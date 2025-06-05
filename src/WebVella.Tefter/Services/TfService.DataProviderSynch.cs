@@ -216,735 +216,6 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public Task BulkSynchronize(
-		TfDataProviderSynchronizeTask task)
-	{
-		try
-		{
-			task.SynchronizationLog.Log("synchronization task started");
-
-			var provider = GetDataProvider(task.DataProviderId);
-
-			if (provider is null)
-			{
-				var ex = new TfException("Unable to get provider.");
-				task.SynchronizationLog.Log($"data provider ({task.DataProviderId}) for task not found.", ex);
-				throw ex;
-			}
-
-			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_SYNC_OPERATION_LOCK_KEY))
-			{
-				Dictionary<string, DataRow> existingData = null;
-				try
-				{
-					task.SynchronizationLog.Log($"start loading existing system data information needed for synchronization");
-					existingData = GetExistingData(provider);
-					task.SynchronizationLog.Log($"complete loading existing system data information needed for synchronization");
-				}
-				catch (Exception ex)
-				{
-					task.SynchronizationLog.Log($"failed to load existing system data information needed for synchronization", ex);
-					throw new TfException("Failed to load existing system data information needed for synchronization.", ex);
-				}
-
-				ReadOnlyCollection<TfDataProviderDataRow> newData = null;
-				try
-				{
-					task.SynchronizationLog.Log($"start loading data from provider");
-					newData = GetNewData(provider, task.SynchronizationLog);
-					task.SynchronizationLog.Log($"complete loading data from provider");
-				}
-				catch (Exception ex)
-				{
-					task.SynchronizationLog.Log($"failed to load data from provider", ex);
-					throw new TfException("Failed to load data from provider.", ex);
-				}
-
-				if (newData.Count() == 0)
-				{
-					task.SynchronizationLog.Log($"data provider returned empty data set");
-					task.SynchronizationLog.Log($"delete all rows from data provider data table");
-
-					DeleteAllProviderRows(provider);
-
-					task.SynchronizationLog.Log($"all rows deleted successfully");
-
-					scope.Complete();
-
-					task.SynchronizationLog.Log($"task completed successfully");
-					return Task.CompletedTask;
-				}
-
-				var tableName = $"dp{provider.Index}";
-
-				Dictionary<string, Guid> preparedJoinKeyIds = null;
-				List<string> columnList = null;
-				Dictionary<string, NpgsqlParameter> paramsDict = null;
-				Dictionary<string, Guid> newTfIds = null;
-
-				try
-				{
-					task.SynchronizationLog.Log($"start prepare join keys informations needed for synchronization");
-					preparedJoinKeyIds = BulkPrepareJoinKeyValueIds(provider, newData);
-					task.SynchronizationLog.Log($"complete prepare join keys informations needed for synchronization");
-				}
-				catch (Exception ex)
-				{
-					task.SynchronizationLog.Log($"failed prepare join keys informations needed for synchronization", ex);
-					throw new TfException("Failed to prepare join key value ids.", ex);
-				}
-
-				try
-				{
-					task.SynchronizationLog.Log($"start processing new rows system identifiers");
-
-					(columnList, paramsDict, newTfIds) = PrepareQueryArrayParameters(provider, preparedJoinKeyIds, existingData, newData);
-
-					BulkPrepareAndUpdateTfIds(newTfIds, paramsDict["tf_id"]);
-
-					task.SynchronizationLog.Log($"complete processing new rows system identifiers");
-				}
-				catch (Exception ex)
-				{
-					task.SynchronizationLog.Log($"failed to process new rows system identifiers", ex);
-					throw new TfException("Failed to process new rows system identifiers.", ex);
-				}
-				try
-				{
-					task.SynchronizationLog.Log($"start creating temporary database structures for syncronization");
-
-					//drop cloned table if exists
-					_dbService.ExecuteSqlNonQueryCommand($"DROP TABLE IF EXISTS {tableName}_sync CASCADE;");
-
-					//clone table
-					var result = _dbManager.CloneTableForSynch(tableName);
-
-					if (!result.IsSuccess)
-					{
-						throw new Exception("Failed to create duplicate structure of provider database table.");
-					}
-
-					task.SynchronizationLog.Log($"complete creating temporary database structures for syncronization");
-				}
-				catch (Exception ex)
-				{
-					task.SynchronizationLog.Log($"failed to create temporary database structures for syncronization", ex);
-					throw new TfException("Failed to create temporary database structures for syncronization.", ex);
-				}
-
-				try
-				{
-					task.SynchronizationLog.Log($"start generating SQL code for synchronization");
-
-					StringBuilder sql = new StringBuilder();
-					sql.Append($"INSERT INTO {tableName}_sync ( ");
-					sql.Append(string.Join(", ", columnList.Select(x => $"\"{x}\"").ToArray()));
-					sql.Append(" ) SELECT * FROM UNNEST ( ");
-					sql.Append(string.Join(", ", columnList.Select(x => $"@{x}").ToArray()));
-					sql.Append(" ); ");
-					sql.AppendLine();
-
-					sql.AppendLine($"DROP TABLE IF EXISTS {tableName} CASCADE;");
-					sql.AppendLine($"ALTER TABLE {tableName}_sync RENAME TO {tableName};");
-
-					DataTable dtConstraints = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetConstraintsMetaSql());
-					foreach (DataRow row in dtConstraints.Rows)
-					{
-						var constraintName = (string)row["constraint_name"];
-
-						if (constraintName.EndsWith("_sync") && (string)row["table_name"] == $"{tableName}_sync")
-						{
-							var constraintNewName = constraintName.Substring(0, constraintName.Length - 5);
-							sql.AppendLine($"ALTER TABLE {tableName} RENAME CONSTRAINT {constraintName} TO {constraintNewName};");
-						}
-					}
-
-					DataTable dtIndexes = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetIndexesMetaSql());
-					foreach (DataRow row in dtIndexes.Rows)
-					{
-						var indexName = (string)row["index_name"];
-						if (indexName.EndsWith("_sync") && (string)row["table_name"] == $"{tableName}_sync")
-						{
-							var indexNewName = indexName.Substring(0, indexName.Length - 5);
-							sql.AppendLine($"ALTER INDEX {indexName} RENAME TO {indexNewName};");
-						}
-					}
-
-					List<NpgsqlParameter> paramList = new List<NpgsqlParameter>();
-					foreach (var column in columnList)
-					{
-						paramList.Add(paramsDict[column]);
-					}
-
-					task.SynchronizationLog.Log($"complete generating SQL code for synchronization");
-
-					task.SynchronizationLog.Log($"start database update");
-
-					_dbService.ExecuteSqlNonQueryCommand(sql.ToString(), paramList);
-
-					task.SynchronizationLog.Log($"completed database update");
-				}
-				catch (Exception ex)
-				{
-					task.SynchronizationLog.Log($"failed to update database", ex);
-					throw new TfException("Failed to update database.", ex);
-				}
-
-				scope.Complete();
-
-				task.SynchronizationLog.Log($"synchronization task completed successfully");
-
-				return Task.CompletedTask;
-			}
-		}
-		catch (Exception ex)
-		{
-			task.SynchronizationLog.Log($"synchronization task failed",
-							TfDataProviderSychronizationLogEntryType.Error);
-			throw ProcessException(ex);
-		}
-	}
-
-	private (List<string> columnNames, Dictionary<string, NpgsqlParameter>, Dictionary<string, Guid>) PrepareQueryArrayParameters(
-		TfDataProvider provider,
-		Dictionary<string, Guid> joinKeyBulkIdDict,
-		Dictionary<string, DataRow> existingData,
-		ReadOnlyCollection<TfDataProviderDataRow> newData)
-	{
-
-		List<string> columnNames = new List<string>();
-
-		Dictionary<string, NpgsqlParameter> paramsDict =
-			new Dictionary<string, NpgsqlParameter>();
-
-		Dictionary<string, Guid> newTfIds = new Dictionary<string, Guid>();
-
-		//data column names and parameters
-		foreach (var column in provider.Columns)
-		{
-			columnNames.Add(column.DbName);
-
-			switch (column.DbType)
-			{
-				case TfDatabaseColumnType.Boolean:
-					{
-						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Boolean);
-						parameter.Value = new List<bool?>();
-						paramsDict.Add(column.DbName, parameter);
-					}
-					break;
-				case TfDatabaseColumnType.Guid:
-					{
-						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
-						parameter.Value = new List<Guid?>();
-						paramsDict.Add(column.DbName, parameter);
-					}
-					break;
-				case TfDatabaseColumnType.Text:
-					{
-						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Text);
-						parameter.Value = new List<string>();
-						paramsDict.Add(column.DbName, parameter);
-					}
-					break;
-				case TfDatabaseColumnType.ShortText:
-					{
-						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Varchar);
-						parameter.Value = new List<string>();
-						paramsDict.Add(column.DbName, parameter);
-					}
-					break;
-				case TfDatabaseColumnType.DateOnly:
-				case TfDatabaseColumnType.DateTime:
-					{
-						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Date);
-						parameter.Value = new List<DateTime?>();
-						paramsDict.Add(column.DbName, parameter);
-					}
-					break;
-				case TfDatabaseColumnType.ShortInteger:
-					{
-						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Smallint);
-						parameter.Value = new List<short?>();
-						paramsDict.Add(column.DbName, parameter);
-					}
-					break;
-				case TfDatabaseColumnType.Integer:
-					{
-						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Integer);
-						parameter.Value = new List<int?>();
-						paramsDict.Add(column.DbName, parameter);
-					}
-					break;
-				case TfDatabaseColumnType.LongInteger:
-					{
-						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Bigint);
-						parameter.Value = new List<long?>();
-						paramsDict.Add(column.DbName, parameter);
-					}
-					break;
-				case TfDatabaseColumnType.Number:
-					{
-						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Numeric);
-						parameter.Value = new List<decimal?>();
-						paramsDict.Add(column.DbName, parameter);
-					}
-					break;
-				default:
-					throw new Exception("Not supported database type");
-			}
-		}
-
-		//join keys column names and parameters
-		foreach (var joinKey in provider.JoinKeys)
-		{
-			columnNames.Add($"tf_jk_{joinKey.DbName}_id");
-			columnNames.Add($"tf_jk_{joinKey.DbName}_version");
-
-			{
-				var parameter = new NpgsqlParameter($"tf_jk_{joinKey.DbName}_id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
-				parameter.Value = new List<Guid>();
-				paramsDict.Add($"tf_jk_{joinKey.DbName}_id", parameter);
-			}
-
-			{
-				var parameter = new NpgsqlParameter($"tf_jk_{joinKey.DbName}_version", NpgsqlDbType.Array | NpgsqlDbType.Smallint);
-				parameter.Value = new List<short>();
-				paramsDict.Add($"tf_jk_{joinKey.DbName}_version", parameter);
-			}
-		}
-
-
-		//add system columns names and parameters
-		{
-			columnNames.Add($"tf_id");
-			columnNames.Add($"tf_created_on");
-			columnNames.Add($"tf_updated_on");
-			columnNames.Add($"tf_row_index");
-			columnNames.Add($"tf_search");
-
-			{
-				var parameter = new NpgsqlParameter($"@tf_id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
-				parameter.Value = new List<Guid>();
-				paramsDict.Add("tf_id", parameter);
-			}
-
-			{
-				var parameter = new NpgsqlParameter($"@tf_created_on", NpgsqlDbType.Array | NpgsqlDbType.Date);
-				parameter.Value = new List<DateTime>();
-				paramsDict.Add("tf_created_on", parameter);
-			}
-
-			{
-				var parameter = new NpgsqlParameter($"@tf_updated_on", NpgsqlDbType.Array | NpgsqlDbType.Date);
-				parameter.Value = new List<DateTime>();
-				paramsDict.Add("tf_updated_on", parameter);
-			}
-
-			{
-				var parameter = new NpgsqlParameter($"@tf_row_index", NpgsqlDbType.Array | NpgsqlDbType.Integer);
-				parameter.Value = new List<int>();
-				paramsDict.Add("tf_row_index", parameter);
-			}
-
-			{
-				var parameter = new NpgsqlParameter($"@tf_search", NpgsqlDbType.Array | NpgsqlDbType.Text);
-				parameter.Value = new List<string>();
-				paramsDict.Add("tf_search", parameter);
-			}
-		}
-
-
-		int currentRowIndex = 0;
-		foreach (var row in newData)
-		{
-			currentRowIndex++;
-
-			var key = GetDataRowPrimaryKeyValueAsString(provider, row, currentRowIndex);
-
-			var columnsWithoutSource = provider.Columns.Where(x => string.IsNullOrWhiteSpace(x.SourceName));
-
-			var searchSb = new StringBuilder();
-
-
-			if (existingData.ContainsKey(key))
-			{
-				((List<Guid>)paramsDict["tf_id"].Value).Add((Guid)existingData[key]["tf_id"]);
-				((List<DateTime>)paramsDict["tf_created_on"].Value).Add((DateTime)existingData[key]["tf_created_on"]);
-				((List<DateTime>)paramsDict["tf_updated_on"].Value).Add((DateTime)DateTime.Now);
-				((List<int>)paramsDict["tf_row_index"].Value).Add(currentRowIndex);
-
-				foreach (var column in columnsWithoutSource)
-				{
-					if (column.IncludeInTableSearch)
-					{
-						object value = existingData[key][column.DbName];
-						if (value is not null)
-							searchSb.Append($" {value}");
-					}
-
-					switch (column.DbType)
-					{
-						case TfDatabaseColumnType.Boolean:
-							{
-								((List<bool?>)paramsDict[column.DbName].Value).Add((bool?)existingData[key][column.DbName]);
-							}
-							break;
-						case TfDatabaseColumnType.Guid:
-							{
-								((List<Guid?>)paramsDict[column.DbName].Value).Add((Guid?)existingData[key][column.DbName]);
-							}
-							break;
-						case TfDatabaseColumnType.Text:
-						case TfDatabaseColumnType.ShortText:
-							{
-								((List<string>)paramsDict[column.DbName].Value).Add((string)existingData[key][column.DbName]);
-							}
-							break;
-						case TfDatabaseColumnType.DateOnly:
-						case TfDatabaseColumnType.DateTime:
-							{
-								DateTime? value = null;
-								if (existingData[key][column.DbName] is DateOnly)
-								{
-									value = ((DateOnly)existingData[key][column.DbName]).ToDateTime();
-								}
-								else if (existingData[key][column.DbName] is DateOnly?)
-								{
-									if (existingData[key][column.DbName] == null)
-									{
-										value = null;
-									}
-									else
-									{
-										value = ((DateOnly)existingData[key][column.DbName]).ToDateTime();
-									}
-								}
-								else if (existingData[key][column.DbName] is DateTime)
-								{
-									value = (DateTime)existingData[key][column.DbName];
-								}
-								else if (existingData[key][column.DbName] is DateTime?)
-								{
-									if (existingData[key][column.DbName] == null)
-									{
-										value = null;
-									}
-									else
-									{
-										value = (DateTime)row[column.DbName];
-									}
-								}
-								else if (existingData[key][column.DbName] == null)
-								{
-									value = null;
-								}
-								else
-								{
-									throw new Exception($"Some source rows contains non DateTime or DateOnly objects for column '{column.DbName}' of type Date\\DateTime.");
-								}
-
-								((List<DateTime?>)paramsDict[column.DbName].Value).Add(value);
-							}
-							break;
-						case TfDatabaseColumnType.ShortInteger:
-							{
-								((List<short?>)paramsDict[column.DbName].Value).Add((short?)existingData[key][column.DbName]);
-							}
-							break;
-						case TfDatabaseColumnType.Integer:
-							{
-								((List<int?>)paramsDict[column.DbName].Value).Add((int?)existingData[key][column.DbName]);
-
-							}
-							break;
-						case TfDatabaseColumnType.LongInteger:
-							{
-								((List<long?>)paramsDict[column.DbName].Value).Add((long?)existingData[key][column.DbName]);
-							}
-							break;
-						case TfDatabaseColumnType.Number:
-							{
-								((List<decimal?>)paramsDict[column.DbName].Value).Add((decimal?)existingData[key][column.DbName]);
-							}
-							break;
-						default:
-							throw new Exception("Not supported database type");
-					}
-				}
-			}
-			else
-			{
-				var tfId = Guid.NewGuid();
-				newTfIds[tfId.ToString()] = tfId;
-				((List<Guid>)paramsDict["tf_id"].Value).Add((Guid)tfId);
-				((List<DateTime>)paramsDict["tf_created_on"].Value).Add((DateTime)DateTime.Now);
-				((List<DateTime>)paramsDict["tf_updated_on"].Value).Add((DateTime)DateTime.Now);
-				((List<int>)paramsDict["tf_row_index"].Value).Add(currentRowIndex);
-
-				foreach (var column in columnsWithoutSource)
-				{
-					if (column.IncludeInTableSearch)
-					{
-						if (!column.IsNullable)
-						{
-							object defaultValue = GetColumnDefaultValue(column);
-							if (defaultValue is not null)
-								searchSb.Append($" {defaultValue}");
-						}
-					}
-
-					switch (column.DbType)
-					{
-						case TfDatabaseColumnType.Boolean:
-							{
-								if (!column.IsNullable)
-									((List<bool?>)paramsDict[column.DbName].Value).Add((bool?)GetColumnDefaultValue(column));
-								else
-									((List<bool?>)paramsDict[column.DbName].Value).Add(null);
-							}
-							break;
-						case TfDatabaseColumnType.Guid:
-							{
-								if (!column.IsNullable)
-									((List<Guid?>)paramsDict[column.DbName].Value).Add((Guid?)GetColumnDefaultValue(column));
-								else
-									((List<Guid?>)paramsDict[column.DbName].Value).Add(null);
-
-							}
-							break;
-						case TfDatabaseColumnType.Text:
-						case TfDatabaseColumnType.ShortText:
-							{
-								if (!column.IsNullable)
-									((List<string>)paramsDict[column.DbName].Value).Add((string)GetColumnDefaultValue(column));
-								else
-									((List<string>)paramsDict[column.DbName].Value).Add(null);
-							}
-							break;
-						case TfDatabaseColumnType.DateOnly:
-						case TfDatabaseColumnType.DateTime:
-							{
-								if (!column.IsNullable)
-									((List<DateTime?>)paramsDict[column.DbName].Value).Add((DateTime?)GetColumnDefaultValue(column));
-								else
-									((List<DateTime?>)paramsDict[column.DbName].Value).Add(null);
-							}
-							break;
-						case TfDatabaseColumnType.ShortInteger:
-							{
-								if (!column.IsNullable)
-									((List<short?>)paramsDict[column.DbName].Value).Add((short?)GetColumnDefaultValue(column));
-								else
-									((List<short?>)paramsDict[column.DbName].Value).Add(null);
-							}
-							break;
-						case TfDatabaseColumnType.Integer:
-							{
-								if (!column.IsNullable)
-									((List<int?>)paramsDict[column.DbName].Value).Add((int?)GetColumnDefaultValue(column));
-								else
-									((List<int?>)paramsDict[column.DbName].Value).Add(null);
-
-							}
-							break;
-						case TfDatabaseColumnType.LongInteger:
-							{
-								if (!column.IsNullable)
-									((List<long?>)paramsDict[column.DbName].Value).Add((long?)GetColumnDefaultValue(column));
-								else
-									((List<long?>)paramsDict[column.DbName].Value).Add(null);
-							}
-							break;
-						case TfDatabaseColumnType.Number:
-							{
-								if (!column.IsNullable)
-									((List<decimal?>)paramsDict[column.DbName].Value).Add((decimal?)GetColumnDefaultValue(column));
-								else
-									((List<decimal?>)paramsDict[column.DbName].Value).Add(null);
-							}
-							break;
-						default:
-							throw new Exception("Not supported database type");
-					}
-				}
-			}
-
-
-			var columnsWithSource = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
-			foreach (var column in columnsWithSource)
-			{
-				if (column.IncludeInTableSearch)
-				{
-					object value = row[column.DbName];
-					if (value is not null)
-						searchSb.Append($" {value}");
-				}
-
-				switch (column.DbType)
-				{
-					case TfDatabaseColumnType.Boolean:
-						{
-							((List<bool?>)paramsDict[column.DbName].Value).Add((bool?)row[column.DbName]);
-						}
-						break;
-					case TfDatabaseColumnType.Guid:
-						{
-							((List<Guid?>)paramsDict[column.DbName].Value).Add((Guid?)row[column.DbName]);
-						}
-						break;
-					case TfDatabaseColumnType.Text:
-					case TfDatabaseColumnType.ShortText:
-						{
-							((List<string>)paramsDict[column.DbName].Value).Add((string)row[column.DbName]);
-						}
-						break;
-					case TfDatabaseColumnType.DateOnly:
-					case TfDatabaseColumnType.DateTime:
-						{
-							DateTime? value = null;
-							if (row[column.DbName] is DateOnly)
-							{
-								value = ((DateOnly)row[column.DbName]).ToDateTime();
-							}
-							else if (row[column.DbName] is DateOnly?)
-							{
-								if (row[column.DbName] == null)
-								{
-									value = null;
-								}
-								else
-								{
-									value = ((DateOnly)row[column.DbName]).ToDateTime();
-								}
-							}
-							else if (row[column.DbName] is DateTime)
-							{
-								value = (DateTime)row[column.DbName];
-							}
-							else if (row[column.DbName] is DateTime?)
-							{
-								if (row[column.DbName] == null)
-								{
-									value = null;
-								}
-								else
-								{
-									value = (DateTime)row[column.DbName];
-								}
-							}
-							else if (row[column.DbName] == null)
-							{
-								value = null;
-							}
-							else
-							{
-								throw new Exception($"Some source rows contains non DateTime or DateOnly objects for column '{column.DbName}' of type Date\\DateTime.");
-							}
-
-							((List<DateTime?>)paramsDict[column.DbName].Value).Add(value);
-						}
-						break;
-					case TfDatabaseColumnType.ShortInteger:
-						{
-							((List<short?>)paramsDict[column.DbName].Value).Add((short?)row[column.DbName]);
-						}
-						break;
-					case TfDatabaseColumnType.Integer:
-						{
-							((List<int?>)paramsDict[column.DbName].Value).Add((int?)row[column.DbName]);
-
-						}
-						break;
-					case TfDatabaseColumnType.LongInteger:
-						{
-							((List<long?>)paramsDict[column.DbName].Value).Add((long?)row[column.DbName]);
-						}
-						break;
-					case TfDatabaseColumnType.Number:
-						{
-							((List<decimal?>)paramsDict[column.DbName].Value).Add((decimal?)row[column.DbName]);
-						}
-						break;
-					default:
-						throw new Exception("Not supported database type");
-				}
-			}
-
-			foreach (var joinKey in provider.JoinKeys)
-			{
-				List<string> keys = new List<string>();
-				foreach (var column in joinKey.Columns)
-					keys.Add(row[column.DbName]?.ToString());
-
-				var combinedKey = CombineKey(keys);
-
-				var skIdValue = joinKeyBulkIdDict[combinedKey];
-
-				((List<Guid>)paramsDict[$"tf_jk_{joinKey.DbName}_id"].Value)
-					.Add(skIdValue);
-
-				((List<short>)paramsDict[$"tf_jk_{joinKey.DbName}_version"].Value)
-					.Add(joinKey.Version);
-			}
-
-			//update search
-			((List<string>)paramsDict["tf_search"].Value).Add(searchSb.ToString());
-		}
-
-		return (columnNames, paramsDict, newTfIds);
-	}
-
-	private Dictionary<string, Guid> BulkPrepareJoinKeyValueIds(
-		TfDataProvider provider,
-		ReadOnlyCollection<TfDataProviderDataRow> newData)
-	{
-		Dictionary<string, Guid> joinKeyBulkIdDict = new();
-
-		foreach (var row in newData)
-		{
-			foreach (var joinKey in provider.JoinKeys)
-			{
-				List<string> keys = new List<string>();
-				foreach (var column in joinKey.Columns)
-					keys.Add(row[column.DbName]?.ToString());
-
-				var key = CombineKey(keys);
-
-				if (joinKeyBulkIdDict.ContainsKey(key))
-					continue;
-
-				joinKeyBulkIdDict[key] = Guid.Empty;
-			}
-		}
-
-		BulkFillIds(joinKeyBulkIdDict);
-
-		return joinKeyBulkIdDict;
-	}
-
-	private void BulkPrepareAndUpdateTfIds(
-		Dictionary<string, Guid> newTfIds,
-		NpgsqlParameter tfIdsParam)
-	{
-		BulkFillIds(newTfIds);
-
-		var tfIdList = (List<Guid>)tfIdsParam.Value;
-		List<Guid> newtfIdList = new List<Guid>();
-		foreach (var id in tfIdList)
-		{
-			if (newTfIds.ContainsKey(id.ToString()))
-			{
-				newtfIdList.Add(newTfIds[id.ToString()]);
-			}
-			else
-			{
-				newtfIdList.Add(id);
-			}
-		}
-		tfIdsParam.Value = newtfIdList;
-	}
-
 	private Dictionary<string, DataRow> GetExistingData(
 		TfDataProvider provider)
 	{
@@ -1231,4 +502,648 @@ public partial class TfService : ITfService
 
 		return lastSynchTask.CompletedOn.Value.AddMinutes(provider.SynchScheduleMinutes);
 	}
+
+	public Task BulkSynchronize(
+		TfDataProviderSynchronizeTask task)
+	{
+		try
+		{
+			task.SynchronizationLog.Log("synchronization task started");
+
+			var provider = GetDataProvider(task.DataProviderId);
+
+			if (provider is null)
+			{
+				var ex = new TfException("Unable to get provider.");
+				task.SynchronizationLog.Log($"data provider ({task.DataProviderId}) for task not found.", ex);
+				throw ex;
+			}
+
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_SYNC_OPERATION_LOCK_KEY))
+			{
+				#region <--- loads existing data --->
+
+				Dictionary<string, DataRow> existingData = null;
+				try
+				{
+					task.SynchronizationLog.Log($"start loading existing system data information needed for synchronization");
+					existingData = GetExistingData(provider);
+					task.SynchronizationLog.Log($"complete loading existing system data information needed for synchronization");
+				}
+				catch (Exception ex)
+				{
+					task.SynchronizationLog.Log($"failed to load existing system data information needed for synchronization", ex);
+					throw new TfException("Failed to load existing system data information needed for synchronization.", ex);
+				}
+
+				#endregion
+
+				#region <--- loads new data --->
+
+				ReadOnlyCollection<TfDataProviderDataRow> newData = null;
+				try
+				{
+					task.SynchronizationLog.Log($"start loading data from provider");
+					newData = GetNewData(provider, task.SynchronizationLog);
+					task.SynchronizationLog.Log($"complete loading data from provider");
+				}
+				catch (Exception ex)
+				{
+					task.SynchronizationLog.Log($"failed to load data from provider", ex);
+					throw new TfException("Failed to load data from provider.", ex);
+				}
+
+				#endregion
+
+				#region <--- delete all records if new data is empty and exists --->
+
+				if (newData.Count() == 0)
+				{
+					task.SynchronizationLog.Log($"data provider returned empty data set");
+					task.SynchronizationLog.Log($"delete all rows from data provider data table");
+
+					DeleteAllProviderRows(provider);
+
+					task.SynchronizationLog.Log($"all rows deleted successfully");
+
+					scope.Complete();
+
+					task.SynchronizationLog.Log($"task completed successfully");
+					return Task.CompletedTask;
+				}
+
+				#endregion
+
+				#region <--- process and prepare new data for database insert --->
+
+				var tableName = $"dp{provider.Index}";
+				List<string> columnList = null;
+				List<NpgsqlParameter> paramList = null;
+
+				try
+				{
+					task.SynchronizationLog.Log($"start prepare new data for database insert");
+
+					PrepareQueryArrayParametersNew(provider, existingData, newData, out columnList, out paramList);
+
+					task.SynchronizationLog.Log($"complete prepare new data for database insert");
+				}
+				catch (Exception ex)
+				{
+					task.SynchronizationLog.Log($"failed to prepare new data for database insert", ex);
+					throw new TfException("Failed to prepare new data for database insert.", ex);
+				}
+
+				#endregion
+
+				#region <--- creating temporary database structures --->
+
+				try
+				{
+					task.SynchronizationLog.Log($"start creating temporary database structures for syncronization");
+
+					//drop cloned table if exists
+					_dbService.ExecuteSqlNonQueryCommand($"DROP TABLE IF EXISTS {tableName}_sync CASCADE;");
+
+					//clone table
+					var result = _dbManager.CloneTableForSynch(tableName);
+
+					if (!result.IsSuccess)
+					{
+						throw new Exception("Failed to create duplicate structure of provider database table.");
+					}
+
+					task.SynchronizationLog.Log($"complete creating temporary database structures for syncronization");
+				}
+				catch (Exception ex)
+				{
+					task.SynchronizationLog.Log($"failed to create temporary database structures for syncronization", ex);
+					throw new TfException("Failed to create temporary database structures for syncronization.", ex);
+				}
+
+				#endregion
+
+				#region <--- generate update sql script --->
+
+				StringBuilder sql = new StringBuilder();
+
+				try
+				{
+					task.SynchronizationLog.Log($"start generating SQL code for synchronization");
+
+
+					sql.Append($"INSERT INTO {tableName}_sync ( ");
+					sql.Append(string.Join(", ", columnList.Select(x => $"\"{x}\"").ToArray()));
+					sql.Append(" ) SELECT * FROM UNNEST ( ");
+					sql.Append(string.Join(", ", columnList.Select(x => $"@{x}").ToArray()));
+					sql.Append(" ); ");
+					sql.AppendLine();
+
+					sql.AppendLine($"DROP TABLE IF EXISTS {tableName} CASCADE;");
+					sql.AppendLine($"ALTER TABLE {tableName}_sync RENAME TO {tableName};");
+
+					DataTable dtConstraints = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetConstraintsMetaSql());
+					foreach (DataRow row in dtConstraints.Rows)
+					{
+						var constraintName = (string)row["constraint_name"];
+
+						if (constraintName.EndsWith("_sync") && (string)row["table_name"] == $"{tableName}_sync")
+						{
+							var constraintNewName = constraintName.Substring(0, constraintName.Length - 5);
+							sql.AppendLine($"ALTER TABLE {tableName} RENAME CONSTRAINT {constraintName} TO {constraintNewName};");
+						}
+					}
+
+					DataTable dtIndexes = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetIndexesMetaSql());
+					foreach (DataRow row in dtIndexes.Rows)
+					{
+						var indexName = (string)row["index_name"];
+						if (indexName.EndsWith("_sync") && (string)row["table_name"] == $"{tableName}_sync")
+						{
+							var indexNewName = indexName.Substring(0, indexName.Length - 5);
+							sql.AppendLine($"ALTER INDEX {indexName} RENAME TO {indexNewName};");
+						}
+					}
+
+					task.SynchronizationLog.Log($"complete generating SQL code for synchronization");
+				}
+				catch (Exception ex)
+				{
+					task.SynchronizationLog.Log($"failed to update database", ex);
+					throw new TfException("Failed to update database.", ex);
+				}
+
+				#endregion
+
+				#region <--- execute update sql script --->
+
+				try
+				{
+					task.SynchronizationLog.Log($"start database update");
+
+					_dbService.ExecuteSqlNonQueryCommand(sql.ToString(), paramList);
+
+					task.SynchronizationLog.Log($"completed database update");
+				}
+				catch (Exception ex)
+				{
+					task.SynchronizationLog.Log($"failed to update database", ex);
+					throw new TfException("Failed to update database.", ex);
+				}
+
+				#endregion
+
+				scope.Complete();
+
+				task.SynchronizationLog.Log($"synchronization task completed successfully");
+
+				return Task.CompletedTask;
+			}
+		}
+		catch (Exception ex)
+		{
+			task.SynchronizationLog.Log($"synchronization task failed",
+				TfDataProviderSychronizationLogEntryType.Error);
+
+			throw ProcessException(ex);
+		}
+	}
+
+	private void PrepareQueryArrayParametersNew(
+		TfDataProvider provider,
+		Dictionary<string, DataRow> existingDataDict,
+		ReadOnlyCollection<TfDataProviderDataRow> newData,
+		out List<string> columnNames,
+		out List<NpgsqlParameter> paramList)
+	{
+
+		columnNames = new List<string>();
+		Dictionary<string, NpgsqlParameter> paramsDict = new Dictionary<string, NpgsqlParameter>();
+
+		#region <--- prepare columns --->
+
+		foreach (var column in provider.Columns)
+		{
+			columnNames.Add(column.DbName);
+
+			switch (column.DbType)
+			{
+				case TfDatabaseColumnType.Boolean:
+					{
+						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Boolean);
+						parameter.Value = new List<bool?>();
+						paramsDict.Add(column.DbName, parameter);
+					}
+					break;
+				case TfDatabaseColumnType.Guid:
+					{
+						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
+						parameter.Value = new List<Guid?>();
+						paramsDict.Add(column.DbName, parameter);
+					}
+					break;
+				case TfDatabaseColumnType.Text:
+					{
+						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Text);
+						parameter.Value = new List<string>();
+						paramsDict.Add(column.DbName, parameter);
+					}
+					break;
+				case TfDatabaseColumnType.ShortText:
+					{
+						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Varchar);
+						parameter.Value = new List<string>();
+						paramsDict.Add(column.DbName, parameter);
+					}
+					break;
+				case TfDatabaseColumnType.DateOnly:
+				case TfDatabaseColumnType.DateTime:
+					{
+						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Date);
+						parameter.Value = new List<DateTime?>();
+						paramsDict.Add(column.DbName, parameter);
+					}
+					break;
+				case TfDatabaseColumnType.ShortInteger:
+					{
+						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Smallint);
+						parameter.Value = new List<short?>();
+						paramsDict.Add(column.DbName, parameter);
+					}
+					break;
+				case TfDatabaseColumnType.Integer:
+					{
+						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Integer);
+						parameter.Value = new List<int?>();
+						paramsDict.Add(column.DbName, parameter);
+					}
+					break;
+				case TfDatabaseColumnType.LongInteger:
+					{
+						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Bigint);
+						parameter.Value = new List<long?>();
+						paramsDict.Add(column.DbName, parameter);
+					}
+					break;
+				case TfDatabaseColumnType.Number:
+					{
+						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Numeric);
+						parameter.Value = new List<decimal?>();
+						paramsDict.Add(column.DbName, parameter);
+					}
+					break;
+				default:
+					throw new Exception("Not supported database type");
+			}
+		}
+
+		//add system columns
+		{
+			columnNames.Add($"tf_id");
+			columnNames.Add($"tf_created_on");
+			columnNames.Add($"tf_updated_on");
+			columnNames.Add($"tf_row_index");
+			columnNames.Add($"tf_search");
+
+			var parameter = new NpgsqlParameter($"@tf_id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
+			parameter.Value = new List<Guid>();
+			paramsDict.Add("tf_id", parameter);
+
+			parameter = new NpgsqlParameter($"@tf_created_on", NpgsqlDbType.Array | NpgsqlDbType.Date);
+			parameter.Value = new List<DateTime>();
+			paramsDict.Add("tf_created_on", parameter);
+
+			parameter = new NpgsqlParameter($"@tf_updated_on", NpgsqlDbType.Array | NpgsqlDbType.Date);
+			parameter.Value = new List<DateTime>();
+			paramsDict.Add("tf_updated_on", parameter);
+
+			parameter = new NpgsqlParameter($"@tf_row_index", NpgsqlDbType.Array | NpgsqlDbType.Integer);
+			parameter.Value = new List<int>();
+			paramsDict.Add("tf_row_index", parameter);
+
+			parameter = new NpgsqlParameter($"@tf_search", NpgsqlDbType.Array | NpgsqlDbType.Text);
+			parameter.Value = new List<string>();
+			paramsDict.Add("tf_search", parameter);
+		}
+
+		#endregion
+
+		var columnsWithSource = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName)).ToList();
+		var columnsWithoutSource = provider.Columns.Where(x => string.IsNullOrWhiteSpace(x.SourceName)).ToList();
+
+		int currentRowIndex = 0;
+		foreach (var row in newData)
+		{
+			currentRowIndex++;
+			var key = GetDataRowPrimaryKeyValueAsString(provider, row, currentRowIndex);
+			var searchSb = new StringBuilder();
+
+			DataRow existingDataRow = null;
+			if (existingDataDict.ContainsKey(key))
+			{
+				existingDataRow = existingDataDict[key];
+			}
+
+			ProcessColumnsWithoutSource(columnsWithoutSource, paramsDict, searchSb, existingDataRow);
+
+			ProcessColumnsWithSource(columnsWithSource, paramsDict, searchSb, row);
+
+			#region <--- processs system columns data --->
+
+			if (existingDataDict.ContainsKey(key))
+			{
+				//if row already exists (found by specified in data provider key)
+				//we use existing system data
+				((List<Guid>)paramsDict["tf_id"].Value).Add((Guid)existingDataDict[key]["tf_id"]);
+				((List<DateTime>)paramsDict["tf_created_on"].Value).Add((DateTime)existingDataDict[key]["tf_created_on"]);
+				((List<DateTime>)paramsDict["tf_updated_on"].Value).Add((DateTime)DateTime.Now);
+				((List<int>)paramsDict["tf_row_index"].Value).Add(currentRowIndex);
+				((List<string>)paramsDict["tf_search"].Value).Add(searchSb.ToString());
+			}
+			else
+			{
+				//if it is a new row, we init system data
+				((List<Guid>)paramsDict["tf_id"].Value).Add((Guid)Guid.NewGuid());
+				((List<DateTime>)paramsDict["tf_created_on"].Value).Add((DateTime)DateTime.Now);
+				((List<DateTime>)paramsDict["tf_updated_on"].Value).Add((DateTime)DateTime.Now);
+				((List<int>)paramsDict["tf_row_index"].Value).Add(currentRowIndex);
+				((List<string>)paramsDict["tf_search"].Value).Add(searchSb.ToString());
+			}
+
+			#endregion
+		}
+
+		paramList = new List<NpgsqlParameter>();
+		foreach (var column in columnNames)
+		{
+			paramList.Add(paramsDict[column]);
+		}
+	}
+
+	private void ProcessColumnsWithoutSource(
+		List<TfDataProviderColumn> columns,
+		Dictionary<string, NpgsqlParameter> paramsDict,
+		StringBuilder searchSb,
+		DataRow existingDataRow)
+	{
+		if (existingDataRow is not null)
+		{
+			foreach (var column in columns)
+			{
+				if (column.IncludeInTableSearch)
+				{
+					object value = existingDataRow[column.DbName];
+					if (value is not null)
+						searchSb.Append($" {value}");
+				}
+
+				switch (column.DbType)
+				{
+					case TfDatabaseColumnType.Boolean:
+						{
+							((List<bool?>)paramsDict[column.DbName].Value).Add((bool?)existingDataRow[column.DbName]);
+						}
+						break;
+					case TfDatabaseColumnType.Guid:
+						{
+							((List<Guid?>)paramsDict[column.DbName].Value).Add((Guid?)existingDataRow[column.DbName]);
+						}
+						break;
+					case TfDatabaseColumnType.Text:
+					case TfDatabaseColumnType.ShortText:
+						{
+							((List<string>)paramsDict[column.DbName].Value).Add((string)existingDataRow[column.DbName]);
+						}
+						break;
+					case TfDatabaseColumnType.DateOnly:
+					case TfDatabaseColumnType.DateTime:
+						{
+							DateTime? value = null;
+							if (existingDataRow[column.DbName] is DateOnly)
+							{
+								value = ((DateOnly)existingDataRow[column.DbName]).ToDateTime();
+							}
+							else if (existingDataRow[column.DbName] is DateOnly?)
+							{
+								if (existingDataRow[column.DbName] == null)
+								{
+									value = null;
+								}
+								else
+								{
+									value = ((DateOnly)existingDataRow[column.DbName]).ToDateTime();
+								}
+							}
+							else if (existingDataRow[column.DbName] is DateTime)
+							{
+								value = (DateTime)existingDataRow[column.DbName];
+							}
+							else if (existingDataRow[column.DbName] is DateTime?)
+							{
+								if (existingDataRow[column.DbName] == null)
+								{
+									value = null;
+								}
+								else
+								{
+									value = (DateTime)existingDataRow[column.DbName];
+								}
+							}
+							else if (existingDataRow[column.DbName] == null)
+							{
+								value = null;
+							}
+							else
+							{
+								throw new Exception($"Some source rows contains non DateTime or DateOnly objects for column '{column.DbName}' of type Date\\DateTime.");
+							}
+
+							((List<DateTime?>)paramsDict[column.DbName].Value).Add(value);
+						}
+						break;
+					case TfDatabaseColumnType.ShortInteger:
+						{
+							((List<short?>)paramsDict[column.DbName].Value).Add((short?)existingDataRow[column.DbName]);
+						}
+						break;
+					case TfDatabaseColumnType.Integer:
+						{
+							((List<int?>)paramsDict[column.DbName].Value).Add((int?)existingDataRow[column.DbName]);
+
+						}
+						break;
+					case TfDatabaseColumnType.LongInteger:
+						{
+							((List<long?>)paramsDict[column.DbName].Value).Add((long?)existingDataRow[column.DbName]);
+						}
+						break;
+					case TfDatabaseColumnType.Number:
+						{
+							((List<decimal?>)paramsDict[column.DbName].Value).Add((decimal?)existingDataRow[column.DbName]);
+						}
+						break;
+					default:
+						throw new Exception("Not supported database type");
+				}
+			}
+		}
+		else
+		{
+			foreach (var column in columns)
+			{
+				object defaultValue = null;
+				if (!column.IsNullable)
+				{
+					defaultValue = GetColumnDefaultValue(column);
+				}
+
+				if (column.IncludeInTableSearch)
+				{
+					if (!column.IsNullable && defaultValue is not null)
+					{
+						searchSb.Append($" {defaultValue}");
+					}
+				}
+
+				switch (column.DbType)
+				{
+					case TfDatabaseColumnType.Boolean:
+						((List<bool?>)paramsDict[column.DbName].Value).Add((bool?)defaultValue);
+						break;
+					case TfDatabaseColumnType.Guid:
+						((List<Guid?>)paramsDict[column.DbName].Value).Add((Guid?)defaultValue);
+						break;
+					case TfDatabaseColumnType.Text:
+					case TfDatabaseColumnType.ShortText:
+						((List<string>)paramsDict[column.DbName].Value).Add((string)defaultValue);
+						break;
+					case TfDatabaseColumnType.DateOnly:
+					case TfDatabaseColumnType.DateTime:
+						((List<DateTime?>)paramsDict[column.DbName].Value).Add((DateTime?)defaultValue);
+						break;
+					case TfDatabaseColumnType.ShortInteger:
+						((List<short?>)paramsDict[column.DbName].Value).Add((short?)defaultValue);
+						break;
+					case TfDatabaseColumnType.Integer:
+						((List<int?>)paramsDict[column.DbName].Value).Add((int?)defaultValue);
+						break;
+					case TfDatabaseColumnType.LongInteger:
+						((List<long?>)paramsDict[column.DbName].Value).Add((long?)defaultValue);
+						break;
+					case TfDatabaseColumnType.Number:
+						((List<decimal?>)paramsDict[column.DbName].Value).Add((decimal?)defaultValue);
+						break;
+					default:
+						throw new Exception("Not supported database type");
+				}
+			}
+		}
+	}
+
+	private void ProcessColumnsWithSource(
+		List<TfDataProviderColumn> columns,
+		Dictionary<string, NpgsqlParameter> paramsDict,
+		StringBuilder searchSb,
+		TfDataProviderDataRow newDataRow)
+	{
+		foreach (var column in columns)
+		{
+			if (column.IncludeInTableSearch)
+			{
+				object value = newDataRow[column.DbName];
+				if (value is not null)
+					searchSb.Append($" {value}");
+			}
+
+			switch (column.DbType)
+			{
+				case TfDatabaseColumnType.Boolean:
+					{
+						((List<bool?>)paramsDict[column.DbName].Value).Add((bool?)newDataRow[column.DbName]);
+					}
+					break;
+				case TfDatabaseColumnType.Guid:
+					{
+						((List<Guid?>)paramsDict[column.DbName].Value).Add((Guid?)newDataRow[column.DbName]);
+					}
+					break;
+				case TfDatabaseColumnType.Text:
+				case TfDatabaseColumnType.ShortText:
+					{
+						((List<string>)paramsDict[column.DbName].Value).Add((string)newDataRow[column.DbName]);
+					}
+					break;
+				case TfDatabaseColumnType.DateOnly:
+				case TfDatabaseColumnType.DateTime:
+					{
+						DateTime? value = null;
+						if (newDataRow[column.DbName] is DateOnly)
+						{
+							value = ((DateOnly)newDataRow[column.DbName]).ToDateTime();
+						}
+						else if (newDataRow[column.DbName] is DateOnly?)
+						{
+							if (newDataRow[column.DbName] == null)
+							{
+								value = null;
+							}
+							else
+							{
+								value = ((DateOnly)newDataRow[column.DbName]).ToDateTime();
+							}
+						}
+						else if (newDataRow[column.DbName] is DateTime)
+						{
+							value = (DateTime)newDataRow[column.DbName];
+						}
+						else if (newDataRow[column.DbName] is DateTime?)
+						{
+							if (newDataRow[column.DbName] == null)
+							{
+								value = null;
+							}
+							else
+							{
+								value = (DateTime)newDataRow[column.DbName];
+							}
+						}
+						else if (newDataRow[column.DbName] == null)
+						{
+							value = null;
+						}
+						else
+						{
+							throw new Exception($"Some source rows contains non DateTime or DateOnly objects for column '{column.DbName}' of type Date\\DateTime.");
+						}
+
+						((List<DateTime?>)paramsDict[column.DbName].Value).Add(value);
+					}
+					break;
+				case TfDatabaseColumnType.ShortInteger:
+					{
+						((List<short?>)paramsDict[column.DbName].Value).Add((short?)newDataRow[column.DbName]);
+					}
+					break;
+				case TfDatabaseColumnType.Integer:
+					{
+						((List<int?>)paramsDict[column.DbName].Value).Add((int?)newDataRow[column.DbName]);
+
+					}
+					break;
+				case TfDatabaseColumnType.LongInteger:
+					{
+						((List<long?>)paramsDict[column.DbName].Value).Add((long?)newDataRow[column.DbName]);
+					}
+					break;
+				case TfDatabaseColumnType.Number:
+					{
+						((List<decimal?>)paramsDict[column.DbName].Value).Add((decimal?)newDataRow[column.DbName]);
+					}
+					break;
+				default:
+					throw new Exception("Not supported database type");
+			}
+		}
+	}
+
 }

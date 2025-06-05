@@ -55,13 +55,6 @@ public partial interface ITfService
 	/// <returns></returns>
 	public TfDataProvider DeleteDataProviderJoinKey(
 		Guid id);
-
-	/// <summary>
-	/// Updates rows with join keys different to last version
-	/// This happens when new join key is added or existing one is
-	/// updated after provider data is synchronized
-	/// </summary>
-	internal Task UpdateJoinKeysVersionAsync(CancellationToken stoppingToken);
 }
 
 public partial class TfService : ITfService
@@ -391,76 +384,6 @@ public partial class TfService : ITfService
 
 				return provider;
 			}
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
-	public Task UpdateJoinKeysVersionAsync(CancellationToken stoppingToken)
-	{
-		try
-		{
-			var dataProviders = GetDataProviders();
-			foreach (var provider in dataProviders)
-			{
-				if (stoppingToken.IsCancellationRequested)
-					return Task.CompletedTask;
-
-				var joinKeys = GetDataProviderJoinKeys(provider.Id);
-
-				if (joinKeys.Count == 0)
-					continue;
-
-				List<string> conditions = new List<string>();
-				foreach (var joinKey in joinKeys)
-				{
-					conditions.Add($"tf_jk_{joinKey.DbName}_version <> {joinKey.Version}");
-				}
-
-				//select 100 rows
-				string sql = "SELECT tf_id FROM " + $"dp{provider.Index}" +
-					" WHERE " + string.Join(" OR ", conditions) +
-					" LIMIT 100";
-
-				while (true)
-				{
-					if (stoppingToken.IsCancellationRequested)
-						return Task.CompletedTask;
-
-					var dt = _dbService.ExecuteSqlQueryCommand(sql);
-
-					List<Guid> tfIds = new List<Guid>();
-					foreach (DataRow row in dt.Rows)
-					{
-						Guid tfId = (Guid)row["tf_id"];
-						tfIds.Add(tfId);
-					}
-
-					if (tfIds.Count == 0)
-						break;
-
-					var dataTable = QueryDataProvider(provider, tfIds);
-
-					Dictionary<string, object> values = new Dictionary<string, object>();
-					foreach (TfDataRow row in dataTable.Rows)
-					{
-						foreach (var joinKey in provider.JoinKeys)
-						{
-							List<string> keys = new List<string>();
-							foreach (var column in joinKey.Columns)
-								keys.Add(row[column.DbName]?.ToString());
-
-							values[$"tf_jk_{joinKey.DbName}_id"] = GetId(keys.ToArray());
-							values[$"tf_jk_{joinKey.DbName}_version"] = joinKey.Version;
-						}
-
-						UpdateProviderRowJoinKeysOnly(provider, (Guid)row["tf_id"], values);
-					}
-				}
-			}
-			return Task.CompletedTask;
 		}
 		catch (Exception ex)
 		{
