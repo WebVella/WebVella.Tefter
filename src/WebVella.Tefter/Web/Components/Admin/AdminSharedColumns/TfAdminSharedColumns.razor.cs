@@ -51,10 +51,11 @@ public partial class TfAdminSharedColumns : TfBaseComponent
 			return;
 		try
 		{
-			var result = UC.DeleteSharedColumn(column.Id);
+			UC.DeleteSharedColumn(column.Id);
 			ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
-			Dispatcher.Dispatch(new SetAppStateAction(component: this,
-				state: TfAppState.Value with { AdminSharedColumns = (List<TucSharedColumn>)result }));
+			//TODO BOZ:"
+			//Dispatcher.Dispatch(new SetAppStateAction(component: this,
+			//	state: TfAppState.Value with { AdminSharedColumns = (List<TucSharedColumn>)result }));
 		}
 		catch (Exception ex)
 		{
