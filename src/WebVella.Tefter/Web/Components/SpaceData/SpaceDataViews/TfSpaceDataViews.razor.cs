@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceData.SpaceDataViews.TfSpaceDataViews","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceData.SpaceDataViews.TfSpaceDataViews", "WebVella.Tefter")]
 public partial class TfSpaceDataViews : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
@@ -23,7 +23,8 @@ public partial class TfSpaceDataViews : TfBaseComponent
 		return items;
 	}
 
-	private void _navigateToView(TucSpaceView view){
+	private void _navigateToView(TucSpaceView view)
+	{
 		Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, view.SpaceId, view.Id));
 	}
 }

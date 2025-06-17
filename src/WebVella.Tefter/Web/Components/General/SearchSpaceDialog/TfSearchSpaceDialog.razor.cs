@@ -22,7 +22,6 @@ public partial class TfSearchSpaceDialog : TfFormBaseComponent, IDialogContentCo
 			_isBusy = false;
 			await InvokeAsync(StateHasChanged);
 		}
-
 	}
 
 	private async Task _cancel()

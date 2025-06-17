@@ -41,7 +41,6 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 			_searchTypes.Add(new TucDataProviderColumnSearchTypeInfo(item));
 		}
 		base.InitForm(_form);
-
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -128,7 +127,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			if(_form.IsDisconnected)
+			if (_form.IsDisconnected)
 				_form.SourceName = null;
 
 			if (!_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue))
@@ -150,7 +149,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 				SourceType = _selectedProviderType.Name,
 				DbType = _selectedDbType
 			};
-			
+
 			TucDataProvider provider;
 			if (_isCreate)
 			{

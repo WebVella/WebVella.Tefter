@@ -2,20 +2,22 @@
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Fluxor;
 using Fluxor.Blazor.Web.ReduxDevTools;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.IdentityModel.Abstractions;
 using Serilog;
 using Serilog.Extensions.Logging;
 using System.Globalization;
 using System.Text;
+using WebVella.BlazorTrace;
 using WebVella.Tefter;
 using WebVella.Tefter.Database;
 using WebVella.Tefter.Services;
 using WebVella.Tefter.Site.Components;
 using WebVella.Tefter.Utility;
 using WebVella.Tefter.Web.Utils;
-#endregion
 
+#endregion
 var configBuilder = new ConfigurationBuilder()
 	.SetBasePath(Directory.GetCurrentDirectory())
 	.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -52,6 +54,26 @@ try
 
 		builder.Services.AddControllers();
 
+		//Blazor Trace Core Service
+		builder.Services.AddBlazorTrace(new WvBlazorTraceConfiguration
+		{
+			#if !DEBUG
+			EnableTracing = false
+			#endif
+		});
+		#if DEBUG
+		//Snapshots require bigger hub message size
+		builder.Services.Configure<HubOptions>(options =>
+		{
+			options.MaximumReceiveMessageSize = 10 * 1024 * 1024; // 10MB
+		});
+		//To get the message size error if it got bigger than the above
+		builder.Services.AddSignalR(o =>
+		{
+			o.EnableDetailedErrors = true;
+		});
+		#endif
+
 		//Add Fluxor State Managements
 		//NOTE: Register your assemblies if you need states
 		builder.Services.AddFluxor(options =>
@@ -66,6 +88,7 @@ try
 
 		//IMPORTANT: Do not remove. Required for the application to work
 		builder.Services.AddTefter();
+
 	}
 
 	var app = builder.Build();
@@ -103,7 +126,7 @@ try
 		app.UseRequestLocalization(localizationOptions);
 		CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(supportedCultures[0]);
 		CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(supportedCultures[0]);
-		
+
 		//IMPORTANT: Do not remove. Required for the application to work
 		app.UseTefter();
 		app.Run();

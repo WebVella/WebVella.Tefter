@@ -22,7 +22,6 @@ public partial class TfThemeDefinition : TfBaseComponent
 		await base.OnInitializedAsync();
 		await _initThemeStyles();
 		EnableRenderLock();
-
 	}
 
 	protected override void OnAfterRender(bool firstRender)

@@ -24,6 +24,8 @@
 		<PackageTags>data,communications,tasks,processes</PackageTags>
 		<PackageReleaseNotes>Initial release</PackageReleaseNotes>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -54,92 +56,40 @@
 		<PackageReference Include="Fluxor" Version="6.6.0" />
 		<PackageReference Include="Fluxor.Blazor.Web" Version="6.6.0" />
 		<PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.6.0" />
-		<PackageReference Include="Markdig" Version="0.41.1" />
+		<PackageReference Include="Markdig" Version="0.41.2" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.3.0" />
-		<PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.5" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.9" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.9" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.6" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.6" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.12.0" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.12.0" />
 	
 		<PackageReference Include="Npgsql" Version="9.0.3" />
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
 		
-		<PackageReference Include="Serilog" Version="4.2.0" />
+		<PackageReference Include="Serilog" Version="4.3.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
 		<PackageReference Include="Serilog.Enrichers.Context" Version="4.6.5" />
 		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
 		<PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
 		<PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
-		<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
 		<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
-		<PackageReference Include="System.Drawing.Common" Version="9.0.5" />
-		<PackageReference Include="System.Formats.Asn1" Version="9.0.5" />
-		<PackageReference Include="System.IO.Packaging" Version="9.0.5" />
-		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.5" />
+		<PackageReference Include="System.Drawing.Common" Version="9.0.6" />
+		<PackageReference Include="System.Formats.Asn1" Version="9.0.6" />
+		<PackageReference Include="System.IO.Packaging" Version="9.0.6" />
+		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.6" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
+		<PackageReference Include="WebVella.BlazorTrace" Version="1.0.8" />
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <EmbeddedResource Update="UseCases\_Recipe\RecipeUseCase.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateBlobRecipeStep\FormComponent\TfCreateBlobRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateDataProviderRecipeStep\FormComponent\TfCreateDataProviderRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateRepositoryFileRecipeStep\FormComponent\TfCreateRepositoryFileRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateSharedColumnRecipeStep\FormComponent\TfCreateSharedColumnRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateSpaceDataRecipeStep\FormComponent\TfCreateSpaceDataRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateSpacePageRecipeStep\FormComponent\TfCreateSpacePageRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateSpaceRecipeStep\FormComponent\TfCreateSpaceRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateSpaceViewRecipeStep\FormComponent\TfCreateSpaceViewRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Addons\RecipeSteps\GroupRecipeStep\FormComponent\TfGroupRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Addons\RecipeSteps\InfoRecipeStep\FormComponent\TfInfoRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\Admin\AdminUsersActions\TfAdminUsersActions.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateRoleRecipeStep\FormComponent\TfCreateRoleRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Addons\RecipeSteps\ResultRecipeStep\FormComponent\TfResultRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\Recipe\RecipeStepForm\TfRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateUserRecipeStep\FormComponent\TfCreateUserRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\Recipe\RecipeList\TfRecipeList.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\Recipe\RecipeDetails\TfRecipeDetails.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
+	  <ProjectReference Include="..\..\..\WebVella.BlazorTrace\src\WebVella.BlazorTrace\WebVella.BlazorTrace.csproj" />
 	</ItemGroup>
 
 </Project>

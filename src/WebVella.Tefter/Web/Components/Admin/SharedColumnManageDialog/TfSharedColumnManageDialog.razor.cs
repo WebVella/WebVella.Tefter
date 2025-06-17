@@ -26,7 +26,7 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
 		_allJoinKeys = await UC.GetAllJoinKeysAsync();
-		if(!_isCreate)
+		if (!_isCreate)
 		{
 			var dbName = Content.DbName;
 			if (dbName.StartsWith("sc_"))
@@ -43,11 +43,11 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 				DataIdentity = Content.DataIdentity,
 			};
 		}
-		else{ 
-			_form.DbType = TfAppState.Value.AdminSharedColumnDataTypes.Single(x=> x.TypeValue == TfDatabaseColumnType.Text);
+		else
+		{
+			_form.DbType = TfAppState.Value.AdminSharedColumnDataTypes.Single(x => x.TypeValue == TfDatabaseColumnType.Text);
 		}
 		base.InitForm(_form);
-
 	}
 
 	private async Task _save()
@@ -67,17 +67,17 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			List<TucSharedColumn> sharedColumns;
+			TucSharedColumn sharedColumn;
 			var submit = _form with { DbName = "sc_" + _form.DbName };
 			if (_isCreate)
 			{
-				sharedColumns = UC.CreateSharedColumn(submit);
+				sharedColumn = UC.CreateSharedColumn(submit);
 			}
 			else
 			{
-				sharedColumns = UC.UpdateSharedColumn(submit);
+				sharedColumn = UC.UpdateSharedColumn(submit);
 			}
-			await Dialog.CloseAsync(sharedColumns);
+			await Dialog.CloseAsync(sharedColumn);
 		}
 		catch (Exception ex)
 		{

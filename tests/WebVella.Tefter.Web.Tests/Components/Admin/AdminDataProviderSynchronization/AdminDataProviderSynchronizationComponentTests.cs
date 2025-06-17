@@ -3,8 +3,10 @@ public class AdminDataProviderSynchronizationComponentTests : BaseTest
 {
 
 	//[Fact]
-	//public void RendersCorrectly()
+	//public async Task RendersCorrectly()
 	//{
+//using (await locker.LockAsync())
+//		{
 	//	//Given
 	//	var Context = GetTestContext();
 	//	// Act
@@ -14,5 +16,6 @@ public class AdminDataProviderSynchronizationComponentTests : BaseTest
 	//	cut.Find(".tf-card");
 
 	//	Context.DisposeComponents();
+	//}
 	//}
 }

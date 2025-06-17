@@ -42,7 +42,7 @@ public partial class TfTemplateHelpDialog : TfBaseComponent, IDialogContentCompo
 		_dynamicComponentContext = new TfTemplateProcessorHelpScreenRegionContext
 		{
 		};
-		_dynamicComponentScope = new TfScreenRegionScope(_processor.GetType(),null);
+		_dynamicComponentScope = new TfScreenRegionScope(_processor.GetType(), null);
 	}
 
 

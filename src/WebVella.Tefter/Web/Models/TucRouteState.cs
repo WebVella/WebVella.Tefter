@@ -9,6 +9,8 @@ public partial record TucRouteState
 	public Guid? UserId { get; init; }
 	public Guid? RoleId { get; init; }
 	public Guid? DataProviderId { get; init; }
+	public string? DataIdentityId { get; init; }
+	public Guid? SharedColumnId { get; init; }
 	public Guid? PageId { get; init; }
 	public Guid? SpaceViewPresetId { get; init; }
 	public string SpaceSection { get; init; }
@@ -60,6 +62,8 @@ public enum RouteDataNode
 	DataProviders,
 	[Description("Shared Columns")]
 	SharedColumns,
+	[Description("Data Identities")]
+	DataIdentities,
 	[Description("Space View")]
 	SpaceView,
 	[Description("Space Dataset")]
@@ -100,6 +104,10 @@ public enum RouteDataNode
 	RoleId,
 	[Description("Data Provider Id")]
 	DataProviderId,
+	[Description("Data Identity Id")]
+	DataIdentityId,
+	[Description("Shared Column Id")]
+	SharedColumnId,
 	[Description("Template Id")]
 	TemplateId,
 	[Description("Template Type Id")]

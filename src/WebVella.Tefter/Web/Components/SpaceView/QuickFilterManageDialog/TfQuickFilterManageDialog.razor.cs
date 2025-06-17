@@ -10,21 +10,24 @@ public partial class TfQuickFilterManageDialog : TfFormBaseComponent, IDialogCon
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_form = new TucSpaceViewPreset
+		if (Content.Item is not null)
 		{
-			Id = Content.Item.Id,
-			IsGroup = Content.Item.IsGroup,
-			Name = Content.Item.Name,
-			Filters = Content.Item.Filters.ToList(),
-			SortOrders = Content.Item.SortOrders.ToList(),
-			Pages = Content.Item.Pages.ToList(),
-			ParentId = Content.Item.ParentId,
-			Color = Content.Item.Color,
-			Icon = Content.Item.Icon
-		};
-		if (_form.ParentId != null)
-		{
-			_selectedParent = Content.Parents.FirstOrDefault(x => x.Id == _form.ParentId);
+			_form = new TucSpaceViewPreset
+			{
+				Id = Content.Item.Id,
+				IsGroup = Content.Item.IsGroup,
+				Name = Content.Item.Name,
+				Filters = Content.Item.Filters.ToList(),
+				SortOrders = Content.Item.SortOrders.ToList(),
+				Pages = Content.Item.Pages.ToList(),
+				ParentId = Content.Item.ParentId,
+				Color = Content.Item.Color,
+				Icon = Content.Item.Icon
+			};
+			if (_form.ParentId != null)
+			{
+				_selectedParent = Content.Parents.FirstOrDefault(x => x.Id == _form.ParentId);
+			}
 		}
 		base.InitForm(_form);
 	}

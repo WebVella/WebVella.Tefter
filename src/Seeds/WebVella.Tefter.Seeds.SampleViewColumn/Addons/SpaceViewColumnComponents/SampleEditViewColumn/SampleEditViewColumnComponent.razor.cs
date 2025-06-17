@@ -43,7 +43,7 @@ public partial class SampleEditViewColumnComponent : ComponentBase,ITfSpaceViewC
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
 	/// </summary>
-	protected async Task OnParametersSetAsync()
+	protected override Task OnParametersSetAsync()
 	{
 		//OPTIONAL: Implement protection for unnecessary renders
 		//Check how the TucBaseViewColumn GetHash works
@@ -54,6 +54,7 @@ public partial class SampleEditViewColumnComponent : ComponentBase,ITfSpaceViewC
 		//	_renderedHash = contextHash;
 		//}
 		_initValues();
+		return Task.CompletedTask;
 	}
 	#endregion
 
@@ -76,12 +77,13 @@ public partial class SampleEditViewColumnComponent : ComponentBase,ITfSpaceViewC
 	/// so the user is notified that the change is aborted
 	/// </summary>
 	/// <returns></returns>
-	private async Task _valueChanged()
+	private Task _valueChanged()
 	{
 		//Do something on value changed
+		return Task.CompletedTask;
 	}
 
-	private void _initValues()
+	private Task _initValues()
 	{
 		//NOTE: values from joins cannot be edited so you need to make a check like:
 		//TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
@@ -90,6 +92,7 @@ public partial class SampleEditViewColumnComponent : ComponentBase,ITfSpaceViewC
 		//if (column.IsJoinColumn)
 		//	throw new Exception("Joined data cannot be edited");
 		_value = String.Empty;//Get and set the column value here
+		return Task.CompletedTask;
 	}
 	#endregion
 }

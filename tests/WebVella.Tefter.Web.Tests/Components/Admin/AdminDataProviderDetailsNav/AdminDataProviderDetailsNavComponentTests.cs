@@ -3,16 +3,19 @@ public class AdminDataProviderDetailsNavComponentTests : BaseTest
 {
 
 	[Fact]
-	public void RendersCorrectly()
+	public async Task RendersCorrectly()
 	{
-		//Given
-		var Context = GetTestContext();
-		// Act
-		var cut = Context.RenderComponent<TfAdminDataProviderDetailsNav>();
+		using (await locker.LockAsync())
+		{
+			//Given
+			var Context = GetTestContext();
+			// Act
+			var cut = Context.RenderComponent<TfAdminDataProviderDetailsNav>();
 
-		// Assert
-		cut.Find(".tf-tabnav");
+			// Assert
+			cut.Find(".tf-tabnav");
 
-		Context.DisposeComponents();
+			Context.DisposeComponents();
+		}
 	}
 }

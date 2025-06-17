@@ -38,9 +38,9 @@ public partial class TfGuidEditColumnComponent : TucBaseViewColumn<TfGuidEditCol
 
 	#region << Properties >>
 	public override Guid AddonId { get; init; } = new Guid(ID);
-	public override string AddonName { get; init;} = NAME;
-	public override string AddonDescription { get; init;} = DESCRIPTION;
-	public override string AddonFluentIconName { get; init;} = FLUENT_ICON_NAME;
+	public override string AddonName { get; init; } = NAME;
+	public override string AddonDescription { get; init; } = DESCRIPTION;
+	public override string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
 		new Guid(TfGuidViewColumnType.ID),
 	};
@@ -82,10 +82,10 @@ public partial class TfGuidEditColumnComponent : TucBaseViewColumn<TfGuidEditCol
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if (columnData is not null && columnData is not Guid) 
+		if (columnData is not null && columnData is not Guid)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Guid.");
 		excelCell.SetValue(XLCellValue.FromObject((Guid?)columnData));
 	}
@@ -124,7 +124,8 @@ public partial class TfGuidEditColumnComponent : TucBaseViewColumn<TfGuidEditCol
 			{
 				await _resetValue();
 				return;
-			};
+			}
+			;
 		}
 
 		try
@@ -149,7 +150,7 @@ public partial class TfGuidEditColumnComponent : TucBaseViewColumn<TfGuidEditCol
 			throw new Exception("Joined data cannot be edited");
 
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if (columnData is not null && columnData is not Guid) 
+		if (columnData is not null && columnData is not Guid)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Guid.");
 		_value = (Guid?)columnData;
 		_valueString = _value?.ToString();

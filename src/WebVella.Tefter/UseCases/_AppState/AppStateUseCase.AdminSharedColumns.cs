@@ -11,8 +11,8 @@ internal partial class AppStateUseCase
 		TfAuxDataState oldAuxDataState)
 	{
 		if (
-			!(newAppState.Route.HasNode(RouteDataNode.Admin,0)
-			&& newAppState.Route.HasNode(RouteDataNode.SharedColumns,1))
+			!(newAppState.Route.HasNode(RouteDataNode.Admin, 0)
+			&& newAppState.Route.HasNode(RouteDataNode.SharedColumns, 1))
 			)
 		{
 			newAppState = newAppState with
@@ -26,7 +26,9 @@ internal partial class AppStateUseCase
 
 
 		//SharedColumns
-		if (newAppState.AdminSharedColumns.Count == 0)
+		if (newAppState.AdminSharedColumns.Count == 0
+			|| (newAppState.Route.SharedColumnId is not null && !newAppState.AdminSharedColumns.Any(x => x.Id == newAppState.Route.SharedColumnId))
+			)
 			newAppState = newAppState with
 			{
 				AdminSharedColumns = GetSharedColumns()
@@ -39,6 +41,12 @@ internal partial class AppStateUseCase
 				AdminSharedColumnDataTypes = GetDatabaseColumnTypeInfos()
 			};
 
+		//DataIdentityId
+		if (newAppState.Route.SharedColumnId is not null)
+		{
+			var sharedColumn = GetSharedColumn(newAppState.Route.SharedColumnId.Value);
+			newAppState = newAppState with { AdminSharedColumn = sharedColumn };
+		}
 
 		return Task.FromResult((newAppState, newAuxDataState));
 	}
@@ -70,33 +78,13 @@ internal partial class AppStateUseCase
 
 	}
 
-	internal virtual List<TucSharedColumn> CreateSharedColumn(
-		TucSharedColumnForm form)
+	internal virtual TucSharedColumn GetSharedColumn(Guid columnId)
 	{
-		if (form.Id == Guid.Empty)
-			form = form with { Id = Guid.NewGuid() };
-
-
-		_tfService.CreateSharedColumn(form.ToModel());
-
-		return GetSharedColumns();
-	}
-
-	internal virtual List<TucSharedColumn> UpdateSharedColumn(
-		TucSharedColumnForm form)
-	{
-		_tfService.UpdateSharedColumn(form.ToModel());
-
-		return GetSharedColumns();
-	}
-
-	internal virtual List<TucSharedColumn> DeleteSharedColumn(
-		Guid columnId)
-	{
+		TucSharedColumn result = null;
 		try
 		{
-			_tfService.DeleteSharedColumn(columnId);
-			return GetSharedColumns();
+			var tfColumn = _tfService.GetSharedColumn(columnId);
+			return new TucSharedColumn(tfColumn);
 		}
 		catch (Exception ex)
 		{
@@ -108,7 +96,48 @@ internal partial class AppStateUseCase
 					toastService: _toastService,
 					messageService: _messageService
 				);
-			return null;
+			return result;
+		}
+
+	}
+
+	internal virtual TucSharedColumn CreateSharedColumn(
+		TucSharedColumnForm form)
+	{
+		if (form.Id == Guid.Empty)
+			form = form with { Id = Guid.NewGuid() };
+
+
+		_tfService.CreateSharedColumn(form.ToModel());
+
+		return new TucSharedColumn(_tfService.GetSharedColumn(form.Id));
+	}
+
+	internal virtual TucSharedColumn UpdateSharedColumn(
+		TucSharedColumnForm form)
+	{
+		_tfService.UpdateSharedColumn(form.ToModel());
+
+		return new TucSharedColumn(_tfService.GetSharedColumn(form.Id));
+	}
+
+	internal virtual void DeleteSharedColumn(
+		Guid columnId)
+	{
+		try
+		{
+			_tfService.DeleteSharedColumn(columnId);
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 		}
 	}
 
@@ -123,7 +152,7 @@ internal partial class AppStateUseCase
 			{
 				foreach (DatabaseColumnTypeInfo item in resultColumnType)
 				{
-					if(item.Type == TfDatabaseColumnType.AutoIncrement) continue;
+					if (item.Type == TfDatabaseColumnType.AutoIncrement) continue;
 					result.Add(new TucDatabaseColumnTypeInfo(item));
 				}
 			}

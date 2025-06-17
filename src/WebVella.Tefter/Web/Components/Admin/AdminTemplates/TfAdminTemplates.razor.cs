@@ -5,15 +5,15 @@ public partial class TfAdminTemplates : TfBaseComponent
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	private string _search = null;
-	private Dictionary<Guid,TucSpaceData> _spaceDataDict = new();
+	private Dictionary<Guid, TucSpaceData> _spaceDataDict = new();
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
 		_search = TfAppState.Value.Route.Search;
 		var allData = UC.GetAllSpaceData();
-		if(allData is not null)
-			_spaceDataDict = allData.ToDictionary(x=> x.Id);
+		if (allData is not null)
+			_spaceDataDict = allData.ToDictionary(x => x.Id);
 	}
 
 	private async Task _addTemplate()

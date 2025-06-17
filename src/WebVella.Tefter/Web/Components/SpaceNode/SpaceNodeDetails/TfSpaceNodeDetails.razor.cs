@@ -36,7 +36,7 @@ public partial class TfSpaceNodeDetails : TfBaseComponent
 
 	private async Task _onRemove()
 	{
-		if(TfAppState.Value.SpaceNode is null) return;
+		if (TfAppState.Value.SpaceNode is null) return;
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this space node removed?")))
 			return;
 
@@ -49,7 +49,7 @@ public partial class TfSpaceNodeDetails : TfBaseComponent
 		{
 			List<TucSpaceNode> submitResult = UC.DeleteSpaceNode(TfAppState.Value.SpaceNode);
 			ToastService.ShowSuccess(LOC("Space node deleted!"));
-			Navigator.NavigateTo(string.Format(TfConstants.SpaceNodePageUrl, TfAppState.Value.Space.Id, null),true);
+			Navigator.NavigateTo(string.Format(TfConstants.SpaceNodePageUrl, TfAppState.Value.Space.Id, null), true);
 		}
 		catch (Exception ex)
 		{
@@ -64,7 +64,7 @@ public partial class TfSpaceNodeDetails : TfBaseComponent
 
 	private async Task _onEdit()
 	{
-		if(TfAppState.Value.SpaceNode is null) return;
+		if (TfAppState.Value.SpaceNode is null) return;
 
 		var node = TfAppState.Value.SpaceNodes.GetSpaceNodeById(TfAppState.Value.SpaceNode.Id);
 		if (node == null)
@@ -86,7 +86,7 @@ public partial class TfSpaceNodeDetails : TfBaseComponent
 		{
 			var nodes = (List<TucSpaceNode>)result.Data;
 			ToastService.ShowSuccess(LOC("Space page successfully saved!"));
-			Navigator.NavigateTo(string.Format(TfConstants.SpaceNodePageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceNode.Id),true);
+			Navigator.NavigateTo(string.Format(TfConstants.SpaceNodePageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceNode.Id), true);
 		}
 	}
 

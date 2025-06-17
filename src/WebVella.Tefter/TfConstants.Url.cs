@@ -34,6 +34,7 @@ public partial class TfConstants
 	public static string RouteNameData = "data";
 	public static string RouteNamePages = "pages";
 	public static string RouteNameSharedColumns = "shared-columns";
+	public static string RouteNameDataIdentities = "data-identities";
 	public static string RouteNameFileRepository = "file-repository";
 	public static string RouteNameTemplates = "templates";
 	public static string AdminDashboardUrl = $"/{RouteNameAdmin}";
@@ -48,11 +49,14 @@ public partial class TfConstants
 
 	public static string AdminDataProvidersPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}";
 	public static string AdminDataProviderDetailsPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}";
+	public static string AdminDataIdentityDetailsPageUrl = $"/{RouteNameAdmin}/{RouteNameDataIdentities}/{{0}}";
 	public static string AdminDataProviderSchemaPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameSchema}";
 	public static string AdminDataProviderAuxPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameAux}";
 	public static string AdminDataProviderSynchronizationPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameSynchronization}";
 	public static string AdminDataProviderDataPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameData}";
 	public static string AdminSharedColumnsPageUrl = $"/{RouteNameAdmin}/{RouteNameSharedColumns}";
+	public static string AdminSharedColumnDetailsPageUrl = $"/{RouteNameAdmin}/{RouteNameSharedColumns}/{{0}}";
+	public static string AdminDataIdentitiesPageUrl = $"/{RouteNameAdmin}/{RouteNameDataIdentities}";
 	public static string AdminFileRepositoryPageUrl = $"/{RouteNameAdmin}/{RouteNameFileRepository}";
 	public static string AdminTemplatesPageUrl = $"/{RouteNameAdmin}/{RouteNameTemplates}";
 	public static string AdminTemplatesTypePageUrl = $"/{RouteNameAdmin}/{RouteNameTemplates}/{{0}}";

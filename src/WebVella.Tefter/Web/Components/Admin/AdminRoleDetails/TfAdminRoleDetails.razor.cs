@@ -80,7 +80,7 @@ public partial class TfAdminRoleDetails : TfBaseComponent
 		{
 			_removingUserId = user.Id;
 			await UC.RemoveUserFromRoleAsync(TfAppState.Value.AdminManagedRole.Id, user.Id);
-			_roleUsers = _roleUsers.Where(x=> x.Id != user.Id).ToList();
+			_roleUsers = _roleUsers.Where(x => x.Id != user.Id).ToList();
 			ToastService.ShowSuccess(LOC("User removed"));
 		}
 		catch (Exception ex)

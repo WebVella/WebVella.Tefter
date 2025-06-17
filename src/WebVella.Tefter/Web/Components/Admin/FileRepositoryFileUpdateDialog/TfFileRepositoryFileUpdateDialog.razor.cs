@@ -30,7 +30,6 @@ public partial class TfFileRepositoryFileUpdateDialog : TfFormBaseComponent, IDi
 			FileName = Content.FileName
 		};
 		base.InitForm(_form);
-
 	}
 
 	private void _onCompleted(IEnumerable<FluentInputFileEventArgs> files)
@@ -48,7 +47,7 @@ public partial class TfFileRepositoryFileUpdateDialog : TfFormBaseComponent, IDi
 	{
 		progressPercent = e.ProgressPercent;
 	}
-	
+
 
 	private async Task _save()
 	{

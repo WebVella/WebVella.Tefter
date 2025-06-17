@@ -1,6 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@if (TfAppState.Value.CurrentUser.IsAdmin)
+@if (TfAppState.Value.CurrentUser is not null
+		&& TfAppState.Value.CurrentUser.IsAdmin)
 {
 	<FluentButton Id="space-settings" Title="space actions"
 				  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Outline">

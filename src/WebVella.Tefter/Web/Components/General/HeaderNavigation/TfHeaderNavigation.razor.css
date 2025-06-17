@@ -22,9 +22,13 @@
 
 	::deep fluent-anchor::part(control) {
 		border-bottom: none;
+		border-color:var(--neutral-fill-secondary-rest);
 	}
 
 	::deep fluent-anchor.main-active::part(control) {
+		border-color: var(--tf-layout-color);
+	}
+	::deep fluent-anchor:hover::part(control) {
 		border-color: var(--tf-layout-color);
 	}
 

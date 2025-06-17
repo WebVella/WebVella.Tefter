@@ -42,9 +42,9 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 
 	#region << Properties >>
 	public override Guid AddonId { get; init; } = new Guid(ID);
-	public override string AddonName { get; init;} = NAME;
-	public override string AddonDescription { get; init;} = DESCRIPTION;
-	public override string AddonFluentIconName { get; init;} = FLUENT_ICON_NAME;
+	public override string AddonName { get; init; } = NAME;
+	public override string AddonDescription { get; init; } = DESCRIPTION;
+	public override string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
 		new Guid(TfTextViewColumnType.ID),
 	};
@@ -84,7 +84,7 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 		var contextHash = RegionContext.GetHash();
 		if (contextHash != _renderedHash)
 		{
-			_initValues();
+			await _initValues();
 			_renderedHash = contextHash;
 		}
 	}
@@ -95,7 +95,7 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
 		excelCell.SetValue(XLCellValue.FromObject(GetDataStringByAlias(VALUE_ALIAS)));
 	}
@@ -127,7 +127,7 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 			if (componentOptions.SpaceDataId != Guid.Empty)
 			{
 				var tfService = serviceProvider.GetService<ITfService>();
-				
+
 				var optionsDT = tfService.QuerySpaceData(
 					spaceDataId: componentOptions.SpaceDataId,
 					userFilters: null,
@@ -136,7 +136,7 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 					page: 1,
 					pageSize: TfConstants.SelectOptionsMaxLimit
 				);
-				
+
 				for (int i = 0; i < optionsDT.Rows.Count; i++)
 				{
 					object value = null;
@@ -238,7 +238,8 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 				await _initValues();
 				await InvokeAsync(StateHasChanged);
 				return;
-			};
+			}
+			;
 		}
 
 		try
@@ -357,7 +358,8 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 				}
 			}
 
-			if(String.IsNullOrWhiteSpace(label)){ 
+			if (String.IsNullOrWhiteSpace(label))
+			{
 				label = value?.ToString();
 			}
 

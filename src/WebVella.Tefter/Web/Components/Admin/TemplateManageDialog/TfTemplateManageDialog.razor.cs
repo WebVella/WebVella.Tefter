@@ -72,7 +72,6 @@ public partial class TfTemplateManageDialog : TfFormBaseComponent, IDialogConten
 		}
 
 		base.InitForm(_form);
-
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -84,7 +83,6 @@ public partial class TfTemplateManageDialog : TfFormBaseComponent, IDialogConten
 			_recalcSpaceDataOptions();
 			await InvokeAsync(StateHasChanged);
 		}
-
 	}
 
 	private async Task _save()
@@ -105,11 +103,11 @@ public partial class TfTemplateManageDialog : TfFormBaseComponent, IDialogConten
 			TucManageTemplateModel submit = _form with { UserId = TfAppState.Value.CurrentUser.Id };
 			if (_isCreate)
 				submit = submit with { Id = Guid.NewGuid() };
-			
+
 			TucTemplate template = null;
-			if (_isCreate) 
+			if (_isCreate)
 				template = UC.CreateTemplate(submit);
-			else 
+			else
 				template = UC.UpdateTemplate(submit);
 
 			await Dialog.CloseAsync(template);

@@ -17,7 +17,7 @@ public partial class TfAdminDataProviderJoinedData : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		if(TfAppState.Value.AdminDataProvider is null) return;
+		if (TfAppState.Value.AdminDataProvider is null) return;
 		_joinedProviders = await UC.GetDataProviderJoinedProvidersAsync(TfAppState.Value.AdminDataProvider.Id);
 	}
 

@@ -23,7 +23,7 @@ public partial class TfRecipeDetails : TfBaseComponent
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
 		_recipe = UC.GetRecipe(RecipeId);
-		if(_recipe is null)
+		if (_recipe is null)
 			throw new Exception("Recipe Id not found");
 		var position = 1;
 		foreach (var step in _recipe.Steps)

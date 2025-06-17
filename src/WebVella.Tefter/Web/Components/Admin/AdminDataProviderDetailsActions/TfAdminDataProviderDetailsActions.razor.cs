@@ -18,10 +18,19 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var record = (TucDataProvider)result.Data;
+			
 			ToastService.ShowSuccess(LOC("Provider successfully updated!"));
+			var item = (TucDataProvider)result.Data;
+			var newState = TfAppState.Value with { AdminDataProvider = item };
+			var index = TfAppState.Value.AdminDataProviders.FindIndex(x => x.Id == item.Id);
+			if (index > -1)
+			{
+				var items = TfAppState.Value.AdminDataProviders.ToList();
+				items[index] = item;
+				newState = newState with { AdminDataProviders = items };
+			}
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
-				state: TfAppState.Value with { AdminDataProvider = record }));
+				state: TfAppState.Value with { AdminDataProvider = item }));
 		}
 	}
 

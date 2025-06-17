@@ -126,6 +126,9 @@
   <data name="Error" xml:space="preserve">
     <value>Грешка</value>
   </data>
+  <data name="new" xml:space="preserve">
+    <value>нов</value>
+  </data>
   <data name="Saved Views" xml:space="preserve">
     <value>Запазени Изгледи</value>
   </data>

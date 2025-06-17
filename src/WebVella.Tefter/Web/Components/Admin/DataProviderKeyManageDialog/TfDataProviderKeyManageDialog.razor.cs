@@ -52,7 +52,6 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 			_providerColumns = _providerColumns.Where(x => !_form.Columns.Any(y => y.Id == x.Id)).ToList();
 		}
 		base.InitForm(_form);
-
 	}
 
 	private async Task _save()

@@ -34,13 +34,19 @@ public partial class TfConstants
 	//Admin
 	public static Icon AdminDashboardIcon = GetIcon("Board");
 	public static string AdminDashboardMenuTitle = "Dashboard";
-	public static string AdminPagesMenuTitle = "Pages";
+	public static string AdminAddonsMenuTitle = "Addons";
+
+	public static Icon AdminDataIcon = GetIcon("Database");
+	public static string AdminLocalDataMenuTitle = "Local Data";
 
 	public static Icon AdminDataProvidersIcon = GetIcon("CloudDatabase");
-	public static string AdminDataProvidersMenuTitle = "Data providers";
+	public static string AdminDataProvidersMenuTitle = "Data Providers";
+
+	public static string AdminDataIdentitiesMenuTitle = "Data Identities";
 
 	public static Icon AdminUsersIcon = GetIcon("People");
 	public static Icon AdminRoleIcon = GetIcon("Key");
+	public static string AdminAccessMenuTitle = "Access";
 	public static string AdminUsersMenuTitle = "Users";
 
 	public static Icon AdminSharedColumnsIcon = GetIcon("BookDatabase");
@@ -51,6 +57,10 @@ public partial class TfConstants
 
 	public static Icon TemplateIcon = GetIcon("CalendarTemplate");
 	public static string AdminTemplatesMenuTitle = "Templates";
+
+	public static Icon ContentIcon = GetIcon("Folder");
+	public static string AdminLocalContentMenuTitle = "Local Content";
+
 
 	//Action icons
 	public static string PageIconString = "Document";

@@ -1,0 +1,19 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (menuItems.Count > 0)
+{
+	<div class="tf-header-nav">
+		@foreach (var item in menuItems)
+		{
+			<FluentAnchor Href="@item.Url" Id="@($"tf-{item.Id}")" Appearance="@Appearance.Outline"
+						  Class="@(item.Selected ? " main-active" : "" )">
+				@if (item.IconCollapsed is not null)
+				{
+					<FluentIcon Slot="start" Value="@item.IconCollapsed" />
+				}
+				@item.Text
+			</FluentAnchor>
+		}
+	</div>
+}
+

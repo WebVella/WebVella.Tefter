@@ -4,7 +4,7 @@
   --tf-layout-wrapper-aside-width: 60px;
   --tf-layout-wrapper-body-width: calc(100vw - var(--tf-layout-wrapper-aside-width));
   --tf-layout-wrapper-body-border-radius: 8px;
-  --tf-layout-wrapper-body-aside-width: 200px;
+  --tf-layout-wrapper-body-aside-width: 220px;
   --tf-layout-wrapper-body-aside-toolbar-height: 40px;
   --tf-content-padding: 10px;
   --tf-header-height: 48px;
@@ -1153,6 +1153,9 @@
 	z-index: 5;
 }
 */
+.fluent-grid {
+  flex-wrap: nowrap !important;
+}
 fluent-button::part(control):focus-visible {
   outline: none !important;
 }
@@ -1520,16 +1523,16 @@ body {
   display: flex;
   background: var(--neutral-fill-layer-rest) !important;
   border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
-  border-top: 3px solid var(--tf-layout-color-accent-2);
-  border-left: 1px solid var(--tf-layout-color-accent-2);
+  border-top: 3px solid var(--tf-layout-color-accent);
+  border-left: 1px solid var(--tf-layout-color-accent);
 }
 .tf-layout__body__aside {
   --neutral-stroke-rest: var(--tf-layout-color-accent);
   --neutral-stroke-input-rest: var(--tf-layout-color-accent);
-  --neutral-stroke-hover: var(--tf-layout-color-accent-2);
-  --neutral-stroke-input-hover: var(--tf-layout-color-accent-2);
-  --neutral-stroke-active: var(--tf-layout-color-accent-2);
-  --neutral-stroke-input-active: var(--tf-layout-color-accent-2);
+  --neutral-stroke-hover: var(--tf-layout-color-accent);
+  --neutral-stroke-input-hover: var(--tf-layout-color-accent);
+  --neutral-stroke-active: var(--tf-layout-color-accent);
+  --neutral-stroke-input-active: var(--tf-layout-color-accent);
   --neutral-stroke-focus: var(--tf-layout-color-accent);
   --neutral-stroke-input-focus: var(--tf-layout-color-accent);
   flex: 0 0 auto;
@@ -1563,7 +1566,7 @@ body {
 .tf-layout__body__aside__content__inner {
   position: absolute;
   left: 0;
-  top: 0;
+  top: 10px;
   width: 100%;
   height: 100%;
   overflow-y: auto;
@@ -1815,7 +1818,7 @@ body {
   background: var(--tf-layout-color-mute) !important;
 }
 .tf-sidetoolbar__search .search::part(control)::placeholder {
-  color: var(--tf-layout-color-accent);
+  color: var(--tf-layout-color-accent-2);
 }
 .tf-sidetoolbar__actions {
   flex: 0 0 auto;

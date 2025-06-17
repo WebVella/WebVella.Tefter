@@ -274,7 +274,7 @@ public static partial class NavigatorExt
 		return result;
 	}
 	#endregion
-	
+
 	#region << Space View >>
 	private static TucRouteState Front_Space_SpaceId_SpaceView_NodesProcess(this TucRouteState result)
 	{
@@ -385,6 +385,7 @@ public static partial class NavigatorExt
 		result = result.Admin_Users_NodesProcess();
 		result = result.Admin_Roles_NodesProcess();
 		result = result.Admin_DataProviders_NodesProcess();
+		result = result.Admin_DataIdentities_NodesProcess();
 		result = result.Admin_SharedColumns_NodesProcess();
 		result = result.Admin_Pages_NodesProcess();
 		result = result.Admin_Files_NodesProcess();
@@ -606,6 +607,36 @@ public static partial class NavigatorExt
 	}
 	#endregion
 
+	#region << Data Identities >>
+	private static TucRouteState Admin_DataIdentities_NodesProcess(this TucRouteState result)
+	{
+		if (result.RouteNodes.Count < 1 || result.RouteNodes[0] != RouteDataNode.Admin)
+			return result;
+
+		if (result.NodesDict.Count < 2 || result.NodesDict[1] != TfConstants.RouteNameDataIdentities)
+			return result;
+
+		result = result.AddRouteNodes(RouteDataNode.DataIdentities);
+		result = result.Admin_DataIdentities_DataIdentityId_NodesProcess();
+		return result;
+	}
+	private static TucRouteState Admin_DataIdentities_DataIdentityId_NodesProcess(this TucRouteState result)
+	{
+		if (result.RouteNodes.Count < 2
+			|| result.RouteNodes[0] != RouteDataNode.Admin
+			|| result.RouteNodes[1] != RouteDataNode.DataIdentities)
+			return result;
+
+		if (result.NodesDict.Count < 3)
+			return result;
+
+		result = result.AddRouteNodes(RouteDataNode.DataIdentityId);
+		result = result with { DataIdentityId = result.NodesDict[2] };
+
+		return result;
+	}
+	#endregion
+
 	#region << Shared Columns >>
 	private static TucRouteState Admin_SharedColumns_NodesProcess(this TucRouteState result)
 	{
@@ -616,7 +647,24 @@ public static partial class NavigatorExt
 			return result;
 
 		result = result.AddRouteNodes(RouteDataNode.SharedColumns);
+		result = result.Admin_SharedColumns_SharedColumnId_NodesProcess();
+		return result;
+	}
+	private static TucRouteState Admin_SharedColumns_SharedColumnId_NodesProcess(this TucRouteState result)
+	{
+		if (result.RouteNodes.Count < 2
+			|| result.RouteNodes[0] != RouteDataNode.Admin
+			|| result.RouteNodes[1] != RouteDataNode.SharedColumns)
+			return result;
 
+		if (result.NodesDict.Count < 3)
+			return result;
+		if (Guid.TryParse(result.NodesDict[2], out Guid outGuid))
+		{
+			result = result.AddRouteNodes(RouteDataNode.SharedColumnId);
+			result = result with { SharedColumnId = outGuid };
+
+		}
 		return result;
 	}
 	#endregion

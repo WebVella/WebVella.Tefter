@@ -3,11 +3,6 @@ public partial class TfSpaceDetails : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-
-	}
 	protected override void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);

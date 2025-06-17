@@ -35,9 +35,9 @@ public partial class TfPhoneDisplayColumnComponent : TucBaseViewColumn<TfPhoneDi
 
 	#region << Properties >>
 	public override Guid AddonId { get; init; } = new Guid(ID);
-	public override string AddonName { get; init;} = NAME;
-	public override string AddonDescription { get; init;} = DESCRIPTION;
-	public override string AddonFluentIconName { get; init;} = FLUENT_ICON_NAME;
+	public override string AddonName { get; init; } = NAME;
+	public override string AddonDescription { get; init; } = DESCRIPTION;
+	public override string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
 		new Guid(TfTextViewColumnType.ID),
 	};
@@ -77,10 +77,10 @@ public partial class TfPhoneDisplayColumnComponent : TucBaseViewColumn<TfPhoneDi
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
 		_initValues();
-		excelCell.SetValue(XLCellValue.FromObject(String.Join(", ",_value)));
+		excelCell.SetValue(XLCellValue.FromObject(String.Join(", ", _value)));
 	}
 	#endregion
 

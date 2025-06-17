@@ -26,7 +26,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
-			if(TfAppState.Value.AdminDataProvider is null) return;
+			if (TfAppState.Value.AdminDataProvider is null) return;
 			_totalRows = await UC.GetDataProviderTotalRowCountAsync(TfAppState.Value.AdminDataProvider.Id);
 			_isDataLoading = false;
 			await InvokeAsync(StateHasChanged);
@@ -151,10 +151,10 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 						pageSize: pageSize == TfConstants.PageSize ? null : pageSize
 					);
 
-				Dispatcher.Dispatch(new SetUserStateAction(
-					component: this,
-					oldStateHash: TfUserState.Value.Hash,
-					state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = user }));
+			Dispatcher.Dispatch(new SetUserStateAction(
+				component: this,
+				oldStateHash: TfUserState.Value.Hash,
+				state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = user }));
 		}
 		catch { }
 

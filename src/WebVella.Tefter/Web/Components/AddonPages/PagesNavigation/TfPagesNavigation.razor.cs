@@ -2,7 +2,7 @@
 public partial class TfPagesNavigation : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
+	[Inject] protected IStateSelection<TfUserState, bool> SidebarExpanded { get; set; }
 
 	protected override void OnInitialized()
 	{
@@ -17,7 +17,7 @@ public partial class TfPagesNavigation : TfBaseComponent
 		search = search?.Trim().ToLowerInvariant();
 		var menuItems = new List<TucMenuItem>();
 		var uri = new Uri(Navigator.Uri);
-		if(TfAppState.Value.Pages is null) return menuItems;
+		if (TfAppState.Value.Pages is null) return menuItems;
 
 		foreach (var page in TfAppState.Value.Pages)
 		{

@@ -90,7 +90,7 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
 			Template = Content with { Id = Content.Id },
 		};
-		_dynamicComponentScope = new TfScreenRegionScope(_processor.GetType(),null);
+		_dynamicComponentScope = new TfScreenRegionScope(_processor.GetType(), null);
 	}
 
 

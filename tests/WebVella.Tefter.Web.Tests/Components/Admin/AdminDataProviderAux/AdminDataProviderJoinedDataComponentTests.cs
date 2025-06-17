@@ -3,17 +3,20 @@ public class AdminDataProviderJoinedDataComponentTests : BaseTest
 {
 
 	[Fact]
-	public void RendersCorrectly()
+	public async Task RendersCorrectly()
 	{
-		//Given
-		var Context = GetTestContext();
-		// Act
-		var cut = Context.RenderComponent<TfAdminDataProviderJoinedData>();
+		using (await locker.LockAsync())
+		{
+			//Given
+			var Context = GetTestContext();
+			// Act
+			var cut = Context.RenderComponent<TfAdminDataProviderJoinedData>();
 
-		// Assert
-		//When no data provider it shows nothings
-		//cut.Find(".fluent-messagebar");
+			// Assert
+			//When no data provider it shows nothings
+			//cut.Find(".fluent-messagebar");
 
-		Context.DisposeComponents();
+			Context.DisposeComponents();
+		}
 	}
 }

@@ -3,22 +3,25 @@ public class AdminDataProviderDetailsActionsComponentTests : BaseTest
 {
 
 	[Fact]
-	public void RendersCorrectly()
+	public async Task RendersCorrectly()
 	{
-		//Given
-		var Context = GetTestContext();
-		// Act
-		var cut = Context.RenderComponent<TfAdminDataProviderDetailsActions>();
-
-		// Assert
-		if (cut.Nodes.Length == 1)
+		using (await locker.LockAsync())
 		{
-			Console.WriteLine(cut.Nodes[0].NodeName);
-			Console.WriteLine(cut.Nodes[0].TextContent);
-			Console.WriteLine(cut.Nodes[0].NodeValue);
-		}
-		cut.Nodes.Length.Should().Be(0);
+			//Given
+			var Context = GetTestContext();
+			// Act
+			var cut = Context.RenderComponent<TfAdminDataProviderDetailsActions>();
 
-		Context.DisposeComponents();
+			// Assert
+			if (cut.Nodes.Length == 1)
+			{
+				Console.WriteLine(cut.Nodes[0].NodeName);
+				Console.WriteLine(cut.Nodes[0].TextContent);
+				Console.WriteLine(cut.Nodes[0].NodeValue);
+			}
+			cut.Nodes.Length.Should().Be(0);
+
+			Context.DisposeComponents();
+		}
 	}
 }
