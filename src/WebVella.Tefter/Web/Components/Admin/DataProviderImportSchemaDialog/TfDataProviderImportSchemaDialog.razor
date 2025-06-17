@@ -70,7 +70,7 @@
 								_rowIndex++;
 								<tr @key=context.Id class="tf-grid-tr">
 									<td class="tf-grid-td">
-										<div><FluentButton IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(_=>_removeRow(context))" /></div>
+										<div><FluentButton Appearance=@Appearance.Outline IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(_=>_removeRow(context))" /></div>
 									</td>
 									<td class="tf-grid-td">
 										<div>

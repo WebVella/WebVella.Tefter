@@ -12,7 +12,7 @@ public class DataProviderKeyManageDialogComponentTests : BaseTest
 			var dialogProvider = Context.RenderComponent<FluentDialogProvider>();
 			// Act
 			var dialogService = Context.Services.GetRequiredService<IDialogService>();
-			var dialog = await dialogService.ShowDialogAsync<TfDataProviderKeyManageDialog>(new DialogParameters());
+			var dialog = await dialogService.ShowDialogAsync<DataProviderIdentityManageDialog>(new DialogParameters());
 			// Assert
 			dialogProvider.Find(".fluent-dialog-main");
 			dialog.Dismiss(null);

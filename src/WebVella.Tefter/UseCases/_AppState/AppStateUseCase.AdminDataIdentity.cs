@@ -11,7 +11,7 @@ internal partial class AppStateUseCase
 	{
 		if (
 			!(newAppState.Route.HasNode(RouteDataNode.Admin, 0)
-			&& newAppState.Route.HasNode(RouteDataNode.DataProviders, 1))
+			&& newAppState.Route.HasNode(RouteDataNode.DataIdentities, 1))
 			)
 		{
 			newAppState = newAppState with
@@ -26,7 +26,7 @@ internal partial class AppStateUseCase
 		if (
 			newAppState.AdminDataIdentities.Count == 0
 			|| (newAppState.Route.DataIdentityId is not null
-				&& !newAppState.AdminDataIdentities.Any(x => x.DataIdentity == newAppState.Route.DataIdentityId))
+				&& !newAppState.AdminDataIdentities.Any(x => x.Name == newAppState.Route.DataIdentityId))
 			)
 			newAppState = newAppState with
 			{
@@ -54,7 +54,7 @@ internal partial class AppStateUseCase
 			if (identities is null)
 				return Task.FromResult(new List<TucDataIdentity>());
 
-			var orderedResults = identities.OrderBy(x => x.Label);
+			var orderedResults = identities.OrderBy(x => x.DataIdentity);
 
 			var records = new List<TfDataIdentity>();
 			if (!String.IsNullOrWhiteSpace(search))
@@ -63,7 +63,7 @@ internal partial class AppStateUseCase
 				foreach (var item in orderedResults)
 				{
 					bool hasMatch = false;
-					if (item.Label.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
+					if (item.DataIdentity.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
 					if (hasMatch) records.Add(item);
 				}
 			}
@@ -100,11 +100,11 @@ internal partial class AppStateUseCase
 	}
 
 	internal virtual Task<TucDataIdentity> GetDataIdentityAsync(
-			string identityId)
+			string identityName)
 	{
 		try
 		{
-			var provider = _tfService.GetDataIdentity(identityId);
+			var provider = _tfService.GetDataIdentity(identityName);
 			if (provider is null)
 				return Task.FromResult((TucDataIdentity)null);
 
@@ -126,9 +126,9 @@ internal partial class AppStateUseCase
 	}
 
 	internal virtual Task DeleteDataIdentityAsync(
-		string identityId)
+		string identityName)
 	{
-		_tfService.DeleteDataIdentity(identityId);
+		_tfService.DeleteDataIdentity(identityName);
 		return Task.CompletedTask;
 	}
 
@@ -154,6 +154,20 @@ internal partial class AppStateUseCase
 			throw new TfException("UpdateDataIdentity returned null object");
 
 		return new TucDataIdentity(provider);
+	}
+
+	internal virtual async Task<List<TucDataProvider>> GetDataProvidersImplementingIdentity(string identityName){ 
+		var result = new List<TucDataProvider>();
+		var allProviders = await GetDataProvidersAsync();
+
+		foreach (var item in allProviders)
+		{
+			if(item.Identities is null || item.Identities.Count == 0) continue;
+			if(!item.Identities.Any(x=> x.Name == identityName)) continue;
+			result.Add(item);
+		}
+
+		return result.OrderBy(x=> x.Name).ToList();
 	}
 
 }

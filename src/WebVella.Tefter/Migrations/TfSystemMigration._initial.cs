@@ -1189,7 +1189,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 		tfService.CreateDataIdentity(new TfDataIdentity
 		{
 			DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
-			Label = "System row id data identity"
+			Label = "System Row ID"
 		});
 
 	}

@@ -6,7 +6,7 @@
 	<FluentButton Title="@LOC("Create User")"
 				  IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)"
 				  OnClick="addUser" Appearance="@Appearance.Outline">
-		@LOC("new")
+		@LOC("User")
 	</FluentButton>
 }
 else if (TfAppState.Value.Route.HasNode(RouteDataNode.Roles))
@@ -14,7 +14,7 @@ else if (TfAppState.Value.Route.HasNode(RouteDataNode.Roles))
 	<FluentButton Title="@LOC("Create Role")"
 				  IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)"
 				  OnClick="addRoleClick" Appearance="@Appearance.Outline">
-		@LOC("new")
+		@LOC("Role")
 	</FluentButton>
 }
 

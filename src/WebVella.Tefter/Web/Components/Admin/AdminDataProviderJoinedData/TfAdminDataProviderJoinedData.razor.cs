@@ -42,10 +42,10 @@ public partial class TfAdminDataProviderJoinedData : TfBaseComponent
 		});
 	}
 
-	private async Task _addKey()
+	private async Task _implementDataIdentity()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TfDataProviderKeyManageDialog>(
-		new TucDataProviderJoinKey(),
+		var dialog = await DialogService.ShowDialogAsync<TfDataProviderIdentityManageDialog>(
+		new TucDataProviderIdentity(),
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -57,16 +57,16 @@ public partial class TfAdminDataProviderJoinedData : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var record = (TucDataProvider)result.Data;
-			ToastService.ShowSuccess(LOC("Key successfully created!"));
+			ToastService.ShowSuccess(LOC("Data Identity successfully implemented!"));
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
 				state: TfAppState.Value with { AdminDataProvider = record }));
 		}
 	}
 
-	private async Task _editKey(TucDataProviderJoinKey key)
+	private async Task _editIdentity(TucDataProviderIdentity identity)
 	{
-		var dialog = await DialogService.ShowDialogAsync<TfDataProviderKeyManageDialog>(
-				key,
+		var dialog = await DialogService.ShowDialogAsync<TfDataProviderIdentityManageDialog>(
+				identity,
 				new DialogParameters()
 				{
 					PreventDismissOnOverlayClick = true,
@@ -77,13 +77,13 @@ public partial class TfAdminDataProviderJoinedData : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			ToastService.ShowSuccess(LOC("The key was successfully updated!"));
+			ToastService.ShowSuccess(LOC("Identity implementation was successfully updated!"));
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
 				state: TfAppState.Value with { AdminDataProvider = (TucDataProvider)result.Data }));
 		}
 	}
 
-	private async Task _deleteKey(TucDataProviderJoinKey key)
+	private async Task _deleteIdentity(TucDataProviderIdentity key)
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this key deleted?")))
 			return;

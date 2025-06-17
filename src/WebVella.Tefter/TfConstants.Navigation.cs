@@ -39,9 +39,10 @@ public partial class TfConstants
 	public static Icon AdminDataIcon = GetIcon("Database");
 	public static string AdminLocalDataMenuTitle = "Local Data";
 
-	public static Icon AdminDataProvidersIcon = GetIcon("CloudDatabase");
+	public static Icon AdminDataProviderIcon = GetIcon("CloudDatabase");
 	public static string AdminDataProvidersMenuTitle = "Data Providers";
 
+	public static Icon AdminDataIdentityIcon = GetIcon("KeyMultiple");
 	public static string AdminDataIdentitiesMenuTitle = "Data Identities";
 
 	public static Icon AdminUsersIcon = GetIcon("People");

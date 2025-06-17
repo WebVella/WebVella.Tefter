@@ -4,20 +4,14 @@
 {
 
 	<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
-		<TfPageHeader Style="margin-bottom:1rem">@LOC("Implemented join keys")</TfPageHeader>
-		<FluentButton Appearance="@Appearance.Outline" OnClick="_addKey">
-			@LOC("Join key")
+		<TfPageHeader Style="margin-bottom:1rem">@LOC("Implemented Data Identities")</TfPageHeader>
+		<FluentButton Appearance="@Appearance.Outline" OnClick="_implementDataIdentity">
+			@LOC("Data identity")
 			<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
 		</FluentButton>
 	</FluentStack>
-	@if (TfAppState.Value.AdminDataProvider.JoinKeys is null || TfAppState.Value.AdminDataProvider.JoinKeys.Count == 0)
-	{
-		<FluentMessageBar Title="@LOC("No keys")" AllowDismiss="false"
-						  Intent="@MessageIntent.Info">@LOC("No join keys are created yet for this data provider")</FluentMessageBar>
-	}
-	else
-	{
-		<div class="tf-grid-wrapper">
+
+	<div class="tf-grid-wrapper">
 			<table class="tf-grid">
 				<thead class="tf-grid-thead">
 					<tr class="tf-grid-thead-bkg"></tr>
@@ -29,24 +23,31 @@
 					</tr>
 				</thead>
 				<tbody class="tf-grid-tbody">
-					@foreach (var context in TfAppState.Value.AdminDataProvider.JoinKeys)
+					@foreach (var context in TfAppState.Value.AdminDataProvider.Identities)
 					{
 						<tr @key=context.Id class="tf-grid-tr">
 							<td class="tf-grid-td">
 								<div>
-									<FluentStack Wrap="false">
-										<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
-													  Title="@LOC("Edit column")" OnClick="@(()=> _editKey(context))" />
-										<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteKey(context))" Title="@LOC("Delete column")">
-											<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
-										</FluentButton>
-									</FluentStack>
+									@if (context.Name == TfConstants.TF_ROW_ID_DATA_IDENTITY)
+									{
+										<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.LockIcon"
+													  Title="@LOC("always implemented")" Disabled=true />
+									}
+									else
+									{
+										<FluentStack Wrap="false">
+											<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
+														  Title="@LOC("Edit column")" OnClick="@(()=> _editIdentity(context))" />
+											<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteIdentity(context))" Title="@LOC("Delete")">
+												<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+											</FluentButton>
+										</FluentStack>
+									}
 								</div>
 							</td>
 							<td class="tf-grid-td">
 								<div>
-									<div>@context.DbName</div>
-									<div class="td-description">@context.Description</div>
+									@context.Name
 								</div>
 							</td>
 							<td class="tf-grid-td">
@@ -54,12 +55,12 @@
 									<FluentStack>
 										@foreach (var item in context.Columns)
 										{
-											<FluentBadge Appearance="@Appearance.Neutral">@item.DbName</FluentBadge>
+											<FluentBadge Appearance="@Appearance.Neutral">@item</FluentBadge>
 										}
 									</FluentStack>
 								</div>
 							</td>
-@* 							<td class="tf-grid-td">
+							@* 							<td class="tf-grid-td">
 								<div>
 									<div>@context.Id</div>
 									<div class="td-description">ver. @context.Version</div>
@@ -71,7 +72,6 @@
 			</table>
 		</div>
 
-	}
 
 	<FluentGrid Style="margin-top:3rem;">
 		<FluentGridItem xs="12" md="6">

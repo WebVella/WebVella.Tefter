@@ -15,7 +15,7 @@
 					<FluentButton Title="@LOC("Create Data provider")"
 								  IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)"
 								  OnClick="onAddClick" Appearance="@Appearance.Outline">
-						@LOC("new")
+						@LOC("Provider")
 					</FluentButton>
 				</div>
 			</div>
@@ -25,7 +25,7 @@
 				@foreach (var item in providers)
 				{
 					<FluentNavLink Href="@(string.Format(TfConstants.AdminDataProviderDetailsPageUrl, item.Id))" Match="@NavLinkMatch.Prefix"
-								   @key="@item.Id" Icon="@TfConstants.AdminDataProvidersIcon">
+								   @key="@item.Id" Icon="@TfConstants.AdminDataProviderIcon">
 						@TfConverters.StringOverflow(item.Name, _stringLimit)
 					</FluentNavLink>
 				}
