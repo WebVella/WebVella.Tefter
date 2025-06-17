@@ -36,4 +36,14 @@ public static class StringExtensions
 			return false;
 		}
 	}
+
+	public static bool IsGreaterThan(this string i, string value)
+	{
+		return (i.CompareTo(value) > 0);
+	}
+
+	public static bool IsLessThan(this string i, string value)
+	{
+		return (i.CompareTo(value) < 0);
+	}
 }

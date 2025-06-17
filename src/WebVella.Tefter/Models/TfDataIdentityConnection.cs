@@ -4,15 +4,15 @@
 [TfDboModel("tf_data_identity_connection")]
 public class TfDataIdentityConnection
 {
-	[TfDboModelProperty("source_data_identity")]
-	public string SourceDataIdentity { get; set; }
+	[TfDboModelProperty("data_identity_1")]
+	public string DataIdentity1 { get; set; }
 
-	[TfDboModelProperty("source_data_value")]
-	public string SourceDataValue { get; set; }
+	[TfDboModelProperty("value_1")]
+	public string Value1 { get; set; }
 
-	[TfDboModelProperty("target_data_identity")]
-	public string TargetDataIdentity { get; set; }
+	[TfDboModelProperty("data_identity_2")]
+	public string DataIdentity2 { get; set; }
 
-	[TfDboModelProperty("target_data_value")]
-	public string TargetDataValue { get; set; }
+	[TfDboModelProperty("value_2")]
+	public string Value2 { get; set; }
 }

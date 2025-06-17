@@ -21,23 +21,29 @@ public partial interface ITfService
 public partial class TfService : ITfService
 {
 	public List<TfDataIdentityConnection> GetDataIdentityConnections(
-		string sourceDataIndentity = null,
-		string sourceDataValue = null,
-		string targetDataIdentity = null,
-		string targetDataValue = null)
+		string dataIndentity1 = null,
+		string value1 = null,
+		string dataIdentity2 = null,
+		string value2 = null)
 	{
 		try
 		{
 			return _dboManager.GetList<TfDataIdentityConnection>(
-				" WHERE ( @source_data_identity IS NULL OR source_data_identity = @source_data_identity) AND " +
-				" ( @source_data_value IS NULL OR source_data_value = @source_data_value ) AND " +
-				" ( @target_data_identity IS NULL OR target_data_identity = @target_data_identity ) AND " +
-				" ( @target_data_value IS NULL OR target_data_value = @target_data_value )",
+				" WHERE" +
+				" ( ( @data_identity_1 IS NULL OR data_identity_1 = @data_identity_1) AND " +
+				" ( @value_1 IS NULL OR value_1 = @value_1 ) AND " +
+				" ( @data_identity_2 IS NULL OR data_identity_2 = @data_identity_2 ) AND " +
+				" ( @value_2 IS NULL OR value_2 = @value_2 ) ) " +
+				" OR " +
+				" ( ( @data_identity_2 IS NULL OR data_identity_1 = @data_identity_2) AND " +
+				" ( @value_2 IS NULL OR value_1 = @value_2 ) AND " +
+				" ( @data_identity_1 IS NULL OR data_identity_2 = @data_identity_1 ) AND " +
+				" ( @value_1 IS NULL OR value_2 = @value_1 ) )",
 				order: null,
-				new NpgsqlParameter<string>("source_data_identity", sourceDataIndentity),
-				new NpgsqlParameter<string>("source_data_value", sourceDataValue),
-				new NpgsqlParameter<string>("target_data_identity", targetDataIdentity),
-				new NpgsqlParameter<string>("target_data_value", targetDataValue)
+				new NpgsqlParameter<string>("data_identity_1", dataIndentity1),
+				new NpgsqlParameter<string>("value_1", value1),
+				new NpgsqlParameter<string>("data_identity_2", dataIdentity2),
+				new NpgsqlParameter<string>("value_2", value2)
 			);
 		}
 		catch (Exception ex)
@@ -59,10 +65,10 @@ public partial class TfService : ITfService
 			}
 
 			var resultList = GetDataIdentityConnections(
-				dataIdentityConnection.SourceDataIdentity,
-				dataIdentityConnection.SourceDataValue,
-				dataIdentityConnection.TargetDataIdentity,
-				dataIdentityConnection.TargetDataValue);
+				dataIdentityConnection.DataIdentity1,
+				dataIdentityConnection.Value1,
+				dataIdentityConnection.DataIdentity2,
+				dataIdentityConnection.Value2);
 
 			return resultList.Count == 1;
 		}
@@ -82,7 +88,41 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
-			var success = _dboManager.Insert<TfDataIdentityConnection>(dataIdentityConnection);
+			TfDataIdentityConnection dicToBeInserted = new TfDataIdentityConnection();
+
+			// Ensure that DataIdentity1 is always less than DataIdentity2
+			if (dataIdentityConnection.DataIdentity1.IsLessThan(dataIdentityConnection.DataIdentity2))
+			{
+				dicToBeInserted.DataIdentity1 = dataIdentityConnection.DataIdentity1;
+				dicToBeInserted.Value1 = dataIdentityConnection.Value1;
+				dicToBeInserted.DataIdentity2 = dataIdentityConnection.DataIdentity2;
+				dicToBeInserted.Value2 = dataIdentityConnection.Value2;
+			}
+			else if (dataIdentityConnection.DataIdentity1.IsGreaterThan(dataIdentityConnection.DataIdentity2))
+			{
+				dicToBeInserted.DataIdentity1 = dataIdentityConnection.DataIdentity2;
+				dicToBeInserted.Value1 = dataIdentityConnection.Value2;
+				dicToBeInserted.DataIdentity2 = dataIdentityConnection.DataIdentity1;
+				dicToBeInserted.Value2 = dataIdentityConnection.Value1;
+			}
+			else //when identity is same, compare values and ensure that Value1 is always less than Value2
+			{
+				dicToBeInserted.DataIdentity1 = dataIdentityConnection.DataIdentity1;
+				dicToBeInserted.DataIdentity2 = dataIdentityConnection.DataIdentity2;
+
+				if (dataIdentityConnection.Value1.IsLessThan(dataIdentityConnection.Value2))
+				{
+					dicToBeInserted.Value1 = dataIdentityConnection.Value1;
+					dicToBeInserted.Value2 = dataIdentityConnection.Value2;
+				}
+				else
+				{
+					dicToBeInserted.Value1 = dataIdentityConnection.Value2;
+					dicToBeInserted.Value2 = dataIdentityConnection.Value1;
+				}
+			}
+
+			var success = _dboManager.Insert<TfDataIdentityConnection>(dicToBeInserted);
 			if (!success)
 				throw new TfDboServiceException("Insert<TfDataIdentityConnection> failed.");
 
@@ -99,7 +139,6 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-
 			new TfDataIdentityConnectionValidator(this)
 				.ValidateDelete(dataIdentityConnection)
 				.ToValidationException()
@@ -107,14 +146,20 @@ public partial class TfService : ITfService
 
 			var count =
 				_dbService.ExecuteSqlNonQueryCommand("DELETE FROM tf_data_identity_connection " +
-					"WHERE source_data_identity = @source_data_identity AND " +
-					"source_data_value = @source_data_value AND " +
-					"target_data_identity = @target_data_identity AND " +
-					"target_data_value = @target_data_value",
-					new NpgsqlParameter<string>("source_data_identity", dataIdentityConnection.SourceDataIdentity),
-					new NpgsqlParameter<string>("source_data_value", dataIdentityConnection.SourceDataValue),
-					new NpgsqlParameter<string>("target_data_identity", dataIdentityConnection.TargetDataIdentity),
-					new NpgsqlParameter<string>("target_data_value", dataIdentityConnection.TargetDataValue));
+					" WHERE" +
+					" ( ( @data_identity_1 IS NULL OR data_identity_1 = @data_identity_1) AND " +
+					" ( @value_1 IS NULL OR value_1 = @value_1 ) AND " +
+					" ( @data_identity_2 IS NULL OR data_identity_2 = @data_identity_2 ) AND " +
+					" ( @value_2 IS NULL OR value_2 = @value_2 ) ) " +
+					" OR " +
+					" ( ( @data_identity_2 IS NULL OR data_identity_1 = @data_identity_2) AND " +
+					" ( @value_2 IS NULL OR value_1 = @value_2 ) AND " +
+					" ( @data_identity_1 IS NULL OR data_identity_2 = @data_identity_1 ) AND " +
+					" ( @value_1 IS NULL OR value_2 = @value_1 ) )",
+					new NpgsqlParameter<string>("data_identity_1", dataIdentityConnection.DataIdentity1),
+					new NpgsqlParameter<string>("value_1", dataIdentityConnection.Value1),
+					new NpgsqlParameter<string>("data_identity_2", dataIdentityConnection.DataIdentity2),
+					new NpgsqlParameter<string>("value_2", dataIdentityConnection.Value2));
 
 			if (count != 1)
 				throw new TfDboServiceException("Faled delete of data identity connection");
@@ -140,23 +185,23 @@ public partial class TfService : ITfService
 
 			RuleSet("general", () =>
 			{
-				RuleFor(dataIdentityConnection => dataIdentityConnection.SourceDataIdentity)
+				RuleFor(dataIdentityConnection => dataIdentityConnection.DataIdentity1)
 					.NotEmpty()
 					.WithMessage("The source data identity is required.");
 
-				RuleFor(dataIdentityConnection => dataIdentityConnection.TargetDataIdentity)
+				RuleFor(dataIdentityConnection => dataIdentityConnection.DataIdentity2)
 					.NotEmpty()
 					.WithMessage("The target data identity is required.");
 
-				RuleFor(dataIdentityConnection => dataIdentityConnection.SourceDataValue)
+				RuleFor(dataIdentityConnection => dataIdentityConnection.Value1)
 					.NotEmpty()
 					.WithMessage("The source data value is required.");
 
-				RuleFor(dataIdentityConnection => dataIdentityConnection.TargetDataValue)
+				RuleFor(dataIdentityConnection => dataIdentityConnection.Value2)
 					.NotEmpty()
 					.WithMessage("The target data value is required.");
 
-				RuleFor(dataIdentityConnection => dataIdentityConnection.SourceDataIdentity)
+				RuleFor(dataIdentityConnection => dataIdentityConnection.DataIdentity1)
 					.Must((dataIdentityConnection, sourceDataIdentity) =>
 					{
 						if (string.IsNullOrWhiteSpace(sourceDataIdentity))
@@ -166,7 +211,7 @@ public partial class TfService : ITfService
 					})
 					.WithMessage("The source data identity is not found.");
 
-				RuleFor(dataIdentityConnection => dataIdentityConnection.SourceDataValue)
+				RuleFor(dataIdentityConnection => dataIdentityConnection.Value1)
 					.Must((dataIdentityConnection, sourceDataValue) =>
 					{
 						if (string.IsNullOrWhiteSpace(sourceDataValue))
@@ -176,7 +221,7 @@ public partial class TfService : ITfService
 					})
 					.WithMessage("The source data value is not a valid result from SHA1 encoded text.");
 
-				RuleFor(dataIdentityConnection => dataIdentityConnection.TargetDataIdentity)
+				RuleFor(dataIdentityConnection => dataIdentityConnection.DataIdentity2)
 					.Must((dataIdentityConnection, targetDataIdentity) =>
 					{
 						if (string.IsNullOrWhiteSpace(targetDataIdentity))
@@ -186,7 +231,7 @@ public partial class TfService : ITfService
 					})
 					.WithMessage("The target data identity is not found.");
 
-				RuleFor(dataIdentityConnection => dataIdentityConnection.TargetDataValue)
+				RuleFor(dataIdentityConnection => dataIdentityConnection.Value2)
 					.Must((dataIdentityConnection, targetDataValue) =>
 					{
 						if (string.IsNullOrWhiteSpace(targetDataValue))

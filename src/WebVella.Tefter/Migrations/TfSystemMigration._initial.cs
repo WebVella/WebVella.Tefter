@@ -1089,28 +1089,28 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithColumns(columns =>
 			{
 				columns
-					.AddShortTextColumn("source_data_identity", c => { c.NotNullable(); })
-					.AddShortTextColumn("source_data_value", c => { c.NotNullable(); })
-					.AddShortTextColumn("target_data_identity", c => { c.NotNullable(); })
-					.AddShortTextColumn("target_data_value", c => { c.NotNullable(); });
+					.AddShortTextColumn("data_identity_1", c => { c.NotNullable(); })
+					.AddShortTextColumn("value_1", c => { c.NotNullable(); })
+					.AddShortTextColumn("data_identity_2", c => { c.NotNullable(); })
+					.AddShortTextColumn("value_2", c => { c.NotNullable(); });
 			})
 			.WithConstraints(constraints =>
 			{
 				constraints
 					.AddPrimaryKeyConstraint("pk_data_identity_connection", c =>
 					{
-						c.WithColumns("source_data_identity", "source_data_value",
-							"target_data_identity", "target_data_value");
+						c.WithColumns("data_identity_1", "value_1",
+							"data_identity_2", "value_2");
 					})
-					.AddForeignKeyConstraint("fk_data_identity_connection_source_identity", c =>
+					.AddForeignKeyConstraint("fk_data_identity_connection_identity_1", c =>
 					{
-						c.WithColumns("source_data_identity")
+						c.WithColumns("data_identity_1")
 						.WithForeignTable("tf_data_identity")
 						.WithForeignColumns("data_identity");
 					})
-					.AddForeignKeyConstraint("fk_data_identity_connection_target_identity", c =>
+					.AddForeignKeyConstraint("fk_data_identity_connection_identity_2", c =>
 					{
-						c.WithColumns("target_data_identity")
+						c.WithColumns("data_identity_2")
 						.WithForeignTable("tf_data_identity")
 						.WithForeignColumns("data_identity");
 					});
@@ -1118,10 +1118,10 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithIndexes(indexes =>
 			{
 				indexes
-					.AddBTreeIndex("ix_data_identity_connection_source_data_identity", i => { i.WithColumns("source_data_identity"); })
-					.AddBTreeIndex("ix_data_identity_connection_source_data_value", i => { i.WithColumns("source_data_value"); })
-					.AddBTreeIndex("ix_data_identity_connection_target_data_identity", i => { i.WithColumns("target_data_identity"); })
-					.AddBTreeIndex("ix_data_identity_connection_target_data_value", i => { i.WithColumns("target_data_value"); });
+					.AddBTreeIndex("ix_data_identity_connection_data_identity_1", i => { i.WithColumns("data_identity_1"); })
+					.AddBTreeIndex("ix_data_identity_connection_value_1", i => { i.WithColumns("value_1"); })
+					.AddBTreeIndex("ix_data_identity_connection_data_identity_2", i => { i.WithColumns("data_identity_2"); })
+					.AddBTreeIndex("ix_data_identity_connection_value_2", i => { i.WithColumns("value_2"); });
 			});
 		#endregion
 

@@ -43,15 +43,31 @@ public partial class TfServiceTest : BaseTest
 
 				TfDataIdentityConnection connectionModel = new TfDataIdentityConnection
 				{
-					SourceDataIdentity = dataIdentity1.DataIdentity,
-					SourceDataValue = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
-					TargetDataIdentity = dataIdentity2.DataIdentity,
-					TargetDataValue = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
+					DataIdentity1 = dataIdentity1.DataIdentity,
+					Value1 = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
+					DataIdentity2 = dataIdentity2.DataIdentity,
+					Value2 = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
 				};
 
 				task = Task.Run(() => { tfService.CreateDataIdentityConnection(connectionModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
+
+				//try to find with switched identities and values
+				bool found = false;
+				task = Task.Run(() =>
+				{
+					found = tfService.DataIdentityConnectionExists(new TfDataIdentityConnection
+					{
+						DataIdentity1 = connectionModel.DataIdentity2,
+						Value1 = connectionModel.Value2,
+						DataIdentity2 = connectionModel.DataIdentity1,
+						Value2 = connectionModel.Value1
+					});
+				});
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				found.Should().BeTrue();
 
 				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
@@ -68,6 +84,28 @@ public partial class TfServiceTest : BaseTest
 				exception.Should().BeNull();
 				connections.Should().NotBeNull();
 				connections.Count.Should().Be(0);
+
+				//create again and try to delete with switched identities and values
+				task = Task.Run(() => { tfService.CreateDataIdentityConnection(connectionModel); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+
+				task = Task.Run(() => { tfService.DeleteDataIdentityConnection(new TfDataIdentityConnection
+				{
+					DataIdentity1 = connectionModel.DataIdentity2,
+					Value1 = connectionModel.Value2,
+					DataIdentity2 = connectionModel.DataIdentity1,
+					Value2 = connectionModel.Value1
+				}); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+
+				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				connections.Should().NotBeNull();
+				connections.Count.Should().Be(0);
+
 			}
 		}
 	}
@@ -100,22 +138,38 @@ public partial class TfServiceTest : BaseTest
 
 				TfDataIdentityConnection connectionModel = new TfDataIdentityConnection
 				{
-					SourceDataIdentity = dataIdentity1.DataIdentity,
-					SourceDataValue = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
-					TargetDataIdentity = dataIdentity2.DataIdentity,
-					TargetDataValue = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
+					DataIdentity1 = dataIdentity1.DataIdentity,
+					Value1 = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
+					DataIdentity2 = dataIdentity2.DataIdentity,
+					Value2 = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
 				};
 
 				var task = Task.Run(() => { tfService.CreateDataIdentityConnection(connectionModel); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-			
+
 				task = Task.Run(() => { tfService.CreateDataIdentityConnection(connectionModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
 				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
 				((TfValidationException)exception).Data.Contains(string.Empty).Should().BeTrue();
+
+				//try to create same identity with switched identities and values
+				task = Task.Run(() =>
+				{
+					tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
+					{
+						DataIdentity1 = connectionModel.DataIdentity2,
+						Value1 = connectionModel.Value2,
+						DataIdentity2 = connectionModel.DataIdentity1,
+						Value2 = connectionModel.Value1
+					});
+				});
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
 			}
 		}
 	}
@@ -148,10 +202,10 @@ public partial class TfServiceTest : BaseTest
 
 				TfDataIdentityConnection connectionModel = new TfDataIdentityConnection
 				{
-					SourceDataIdentity = dataIdentity1.DataIdentity,
-					SourceDataValue = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
-					TargetDataIdentity = dataIdentity2.DataIdentity,
-					TargetDataValue = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
+					DataIdentity1 = dataIdentity1.DataIdentity,
+					Value1 = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
+					DataIdentity2 = dataIdentity2.DataIdentity,
+					Value2 = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
 				};
 
 				var task = Task.Run(() => { tfService.CreateDataIdentityConnection(connectionModel); });
@@ -159,7 +213,7 @@ public partial class TfServiceTest : BaseTest
 				exception.Should().BeNull();
 
 				//change last char from 0 to 1
-				connectionModel.SourceDataValue = "8fcd4d52d4f57b72761d5198abf9946b9c27f051"; 
+				connectionModel.Value1 = "8fcd4d52d4f57b72761d5198abf9946b9c27f051";
 				task = Task.Run(() => { tfService.DeleteDataIdentityConnection(connectionModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
@@ -198,10 +252,10 @@ public partial class TfServiceTest : BaseTest
 
 				TfDataIdentityConnection connectionModel = new TfDataIdentityConnection
 				{
-					SourceDataIdentity = "non_existant_source_identity",
-					SourceDataValue = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
-					TargetDataIdentity = dataIdentity2.DataIdentity,
-					TargetDataValue = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
+					DataIdentity1 = "non_existant_source_identity",
+					Value1 = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
+					DataIdentity2 = dataIdentity2.DataIdentity,
+					Value2 = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
 				};
 
 				var task = Task.Run(() => { tfService.CreateDataIdentityConnection(connectionModel); });
@@ -209,16 +263,16 @@ public partial class TfServiceTest : BaseTest
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
 				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
-				((TfValidationException)exception).Data.Contains(nameof(TfDataIdentityConnection.SourceDataIdentity)).Should().BeTrue();
+				((TfValidationException)exception).Data.Contains(nameof(TfDataIdentityConnection.DataIdentity1)).Should().BeTrue();
 
-				connectionModel.SourceDataIdentity = dataIdentity1.DataIdentity;
-				connectionModel.TargetDataIdentity = "non_existant_target_identity";
+				connectionModel.DataIdentity1 = dataIdentity1.DataIdentity;
+				connectionModel.DataIdentity2 = "non_existant_target_identity";
 				task = Task.Run(() => { tfService.CreateDataIdentityConnection(connectionModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
 				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
-				((TfValidationException)exception).Data.Contains(nameof(TfDataIdentityConnection.TargetDataIdentity)).Should().BeTrue();
+				((TfValidationException)exception).Data.Contains(nameof(TfDataIdentityConnection.DataIdentity2)).Should().BeTrue();
 			}
 		}
 	}
@@ -251,29 +305,29 @@ public partial class TfServiceTest : BaseTest
 
 				TfDataIdentityConnection connectionModel = new TfDataIdentityConnection
 				{
-					SourceDataIdentity = dataIdentity1.DataIdentity,
-					SourceDataValue = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
-					TargetDataIdentity = dataIdentity2.DataIdentity,
-					TargetDataValue = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
+					DataIdentity1 = dataIdentity1.DataIdentity,
+					Value1 = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
+					DataIdentity2 = dataIdentity2.DataIdentity,
+					Value2 = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
 				};
 
 				//invalid SHA1 value
-				connectionModel.SourceDataValue = "asdfasdfdasfas";
+				connectionModel.Value1 = "asdfasdfdasfas";
 				var task = Task.Run(() => { tfService.CreateDataIdentityConnection(connectionModel); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
 				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
-				((TfValidationException)exception).Data.Contains(nameof(TfDataIdentityConnection.SourceDataValue)).Should().BeTrue();
+				((TfValidationException)exception).Data.Contains(nameof(TfDataIdentityConnection.Value1)).Should().BeTrue();
 
-				connectionModel.SourceDataValue = "8fcd4d52d4f57b72761d5198abf9946b9c27f050";
-				connectionModel.TargetDataValue = "sdafasdfasdfsda";
+				connectionModel.Value1 = "8fcd4d52d4f57b72761d5198abf9946b9c27f050";
+				connectionModel.Value2 = "sdafasdfasdfsda";
 				task = Task.Run(() => { tfService.CreateDataIdentityConnection(connectionModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
 				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
-				((TfValidationException)exception).Data.Contains(nameof(TfDataIdentityConnection.TargetDataValue)).Should().BeTrue();
+				((TfValidationException)exception).Data.Contains(nameof(TfDataIdentityConnection.Value2)).Should().BeTrue();
 			}
 		}
 	}
@@ -322,10 +376,10 @@ public partial class TfServiceTest : BaseTest
 
 				TfDataIdentityConnection connectionModel1 = new TfDataIdentityConnection
 				{
-					SourceDataIdentity = dataIdentity1.DataIdentity,
-					SourceDataValue = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
-					TargetDataIdentity = dataIdentity2.DataIdentity,
-					TargetDataValue = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
+					DataIdentity1 = dataIdentity1.DataIdentity,
+					Value1 = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
+					DataIdentity2 = dataIdentity2.DataIdentity,
+					Value2 = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
 				};
 
 				task = Task.Run(() => { tfService.CreateDataIdentityConnection(connectionModel1); });
@@ -334,10 +388,10 @@ public partial class TfServiceTest : BaseTest
 
 				TfDataIdentityConnection connectionModel2 = new TfDataIdentityConnection
 				{
-					SourceDataIdentity = dataIdentity2.DataIdentity,
-					SourceDataValue = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
-					TargetDataIdentity = dataIdentity3.DataIdentity,
-					TargetDataValue = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
+					DataIdentity1 = dataIdentity2.DataIdentity,
+					Value1 = "8fcd4d52d4f57b72761d5198abf9946b9c27f050",
+					DataIdentity2 = dataIdentity3.DataIdentity,
+					Value2 = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c6"
 				};
 
 				task = Task.Run(() => { tfService.CreateDataIdentityConnection(connectionModel2); });
@@ -347,10 +401,10 @@ public partial class TfServiceTest : BaseTest
 
 				TfDataIdentityConnection connectionModel3 = new TfDataIdentityConnection
 				{
-					SourceDataIdentity = dataIdentity1.DataIdentity,
-					SourceDataValue = "8fcd4d52d4f57b72761d5198abf9946b9c27f052",
-					TargetDataIdentity = dataIdentity3.DataIdentity,
-					TargetDataValue = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c7"
+					DataIdentity1 = dataIdentity1.DataIdentity,
+					Value1 = "8fcd4d52d4f57b72761d5198abf9946b9c27f052",
+					DataIdentity2 = dataIdentity3.DataIdentity,
+					Value2 = "e3ca24d9ff05b5ea06e25c34e58b609c366ba3c7"
 				};
 
 				task = Task.Run(() => { tfService.CreateDataIdentityConnection(connectionModel3); });
@@ -402,19 +456,19 @@ public partial class TfServiceTest : BaseTest
 				connections.Count.Should().Be(2);
 
 
-				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(targetDataValue: connectionModel1.TargetDataValue); });
+				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(targetDataValue: connectionModel1.Value2); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				connections.Should().NotBeNull();
 				connections.Count.Should().Be(2);
 
-				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(targetDataValue: connectionModel3.TargetDataValue); });
+				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(targetDataValue: connectionModel3.Value2); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				connections.Should().NotBeNull();
 				connections.Count.Should().Be(1);
 
-				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(sourceDataValue: connectionModel1.SourceDataValue); });
+				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(sourceDataValue: connectionModel1.Value1); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				connections.Should().NotBeNull();
