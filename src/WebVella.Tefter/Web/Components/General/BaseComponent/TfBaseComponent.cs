@@ -13,6 +13,7 @@ public class TfBaseComponent : FluxorComponent
 	[Inject] protected ITfConfigurationService ConfigurationService { get; set; }
 	[Inject] protected ITfService TfService { get; set; }
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
+	[Inject] protected IWvBlazorTraceService WvBlazorTraceService { get; set; }
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
 	protected IStringLocalizer LC;

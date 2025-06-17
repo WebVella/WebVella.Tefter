@@ -1,8 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
 @using Microsoft.FluentUI.AspNetCore.Components;
 @using WebVella.Tefter.Services
 @using WebVella.Tefter.Web.Layout;
-
+@using WebVella.BlazorTrace;
 <Fluxor.Blazor.Web.StoreInitializer />
 @*
 	IMPORANT: If you want to have your own routable components in your addon
@@ -20,3 +21,4 @@
 <FluentTooltipProvider />
 <FluentKeyCodeProvider />
 <FluentMenuProvider />
+<WvBlazorTrace/> @* <-- INSERT HERE *@

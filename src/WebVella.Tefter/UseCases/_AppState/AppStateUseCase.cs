@@ -10,6 +10,7 @@ internal partial class AppStateUseCase
 	private readonly NavigationManager _navigationManager;
 	private readonly IToastService _toastService;
 	private readonly IMessageService _messageService;
+	private readonly IWvBlazorTraceService _blazorTraceService;
 	private readonly IStringLocalizer<AppStateUseCase> LOC;
 
 
@@ -23,12 +24,13 @@ internal partial class AppStateUseCase
 		_navigationManager = serviceProvider.GetService<NavigationManager>();
 		_toastService = serviceProvider.GetService<IToastService>();
 		_messageService = serviceProvider.GetService<IMessageService>();
+		_blazorTraceService = serviceProvider.GetService<IWvBlazorTraceService>();
 		LOC = serviceProvider.GetService<IStringLocalizer<AppStateUseCase>>();
 	}
 
 	internal virtual async Task<(TfAppState, TfAuxDataState)> InitState(TucUser currentUser, string url, TfAppState oldAppState, TfAuxDataState oldAuxDataState)
 	{
-
+		_blazorTraceService.OnSignal(this,signalName:"init-app-state");
 		if (oldAppState == null) oldAppState = new TfAppState();
 		if (oldAuxDataState == null) oldAuxDataState = new TfAuxDataState();
 		var route = _navigationManager.GetRouteState(url);
@@ -43,6 +45,7 @@ internal partial class AppStateUseCase
 		var auxDataState = oldAuxDataState with { Hash = oldAuxDataState.Hash };
 		(appState, auxDataState) = await InitAdminUsersAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
 		(appState, auxDataState) = await InitAdminDataProviderAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
+		(appState, auxDataState) = await InitAdminDataIdentityAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
 		(appState, auxDataState) = await InitAdminSharedColumnsAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
 		(appState, auxDataState) = await InitAdminFileRepositoryAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
 		(appState, auxDataState) = await InitAdminTemplatesAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
@@ -53,6 +56,7 @@ internal partial class AppStateUseCase
 		(appState, auxDataState) = await InitSpaceNodeAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
 		(appState, auxDataState) = await InitSpaceDataAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
 		(appState, auxDataState) = await InitSpaceViewAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
+
 		return (appState, auxDataState);
 	}
 

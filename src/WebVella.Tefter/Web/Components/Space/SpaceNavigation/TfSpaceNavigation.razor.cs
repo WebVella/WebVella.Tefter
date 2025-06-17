@@ -108,7 +108,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 		await _generateMenu();
 	}
 
-	
+
 
 	#endregion
 

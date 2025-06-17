@@ -45,12 +45,13 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 		});
 	}
 
-	private void _setNextSyncOn(){ 
-		if(TfAppState.Value.AdminDataProvider is null) return;
+	private void _setNextSyncOn()
+	{
+		if (TfAppState.Value.AdminDataProvider is null) return;
 		_nextSyncronization = LOC("not scheduled");
 		var providerNextTaskCreatedOn = UC.GetProviderNextSyncOn(TfAppState.Value.AdminDataProvider.Id);
 		if (providerNextTaskCreatedOn is not null)
-			_nextSyncronization = providerNextTaskCreatedOn.Value.ToString(TfConstants.DateTimeFormat);	
+			_nextSyncronization = providerNextTaskCreatedOn.Value.ToString(TfConstants.DateTimeFormat);
 	}
 
 	private async Task _onViewLogClick(TucDataProviderSyncTask task)

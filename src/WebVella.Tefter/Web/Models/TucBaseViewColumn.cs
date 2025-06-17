@@ -10,13 +10,14 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	[Inject] protected IToastService ToastService { get; set; }
 	[Inject] protected IDialogService DialogService { get; set; }
 	[Inject] protected IMessageService MessageService { get; set; }
+	[Inject] protected IWvBlazorTraceService WvBlazorTraceService { get; set; }
 	#endregion
 
 	#region << Properties >>
 	public virtual Guid AddonId { get; init; } = Guid.NewGuid();
-	public virtual string AddonName { get; init;} = String.Empty;
-	public virtual string AddonDescription { get; init;} = String.Empty;
-	public virtual string AddonFluentIconName { get; init;} = String.Empty;
+	public virtual string AddonName { get; init; } = String.Empty;
+	public virtual string AddonDescription { get; init; } = String.Empty;
+	public virtual string AddonFluentIconName { get; init; } = String.Empty;
 	public virtual List<Guid> SupportedColumnTypes { get; init; } = new();
 	[Parameter] public TfSpaceViewColumnScreenRegionContext RegionContext { get; set; }
 	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
@@ -56,7 +57,6 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		}
 		if (RegionContext.EditContext is not null)
 			RegionContext.EditContext.OnValidationRequested += OnOptionsValidationRequested;
-
 	}
 
 	protected override async Task OnParametersSetAsync()
@@ -242,7 +242,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		if (RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName] is null) return defaultValue;
 		object value = RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName];
 		if (value is null) return defaultValue;
-		if(value.GetType().ImplementsInterface(typeof(IList))) return (List<string>)value;
+		if (value.GetType().ImplementsInterface(typeof(IList))) return (List<string>)value;
 		return value.ToString();
 	}
 
@@ -272,7 +272,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 
 		if (typeof(T) == typeof(String)) return (T)value;
 		else if (value is T) return (T)value;
-		else if(value.GetType().ImplementsInterface(typeof(IList))) return (List<Nullable<T>>)value;
+		else if (value.GetType().ImplementsInterface(typeof(IList))) return (List<Nullable<T>>)value;
 		return TfConverters.Convert<T>(value.ToString());
 	}
 

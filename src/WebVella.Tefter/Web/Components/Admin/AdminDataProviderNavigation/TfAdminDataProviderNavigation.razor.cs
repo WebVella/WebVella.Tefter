@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminDataProviderNavigation.TfAdminDataProviderNavigation", "WebVella.Tefter")]
 public partial class TfAdminDataProviderNavigation : TfBaseComponent
 {
-	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
+	[Inject] protected IStateSelection<TfUserState, bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	private string search = null;
@@ -12,7 +12,6 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 	{
 		base.OnInitialized();
 		SidebarExpanded.Select(x => x.SidebarExpanded);
-
 	}
 
 	private async Task onAddClick()

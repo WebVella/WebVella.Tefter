@@ -91,7 +91,7 @@
 		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Accent" />
 		</FluentButton>
-		@if (TfAppState.Value.CurrentUser.IsAdmin)
+		@if (TfAppState.Value.CurrentUser is not null && TfAppState.Value.CurrentUser.IsAdmin)
 		{
 			<FluentButton Id="view-setting-selector" OnClick="OnSettingsClick" Appearance="@Appearance.Outline">
 				<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Accent" />

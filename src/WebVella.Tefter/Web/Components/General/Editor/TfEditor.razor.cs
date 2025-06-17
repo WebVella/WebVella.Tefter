@@ -23,7 +23,8 @@ public partial class TfEditor : TfBaseComponent
 		get
 		{
 			var result = new StringBuilder();
-			if(Size == TfEditorSize.Large){ 
+			if (Size == TfEditorSize.Large)
+			{
 				result.Append($"height:200px;");
 			}
 
@@ -72,9 +73,6 @@ public partial class TfEditor : TfBaseComponent
 				await JSRuntime.InvokeAsync<object>(
 					"Tefter.createQuill", divEditorElement, _componentId.ToString(), _objectRef, textChangeMethodName, null, Placeholder, ReadOnly);
 			}
-
-
-
 			_editorInited = true;
 		}
 	}
@@ -126,7 +124,8 @@ public partial class TfEditor : TfBaseComponent
 
 }
 
-public enum TfEditorSize{ 
+public enum TfEditorSize
+{
 	Normal = 0,
 	Large = 1
 }

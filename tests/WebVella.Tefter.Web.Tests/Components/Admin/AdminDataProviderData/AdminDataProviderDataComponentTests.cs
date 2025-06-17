@@ -3,16 +3,19 @@ public class AdminDataProviderDataComponentTests : BaseTest
 {
 
 	[Fact]
-	public void RendersCorrectly()
+	public async Task RendersCorrectly()
 	{
-		//Given
-		var Context = GetTestContext();
-		// Act
-		var cut = Context.RenderComponent<TfAdminDataProviderData>();
+		using (await locker.LockAsync())
+		{
+			//Given
+			var Context = GetTestContext();
+			// Act
+			var cut = Context.RenderComponent<TfAdminDataProviderData>();
 
-		// Assert
-		cut.Find(".tf-layout__body__main");
+			// Assert
+			cut.Find(".tf-layout__body__main");
 
-		Context.DisposeComponents();
+			Context.DisposeComponents();
+		}
 	}
 }

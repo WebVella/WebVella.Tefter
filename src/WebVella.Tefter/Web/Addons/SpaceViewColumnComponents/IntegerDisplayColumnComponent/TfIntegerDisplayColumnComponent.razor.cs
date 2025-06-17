@@ -21,7 +21,7 @@ public partial class TfIntegerDisplayColumnComponent : TucBaseViewColumn<TfInteg
 	public TfIntegerDisplayColumnComponent()
 	{
 	}
-	
+
 	/// <summary>
 	/// The custom constructor is needed because in varoius cases we need to instance the component without
 	/// rendering. The export to excel is one of those cases.
@@ -35,9 +35,9 @@ public partial class TfIntegerDisplayColumnComponent : TucBaseViewColumn<TfInteg
 
 	#region << Properties >>
 	public override Guid AddonId { get; init; } = new Guid(ID);
-	public override string AddonName { get; init;} = NAME;
-	public override string AddonDescription { get; init;} = DESCRIPTION;
-	public override string AddonFluentIconName { get; init;} = FLUENT_ICON_NAME;
+	public override string AddonName { get; init; } = NAME;
+	public override string AddonDescription { get; init; } = DESCRIPTION;
+	public override string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
 		new Guid(TfIntegerViewColumnType.ID),
 	};
@@ -77,7 +77,7 @@ public partial class TfIntegerDisplayColumnComponent : TucBaseViewColumn<TfInteg
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
 		_initValues();
 		if (_value.Count == 0)

@@ -4,7 +4,7 @@
   --tf-layout-wrapper-aside-width: 60px;
   --tf-layout-wrapper-body-width: calc(100vw - var(--tf-layout-wrapper-aside-width));
   --tf-layout-wrapper-body-border-radius: 8px;
-  --tf-layout-wrapper-body-aside-width: 200px;
+  --tf-layout-wrapper-body-aside-width: 220px;
   --tf-layout-wrapper-body-aside-toolbar-height: 40px;
   --tf-content-padding: 10px;
   --tf-header-height: 48px;
@@ -593,9 +593,9 @@ fluent-data-grid-row:has([row-selected]) {
   --tf-td-fill-slate: color-mix(in srgb, var(--tf-slate-300) 20%, var(--neutral-fill-layer-rest) 80%);
 }
 .tf-layout__body,
-.tf-header-nav {
+.tf-layout__header {
   --tf-layout-color-mute: color-mix(in srgb, var(--accent-base-color) 30%, var(--neutral-fill-layer-rest) 70%);
-  --tf-layout-color: color-mix(in srgb, var(--accent-base-color) 15%, var(--neutral-fill-layer-rest) 85%);
+  --tf-layout-color: color-mix(in srgb, var(--accent-base-color) 5%, var(--neutral-fill-layer-rest) 95%);
   --tf-layout-color-accent: color-mix(in srgb, var(--accent-base-color) 60%, var(--neutral-fill-layer-rest) 40%);
   --tf-layout-color-accent-2: color-mix(in srgb, var(--accent-base-color) 80%, var(--neutral-fill-layer-rest) 20%);
 }

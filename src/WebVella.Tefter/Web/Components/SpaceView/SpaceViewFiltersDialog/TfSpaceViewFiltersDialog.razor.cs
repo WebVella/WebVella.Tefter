@@ -24,7 +24,8 @@ public partial class TfSpaceViewFiltersDialog : TfFormBaseComponent, IDialogCont
 		}
 	}
 
-	private Task _onFiltersChangeHandler(List<TucFilterBase> filters){ 
+	private Task _onFiltersChangeHandler(List<TucFilterBase> filters)
+	{
 		_items = filters;
 		return Task.CompletedTask;
 	}

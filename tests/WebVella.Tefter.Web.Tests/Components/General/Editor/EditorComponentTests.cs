@@ -4,17 +4,20 @@ public class EditorComponentTests : BaseTest
 {
 
 	[Fact]
-	public void RendersCorrectly()
+	public async Task RendersCorrectly()
 	{
-		//Given
-		var Context = GetTestContext();
-		// Act
-		var cut = Context.RenderComponent<TfEditor>();
+		using (await locker.LockAsync())
+		{
+			//Given
+			var Context = GetTestContext();
+			// Act
+			var cut = Context.RenderComponent<TfEditor>();
 
-		// Assert
-		cut.Find(".tf-editor");
+			// Assert
+			cut.Find(".tf-editor");
 
-		Context.DisposeComponents();
+			Context.DisposeComponents();
+		}
 	}
 
 }

@@ -163,8 +163,8 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 			CustomSettingsJson = null,
 			Preview = null
 		};
-		_dynamicComponentScope = _processor is not null 
-			? new TfScreenRegionScope(_processor.GetType(),null)
+		_dynamicComponentScope = _processor is not null
+			? new TfScreenRegionScope(_processor.GetType(), null)
 			: null;
 	}
 

@@ -5,6 +5,7 @@ public partial class TfUserStateManager : FluxorComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] public IActionSubscriber ActionSubscriber { get; set; }
+	[Inject] public IWvBlazorTraceService WvBlazorTraceService { get; set; }
 	[Inject] public IDispatcher Dispatcher { get; set; }
 	[Inject] public TfUserEventProvider TfUserEventProvider { get; set; }
 	[Inject] protected NavigationManager Navigator { get; set; }
@@ -34,6 +35,7 @@ public partial class TfUserStateManager : FluxorComponent
 	}
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
+		WvBlazorTraceService.OnSignal(this,signalName:"user-state-refresh");
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
@@ -64,7 +66,7 @@ public partial class TfUserStateManager : FluxorComponent
 				Navigator.ReloadCurrentUrl();
 				return;
 			}
-			else if (uri.LocalPath == "/" && !String.IsNullOrWhiteSpace(state.CurrentUser.Settings.StartUpUrl) 
+			else if (uri.LocalPath == "/" && !String.IsNullOrWhiteSpace(state.CurrentUser.Settings.StartUpUrl)
 				&& queryDictionary[TfConstants.NoDefaultRedirectQueryName] is null)
 			{
 				Navigator.NavigateTo(state.CurrentUser.Settings.StartUpUrl);
@@ -97,7 +99,7 @@ public partial class TfUserStateManager : FluxorComponent
 			component: this,
 			state: state,
 			oldStateHash: TfUserState.Value.Hash,
-			fromEvent:true
+			fromEvent: true
 		));
 		//StateHasChanged();
 	}

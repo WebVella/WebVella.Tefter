@@ -5,25 +5,29 @@ public class AdminDataProviderDetailsComponentTests : BaseTest
 {
 
 	[Fact]
-	public void RendersCorrectly()
+	public async Task RendersCorrectly()
 	{
-		//Given
-		var Context = GetTestContext();
+		using (await locker.LockAsync())
+		{
+			//Given
+			var Context = GetTestContext();
 
-		var dataProvider = new TucDataProvider(){
-			ProviderType = new TucDataProviderTypeInfo(new CsvDataProvider())
-		};
-		
-		new CsvDataProvider { };
-		Dispatcher.Dispatch(new SetAppStateAction(
-		component: null,
-		state: new TfAppState { Hash = Guid.NewGuid(), AdminDataProvider = dataProvider }));
-		// Act
-		var cut = Context.RenderComponent<TfAdminDataProviderDetails>();
+			var dataProvider = new TucDataProvider()
+			{
+				ProviderType = new TucDataProviderTypeInfo(new CsvDataProvider())
+			};
 
-		// Assert
-		cut.Find(".tf-card");
+			new CsvDataProvider { };
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: null,
+			state: new TfAppState { Hash = Guid.NewGuid(), AdminDataProvider = dataProvider }));
+			// Act
+			var cut = Context.RenderComponent<TfAdminDataProviderDetails>();
 
-		Context.DisposeComponents();
+			// Assert
+			cut.Find(".tf-card");
+
+			Context.DisposeComponents();
+		}
 	}
 }

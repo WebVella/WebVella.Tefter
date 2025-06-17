@@ -3,6 +3,7 @@ public partial class TfAppStateManager : FluxorComponent
 {
 	[Inject] protected NavigationManager Navigator { get; set; }
 	[Inject] public IActionSubscriber ActionSubscriber { get; set; }
+	[Inject] public IWvBlazorTraceService WvBlazorTraceService { get; set; }
 	[Inject] public IDispatcher Dispatcher { get; set; }
 	[Inject] private IState<TfUserState> TfUserState { get; set; }
 	[Inject] private IState<TfAppState> TfAppState { get; set; }
@@ -37,6 +38,7 @@ public partial class TfAppStateManager : FluxorComponent
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
+		WvBlazorTraceService.OnSignal(this,signalName:"app-state-refresh");
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
@@ -48,11 +50,11 @@ public partial class TfAppStateManager : FluxorComponent
 
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
-		if(!Navigator.UrlHasState()) return;
+		if (!Navigator.UrlHasState()) return;
 		InvokeAsync(async () =>
 		{
 
-			await _init(e.Location,TfAppState.Value, TfAuxDataState.Value);
+			await _init(e.Location, TfAppState.Value, TfAuxDataState.Value);
 		});
 	}
 
@@ -82,6 +84,6 @@ public partial class TfAppStateManager : FluxorComponent
 	//	_renderedUserStateHash = Guid.NewGuid();
 	//	await InvokeAsync(StateHasChanged);
 	//}
-	
+
 
 }

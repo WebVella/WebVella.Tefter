@@ -13,7 +13,7 @@ public partial class TfLayout : ComponentBase
 			var colorName = Color.GetAttribute().Name;
 			var sb = new StringBuilder();
 			sb.AppendLine("<style>");
-			sb.AppendLine("html:root .tf-layout__body, html:root .tf-header-nav {");
+			sb.AppendLine("html:root .tf-layout__body, html:root .tf-layout__header {");
 			sb.AppendLine($"--accent-base-color: var(--tf-{colorName}-500);");
 			sb.AppendLine($"--accent-fill-rest: var(--tf-{colorName}-500);");
 			sb.AppendLine($"--accent-fill-hover: var(--tf-{colorName}-600);");

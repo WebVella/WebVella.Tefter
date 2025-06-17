@@ -18,7 +18,8 @@ public partial class TfRecipeList : TfBaseComponent
 		_items = UC.GetRecipes();
 	}
 
-	private void _select(ITfRecipeAddon recipe){ 
-		Navigator.NavigateTo(String.Format(TfConstants.InstallDetailsPage,recipe.AddonId));
+	private void _select(ITfRecipeAddon recipe)
+	{
+		Navigator.NavigateTo(String.Format(TfConstants.InstallDetailsPage, recipe.AddonId));
 	}
 }

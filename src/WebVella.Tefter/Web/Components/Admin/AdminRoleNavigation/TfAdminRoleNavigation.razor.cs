@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminRoleNavigation.TfAdminRoleNavigation", "WebVella.Tefter")]
 public partial class TfAdminRoleNavigation : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
+	[Inject] protected IStateSelection<TfUserState, bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	private string search = null;
@@ -11,7 +11,6 @@ public partial class TfAdminRoleNavigation : TfBaseComponent, IAsyncDisposable
 	{
 		base.OnInitialized();
 		SidebarExpanded.Select(x => x.SidebarExpanded);
-
 	}
 
 	private List<TucRole> _getRoles()

@@ -42,7 +42,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 	{
 		menuItems.Clear();
 		var iconColor = "var(--tf-admin-color)";
-		if(TfAppState.Value.Route is null) return;
+		if (TfAppState.Value.Route is null) return;
 		menuItems.Add(new TucMenuItem()
 		{
 			Id = "tf-dashboard-link",
@@ -56,52 +56,64 @@ public partial class TfAdminNavigation : TfBaseComponent
 		{
 			Id = "tf-users-link",
 			IconCollapsed = TfConstants.AdminUsersIcon,
-			Selected = TfAppState.Value.Route.HasNode(RouteDataNode.Users,1),
+			Selected = TfAppState.Value.Route.HasNode(RouteDataNode.Users, 1)
+				|| TfAppState.Value.Route.HasNode(RouteDataNode.Roles, 1),
 			Url = string.Format(TfConstants.AdminUsersPageUrl),
-			Text = LOC(TfConstants.AdminUsersMenuTitle)
+			Text = LOC(TfConstants.AdminAccessMenuTitle)
 		});
 
 		menuItems.Add(new TucMenuItem()
 		{
 			Id = "tf-data-providers-link",
-			IconCollapsed = TfConstants.AdminDataProvidersIcon,
-			Selected = TfAppState.Value.Route.HasNode(RouteDataNode.DataProviders,1),
+			IconCollapsed = TfConstants.AdminDataIcon,
+			Selected = TfAppState.Value.Route.HasNode(RouteDataNode.DataProviders, 1)
+			|| TfAppState.Value.Route.HasNode(RouteDataNode.SharedColumns, 1)
+			|| TfAppState.Value.Route.HasNode(RouteDataNode.DataIdentities, 1),
 			Url = string.Format(TfConstants.AdminDataProvidersPageUrl),
-			Text = LOC(TfConstants.AdminDataProvidersMenuTitle)
+			Text = LOC(TfConstants.AdminLocalDataMenuTitle)
 		});
+		//menuItems.Add(new TucMenuItem()
+		//{
+		//	Id = "tf-shared-columns-link",
+		//	IconCollapsed = TfConstants.AdminSharedColumnsIcon,
+		//	Selected = TfAppState.Value.Route.HasNode(RouteDataNode.SharedColumns,1),
+		//	Url = TfConstants.AdminSharedColumnsPageUrl,
+		//	Text = LOC(TfConstants.AdminSharedColumnsMenuTitle)
+		//});
 		menuItems.Add(new TucMenuItem()
 		{
-			Id = "tf-shared-columns-link",
-			IconCollapsed = TfConstants.AdminSharedColumnsIcon,
-			Selected = TfAppState.Value.Route.HasNode(RouteDataNode.SharedColumns,1),
-			Url = TfConstants.AdminSharedColumnsPageUrl,
-			Text = LOC(TfConstants.AdminSharedColumnsMenuTitle)
-		});
-		menuItems.Add(new TucMenuItem()
-		{
-			Id = "tf-templates-link",
-			IconCollapsed = TfConstants.TemplateIcon,
-			Selected = TfAppState.Value.Route.HasNode(RouteDataNode.Templates,1),
-			Url = string.Format(TfConstants.AdminTemplatesTypePageUrl,(int)TfTemplateResultType.File),
-			Text = LOC(TfConstants.AdminTemplatesMenuTitle)
-		});
-		menuItems.Add(new TucMenuItem()
-		{
-			Id = "tf-file-repository-link",
-			IconCollapsed = TfConstants.AdminFileRepositoryIcon,
-			Selected = TfAppState.Value.Route.HasNode(RouteDataNode.FileRepository,1),
+			Id = "tf-content-link",
+			IconCollapsed = TfConstants.ContentIcon,
+			Selected = TfAppState.Value.Route.HasNode(RouteDataNode.Templates, 1)
+			|| TfAppState.Value.Route.HasNode(RouteDataNode.FileRepository, 1),
 			Url = TfConstants.AdminFileRepositoryPageUrl,
-			Text = LOC(TfConstants.AdminFileRepositoryMenuTitle)
+			Text = LOC(TfConstants.AdminLocalContentMenuTitle)
 		});
+		//menuItems.Add(new TucMenuItem()
+		//{
+		//	Id = "tf-templates-link",
+		//	IconCollapsed = TfConstants.TemplateIcon,
+		//	Selected = TfAppState.Value.Route.HasNode(RouteDataNode.Templates, 1),
+		//	Url = string.Format(TfConstants.AdminTemplatesTypePageUrl, (int)TfTemplateResultType.File),
+		//	Text = LOC(TfConstants.AdminTemplatesMenuTitle)
+		//});
+		//menuItems.Add(new TucMenuItem()
+		//{
+		//	Id = "tf-file-repository-link",
+		//	IconCollapsed = TfConstants.AdminFileRepositoryIcon,
+		//	Selected = TfAppState.Value.Route.HasNode(RouteDataNode.FileRepository,1),
+		//	Url = TfConstants.AdminFileRepositoryPageUrl,
+		//	Text = LOC(TfConstants.AdminFileRepositoryMenuTitle)
+		//});
 		if (TfAppState.Value.Pages.Count > 0)
 		{
 			menuItems.Add(new TucMenuItem()
 			{
 				Id = "tf-pages-link",
 				IconCollapsed = TfConstants.ApplicationIcon,
-				Selected = TfAppState.Value.Route.HasNode(RouteDataNode.Pages,1),
+				Selected = TfAppState.Value.Route.HasNode(RouteDataNode.Pages, 1),
 				Url = string.Format(TfConstants.AdminPagesSingleUrl, TfAppState.Value.Pages[0].Id),
-				Text = LOC(TfConstants.AdminPagesMenuTitle)
+				Text = LOC(TfConstants.AdminAddonsMenuTitle)
 			});
 		}
 	}

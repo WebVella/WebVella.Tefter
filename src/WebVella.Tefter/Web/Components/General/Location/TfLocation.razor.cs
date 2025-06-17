@@ -21,20 +21,52 @@ public partial class TfLocation : TfBaseComponent
 		{
 			result.Add(new TucMenuItem
 			{
-				Text = TfConverters.StringOverflow("Pages", _ellipsisCount),
+				Text = TfConstants.AdminAddonsMenuTitle,
 				Url = string.Format(TfConstants.PagesPageUrl)
 			});
 		}
 		else if (TfAppState.Value.Route.HasNode(RouteDataNode.Admin, 0))
 		{
-			if (TfAppState.Value.Route.RouteNodes.Count > 1)
+			if (
+				TfAppState.Value.Route.HasNode(RouteDataNode.Users, 1)
+				|| TfAppState.Value.Route.HasNode(RouteDataNode.Roles, 1)
+				)
+			{
+				result.Add(new TucMenuItem
+				{
+					Text = TfConstants.AdminAccessMenuTitle
+				});
+			}
+			else if (
+				TfAppState.Value.Route.HasNode(RouteDataNode.DataProviders, 1)
+				|| TfAppState.Value.Route.HasNode(RouteDataNode.SharedColumns, 1)
+				|| TfAppState.Value.Route.HasNode(RouteDataNode.DataIdentities, 1)
+				)
+			{
+				result.Add(new TucMenuItem
+				{
+					Text = TfConstants.AdminLocalDataMenuTitle
+				});
+			}
+			else if (
+				TfAppState.Value.Route.HasNode(RouteDataNode.FileRepository, 1)
+				|| TfAppState.Value.Route.HasNode(RouteDataNode.Templates, 1)
+				)
+			{
+				result.Add(new TucMenuItem
+				{
+					Text = TfConstants.AdminLocalContentMenuTitle
+				});
+			}
+			else if (TfAppState.Value.Route.RouteNodes.Count > 1)
 			{
 				result.Add(new TucMenuItem
 				{
 					Text = TfConverters.StringOverflow(TfAppState.Value.Route.RouteNodes[1].ToDescriptionString(), _ellipsisCount)
 				});
 			}
-			else{ 
+			else
+			{
 				result.Add(new TucMenuItem
 				{
 					Text = TfConverters.StringOverflow("Dashboard", _ellipsisCount)

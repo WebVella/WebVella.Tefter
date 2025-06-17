@@ -1,7 +1,24 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-<FluentButton Id="space-settings" Title="space actions"
+@if (TfAppState.Value.Route.HasNode(RouteDataNode.Users))
+{
+	<FluentButton Title="@LOC("Create User")"
+				  IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)"
+				  OnClick="addUser" Appearance="@Appearance.Outline">
+		@LOC("new")
+	</FluentButton>
+}
+else if (TfAppState.Value.Route.HasNode(RouteDataNode.Roles))
+{
+	<FluentButton Title="@LOC("Create Role")"
+				  IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)"
+				  OnClick="addRoleClick" Appearance="@Appearance.Outline">
+		@LOC("new")
+	</FluentButton>
+}
+
+@* <FluentButton Id="space-settings" Title="space actions"
 			  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Outline">
 	<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Accent" />
 </FluentButton>
@@ -23,6 +40,6 @@
 		@LOC("Create Role")
 		<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Accent" />
 	</FluentMenuItem>
-</FluentMenu>
+</FluentMenu> *@
 
 

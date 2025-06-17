@@ -7,7 +7,7 @@ public partial class AdminTemplateDetailsPage : TfBasePage
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		if(ResultId is null)
-			Navigator.NavigateTo(string.Format(TfConstants.AdminTemplatesTypePageUrl,(int)TfTemplateResultType.File));
+		if (ResultId is null)
+			Navigator.NavigateTo(string.Format(TfConstants.AdminTemplatesTypePageUrl, (int)TfTemplateResultType.File));
 	}
 }

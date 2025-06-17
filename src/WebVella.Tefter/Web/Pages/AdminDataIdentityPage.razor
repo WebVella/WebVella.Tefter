@@ -1,0 +1,40 @@
+﻿@namespace WebVella.Tefter.Web.Pages
+@page "/admin/data-identities"
+@page "/admin/data-identities/{DataIdentityId}/{*Path}"
+
+@layout AdminLayout
+@inherits TfBasePage
+
+<TfLayoutBody>
+	<Aside>
+		<TfAdminDataIdentityNavigation />
+	</Aside>
+	<ChildContent>
+		@if (String.IsNullOrWhiteSpace(DataIdentityId) || TfAppState.Value.AdminDataIdentity is null)
+		{
+			<TfLayoutBodyMain>
+				<Header>
+					<TfPageHeader>@LOC("Data Identities")</TfPageHeader>
+				</Header>
+				<ChildContent>
+					<FluentMessageBar Title="No Data Identities found" AllowDismiss="false"
+									  Intent="@MessageIntent.Info" Style="margin-bottom:10px;">
+						@LOC("There are no data identities created yet. Start by pressing the 'Create Data Identity' button.")
+					</FluentMessageBar>
+				</ChildContent>
+			</TfLayoutBodyMain>
+		}
+		else
+		{
+			<TfLayoutBodyMain>
+				<Header>
+					<TfPageHeader>@LOC(TfConstants.AdminDataIdentitiesMenuTitle)</TfPageHeader>
+				</Header>
+				<ChildContent>
+					<div>DataIdentity</div>
+				</ChildContent>
+			</TfLayoutBodyMain>
+		}
+	</ChildContent>
+</TfLayoutBody>
+

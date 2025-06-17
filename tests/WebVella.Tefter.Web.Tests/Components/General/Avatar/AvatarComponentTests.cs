@@ -3,20 +3,23 @@ public class AvatarComponentTests : BaseTest
 {
 
 	[Fact]
-	public void RendersCorrectly()
+	public async Task RendersCorrectly()
 	{
-		//Given
-		var Context = GetTestContext();
-		var cssClass = "test-avatar";
-		// Act
-		var cut = Context.RenderComponent<TfAvatar>(parameters => parameters
-		.Add(p => p.Class, cssClass)
-		);
+		using (await locker.LockAsync())
+		{
+			//Given
+			var Context = GetTestContext();
+			var cssClass = "test-avatar";
+			// Act
+			var cut = Context.RenderComponent<TfAvatar>(parameters => parameters
+			.Add(p => p.Class, cssClass)
+			);
 
-		// Assert
-		cut.Find($".{cssClass}");
+			// Assert
+			cut.Find($".{cssClass}");
 
-		Context.DisposeComponents();
+			Context.DisposeComponents();
+		}
 	}
 
 }

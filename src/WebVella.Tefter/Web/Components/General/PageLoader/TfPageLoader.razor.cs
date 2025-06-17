@@ -17,7 +17,8 @@ public partial class TfPageLoader : ComponentBase, IAsyncDisposable
 	protected override void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);
-		if(firstRender) {
+		if (firstRender)
+		{
 			Navigator.LocationChanged += Navigator_LocationChanged;
 			ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_StateChanged);
 		}

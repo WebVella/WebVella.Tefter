@@ -84,7 +84,7 @@ public partial class TfTextDisplayColumnComponent : TucBaseViewColumn<TfTextDisp
 	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
 		_initValues();
-		excelCell.SetValue(XLCellValue.FromObject(String.Join(", ",_value)));
+		excelCell.SetValue(XLCellValue.FromObject(String.Join(", ", _value)));
 	}
 	#endregion
 

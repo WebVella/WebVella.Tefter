@@ -82,7 +82,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 			Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, spaceView.SpaceId, spaceView.Id));
 		}
 	}
-	
+
 	private void onSearch(string value)
 	{
 		search = value;

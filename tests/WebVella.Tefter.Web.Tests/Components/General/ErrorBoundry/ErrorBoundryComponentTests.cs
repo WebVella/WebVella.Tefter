@@ -3,17 +3,20 @@ public class ErrorBoundryComponentTests : BaseTest
 {
 
 	[Fact]
-	public void RendersCorrectly()
+	public async Task RendersCorrectly()
 	{
-		//Given
-		var Context = GetTestContext();
-		// Act
-		var cut = Context.RenderComponent<TfErrorBoundry>();
+		using (await locker.LockAsync())
+		{
+			//Given
+			var Context = GetTestContext();
+			// Act
+			var cut = Context.RenderComponent<TfErrorBoundry>();
 
-		// Assert
-		cut.Nodes.Length.Should().Be(0);
+			// Assert
+			cut.Nodes.Length.Should().Be(0);
 
-		Context.DisposeComponents();
+			Context.DisposeComponents();
+		}
 	}
 
 }

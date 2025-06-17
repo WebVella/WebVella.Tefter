@@ -7,7 +7,7 @@
 	@if (TfAppState.Value.Route is not null && TfAppState.Value.Route.HasNode(RouteDataNode.Admin, 0))
 	{
 		<div class="title">
-			<FluentBadge Fill="somevalue" BackgroundColor="var(--tf-red-500)" Color="rgba(255,255,255,0.75)">@LOC("Admin Panel")</FluentBadge>
+			<FluentBadge Fill="somevalue" BackgroundColor="var(--tf-layout-color-accent)" Color="rgba(255,255,255,0.75)">@LOC("Admin Panel")</FluentBadge>
 		</div>
 	}
 	else if (TfAppState.Value.Route?.SpaceId is not null)

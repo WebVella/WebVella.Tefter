@@ -326,7 +326,7 @@ internal partial class AppStateUseCase
 			Name = provider.Name,
 			SettingsJson = provider.SettingsJson,
 			SynchScheduleEnabled = provider.SynchScheduleEnabled,
-			SynchScheduleMinutes = provider.SynchScheduleMinutes
+			SynchScheduleMinutes = provider.SynchScheduleMinutes,
 		};
 
 		provider = _tfService.UpdateDataProvider(submit);

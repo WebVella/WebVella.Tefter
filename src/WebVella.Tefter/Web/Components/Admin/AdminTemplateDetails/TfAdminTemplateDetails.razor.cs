@@ -36,7 +36,6 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 			_recalcSpaceDataOptions();
 			await InvokeAsync(StateHasChanged);
 		}
-
 	}
 
 	protected override void OnParametersSet()
@@ -65,7 +64,7 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 		{
 			Template = TfAppState.Value.AdminTemplateDetails
 		};
-		_dynamicComponentScope = new TfScreenRegionScope(_processor.GetType(),null);
+		_dynamicComponentScope = new TfScreenRegionScope(_processor.GetType(), null);
 	}
 
 	private async Task onUpdateClick()

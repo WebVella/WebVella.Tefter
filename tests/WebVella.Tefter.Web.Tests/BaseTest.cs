@@ -25,11 +25,14 @@ using WebVella.Tefter.Web.Store;
 using WebVella.Tefter.Web.Utils;
 using WebVella.Tefter.Services;
 using WebVella.Tefter.UseCases.Recipe;
+using WebVella.BlazorTrace;
+using System.Threading;
 
 
 namespace WebVella.Tefter.Web.Tests;
 public class BaseTest
 {
+	protected static readonly AsyncLock locker = new AsyncLock();
 	public Mock<ITfConfigurationService> TfConfigurationServiceMock;
 	public Mock<AuthenticationStateProvider> AuthenticationStateProviderMock;
 	public Mock<ILogger> LoggerMock;
@@ -49,6 +52,7 @@ public class BaseTest
 	internal Mock<IMigrationManager> MigrationManagerMock;
 	public Mock<ITfService> TfServiceMock;
 	public Mock<ITfMetaService> TfMetaServiceMock;
+	public Mock<IWvBlazorTraceService> WvBlazorTraceServiceMock;
 	//localization
 	public Mock<IStringLocalizerFactory> StringLocalizerFactoryMock;
 
@@ -165,7 +169,6 @@ public class BaseTest
 		Context.Services.AddScoped(typeof(ProtectedLocalStorage), Services => protectedSessionStorage);
 		#endregion
 
-
 		//localization
 		StringLocalizerFactoryMock = new Mock<IStringLocalizerFactory>();
 		Context.Services.AddSingleton(typeof(IStringLocalizerFactory), Services => StringLocalizerFactoryMock.Object);
@@ -185,6 +188,10 @@ public class BaseTest
 
 		InstallUseCaseMock = new Mock<RecipeUseCase>(Context.Services);
 		Context.Services.AddTransient(typeof(RecipeUseCase), Services => InstallUseCaseMock.Object);
+
+		Context.Services.AddBlazorTrace();
+		//WvBlazorTraceServiceMock = new Mock<IWvBlazorTraceService>();
+		//Context.Services.AddTransient(typeof(IWvBlazorTraceService), Services => WvBlazorTraceServiceMock.Object);
 
 		Store = Context.Services.GetRequiredService<IStore>();
 		Store.InitializeAsync().Wait();

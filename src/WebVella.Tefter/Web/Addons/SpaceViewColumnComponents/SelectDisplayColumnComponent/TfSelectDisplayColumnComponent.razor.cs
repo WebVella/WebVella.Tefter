@@ -42,9 +42,9 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 
 	#region << Properties >>
 	public override Guid AddonId { get; init; } = new Guid(ID);
-	public override string AddonName { get; init;} = NAME;
-	public override string AddonDescription { get; init;} = DESCRIPTION;
-	public override string AddonFluentIconName { get; init;} = FLUENT_ICON_NAME;
+	public override string AddonName { get; init; } = NAME;
+	public override string AddonDescription { get; init; } = DESCRIPTION;
+	public override string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
 		new Guid(TfTextViewColumnType.ID),
 	};
@@ -82,7 +82,7 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 		var contextHash = RegionContext.GetHash();
 		if (contextHash != _renderedHash)
 		{
-			_initValues();
+			await _initValues();
 			_renderedHash = contextHash;
 		}
 	}
@@ -93,7 +93,7 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
 		excelCell.SetValue(XLCellValue.FromObject(GetDataStringByAlias(VALUE_ALIAS)));
 	}
@@ -124,7 +124,7 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 			if (componentOptions.SpaceDataId != Guid.Empty)
 			{
 				var tfService = serviceProvider.GetService<ITfService>();
-			
+
 				var optionsDT = tfService.QuerySpaceData(
 					spaceDataId: componentOptions.SpaceDataId,
 					userFilters: null,
@@ -133,7 +133,7 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 					page: 1,
 					pageSize: TfConstants.SelectOptionsMaxLimit
 				);
-			
+
 				for (int i = 0; i < optionsDT.Rows.Count; i++)
 				{
 					object value = null;

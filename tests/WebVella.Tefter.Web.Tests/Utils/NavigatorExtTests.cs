@@ -19,6 +19,8 @@ public class NavigatorExtTests
 		Guid userId = Guid.NewGuid();
 		Guid roleId = Guid.NewGuid();
 		Guid providerId = Guid.NewGuid();
+		Guid sharedColumnId = Guid.NewGuid();
+		string identityId = Guid.NewGuid().ToString();
 		Guid viewId = Guid.NewGuid();
 		Guid dataId = Guid.NewGuid();
 		Guid nodeId = Guid.NewGuid();
@@ -117,6 +119,24 @@ public class NavigatorExtTests
 		result.RouteNodes[2].Should().Be(RouteDataNode.DataProviderId);
 		result.DataProviderId.Should().Be(providerId);
 
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataIdentitiesPageUrl)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(2);
+		result.RouteNodes.Count.Should().Be(2);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.DataIdentities);
+
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataIdentityDetailsPageUrl, identityId)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(3);
+		result.RouteNodes.Count.Should().Be(3);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.DataIdentities);
+		result.RouteNodes[2].Should().Be(RouteDataNode.DataIdentityId);
+		result.DataIdentityId.Should().Be(identityId);
+
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderSchemaPageUrl, providerId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
@@ -170,6 +190,16 @@ public class NavigatorExtTests
 		result.RouteNodes.Count.Should().Be(2);
 		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
 		result.RouteNodes[1].Should().Be(RouteDataNode.SharedColumns);
+
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminSharedColumnDetailsPageUrl, sharedColumnId)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(3);
+		result.RouteNodes.Count.Should().Be(3);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.SharedColumns);
+		result.RouteNodes[2].Should().Be(RouteDataNode.SharedColumnId);
+		result.SharedColumnId.Should().Be(sharedColumnId);
 		#endregion
 
 		#region << Admin FileRepository >>

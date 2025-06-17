@@ -27,7 +27,6 @@ public class TfFormBaseComponent : TfBaseComponent
 		return base.DisposeAsyncCore(disposing);
 	}
 
-
 	/// <summary>
 	/// Must be called always in the Initialize of the derivative components to init the Edit context
 	/// </summary>

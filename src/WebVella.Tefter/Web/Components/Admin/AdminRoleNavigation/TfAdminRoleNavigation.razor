@@ -19,7 +19,7 @@
 				@foreach (var item in _getRoles())
 				{
 					<FluentNavLink Href="@(string.Format(TfConstants.AdminRoleDetailsPageUrl, item.Id))" Match="@NavLinkMatch.Prefix"
-								   @key="@item.Id" Icon="@TfConstants.AdminUsersIcon">
+								   @key="@item.Id" Icon="@TfConstants.AdminRoleIcon">
 						@TfConverters.StringOverflow(item.Name, _stringLimit)
 					</FluentNavLink>
 				}
