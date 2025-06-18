@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿using Microsoft.FluentUI.AspNetCore.Components.DesignTokens;
+
+namespace WebVella.Tefter.Web.Components;
 public partial class TfLayout : ComponentBase
 {
 	[Parameter] public bool SidebarExpanded { get; set; }
@@ -6,6 +8,7 @@ public partial class TfLayout : ComponentBase
 	[Parameter] public RenderFragment Navigation { get; set; }
 	[Parameter] public RenderFragment Body { get; set; }
 	[Parameter] public TfColor Color { get; set; } = TfColor.Emerald500;
+
 	private string _styles
 	{
 		get
@@ -13,7 +16,7 @@ public partial class TfLayout : ComponentBase
 			var colorName = Color.GetAttribute().Name;
 			var sb = new StringBuilder();
 			sb.AppendLine("<style>");
-			sb.AppendLine("html:root .tf-layout__body, html:root .tf-layout__header {");
+			sb.AppendLine("html:root .tf-layout {");
 			sb.AppendLine($"--accent-base-color: var(--tf-{colorName}-500);");
 			sb.AppendLine($"--accent-fill-rest: var(--tf-{colorName}-500);");
 			sb.AppendLine($"--accent-fill-hover: var(--tf-{colorName}-600);");

@@ -63,8 +63,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Recipes", "Recipes", "{825B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Recipes.GeoTeam", "recipes\WebVella.Tefter.Recipes.GeoTeam\WebVella.Tefter.Recipes.GeoTeam.csproj", "{6D64099A-B4D7-4212-8C2D-0E80423AE923}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.BlazorTrace", "..\WebVella.BlazorTrace\src\WebVella.BlazorTrace\WebVella.BlazorTrace.csproj", "{DA3F33E4-7605-F8C1-C318-C7AE7F7EBA41}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -151,10 +149,6 @@ Global
 		{6D64099A-B4D7-4212-8C2D-0E80423AE923}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D64099A-B4D7-4212-8C2D-0E80423AE923}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D64099A-B4D7-4212-8C2D-0E80423AE923}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DA3F33E4-7605-F8C1-C318-C7AE7F7EBA41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DA3F33E4-7605-F8C1-C318-C7AE7F7EBA41}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DA3F33E4-7605-F8C1-C318-C7AE7F7EBA41}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DA3F33E4-7605-F8C1-C318-C7AE7F7EBA41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

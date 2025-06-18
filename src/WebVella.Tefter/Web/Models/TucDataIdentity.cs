@@ -2,23 +2,23 @@
 
 public record TucDataIdentity
 {
-	public string DataIdentity { get; set; }
-	public string Label { get; set; }
+	public string Name { get; set; }
+	public string Description { get; set; }
 	public bool IsSystem { get; set; }
 
 	public TucDataIdentity() { }
 	public TucDataIdentity(TfDataIdentity model)
 	{
-		DataIdentity = model.DataIdentity;
-		Label = model.Label;
+		Name = model.DataIdentity;
+		Description = model.Label;
 		IsSystem = model.IsSystem;
 
 	}
 
 	public TfDataIdentity ToModel(){ 
 		return new TfDataIdentity{ 
-			DataIdentity = DataIdentity,
-			Label = Label,
+			DataIdentity = Name,
+			Label = Description,
 		};
 	}
 }

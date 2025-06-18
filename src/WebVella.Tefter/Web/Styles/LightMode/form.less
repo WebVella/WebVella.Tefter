@@ -98,10 +98,23 @@ fluent-radio {
 	--neutral-stroke-strong-rest: var(--tf-zinc-300);
 }
 
+.fluent-input-label {
+	color: var(--neutral-foreground-hover) !important;
+}
+
+.fluent-sortable-list {
+	--fluent-sortable-list-border-color: var(--neutral-layer-4) !important;
+}
+
 .sortable-item {
 	--fluent-sortable-list-background-color: var(--neutral-fill-layer-rest);
 	--neutral-stroke-input-active: var(--neutral-fill-layer-active);
 	--neutral-layer-1: var(--neutral-fill-layer-focus);
+	--fluent-sortable-list-item-border-color: var(--neutral-layer-4);
+
+	&.sortable-ghost {
+		--fluent-sortable-list-item-drop-color: var(--neutral-layer-4);
+	}
 }
 
 

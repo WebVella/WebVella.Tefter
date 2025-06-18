@@ -117,79 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Are you sure that you need this column deleted?" xml:space="preserve">
-    <value>Сигурни ли сте, че искате да изтриете тази колона?</value>
+  <data name="Edit" xml:space="preserve">
+    <value>Редактирай</value>
   </data>
-  <data name="Are you sure that you need this key deleted?" xml:space="preserve">
-    <value>Сигурни ли сте, че искате да изтриете този ключ?</value>
+  <data name="Locked" xml:space="preserve">
+    <value>Заключено</value>
   </data>
-  <data name="Column successfully updated!" xml:space="preserve">
-    <value>Колоната е редактирана успешно!</value>
+  <data name="System roles cannot be managed" xml:space="preserve">
+    <value>Системните роли не могат да бъдат променяни</value>
   </data>
-  <data name="Delete column" xml:space="preserve">
-    <value>Изтриване на колоната</value>
-  </data>
-  <data name="Delete key" xml:space="preserve">
-    <value>Изтриване на ключ</value>
-  </data>
-  <data name="Edit column" xml:space="preserve">
-    <value>Редакция на колоната</value>
-  </data>
-  <data name="Edit key" xml:space="preserve">
-    <value>Редакция на ключ</value>
-  </data>
-  <data name="Missing Synchronization Key" xml:space="preserve">
-    <value>Липсващ ключ за синхронизация</value>
-  </data>
-  <data name="No keys" xml:space="preserve">
-    <value>Няма ключове</value>
-  </data>
-  <data name="No shared columns are matching any of the join keys for this data source" xml:space="preserve">
-    <value>Няма споделени колони, които да използват свързващ ключ на този източник</value>
-  </data>
-  <data name="No shared columns matched" xml:space="preserve">
-    <value>Няма споделени колони</value>
-  </data>
-  <data name="No join keys are created yet for this data provider" xml:space="preserve">
-    <value>Все още няма създадени свързващи ключове за този доставчик на данни</value>
-  </data>
-  <data name="Join key" xml:space="preserve">
-    <value>Свързващ ключ</value>
-  </data>
-  <data name="The column is successfully deleted!" xml:space="preserve">
-    <value>Колоната е успешно изтрита!</value>
-  </data>
-  <data name="The key is successfully deleted!" xml:space="preserve">
-    <value>Ключът е успешно изтрит!</value>
-  </data>
-  <data name="The key was successfully updated!" xml:space="preserve">
-    <value>Ключът е редактиран успешно!</value>
-  </data>
-  <data name="This data source is missing its syncronization key. No data syncronization is possible until this key is created. Once you have added the schema columns, you can do that in the next 'Join Keys' tab." xml:space="preserve">
-    <value>За този доставчик на данни все още няма създаден синхронизационен ключ. Синхронизацията на данни е невъзможно без него. Щом добавите колони в схемата, може да го създадете в следващото меню 'Свързващи ключове'.</value>
-  </data>
-  <data name="This will delete all related data too!" xml:space="preserve">
-    <value>Това ще изтрие и всички свързани данни!</value>
-  </data>
-  <data name="Columns that match one of the join keys implemented for this data source" xml:space="preserve">
-    <value>Колони, които съвпадат с един от ключовете за присъединяване, имплементирани за този източник на данни</value>
-  </data>
-  <data name="Implemented Data Identities" xml:space="preserve">
-    <value>Приложени Идентификатори на данни</value>
-  </data>
-  <data name="Joined Shared columns" xml:space="preserve">
-    <value>Свързани споделени колони</value>
-  </data>
-  <data name="For data from different providers to be joined, they must implement at least one common join key." xml:space="preserve">
-    <value>За да могат данните от различни доставчици да бъдат обединени, те трябва да реализират поне един общ ключ за присъединяване.</value>
-  </data>
-  <data name="Joined Data providers" xml:space="preserve">
-    <value>Свързани източници на данни</value>
-  </data>
-  <data name="No data providers can be joined" xml:space="preserve">
-    <value>Няма свързани източници на данни</value>
-  </data>
-  <data name="When data providers share at least one common join key, their data can be joined. Only the data from the primary provider is modifiable." xml:space="preserve">
-    <value>Когато доставчиците на данни споделят поне един общ ключ за присъединяване, техните данни могат да бъдат обединени. Могат да се променят само данните от основния доставчик.</value>
+  <data name="User successfully updated" xml:space="preserve">
+    <value>Потребителят е успешно редактиран</value>
   </data>
 </root>

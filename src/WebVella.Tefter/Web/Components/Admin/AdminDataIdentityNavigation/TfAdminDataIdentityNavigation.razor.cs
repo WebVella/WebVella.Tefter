@@ -16,7 +16,8 @@ public partial class TfAdminDataIdentityNavigation : TfBaseComponent
 
 	private async Task onAddClick()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TfDataProviderManageDialog>(new TucDataProvider(), new DialogParameters()
+		var dialog = await DialogService.ShowDialogAsync<TfDataIdentityManageDialog>(
+			new TucDataIdentity(), new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
@@ -26,22 +27,22 @@ public partial class TfAdminDataIdentityNavigation : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var provider = (TucDataProvider)result.Data;
-			Navigator.NavigateTo(string.Format(TfConstants.AdminDataProviderDetailsPageUrl, provider.Id));
+			var item = (TucDataIdentity)result.Data;
+			Navigator.NavigateTo(string.Format(TfConstants.AdminDataIdentityDetailsPageUrl, item.Name));
 		}
 	}
-	private List<TucDataProvider> _getProviders()
+	private List<TucDataIdentity> _getIdentities()
 	{
 		search = search?.Trim().ToLowerInvariant();
-		var menuItems = new List<TucDataProvider>();
-		foreach (var provider in TfAppState.Value.AdminDataProviders)
+		var menuItems = new List<TucDataIdentity>();
+		foreach (var identity in TfAppState.Value.AdminDataIdentities)
 		{
 			if (!String.IsNullOrWhiteSpace(search) &&
-				!(provider.Name.ToLowerInvariant().Contains(search))
+				!(identity.Description.ToLowerInvariant().Contains(search))
 				)
 				continue;
 
-			menuItems.Add(provider);
+			menuItems.Add(identity);
 		}
 
 		return menuItems;

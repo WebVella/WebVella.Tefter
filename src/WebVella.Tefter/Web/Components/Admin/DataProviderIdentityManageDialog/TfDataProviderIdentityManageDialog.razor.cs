@@ -1,10 +1,10 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Admin.DataProviderKeyManageDialog.TfDataProviderKeyManageDialog", "WebVella.Tefter")]
-public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderJoinKey>
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.DataProviderIdentityManageDialog.TfDataProviderIdentityManageDialog", "WebVella.Tefter")]
+public partial class TfDataProviderIdentityManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderIdentity>
 {
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] private IState<TfAppState> TfAppState { get; set; }
-	[Parameter] public TucDataProviderJoinKey Content { get; set; }
+	[Parameter] public TucDataProviderIdentity Content { get; set; }
 
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
@@ -14,10 +14,11 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 	private string _btnText = "";
 	private Icon _iconBtn;
 
-	private List<TucDataProviderColumn> _providerColumns = new();
-	private TucDataProviderJoinKeyForm _form = new();
+	private List<string> _providerColumns = new();
+	private TucDataProviderIdentity _form = new();
 
-	private List<string> _allJoinKeys = new();
+	private List<string> _identityOptions = new();
+	private List<TucDataIdentity> _allDataIdentities = new();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -32,15 +33,20 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		{
 			_isCreate = true;
 		}
-		_title = _isCreate ? LOC("Create key") : LOC("Manage key");
+		_title = _isCreate ? LOC("Create identity implementation") : LOC("Manage identity implementation");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
-		_allJoinKeys = await UC.GetAllJoinKeysAsync();
-		_providerColumns = TfAppState.Value.AdminDataProvider.Columns.OrderBy(x => x.DbName).ToList();
+		_allDataIdentities = await UC.GetDataIdentitiesAsync();
+		_providerColumns = TfAppState.Value.AdminDataProvider.Columns.OrderBy(x => x.DbName).Select(x => x.DbName).ToList();
+		_identityOptions = _allDataIdentities
+			.Where(x=> !TfAppState.Value.AdminDataProvider.Identities.Any(y=> y.Name == x.Name))
+			.Select(x=> x.Name).ToList();
+
+
 		//Setup form
 		if (_isCreate)
 		{
-			_form = new TucDataProviderJoinKeyForm
+			_form = new TucDataProviderIdentity
 			{
 				Id = Guid.NewGuid(),
 				DataProviderId = TfAppState.Value.AdminDataProvider.Id,
@@ -48,8 +54,10 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		}
 		else
 		{
-			_form = new TucDataProviderJoinKeyForm(Content);
-			_providerColumns = _providerColumns.Where(x => !_form.Columns.Any(y => y.Id == x.Id)).ToList();
+			_identityOptions.Add(Content.Name);
+			_identityOptions = _identityOptions.Order().ToList();
+			_form = new TucDataProviderIdentity(Content);
+			_providerColumns = _providerColumns.Where(x => !_form.Columns.Any(y => y == x)).ToList();
 		}
 		base.InitForm(_form);
 	}
@@ -78,11 +86,11 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 			};
 			if (_isCreate)
 			{
-				provider = UC.CreateDataProviderKey(submit);
+				provider = UC.CreateDataProviderIdentity(submit);
 			}
 			else
 			{
-				provider = UC.UpdateDataProviderKey(submit);
+				provider = UC.UpdateDataProviderIdentity(submit);
 			}
 
 			await Dialog.CloseAsync(provider);

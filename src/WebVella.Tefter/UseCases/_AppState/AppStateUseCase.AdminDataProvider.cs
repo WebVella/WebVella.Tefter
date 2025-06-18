@@ -427,6 +427,28 @@ internal partial class AppStateUseCase
 		return new TucDataProvider(result);
 	}
 
+	//Data identity
+	internal virtual TucDataProvider CreateDataProviderIdentity(
+		TucDataProviderIdentity form)
+	{
+		var result = _tfService.CreateDataProviderIdentity(form.ToModel());
+		return new TucDataProvider(result);
+	}
+
+	internal virtual TucDataProvider UpdateDataProviderIdentity(
+		TucDataProviderIdentity form)
+	{
+		var result = _tfService.UpdateDataProviderIdentity(form.ToModel());
+		return new TucDataProvider(result);
+	}
+
+	internal TucDataProvider DeleteDataProviderIdentity(
+		Guid providerIdentityId)
+	{
+		var result = _tfService.DeleteDataProviderIdentity(providerIdentityId);
+		return new TucDataProvider(result);
+	}
+
 	//Data synchronization
 	internal virtual Task<List<TucDataProviderSyncTask>> GetDataProviderSynchronizationTasks(
 		Guid providerId)

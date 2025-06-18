@@ -17,16 +17,22 @@
 					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value.AdminManagedRole?.Name"
 									 ReadOnly="true" Label="@LOC("Email")" Style="width:100%" />
 				</FluentGridItem>
-				<FluentGridItem xs="1">
+				<FluentGridItem xs="6">
 					<FluentInputLabel>@LOC("Type")</FluentInputLabel>
-					@if (TfAppState.Value.AdminManagedRole?.IsSystem ?? false)
-					{
-						<FluentBadge Appearance="Appearance.Accent" Class="input-badge">system role</FluentBadge>
-					}
-					else
-					{
-						<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">user created</FluentBadge>
-					}
+					<TfPlainTextField>
+						<FluentStack VerticalAlignment="@VerticalAlignment.Center" Class="fluent-plaintext-field">
+							@if (TfAppState.Value.AdminManagedRole?.IsSystem ?? false)
+							{
+								<FluentIcon Value="@TfConstants.GetIcon("ShieldError").WithColor(Color.Accent)"></FluentIcon>
+								<span>@LOC("system role")</span>
+							}
+							else
+							{
+								<FluentIcon Value="@TfConstants.GetIcon("Person").WithColor(Color.Info)"></FluentIcon>
+								<span>@LOC("user created")</span>
+							}
+						</FluentStack>
+					</TfPlainTextField>
 				</FluentGridItem>
 			</FluentGrid>
 		</ChildContent>
@@ -100,7 +106,7 @@
 											}
 											else
 											{
-												<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _removeUser(context))" Title="@LOC("Remove the user")"
+												<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _removeUser(context))" Title="@LOC("Remove the user")"
 															  Disabled="_submitting">
 													<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" Slot="start" />
 													<span>@LOC("remove")</span>

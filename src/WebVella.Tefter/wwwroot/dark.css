@@ -323,10 +323,10 @@ html:root {
   --neutral-foreground-active: var(--tf-zinc-500);
   --neutral-foreground-focus: var(--tf-zinc-300);
   --neutral-foreground-hint: var(--tf-zinc-500);
-  --neutral-stroke-rest: var(--tf-zinc-600);
-  --neutral-stroke-hover: var(--tf-zinc-400);
-  --neutral-stroke-active: var(--tf-zinc-300);
-  --neutral-stroke-focus: var(--tf-zinc-500);
+  --neutral-stroke-rest: var(--tf-zinc-700);
+  --neutral-stroke-hover: var(--tf-zinc-500);
+  --neutral-stroke-active: var(--tf-zinc-400);
+  --neutral-stroke-focus: var(--tf-zinc-600);
   --neutral-stroke-control-rest: linear-gradient(var(--tf-zinc-100) 90%, var(--tf-zinc-700) 100%);
   --neutral-stroke-control-hover: linear-gradient(var(--tf-zinc-200) 90%, var(--tf-zinc-800) 100%);
   --neutral-stroke-control-active: var(--tf-zinc-200);
@@ -517,10 +517,17 @@ fluent-radio {
 .fluent-input-label {
   color: var(--neutral-foreground-hover) !important;
 }
+.fluent-sortable-list {
+  --fluent-sortable-list-border-color: var(--neutral-layer-4) !important;
+}
 .sortable-item {
   --fluent-sortable-list-background-color: var(--neutral-fill-layer-rest);
   --neutral-stroke-input-active: var(--neutral-fill-layer-active);
   --neutral-layer-1: var(--neutral-fill-layer-focus);
+  --fluent-sortable-list-item-border-color: var(--neutral-layer-4);
+}
+.sortable-item.sortable-ghost {
+  --fluent-sortable-list-item-drop-color: var(--neutral-layer-4);
 }
 fluent-button:hover {
   background: rgba(255, 255, 255, 0.05);
@@ -618,8 +625,7 @@ fluent-data-grid-row:has([row-selected]) {
   --tf-td-color-slate: var(--tf-slate-600);
   --tf-td-fill-slate: color-mix(in srgb, var(--tf-slate-700) 20%, var(--neutral-fill-layer-rest) 80%);
 }
-.tf-layout__body,
-.tf-layout__header {
+.tf-layout {
   --tf-layout-color-mute: color-mix(in srgb, var(--accent-base-color) 10%, var(--neutral-fill-layer-rest) 90%);
   --tf-layout-color: color-mix(in srgb, var(--accent-base-color) 5%, var(--neutral-fill-layer-rest) 95%);
   --tf-layout-color-accent: color-mix(in srgb, var(--accent-base-color) 30%, var(--neutral-fill-layer-rest) 70%);

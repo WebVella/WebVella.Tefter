@@ -3,7 +3,7 @@
 
 @if (SidebarExpanded.Value)
 {
-	var providers = _getProviders();
+	var items = _getIdentities();
 	<TfLayoutBodyAside>
 		<Toolbar>
 			<div class="tf-sidetoolbar">
@@ -14,25 +14,25 @@
 				<div class="tf-sidetoolbar__actions">
 					<FluentButton Title="@LOC("Create Data provider")"
 								  IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)"
-								  OnClick="onAddClick" Appearance="@Appearance.Outline">@LOC("new")</FluentButton>
+								  OnClick="onAddClick" Appearance="@Appearance.Outline">@LOC("Identity")</FluentButton>
 				</div>
 			</div>
 		</Toolbar>
 		<ChildContent>
 			<FluentNavMenu Class="tf-sidenav">
-				@foreach (var item in providers)
+				@foreach (var item in items)
 				{
-					<FluentNavLink Href="@(string.Format(TfConstants.AdminDataProviderDetailsPageUrl, item.Id))" Match="@NavLinkMatch.Prefix"
-								   @key="@item.Id" Icon="@TfConstants.AdminDataProvidersIcon">
+					<FluentNavLink Href="@(string.Format(TfConstants.AdminDataIdentityDetailsPageUrl, item.Name))" Match="@NavLinkMatch.Prefix"
+								   @key="@item.Name" Icon="@TfConstants.AdminDataIdentityIcon">
 						@TfConverters.StringOverflow(item.Name, _stringLimit)
 					</FluentNavLink>
 				}
-				@if (providers.Count == 0)
+				@if (items.Count == 0)
 				{
 					<div style="padding-left:5px;padding-top:5px">@LOC("no items")</div>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="onAddClick" Style="margin-top:1rem;">
 						<FluentIcon Slot="start" Value="@TfConstants.AddIcon" Color="@Color.Accent" />
-						@LOC("Create Data provider")
+						@LOC("Create Data Identity")
 					</FluentButton>
 				}
 			</FluentNavMenu>

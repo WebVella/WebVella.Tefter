@@ -84,12 +84,14 @@
 		<PackageReference Include="System.IO.Packaging" Version="9.0.6" />
 		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.6" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
-		<PackageReference Include="WebVella.BlazorTrace" Version="1.0.8" />
+		<PackageReference Include="WebVella.BlazorTrace" Version="1.0.9" />
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\WebVella.BlazorTrace\src\WebVella.BlazorTrace\WebVella.BlazorTrace.csproj" />
+	  <EmbeddedResource Update="Web\Components\Admin\DataIdentityManageDialog\TfDataIdentityManageDialog.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

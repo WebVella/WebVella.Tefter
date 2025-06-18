@@ -21,35 +21,29 @@
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentCombobox TOption="string"
-									Autocomplete="ComboboxAutocomplete.Both"
-									Items="_allJoinKeys"
-									Height="@TfConstants.ComboPanelHeight"
-									@bind-Value=@_form.DbName
-									Placeholder="@LOC("select or add...")"
-									Label="@LOC("Name")" Style="width:100%" />
-					<FluentValidationMessage For="@(() => _form.DbName)" />
+					<FluentSelect TOption="string"
+								  Items="_identityOptions"
+								  OptionSelected="(x => x == _form.Name)"
+								  @bind-SelectedOption="@_form.Name" 
+								  Placeholder="@LOC("select identity...")"
+								  Label="@LOC("Data Identity")" Style="width:100%" />
+					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
-				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Description
-									 Label="@LOC("Description")" Style="width:100%"
-									 AutoComplete="off" />
-					<FluentValidationMessage For="@(() => _form.Description)" />
-				</FluentGridItem>
+				<FluentGridItem xs="6"></FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Selected Columns")" />
 					<FluentSortableList Id="selection" Group="selection"
 										Style="height:200px;overflow-y:scroll;overflow-x:hidden"
-										TItem="TucDataProviderColumn"
+										TItem="string"
 										OnUpdate="@onSelectionUpdate" OnRemove="@onSelectionRemove"
 										Items="@_form.Columns" Context="item">
 						<ItemTemplate>
 							<div class="sortable-grab">
 								<FluentIcon Value="@TfConstants.GetIcon("ArrowMove")" />
 							</div>
-							<div class="sortable-item-content" style="flex-grow: 1;">@item.DbName</div>
+							<div class="sortable-item-content" style="flex-grow: 1;">@item</div>
 						</ItemTemplate>
 					</FluentSortableList>
 					<FluentValidationMessage For="@(() => _form.Columns)" />
@@ -59,14 +53,14 @@
 					<FluentSortableList Id="provider" Group="provider"
 										Sort="false"
 										Style="height:200px;overflow-y:scroll;overflow-x:hidden"
-										TItem="TucDataProviderColumn"
+										TItem="string"
 										OnRemove="@onProviderRemove"
 										Items="@_providerColumns" Context="item">
 						<ItemTemplate>
 							<div class="sortable-grab">
 								<FluentIcon Value="@TfConstants.GetIcon("ArrowMove")" />
 							</div>
-							<div class="sortable-item-content" style="flex-grow: 1;">@item.DbName</div>
+							<div class="sortable-item-content" style="flex-grow: 1;">@item</div>
 						</ItemTemplate>
 					</FluentSortableList>
 				</FluentGridItem>

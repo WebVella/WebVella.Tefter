@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Pages
 @page "/admin/data-identities"
-@page "/admin/data-identities/{DataIdentityId}/{*Path}"
+@page "/admin/data-identities/{DataIdentityId}"
 
 @layout AdminLayout
 @inherits TfBasePage
@@ -14,7 +14,7 @@
 		{
 			<TfLayoutBodyMain>
 				<Header>
-					<TfPageHeader>@LOC("Data Identities")</TfPageHeader>
+					<TfPageHeader>@LOC(TfConstants.AdminDataIdentitiesMenuTitle)</TfPageHeader>
 				</Header>
 				<ChildContent>
 					<FluentMessageBar Title="No Data Identities found" AllowDismiss="false"
@@ -28,10 +28,10 @@
 		{
 			<TfLayoutBodyMain>
 				<Header>
-					<TfPageHeader>@LOC(TfConstants.AdminDataIdentitiesMenuTitle)</TfPageHeader>
+					<TfPageHeader>@TfAppState.Value.AdminDataIdentity.Name</TfPageHeader>
 				</Header>
 				<ChildContent>
-					<div>DataIdentity</div>
+					<TfAdminDataIdentityDetails/>
 				</ChildContent>
 			</TfLayoutBodyMain>
 		}
