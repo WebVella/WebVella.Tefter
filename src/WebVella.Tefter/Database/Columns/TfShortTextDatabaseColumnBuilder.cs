@@ -61,7 +61,7 @@ public class TfShortTextDatabaseColumnBuilder : TfDatabaseColumnBuilder
 			throw new ArgumentNullException(nameof(columns), "The columns array cannot be null or empty.");
 
 		_generatedExpression = string.Format( TfConstants.DB_SHORT_TEXT_COLUMN_SHA1_FROM_COLUMNS_VALUE,
-			string.Join(",", columns));
+			string.Join(",", columns.Select( x=> x + "::TEXT") ));
 
 		return this;
 	}

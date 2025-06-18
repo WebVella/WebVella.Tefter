@@ -20,7 +20,7 @@ internal static class TfDatabaseSqlProvider
 		sb.AppendLine();
 
 		sb.AppendLine(@"
-CREATE OR REPLACE FUNCTION _tefter_gen_sha1(col_values anyarray)
+CREATE OR REPLACE FUNCTION _tefter_gen_sha1(col_values TEXT[])
 RETURNS TEXT AS $$
 BEGIN
     RETURN encode(digest(array_to_string(col_values, ''), 'sha1'), 'hex');
