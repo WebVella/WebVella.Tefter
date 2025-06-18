@@ -44,6 +44,7 @@ public partial class TfServiceTest : BaseTest
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				provider.Identities.Count().Should().Be(2); //include system identity
+				provider.Identities.Single(x => x.DataIdentity == dataIdentity.DataIdentity).Columns.Count().Should().Be(provider.Columns.Count());
 
 				var tables = dbManager.GetDatabaseBuilder().Build();
 				var table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
@@ -55,6 +56,7 @@ public partial class TfServiceTest : BaseTest
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				provider.Identities.Count().Should().Be(2); //include system identity
+				provider.Identities.Single(x => x.DataIdentity == dataIdentity.DataIdentity).Columns.Count().Should().Be(1);
 
 
 				task = Task.Run(() => { provider = tfService.DeleteDataProviderIdentity(dataProviderIdentityModel.Id); });
