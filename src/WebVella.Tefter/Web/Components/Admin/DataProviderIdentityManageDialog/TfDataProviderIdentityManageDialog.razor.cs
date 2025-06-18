@@ -33,7 +33,7 @@ public partial class TfDataProviderIdentityManageDialog : TfFormBaseComponent, I
 		{
 			_isCreate = true;
 		}
-		_title = _isCreate ? LOC("Create implementation") : LOC("Manage implementation");
+		_title = _isCreate ? LOC("Create identity implementation") : LOC("Manage identity implementation");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
 		_allDataIdentities = await UC.GetDataIdentitiesAsync();

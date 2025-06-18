@@ -16,15 +16,19 @@
 	</TitleTemplate>
 	<ChildContent>
 		<FluentGrid>
-			<FluentGridItem xs="5">
+			<FluentGridItem xs="3">
 				<FluentTextField Value="@(TfAppState.Value.AdminSharedColumn?.DbName)"
 								 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" Disabled="true" />
 			</FluentGridItem>
-			<FluentGridItem xs="5">
+			<FluentGridItem xs="3">
 				<FluentTextField Value="@(TfAppState.Value.AdminSharedColumn.DbType?.Name)"
 								 Label="@LOC("Data type")" Style="width:100%" ReadOnly="true" Disabled="true" />
 			</FluentGridItem>
-			<FluentGridItem xs="2">
+			<FluentGridItem xs="3">
+				<FluentTextField Value="@(TfAppState.Value.AdminSharedColumn.DataIdentity)"
+								 Label="@LOC("Data Identity")" Style="width:100%" ReadOnly="true" Disabled="true" />
+			</FluentGridItem>
+			<FluentGridItem xs="3">
 				<FluentInputLabel Label="@LOC("Global search")" />
 				<div>
 					@if (TfAppState.Value.AdminSharedColumn?.IncludeInTableSearch ?? false)
