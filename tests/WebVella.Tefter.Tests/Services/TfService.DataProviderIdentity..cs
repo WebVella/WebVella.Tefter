@@ -37,7 +37,7 @@ public partial class TfServiceTest : BaseTest
 						Id = Guid.NewGuid(),
 						DataProviderId = provider.Id,
 						DataIdentity = dataIdentity.DataIdentity,
-						Columns = provider.Columns.Select(x=>x.DbName).ToList()
+						Columns = provider.Columns.Select(x => x.DbName).ToList()
 					};
 
 				task = Task.Run(() => { provider = tfService.CreateDataProviderIdentity(dataProviderIdentityModel); });
@@ -49,6 +49,13 @@ public partial class TfServiceTest : BaseTest
 				var table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
 				table.Should().NotBeNull();
 				table.Columns.Any(x => x.Name == $"tf_ide_{dataProviderIdentityModel.DataIdentity}").Should().BeTrue();
+
+				dataProviderIdentityModel.Columns = new List<string> { provider.Columns.Last().DbName };
+				task = Task.Run(() => { provider = tfService.UpdateDataProviderIdentity(dataProviderIdentityModel); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				provider.Identities.Count().Should().Be(2); //include system identity
+
 
 				task = Task.Run(() => { provider = tfService.DeleteDataProviderIdentity(dataProviderIdentityModel.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
@@ -335,6 +342,26 @@ public partial class TfServiceTest : BaseTest
 			PreferredSearchType = TfDataProviderColumnSearchType.Contains
 		};
 
-		return tfService.CreateDataProviderColumn(column2);
+		tfService.CreateDataProviderColumn(column2);
+
+		TfDataProviderColumn column3 = new TfDataProviderColumn
+		{
+			Id = Guid.NewGuid(),
+			AutoDefaultValue = true,
+			DefaultValue = null,
+			DataProviderId = provider.Id,
+			DbName = $"dp{provider.Index}_db_column3",
+			DbType = TfDatabaseColumnType.Integer,
+			SourceName = "source_column3",
+			SourceType = "INTEGER",
+			IncludeInTableSearch = false,
+			IsNullable = true,
+			IsSearchable = true,
+			IsSortable = true,
+			IsUnique = true,
+			PreferredSearchType = TfDataProviderColumnSearchType.Contains
+		};
+
+		return tfService.CreateDataProviderColumn(column3);
 	}
 }
