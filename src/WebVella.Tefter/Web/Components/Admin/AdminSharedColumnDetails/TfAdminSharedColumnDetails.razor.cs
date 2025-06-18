@@ -6,6 +6,15 @@ public partial class TfAdminSharedColumnDetails : TfBaseComponent
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	private bool _isDeleting = false;
+
+	internal List<TucDataProvider> _dataProviders = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		_dataProviders = await UC.GetDataProvidersJoinedToSharedColumn(TfAppState.Value.AdminSharedColumn?.Id);
+	}
+
 	private async Task _editColumn()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSharedColumnManageDialog>(
@@ -56,5 +65,16 @@ public partial class TfAdminSharedColumnDetails : TfBaseComponent
 			_isDeleting = false;
 			await InvokeAsync(StateHasChanged);
 		}
+	}
+
+	private string _getProviderImplementation(TucDataProvider provider){ 
+		if(provider is null || provider.Identities is null || provider.Identities.Count == 0)
+			return null;
+
+		var implementation = provider.Identities.FirstOrDefault(x=> x.Name == TfAppState.Value.AdminSharedColumn?.DataIdentity);
+		if(implementation == null) 
+			return null;
+
+		return String.Join(", ", implementation.Columns);
 	}
 }

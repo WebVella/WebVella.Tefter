@@ -172,4 +172,22 @@ internal partial class AppStateUseCase
 			return null;
 		}
 	}
+
+	internal virtual async Task<List<TucDataProvider>> GetDataProvidersJoinedToSharedColumn(Guid? sharedColumnId)
+	{
+		var result = new List<TucDataProvider>();
+		if (sharedColumnId is null) return result;
+		var sharedColumn = GetSharedColumn(sharedColumnId.Value);
+		if (sharedColumn is null)
+			throw new Exception("Shared column not found");
+		var allProviders = await GetDataProvidersAsync();
+		foreach (var item in allProviders)
+		{
+			if (item.Identities is null || item.Identities.Count == 0) continue;
+			if (!item.Identities.Any(x => x.Name == sharedColumn.DataIdentity)) continue;
+			result.Add(item);
+		}
+
+		return result.OrderBy(x => x.Name).ToList();
+	}
 }

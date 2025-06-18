@@ -231,7 +231,7 @@ public partial class TfService : ITfService
 					});
 
 				_dbManager.SaveChanges(dbBuilder);
-
+				scope.Complete();
 				return GetDataProvider(dataIdentity.DataProviderId);
 			}
 		}

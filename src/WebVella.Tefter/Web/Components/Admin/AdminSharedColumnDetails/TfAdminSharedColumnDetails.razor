@@ -44,3 +44,50 @@
 		</FluentGrid>
 	</ChildContent>
 </TfCard>
+
+<TfCard Style="margin-top:30px;">
+	<TitleTemplate>
+		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+			<h3>@LOC("Joined Data Providers")</h3>
+		</FluentStack>
+	</TitleTemplate>
+	<ChildContent>
+		@if (TfAppState.Value.AdminDataIdentity?.IsSystem ?? false)
+		{
+			<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss=false>@LOC("System Identity! All objects in Tefter implement this identity by using their row id")</FluentMessageBar>
+		}
+		else if (_dataProviders.Count == 0)
+		{
+			<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false>@LOC("No data providers implement the identity")</FluentMessageBar>
+		}
+		else
+		{
+			<div class="tf-grid-wrapper">
+				<table class="tf-grid">
+					<thead class="tf-grid-thead">
+						<tr class="tf-grid-thead-bkg"></tr>
+						<tr class="tf-grid-tr">
+							<th class="tf-grid-th">name</th>
+							<th class="tf-grid-th">columns</th>
+						</tr>
+					</thead>
+					<tbody class="tf-grid-tbody">
+						@foreach (var context in _dataProviders)
+						{
+							<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+								<td class="tf-grid-td">
+									<div>@context.Name</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>
+										@_getProviderImplementation(context)
+									</div>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</ChildContent>
+</TfCard>
