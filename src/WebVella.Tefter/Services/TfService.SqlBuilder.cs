@@ -484,9 +484,7 @@ public partial class TfService : ITfService
 					.Distinct().ToList();
 
 			string joins = string.Join(Environment.NewLine, columnsToJoin
-					.Select(x => $"	LEFT OUTER JOIN {x.TableName} {x.TableAlias} ON " +
-					$"{x.TableAlias}.data_identity_value = {_tableAlias}.tf_ide_{x.DataIdentity} AND " +
-					$"{x.TableAlias}.shared_column_id = '{x.Id}'").ToList());
+					.Select(x => GenerateJoinSqlForColumn(x) ).ToList());
 
 			if (!string.IsNullOrEmpty(joins.Trim()))
 				sb.Append($"{Environment.NewLine}{joins}");
@@ -506,6 +504,24 @@ public partial class TfService : ITfService
 			}
 
 			return (sb.ToString(), parameters, _page, _pageSize);
+		}
+
+		private string GenerateJoinSqlForColumn( SqlBuilderColumn column )
+		{
+			if (column.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY)
+			{
+				return
+					$"LEFT OUTER JOIN {column.TableName} {column.TableAlias} ON " +
+					$"{column.TableAlias}.data_identity_value = {_tableAlias}.tf_ide_{column.DataIdentity} AND " +
+					$"{column.TableAlias}.shared_column_id = '{column.Id}'";
+			}
+			else
+			{
+				return
+					$"LEFT OUTER JOIN {column.TableName} {column.TableAlias} ON " +
+					$"{column.TableAlias}.data_identity_value = {_tableAlias}.tf_row_id AND " +
+					$"{column.TableAlias}.shared_column_id = '{column.Id}'";
+			}
 		}
 
 		private string GenerateSortSql()
