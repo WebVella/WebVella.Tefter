@@ -7,7 +7,7 @@ public partial class TfSpaceNodeDetails : TfBaseComponent
 	[Inject] protected IStateSelection<TfUserState, bool> SidebarExpanded { get; set; }
 
 	private bool _isRemoving = false;
-	private bool _showManageButtons = false;
+	//private bool _showManageButtons = false;
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();

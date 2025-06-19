@@ -148,6 +148,7 @@ public partial class TfNumberEditColumnComponent : TucBaseViewColumn<TfNumberEdi
 
 	private void _initValues()
 	{
+		if(RegionContext.Mode != TfComponentPresentationMode.Display) return;
 		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
 		if (column is null)
 			throw new Exception("Column not found");

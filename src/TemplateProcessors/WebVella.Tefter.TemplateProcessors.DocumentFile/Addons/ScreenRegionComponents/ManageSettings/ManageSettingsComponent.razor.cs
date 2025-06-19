@@ -20,7 +20,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorManageSettingsScreenRegionContext RegionContext { get; init; }
+	[Parameter] public TfTemplateProcessorManageSettingsScreenRegionContext? RegionContext { get; init; }
 
 	private DocumentFileTemplateSettings _form = new();
 	private string _downloadUrl
@@ -48,7 +48,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		if (RegionContext.Template.SettingsJson != JsonSerializer.Serialize(_form))
+		if (RegionContext!.Template.SettingsJson != JsonSerializer.Serialize(_form))
 		{
 			_form = String.IsNullOrWhiteSpace(RegionContext.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(RegionContext.Template.SettingsJson) ?? new();
 			base.InitForm(_form);
@@ -93,7 +93,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	}
 	private async Task _valueChanged()
 	{
-		RegionContext.Template.SettingsJson = JsonSerializer.Serialize(_form);
+		RegionContext!.Template.SettingsJson = JsonSerializer.Serialize(_form);
 		await RegionContext.SettingsJsonChanged.InvokeAsync(RegionContext.Template.SettingsJson);
 	}
 

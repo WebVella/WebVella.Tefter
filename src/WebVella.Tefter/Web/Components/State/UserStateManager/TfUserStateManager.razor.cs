@@ -5,7 +5,7 @@ public partial class TfUserStateManager : FluxorComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] public IActionSubscriber ActionSubscriber { get; set; }
-	[Inject] public IWvBlazorTraceService WvBlazorTraceService { get; set; }
+	//[Inject] public IWvBlazorTraceService WvBlazorTraceService { get; set; }
 	[Inject] public IDispatcher Dispatcher { get; set; }
 	[Inject] public TfUserEventProvider TfUserEventProvider { get; set; }
 	[Inject] protected NavigationManager Navigator { get; set; }
@@ -35,7 +35,7 @@ public partial class TfUserStateManager : FluxorComponent
 	}
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		WvBlazorTraceService.OnSignal(this,signalName:"user-state-refresh");
+		//WvBlazorTraceService.OnSignal(this,signalName:"user-state-refresh");
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{

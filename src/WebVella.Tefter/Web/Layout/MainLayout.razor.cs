@@ -7,7 +7,6 @@ public partial class MainLayout : FluxorLayout
 	[Inject] protected IStateSelection<TfUserState, TfColor> ThemeColor { get; set; }
 	[Inject] protected IStateSelection<TfAppState, RouteDataNode?> FirstRouteNode { get; set; }
 	[Inject] protected IStateSelection<TfAppState, TfColor> SpaceColor { get; set; }
-	[Inject] protected IWvBlazorTraceService WvBlazorTraceService { get; set; }
 	[Inject] protected NavigationManager Navigator { get; set; }
 	[Inject] public IActionSubscriber ActionSubscriber { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
@@ -35,7 +34,6 @@ public partial class MainLayout : FluxorLayout
 
 	protected override void OnAfterRender(bool firstRender)
 	{
-		WvBlazorTraceService.OnSignal(this,signalName:"layout-refresh");
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{

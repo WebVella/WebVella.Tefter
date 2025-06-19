@@ -95,7 +95,8 @@
 									<tr @key=row.Id class="tf-grid-tr">
 										<td class="tf-grid-td">
 											<div>
-												<FluentButton IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" OnClick="@(_=> _removeItem(row))" />
+												<FluentButton Appearance=@Appearance.Outline IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" 
+													OnClick="@(_=> _removeItem(row))" />
 											</div>
 										</td>
 										<td class="tf-grid-td">

@@ -145,6 +145,7 @@ public partial class TfIntegerEditColumnComponent : TucBaseViewColumn<TfIntegerE
 
 	private void _initValues()
 	{
+		if(RegionContext.Mode != TfComponentPresentationMode.Display) return;
 		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
 		if (column is null)
 			throw new Exception("Column not found");

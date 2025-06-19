@@ -79,7 +79,7 @@ public class AssetsController : ControllerBase
 		var cultureInfo = new CultureInfo("en-US");
 
 		HttpContext.Response.Headers.Remove("last-modified");
-		HttpContext.Response.Headers.Add("last-modified", asset.ModifiedOn.ToString(cultureInfo));
+		HttpContext.Response.Headers.Append("last-modified", asset.ModifiedOn.ToString(cultureInfo));
 
 		const int durationInSeconds = 60 * 60 * 24 * 30; //30 days caching of these resources
 

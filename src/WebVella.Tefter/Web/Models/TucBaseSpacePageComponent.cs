@@ -3,7 +3,6 @@
 public abstract class TucBaseSpacePageComponent : ComponentBase, ITfSpacePageAddon
 {
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
-	[Inject] protected IWvBlazorTraceService WvBlazorTraceService { get; set; }
 	public virtual Guid AddonId { get; init; } = Guid.NewGuid();
 	public virtual string AddonName { get; init; } = null;
 	public virtual string AddonDescription { get; init; } = null;

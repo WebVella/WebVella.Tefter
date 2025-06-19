@@ -10,7 +10,6 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	[Inject] protected IToastService ToastService { get; set; }
 	[Inject] protected IDialogService DialogService { get; set; }
 	[Inject] protected IMessageService MessageService { get; set; }
-	[Inject] protected IWvBlazorTraceService WvBlazorTraceService { get; set; }
 	#endregion
 
 	#region << Properties >>

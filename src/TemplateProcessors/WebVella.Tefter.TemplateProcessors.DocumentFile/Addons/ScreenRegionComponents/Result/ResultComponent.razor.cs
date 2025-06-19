@@ -19,7 +19,7 @@ public partial class ResultComponent : TfBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultScreenRegionContext RegionContext { get; init; }
+	[Parameter] public TfTemplateProcessorResultScreenRegionContext? RegionContext { get; init; }
 
 	private DocumentFileTemplateResult? _result = null;
 	private bool _isLoading = true;
@@ -36,7 +36,7 @@ public partial class ResultComponent : TfBaseComponent,
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
-			if (RegionContext.Template is not null && RegionContext.SpaceData is not null)
+			if (RegionContext!.Template is not null && RegionContext.SpaceData is not null)
 			{
 				ITfTemplateResult result = TfService.ProcessTemplate(
 					templateId: RegionContext.Template.Id,

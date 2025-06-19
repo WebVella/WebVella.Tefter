@@ -35,7 +35,7 @@ public partial class SampleEditViewColumnComponent : ComponentBase,ITfSpaceViewC
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
-	private string _renderedHash = null;
+	//private string _renderedHash = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -86,6 +86,7 @@ public partial class SampleEditViewColumnComponent : ComponentBase,ITfSpaceViewC
 	private Task _initValues()
 	{
 		//NOTE: values from joins cannot be edited so you need to make a check like:
+		//if(RegionContext.Mode != TfComponentPresentationMode.Display) return;
 		//TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
 		//if (column is null)
 		//	throw new Exception("Column not found");

@@ -11,7 +11,7 @@ public partial class TfDataProviderSyncLogDialog : TfFormBaseComponent, IDialogC
 	private bool _isBusy = true;
 	private ReadOnlyCollection<TfDataProviderSychronizationLogEntry> _items =
 		new List<TfDataProviderSychronizationLogEntry>().AsReadOnly();
-	private int _limit = 1000;
+	//private int _limit = 1000;
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();

@@ -20,7 +20,7 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultPreviewScreenRegionContext RegionContext { get; init; }
+	[Parameter] public TfTemplateProcessorResultPreviewScreenRegionContext? RegionContext { get; init; }
 
 	private DocumentFileTemplatePreviewResult? _preview = null;
 	private bool _isLoading = true;
@@ -36,7 +36,7 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			if (RegionContext.Template is not null && RegionContext.SpaceData is not null)
+			if (RegionContext!.Template is not null && RegionContext.SpaceData is not null)
 			{
 				ITfTemplatePreviewResult result = TfService.GenerateTemplatePreviewResult(
 					templateId: RegionContext.Template.Id,

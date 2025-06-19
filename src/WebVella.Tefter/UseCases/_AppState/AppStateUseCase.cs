@@ -10,7 +10,6 @@ internal partial class AppStateUseCase
 	private readonly NavigationManager _navigationManager;
 	private readonly IToastService _toastService;
 	private readonly IMessageService _messageService;
-	private readonly IWvBlazorTraceService _blazorTraceService;
 	private readonly IStringLocalizer<AppStateUseCase> LOC;
 
 
@@ -24,13 +23,11 @@ internal partial class AppStateUseCase
 		_navigationManager = serviceProvider.GetService<NavigationManager>();
 		_toastService = serviceProvider.GetService<IToastService>();
 		_messageService = serviceProvider.GetService<IMessageService>();
-		_blazorTraceService = serviceProvider.GetService<IWvBlazorTraceService>();
 		LOC = serviceProvider.GetService<IStringLocalizer<AppStateUseCase>>();
 	}
 
 	internal virtual async Task<(TfAppState, TfAuxDataState)> InitState(TucUser currentUser, string url, TfAppState oldAppState, TfAuxDataState oldAuxDataState)
 	{
-		_blazorTraceService.OnSignal(this,signalName:"init-app-state");
 		if (oldAppState == null) oldAppState = new TfAppState();
 		if (oldAuxDataState == null) oldAuxDataState = new TfAuxDataState();
 		var route = _navigationManager.GetRouteState(url);
