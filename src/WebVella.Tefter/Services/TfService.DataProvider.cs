@@ -532,9 +532,9 @@ public partial class TfService : ITfService
 				continue;
 
 			var foundSimilarJoinKey = provider
-							.JoinKeys
-							.Select(x => x.DbName)
-							.Intersect(dataProvider.JoinKeys.Select(x => x.DbName))
+							.Identities
+							.Select(x => x.DataIdentity)
+							.Intersect(dataProvider.Identities.Select(x => x.DataIdentity))
 							.Any();
 			
 			if (foundSimilarJoinKey)

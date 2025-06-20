@@ -189,7 +189,7 @@
   <data name="No data providers can be joined" xml:space="preserve">
     <value>Няма свързани източници на данни</value>
   </data>
-  <data name="When data providers share at least one common join key, their data can be joined. Only the data from the primary provider is modifiable." xml:space="preserve">
-    <value>Когато доставчиците на данни споделят поне един общ ключ за присъединяване, техните данни могат да бъдат обединени. Могат да се променят само данните от основния доставчик.</value>
+  <data name="When data providers share at least one common identity, their data can be joined. Only the data from the primary provider is modifiable." xml:space="preserve">
+    <value>Когато доставчиците на данни споделят поне една обща идентичност, техните данни могат да бъдат обединени. Могат да се променят само данните от основния доставчик.</value>
   </data>
 </root>

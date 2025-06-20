@@ -99,7 +99,15 @@ public partial class TfAdminDataProviderJoinedData : TfBaseComponent
 		{
 			ProcessException(ex);
 		}
+	}
 
+	private string _showCommonIdentities(TucDataProvider subProvider)
+	{
+		var commonIdentities = TfAppState.Value.AdminDataProvider.Identities
+							.Select(x => x.Name)
+							.Intersect(subProvider.Identities.Select(x => x.Name)).ToList();
+		if (commonIdentities.Count == 0) return "n/a";
+		return String.Join(", ", commonIdentities);
 	}
 
 }

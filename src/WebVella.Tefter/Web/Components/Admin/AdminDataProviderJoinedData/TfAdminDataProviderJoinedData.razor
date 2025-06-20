@@ -79,7 +79,7 @@
 				<TitleTemplate>
 					<TfPageHeader>
 						<ChildContent>@LOC("Joined Data providers")</ChildContent>
-						<SubHeader>@LOC("When data providers share at least one common join key, their data can be joined. Only the data from the primary provider is modifiable.")</SubHeader>
+						<SubHeader>@LOC("When data providers share at least one common identity, their data can be joined. Only the data from the primary provider is modifiable.")</SubHeader>
 					</TfPageHeader>
 				</TitleTemplate>
 				<ChildContent>
@@ -98,6 +98,7 @@
 										<th class="tf-grid-th" style="width:80px;min-width:80px;">code</th>
 										<th class="tf-grid-th">name</th>
 										<th class="tf-grid-th">type</th>
+										<th class="tf-grid-th">common identities</th>
 									</tr>
 								</thead>
 								<tbody class="tf-grid-tbody">
@@ -112,6 +113,9 @@
 											</td>
 											<td class="tf-grid-td">
 												<div>@context.ProviderType.Name</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@_showCommonIdentities(context)</div>
 											</td>
 										</tr>
 									}
@@ -145,8 +149,8 @@
 									<tr class="tf-grid-tr">
 										<th class="tf-grid-th">name</th>
 										<th class="tf-grid-th">type</th>
-										<th class="tf-grid-th">key</th>
 										<th class="tf-grid-th" style="width:80px">in search</th>
+										<th class="tf-grid-th">common identity</th>
 									</tr>
 								</thead>
 								<tbody class="tf-grid-tbody">
@@ -160,9 +164,6 @@
 												<div>@context.DbType.Name</div>
 											</td>
 											<td class="tf-grid-td">
-												<div>@context.DataIdentity</div>
-											</td>
-											<td class="tf-grid-td">
 												<div>
 													@if (context.IncludeInTableSearch)
 													{
@@ -173,6 +174,9 @@
 														<FluentBadge>no</FluentBadge>
 													}
 												</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@context.DataIdentity</div>
 											</td>
 										</tr>
 									}
