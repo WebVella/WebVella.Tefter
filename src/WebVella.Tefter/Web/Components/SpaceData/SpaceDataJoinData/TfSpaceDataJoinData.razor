@@ -1,0 +1,107 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<TfPageHeader>
+	<ChildContent>@LOC("Shared column Joins")</ChildContent>
+	<SubHeader>@LOC("Columns that match one of the identity implemented for this data source")</SubHeader>
+</TfPageHeader>
+
+@if (_dataProvider.SharedColumns.Count == 0)
+{
+	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("This dataset does not provide data to views")</FluentMessageBar>
+
+}
+else
+{
+	<div class="tf-grid-wrapper">
+		<table class="tf-grid">
+			<thead class="tf-grid-thead">
+				<tr class="tf-grid-thead-bkg"></tr>
+				<tr class="tf-grid-tr">
+					<th class="tf-grid-th">name</th>
+					<th class="tf-grid-th">type</th>
+					<th class="tf-grid-th" style="width:80px">in search</th>
+					<th class="tf-grid-th">common identity</th>
+				</tr>
+			</thead>
+			<tbody class="tf-grid-tbody">
+				@foreach (var context in _dataProvider.SharedColumns)
+				{
+					<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+						<td class="tf-grid-td">
+							<div>@context.DbName</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@context.DbType.Name</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								@if (context.IncludeInTableSearch)
+								{
+									<FluentBadge Appearance="@Appearance.Neutral">yes</FluentBadge>
+								}
+								else
+								{
+									<FluentBadge>no</FluentBadge>
+								}
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@context.DataIdentity</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+
+<TfPageHeader Style="margin-top:30px;">
+	<ChildContent>@LOC("ReadOnly Data Provider Joins")</ChildContent>
+	<SubHeader>@LOC("Data that can be joined and added as readonly columns.")</SubHeader>
+</TfPageHeader>
+
+@if (_joinedProviders.Count == 0)
+{
+	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("This dataset does not provide data to views")</FluentMessageBar>
+
+}
+else
+{
+	<div class="tf-grid-wrapper">
+		<table class="tf-grid">
+			<thead class="tf-grid-thead">
+				<tr class="tf-grid-thead-bkg"></tr>
+				<tr class="tf-grid-tr">
+					<th class="tf-grid-th" style="width:80px;min-width:80px;">code</th>
+					<th class="tf-grid-th">name</th>
+					<th class="tf-grid-th">type</th>
+					<th class="tf-grid-th">common identities</th>
+				</tr>
+			</thead>
+			<tbody class="tf-grid-tbody">
+				@foreach (var context in _joinedProviders)
+				{
+					<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+						<td class="tf-grid-td">
+							<div>@context.Code</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@context.Name</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@context.ProviderType.Name</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@_showCommonIdentities(context)</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+
+

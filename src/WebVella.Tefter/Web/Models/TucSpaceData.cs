@@ -14,8 +14,10 @@ public record TucSpaceData
 	public short Position { get; set; }
 	public List<TucFilterBase> Filters { get; set; } = new ();
 	public List<string> Columns { get; set; } = new();
-
 	public List<TucSort> SortOrders { get; set; } = new();
+
+	public List<TucSpaceDataIdentity> Identities { get; internal set; }
+
 
 	public TucSpaceData() { }
 
@@ -29,6 +31,7 @@ public record TucSpaceData
 		Filters = model.Filters.Select(x=> TucFilterBase.FromModel(x)).ToList();
 		Columns = model.Columns;
 		SortOrders = model.SortOrders.Select(x=> new TucSort(x)).ToList();
+		Identities = model.Identities.Select(x=> new TucSpaceDataIdentity(x)).ToList();
 		
 	}
 
@@ -43,7 +46,8 @@ public record TucSpaceData
 			Position = Position,
 			Filters = Filters.Select(x=> TucFilterBase.ToModel(x)).ToList(),
 			Columns = Columns,
-			SortOrders = SortOrders.Select(x=> x.ToModel()).ToList()
+			SortOrders = SortOrders.Select(x=> x.ToModel()).ToList(),
+			Identities = Identities.Select(x=> x.ToModel()).ToList().AsReadOnly()
 		};
 	}
 
@@ -56,7 +60,8 @@ public record TucSpaceData
 			Name = Name,
 			Filters = Filters.Select(x => TucFilterBase.ToModel(x)).ToList(),
 			Columns = Columns,
-			SortOrders = SortOrders.Select(x => x.ToModel()).ToList()
+			SortOrders = SortOrders.Select(x => x.ToModel()).ToList(),
+
 		};
 	}
 }

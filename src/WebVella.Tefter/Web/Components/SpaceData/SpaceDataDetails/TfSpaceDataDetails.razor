@@ -48,7 +48,8 @@ else if (TfAppState.Value.SpaceData is null)
 		</ChildContent>
 	</TfLayoutBodyMain>
 }
-else if (Menu == "data"){
+else if (Menu == TfConstants.RouteNameData)
+{
 	<TfSpaceDataData />
 }
 else
@@ -61,9 +62,13 @@ else
 			<TfSpaceDataDetailsNav />
 		</HeaderAside>
 		<ChildContent>
-			@if (Menu == "views")
+			@if (Menu == TfConstants.RouteNameViews)
 			{
 				<TfSpaceDataViews />
+			}
+			else if (Menu == TfConstants.RouteNameAux)
+			{
+				<TfSpaceDataJoinData />
 			}
 			else
 			{

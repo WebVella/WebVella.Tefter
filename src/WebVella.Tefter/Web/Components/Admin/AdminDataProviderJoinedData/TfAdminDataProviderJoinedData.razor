@@ -78,60 +78,8 @@
 			<TfCard>
 				<TitleTemplate>
 					<TfPageHeader>
-						<ChildContent>@LOC("Joined Data providers")</ChildContent>
-						<SubHeader>@LOC("When data providers share at least one common identity, their data can be joined. Only the data from the primary provider is modifiable.")</SubHeader>
-					</TfPageHeader>
-				</TitleTemplate>
-				<ChildContent>
-					@if (_joinedProviders.Count == 0)
-					{
-						<FluentMessageBar Title="@LOC("No data providers can be joined")" AllowDismiss="false"
-										  Intent="@MessageIntent.Info">@LOC("For data from different providers to be joined, they must implement at least one common join key.")</FluentMessageBar>
-					}
-					else
-					{
-						<div class="tf-grid-wrapper">
-							<table class="tf-grid">
-								<thead class="tf-grid-thead">
-									<tr class="tf-grid-thead-bkg"></tr>
-									<tr class="tf-grid-tr">
-										<th class="tf-grid-th" style="width:80px;min-width:80px;">code</th>
-										<th class="tf-grid-th">name</th>
-										<th class="tf-grid-th">type</th>
-										<th class="tf-grid-th">common identities</th>
-									</tr>
-								</thead>
-								<tbody class="tf-grid-tbody">
-									@foreach (var context in _joinedProviders)
-									{
-										<tr @key=context.Id class="tf-grid-tr">
-											<td class="tf-grid-td">
-												<div>@context.Code</div>
-											</td>
-											<td class="tf-grid-td">
-												<div>@context.Name</div>
-											</td>
-											<td class="tf-grid-td">
-												<div>@context.ProviderType.Name</div>
-											</td>
-											<td class="tf-grid-td">
-												<div>@_showCommonIdentities(context)</div>
-											</td>
-										</tr>
-									}
-								</tbody>
-							</table>
-						</div>
-					}
-				</ChildContent>
-			</TfCard>
-		</FluentGridItem>
-		<FluentGridItem xs="12" md="6">
-			<TfCard>
-				<TitleTemplate>
-					<TfPageHeader>
 						<ChildContent>@LOC("Joined Shared columns")</ChildContent>
-						<SubHeader>@LOC("Columns that match one of the join keys implemented for this data source")</SubHeader>
+						<SubHeader>@LOC("Columns that match one of the identity implemented for this data source")</SubHeader>
 					</TfPageHeader>
 				</TitleTemplate>
 				<ChildContent>
@@ -187,5 +135,58 @@
 				</ChildContent>
 			</TfCard>
 		</FluentGridItem>
+		<FluentGridItem xs="12" md="6">
+			<TfCard>
+				<TitleTemplate>
+					<TfPageHeader>
+						<ChildContent>@LOC("Joined Data providers")</ChildContent>
+						<SubHeader>@LOC("When data providers share at least one common identity, their data can be joined. Only the data from the primary provider is modifiable.")</SubHeader>
+					</TfPageHeader>
+				</TitleTemplate>
+				<ChildContent>
+					@if (_joinedProviders.Count == 0)
+					{
+						<FluentMessageBar Title="@LOC("No data providers can be joined")" AllowDismiss="false"
+										  Intent="@MessageIntent.Info">@LOC("For data from different providers to be joined, they must implement at least one common join key.")</FluentMessageBar>
+					}
+					else
+					{
+						<div class="tf-grid-wrapper">
+							<table class="tf-grid">
+								<thead class="tf-grid-thead">
+									<tr class="tf-grid-thead-bkg"></tr>
+									<tr class="tf-grid-tr">
+										<th class="tf-grid-th" style="width:80px;min-width:80px;">code</th>
+										<th class="tf-grid-th">name</th>
+										<th class="tf-grid-th">type</th>
+										<th class="tf-grid-th">common identities</th>
+									</tr>
+								</thead>
+								<tbody class="tf-grid-tbody">
+									@foreach (var context in _joinedProviders)
+									{
+										<tr @key=context.Id class="tf-grid-tr">
+											<td class="tf-grid-td">
+												<div>@context.Code</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@context.Name</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@context.ProviderType.Name</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@_showCommonIdentities(context)</div>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</ChildContent>
+			</TfCard>
+		</FluentGridItem>
+
 	</FluentGrid>
 }
