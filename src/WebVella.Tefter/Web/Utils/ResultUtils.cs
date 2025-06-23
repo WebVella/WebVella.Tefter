@@ -200,6 +200,10 @@ internal static class ResultUtils
 			//	}
 			//}
 		}
+		else if(exception.InnerException is not null)
+		{
+			generalErrors.Add(exception.InnerException.Message);
+		}
 		else
 		{
 			generalErrors.Add(exception.Message);

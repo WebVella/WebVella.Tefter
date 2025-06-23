@@ -228,7 +228,7 @@ public partial class TfService : ITfService
 						{
 							//ignore columns from same provider and shared columns
 							if (columnName.StartsWith($"{_tableName}_") ||
-								columnName.StartsWith($"sc_"))
+								columnName.StartsWith(TfConstants.TF_SHARED_COLUMN_PREFIX))
 							{
 								continue;
 							}

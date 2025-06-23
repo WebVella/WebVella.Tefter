@@ -16,26 +16,7 @@ public record TucSpaceData
 	public List<string> Columns { get; set; } = new();
 	public List<TucSort> SortOrders { get; set; } = new();
 	public List<TucSpaceDataIdentity> Identities { get; internal set; }
-
-	public List<string> TotalColumns
-	{
-		get
-		{
-			var result = new List<string>();
-
-			result.AddRange(Columns ?? new List<string>());
-
-			foreach (var identity in Identities ?? new List<TucSpaceDataIdentity>())
-			{
-				foreach (var column in identity.Columns ?? new List<string>())
-				{
-					result.Add($"{identity.Name}.{column}");
-				}
-			}
-			return result.Order().ToList();
-		}
-	}
-
+	public List<TucSpaceDataColumn> AllColumns { get; set; } = null;
 	public TucSpaceData() { }
 
 	public TucSpaceData(TfSpaceData model)

@@ -8,9 +8,9 @@ public record TucSpaceDataIdentity
 
 	public Guid SpaceDataId { get; internal set; }
 
-	public string Name { get; set; }
+	public string DataIdentity { get; set; }
 
-	public bool IsSystem { get { return Name == TfConstants.TF_ROW_ID_DATA_IDENTITY;  } }
+	public bool IsSystem { get { return DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY;  } }
 
 	public List<string> Columns { get; internal set; } = new();
 
@@ -20,7 +20,7 @@ public record TucSpaceDataIdentity
 	{
 		Id = model.Id;
 		SpaceDataId = model.SpaceDataId;
-		Name = model.DataIdentity;
+		DataIdentity = model.DataIdentity;
 		Columns = model.Columns;
 	}
 
@@ -30,7 +30,7 @@ public record TucSpaceDataIdentity
 		{
 			Id = Id,
 			SpaceDataId= SpaceDataId,
-			DataIdentity= Name,
+			DataIdentity= DataIdentity,
 			Columns = Columns,
 		};
 	}

@@ -80,7 +80,14 @@ public partial interface ITfService
 	/// </summary>
 	/// <param name="dataProviderId">The unique identifier of the data provider to check for join availability.</param>
 	/// <returns>A list of data providers that can be joined with the specified data provider.</returns>
-	public List<TfDataProvider> GetAvailableForJoinDataProviders(Guid dataProviderId);
+	public List<TfDataProvider> GetAuxDataProviders(Guid dataProviderId);
+
+	/// <summary>
+	/// Calculates the aux data schema based on the implemented data identities. Returns only shared columns or column from other data providers
+	/// </summary>
+	/// <param name="providerId"></param>
+	/// <returns></returns>
+	TfDataProviderAuxDataSchema GetDataProviderAuxDataSchema(Guid providerId);
 }
 
 public partial class TfService : ITfService
@@ -518,7 +525,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfDataProvider> GetAvailableForJoinDataProviders(Guid dataProviderId)
+	public List<TfDataProvider> GetAuxDataProviders(Guid dataProviderId)
 	{
 		List<TfDataProvider> result = new List<TfDataProvider>();
 
@@ -543,6 +550,58 @@ public partial class TfService : ITfService
 
 		return result;
 	}
+
+	public TfDataProviderAuxDataSchema GetDataProviderAuxDataSchema(Guid providerId)
+	{
+		var result = new TfDataProviderAuxDataSchema();
+		var providers = GetDataProviders();
+		TfDataProvider provider = providers.Single(x => x.Id == providerId);
+		var sharedColumns = GetSharedColumns();
+		var identities = GetDataIdentities();
+		foreach (var identity in provider.Identities)
+		{
+			var resultIdentity = identities.FirstOrDefault(x=> x.DataIdentity == identity.DataIdentity);
+			if(resultIdentity is null) continue;
+
+			var identitySharedColumns = sharedColumns.Where(x=> x.DataIdentity == identity.DataIdentity).ToList();
+			var identityProviders = providers.Where(x=> x.Id != providerId && x.Identities.Any(x=> x.DataIdentity == identity.DataIdentity)).ToList();
+
+			if(identitySharedColumns.Count == 0 && identityProviders.Count == 0)
+				continue;
+
+			var resultIdentitySchema = new TfDataProviderAuxDataSchemaIdentity{ 
+				DataIdentity = resultIdentity,
+				Columns = new List<TfDataProviderAuxDataSchemaColumn>()
+			};
+
+			foreach (var column in identitySharedColumns)
+			{
+				resultIdentitySchema.Columns.Add(new TfDataProviderAuxDataSchemaColumn{ 
+					DbName = column.DbName,
+					SharedColumn = column,
+					DataProvider = null,
+					DataProviderColumn = null
+				});
+			}
+
+			foreach (var identityProvider in identityProviders)
+			{
+				foreach (var providerColumn in identityProvider.Columns)
+				{
+					resultIdentitySchema.Columns.Add(new TfDataProviderAuxDataSchemaColumn{ 
+						DbName = $"{identity.DataIdentity}.{providerColumn.DbName}",
+						SharedColumn = null,
+						DataProvider = identityProvider,
+						DataProviderColumn = providerColumn
+					});					
+				}
+			}
+
+			result.DataIdentities.Add(resultIdentitySchema);
+		}
+		return result;
+	}
+
 
 	#region <--- utility --->
 

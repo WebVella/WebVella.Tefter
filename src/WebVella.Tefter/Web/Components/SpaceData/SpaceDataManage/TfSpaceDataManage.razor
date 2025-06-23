@@ -70,8 +70,8 @@ else
 		</ChildContent>
 	</TfCard>
 	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Primary and Shared Columns")</FluentLabel>
-	<TfColumnCard DataProvider="SelectedProvider" Items="_form.Columns" ItemsChanged="_onColumnsChanged" />
-	<div>Joined data - TODO</div>
+	<TfSpaceDataColumnCard Options="_columnOptions" Items="_form.AllColumns" AddColumn="_onAddColumn" RemoveColumn="_onRemoveColumn" />
+
 
 	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Query Filters")</FluentLabel>
 	<TfFilterCard DataProvider="SelectedProvider" Items="_form.Filters" ItemsChanged="_onFiltersChanged" />
