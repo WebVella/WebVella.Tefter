@@ -29,39 +29,14 @@ else
 									 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
 
 				</FluentGridItem>
-				<FluentGridItem xs="6"></FluentGridItem>
-			</FluentGrid>
-			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Primary Data provider")" />
 					@if (SelectedProvider is not null)
 					{
 						<div class="tf-grid-wrapper">
 							<table class="tf-grid">
-								<thead class="tf-grid-thead">
-									<tr class="tf-grid-thead-bkg"></tr>
-									<tr class="tf-grid-tr">
-										@if (TfAppState.Value.CurrentUser.IsAdmin)
-										{
-											<th class="tf-grid-th" style="width:60px;min-width:60px;"></th>
-										}
-										<th class="tf-grid-th" style="width:60px;min-width:60px;">code</th>
-										<th class="tf-grid-th">name</th>
-										<th class="tf-grid-th">type</th>
-									</tr>
-								</thead>
 								<tbody class="tf-grid-tbody">
 									<tr @key=SelectedProvider.Id class="tf-grid-tr">
-										@if (TfAppState.Value.CurrentUser.IsAdmin)
-										{
-											<td class="tf-grid-td">
-												<div>
-													<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open provider")"
-																  Href="@(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, SelectedProvider.Id))"
-																  IconStart="@TfConstants.ViewIcon" Target="_blank" />
-												</div>
-											</td>
-										}
 										<td class="tf-grid-td">
 											<div>@SelectedProvider.Code</div>
 										</td>
@@ -71,6 +46,16 @@ else
 										<td class="tf-grid-td">
 											<div>@SelectedProvider.ProviderType.Name</div>
 										</td>
+										@if (TfAppState.Value.CurrentUser.IsAdmin)
+										{
+											<td class="tf-grid-td" style="width:80px;">
+												<div>
+													<FluentAnchor Appearance="@Appearance.Outline" title="@LOC("open provider")"
+																  Href="@(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, SelectedProvider.Id))"
+																  IconStart="@TfConstants.ViewIcon" Target="_blank">@LOC("view")</FluentAnchor>
+												</div>
+											</td>
+										}
 									</tr>
 								</tbody>
 							</table>
@@ -81,51 +66,13 @@ else
 						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Error">@LOC("The data provider no longer exists")</FluentMessageBar>
 					}
 				</FluentGridItem>
-				<FluentGridItem xs="6">
-					<FluentInputLabel Label="@LOC("Joined Data Providers")" />
-					@if (_joinedProviders.Count == 0)
-					{
-						<FluentMessageBar Title="@LOC("No data providers can be joined")" AllowDismiss="false"
-										  Intent="@MessageIntent.Info">@LOC("For data from different providers to be joined, they must implement at least one common join key.")</FluentMessageBar>
-					}
-					else
-					{
-						<div class="tf-grid-wrapper">
-							<table class="tf-grid">
-								<thead class="tf-grid-thead">
-									<tr class="tf-grid-thead-bkg"></tr>
-									<tr class="tf-grid-tr">
-										<th class="tf-grid-th" style="width:80px;min-width:80px;">code</th>
-										<th class="tf-grid-th">name</th>
-										<th class="tf-grid-th">type</th>
-									</tr>
-								</thead>
-								<tbody class="tf-grid-tbody">
-									@foreach (var context in _joinedProviders)
-									{
-										<tr @key=context.Id class="tf-grid-tr">
-											<td class="tf-grid-td">
-												<div>@context.Code</div>
-											</td>
-											<td class="tf-grid-td">
-												<div>@context.Name</div>
-											</td>
-											<td class="tf-grid-td">
-												<div>@context.ProviderType.Name</div>
-											</td>
-										</tr>
-									}
-								</tbody>
-							</table>
-						</div>
-					}
-				</FluentGridItem>
 			</FluentGrid>
-
 		</ChildContent>
 	</TfCard>
-	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
+	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Primary and Shared Columns")</FluentLabel>
 	<TfColumnCard DataProvider="SelectedProvider" Items="_form.Columns" ItemsChanged="_onColumnsChanged" />
+	<div>Joined data - TODO</div>
+
 	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Query Filters")</FluentLabel>
 	<TfFilterCard DataProvider="SelectedProvider" Items="_form.Filters" ItemsChanged="_onFiltersChanged" />
 	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Default Sort")</FluentLabel>

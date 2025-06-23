@@ -32,9 +32,6 @@ public partial class TfColumnCard : TfBaseComponent
 			{
 				var result = new List<string>();
 				result.AddRange(DataProvider.ColumnsPublic.Select(x => x.DbName).ToList());
-				if (_joinedColumns is not null)
-					result.AddRange(_joinedColumns.Select(x => x.DbName).Distinct().ToList());
-
 				return result.Order().ToList();
 			}
 			if (Options is not null) return Options.ToList();
@@ -52,43 +49,7 @@ public partial class TfColumnCard : TfBaseComponent
 
 	private string _selectedColumn = null;
 	public bool _submitting = false;
-	public List<TucColumn> _joinedColumns = new();
 	public Guid? _initedProviderId = null;
-
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await _initJoinedProviders();
-	}
-
-	protected override async Task OnParametersSetAsync()
-	{
-		await base.OnParametersSetAsync();
-		await _initJoinedProviders();
-	}
-
-	private async Task _initJoinedProviders()
-	{
-		if (_initedProviderId == DataProvider?.Id) return;
-
-		_joinedColumns = new();
-		if (DataProvider is not null)
-		{
-			var joinedProviders = (await UC.GetDataProviderJoinedProvidersAsync(DataProvider.Id)) ?? new List<TucDataProvider>();
-			var addedHs = new HashSet<string>();
-			foreach (var dp in joinedProviders)
-			{
-				foreach (var col in dp.ColumnsPublic)
-				{
-					if (addedHs.Contains(col.DbName)) continue;
-					addedHs.Add(col.DbName);
-					_joinedColumns.Add(col);
-				}
-			}
-		}
-
-		_initedProviderId = DataProvider?.Id;
-	}
 
 	private async Task _addColumn()
 	{
@@ -122,10 +83,5 @@ public partial class TfColumnCard : TfBaseComponent
 	private TucColumn _getProviderColumnByName(string dbName)
 	{
 		return DataProvider?.ColumnsPublic.FirstOrDefault(x => x.DbName == dbName);
-	}
-
-	private TucColumn _getJoinColumnByName(string dbName)
-	{
-		return _joinedColumns.FirstOrDefault(x => x.DbName == dbName);
 	}
 }
