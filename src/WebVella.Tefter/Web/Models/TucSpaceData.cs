@@ -12,12 +12,29 @@ public record TucSpaceData
 	[Required]
 	public string Name { get; set; }
 	public short Position { get; set; }
-	public List<TucFilterBase> Filters { get; set; } = new ();
+	public List<TucFilterBase> Filters { get; set; } = new();
 	public List<string> Columns { get; set; } = new();
 	public List<TucSort> SortOrders { get; set; } = new();
-
 	public List<TucSpaceDataIdentity> Identities { get; internal set; }
 
+	public List<string> TotalColumns
+	{
+		get
+		{
+			var result = new List<string>();
+
+			result.AddRange(Columns ?? new List<string>());
+
+			foreach (var identity in Identities ?? new List<TucSpaceDataIdentity>())
+			{
+				foreach (var column in identity.Columns ?? new List<string>())
+				{
+					result.Add($"{identity.Name}.{column}");
+				}
+			}
+			return result.Order().ToList();
+		}
+	}
 
 	public TucSpaceData() { }
 
@@ -28,11 +45,11 @@ public record TucSpaceData
 		SpaceId = model.SpaceId;
 		Name = model.Name;
 		Position = model.Position;
-		Filters = model.Filters.Select(x=> TucFilterBase.FromModel(x)).ToList();
+		Filters = model.Filters.Select(x => TucFilterBase.FromModel(x)).ToList();
 		Columns = model.Columns;
-		SortOrders = model.SortOrders.Select(x=> new TucSort(x)).ToList();
-		Identities = model.Identities.Select(x=> new TucSpaceDataIdentity(x)).ToList();
-		
+		SortOrders = model.SortOrders.Select(x => new TucSort(x)).ToList();
+		Identities = model.Identities.Select(x => new TucSpaceDataIdentity(x)).ToList();
+
 	}
 
 	public TfSpaceData ToModel()
@@ -40,14 +57,14 @@ public record TucSpaceData
 		return new TfSpaceData
 		{
 			Id = Id,
-			DataProviderId= DataProviderId,
-			SpaceId= SpaceId,
+			DataProviderId = DataProviderId,
+			SpaceId = SpaceId,
 			Name = Name,
 			Position = Position,
-			Filters = Filters.Select(x=> TucFilterBase.ToModel(x)).ToList(),
+			Filters = Filters.Select(x => TucFilterBase.ToModel(x)).ToList(),
 			Columns = Columns,
-			SortOrders = SortOrders.Select(x=> x.ToModel()).ToList(),
-			Identities = Identities.Select(x=> x.ToModel()).ToList().AsReadOnly()
+			SortOrders = SortOrders.Select(x => x.ToModel()).ToList(),
+			Identities = Identities.Select(x => x.ToModel()).ToList().AsReadOnly()
 		};
 	}
 

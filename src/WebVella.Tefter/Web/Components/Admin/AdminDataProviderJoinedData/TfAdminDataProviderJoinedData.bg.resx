@@ -183,8 +183,8 @@
   <data name="For data from different providers to be joined, they must implement at least one common join key." xml:space="preserve">
     <value>За да могат данните от различни доставчици да бъдат обединени, те трябва да реализират поне един общ ключ за присъединяване.</value>
   </data>
-  <data name="Joined Data providers" xml:space="preserve">
-    <value>Свързани източници на данни</value>
+  <data name="Aux Data providers" xml:space="preserve">
+    <value>Допълнителни източници на данни</value>
   </data>
   <data name="No data providers can be joined" xml:space="preserve">
     <value>Няма свързани източници на данни</value>

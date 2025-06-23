@@ -144,8 +144,8 @@
   <data name="Icon" xml:space="preserve">
     <value>Икона</value>
   </data>
-  <data name="Joined Data Providers" xml:space="preserve">
-    <value>Свързани източници на данни</value>
+  <data name="Aux Data Providers" xml:space="preserve">
+    <value>Допълнителни източници на данни</value>
   </data>
   <data name="limited access" xml:space="preserve">
     <value>ограничен достъп</value>

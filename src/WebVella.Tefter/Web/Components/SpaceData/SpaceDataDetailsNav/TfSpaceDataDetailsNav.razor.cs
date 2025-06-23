@@ -25,7 +25,7 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 			Url = string.Format(TfConstants.SpaceDataJoinedDataPageUrl, TfAppState.Value.Route.SpaceId, TfAppState.Value.Route.SpaceDataId),
 			Match = NavLinkMatch.Prefix,
 			//Icon = new Icons.Regular.Size20.Table(),
-			Text = LOC("Joined Data")
+			Text = LOC("Aux Data")
 		});
 		menu.Add(new TucMenuItem
 		{
