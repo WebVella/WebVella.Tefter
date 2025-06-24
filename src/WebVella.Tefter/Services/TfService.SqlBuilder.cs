@@ -28,6 +28,7 @@ public partial class TfService : ITfService
 		private List<SqlBuilderColumn> _filterColumns = new();
 		private List<SqlBuilderColumn> _sortColumns = new();
 		private List<SqlBuilderJoinData> _joinData = new();
+		private List<SqlBuilderSharedColumnData> _sharedColumnsData = new();
 
 		private TfFilterAnd _mainFilter;
 		private List<TfFilterBase> _filters = new();
@@ -42,6 +43,7 @@ public partial class TfService : ITfService
 		private List<Guid> _tfIds = null;
 		private bool _returnOnlyTfIds = false;
 		public List<SqlBuilderJoinData> JoinData { get { return _joinData; } }
+		public List<SqlBuilderSharedColumnData> SharedColumnsData { get { return _sharedColumnsData; } }
 
 		public SqlBuilder(
 			ITfService tfService,
@@ -226,10 +228,42 @@ public partial class TfService : ITfService
 
 						foreach (var columnName in spaceDataIdentity.Columns.Distinct())
 						{
-							//ignore columns from same provider and shared columns
-							if (columnName.StartsWith($"{_tableName}_") ||
-								columnName.StartsWith(TfConstants.TF_SHARED_COLUMN_PREFIX))
+							//ignore columns from same provider
+							if (columnName.StartsWith($"{_tableName}_"))
 							{
+								continue;
+							}
+
+							//if column is shared column
+							if (columnName.StartsWith(TfConstants.TF_SHARED_COLUMN_PREFIX))
+							{
+								var sharedColumn = _dataProvider.SharedColumns
+									.SingleOrDefault(x => x.DbName == columnName);
+
+								//if column is already processed, ignore duplicate
+								if (_sharedColumnsData.Any(x => x.DbName == x.DbName))
+								{
+									continue;
+								}
+
+								var sqlBuilderColumn = _availableColumns.SingleOrDefault(x => x.DbName == columnName);
+								if(sqlBuilderColumn == null)
+								{
+									continue;
+								}	
+
+								var sharedColumnData = new SqlBuilderSharedColumnData
+								{
+									DbName = columnName,
+									DbType = sharedColumn.DbType,
+									BuilderColumnInfo = sqlBuilderColumn,
+									DataIdentity = spaceDataIdentity.DataIdentity,
+									TableAlias = sqlBuilderColumn.TableAlias,
+									TableName = GetSharedColumnValueTableNameByType(sharedColumn.DbType)
+								};
+
+								_sharedColumnsData.Add(sharedColumnData);
+
 								continue;
 							}
 
@@ -466,6 +500,14 @@ public partial class TfService : ITfService
 				columns = columns + $",{Environment.NewLine}\t" + extColumns;
 			}
 
+			if (_sharedColumnsData.Count > 0)
+			{
+				string extColumns = string.Join($",{Environment.NewLine}\t",
+					_sharedColumnsData.Select(x => x.GetSelectString()).ToList());
+
+				columns = columns + $",{Environment.NewLine}\t" + extColumns;
+			}
+
 			StringBuilder sb = new StringBuilder();
 			if (_returnOnlyTfIds)
 				sb.Append($"SELECT tf_id {Environment.NewLine}FROM {_tableName} {_tableAlias}");
@@ -475,6 +517,9 @@ public partial class TfService : ITfService
 			//joins are created for select columns, filter columns and sort columns
 			var columnsToJoin = _selectColumns
 					.Where(x => x.DataIdentity != null)
+					.Union( _availableColumns
+						.Where( x=> _sharedColumnsData.Any( s=>s.DbName == x.DbName))
+					)
 					.Union(_filterColumns
 						.Where(x => x.DataIdentity != null)
 					)

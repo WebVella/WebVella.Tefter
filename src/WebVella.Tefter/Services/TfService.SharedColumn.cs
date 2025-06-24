@@ -3,7 +3,10 @@
 public partial interface ITfService
 {
 	TfSharedColumn GetSharedColumn(
-	Guid id);
+		Guid id);
+
+	TfSharedColumn GetSharedColumn(
+		string name);
 
 	List<TfSharedColumn> GetSharedColumns();
 
@@ -25,6 +28,19 @@ public partial class TfService : ITfService
 		try
 		{
 			return _dboManager.Get<TfSharedColumn>(id);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	public TfSharedColumn GetSharedColumn(
+		string name)
+	{
+		try
+		{
+			return _dboManager.Get<TfSharedColumn>(name, nameof(TfSharedColumn.DbName));
 		}
 		catch (Exception ex)
 		{

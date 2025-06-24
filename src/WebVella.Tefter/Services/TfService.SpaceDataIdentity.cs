@@ -280,6 +280,18 @@ public partial class TfService : ITfService
 
 						foreach (var column in columns)
 						{
+							if(column.StartsWith(TfConstants.TF_SHARED_COLUMN_PREFIX))
+							{
+								var sharedColumn = _tfService.GetSharedColumn(column);
+								if (sharedColumn is null)
+									return false;
+
+								if (sharedColumn.DataIdentity != spaceDataIdentity.DataIdentity)
+									return false;
+
+								return true;
+							}	
+
 							if (column == TfConstants.TF_ROW_ID_DATA_IDENTITY)
 								continue;
 

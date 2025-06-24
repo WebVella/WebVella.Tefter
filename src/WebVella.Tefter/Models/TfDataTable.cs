@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using System.Linq;
 
 namespace WebVella.Tefter;
 
@@ -73,6 +74,7 @@ public sealed class TfDataTable
 	internal TfDataTable(
 		TfDataProvider dataProvider,
 		List<SqlBuilderJoinData> joinData,
+		List<SqlBuilderSharedColumnData> sharedColumnsData,
 		TfDataTableQuery query,
 		string sql,
 		List<NpgsqlParameter> sqlParameters,
@@ -92,6 +94,7 @@ public sealed class TfDataTable
 		Columns = InitColumns(
 			dataProvider,
 			joinData,
+			sharedColumnsData,
 			onlyColumns);
 
 		Sql = sql;
@@ -104,6 +107,7 @@ public sealed class TfDataTable
 	private TfDataColumnCollection InitColumns(
 		TfDataProvider dataProvider,
 		List<SqlBuilderJoinData> joinData,
+		List<SqlBuilderSharedColumnData> sharedColumnsData,
 		List<string> onlyColumns)
 	{
 		var columns = new TfDataColumnCollection(this);
@@ -116,10 +120,10 @@ public sealed class TfDataTable
 				isShared: false,
 				isSystem: true,
 				isJoinColumn: false,
-				isIdentityColumn: false ));
+				isIdentityColumn: false));
 
 		//the case we return only tf_ids
-		if (onlyColumns.Count == 1 && onlyColumns[0] == "tf_id")
+		if (onlyColumns != null && onlyColumns.Count == 1 && onlyColumns[0] == "tf_id")
 		{
 			return columns;
 		}
@@ -151,7 +155,7 @@ public sealed class TfDataTable
 			TfDatabaseColumnType.DateTime,
 			isNullable: false,
 			isShared: false,
-			isSystem: true, 
+			isSystem: true,
 			isJoinColumn: false,
 			isIdentityColumn: false));
 
@@ -162,7 +166,7 @@ public sealed class TfDataTable
 			isNullable: false,
 			isShared: false,
 			isSystem: true,
-			isJoinColumn: false, 
+			isJoinColumn: false,
 			isIdentityColumn: false));
 
 		columns.Add(new TfDataColumn(
@@ -209,47 +213,43 @@ public sealed class TfDataTable
 		}
 
 
-		foreach (var providerColumn in dataProvider.SharedColumns)
+		foreach (var sharedColumnData in sharedColumnsData )
 		{
-			if (onlyColumns != null && !onlyColumns.Contains(providerColumn.DbName))
-				continue;
+			var combinedColumnName = $"{sharedColumnData.DataIdentity}.{sharedColumnData.DbName}";
 
 			columns.Add(new TfDataColumn(
 				this,
-				providerColumn.DbName,
-				providerColumn.DbType,
+				combinedColumnName,
+				sharedColumnData.DbType,
 				isNullable: true,
 				isShared: true,
 				isSystem: false,
 				isJoinColumn: false,
-				isIdentityColumn: false ));
+				isIdentityColumn: false));
 		}
 
-		if (onlyColumns != null)
+		foreach (var data in joinData)
 		{
-			foreach (var data in joinData)
+			var columnName = $"jp$dp{data.Provider.Index}${data.DataIdentity}";
+			foreach (var joinDataColumn in data.Columns)
 			{
-				var columnName = $"jp$dp{data.Provider.Index}${data.DataIdentity}";
+				var joinedProviderColumn = data.Provider.Columns.Single(x => x.DbName == joinDataColumn.DbName);
 
-				if (onlyColumns.Contains(columnName))
-				{
-					foreach (var joinDataColumn in data.Columns)
-					{
-						var joinedProviderColumn = data.Provider.Columns.Single(x=>x.DbName == joinDataColumn.DbName);
+				var combinedColumnName = $"{joinDataColumn.DataIdentity}.{joinedProviderColumn.DbName}";
 
-						columns.Add(new TfDataColumn(
-							this,
-							$"{joinDataColumn.DbName}.{joinedProviderColumn.DbName}",
-							joinedProviderColumn.DbType,
-							isNullable: joinedProviderColumn.IsNullable,
-							isShared: false,
-							isSystem: false,
-							isJoinColumn: true,
-							isIdentityColumn: false));
-					}
-				}
+				columns.Add(new TfDataColumn(
+					this,
+					combinedColumnName,
+					joinedProviderColumn.DbType,
+					isNullable: joinedProviderColumn.IsNullable,
+					isShared: false,
+					isSystem: false,
+					isJoinColumn: true,
+					isIdentityColumn: false));
 			}
+
 		}
+
 
 		return columns;
 	}
@@ -290,7 +290,7 @@ public sealed class TfDataTable
 			dt.Columns.Add(column.Name, columnType);
 		}
 
-		foreach(TfDataRow row in this.Rows)
+		foreach (TfDataRow row in this.Rows)
 			dt.Rows.Add(row.Values);
 
 		return dt;

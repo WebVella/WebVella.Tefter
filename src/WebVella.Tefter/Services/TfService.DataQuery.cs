@@ -116,6 +116,7 @@ public partial class TfService : ITfService
 				parameters,
 				provider,
 				sqlBuilder.JoinData,
+				sqlBuilder.SharedColumnsData,
 				new TfDataTableQuery
 				{
 					Search = search,
@@ -168,6 +169,7 @@ public partial class TfService : ITfService
 				parameters,
 				provider,
 				sqlBuilder.JoinData,
+				sqlBuilder.SharedColumnsData,
 				new TfDataTableQuery
 				{
 					Search = null,
@@ -223,6 +225,7 @@ public partial class TfService : ITfService
 				parameters,
 				provider,
 				sqlBuilder.JoinData,
+				sqlBuilder.SharedColumnsData,
 				new TfDataTableQuery
 				{
 					Search = null,
@@ -298,6 +301,7 @@ public partial class TfService : ITfService
 				parameters,
 				provider,
 				sqlBuilder.JoinData,
+				sqlBuilder.SharedColumnsData,
 				new TfDataTableQuery
 				{
 					Search = search,
@@ -321,6 +325,7 @@ public partial class TfService : ITfService
 		List<NpgsqlParameter> sqlParameters,
 		TfDataProvider provider,
 		List<SqlBuilderJoinData> joinData,
+		List<SqlBuilderSharedColumnData> sharedColumnsData,
 		TfDataTableQuery query,
 		DataTable dataTable)
 	{
@@ -330,23 +335,15 @@ public partial class TfService : ITfService
 			columns.Add(column.ColumnName);
 		}
 
-		TfDataTable resultTable = new TfDataTable(provider, joinData, query, sql, sqlParameters, columns);
-
-		if (dataTable.Rows.Count == 0)
-			return resultTable;
+		TfDataTable resultTable = new TfDataTable(provider, joinData, 
+			sharedColumnsData, query, sql, sqlParameters, columns );
 
 		HashSet<string> dateOnlyColumns = new HashSet<string>();
 
-		foreach (var column in provider.Columns)
+		foreach (var column in resultTable.Columns)
 		{
 			if (column.DbType == TfDatabaseColumnType.DateOnly)
-				dateOnlyColumns.Add(column.DbName);
-		}
-
-		foreach (var column in provider.SharedColumns)
-		{
-			if (column.DbType == TfDatabaseColumnType.DateOnly)
-				dateOnlyColumns.Add(column.DbName);
+				dateOnlyColumns.Add(column.Name);
 		}
 
 		Dictionary<string, TfDataProviderColumn> joinedColumns = new();
@@ -362,42 +359,31 @@ public partial class TfService : ITfService
 
 		foreach (DataRow row in dataTable.Rows)
 		{
-			Dictionary<string, JArray> joinedRecords = new Dictionary<string, JArray>();
-
+			var joinColumnValuesDict = GetRowJoinedValues(row,joinData);
 			object[] values = new object[resultTable.Columns.Count];
-
 			int valuesCounter = 0;
 			foreach (var column in resultTable.Columns)
 			{
-				if (joinedColumns.ContainsKey(column.Name))
+				var columnName = column.Name;
+
+				if (column.IsJoinColumn)
 				{
-					var segments = column.Name.Split(".");
-					string providerColumnName = segments[0];
-					string identity = segments[1];
-					
-					var sourceColumnName = $"jp${providerColumnName}${identity}";
-
-					JArray jArr = null;
-
-					if (joinedRecords.ContainsKey(sourceColumnName))
-						jArr = joinedRecords[sourceColumnName];
-					else
-					{
-						jArr = JArray.Parse((string)row[sourceColumnName]);
-						joinedRecords[sourceColumnName] = jArr;
-					}
-
-					values[valuesCounter++] = ExtractJoinedRecordsValue(jArr, joinedColumns[column.Name]);
+					values[valuesCounter++] = joinColumnValuesDict[column.Name];
 					continue;
 				}
+				else if( column.IsShared)
+				{
+					var segments = columnName.Split(".");
+					columnName = segments[1];
+				}
 
-				object value = row[column.Name];
+				object value = row[columnName];
 
 				if (value == DBNull.Value)
 				{
 					value = null;
 				}
-				else if (dateOnlyColumns.Contains(column.Name))
+				else if (dateOnlyColumns.Contains(columnName))
 				{
 					value = DateOnly.FromDateTime((DateTime)value);
 				}
@@ -410,7 +396,30 @@ public partial class TfService : ITfService
 		return resultTable;
 	}
 
-	private object ExtractJoinedRecordsValue(JArray jArr, TfDataProviderColumn providerColumn)
+	private Dictionary<string,object> GetRowJoinedValues(
+		DataRow row,
+		List<SqlBuilderJoinData> joinData)
+	{
+		Dictionary<string, object> joinedValues = new Dictionary<string, object>();
+
+		foreach (var data in joinData)
+		{
+			var sourceColumnName = $"jp$dp{data.Provider.Index}${data.DataIdentity}";
+			JArray jArr = JArray.Parse((string)row[sourceColumnName]);
+
+			foreach (var sqlColumn in data.Columns)
+			{
+				var providerColumn = data.Provider.Columns.Single(x => x.DbName == sqlColumn.DbName);
+				object value = ExtractJoinedRecordsValue(jArr, providerColumn);
+				joinedValues[$"{data.DataIdentity}.{sqlColumn.DbName}"] = value;
+			}
+		}
+		return joinedValues;
+	}
+
+	private object ExtractJoinedRecordsValue(
+		JArray jArr, 
+		TfDataProviderColumn providerColumn)
 	{
 		switch (providerColumn.DbType)
 		{
