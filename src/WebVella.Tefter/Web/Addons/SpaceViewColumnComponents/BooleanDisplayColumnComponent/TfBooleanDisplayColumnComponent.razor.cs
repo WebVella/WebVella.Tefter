@@ -121,6 +121,7 @@ public partial class TfBooleanDisplayColumnComponent : TucBaseViewColumn<TfBoole
 	#region << Private logic >>
 	private void _initValues()
 	{
+		if(RegionContext.Mode != TfComponentPresentationMode.Display) return;
 		_value = new();
 		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
 		if (column is null)

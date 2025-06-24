@@ -46,7 +46,8 @@
 									Height="@TfConstants.ComboPanelHeight"
 									@bind-Value=@_form.DataIdentity
 									Placeholder="@LOC("select or add...")"
-									Label="@LOC("Target join key")" Style="width:100%" />
+									Disabled="!_isCreate"
+									Label="@LOC("Target data identity")" Style="width:100%" />
 					<FluentValidationMessage For="@(() => _form.DataIdentity)" />
 				</FluentGridItem>
 			</FluentGrid>

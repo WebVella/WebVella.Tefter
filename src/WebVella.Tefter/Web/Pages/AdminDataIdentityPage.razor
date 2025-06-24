@@ -10,7 +10,7 @@
 		<TfAdminDataIdentityNavigation />
 	</Aside>
 	<ChildContent>
-		@if (String.IsNullOrWhiteSpace(DataIdentityId) || TfAppState.Value.AdminDataIdentity is null)
+		@if (TfAppState.Value.AdminDataIdentities.Count == 0)
 		{
 			<TfLayoutBodyMain>
 				<Header>
@@ -24,7 +24,7 @@
 				</ChildContent>
 			</TfLayoutBodyMain>
 		}
-		else
+		else if (TfAppState.Value.AdminDataIdentity is not null)
 		{
 			<TfLayoutBodyMain>
 				<Header>

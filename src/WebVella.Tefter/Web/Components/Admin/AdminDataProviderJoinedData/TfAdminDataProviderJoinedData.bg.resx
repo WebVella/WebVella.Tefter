@@ -177,19 +177,19 @@
   <data name="Implemented Data Identities" xml:space="preserve">
     <value>Приложени Идентификатори на данни</value>
   </data>
-  <data name="Joined Shared columns" xml:space="preserve">
-    <value>Свързани споделени колони</value>
+  <data name="Aux Shared columns" xml:space="preserve">
+    <value>Допълнителни споделени колони</value>
   </data>
   <data name="For data from different providers to be joined, they must implement at least one common join key." xml:space="preserve">
     <value>За да могат данните от различни доставчици да бъдат обединени, те трябва да реализират поне един общ ключ за присъединяване.</value>
   </data>
-  <data name="Joined Data providers" xml:space="preserve">
-    <value>Свързани източници на данни</value>
+  <data name="Aux Data providers" xml:space="preserve">
+    <value>Допълнителни източници на данни</value>
   </data>
   <data name="No data providers can be joined" xml:space="preserve">
     <value>Няма свързани източници на данни</value>
   </data>
-  <data name="When data providers share at least one common join key, their data can be joined. Only the data from the primary provider is modifiable." xml:space="preserve">
-    <value>Когато доставчиците на данни споделят поне един общ ключ за присъединяване, техните данни могат да бъдат обединени. Могат да се променят само данните от основния доставчик.</value>
+  <data name="When data providers share at least one common identity, their data can be joined. Only the data from the primary provider is modifiable." xml:space="preserve">
+    <value>Когато доставчиците на данни споделят поне една обща идентичност, техните данни могат да бъдат обединени. Могат да се променят само данните от основния доставчик.</value>
   </data>
 </root>

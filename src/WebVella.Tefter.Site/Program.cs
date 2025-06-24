@@ -55,12 +55,12 @@ try
 		builder.Services.AddControllers();
 
 		//Blazor Trace Core Service
-		builder.Services.AddBlazorTrace(new WvBlazorTraceConfiguration
-		{
-			#if !DEBUG
-			EnableTracing = false
-			#endif
-		});
+		// builder.Services.AddBlazorTrace(new WvBlazorTraceConfiguration
+		// {
+		// 	#if !DEBUG
+		// 	EnableTracing = false
+		// 	#endif
+		// });
 		#if DEBUG
 		//Snapshots require bigger hub message size
 		builder.Services.Configure<HubOptions>(options =>

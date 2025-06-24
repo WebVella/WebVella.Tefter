@@ -23,8 +23,7 @@ internal partial class AppStateUseCase
 				AdminDataProviderData = null,
 			};
 			return (newAppState, newAuxDataState);
-		}
-		;
+		};
 
 
 		//AdminDataProviders, AdminDataProvidersPage
@@ -195,7 +194,7 @@ internal partial class AppStateUseCase
 		var result = new List<TucDataProvider>();
 		try
 		{
-			var providers = _tfService.GetAvailableForJoinDataProviders(providerId);
+			var providers = _tfService.GetAuxDataProviders(providerId);
 			if (providers is not null)
 			{
 				foreach (var item in providers)

@@ -282,7 +282,7 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 				_selectedSpaceData = TfAppState.Value.SpaceDataList[0];
 				await OnOptionsChanged(nameof(componentOptions.SpaceDataId), _selectedSpaceData.Id);
 			}
-
+			return;
 		}
 
 		_value = GetColumnDataByAlias(VALUE_ALIAS);

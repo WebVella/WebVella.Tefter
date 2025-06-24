@@ -3,7 +3,7 @@ public static class AssemblyExtensions
 {
 	public static string GetFileFromResourceAndUploadLocally(this Assembly assembly, string resourceName)
 	{
-		using (Stream? stream = assembly.GetManifestResourceStream(resourceName))
+		using (Stream stream = assembly.GetManifestResourceStream(resourceName))
 		{
 			if (stream == null)
 			{

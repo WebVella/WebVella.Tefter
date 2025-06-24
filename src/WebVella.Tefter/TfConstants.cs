@@ -42,5 +42,8 @@ public partial class TfConstants
 	public static Guid ADMIN_USER_ID = new Guid("9c9f7fdc-3ce9-4e2a-9b0c-ba23f0949149");
 
 	public const string TF_ROW_ID_DATA_IDENTITY = "tf_row_id";
+	public const string TF_SHARED_COLUMN_PREFIX = "sc_";
+
+
 
 }

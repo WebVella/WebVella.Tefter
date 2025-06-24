@@ -32,7 +32,7 @@ public partial class SampleDisplayViewColumnComponent : ComponentBase, ITfSpaceV
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
-	private string _renderedHash = null;
+	//private string _renderedHash = null;
 	#endregion
 
 	#region << Lifecycle >>

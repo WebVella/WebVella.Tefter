@@ -3,7 +3,7 @@ public partial class TfAppStateManager : FluxorComponent
 {
 	[Inject] protected NavigationManager Navigator { get; set; }
 	[Inject] public IActionSubscriber ActionSubscriber { get; set; }
-	[Inject] public IWvBlazorTraceService WvBlazorTraceService { get; set; }
+	//[Inject] public IWvBlazorTraceService WvBlazorTraceService { get; set; }
 	[Inject] public IDispatcher Dispatcher { get; set; }
 	[Inject] private IState<TfUserState> TfUserState { get; set; }
 	[Inject] private IState<TfAppState> TfAppState { get; set; }
@@ -38,7 +38,7 @@ public partial class TfAppStateManager : FluxorComponent
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		WvBlazorTraceService.OnSignal(this,signalName:"app-state-refresh");
+		//WvBlazorTraceService.OnSignal(this,signalName:"app-state-refresh");
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{

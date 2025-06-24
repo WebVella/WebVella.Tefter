@@ -77,7 +77,7 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 		catch (Exception ex)
 		{
 			synchLog.Log("failed loading provider settings", ex);
-			throw ex;
+			throw;
 		}
 
 		if (string.IsNullOrWhiteSpace(settings.ConnectionString))
@@ -277,7 +277,7 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 							synchLog.Log($"failed to process value for row index={rowCounter}, source column='{sourceName}'," +
 								$" provider column='{providerColumnWithSource.DbName}', provider column type='{providerColumnWithSource.DbType}'," +
 								$"  value='{value}'", ex);
-							throw ex;
+							throw;
 						}
 					}
 					catch (Exception ex)

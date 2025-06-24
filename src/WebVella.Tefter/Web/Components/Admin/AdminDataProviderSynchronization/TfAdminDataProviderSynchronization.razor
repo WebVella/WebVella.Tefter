@@ -3,7 +3,8 @@
 
 <FluentGrid>
 	<FluentGridItem xs="12" md="6">
-		<TfColumnCard Title="@LOC("Row Identity key")" DataProvider="TfAppState.Value.AdminDataProvider" Items="_keyitems" ItemsChanged="_onColumnsChanged"
+		<TfColumnCard Title="@LOC("Row Identity key")" DataProvider="TfAppState.Value.AdminDataProvider" 
+						Items="_keyitems" ItemsChanged="_onColumnsChanged"
 					  NoItemsMessage="@LOC("Data row position in the list will be used for comparison.")">
 			<NoItemsTemplate>
 				<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("Row position")" AllowDismiss="false" Style="margin:3px 0">

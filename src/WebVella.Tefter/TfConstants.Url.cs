@@ -82,6 +82,7 @@ public partial class TfConstants
 	public static string SpaceViewPagesPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceView}/{{1}}/{RouteNameSpacePages}";
 	public static string SpaceDataPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}";
 	public static string SpaceDataViewsPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameViews}";
+	public static string SpaceDataJoinedDataPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameAux}";
 	public static string SpaceDataDataPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameData}";
 	public static string NoAccessPage = $"/403";
 	public static string InstallPage = $"/tf-install";

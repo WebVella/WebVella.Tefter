@@ -40,7 +40,7 @@
 						@if (TfAppState.Value.SpaceDataData.Rows.Count == 0)
 						{
 							<tr class="tf-grid-tr">
-								<td class="tf-grid-td">No records found</td>
+								<td class="tf-grid-td" colspan="@TfAppState.Value.SpaceDataData.Columns.Count">No records found</td>
 							</tr>
 						}
 					</tbody>

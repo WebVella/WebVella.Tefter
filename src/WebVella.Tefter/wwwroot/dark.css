@@ -496,6 +496,7 @@ fluent-select[readonly]::part(control),
 fluent-select.disabled::part(control),
 fluent-combobox[readonly]::part(control),
 fluent-combobox.disabled::part(control) {
+  opacity: 1 !important;
   background: transparent;
   border-color: var(--neutral-stroke-input-rest);
 }

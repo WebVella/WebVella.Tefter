@@ -22,9 +22,9 @@ public record TfSharedColumn
 
 	public void FixPrefix()
 	{
-		if (!DbName.StartsWith("sc_"))
+		if (!DbName.StartsWith(TfConstants.TF_SHARED_COLUMN_PREFIX))
 		{
-			DbName = "sc_" + DbName;
+			DbName = TfConstants.TF_SHARED_COLUMN_PREFIX + DbName;
 		}
 	}
 }

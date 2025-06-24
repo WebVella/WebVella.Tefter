@@ -9,7 +9,7 @@ public partial record TucRouteState
 	public Guid? UserId { get; init; }
 	public Guid? RoleId { get; init; }
 	public Guid? DataProviderId { get; init; }
-	public string? DataIdentityId { get; init; }
+	public string DataIdentityId { get; init; }
 	public Guid? SharedColumnId { get; init; }
 	public Guid? PageId { get; init; }
 	public Guid? SpaceViewPresetId { get; init; }

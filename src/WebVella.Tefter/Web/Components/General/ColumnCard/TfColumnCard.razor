@@ -45,18 +45,12 @@
 						@foreach (var context in Items.Order())
 						{
 							var column = _getProviderColumnByName(context);
-							var joinColumn = _getJoinColumnByName(context);
 							<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 								<td class="tf-grid-td" style="width:90px;min-width:90px;vertical-align:middle">
 									<div>
 										@if (column is not null)
 										{
 											<FluentBadge Fill="somevalue" Color="white" BackgroundColor="var(--tf-green-700)" Style="width:100%">primary</FluentBadge>
-										}
-										else if (joinColumn is not null)
-										{
-											<FluentBadge Fill="somevalue" Color="white" BackgroundColor="var(--tf-violet-700)" Style="width:100%">joined</FluentBadge>
-											<FluentBadge Style="width:100%;margin-top:5px">readonly</FluentBadge>
 										}
 										else
 										{
@@ -72,10 +66,6 @@
 										@if (column is not null)
 										{
 											<span>@column.DbType.Name</span>
-										}
-										else if (joinColumn is not null)
-										{
-											<span>@joinColumn.DbType.Name</span>
 										}
 									</div>
 								</td>

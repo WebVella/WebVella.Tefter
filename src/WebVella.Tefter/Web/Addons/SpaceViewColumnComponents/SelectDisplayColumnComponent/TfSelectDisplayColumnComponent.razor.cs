@@ -225,7 +225,7 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 				_selectedSpaceData = TfAppState.Value.SpaceDataList[0];
 				await OnOptionsChanged(nameof(componentOptions.SpaceDataId), _selectedSpaceData.Id);
 			}
-
+			return;
 		}
 		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
 		if (column is null)

@@ -126,8 +126,8 @@
   <data name="Create view" xml:space="preserve">
     <value>Създай изглед</value>
   </data>
-  <data name="Joined Data Providers" xml:space="preserve">
-    <value>Свързани източници на данни</value>
+  <data name="Aux Data Providers" xml:space="preserve">
+    <value>Допълнителни източници на данни</value>
   </data>
   <data name="Manage view" xml:space="preserve">
     <value>Редактирай изглед</value>
@@ -144,7 +144,7 @@
   <data name="Type" xml:space="preserve">
     <value>Тип</value>
   </data>
-  <data name="When data providers share at least one common join key, their data can be joined. Only the data from the primary provider is modifiable." xml:space="preserve">
-    <value>Когато доставчиците на данни споделят поне един общ ключ за присъединяване, техните данни могат да бъдат обединени. Могат да се променят само данните от основния доставчик.</value>
+	<data name="When data providers share at least one common identity, their data can be joined. Only the data from the primary provider is modifiable." xml:space="preserve">
+    <value>Когато доставчиците на данни споделят поне една обща идентичност, техните данни могат да бъдат обединени. Могат да се променят само данните от основния доставчик.</value>
   </data>
 </root>

@@ -28,7 +28,7 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 			Url = string.Format(TfConstants.AdminDataProviderAuxPageUrl, providerId),
 			Match = NavLinkMatch.Prefix,
 			//Icon = new Icons.Regular.Size20.TableAdd(),
-			Text = LOC("Joined Data")
+			Text = LOC("Aux Data")
 		});
 		menu.Add(new TucMenuItem
 		{

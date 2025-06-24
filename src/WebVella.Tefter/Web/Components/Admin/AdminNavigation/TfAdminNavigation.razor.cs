@@ -41,7 +41,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 	private void generateMenu()
 	{
 		menuItems.Clear();
-		var iconColor = "var(--tf-admin-color)";
+		//var iconColor = "var(--tf-admin-color)";
 		if (TfAppState.Value.Route is null) return;
 		menuItems.Add(new TucMenuItem()
 		{

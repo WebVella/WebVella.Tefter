@@ -101,7 +101,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 			catch (Exception ex)
 			{
 				synchLog.Log("failed loading provider settings", ex);
-				throw ex;
+				throw;
 			}
 			var culture = new CultureInfo(settings.CultureName);
 
@@ -152,7 +152,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 				catch (Exception ex)
 				{
 					synchLog.Log($"failed loading provider csv file from repository file {settings.Filepath}", ex);
-					throw ex;
+					throw;
 				}
 
 				using (var stream = tfService.GetRepositoryFileContentAsFileStream(file.Filename))
@@ -395,7 +395,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 			catch (Exception ex)
 			{
 				synchLog.Log($"failed to open and parse csv file", ex);
-				throw ex;
+				throw;
 			}
 
 			var sourceColumns = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
@@ -413,7 +413,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 				catch (Exception ex)
 				{
 					synchLog.Log($"failed to read row[{rowCounter}] data from csv file", ex);
-					throw ex;
+					throw;
 				}
 
 
@@ -443,7 +443,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 						synchLog.Log($"failed to process value for row index={rowCounter}, source column='{sourceName}'," +
 							$" provider column='{providerColumnWithSource.DbName}', provider column type='{providerColumnWithSource.DbType}'," +
 							$"  value='{value}'", ex);
-						throw ex;
+						throw;
 					}
 				}
 				result.Add(row);

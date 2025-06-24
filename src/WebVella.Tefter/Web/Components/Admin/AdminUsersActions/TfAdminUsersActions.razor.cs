@@ -5,7 +5,7 @@ public partial class TfAdminUsersActions : TfBaseComponent
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 
-	private bool _settingsMenuVisible = false;
+	//private bool _settingsMenuVisible = false;
 	private async Task addUser()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfUserManageDialog>(

@@ -4,7 +4,6 @@ public partial class GuestLayout : LayoutComponentBase
 	[Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
 	[Inject] private IJSRuntime JSRuntime { get; set; }
-	[Inject] private IWvBlazorTraceService WvBlazorTraceService { get; set; }
 	[Inject] protected NavigationManager Navigator { get; set; }
 
 
@@ -12,8 +11,7 @@ public partial class GuestLayout : LayoutComponentBase
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		WvBlazorTraceService.OnSignal(this,signalName:"layout-refresh");
-		base.OnAfterRender(firstRender);
+		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
 			var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();

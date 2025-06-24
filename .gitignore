@@ -350,6 +350,7 @@ MigrationBackup/
 .ionide/
 /src/WebVella.Tefter.Site/appsettings.DESKTOP-KU8LRG2.json
 .idea
+.vscode
 /src/WebVella.Tefter.Site/Files/
 /src/WebVella.Tefter.Site/BlobStorage/
 /tests/WebVella.Tefter.Tests/FileResults

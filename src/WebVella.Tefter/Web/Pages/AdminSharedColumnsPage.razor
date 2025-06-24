@@ -8,7 +8,7 @@
 		<TfAdminSharedColumnsNavigation />
 	</Aside>
 	<ChildContent>
-		@if (SharedColumnId == Guid.Empty || TfAppState.Value.AdminSharedColumn is null)
+		@if (TfAppState.Value.AdminSharedColumns.Count == 0)
 		{
 			<TfLayoutBodyMain>
 				<Header>
@@ -22,7 +22,7 @@
 				</ChildContent>
 			</TfLayoutBodyMain>
 		}
-		else
+		else if (TfAppState.Value.AdminSharedColumn is not null)
 		{
 			<TfLayoutBodyMain>
 				<Header>

@@ -10,7 +10,7 @@
 		<TfAdminDataProviderNavigation />
 	</Aside>
 	<ChildContent>
-		@if (ProviderId == Guid.Empty || TfAppState.Value.AdminDataProvider is null)
+		@if (TfAppState.Value.AdminDataProviders.Count == 0)
 		{
 			<TfLayoutBodyMain>
 				<Header>
@@ -24,7 +24,7 @@
 				</ChildContent>
 			</TfLayoutBodyMain>
 		}
-		else
+		else if (TfAppState.Value.AdminDataProvider is not null)
 		{
 			if (TfAppState.Value.Route.HasNode(RouteDataNode.Data, 3))
 			{

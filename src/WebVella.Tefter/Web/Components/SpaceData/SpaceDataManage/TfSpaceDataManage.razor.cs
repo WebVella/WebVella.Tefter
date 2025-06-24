@@ -10,7 +10,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private TucSpaceData _form = new();
-	private List<TucDataProvider> _joinedProviders = new();
+	private List<TucSpaceDataColumn> _columnOptions = new();
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -19,10 +19,10 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		await base.OnInitializedAsync();
-		await _init();
+		base.OnInitialized();
+		_init();
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -36,14 +36,11 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 	private void On_AppChanged(SetAppStateAction action)
 	{
-		InvokeAsync(async () =>
-		{
-			await _init();
-			await InvokeAsync(StateHasChanged);
-		});
+			_init();
+			StateHasChanged();
 	}
 
-	private async Task _init()
+	private void _init()
 	{
 		if (TfAppState.Value.SpaceData is null) return;
 		_form = TfAppState.Value.SpaceData with { Id = TfAppState.Value.SpaceData.Id };
@@ -51,12 +48,12 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		if (_form.DataProviderId != Guid.Empty)
 		{
 			SelectedProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _form.DataProviderId);
-			_joinedProviders = await UC.GetDataProviderJoinedProvidersAsync(SelectedProvider.Id);
 		}
 		else
 		{
 			SelectedProvider = null;
 		}
+		_columnOptions = UC.GetSpaceDataColumnOptions(TfAppState.Value.SpaceData.DataProviderId);
 	}
 
 	private async Task _deleteSpaceData()
@@ -118,11 +115,39 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 			}));
 		}
 	}
-	private async Task _onColumnsChanged(List<string> columns)
+	private async Task _onAddColumn(TucSpaceDataColumn column)
 	{
 		try
 		{
-			TucSpaceData spaceData = UC.UpdateSpaceDataColumns(TfAppState.Value.SpaceData.Id, columns);
+			TucSpaceData spaceData = UC.AddSpaceDataColumn(TfAppState.Value.SpaceData.Id, column);
+			ToastService.ShowSuccess("Dataset updated!");
+			var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
+			var itemIndex = spaceDataList.FindIndex(x => x.Id == spaceData.Id);
+			if (itemIndex > -1) spaceDataList[itemIndex] = spaceData;
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with
+			{
+				SpaceData = spaceData,
+				SpaceDataList = spaceDataList
+			}));
+			_form = spaceData with { Id = spaceData.Id };
+		}
+		catch (Exception ex)
+		{
+			ProcessFormSubmitResponse(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private async Task _onRemoveColumn(TucSpaceDataColumn column)
+	{
+		try
+		{
+			TucSpaceData spaceData = UC.RemoveSpaceDataColumn(TfAppState.Value.SpaceData.Id, column);
 			ToastService.ShowSuccess("Dataset updated!");
 			var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
 			var itemIndex = spaceDataList.FindIndex(x => x.Id == spaceData.Id);

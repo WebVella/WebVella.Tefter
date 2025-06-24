@@ -6,7 +6,7 @@ public partial class TfRecipeStepForm : TfRecipeStepFormBase
 	[Parameter] public ITfRecipeStepAddon Addon { get; set; }
 	[Parameter] public bool IsSubstep { get; set; } = false;
 
-	private TfRecipeStepFormBase compRef;
+	//private TfRecipeStepFormBase compRef;
 	private string _renderedStepJson = null;
 
 	protected override bool ShouldRender()

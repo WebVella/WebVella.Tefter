@@ -54,7 +54,7 @@ public class RepositoryController : ControllerBase
 		var cultureInfo = new CultureInfo("en-US");
 
 		HttpContext.Response.Headers.Remove("last-modified");
-		HttpContext.Response.Headers.Add("last-modified", file.LastModifiedOn.ToString(cultureInfo));
+		HttpContext.Response.Headers.Append("last-modified", file.LastModifiedOn.ToString(cultureInfo));
 
 		const int durationInSeconds = 60 * 60 * 24 * 30; //30 days caching of these resources
 
@@ -74,7 +74,7 @@ public class RepositoryController : ControllerBase
 
 	[HttpGet]
 	[Route("/fs/blob/{blobId}/{fileName}")]
-	public async Task<IActionResult> Download([FromRoute] Guid blobId, [FromRoute] string filename)
+	public IActionResult Download([FromRoute] Guid blobId, [FromRoute] string filename)
 	{
 		if (blobId == Guid.Empty || string.IsNullOrWhiteSpace(filename))
 		{
