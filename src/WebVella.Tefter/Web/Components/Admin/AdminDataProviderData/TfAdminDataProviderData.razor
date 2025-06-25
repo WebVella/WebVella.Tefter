@@ -80,7 +80,14 @@
 									{
 										if (!_columnIsVisible(column)) { continue; }
 										<td class="tf-grid-td">
-											<div>@row[column.Name]</div>
+											@if (column.IsJoinColumn)
+											{
+												<div>@(String.Join(", ", (List<string>)row[column.Name]))</div>
+											}
+											else
+											{
+												<div>@row[column.Name]</div>
+											}
 										</td>
 									}
 								</tr>
