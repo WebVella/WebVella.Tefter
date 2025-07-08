@@ -217,20 +217,44 @@ public partial class TfService : ITfService
 
 				string providerTableName = $"dp{provider.Index}";
 				string identityColumnName = $"tf_ide_{dataIdentity.DataIdentity}";
+				string identityColumnIndexName = $"ix_{providerTableName}_{identityColumnName}";
 
 				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 
+				//first remove the old identity column
+				//it will remove related indexes
+				dbBuilder
+					.WithTableBuilder(providerTableName)
+					.WithColumns(c => { c.Remove(identityColumnName); });
+
+				_dbManager.SaveChanges(dbBuilder);
+
+				dbBuilder = _dbManager.GetDatabaseBuilder();
+
+				//now add the new identity column and new index
 				dbBuilder
 					.WithTableBuilder(providerTableName)
 					.WithColumns(c =>
 					{
-						c.WithShortTextColumn(identityColumnName, col =>
+						c.AddShortTextColumn(identityColumnName, col =>
 						{
 							col.AsGeneratedSHA1FromColumns(dataIdentity.Columns.ToArray());
 						});
 					});
 
+				dbBuilder
+					.WithTableBuilder(providerTableName)
+					.WithIndexes(indexes =>
+					{
+						indexes
+							.AddBTreeIndex(identityColumnIndexName, i =>
+							{
+								i.WithColumns(identityColumnName);
+							});
+					});
+
 				_dbManager.SaveChanges(dbBuilder);
+
 				scope.Complete();
 				return GetDataProvider(dataIdentity.DataProviderId);
 			}
@@ -277,7 +301,7 @@ public partial class TfService : ITfService
 				_dbManager.SaveChanges(dbBuilder);
 
 				bool success = _dboManager.Delete<TfDataProviderIdentityDbo>(id);
-				if(!success)
+				if (!success)
 					throw new TfDboServiceException("Delete<TfDataProviderIdentityDbo> failed.");
 
 				scope.Complete();
@@ -478,7 +502,7 @@ public partial class TfService : ITfService
 
 						return existingDataIdentity.DataIdentity == dbName;
 					})
-					.WithMessage("There identity cannot be changed.");
+					.WithMessage("The identity cannot be changed.");
 			});
 		}
 
@@ -515,7 +539,7 @@ public partial class TfService : ITfService
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"The data provider identity is null.") });
 
-			if (dataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY )
+			if (dataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"The system data provider identity cannot be deleted.") });
 
