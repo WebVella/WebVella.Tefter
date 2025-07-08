@@ -21,7 +21,11 @@
 						<tr class="tf-grid-tr">
 							@foreach (var column in TfAppState.Value.SpaceDataData.Columns)
 							{
-								<th class="tf-grid-th">@column</th>
+								if (column.IsSystem)
+								{
+									continue;
+								}
+								<th class="tf-grid-th">@column.Name</th>
 							}
 						</tr>
 					</thead>
@@ -31,8 +35,19 @@
 							<tr @key=@row["tf_id"] class="tf-grid-tr">
 								@foreach (var column in TfAppState.Value.SpaceDataData.Columns)
 								{
+									if (column.IsSystem)
+									{
+										continue;
+									}
 									<td class="tf-grid-td">
-										<div>@row[column.Name]</div>
+										@if (column.IsJoinColumn)
+										{
+											<div>@(String.Join(", ", (List<string>)row[column.Name]))</div>
+										}
+										else
+										{
+											<div>@row[column.Name]</div>
+										}
 									</td>
 								}
 							</tr>
