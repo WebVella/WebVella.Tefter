@@ -1,0 +1,95 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<TucErrorBoundry>
+	<div style="padding:var(--tf-layout-content-padding)">
+		@if (_column is null)
+		{
+			<TucSkeletonMenu HasIcon=true IsAside=true BackgroundColor="var(--tf-fill-color-hover)" />
+		}
+		else
+		{
+			<TucPageHeader Icon="@TfConstants.AdminRoleIcon" IconColor="@TfConstants.AdminColor" Class="page-title"
+						   Area="@LOC(TfConstants.AdminSharedColumnsMenuTitle)" Title="@_column.DbName" />
+
+			<TucCard Title="@LOC("Details")">
+				<ToolbarTemplate>
+					<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteRole">
+						@LOC("Delete")
+						<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(TfColor.Red600.GetAttribute().Value)" Slot="start" />
+					</FluentButton>
+					<FluentButton Appearance="@Appearance.Outline" OnClick="_editRole">
+						@LOC("Edit")
+						<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
+					</FluentButton>
+				</ToolbarTemplate>
+				<ChildContent>
+					<FluentGrid>
+						<FluentGridItem xs="3">
+							<FluentTextField Value="@(_column.DbName)"
+											 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+						</FluentGridItem>
+						<FluentGridItem xs="3">
+							<FluentTextField Value="@(_column.DbType.ToString())"
+											 Label="@LOC("Data type")" Style="width:100%" ReadOnly="true"/>
+						</FluentGridItem>
+						<FluentGridItem xs="3">
+							<FluentTextField Value="@(_column.DataIdentity)"
+											 Label="@LOC("Data Identity")" Style="width:100%" ReadOnly="true" />
+						</FluentGridItem>
+						<FluentGridItem xs="3">
+							<FluentInputLabel Label="@LOC("Global search")" />
+							<div>
+								@if (_column.IncludeInTableSearch)
+								{
+									<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetAttribute().Value" Color="white" Class="input-badge">ON</FluentBadge>
+								}
+								else
+								{
+									<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetAttribute().Value" Color="white" Class="input-badge">OFF</FluentBadge>
+								}
+							</div>
+						</FluentGridItem>
+					</FluentGrid>
+				</ChildContent>
+			</TucCard>
+
+			<TucCard Title="@LOC("Connected Data Providers")">
+				<ChildContent>
+					@if (_dataProviders.Count == 0)
+					{
+						<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false>@LOC("No data providers implement the identity")</FluentMessageBar>
+					}
+					else
+					{
+						<div class="tf-grid-wrapper">
+							<table class="tf-grid">
+								<thead class="tf-grid-thead">
+									<tr class="tf-grid-thead-bkg"></tr>
+									<tr class="tf-grid-tr">
+										<th class="tf-grid-th">name</th>
+										<th class="tf-grid-th">columns</th>
+									</tr>
+								</thead>
+								<tbody class="tf-grid-tbody">
+									@foreach (var context in _dataProviders)
+									{
+										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+											<td class="tf-grid-td">
+												<div>@context.Name</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>
+													@_getProviderImplementation(context)
+												</div>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</ChildContent>
+			</TucCard>
+		}
+	</div>
+</TucErrorBoundry>

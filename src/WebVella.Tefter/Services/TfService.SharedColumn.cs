@@ -8,16 +8,18 @@ public partial interface ITfService
 	TfSharedColumn GetSharedColumn(
 		string name);
 
-	List<TfSharedColumn> GetSharedColumns();
+	List<TfSharedColumn> GetSharedColumns(string? search = null);
 
-	void CreateSharedColumn(
+	TfSharedColumn CreateSharedColumn(
 	   TfSharedColumn column);
 
-	void UpdateSharedColumn(
+	TfSharedColumn UpdateSharedColumn(
 		TfSharedColumn column);
 
 	void DeleteSharedColumn(
 		Guid columnId);
+
+	ReadOnlyCollection<TfDataProvider> GetSharedColumnConnectedDataProviders(Guid columnId);
 }
 
 public partial class TfService : ITfService
@@ -48,12 +50,20 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfSharedColumn> GetSharedColumns()
+	public List<TfSharedColumn> GetSharedColumns(string? search = null)
 	{
 		try
 		{
 			var orderSettings = new TfOrderSettings(nameof(TfDataProviderColumn.DbName), OrderDirection.ASC);
-			return _dboManager.GetList<TfSharedColumn>(order: orderSettings);
+			var allColumns = _dboManager.GetList<TfSharedColumn>(order: orderSettings);
+			if (String.IsNullOrWhiteSpace(search))
+				return allColumns;
+
+			search = search.Trim().ToLowerInvariant();
+			return allColumns.Where(x =>
+				x.DbName.ToLowerInvariant().Contains(search)
+				|| x.DataIdentity.ToLowerInvariant().Contains(search)
+				).ToList();
 		}
 		catch (Exception ex)
 		{
@@ -61,7 +71,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void CreateSharedColumn(
+	public TfSharedColumn CreateSharedColumn(
 		TfSharedColumn column)
 	{
 		try
@@ -81,6 +91,7 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Insert<TfSharedColumn> failed");
 
 				scope.Complete();
+				return GetSharedColumn(column.Id);
 			}
 		}
 		catch (Exception ex)
@@ -89,7 +100,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void UpdateSharedColumn(
+	public TfSharedColumn UpdateSharedColumn(
 		TfSharedColumn column)
 	{
 		try
@@ -110,6 +121,7 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Update<TfSharedColumn> failed");
 
 				scope.Complete();
+				return GetSharedColumn(column.Id);
 			}
 		}
 		catch (Exception ex)
@@ -141,6 +153,32 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	public ReadOnlyCollection<TfDataProvider> GetSharedColumnConnectedDataProviders(Guid columnId)
+	{
+		try
+		{
+			if (columnId == Guid.Empty) throw new ArgumentException(nameof(columnId), "required");
+			var column = GetSharedColumn(columnId);
+			if (column is null)
+				throw new Exception("Shared column not found");
+
+			var result = new List<TfDataProvider>();
+			var allProviders = GetDataProviders();
+			foreach (var item in allProviders)
+			{
+				if (item.Identities is null || item.Identities.Count == 0) continue;
+				if (!item.Identities.Any(x => x.DataIdentity == column.DataIdentity)) continue;
+				result.Add(item);
+			}
+
+			return result.OrderBy(x => x.Name).ToList().AsReadOnly();
 		}
 		catch (Exception ex)
 		{

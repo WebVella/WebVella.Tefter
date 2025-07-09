@@ -1,0 +1,14 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<TucErrorBoundry>
+	@if (_isLoading)
+	{
+		<TucSkeletonMenu HasIcon=true BackgroundColor="var(--tf-fill-color-dark-1)" />
+	}
+	else
+	{
+		<TucMenu Items="_menu" ItemClass="tf-header__item" />
+	}
+</TucErrorBoundry>
+
+

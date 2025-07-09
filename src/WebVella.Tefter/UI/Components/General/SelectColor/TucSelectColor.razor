@@ -1,0 +1,82 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@if (_isReadonly)
+{
+	<FluentTextField ReadOnly="true" Value="@Value.ToString()" Style="width:100%">
+		@if (Value is null)
+		{
+			<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape")"
+						Color="Color.Neutral" />
+		}
+		else
+		{
+			<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
+						Color="Color.Custom"
+						CustomColor="@Value.GetAttribute().Value" />
+		}
+
+	</FluentTextField>
+}
+else
+{
+	<div class="tf-select-node">
+		<FluentStack>
+			<FluentButton Id="@_elementId" Style="width:100%" Class="tf-select-btn"
+						  Appearance="@Appearance.Outline"
+						  OnClick="@(_=> _onOpenChanged(true))">
+
+				<span>@(Value.GetAttribute().Name)</span>
+				@if (Value is null)
+				{
+					<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape")"
+								Color="Color.Neutral" />
+				}
+				else
+				{
+					<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
+								Color="Color.Custom"
+								CustomColor="@Value.Value.GetAttribute().Value" />
+				}
+				<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-fill-strong-focus)" Color="@Color.Custom" />
+			</FluentButton>
+			@if (!Required && Value is not null)
+			{
+				<FluentButton Appearance=@Appearance.Outline IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(()=> _optionChanged(TfColor.Black))" />
+			}
+		</FluentStack>
+		@if (_open)
+		{
+			<FluentOverlay Visible="@true" OnClose="@(_=> _onOpenChanged(false))" Transparent="true" FullScreen="true" />
+			<FluentAnchoredRegion Anchor="@_elementId" Style="max-height:300px;overflow:scroll;position:relative;"
+								  AutoFocus="true" FixedPlacement="true" Class="tf-select-menu"
+								  HorizontalDefaultPosition="HorizontalPosition.Center"
+								  VerticalDefaultPosition="VerticalPosition.Bottom"
+								  HorizontalPositioningMode="AxisPositioningMode.Dynamic"
+								  VerticalPositioningMode="AxisPositioningMode.Dynamic"
+								  HorizontalScaling="AxisScalingMode.Anchor">
+				<div class="tf-select-menu__body">
+					<FluentNavMenu>
+						<Virtualize TItem="TfColor" Items="@_colors" Context="option" ItemSize="32">
+							<FluentMenuItem @key=@((int)option) OnClick="@(()=> _optionChanged(option))" Class="@(option == Value ? "tf-menu-item-selected" : "")">
+								@if (option == TfColor.Black)
+								{
+									<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape")"
+												Color="Color.Neutral" />
+								}
+								else
+								{
+									<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
+												Color="Color.Custom"
+												CustomColor="@option.GetAttribute().Value" />
+								}
+								<FluentLabel>@option.GetAttribute().Name</FluentLabel>
+							</FluentMenuItem>
+						</Virtualize>
+					</FluentNavMenu>
+				</div>
+			</FluentAnchoredRegion>
+		}
+	</div>
+}
+
+

@@ -32,12 +32,12 @@ public partial class TfNavigation : TfBaseComponent
 			ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
 		}
 	}
-	private void On_AppChanged(SetAppStateAction action)
+	private async void On_AppChanged(SetAppStateAction action)
 	{
-		InvokeAsync(async () =>
+		await InvokeAsync(() =>
 		{
 			_initMenus();
-			await InvokeAsync(StateHasChanged);
+			StateHasChanged();
 		});
 	}
 

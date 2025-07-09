@@ -13,9 +13,7 @@ using WebVella.BlazorTrace;
 using WebVella.Tefter;
 using WebVella.Tefter.Database;
 using WebVella.Tefter.Services;
-using WebVella.Tefter.Site.Components;
 using WebVella.Tefter.Utility;
-using WebVella.Tefter.Web.Utils;
 
 #endregion
 var configBuilder = new ConfigurationBuilder()
@@ -39,6 +37,11 @@ try
 		 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 		 .AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: true);
 
+		var config = new ConfigurationBuilder()
+				 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+				 .AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: true)
+					.Build();
+
 		builder.Host.UseSerilog(Log.Logger);
 
 		//builder.Host.ConfigureLogging(logging =>
@@ -55,36 +58,7 @@ try
 		builder.Services.AddControllers();
 
 		//Blazor Trace Core Service
-		// builder.Services.AddBlazorTrace(new WvBlazorTraceConfiguration
-		// {
-		// 	#if !DEBUG
-		// 	EnableTracing = false
-		// 	#endif
-		// });
-		#if DEBUG
-		//Snapshots require bigger hub message size
-		builder.Services.Configure<HubOptions>(options =>
-		{
-			options.MaximumReceiveMessageSize = 10 * 1024 * 1024; // 10MB
-		});
-		//To get the message size error if it got bigger than the above
-		builder.Services.AddSignalR(o =>
-		{
-			o.EnableDetailedErrors = true;
-		});
-		#endif
-
-		//Add Fluxor State Managements
-		//NOTE: Register your assemblies if you need states
-		builder.Services.AddFluxor(options =>
-		{
-			//options.UseRouting();
-			options.ScanAssemblies(typeof(ITfService).Assembly);
-			//options.AddMiddleware<LoggingMiddleware>();
-			//options.UseReduxDevTools();
-		});
-
-
+		builder.Services.AddBlazorTrace(new WvBlazorTraceConfiguration(){ EnableTracing = false});
 
 		//IMPORTANT: Do not remove. Required for the application to work
 		builder.Services.AddTefter();
@@ -111,10 +85,9 @@ try
 		//You need to register your Assembly here to be scanned
 		//IMPORTANT: to not forget to add it in the <Route> AdditionalAssemblies 
 		//parameter also
-		app.MapRazorComponents<App>()
-			.AddAdditionalAssemblies(new[] { typeof(ITfService).Assembly })
-			.AddInteractiveServerRenderMode();
 
+		app.MapRazorComponents<WebVella.Tefter.UI.Components.App>()
+			.AddInteractiveServerRenderMode();
 		//This setups the localization of the Application. 
 		//It currently support only a selection of languages/cultures. 
 		//Contact us if you want to help with the translation in other languages

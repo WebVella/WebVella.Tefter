@@ -1,0 +1,37 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfFormBaseComponent
+
+<TucCard Style="width:300px;" Class="login-card">
+	<TitleTemplate>
+		<div class="login-logo">
+			<div class="login-logo-image"><img src="@ConfigurationService.CompanyLogoUrl" /></div>
+			<div class="login-logo-text">
+				<div>@ConfigurationService.CompanyName</div>
+				@if (!String.IsNullOrWhiteSpace(ConfigurationService.CompanySlogan))
+				{
+					<div class="login-logo-slogan">@ConfigurationService.CompanySlogan</div>
+				}
+			</div>
+		</div>
+	</TitleTemplate>
+	<ChildContent>
+		<FluentEditForm EditContext="EditContext" OnSubmit="_submit" FormName="login-form" novalidate>
+			<DataAnnotationsValidator />
+			<div class="login-form">
+				<FluentTextField TextFieldType="@TextFieldType.Email" @bind-Value=_form.Email
+								 Label="@LOC("Email")" Id="email" Name="email" Autofocus="true" />
+				<FluentValidationMessage For="@(() => _form.Email)" />
+				<FluentTextField TextFieldType="@TextFieldType.Password" @bind-Value=_form.Password
+								 Label="@LOC("Password")" Id="password" Name="password" />
+				<FluentValidationMessage For="@(() => _form.Password)" />
+				<FluentCheckbox @bind-Value=_form.RememberMe Style="margin-top:1rem;">@LOC("Remember Me")</FluentCheckbox>
+			</div>
+			<div class="login-btn">
+				<FluentButton Type="ButtonType.Submit" Appearance="@Appearance.Accent"
+							  IconStart="@TfConstants.GetIcon("Key").WithColor(Color.Neutral)"
+							  Loading="@_isSubmitting" Disabled="@_isSubmitting">@LOC("Login")</FluentButton>
+			</div>
+		</FluentEditForm>
+	</ChildContent>
+</TucCard>
+

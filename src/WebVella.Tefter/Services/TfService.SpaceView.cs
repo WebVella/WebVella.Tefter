@@ -96,302 +96,303 @@ public partial class TfService : ITfService
 		TfCreateSpaceViewExtended spaceViewExt,
 		bool createNewDataSet = true)
 	{
-		try
-		{
-			if (spaceViewExt != null && spaceViewExt.Id == Guid.Empty)
-				spaceViewExt.Id = Guid.NewGuid();
+		throw new Exception("TODO");
+		//try
+		//{
+		//	if (spaceViewExt != null && spaceViewExt.Id == Guid.Empty)
+		//		spaceViewExt.Id = Guid.NewGuid();
 
-			TfSpace space = null;
-			TfSpaceData spaceData = null;
-			TfSpaceView spaceView = null;
-			TfDataProvider dataprovider = null;
+		//	TfSpace space = null;
+		//	TfSpaceData spaceData = null;
+		//	TfSpaceView spaceView = null;
+		//	TfDataProvider dataprovider = null;
 
-			#region << Validate>>
+		//	#region << Validate>>
 
-			var valEx = new TfValidationException();
+		//	var valEx = new TfValidationException();
 
-			//args
-			if (String.IsNullOrWhiteSpace(spaceViewExt.Name))
-				valEx.AddValidationError(nameof(spaceViewExt.Name), "required");
+		//	//args
+		//	if (String.IsNullOrWhiteSpace(spaceViewExt.Name))
+		//		valEx.AddValidationError(nameof(spaceViewExt.Name), "required");
 
-			if (spaceViewExt.SpaceId == Guid.Empty)
-				valEx.AddValidationError(nameof(spaceViewExt.SpaceId), "required");
+		//	if (spaceViewExt.SpaceId == Guid.Empty)
+		//		valEx.AddValidationError(nameof(spaceViewExt.SpaceId), "required");
 
-			if (createNewDataSet)
-			{
-				if (String.IsNullOrWhiteSpace(spaceViewExt.NewSpaceDataName))
-					valEx.AddValidationError(nameof(spaceViewExt.NewSpaceDataName), "required");
+		//	if (createNewDataSet)
+		//	{
+		//		if (String.IsNullOrWhiteSpace(spaceViewExt.NewSpaceDataName))
+		//			valEx.AddValidationError(nameof(spaceViewExt.NewSpaceDataName), "required");
 
-				if (spaceViewExt.DataProviderId is null)
-					valEx.AddValidationError(nameof(spaceViewExt.DataProviderId), "required");
-			}
-			else
-			{
-				if (spaceViewExt.SpaceDataId is null)
-					valEx.AddValidationError(nameof(spaceViewExt.SpaceDataId), "required");
-			}
+		//		if (spaceViewExt.DataProviderId is null)
+		//			valEx.AddValidationError(nameof(spaceViewExt.DataProviderId), "required");
+		//	}
+		//	else
+		//	{
+		//		if (spaceViewExt.SpaceDataId is null)
+		//			valEx.AddValidationError(nameof(spaceViewExt.SpaceDataId), "required");
+		//	}
 
-			//Space
-			space = GetSpace(spaceViewExt.SpaceId);
-			if (space is null)
-				valEx.AddValidationError(nameof(spaceViewExt.SpaceId), "space is not found");
+		//	//Space
+		//	space = GetSpace(spaceViewExt.SpaceId);
+		//	if (space is null)
+		//		valEx.AddValidationError(nameof(spaceViewExt.SpaceId), "space is not found");
 
 
-			//SpaceData
-			if (spaceViewExt.SpaceDataId is not null)
-			{
-				spaceData = GetSpaceData(spaceViewExt.SpaceDataId.Value);
-				if (spaceData is null)
-					valEx.AddValidationError(nameof(spaceViewExt.SpaceDataId), "dataset is not found");
-			}
+		//	//SpaceData
+		//	if (spaceViewExt.SpaceDataId is not null)
+		//	{
+		//		spaceData = GetSpaceData(spaceViewExt.SpaceDataId.Value);
+		//		if (spaceData is null)
+		//			valEx.AddValidationError(nameof(spaceViewExt.SpaceDataId), "dataset is not found");
+		//	}
 
-			//DataProvider
-			Guid? dataProviderId = null;
-			if (spaceViewExt.DataProviderId is not null)
-			{
-				dataProviderId = spaceViewExt.DataProviderId.Value;
-			}
-			else if (spaceData is not null)
-			{
-				dataProviderId = spaceData.DataProviderId;
-			}
+		//	//DataProvider
+		//	Guid? dataProviderId = null;
+		//	if (spaceViewExt.DataProviderId is not null)
+		//	{
+		//		dataProviderId = spaceViewExt.DataProviderId.Value;
+		//	}
+		//	else if (spaceData is not null)
+		//	{
+		//		dataProviderId = spaceData.DataProviderId;
+		//	}
 
-			if (dataProviderId is not null)
-			{
-				dataprovider = GetDataProvider(dataProviderId.Value);
-				if (dataprovider is null)
-					valEx.AddValidationError(nameof(dataProviderId), "data provider is not found");
-			}
+		//	if (dataProviderId is not null)
+		//	{
+		//		dataprovider = GetDataProvider(dataProviderId.Value);
+		//		if (dataprovider is null)
+		//			valEx.AddValidationError(nameof(dataProviderId), "data provider is not found");
+		//	}
 
-			valEx.ThrowIfContainsErrors();
+		//	valEx.ThrowIfContainsErrors();
 
-			#endregion
+		//	#endregion
 
-			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
-			{
-				#region << create space data if needed >>
-				if (spaceData is null)
-				{
-					List<string> selectedColumns = new();
-					//system columns are always selected so we should not add them in the space data
-					if (spaceViewExt.AddProviderColumns && spaceViewExt.AddSharedColumns)
-					{
-						//all columns are requested from the provider, so send empty column list, which will apply newly added columns
-						//to the provider dynamically
-					}
-					else if (spaceViewExt.AddProviderColumns)
-					{
-						selectedColumns.AddRange(dataprovider.Columns.Select(x => x.DbName).ToList());
-					}
-					else if (spaceViewExt.AddSharedColumns)
-					{
-						selectedColumns.AddRange(dataprovider.SharedColumns.Select(x => x.DbName).ToList());
-					}
+		//	using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+		//	{
+		//		#region << create space data if needed >>
+		//		if (spaceData is null)
+		//		{
+		//			List<string> selectedColumns = new();
+		//			//system columns are always selected so we should not add them in the space data
+		//			if (spaceViewExt.AddProviderColumns && spaceViewExt.AddSharedColumns)
+		//			{
+		//				//all columns are requested from the provider, so send empty column list, which will apply newly added columns
+		//				//to the provider dynamically
+		//			}
+		//			else if (spaceViewExt.AddProviderColumns)
+		//			{
+		//				selectedColumns.AddRange(dataprovider.Columns.Select(x => x.DbName).ToList());
+		//			}
+		//			else if (spaceViewExt.AddSharedColumns)
+		//			{
+		//				selectedColumns.AddRange(dataprovider.SharedColumns.Select(x => x.DbName).ToList());
+		//			}
 
-					var spaceDataObj = new TfCreateSpaceData()
-					{
-						Id = Guid.NewGuid(),
-						Name = spaceViewExt.NewSpaceDataName,
-						Filters = new(),//filters will not be added at this point
-						Columns = selectedColumns,
-						DataProviderId = dataprovider.Id,
-						SpaceId = space.Id
-					};
+		//			var spaceDataObj = new TfCreateSpaceData()
+		//			{
+		//				Id = Guid.NewGuid(),
+		//				Name = spaceViewExt.NewSpaceDataName,
+		//				Filters = new(),//filters will not be added at this point
+		//				Columns = selectedColumns,
+		//				DataProviderId = dataprovider.Id,
+		//				SpaceId = space.Id
+		//			};
 
-					spaceData = CreateSpaceData(spaceDataObj);
-				}
-				#endregion
+		//			spaceData = CreateSpaceData(spaceDataObj);
+		//		}
+		//		#endregion
 
-				#region << create view>>
-				{
-					var spaceViewObj = new TfSpaceView()
-					{
-						Id = Guid.NewGuid(),
-						Name = spaceViewExt.Name,
-						Position = 1,//will be overrided later
-						SpaceDataId = spaceData.Id,
-						SpaceId = space.Id,
-						Type = spaceViewExt.Type,
-						Presets = spaceViewExt.Presets,
-						SettingsJson = spaceViewExt.SettingsJson,
-					};
+		//		#region << create view>>
+		//		{
+		//			var spaceViewObj = new TfSpaceView()
+		//			{
+		//				Id = Guid.NewGuid(),
+		//				Name = spaceViewExt.Name,
+		//				Position = 1,//will be overrided later
+		//				SpaceDataId = spaceData.Id,
+		//				SpaceId = space.Id,
+		//				Type = spaceViewExt.Type,
+		//				Presets = spaceViewExt.Presets,
+		//				SettingsJson = spaceViewExt.SettingsJson,
+		//			};
 
-					spaceView = CreateSpaceView(spaceViewObj);
-				}
-				#endregion
+		//			spaceView = CreateSpaceView(spaceViewObj);
+		//		}
+		//		#endregion
 
-				#region << create view columns>>
-				{
-					var availableTypes = GetAvailableSpaceViewColumnTypes();
-					var columnsToCreate = new List<TfSpaceViewColumn>();
-					short position = 1;
-					if (createNewDataSet)
-					{
-						if (spaceViewExt.AddProviderColumns)
-						{
-							foreach (var column in dataprovider.Columns)
-							{
-								var columnType = ModelHelpers.GetColumnTypeForDbType(column.DbType, availableTypes);
-								var tfColumn = new TfSpaceViewColumn
-								{
-									Id = Guid.NewGuid(),
-									SpaceViewId = spaceView.Id,
-									Position = position,
-									Title = column.DbName,
-									QueryName = column.DbName,
-									ComponentOptionsJson = "{}",
-									DataMapping = new(),
-									TypeId = Guid.Empty,
-									ComponentId = Guid.Empty,
-								};
+		//		#region << create view columns>>
+		//		{
+		//			var availableTypes = GetAvailableSpaceViewColumnTypes();
+		//			var columnsToCreate = new List<TfSpaceViewColumn>();
+		//			short position = 1;
+		//			if (createNewDataSet)
+		//			{
+		//				if (spaceViewExt.AddProviderColumns)
+		//				{
+		//					foreach (var column in dataprovider.Columns)
+		//					{
+		//						var columnType = ModelHelpers.GetColumnTypeForDbType(column.DbType, availableTypes);
+		//						var tfColumn = new TfSpaceViewColumn
+		//						{
+		//							Id = Guid.NewGuid(),
+		//							SpaceViewId = spaceView.Id,
+		//							Position = position,
+		//							Title = column.DbName,
+		//							QueryName = column.DbName,
+		//							ComponentOptionsJson = "{}",
+		//							DataMapping = new(),
+		//							TypeId = Guid.Empty,
+		//							ComponentId = Guid.Empty,
+		//						};
 
-								if (columnType is not null)
-								{
-									tfColumn.TypeId = columnType.AddonId;
-									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
-									foreach (var mapper in columnType.DataMapping)
-									{
-										tfColumn.DataMapping[mapper.Alias] = column.DbName;
-									}
-								}
-								columnsToCreate.Add(tfColumn);
-								position++;
-							}
-						}
-						if (spaceViewExt.AddSharedColumns)
-						{
-							foreach (var column in dataprovider.SharedColumns)
-							{
-								var columnType = ModelHelpers.GetColumnTypeForDbType(column.DbType, availableTypes);
-								var tfColumn = new TfSpaceViewColumn
-								{
-									Id = Guid.NewGuid(),
-									SpaceViewId = spaceView.Id,
-									Position = position,
-									Title = column.DbName,
-									QueryName = column.DbName,
-									ComponentOptionsJson = "{}",
-									DataMapping = new(),
-									TypeId = Guid.Empty,
-									ComponentId = Guid.Empty,
-								};
+		//						if (columnType is not null)
+		//						{
+		//							tfColumn.TypeId = columnType.AddonId;
+		//							tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
+		//							foreach (var mapper in columnType.DataMapping)
+		//							{
+		//								tfColumn.DataMapping[mapper.Alias] = column.DbName;
+		//							}
+		//						}
+		//						columnsToCreate.Add(tfColumn);
+		//						position++;
+		//					}
+		//				}
+		//				if (spaceViewExt.AddSharedColumns)
+		//				{
+		//					foreach (var column in dataprovider.SharedColumns)
+		//					{
+		//						var columnType = ModelHelpers.GetColumnTypeForDbType(column.DbType, availableTypes);
+		//						var tfColumn = new TfSpaceViewColumn
+		//						{
+		//							Id = Guid.NewGuid(),
+		//							SpaceViewId = spaceView.Id,
+		//							Position = position,
+		//							Title = column.DbName,
+		//							QueryName = column.DbName,
+		//							ComponentOptionsJson = "{}",
+		//							DataMapping = new(),
+		//							TypeId = Guid.Empty,
+		//							ComponentId = Guid.Empty,
+		//						};
 
-								if (columnType is not null)
-								{
-									tfColumn.TypeId = columnType.AddonId;
-									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
-									foreach (var mapper in columnType.DataMapping)
-									{
-										tfColumn.DataMapping[mapper.Alias] = column.DbName;
-									}
-								}
-								columnsToCreate.Add(tfColumn);
-								position++;
-							}
-						}
-						if (spaceViewExt.AddSystemColumns)
-						{
-							foreach (var column in dataprovider.SystemColumns)
-							{
-								var columnType = ModelHelpers.GetColumnTypeForDbType(column.DbType, availableTypes);
-								var tfColumn = new TfSpaceViewColumn
-								{
-									Id = Guid.NewGuid(),
-									SpaceViewId = spaceView.Id,
-									Position = position,
-									Title = column.DbName,
-									QueryName = column.DbName,
-									ComponentOptionsJson = "{}",
-									DataMapping = new(),
-									TypeId = Guid.Empty,
-									ComponentId = Guid.Empty,
-								};
+		//						if (columnType is not null)
+		//						{
+		//							tfColumn.TypeId = columnType.AddonId;
+		//							tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
+		//							foreach (var mapper in columnType.DataMapping)
+		//							{
+		//								tfColumn.DataMapping[mapper.Alias] = column.DbName;
+		//							}
+		//						}
+		//						columnsToCreate.Add(tfColumn);
+		//						position++;
+		//					}
+		//				}
+		//				if (spaceViewExt.AddSystemColumns)
+		//				{
+		//					foreach (var column in dataprovider.SystemColumns)
+		//					{
+		//						var columnType = ModelHelpers.GetColumnTypeForDbType(column.DbType, availableTypes);
+		//						var tfColumn = new TfSpaceViewColumn
+		//						{
+		//							Id = Guid.NewGuid(),
+		//							SpaceViewId = spaceView.Id,
+		//							Position = position,
+		//							Title = column.DbName,
+		//							QueryName = column.DbName,
+		//							ComponentOptionsJson = "{}",
+		//							DataMapping = new(),
+		//							TypeId = Guid.Empty,
+		//							ComponentId = Guid.Empty,
+		//						};
 
-								if (columnType is not null)
-								{
-									tfColumn.TypeId = columnType.AddonId;
-									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
-									foreach (var mapper in columnType.DataMapping)
-									{
-										tfColumn.DataMapping[mapper.Alias] = column.DbName;
-									}
-								}
-								columnsToCreate.Add(tfColumn);
-								position++;
-							}
-						}
-					}
-					else
-					{
-						if (spaceViewExt.AddDataSetColumns)
-						{
-							var columnsList = new List<string>();
-							if (spaceData.Columns.Count > 0)
-							{
-								columnsList = spaceData.Columns;
-							}
-							else
-							{
-								columnsList = dataprovider.Columns.Select(x => x.DbName).ToList();
-							}
-							foreach (var dbName in columnsList)
-							{
-								TfDatabaseColumnType? dbType = dataprovider.Columns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
+		//						if (columnType is not null)
+		//						{
+		//							tfColumn.TypeId = columnType.AddonId;
+		//							tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
+		//							foreach (var mapper in columnType.DataMapping)
+		//							{
+		//								tfColumn.DataMapping[mapper.Alias] = column.DbName;
+		//							}
+		//						}
+		//						columnsToCreate.Add(tfColumn);
+		//						position++;
+		//					}
+		//				}
+		//			}
+		//			else
+		//			{
+		//				if (spaceViewExt.AddDataSetColumns)
+		//				{
+		//					var columnsList = new List<string>();
+		//					if (spaceData.Columns.Count > 0)
+		//					{
+		//						columnsList = spaceData.Columns;
+		//					}
+		//					else
+		//					{
+		//						columnsList = dataprovider.Columns.Select(x => x.DbName).ToList();
+		//					}
+		//					foreach (var dbName in columnsList)
+		//					{
+		//						TfDatabaseColumnType? dbType = dataprovider.Columns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
 
-								if (dbType is null)
-									dbType = dataprovider.SharedColumns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
+		//						if (dbType is null)
+		//							dbType = dataprovider.SharedColumns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
 
-								if (dbType is null)
-									dbType = dataprovider.SystemColumns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
+		//						if (dbType is null)
+		//							dbType = dataprovider.SystemColumns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
 
-								if (dbType is null) continue;
+		//						if (dbType is null) continue;
 
-								var columnType = ModelHelpers.GetColumnTypeForDbType(dbType.Value, availableTypes);
-								var tfColumn = new TfSpaceViewColumn
-								{
-									Id = Guid.NewGuid(),
-									SpaceViewId = spaceView.Id,
-									Position = position,
-									Title = dbName,
-									QueryName = dbName,
-									ComponentOptionsJson = "{}",
-									DataMapping = new(),
-									TypeId = Guid.Empty,
-									ComponentId = Guid.Empty
-								};
+		//						var columnType = ModelHelpers.GetColumnTypeForDbType(dbType.Value, availableTypes);
+		//						var tfColumn = new TfSpaceViewColumn
+		//						{
+		//							Id = Guid.NewGuid(),
+		//							SpaceViewId = spaceView.Id,
+		//							Position = position,
+		//							Title = dbName,
+		//							QueryName = dbName,
+		//							ComponentOptionsJson = "{}",
+		//							DataMapping = new(),
+		//							TypeId = Guid.Empty,
+		//							ComponentId = Guid.Empty
+		//						};
 
-								if (columnType is not null)
-								{
-									tfColumn.TypeId = columnType.AddonId;
-									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
-									foreach (var mapper in columnType.DataMapping)
-									{
-										tfColumn.DataMapping[mapper.Alias] = dbName;
-									}
-								}
-								columnsToCreate.Add(tfColumn);
-								position++;
-							}
-						}
-					}
-					foreach (var tfColumn in columnsToCreate)
-					{
-						var createdColumn = CreateSpaceViewColumn(tfColumn);
-						if (createdColumn is null)
-							throw new TfException("CreateSpaceViewColumn failed to return newly created object");
-					}
-				}
-				#endregion
+		//						if (columnType is not null)
+		//						{
+		//							tfColumn.TypeId = columnType.AddonId;
+		//							tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
+		//							foreach (var mapper in columnType.DataMapping)
+		//							{
+		//								tfColumn.DataMapping[mapper.Alias] = dbName;
+		//							}
+		//						}
+		//						columnsToCreate.Add(tfColumn);
+		//						position++;
+		//					}
+		//				}
+		//			}
+		//			foreach (var tfColumn in columnsToCreate)
+		//			{
+		//				var createdColumn = CreateSpaceViewColumn(tfColumn);
+		//				if (createdColumn is null)
+		//					throw new TfException("CreateSpaceViewColumn failed to return newly created object");
+		//			}
+		//		}
+		//		#endregion
 
-				scope.Complete();
+		//		scope.Complete();
 
-				return GetSpaceView(spaceView.Id);
-			}
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
+		//		return GetSpaceView(spaceView.Id);
+		//	}
+		//}
+		//catch (Exception ex)
+		//{
+		//	throw ProcessException(ex);
+		//}
 	}
 
 	public TfSpaceView CreateSpaceView(

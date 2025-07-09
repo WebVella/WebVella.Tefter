@@ -1,0 +1,59 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+<div class="@_class" style="@Style" id="@Id" @onclick=OnClick>
+	@if (TitleTemplate is not null
+		|| !String.IsNullOrWhiteSpace(Title)
+		|| SubTitleTemplate is not null
+		|| !String.IsNullOrWhiteSpace(SubTitle)
+		|| ToolbarTemplate is not null)
+	{
+		<div class="tf-card__title" style="@TitleStyle">
+			<div class="tf-card__title__left">
+				<div>
+					@if (TitleTemplate is not null)
+					{
+						@TitleTemplate
+					}
+					else if (!String.IsNullOrWhiteSpace(Title))
+					{
+						@Title
+					}
+				</div>
+				@if (SubTitleTemplate is not null
+							|| !String.IsNullOrWhiteSpace(SubTitle))
+				{
+					<div class="tf-card__subtitle">
+						@if (SubTitleTemplate is not null)
+						{
+							@SubTitleTemplate
+						}
+						else if (!String.IsNullOrWhiteSpace(SubTitle))
+						{
+							@SubTitle
+						}
+					</div>
+
+				}
+			</div>
+			@if (ToolbarTemplate is not null)
+			{
+				<div class="tf-card__title__right">
+					@ToolbarTemplate
+				</div>
+			}
+		</div>
+
+	}
+	<div class="tf-card__content">
+		@ChildContent
+	</div>
+	@if (FooterTemplate is not null)
+	{
+		<div class="tf-card__footer">
+			@FooterTemplate
+		</div>
+	}
+</div>
+
+

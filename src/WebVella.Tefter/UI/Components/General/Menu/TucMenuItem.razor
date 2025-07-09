@@ -1,0 +1,51 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+<div class="@_css">
+	<FluentAnchor Href="@Item.Href"
+				  Id="@Item.Id" AdditionalAttributes=@_attributes
+				  OnClick="@(()=> {if(!Item.ShouldNavigate) {Item.OnClick();}})" Appearance="@Appearance.Hypertext">
+		@if (Item.Icon is not null && !String.IsNullOrWhiteSpace(Item.Text))
+		{
+			<span slot="start">
+				<FluentIcon Value="@Item.Icon" />
+			</span>
+		}
+		else if (Item.Icon is not null)
+		{
+			<FluentIcon Value="@Item.Icon" />
+		}
+		@if (!String.IsNullOrWhiteSpace(Item.Text))
+		{
+			<span class="tf-menu__item__text">@TfConverters.StringOverflow(Item.Text,EllipsesLimit)</span>
+		}
+		@if (Item.IsSeparateChevron.HasValue && !Item.IsSeparateChevron.Value)
+		{
+			<span slot="end">
+				<FluentIcon Value="@TfConstants.GetIcon("ChevronDown")" />
+			</span>
+		}
+		@if (Item.Color is not null)
+		{
+			<span class="tf-menu__item__color" style="@($"background-color:{Item.Color.GetAttribute().Value}")"></span>
+		}
+	</FluentAnchor>
+	@if (!Item.Disabled && Item.Items.Count > 0)
+	{
+		<FluentMenu UseMenuService="false"
+					Open="@Item.Expanded"
+					OpenChanged="@((x) => Item.OnExpand(x))"
+					Anchor="@Item.Id">
+			@foreach (var node in Item.Items)
+			{
+				<TucMenuDropdownItem Item="node" EllipsesLimit="@EllipsesLimit" />
+			}
+		</FluentMenu>
+	}
+</div>
+@if (_expandItem is not null)
+{
+	<TucMenuItem Item="_expandItem" Class="@_expandItemCss" />
+}
+
+

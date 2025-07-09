@@ -1,0 +1,44 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits ComponentBase
+
+<div class="@_cssClass">
+	<div class="@($"{_layoutClass}__header")">
+		@Header
+	</div>
+	@if (Toolbar is not null)
+	{
+		<div class="@($"{_layoutClass}__toolbar")">
+			@Toolbar
+		</div>
+	}
+	<div class="@($"{_layoutClass}__wrapper")">
+		@if (AsideContent is not null)
+		{
+			<div class="@($"{_layoutClass}__aside {(AsideToolbar is not null ? $"{_layoutClass}__aside--with-toolbar" : "")}")">
+				@if (AsideToolbar is not null)
+				{
+					<div class="@($"{_layoutClass}__aside-toolbar")">
+						@AsideToolbar
+					</div>
+				}
+				<div class="@($"{_layoutClass}__aside-content")">
+					@AsideContent
+				</div>
+			</div>
+		}
+		<div class="@($"{_layoutClass}__main {(ContentToolbar is not null ? $"{_layoutClass}__main--with-toolbar" : "")}")">
+			@if (ContentToolbar is not null)
+			{
+				<div class="@($"{_layoutClass}__main-toolbar")">
+					@ContentToolbar
+				</div>
+			}
+			<div class="@($"{_layoutClass}__main-content")">
+				@Content
+			</div>
+		</div>
+
+	</div>
+</div>
+
+

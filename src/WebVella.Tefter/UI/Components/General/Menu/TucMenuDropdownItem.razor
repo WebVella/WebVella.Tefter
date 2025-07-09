@@ -1,0 +1,46 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+@if (Item.Items.Count == 0)
+{
+	<FluentMenuItem Id="@Item.Id" OnClick="Item.OnClick"
+					AdditionalAttributes="@_attributes" Label="@TfConverters.StringOverflow(Item.Text, EllipsesLimit)">
+		@if (Item.Icon is not null)
+		{
+			<span slot="start">
+				<FluentIcon Value="@Item.Icon" />
+			</span>
+		}
+		@if (Item.Color is not null)
+		{
+			<span class="tf-menu__item__color" style="@($"background-color:{Item.Color.GetAttribute().Value}")"></span>
+		}
+	</FluentMenuItem>
+}
+else
+{
+	<FluentMenuItem Id="@Item.Id"
+					OnClick="Item.OnClick"
+					AdditionalAttributes="@_attributes"
+					Label="@TfConverters.StringOverflow(Item.Text, EllipsesLimit)">
+		<ChildContent>
+			@if (Item.Icon is not null)
+			{
+				<span slot="start">
+					<FluentIcon Value="@Item.Icon" />
+				</span>
+			}
+			@if (Item.Color is not null)
+			{
+				<span class="tf-menu__item__color" style="@($"background-color:{Item.Color.GetAttribute().Value}")"></span>
+			}
+		</ChildContent>
+		<MenuItems>
+			@foreach (var node in Item.Items)
+			{
+				<TucMenuDropdownItem Item="node" />
+			}
+		</MenuItems>
+
+	</FluentMenuItem>
+}

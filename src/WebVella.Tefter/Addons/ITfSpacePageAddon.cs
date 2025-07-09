@@ -6,12 +6,12 @@ public interface ITfSpacePageAddon : ITfAddon
 	public Task<string> OnPageCreated(IServiceProvider serviceProvider, TfSpacePageAddonContext context);
 	public Task<string> OnPageUpdated(IServiceProvider serviceProvider, TfSpacePageAddonContext context);
 	public Task OnPageDeleted(IServiceProvider serviceProvider, TfSpacePageAddonContext context);
-	public Task<(TfAppState,TfAuxDataState)> InitState(
-		IServiceProvider serviceProvider,
-		TucUser currentUser,
-		TfAppState newAppState, TfAppState oldAppState,
-		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState, 
-		TfSpacePageAddonContext context);
+	//public Task<(TfAppState,TfAuxDataState)> InitState(
+	//	IServiceProvider serviceProvider,
+	//	TucUser currentUser,
+	//	TfAppState newAppState, TfAppState oldAppState,
+	//	TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState, 
+	//	TfSpacePageAddonContext context);
 	public string GetOptions();
 	public List<ValidationError> ValidateOptions();
 }

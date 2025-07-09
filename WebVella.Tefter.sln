@@ -24,28 +24,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Site", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Web.Tests", "tests\WebVella.Tefter.Web.Tests\WebVella.Tefter.Web.Tests.csproj", "{AE410F01-BB1F-45D4-AA01-9FA762B958E8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Talk", "src\WebVella.Tefter.Talk\WebVella.Tefter.Talk.csproj", "{C4999968-5255-45A0-849B-E09FAF424BA1}"
-	ProjectSection(ProjectDependencies) = postProject
-		{488533C5-7E51-4222-AD4C-3B3109B006A3} = {488533C5-7E51-4222-AD4C-3B3109B006A3}
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Assets", "src\WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj", "{EC503074-45F3-4367-B295-22593B36F4D9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.EmailSender", "src\WebVella.Tefter.EmailSender\WebVella.Tefter.EmailSender.csproj", "{0FE29016-C0B1-4E4A-8353-D285F059AB5F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.DataProviders.MsSql", "src\WebVella.Tefter.DataProviders.MsSql\WebVella.Tefter.DataProviders.MsSql.csproj", "{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TemplateProcessors", "TemplateProcessors", "{5B27AF15-DB08-4A07-BDBB-1F857288F9FC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.TemplateProcessors.Email", "src\TemplateProcessors\WebVella.Tefter.TemplateProcessors.Email\WebVella.Tefter.TemplateProcessors.Email.csproj", "{CCB8DE67-5804-4E5B-A254-99B59540E87B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.TemplateProcessors.ExcelFile", "src\TemplateProcessors\WebVella.Tefter.TemplateProcessors.ExcelFile\WebVella.Tefter.TemplateProcessors.ExcelFile.csproj", "{87ED8983-FFCE-4ABC-A2FD-DB042CD27BD6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.TemplateProcessors.TextFile", "src\TemplateProcessors\WebVella.Tefter.TemplateProcessors.TextFile\WebVella.Tefter.TemplateProcessors.TextFile.csproj", "{60BC024E-FC8A-403C-B059-94C13D91A65B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.TemplateProcessors.TextContent", "src\TemplateProcessors\WebVella.Tefter.TemplateProcessors.TextContent\WebVella.Tefter.TemplateProcessors.TextContent.csproj", "{3FD0F3C0-ABAE-40F5-9315-417C63141AE7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.TemplateProcessors.DocumentFile", "src\TemplateProcessors\WebVella.Tefter.TemplateProcessors.DocumentFile\WebVella.Tefter.TemplateProcessors.DocumentFile.csproj", "{91E93E1D-74E8-47D2-A8FE-1B45DF2599F2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Seeds", "Seeds", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -60,8 +41,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Seeds.SampleViewColumn", "src\Seeds\WebVella.Tefter.Seeds.SampleViewColumn\WebVella.Tefter.Seeds.SampleViewColumn.csproj", "{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Recipes", "Recipes", "{825B5329-3657-42DE-AC11-93EF6391945F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Recipes.GeoTeam", "recipes\WebVella.Tefter.Recipes.GeoTeam\WebVella.Tefter.Recipes.GeoTeam.csproj", "{6D64099A-B4D7-4212-8C2D-0E80423AE923}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,42 +68,10 @@ Global
 		{AE410F01-BB1F-45D4-AA01-9FA762B958E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE410F01-BB1F-45D4-AA01-9FA762B958E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE410F01-BB1F-45D4-AA01-9FA762B958E8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4999968-5255-45A0-849B-E09FAF424BA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4999968-5255-45A0-849B-E09FAF424BA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4999968-5255-45A0-849B-E09FAF424BA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4999968-5255-45A0-849B-E09FAF424BA1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EC503074-45F3-4367-B295-22593B36F4D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC503074-45F3-4367-B295-22593B36F4D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC503074-45F3-4367-B295-22593B36F4D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC503074-45F3-4367-B295-22593B36F4D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0FE29016-C0B1-4E4A-8353-D285F059AB5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0FE29016-C0B1-4E4A-8353-D285F059AB5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0FE29016-C0B1-4E4A-8353-D285F059AB5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0FE29016-C0B1-4E4A-8353-D285F059AB5F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CCB8DE67-5804-4E5B-A254-99B59540E87B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CCB8DE67-5804-4E5B-A254-99B59540E87B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CCB8DE67-5804-4E5B-A254-99B59540E87B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CCB8DE67-5804-4E5B-A254-99B59540E87B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{87ED8983-FFCE-4ABC-A2FD-DB042CD27BD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{87ED8983-FFCE-4ABC-A2FD-DB042CD27BD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{87ED8983-FFCE-4ABC-A2FD-DB042CD27BD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{87ED8983-FFCE-4ABC-A2FD-DB042CD27BD6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{60BC024E-FC8A-403C-B059-94C13D91A65B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{60BC024E-FC8A-403C-B059-94C13D91A65B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{60BC024E-FC8A-403C-B059-94C13D91A65B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{60BC024E-FC8A-403C-B059-94C13D91A65B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3FD0F3C0-ABAE-40F5-9315-417C63141AE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3FD0F3C0-ABAE-40F5-9315-417C63141AE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3FD0F3C0-ABAE-40F5-9315-417C63141AE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3FD0F3C0-ABAE-40F5-9315-417C63141AE7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{91E93E1D-74E8-47D2-A8FE-1B45DF2599F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91E93E1D-74E8-47D2-A8FE-1B45DF2599F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91E93E1D-74E8-47D2-A8FE-1B45DF2599F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91E93E1D-74E8-47D2-A8FE-1B45DF2599F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BE0B1C3E-D793-DF94-4E45-08924EE577E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BE0B1C3E-D793-DF94-4E45-08924EE577E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE0B1C3E-D793-DF94-4E45-08924EE577E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -145,10 +92,6 @@ Global
 		{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6D64099A-B4D7-4212-8C2D-0E80423AE923}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6D64099A-B4D7-4212-8C2D-0E80423AE923}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6D64099A-B4D7-4212-8C2D-0E80423AE923}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6D64099A-B4D7-4212-8C2D-0E80423AE923}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -156,17 +99,11 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4FCDA882-507F-4677-B756-EBEBD464F5D3} = {FBDDD2A3-E610-424E-B64E-58B4662A4583}
 		{AE410F01-BB1F-45D4-AA01-9FA762B958E8} = {FBDDD2A3-E610-424E-B64E-58B4662A4583}
-		{CCB8DE67-5804-4E5B-A254-99B59540E87B} = {5B27AF15-DB08-4A07-BDBB-1F857288F9FC}
-		{87ED8983-FFCE-4ABC-A2FD-DB042CD27BD6} = {5B27AF15-DB08-4A07-BDBB-1F857288F9FC}
-		{60BC024E-FC8A-403C-B059-94C13D91A65B} = {5B27AF15-DB08-4A07-BDBB-1F857288F9FC}
-		{3FD0F3C0-ABAE-40F5-9315-417C63141AE7} = {5B27AF15-DB08-4A07-BDBB-1F857288F9FC}
-		{91E93E1D-74E8-47D2-A8FE-1B45DF2599F2} = {5B27AF15-DB08-4A07-BDBB-1F857288F9FC}
 		{BE0B1C3E-D793-DF94-4E45-08924EE577E0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{DC264655-ACE2-4C82-88A6-0C9E6248E35D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{E95B6CAB-5261-4660-BD58-EFB0D9C72218} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{6B48DF26-790D-C28B-E21C-0CF642871453} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{6D64099A-B4D7-4212-8C2D-0E80423AE923} = {825B5329-3657-42DE-AC11-93EF6391945F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C1A4AC87-0ABF-4D69-AB37-06B038019BBB}

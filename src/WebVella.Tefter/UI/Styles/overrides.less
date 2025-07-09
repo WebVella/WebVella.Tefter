@@ -1,0 +1,163 @@
+﻿@import '_variables.less';
+
+
+.fluent-grid {
+	flex-wrap: nowrap !important;
+}
+
+
+/*Message*/
+.fluent-messagebar-message .title {
+	display: block;
+}
+
+div[class ^='fluent-messagebar'],
+.fluent-messagebar-notification,
+.fluent-messagebar-message {
+	animation: none !important;
+}
+
+.fluent-messagebar {
+	&.intent-success {
+		--success: var(--tf-green-600);
+		background-color: var(--tf-green-200) !important;
+		border: 1px solid var(--tf-green-200) !important;
+	}
+
+	&.intent-error {
+		--error: var(--tf-red-600);
+		background-color: var(--tf-red-200) !important;
+		border: 1px solid var(--tf-red-200) !important;
+	}
+
+	&.intent-warning {
+		--warning: var(--tf-orange-600);
+		background-color: var(--tf-orange-200) !important;
+		border: 1px solid var(--tf-orange-200) !important;
+	}
+
+	&.intent-info {
+		--info: var(--tf-blue-500);
+		background-color: var(--tf-blue-200) !important;
+		border: 1px solid var(--tf-blue-200) !important;
+	}
+}
+
+/*Form*/
+.fluent-input-label {
+	color: var(--tf-font-color-mute) !important;
+}
+
+fluent-select::part(listbox) {
+	max-height: 200px;
+}
+
+fluent-text-field,
+fluent-number-field,
+fluent-select,
+fluent-text-area,
+fluent-combobox{
+
+	&::part(root), &::part(control) {
+		border-color: var(--tf-stroke-input);
+	}
+
+	&.disabled {
+		opacity: 1;
+
+		&::part(control) {
+			opacity: 1;
+		}
+
+		&::part(root), &::part(control) {
+			border-color: var(--tf-stroke-base);
+		}
+	}
+
+	&.readonly {
+		opacity: 1;
+
+		&::part(control) {
+			opacity: 1;
+		}
+
+		&::part(root), &::part(control) {
+			border-color: var(--tf-stroke-base);
+			background: var(--tf-fill-color-base-1);
+		}
+	}
+}
+
+.tf-select-btn {
+	border-radius: 4px;
+}
+
+fluent-switch::part(label) {
+	margin-inline-end: 0;
+}
+
+/*Dialog*/
+.fluent-dialog-header {
+	background: var(--tf-fill-color-base);
+	border-radius: var(--tf-border-radius-base);
+	padding: 0.5rem 1rem !important;
+	column-gap: 0 !important;
+	margin-bottom: var(--dialog-padding);
+	font-size: var(--tf-font-size-md);
+}
+
+.fluent-dialog-header .fluent-typography {
+	font-size: var(--tf-font-size-lg) !important;
+}
+
+.fluent-dialog-header fluent-button::part(control) {
+	background: transparent;
+}
+
+.fluent-dialog-header fluent-button:hover::part(control) {
+	/*background: var(--tf-body-color-accent-2);*/
+}
+
+.fluent-dialog-header fluent-button svg {
+	/*fill: var(--tf-font-color-mute) !important;*/
+}
+
+.fluent-dialog-main.right::part(control),
+.fluent-dialog-main.left::part(control) {
+	--dialog-padding: 0px;
+}
+
+fluent-badge::part(control) {
+	font-size: 14px;
+	padding: 3px 5px;
+}
+
+fluent-badge.input-badge::part(control) {
+	padding: 7px 5px;
+}
+
+fluent-button {
+	--neutral-stroke-rest: var(--tf-stroke-button);
+	--neutral-stroke-control-rest: var(--neutral-stroke-rest);
+	--neutral-stroke-hover: var(--tf-stroke-button-hover);
+	--neutral-stroke-control-hover: var(--neutral-stroke-hover);
+	--neutral-fill-rest: var(--tf-white);
+	--neutral-fill-hover: var(--neutral-fill-rest);
+	background-color: var(--tf-white) !important;
+	border-radius: var(--tf-border-radius-xl);
+	color: var(--tf-font-color-link);
+
+	&::part(control):focus-visible {
+		outline: none !important;
+	}
+
+	&:hover {
+		color: var(--tf-font-color-link-hover);
+	}
+}
+
+fluent-skeleton {
+	& + & {
+		margin-top: 5px;
+	}
+}

@@ -2,7 +2,7 @@
 
 public partial interface ITfService
 {
-	public List<TfDataIdentity> GetDataIdentities();
+	public List<TfDataIdentity> GetDataIdentities(string? search = null);
 
 	public TfDataIdentity GetDataIdentity(
 		string dataIdentity);
@@ -19,11 +19,19 @@ public partial interface ITfService
 
 public partial class TfService : ITfService
 {
-	public List<TfDataIdentity> GetDataIdentities()
+	public List<TfDataIdentity> GetDataIdentities(string? search = null)
 	{
 		try
 		{
-			return _dboManager.GetList<TfDataIdentity>();
+			var allIdentities = _dboManager.GetList<TfDataIdentity>();
+			if(String.IsNullOrWhiteSpace(search))
+				return allIdentities;
+
+			search = search.Trim().ToLowerInvariant();
+			return allIdentities.Where(x=> 
+				x.DataIdentity.ToLowerInvariant().Contains(search)
+				|| x.Label.ToLowerInvariant().Contains(search)
+				).ToList();
 		}
 		catch (Exception ex)
 		{

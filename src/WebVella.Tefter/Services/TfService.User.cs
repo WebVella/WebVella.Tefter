@@ -49,6 +49,14 @@ public partial interface ITfService
 	ReadOnlyCollection<TfUser> GetUsers();
 
 	/// <summary>
+	/// Retrieves all users in the system matching the search string.
+	/// </summary>
+	/// <returns>A read-only collection of <see cref="TfUser"/> instances.</returns>
+	ReadOnlyCollection<TfUser> GetUsers(string? search);
+
+	ReadOnlyCollection<TfUser> GetUsersForRole(Guid roleId);
+
+	/// <summary>
 	/// Saves a user to the system. Creates a new user if it does not exist, or updates an existing one.
 	/// </summary>
 	/// <param name="user">The user to save.</param>
@@ -128,6 +136,12 @@ public partial interface ITfService
 	Task<TfUser> UpdateUserAsync(
 			TfUser user);
 
+	//Gets the authenticated user from cookie
+	Task<TfUser?> GetUserFromCookieAsync(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider);
+
+	//Checks user current URL access
+	bool UserHasAccess(TfUser user, NavigationManager navigator);
+
 	/// <summary>
 	/// Removes a role from a list of users.
 	/// </summary>
@@ -137,6 +151,10 @@ public partial interface ITfService
 		List<TfUser> users,
 		TfRole role);
 
+
+	Task<TfUser> RemoveUserFromRoleAsync(
+		Guid userId,
+		Guid roleId);
 	/// <summary>
 	/// Asynchronously removes a role from a list of users.
 	/// </summary>
@@ -156,6 +174,10 @@ public partial interface ITfService
 		List<TfUser> users,
 		TfRole role);
 
+	Task<TfUser> AddUserToRoleAsync(
+		Guid userId,
+		Guid roleId);
+
 	/// <summary>
 	/// Asynchronously adds a role to a list of users.
 	/// </summary>
@@ -165,6 +187,12 @@ public partial interface ITfService
 	Task AddUsersRoleAsync(
 		List<TfUser> users,
 		TfRole role);
+
+	Task<TfUser> SetStartUpUrl(Guid userId, string url);
+
+	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
+
+	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
 }
 
 public partial class TfService : ITfService
@@ -406,6 +434,44 @@ public partial class TfService : ITfService
 		}
 	}
 
+	public ReadOnlyCollection<TfUser> GetUsers(string? search)
+	{
+		try
+		{
+			var allUsers = GetUsers();
+			if (String.IsNullOrWhiteSpace(search))
+				return allUsers;
+
+			search = search.Trim().ToLowerInvariant();
+			return allUsers.Where(x =>
+				x.Email.ToLowerInvariant().Contains(search)
+				|| x.FirstName.ToLowerInvariant().Contains(search)
+				|| x.LastName.ToLowerInvariant().Contains(search)
+				).ToList().AsReadOnly();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	public ReadOnlyCollection<TfUser> GetUsersForRole(Guid roleId)
+	{
+		try
+		{
+			var allUsers = GetUsers();
+
+			return allUsers
+				.Where(x => x.Roles.Any(r => r.Id == roleId))
+				.OrderBy(x => x.Email)
+				.ToList().AsReadOnly();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
 	public TfUser SaveUser(
 		TfUser user)
 	{
@@ -441,7 +507,7 @@ public partial class TfService : ITfService
 
 		UserDbo userDbo = new UserDbo
 		{
-			Id = Guid.NewGuid(),
+			Id = user.Id == Guid.Empty ? Guid.NewGuid() : user.Id,
 			CreatedOn = user.CreatedOn,
 			Email = user.Email,
 			Enabled = user.Enabled,
@@ -974,6 +1040,75 @@ public partial class TfService : ITfService
 		return await GetUserAsync(userDbo.Id);
 	}
 
+	public async Task<TfUser?> GetUserFromCookieAsync(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider)
+	{
+		var user = (await authStateProvider.GetAuthenticationStateAsync())?.User;
+		if (user is null) return null;
+		//Temporary fix for multitab logout- we check the cookie as well
+		var cookie = await new CookieService(jsRuntime).GetAsync(TfConstants.TEFTER_AUTH_COOKIE_NAME);
+		if (cookie is null || user.Identity is null || !user.Identity.IsAuthenticated ||
+			(user.Identity as TfIdentity) is null ||
+			(user.Identity as TfIdentity)!.User is null)
+		{
+			return null;
+		}
+		var tfUser = ((TfIdentity)user.Identity).User;
+		if (tfUser is null) return null;
+
+		return tfUser;
+	}
+
+	public bool UserHasAccess(TfUser user, NavigationManager navigator)
+	{
+		if (user.IsAdmin) return true;
+
+		var routeData = navigator.GetRouteState();
+		if (routeData.HasNode(RouteDataNode.Space, 0) && routeData.SpaceId is not null)
+		{
+			if (routeData.HasNode(RouteDataNode.Manage, 2)) return false;
+
+			var space = GetSpace(routeData.SpaceId.Value);
+			if (!space.IsPrivate) return true;
+
+			if (space.Roles
+			.Select(x => x.Id)
+			.Intersect(user.Roles.Select(x => x.Id))
+			.Any())
+				return true;
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+
+	public async Task<TfUser> AddUserToRoleAsync(
+		Guid userId,
+		Guid roleId)
+	{
+		try
+		{
+			var userSM = await GetUserAsync(userId);
+			if (userSM is null)
+				throw new Exception("User not found");
+
+			var roleSM = await GetRoleAsync(roleId);
+			if (roleSM is null)
+				throw new Exception("Role not found");
+
+			if (userSM.Roles.Any(x => x.Id == roleId))
+				return userSM;
+
+			await AddUsersRoleAsync(new List<TfUser> { userSM }, roleSM);
+			return await GetUserAsync(userId);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
 	public Task AddUsersRoleAsync(
 		List<TfUser> users,
 		TfRole role)
@@ -988,7 +1123,30 @@ public partial class TfService : ITfService
 		}
 		return Task.CompletedTask;
 	}
+	public async Task<TfUser> RemoveUserFromRoleAsync(
+			Guid userId,
+			Guid roleId)
+	{
+		try
+		{
+			var userSM = await GetUserAsync(userId);
+			if (userSM is null)
+				throw new Exception("User not found");
 
+			var roleSM = await GetRoleAsync(roleId);
+			if (roleSM is null)
+				throw new Exception("Role not found");
+
+			if (!userSM.Roles.Any(x => x.Id == roleId))
+				return userSM;
+			await RemoveUsersRoleAsync(new List<TfUser> { userSM }, roleSM);
+			return await GetUserAsync(userId);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
 	public Task RemoveUsersRoleAsync(
 		List<TfUser> users,
 		TfRole role)
@@ -1002,6 +1160,36 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 		return Task.CompletedTask;
+	}
+
+	public async Task<TfUser> SetStartUpUrl(Guid userId,
+			string url)
+	{
+		var user = GetUser(userId);
+		var userBld = CreateUserBuilder(user);
+		userBld
+		.WithStartUpUrl(url);
+
+		await SaveUserAsync(userBld.Build());
+		return GetUser(userId);
+	}
+
+	public virtual async Task<TfUser> SetUserCulture(Guid userId, string cultureCode)
+	{
+		TfUser user = GetUser(userId);
+		var userBld = CreateUserBuilder(user);
+		userBld.WithCultureCode(cultureCode);
+		await SaveUserAsync(userBld.Build());
+		return GetUser(userId);
+	}
+
+	public virtual async Task<TfUser> SetPageSize(Guid userId, int? pageSize)
+	{
+		TfUser user = GetUser(userId);
+		var userBld = CreateUserBuilder(user);
+		userBld.WithPageSize(pageSize);
+		await SaveUserAsync(userBld.Build());
+		return GetUser(userId);
 	}
 
 	#region <--- validation --->

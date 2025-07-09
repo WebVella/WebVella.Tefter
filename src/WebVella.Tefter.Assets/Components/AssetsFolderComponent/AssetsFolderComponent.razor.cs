@@ -72,13 +72,13 @@ public partial class AssetsFolderComponent : TfBaseComponent
 		}
 	}
 
-	private void On_AppChanged(SetAppStateAction action)
+	private async void On_AppChanged(SetAppStateAction action)
 	{
-		InvokeAsync(async () =>
+		await InvokeAsync(() =>
 		{
 			_search = TfAppState.Value.Route.Search;
 			_generateItems();
-			await InvokeAsync(StateHasChanged);
+			StateHasChanged();
 		});
 	}
 	private async Task _searchValueChanged(string search)

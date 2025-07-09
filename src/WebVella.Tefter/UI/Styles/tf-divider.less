@@ -1,0 +1,34 @@
+﻿@import '_variables.less';
+
+
+.tf-divider {
+	display: flex;
+	align-items: end;
+	--tf-divider-background: var(--tf-stroke-invert-base);
+	position: relative;
+
+	fluent-dialog &, .tf-card & {
+		--tf-divider-background: var(--tf-stroke-base);
+	}
+
+	&__title {
+		flex: 0 0 auto;
+		background: var(--tf-divider-background);
+		color: var(--neutral-foreground-rest);
+		padding: 5px 15px;
+		border-radius: var(--tf-border-radius-base) var(--tf-border-radius-base) 0 0;
+	}
+
+	&__hr {
+		flex: 1 1 auto;
+		height: 2px;
+		background: var(--tf-divider-background);
+	}
+}
+
+
+
+
+
+
+

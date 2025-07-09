@@ -1,0 +1,38 @@
+﻿@import '_variables.less';
+
+.tf-layout-table {
+	--content-top: var(--tf-layout-header-height);
+	position: relative;
+	height: 100vh;
+	overflow: hidden;
+
+	&--with-toolbar {
+		--content-top: calc(var(--tf-layout-header-height) + var(--tf-layout-toolbar-height));
+	}
+
+	&__header {
+		height: var(--tf-layout-header-height);
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+	}
+
+	&__toolbar {
+		height: var(--tf-layout-toolbar-height);
+		position: absolute;
+		top: var(--tf-layout-header-height);
+		left: 0;
+		right: 0;
+	}
+
+	&__content {
+		position: absolute;
+		top: var(--content-top);
+		left: 0;
+		right: 0;
+		bottom:0;
+		overflow: auto;
+		padding:1rem;
+	}
+}

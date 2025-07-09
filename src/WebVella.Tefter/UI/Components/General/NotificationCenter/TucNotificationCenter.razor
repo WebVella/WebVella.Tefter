@@ -1,0 +1,28 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@code {
+	private RenderFragment NotificationIcon() =>
+        @<FluentIcon Value="@TfConstants.GetIcon("Alert")" Title="Notification center" />;
+}
+<FluentAnchor Href="#" OnClick="OpenNotificationCenterAsync"
+			  Title="Notification center" Appearance="Appearance.Hypertext">
+	@if (MessageService.Count(TfConstants.MESSAGES_NOTIFICATION_CENTER) > 0)
+	{
+		<FluentCounterBadge Count="@MessageService.Count(TfConstants.MESSAGES_NOTIFICATION_CENTER)"
+							Max="9"
+							ShowOverflow="true"
+							BackgroundColor="@Color.Error"
+							Color="Color.Fill"
+							Appearance="Appearance.Accent">
+			<ChildContent>
+				@NotificationIcon()
+			</ChildContent>
+		</FluentCounterBadge>
+	}
+	else
+	{
+		@NotificationIcon()
+	}
+</FluentAnchor>
+
+

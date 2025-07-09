@@ -1,0 +1,13 @@
+﻿@inherits LayoutComponentBase
+@if (_isLoaded)
+{
+	@Body
+
+	<FluentToastProvider MaxToastCount="3" Position="ToastPosition.TopCenter" RemoveToastsOnNavigation=false />
+	<FluentDialogProvider />
+	<FluentTooltipProvider />
+	<FluentKeyCodeProvider />
+	<FluentMenuProvider />
+}
+
+

@@ -8,6 +8,8 @@ public class TfDataProvider
 	[Required]
 	public string Name { get; internal set; }
 	public int Index { get; internal set; }
+	public string ColumnPrefix { get => $"{Code}_"; }
+	public string Code { get => $"dp{Index}"; }
 	public string SettingsJson { get; internal set; }
 	public short SynchScheduleMinutes { get; set; } = 60;
 	public bool SynchScheduleEnabled { get; set; } = false;

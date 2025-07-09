@@ -26,6 +26,8 @@ public partial interface ITfService
 	TfRole GetRole(
 		string name);
 
+
+	ReadOnlyCollection<TfRole> GetRoles(string? search);
 	/// <summary>
 	/// Retrieves all roles in the system.
 	/// </summary>
@@ -161,6 +163,24 @@ public partial class TfService : ITfService
 					.WithName(roleDbo.Name)
 					.IsSystem(roleDbo.IsSystem)
 					.Build();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	public ReadOnlyCollection<TfRole> GetRoles(string? search)
+	{
+		try
+		{
+			var allRoles = GetRoles();
+			if (String.IsNullOrWhiteSpace(search))
+				return allRoles;
+			search = search.Trim().ToLowerInvariant();
+			return allRoles.Where(x =>
+				x.Name.ToLowerInvariant().Contains(search)
+				).ToList().AsReadOnly();
 		}
 		catch (Exception ex)
 		{

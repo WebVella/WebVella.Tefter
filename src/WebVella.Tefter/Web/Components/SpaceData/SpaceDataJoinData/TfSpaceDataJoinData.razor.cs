@@ -30,14 +30,14 @@ public partial class TfSpaceDataJoinData : TfBaseComponent
 		}
 	}
 
-	private void On_AppChanged(SetAppStateAction action)
+	private async void On_AppChanged(SetAppStateAction action)
 	{
-		InvokeAsync(async () =>
+		await InvokeAsync(async () =>
 		{
 			if (TfAppState.Value.SpaceData is not null)
 			{
 				await _generateItems();
-				await InvokeAsync(StateHasChanged);
+				StateHasChanged();
 			}
 		});
 	}

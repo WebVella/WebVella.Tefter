@@ -1,0 +1,58 @@
+﻿@import '_variables.less';
+
+
+.tf-page-header {
+	margin-bottom: 1rem;
+
+	&.page-title{
+		margin-bottom:calc(2 * var(--tf-layout-content-padding));
+	}
+
+	&__primary {
+		display: flex;
+		justify-content: space-between;
+
+		&__left {
+			flex: 1 1 auto;
+			display: flex;
+		}
+
+		&__right {
+			flex: 0 0 auto;
+		}
+
+		&__icon-wrapper {
+			flex: 0 0 auto;
+			margin-right: 0.75rem;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding-top:5px;
+		}
+
+		&__icon {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		&__meta {
+			&__area {
+				color: var(--tf-font-color-mute);
+				font-size: var(--tf-font-size-sm);
+			}
+
+			&__title {
+				font-size: var(--tf-font-size-xxl);
+				font-weight: var(--tf-font-weight-lg);
+			}
+		}
+	}
+
+	&__divider{
+		color:var(--tf-font-color-mute);
+	}
+}

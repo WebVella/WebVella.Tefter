@@ -1,6 +1,4 @@
 ﻿using WebVella.Tefter.Models;
-using WebVella.Tefter.Web.Components;
-using WebVella.Tefter.Web.Models;
 
 namespace WebVella.Tefter.DataProviders.Csv.Addons;
 

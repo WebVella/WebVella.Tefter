@@ -2,9 +2,9 @@
 
 public partial class TfConstants
 {
-	public static List<TucCultureOption> CultureOptions = new List<TucCultureOption>(){
-		new TucCultureOption{ CultureCode = "en-US", IconUrl ="/_content/WebVella.Tefter/media/us.svg", Name = "English (US)"},
-		new TucCultureOption{ CultureCode = "bg-BG", IconUrl ="/_content/WebVella.Tefter/media/bg.svg", Name = "Български"}
+	public static List<TfCultureOption> CultureOptions = new List<TfCultureOption>(){
+		new TfCultureOption{ CultureCode = "en-US", IconUrl ="/_content/WebVella.Tefter/media/us.svg", Name = "English (US)"},
+		new TfCultureOption{ CultureCode = "bg-BG", IconUrl ="/_content/WebVella.Tefter/media/bg.svg", Name = "Български"}
 	};
 	public static CultureInfo DefaultCulture = new CultureInfo("en-US");
 	public static string TimeZoneName = "Europe/Sofia";

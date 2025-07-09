@@ -5,12 +5,35 @@ namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
+	Task<TfInstallData?> GetInstallDataAsync();
+	Task SaveInstallDataAsync(TfInstallData data);
 	Task<TfRecipeResult> ApplyRecipeAsync(ITfRecipeAddon recipe);
 	Task<TfRecipeStepResult> ApplyStep(ITfRecipeStepAddon step);
 }
 
 public partial class TfService : ITfService
 {
+	public Task<TfInstallData?> GetInstallDataAsync()
+	{
+		var setting = GetSetting(TfConstants.InstallDataKey);
+		if (setting is null)
+			return Task.FromResult((TfInstallData?)null);
+		TfInstallData? data = JsonSerializer.Deserialize<TfInstallData>(setting.Value);
+		return Task.FromResult(data);
+	}
+
+	public Task SaveInstallDataAsync(TfInstallData data)
+	{
+		if (data is null) throw new ArgumentNullException(nameof(data));
+		var setting = new TfSetting
+		{
+			Key = TfConstants.InstallDataKey,
+			Value = JsonSerializer.Serialize(data)
+		};
+		SaveSetting(setting);
+		return Task.CompletedTask;
+	}
+
 	public async Task<TfRecipeResult> ApplyRecipeAsync(ITfRecipeAddon recipe)
 	{
 		var result = new TfRecipeResult()

@@ -46,12 +46,12 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	protected override bool ShouldRender() => !_isDataLoading && base.ShouldRender();
 
 	// Event Handlers
-	private void HandleAppStateChange(SetAppStateAction action)
+	private async void HandleAppStateChange(SetAppStateAction action)
 	{
-		InvokeAsync(async () =>
+		await InvokeAsync(() =>
 		{
 			_isDataLoading = false;
-			await InvokeAsync(StateHasChanged);
+			StateHasChanged();
 		});
 	}
 	public async Task HandleKeyDownAsync(FluentKeyCodeEventArgs args)

@@ -1,7 +1,4 @@
-﻿using WebVella.Tefter.Web.Components;
-using WebVella.Tefter.Web.Models;
-
-namespace WebVella.Tefter.DataProviders.MsSql.Addons;
+﻿namespace WebVella.Tefter.DataProviders.MsSql.Addons;
 
 [LocalizationResource("WebVella.Tefter.DataProviders.MsSql.Addons.ScreenRegionComponents.ViewSettings.ViewSettingsComponent", "WebVella.Tefter.DataProviders.MsSql")]
 public partial class ViewSettingsComponent : TfBaseComponent,

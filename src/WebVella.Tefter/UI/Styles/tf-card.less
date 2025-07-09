@@ -1,0 +1,70 @@
+﻿@import '_variables.less';
+
+
+.tf-card {
+	--tf-card-border-radius: var(--tf-border-radius-md);
+	border-width: 0;
+	border-style: solid;
+	border-radius: var(--tf-card-border-radius);
+	background: var(--tf-white);
+	padding: var(--tf-layout-content-padding);
+
+	&__title {
+		background: var(--tf-fill-color-base);
+		border-radius: 0.5rem;
+		padding: 0.5rem 1rem;
+		margin-bottom: 0;
+		font-size: var(--tf-font-size-md);
+		font-weight: var(--tf-font-weight-base);
+		display:flex;
+		align-items:center;
+
+		&__left{
+			flex:1 1 auto;
+		}
+		&__right{
+			flex:0 0 auto;
+			flex-wrap:nowrap;
+			padding-left:1rem;
+		}
+
+		h3 {
+			margin-bottom: 0;
+			font-size: var(--tf-font-size-md);
+			font-weight: var(--tf-font-weight-base);
+		}
+	}
+	&__subtitle{
+		color:var(--tf-font-color-mute);
+		font-size:var(--tf-font-size-sm);
+	}
+
+	&__content {
+	}
+
+	&__title + &__content {
+		padding-top: var(--tf-layout-content-padding);
+	}
+
+	& + & {
+		margin-top: 2rem;
+	}
+}
+
+
+.tf-card__title {
+
+}
+
+
+.tf-card__content {
+	padding-top: 0.5rem;
+}
+
+.tf-card--clickable {
+	cursor: pointer;
+}
+
+.tf-card--clickable:hover {
+	background: var(--neutral-fill-secondary-rest);
+}

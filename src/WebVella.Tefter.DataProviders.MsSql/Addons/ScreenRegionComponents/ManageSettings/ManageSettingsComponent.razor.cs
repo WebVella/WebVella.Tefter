@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using WebVella.Tefter.Exceptions;
-using WebVella.Tefter.Web.Components;
-using WebVella.Tefter.Web.Models;
 
 namespace WebVella.Tefter.DataProviders.MsSql.Addons;
 [LocalizationResource("WebVella.Tefter.DataProviders.MsSql.Addons.ScreenRegionComponents.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.DataProviders.MsSql")]

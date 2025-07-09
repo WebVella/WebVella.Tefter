@@ -36,12 +36,12 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 		}
 	}
 
-	private void On_AppChanged(SetAppStateAction action)
+	private async void On_AppChanged(SetAppStateAction action)
 	{
-		InvokeAsync(async () =>
+		await InvokeAsync(() =>
 		{
 			_setNextSyncOn();
-			await InvokeAsync(StateHasChanged);
+			StateHasChanged();
 		});
 	}
 

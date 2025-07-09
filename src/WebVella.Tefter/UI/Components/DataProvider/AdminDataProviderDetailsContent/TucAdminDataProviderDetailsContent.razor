@@ -1,0 +1,72 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<TucErrorBoundry>
+	<div style="padding:var(--tf-layout-content-padding)">
+		@if (_provider is null)
+		{
+			<TucSkeletonMenu HasIcon=false IsAside=true BackgroundColor="var(--tf-fill-color-hover)" />
+		}
+		else
+		{
+			<TucPageHeader Icon="TfConstants.AdminDataProviderIcon" Area="@LOC(TfConstants.AdminDataProvidersMenuTitle)"
+						   Title="@_provider.Name" SubTitle="@LOC("Details")" IconColor="TfConstants.AdminColor" />
+			<TucCard Title="@LOC("Details")">
+				<ToolbarTemplate>
+					<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteProvider" Loading="_isDeleting" Disabled="_isDeleting">
+						@LOC("Delete")
+						<FluentIcon Value="@TfConstants.DeleteIcon" Color="@Color.Error" Slot="start" />
+					</FluentButton>
+					<FluentButton Appearance="@Appearance.Outline" OnClick="_editProvider">
+						@LOC("Edit")
+						<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+					</FluentButton>
+				</ToolbarTemplate>
+				<ChildContent>
+					<FluentGrid>
+						<FluentGridItem xs="2">
+							<FluentTextField Value="@(_provider.Code)"
+											 Label="@LOC("Code")" Style="width:100%" ReadOnly="true" Disabled="true" />
+						</FluentGridItem>
+						<FluentGridItem xs="5">
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_provider.Name"
+											 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+						</FluentGridItem>
+						<FluentGridItem xs="5">
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_provider.Name"
+											 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" />
+						</FluentGridItem>
+					</FluentGrid>
+					<FluentGrid>
+						<FluentGridItem xs="12">
+							<FluentInputLabel>@LOC("Supported Source data types")</FluentInputLabel>
+							@{
+								var supportedDataTypes = _provider.SupportedSourceDataTypes;
+							}
+							@if (_provider.SupportedSourceDataTypes is null || _provider.SupportedSourceDataTypes.Count == 0)
+							{
+								<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning" Title="@LOC("Warning")">
+									<div>@LOC("The data provider does not support any  type of source data!")</div>
+								</FluentMessageBar>
+							}
+							else
+							{
+								<FluentStack Orientation="@Orientation.Horizontal">
+									@foreach (var item in supportedDataTypes.Order())
+									{
+										<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">@item</FluentBadge>
+									}
+								</FluentStack>
+							}
+						</FluentGridItem>
+					</FluentGrid>
+					<FluentDivider Style="margin:15px 0" />
+					<FluentGrid Style="margin-top:3px;">
+						<FluentGridItem xs="12">
+							<TucScreenRegionComponent RegionContext="_dynamicComponentContext" Scope="@_dynamicComponentScope" />
+						</FluentGridItem>
+					</FluentGrid>
+				</ChildContent>
+			</TucCard>
+		}
+	</div>
+</TucErrorBoundry>

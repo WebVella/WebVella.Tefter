@@ -1,0 +1,32 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<div class="@_css" style="@_style">
+	@foreach (var item in Items)
+	{
+		<a href="@item.Href" class="tf-asidenav__item @(item.Selected ? "tf-asidenav__item--active" : "")">
+			@if (!String.IsNullOrWhiteSpace(item.Abbriviation) || item.Icon is not null)
+			{
+				<div class="tf-asidenav__item__badge">
+					<div class="tf-asidenav__item__badge__wrapper" style="@_getBadgeStyle(item)">
+						@if (!String.IsNullOrWhiteSpace(item.Abbriviation))
+						{
+							<div class="tf-asidenav__item__badge__text" style="@_getAbbriviationStyle(item)">@item.Abbriviation</div>
+						}
+						else
+						{
+							<div class="tf-asidenav__item__badge__icon" style="@_getIconStyle(item)">
+								<FluentIcon Value="@item.Icon" Width="32"/>
+							</div>
+						}
+					</div>
+				</div>
+			}
+			<div class="tf-asidenav__item__meta">
+				<div class="tf-asidenav__item__meta__title">@item.Text</div>
+				<div class="tf-asidenav__item__meta__description">@item.Description</div>
+			</div>
+		</a>
+	}
+</div>
+
+

@@ -23,12 +23,12 @@ public partial class TfAdminDataIdentityDetails : TfBaseComponent
 		ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
 	}
 
-	private void On_AppChanged(SetAppStateAction action)
+	private async void On_AppChanged(SetAppStateAction action)
 	{
-		InvokeAsync(async () =>
+		await InvokeAsync(async () =>
 		{
 			_dataProviders = await UC.GetDataProvidersImplementingIdentity(TfAppState.Value.AdminDataIdentity?.Name);
-			await InvokeAsync(StateHasChanged);
+			StateHasChanged();
 		});
 	}
 

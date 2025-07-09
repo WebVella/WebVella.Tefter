@@ -162,7 +162,7 @@ public partial class TfService : ITfService
 
 			foreach (var providerDataIdentity in providerIdentities)
 			{
-				if(providerDataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
+				if (providerDataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
 					continue;
 
 				systemColumns.Add(new TfDataProviderSystemColumn
@@ -197,7 +197,7 @@ public partial class TfService : ITfService
 			if (column is not null)
 				provider = GetDataProvider(column.DataProviderId);
 
-			new TfDataProviderColumnValidator(this,provider)
+			new TfDataProviderColumnValidator(this, provider)
 				.ValidateCreate(column)
 				.ToValidationException()
 				.ThrowIfContainsErrors();
@@ -239,16 +239,16 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			if(columns == null || columns.Count == 0)
+			if (columns == null || columns.Count == 0)
 				throw new TfException("No columns to create");
 
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				TfDataProvider provider = null;
-				if (columns[0] is not null )
+				if (columns[0] is not null)
 					provider = GetDataProvider(columns[0].DataProviderId);
 
-				var validator = new TfDataProviderColumnValidator(this,provider);
+				var validator = new TfDataProviderColumnValidator(this, provider);
 				List<ValidationResult> validationResults = new();
 				foreach (var column in columns)
 				{
@@ -260,7 +260,7 @@ public partial class TfService : ITfService
 					var validationResult = validator.ValidateCreate(column);
 					validationResults.Add(validationResult);
 
-					if(!validationResult.IsValid)
+					if (!validationResult.IsValid)
 						continue;
 
 					CreateDataProviderColumn(column);
@@ -268,7 +268,7 @@ public partial class TfService : ITfService
 
 				validationResults
 					.ToValidationException()
-					.ThrowIfContainsErrors(); 
+					.ThrowIfContainsErrors();
 
 				scope.Complete();
 
@@ -344,7 +344,7 @@ public partial class TfService : ITfService
 				if (column is not null)
 					provider = GetDataProvider(column.DataProviderId);
 
-				new TfDataProviderColumnValidator(this,provider)
+				new TfDataProviderColumnValidator(this, provider)
 					.ValidateDelete(column)
 					.ToValidationException()
 					.ThrowIfContainsErrors();
@@ -1104,9 +1104,9 @@ public partial class TfService : ITfService
 		private readonly string _requiredColumnNamePrefix = string.Empty;
 		public TfDataProviderColumnValidator(
 			ITfService tfService,
-			TfDataProvider provider )
+			TfDataProvider provider)
 		{
-			if( provider is not null )
+			if (provider is not null)
 				_requiredColumnNamePrefix = $"dp{provider.Index}_";
 
 			RuleSet("general", () =>
@@ -1127,7 +1127,14 @@ public partial class TfService : ITfService
 					.WithMessage("There is no existing data provider for specified provider id.");
 
 				RuleFor(column => column.SourceType)
-					.NotEmpty()
+					.Must((column, sourceType) =>
+					{
+						if(!string.IsNullOrWhiteSpace(sourceType))
+							return true;
+						if (string.IsNullOrWhiteSpace(column.SourceName))
+							return true;
+						return false;
+					})
 					.WithMessage("The data provider column source type is required.");
 
 				RuleFor(column => column.SourceType)
@@ -1217,7 +1224,7 @@ public partial class TfService : ITfService
 							return true;
 
 						var customNamePart = dbName;
-						if(dbName.StartsWith(_requiredColumnNamePrefix))
+						if (dbName.StartsWith(_requiredColumnNamePrefix))
 							customNamePart = dbName.Substring(_requiredColumnNamePrefix.Length);
 
 						return customNamePart.Length >= TfConstants.DB_MIN_OBJECT_NAME_LENGTH;
@@ -1263,16 +1270,16 @@ public partial class TfService : ITfService
 						if (!column.IsNullable && column.DefaultValue == null)
 							return false;
 
-						if(column.IsNullable && column.DefaultValue == null && column.AutoDefaultValue &&
+						if (column.IsNullable && column.DefaultValue == null && column.AutoDefaultValue &&
 							(column.DbType == TfDatabaseColumnType.Guid ||
 							 column.DbType == TfDatabaseColumnType.DateOnly ||
-							 column.DbType == TfDatabaseColumnType.DateTime ))
+							 column.DbType == TfDatabaseColumnType.DateTime))
 						{
 							return true;
 						}
-					
-						if	(!column.IsNullable && string.IsNullOrWhiteSpace(column.DefaultValue) &&
-							( column.DbType != TfDatabaseColumnType.Text && column.DbType != TfDatabaseColumnType.ShortText) )
+
+						if (!column.IsNullable && string.IsNullOrWhiteSpace(column.DefaultValue) &&
+							(column.DbType != TfDatabaseColumnType.Text && column.DbType != TfDatabaseColumnType.ShortText))
 							return false;
 
 						return true;

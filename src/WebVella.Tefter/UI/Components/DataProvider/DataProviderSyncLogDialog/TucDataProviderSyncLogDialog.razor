@@ -1,0 +1,35 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	<div>
+		@if (_isBusy)
+		{
+			<TucLoadingPane />
+		}
+		else
+		{
+			<div class="tf-console-box">
+				@foreach (var context in _items)
+				{
+					<div class="tf-console-box__row">
+						<div class="tf-console-box__row__date">[@context.CreatedOn.ToString(TfConstants.DateTimeFormat)]</div>
+						<div class="tf-console-box__row__message">
+							<span class="@(context.Type == TfDataProviderSychronizationLogEntryType.Error ? "error" : "")">@context.Message</span>
+						</div>
+					</div>
+				}
+			</div>
+		}
+	</div>
+</FluentDialogBody>

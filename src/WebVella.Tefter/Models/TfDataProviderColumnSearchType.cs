@@ -2,7 +2,7 @@
 
 public enum TfDataProviderColumnSearchType
 {
-	Equals,
-	Comparison,
-	Contains
+	Equals = 0,
+	Comparison = 1,
+	Contains = 2,
 }

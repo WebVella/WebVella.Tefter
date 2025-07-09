@@ -37,22 +37,22 @@ public partial class TfSpaceNavigation : TfBaseComponent
 		}
 	}
 
-	private void On_AppChanged(SetAppStateAction action)
+	private async void On_AppChanged(SetAppStateAction action)
 	{
 		if (action.Component == this) return;
-		InvokeAsync(async () =>
+		await InvokeAsync(async () =>
 		{
 			await _generateMenu();
-			await InvokeAsync(StateHasChanged);
+			StateHasChanged();
 		});
 	}
 
-	private void On_UserChanged(SetUserStateAction action)
+	private async void On_UserChanged(SetUserStateAction action)
 	{
 		if (action.Component == this) return;
-		InvokeAsync(async () =>
+		await InvokeAsync(() =>
 		{
-			await InvokeAsync(StateHasChanged);
+			StateHasChanged();
 		});
 	}
 

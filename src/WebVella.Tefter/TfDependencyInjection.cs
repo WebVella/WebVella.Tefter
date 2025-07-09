@@ -65,12 +65,16 @@ public static class TfDependencyInjection
 		services.AddSingleton<ITfMetaService, TfMetaService>();
 		services.AddSingleton<ITfService, TfService>();
 
-		//use cases
-		services.AddTransient<AppStateUseCase, AppStateUseCase>();
-		services.AddTransient<UserStateUseCase, UserStateUseCase>();
-		services.AddTransient<ExportUseCase, ExportUseCase>();
-		services.AddTransient<LoginUseCase, LoginUseCase>();
-		services.AddTransient<RecipeUseCase, RecipeUseCase>();
+		//UI
+		services.AddScoped<ITfRecipeUIService, TfRecipeUIService>();
+		services.AddScoped<ITfUserUIService, TfUserUIService>();
+		services.AddScoped<ITfGeneralUIService, TfDashboardUIService>();
+		services.AddScoped<ITfSpaceUIService, TfSpaceUIService>();
+		services.AddScoped<ITfDataProviderUIService, TfDataProviderUIService>();
+		services.AddScoped<ITfMetaUIService, TfMetaUIService>();
+		services.AddScoped<ITfDataIdentityUIService, TfDataIdentityUIService>();
+		services.AddScoped<ITfSharedColumnUIService, TfSharedColumnUIService>();
+
 
 		//hosted services
 		services.AddHostedService<TfDataProviderSynchronizeJob>();

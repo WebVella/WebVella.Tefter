@@ -4,10 +4,11 @@ namespace WebVella.Tefter;
 
 public partial class TfConstants
 {
-	public static Icon GetIcon(string name, IconSize size = IconSize.Size20, IconVariant variant = IconVariant.Regular)
+	public static Icon GetIcon(string? name, IconSize size = IconSize.Size20, IconVariant variant = IconVariant.Regular)
 	{
 		try
 		{
+			if(String.IsNullOrWhiteSpace(name)) name = "ErrorCircle";
 			return IconsExtensions.GetInstance(new IconInfo { Name = name, Size = size, Variant = variant });
 		}
 		catch
@@ -18,7 +19,9 @@ public partial class TfConstants
 
 	public static Icon HomeIcon = GetIcon("Home");
 	public static Icon ApplicationIcon = GetIcon("AppFolder");
+	public static Icon AdminIcon = GetIcon("Settings");
 	public static string HomeMenuTitle = "Home";
+	public static string AdminMenuTitle = "Administration";
 	public static string PagesMenuTitle = "Application Pages";
 
 	public static Icon BookmarkONIcon = GetIcon("Bookmark", variant: IconVariant.Filled);
@@ -37,7 +40,7 @@ public partial class TfConstants
 	public static string AdminAddonsMenuTitle = "Addons";
 
 	public static Icon AdminDataIcon = GetIcon("Database");
-	public static string AdminLocalDataMenuTitle = "Local Data";
+	public static string AdminDataMenuTitle = "Data";
 
 	public static Icon AdminDataProviderIcon = GetIcon("CloudDatabase");
 	public static string AdminDataProvidersMenuTitle = "Data Providers";
@@ -45,10 +48,12 @@ public partial class TfConstants
 	public static Icon AdminDataIdentityIcon = GetIcon("KeyMultiple");
 	public static string AdminDataIdentitiesMenuTitle = "Data Identities";
 
+	public static Icon AdminUserIcon = GetIcon("Person");
 	public static Icon AdminUsersIcon = GetIcon("People");
 	public static Icon AdminRoleIcon = GetIcon("Key");
 	public static string AdminAccessMenuTitle = "Access";
-	public static string AdminUsersMenuTitle = "Users";
+	public static string AdminUsersMenuTitle = "Users Accounts";
+	public static string AdminRolesMenuTitle = "Access Roles";
 
 	public static Icon AdminSharedColumnsIcon = GetIcon("BookDatabase");
 	public static string AdminSharedColumnsMenuTitle = "Shared Columns";
@@ -60,7 +65,7 @@ public partial class TfConstants
 	public static string AdminTemplatesMenuTitle = "Templates";
 
 	public static Icon ContentIcon = GetIcon("Folder");
-	public static string AdminLocalContentMenuTitle = "Local Content";
+	public static string AdminContentMenuTitle = "Content";
 
 
 	//Action icons

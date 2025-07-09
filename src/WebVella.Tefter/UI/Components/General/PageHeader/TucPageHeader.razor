@@ -1,0 +1,41 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits ComponentBase
+
+<div class="@_cssClass" style="@Style">
+	<div class="tf-page-header__primary">
+		<div class="tf-page-header__primary__left">
+			@if (Icon is not null)
+			{
+				<div class="tf-page-header__primary__icon-wrapper">
+					<div class="tf-page-header__primary__icon" style="@($"background: var({_iconBackgroundColor.GetAttribute().Variable})")">
+						<FluentIcon Value="@Icon.WithColor($"var({_iconForegroundColor.GetAttribute().Variable})")" />
+					</div>
+				</div>
+			}
+			<div class="tf-page-header__primary__meta">
+				<div class="tf-page-header__primary__meta__area">
+					@Area
+				</div>
+				<div class="tf-page-header__primary__meta__title">
+					@if (!String.IsNullOrWhiteSpace(SubTitle))
+					{
+						<span>@Title</span>
+						<span class="tf-page-header__divider">:</span>
+						<span>@SubTitle</span>
+					}
+					else
+					{
+						@Title
+					}
+				</div>
+			</div>
+		</div>
+		<div class="tf-page-header__primary__right">
+			@Toolbar
+		</div>
+	</div>
+	<div class="tf-page-header__secondary">
+		<div class="tf-page-header__secondary__left"></div>
+		<div class="tf-page-header__secondary__right"></div>
+	</div>
+</div>

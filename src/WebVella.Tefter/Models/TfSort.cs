@@ -21,6 +21,19 @@ public class TfSort
 		ColumnName = columnName;
 		Direction = direction;
 	}
+	public TfSort(TfSortQuery model)
+	{
+		ColumnName = model.Name;
+		Direction = (TfSortDirection)model.Direction;
+	}
+	public TfSortQuery ToQuery()
+	{
+		return new TfSortQuery
+		{
+			Name = ColumnName,
+			Direction = (int)Direction
+		};
+	}
 }
 
 public enum TfSortDirection

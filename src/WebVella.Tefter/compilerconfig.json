@@ -1,14 +1,6 @@
 ﻿[
     {
         "outputFile": "wwwroot/styles.css",
-        "inputFile": "Web/Styles/index.less"
-    },
-    {
-        "outputFile": "wwwroot/dark.css",
-        "inputFile": "Web/Styles/DarkMode/index.less"
-    },
-    {
-        "outputFile": "wwwroot/light.css",
-        "inputFile": "Web/Styles/LightMode/index.less"
+        "inputFile": "UI/Styles/_styles.less"
     }
 ]

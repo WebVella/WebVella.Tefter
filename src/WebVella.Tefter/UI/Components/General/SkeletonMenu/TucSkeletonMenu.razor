@@ -1,0 +1,33 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+@if (IsAside)
+{
+	<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+		<div style="flex:0 0 auto">
+			<FluentSkeleton Shape="SkeletonShape.Circle" Height="30px" Width="30px" Style="@_iconStyle"></FluentSkeleton>
+		</div>
+		<div style="flex:1 1 auto">
+			<FluentSkeleton Shape="SkeletonShape.Rect" Height="13px" Width="100%" Style="@_menuStyle"></FluentSkeleton>
+			<FluentSkeleton Shape="SkeletonShape.Rect" Height="13px" Width="100%" Style="@_menuStyle"></FluentSkeleton>
+		</div>
+	</FluentStack>
+
+}
+else
+{
+	<div class="tf-menu @Class">
+		<div class="tf-menu__item">
+			<FluentAnchor Href="#" Appearance="@Appearance.Hypertext">
+				@if (HasIcon)
+				{
+					<span slot="start">
+						<FluentSkeleton Shape="SkeletonShape.Circle" Height="20px" Width="20px" Style="@_iconStyle"></FluentSkeleton>
+					</span>
+				}
+				<FluentSkeleton Shape="SkeletonShape.Rect" Height="13px" Width="100px" Style="@_menuStyle"></FluentSkeleton>
+			</FluentAnchor>
+		</div>
+	</div>
+}
+

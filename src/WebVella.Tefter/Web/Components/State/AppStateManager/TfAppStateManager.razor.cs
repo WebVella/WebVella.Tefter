@@ -48,10 +48,10 @@ public partial class TfAppStateManager : FluxorComponent
 		}
 	}
 
-	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
+	private async void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
 		if (!Navigator.UrlHasState()) return;
-		InvokeAsync(async () =>
+		await InvokeAsync(async () =>
 		{
 
 			await _init(e.Location, TfAppState.Value, TfAuxDataState.Value);

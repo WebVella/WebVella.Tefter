@@ -1,0 +1,47 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.FluentUI.AspNetCore.Components.Extensions;
+@using System.ComponentModel;
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using Microsoft.FluentUI.AspNetCore.Components;
+@using System.Globalization;
+@using Microsoft.Extensions.Localization;
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<HeadOutlet @rendermode="new InteractiveServerRenderMode(prerender: false)" />
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<base href="/" />
+	<ImportMap />
+	<link href="@Assets[$"_content/Microsoft.FluentUI.AspNetCore.Components/css/reboot.css?cb={cb}"]" rel="stylesheet" />
+	<link rel="stylesheet" href="@Assets[$"WebVella.Tefter.Site.styles.css?cb={cb}"]" />
+	<link rel="stylesheet" href="@Assets[$"_content/WebVella.Tefter/styles.css?cb={cb}"]" />
+	<link rel="icon" type="image/png" href="@Assets[$"/favicon.ico"]" />
+	<script src="_content/Microsoft.FluentUI.AspNetCore.Components/Microsoft.FluentUI.AspNetCore.Components.lib.module.js?cb=@cb" type="module" async></script>
+	<script src="@Assets[$"_content/WebVella.Tefter/lib/quill.js?cb={cb}"]"></script>
+</head>
+
+<body>
+	<div id="top"></div>
+	<Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
+	<script src="@Assets[$"_framework/blazor.web.js?cb={cb}"]"></script>
+	@* <script src="@($"_content/Microsoft.FluentUI.AspNetCore.Components/js/loading-theme.js?cb={cb}")" type="text/javascript"></script> *@
+	<script src="@Assets[$"_content/WebVella.Tefter/lib/Sortable.min.js?cb={cb}"]" type="text/javascript"></script>
+	<script src="@Assets[$"_content/WebVella.Tefter/app.js?cb={cb}"]" type="text/javascript"></script>
+</body>
+</html>
+
+
+@code {
+	[Inject] protected ITfConfigurationService ConfigurationService { get; set; }
+	private string cb => ConfigurationService.CacheKey;
+}

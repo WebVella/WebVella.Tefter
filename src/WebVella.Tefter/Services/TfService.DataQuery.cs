@@ -6,6 +6,12 @@ namespace WebVella.Tefter.Services;
 public partial interface ITfService
 {
 	public TfDataTable QueryDataProvider(
+		Guid providerId,
+		string search = null,
+		int? page = null,
+		int? pageSize = null,
+		bool noRows = false);
+	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
 		string search = null,
 		int? page = null,
@@ -64,7 +70,8 @@ public partial interface ITfService
 		Guid rowId,
 		string dbName,
 		object value);
-
+	void DeleteAllProviderRows(
+			Guid providerId);
 	internal void DeleteAllProviderRows(
 		TfDataProvider provider);
 
@@ -74,6 +81,32 @@ public partial interface ITfService
 
 public partial class TfService : ITfService
 {
+	public TfDataTable QueryDataProvider(
+		Guid providerId,
+		string search = null,
+		int? page = null,
+		int? pageSize = null,
+		bool noRows = false)
+	{
+		try
+		{
+			var provider = GetDataProvider(providerId);
+			if (provider == null)
+				throw new Exception("Provider not found");
+
+			return QueryDataProvider(
+				provider: provider,
+				search: search,
+				page: page,
+				pageSize: pageSize,
+				noRows: noRows
+			);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
 	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
 		string search = null,
@@ -335,8 +368,8 @@ public partial class TfService : ITfService
 			columns.Add(column.ColumnName);
 		}
 
-		TfDataTable resultTable = new TfDataTable(provider, joinData, 
-			sharedColumnsData, query, sql, sqlParameters, columns );
+		TfDataTable resultTable = new TfDataTable(provider, joinData,
+			sharedColumnsData, query, sql, sqlParameters, columns);
 
 		HashSet<string> dateOnlyColumns = new HashSet<string>();
 
@@ -359,7 +392,7 @@ public partial class TfService : ITfService
 
 		foreach (DataRow row in dataTable.Rows)
 		{
-			var joinColumnValuesDict = GetRowJoinedValues(row,joinData);
+			var joinColumnValuesDict = GetRowJoinedValues(row, joinData);
 			object[] values = new object[resultTable.Columns.Count];
 			int valuesCounter = 0;
 			foreach (var column in resultTable.Columns)
@@ -371,7 +404,7 @@ public partial class TfService : ITfService
 					values[valuesCounter++] = joinColumnValuesDict[column.Name];
 					continue;
 				}
-				else if( column.IsShared)
+				else if (column.IsShared)
 				{
 					var segments = columnName.Split(".");
 					columnName = segments[1];
@@ -396,7 +429,7 @@ public partial class TfService : ITfService
 		return resultTable;
 	}
 
-	private Dictionary<string,object> GetRowJoinedValues(
+	private Dictionary<string, object> GetRowJoinedValues(
 		DataRow row,
 		List<SqlBuilderJoinData> joinData)
 	{
@@ -418,7 +451,7 @@ public partial class TfService : ITfService
 	}
 
 	private object ExtractJoinedRecordsValue(
-		JArray jArr, 
+		JArray jArr,
 		TfDataProviderColumn providerColumn)
 	{
 		switch (providerColumn.DbType)
@@ -455,7 +488,7 @@ public partial class TfService : ITfService
 						string stringValue = ((JToken)jObj[providerColumn.DbName]).ToObject<string>();
 						if (string.IsNullOrWhiteSpace(stringValue))
 							result.Add(null);
-						else 
+						else
 							result.Add(DateOnly.Parse(stringValue));
 					}
 					return result;
@@ -688,10 +721,10 @@ public partial class TfService : ITfService
 			Guid sharedColumnId = sharedColumn.Id;
 
 			string identityValue = null;
-			if(dataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
+			if (dataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
 				identityValue = (string)insertedRow["tf_row_id"];
 			else
-				identityValue =	(string)insertedRow[$"tf_ide_{dataIdentity.DataIdentity}"];
+				identityValue = (string)insertedRow[$"tf_ide_{dataIdentity.DataIdentity}"];
 
 			UpsertSharedColumnValue(
 				value,
@@ -753,7 +786,7 @@ public partial class TfService : ITfService
 			var tableColumn = row.DataTable.Columns[i];
 
 			//ignore shared, identity and joined columns here
-			if (tableColumn.IsShared || tableColumn.IsJoinColumn || tableColumn.IsIdentityColumn )
+			if (tableColumn.IsShared || tableColumn.IsJoinColumn || tableColumn.IsIdentityColumn)
 				continue;
 
 			columnNames.Add(tableColumn.Name);
@@ -821,7 +854,7 @@ public partial class TfService : ITfService
 		foreach (var column in row.DataTable.Columns)
 		{
 			//join,shared and identity columns will not be updated
-			if ( column.IsShared || column.IsJoinColumn ||column.IsIdentityColumn)
+			if (column.IsShared || column.IsJoinColumn || column.IsIdentityColumn)
 				continue;
 
 			if (column.DbType == TfDatabaseColumnType.Guid)
@@ -939,7 +972,7 @@ public partial class TfService : ITfService
 			var tableColumn = row.DataTable.Columns[i];
 
 			//ignore shared,identity and joined columns here
-			if ( tableColumn.IsIdentityColumn || tableColumn.IsShared || tableColumn.IsJoinColumn)
+			if (tableColumn.IsIdentityColumn || tableColumn.IsShared || tableColumn.IsJoinColumn)
 				continue;
 
 			if (!columnsWithChange.Contains(tableColumn.Name))
@@ -1327,7 +1360,7 @@ public partial class TfService : ITfService
 		sql.AppendLine(",");
 
 		//note we do not set value for identity columns and tf_row_id
-	
+
 		foreach (var column in provider.Columns)
 		{
 			sql.AppendLine(column.DbName);
@@ -1480,6 +1513,21 @@ public partial class TfService : ITfService
 			var row = GetProviderRow(provider, rowId);
 			row[dbName] = value;
 			UpdateProviderRow(provider, row);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+	public void DeleteAllProviderRows(
+		Guid providerId)
+	{
+		try
+		{
+			var provider = GetDataProvider(providerId);
+			if (provider is null)
+				throw new Exception("Provider not found");
+			DeleteAllProviderRows(provider);
 		}
 		catch (Exception ex)
 		{

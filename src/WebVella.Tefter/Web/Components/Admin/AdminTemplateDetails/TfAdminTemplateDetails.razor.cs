@@ -44,12 +44,12 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 		_initDynamicComponent();
 	}
 
-	private void On_AppChanged(SetAppStateAction action)
+	private async void On_AppChanged(SetAppStateAction action)
 	{
-		InvokeAsync(async () =>
+		await InvokeAsync(() =>
 		{
 			_initDynamicComponent();
-			await InvokeAsync(StateHasChanged);
+			StateHasChanged();
 		});
 	}
 

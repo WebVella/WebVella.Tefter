@@ -1,0 +1,18 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@if (_componentsMeta is null)
+{
+	
+}
+else if (_componentsMeta.Count > 0)
+{
+	<TucErrorBoundry>
+		@foreach (var meta in _componentsMeta)
+		{
+			<DynamicComponent Type="@meta.Type" Parameters="@_context" />
+		}
+	</TucErrorBoundry>
+}
+else if (!String.IsNullOrWhiteSpace(Placeholder))
+{
+	<div>@Placeholder</div>
+}

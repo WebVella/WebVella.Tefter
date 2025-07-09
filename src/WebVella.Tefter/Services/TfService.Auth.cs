@@ -2,7 +2,7 @@
 
 public partial interface ITfService
 {
-	internal Task AuthenticateAsync(
+	internal Task<TfUser> AuthenticateAsync(
 		IJSRuntime jsRuntime,
 		string email,
 		string password,
@@ -13,7 +13,7 @@ public partial interface ITfService
 
 public partial class TfService : ITfService
 {
-	public async Task AuthenticateAsync(
+	public async Task<TfUser> AuthenticateAsync(
 		IJSRuntime jsRuntime,
 		string email,
 		string password,
@@ -50,6 +50,8 @@ public partial class TfService : ITfService
 					key: TfConstants.TEFTER_AUTH_COOKIE_NAME,
 					value: cryptoService.Encrypt(user.Id.ToString()),
 					expiration: rememberMe ? DateTimeOffset.Now.AddDays(30) : null);
+
+			return user;
 		}
 		catch (Exception ex)
 		{

@@ -1,0 +1,26 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<FluentDialogHeader Style="display:none" />
+<FluentDialogFooter Style="display:none" />
+<FluentDialogBody>
+	<div class="notification-panel">
+		<div class="notification-panel">
+			<div class="notification-panel__header">
+				<div class="talk-channel-label">@LOC("Notifications")</div>
+				<div class="notification-panel__header_actions">
+					<FluentButton Appearance="@Appearance.Stealth"
+								  OnClick="_cancel"
+								  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+				</div>
+			</div>
+			<div class="notification-panel__body" style="padding:10px">
+				<div style="text-align:right;margin-bottom:1rem;">
+					<FluentButton Appearance="@Appearance.Outline" OnClick="@_dismissAll">@LOC("Dismiss All")</FluentButton>
+				</div>
+				<FluentMessageBarProvider Section="@TfConstants.MESSAGES_NOTIFICATION_CENTER" MaxMessageCount="-1" />
+			</div>
+		</div>
+	</div>
+</FluentDialogBody>
+
+

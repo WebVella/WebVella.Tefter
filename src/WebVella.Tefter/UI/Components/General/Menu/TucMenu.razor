@@ -1,0 +1,14 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<div class="@_css" style="@_style">
+	@foreach (var item in _displayItems)
+	{
+		<TucMenuItem Item="item" Class="@ItemClass" EllipsesLimit="@EllipsesLimit" />
+		@if (_moreItem is not null)
+		{
+			<TucMenuItem Item="_moreItem" Class="@ItemClass" EllipsesLimit="@EllipsesLimit" />
+		}
+	}
+</div>
+
+

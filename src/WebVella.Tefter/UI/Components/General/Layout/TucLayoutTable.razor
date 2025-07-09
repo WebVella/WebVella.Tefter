@@ -1,0 +1,19 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits ComponentBase
+
+<div class="@_cssClass">
+	<div class="@($"{_layoutClass}__header")">
+		@Header
+	</div>
+	@if (Toolbar is not null)
+	{
+		<div class="@($"{_layoutClass}__toolbar")">
+			@Toolbar
+		</div>
+	}
+	<div class="@($"{_layoutClass}__content")">
+		@Content
+	</div>
+</div>
+
+

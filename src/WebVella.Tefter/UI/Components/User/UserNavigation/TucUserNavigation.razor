@@ -1,0 +1,61 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+@if (_currentUser is not null)
+{
+	@if (_adminMenu.Count > 0)
+	{
+		<div class="tf-header__item">
+			<TucMenu Items="_adminMenu" />
+		</div>
+	}
+	@* 	<TfLanguageSwitch />
+	<TfNotificationCenter /> *@
+	<div class="tf-header__item">
+		<div class="tf-menu">
+			<div class="tf-menu__item">
+				<TucLanguageSwitch User="_currentUser"/>
+			</div>
+			<div class="tf-menu__item">
+				<TucNotificationCenter />
+			</div>
+			<div class="tf-menu__item">
+				<FluentAnchor Href="#" OnClick="() => _visible = !_visible" 
+						Id="user-menu-toggle" Appearance="@Appearance.Hypertext">
+					<TucAvatar User="_currentUser" />
+				</FluentAnchor>
+				<FluentMenu Width="200px" @bind-Open="_visible" Anchor="user-menu-toggle" UseMenuService="false">
+					<FluentMenuItem Disabled="true">
+						@_currentUser.FirstName @_currentUser.LastName
+						<span slot="start">
+							<FluentIcon Value="@TfConstants.GetIcon("Person").WithColor("var(--tf-layout-color)")" Slot="start" />
+						</span>
+					</FluentMenuItem>
+					<FluentMenuItem OnClick="_setUrlAsStartup">
+						@LOC("Set as Startup URL")
+						<span slot="start">
+							<FluentIcon Value="@TfConstants.GetIcon("Pin").WithColor("var(--tf-layout-color)")" Slot="start" />
+						</span>
+					</FluentMenuItem>
+					<FluentMenuItem OnClick="_logout">
+						@LOC("Logout")
+						<span slot="start">
+							<FluentIcon Value="@TfConstants.GetIcon("SignOut").WithColor("var(--tf-layout-color)")" Slot="start" />
+						</span>
+					</FluentMenuItem>
+				</FluentMenu>
+			</div>
+		</div>
+	</div>
+
+
+	<FluentMenu Width="200" @bind-Open="_helpVisible" Anchor="help-switch-btn" UseMenuService="false">
+		<FluentMenuItem Href="https://tefter.webvella.com/docs">Online Documentation</FluentMenuItem>
+		<FluentMenuItem Href="https://tefter.webvella.com">Tefter website</FluentMenuItem>
+		<FluentMenuItem Disabled>Non commercial use license</FluentMenuItem>
+		<FluentMenuItem Disabled>Tefter v1.23</FluentMenuItem>
+	</FluentMenu>
+}
+
+
+

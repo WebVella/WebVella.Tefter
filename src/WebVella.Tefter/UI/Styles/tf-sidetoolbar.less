@@ -1,0 +1,72 @@
+﻿@import '_variables.less';
+
+.tf-sidetoolbar {
+	display: flex;
+
+	&__mode {
+		flex: 0 0 auto;
+
+		.modebar {
+			padding: 0;
+			background: transparent;
+
+			.btn {
+				margin: 0;
+				border-radius: 0;
+
+				&.active {
+					background: var(--accent-base-color);
+					border-color: var(--accent-base-color);
+					color: var(--foreground-on-accent-rest) !important;
+
+					svg {
+						fill: var(--foreground-on-accent-rest) !important;
+					}
+				}
+
+
+
+				&:first-child {
+					border-radius: calc(var(--control-corner-radius) * 1px) 0 0 calc(var(--control-corner-radius) * 1px);
+				}
+
+				&:last-child {
+					border-radius: 0 calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0;
+					margin-right: 5px;
+				}
+			}
+
+			.btn + .btn {
+				margin-left: 0;
+			}
+
+
+			fluent-button.active::part(control) {
+				background: var(--accent-base-color);
+				border-color: var(--accent-base-color);
+			}
+		}
+	}
+
+	&__search {
+		flex: 1 1 auto;
+		padding-right: 5px;
+
+		.search {
+			width: 100%;
+
+			&::part(root) {
+				background: var(--tf-white) !important;
+				border:1px solid var(--tf-stroke-base);
+			}
+
+			&::part(control)::placeholder {
+				color: var(--tf-layout-color-accent-2);
+			}
+		}
+	}
+
+	&__actions {
+		flex: 0 0 auto;
+	}
+}

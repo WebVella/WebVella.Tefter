@@ -14,13 +14,9 @@ global using Microsoft.AspNetCore.Hosting;
 global using System.Runtime.ExceptionServices;
 
 global using WebVella.Tefter.Services;
-global using WebVella.Tefter.Web.Store;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Addons;
 global using WebVella.Tefter.Models;
-global using WebVella.Tefter.Web.Components;
-global using WebVella.Tefter.Web.Models;
-global using WebVella.Tefter.Web.Utils;
 global using WebVella.Tefter.Migrations;
 
 global using WebVella.Tefter.EmailSender;

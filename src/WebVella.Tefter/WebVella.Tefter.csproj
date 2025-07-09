@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
 		<AssemblyName>WebVella.Tefter</AssemblyName>
@@ -29,9 +30,26 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Remove="compilerconfig.json" />
+		<Content Remove="compilerconfig.json" />
 	</ItemGroup>
-	
+
+	<ItemGroup>
+		<Compile Remove="Web\**" />
+		<Content Remove="Web\**" />
+		<EmbeddedResource Remove="Web\**" />
+		<None Remove="Web\**" />
+		<Compile Remove="UseCases\**" />
+		<Content Remove="UseCases\**" />
+		<None Remove="UseCases\**" />
+		<EmbeddedResource Remove="UseCases\**" />
+		<!--<Compile Remove="Web\Components\**" />
+		<Content Remove="Web\Components\**" />-->
+		<!--<Compile Remove="Web\**" />
+		<Content Remove="Web\**" />
+		<EmbeddedResource Remove="Web\**" />
+		<None Remove="Web\**" />-->
+	</ItemGroup>
+
 	<ItemGroup>
 		<None Include="..\..\LICENSE">
 			<Pack>True</Pack>
@@ -43,10 +61,11 @@
 		</None>
 		<None Include="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\.editorconfig" />
 		<None Include="compilerconfig.json">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
+		<None Include="Web\_Imports.razor" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<PackageReference Include="ClosedXML" Version="0.105.0" />
 		<PackageReference Include="FluentValidation" Version="12.0.0" />
@@ -56,17 +75,17 @@
 		<PackageReference Include="Fluxor" Version="6.6.0" />
 		<PackageReference Include="Fluxor.Blazor.Web" Version="6.6.0" />
 		<PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.6.0" />
-		<PackageReference Include="Markdig" Version="0.41.2" />
+		<PackageReference Include="Markdig" Version="0.41.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.3.0" />
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.6" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.6" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.12.0" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.12.0" />
-	
+
 		<PackageReference Include="Npgsql" Version="9.0.3" />
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
-		
+
 		<PackageReference Include="Serilog" Version="4.3.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
 		<PackageReference Include="Serilog.Enrichers.Context" Version="4.6.5" />
@@ -84,14 +103,14 @@
 		<PackageReference Include="System.IO.Packaging" Version="9.0.6" />
 		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.6" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
-		<PackageReference Include="WebVella.BlazorTrace" Version="1.0.9" />
+		<PackageReference Include="WebVella.BlazorTrace" Version="1.0.12" />
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
-	  <EmbeddedResource Update="Web\Components\Admin\DataIdentityManageDialog\TfDataIdentityManageDialog.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
+		<EmbeddedResource Update="Web\Components\Admin\DataIdentityManageDialog\TfDataIdentityManageDialog.bg.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
 	</ItemGroup>
 
 </Project>

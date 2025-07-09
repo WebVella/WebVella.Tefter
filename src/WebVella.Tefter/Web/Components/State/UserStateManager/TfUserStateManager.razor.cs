@@ -80,12 +80,12 @@ public partial class TfUserStateManager : FluxorComponent
 		}
 	}
 
-	private void On_StateChanged(SetUserStateAction action)
+	private async void On_StateChanged(SetUserStateAction action)
 	{
 		if (action.StateComponent == this) return;
-		InvokeAsync(async () =>
+		await InvokeAsync(async () =>
 		{
-			await InvokeAsync(StateHasChanged);
+			StateHasChanged();
 		});
 	}
 

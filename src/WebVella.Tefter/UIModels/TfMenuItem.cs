@@ -1,0 +1,70 @@
+﻿namespace WebVella.Tefter.Models;
+
+public record TfMenuItem
+{
+	public string? Id { get; set; }
+	public string? Text { get; set; }
+	public string? Tooltip { get; set; }
+	public string? Description { get; set; }
+	public string? Abbriviation { get; set; }
+	public bool Disabled { get; set; } = false;
+	public Icon? IconCollapsed { get; set; }
+	public Icon? IconExpanded { get; set; }
+	public TfColor? Color { get; set; }
+	public TfColor? IconColor { get; set; }
+	public Icon? Icon
+	{
+		get
+		{
+			return Expanded
+			? (IconExpanded is null || IconColor is null ? IconExpanded : IconExpanded?.WithColor(IconColor.GetAttribute().Value))
+			: (IconCollapsed is null || IconColor is null ? IconCollapsed : IconCollapsed?.WithColor(IconColor.GetAttribute().Value));
+		}
+	}
+	public string? Url { get; set; }
+	public string? Href
+	{
+		get
+		{
+			if (Disabled) return null;
+			if (String.IsNullOrWhiteSpace(Url)) return "#";
+			return Url;
+		}
+	}
+	public bool? IsSeparateChevron
+	{
+		get
+		{
+			if (Items.Count == 0) return null;
+			if (!ShouldNavigate) return false;
+			return true;
+		}
+	}
+	public bool ShouldNavigate
+	{
+		get
+		{
+			if (Href is null) return false;
+			if (Href == "#") return false;
+			return true;
+		}
+	}
+	public bool Expanded { get; set; } = false;
+	public bool Selected { get; set; } = false;
+	public object? Data { get; set; }
+	public List<TfMenuItem> Items { get; set; } = new();
+	public ElementReference Reference { get; set; }
+	public string Hash
+	{
+		get
+		{
+			return $"{Id}{Url}{Text}{Description}{Expanded}{Selected}";
+		}
+	}
+
+	[JsonIgnore]
+	public Action OnClick { get; set; } = default!;
+
+	[JsonIgnore]
+	public Action<bool> OnExpand { get; set; } = default!;
+}

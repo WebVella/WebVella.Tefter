@@ -19,6 +19,10 @@ public partial interface ITfService
 		Guid providerId,
 		TfSynchronizationPolicy synchPolicy);
 
+	internal void TriggerSynchronization(Guid providerId);
+	internal void UpdateDataProviderSunchronization(Guid providerId, short syncScheduleMinutes, bool syncScheduleEnabled);
+	internal void UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns);
+
 	internal void UpdateSychronizationTask(
 		Guid taskId,
 		TfSynchronizationStatus status,
@@ -33,6 +37,8 @@ public partial interface ITfService
 		CancellationToken stoppingToken);
 
 	public DateTime? GetDataProviderNextSynchronizationTime(Guid id);
+
+	List<TfDataProviderSynchronizeTask> GetDataProviderSynchronizationTasks(Guid providerId, int? page = null, int? pageSize = null);
 }
 
 public partial class TfService : ITfService
@@ -172,6 +178,35 @@ public partial class TfService : ITfService
 		return task.Id;
 	}
 
+	public void TriggerSynchronization(Guid providerId){ 
+		CreateSynchronizationTask(providerId, new TfSynchronizationPolicy());
+	}
+	public void UpdateDataProviderSunchronization(Guid providerId, short syncScheduleMinutes, bool syncScheduleEnabled){ 
+		var provider = GetDataProvider(providerId);
+		if (provider is null)
+			throw new TfException("Provider not found");
+		UpdateDataProvider(new TfUpdateDataProvider{ 
+			Id = provider.Id,
+			Name = provider.Name,
+			SettingsJson = provider.SettingsJson,
+			SynchPrimaryKeyColumns = provider.SynchPrimaryKeyColumns.ToList(),
+			SynchScheduleEnabled = syncScheduleEnabled,
+			SynchScheduleMinutes = syncScheduleMinutes
+		});
+	}
+	public void UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns){ 
+		var provider = GetDataProvider(providerId);
+		if (provider is null)
+			throw new TfException("Provider not found");
+		UpdateDataProvider(new TfUpdateDataProvider{ 
+			Id = provider.Id,
+			Name = provider.Name,
+			SettingsJson = provider.SettingsJson,
+			SynchPrimaryKeyColumns = columns,
+			SynchScheduleEnabled = provider.SynchScheduleEnabled,
+			SynchScheduleMinutes = provider.SynchScheduleMinutes
+		});
+	}
 	public void UpdateSychronizationTask(
 		Guid taskId,
 		TfSynchronizationStatus status,
@@ -501,6 +536,15 @@ public partial class TfService : ITfService
 			return DateTime.Now;
 
 		return lastSynchTask.CompletedOn.Value.AddMinutes(provider.SynchScheduleMinutes);
+	}
+
+	public List<TfDataProviderSynchronizeTask> GetDataProviderSynchronizationTasks(Guid providerId, int? page = null, int? pageSize = null){ 
+		var tasks = GetSynchronizationTasks(providerId);
+		tasks = tasks.OrderByDescending(x=> x.CreatedOn).ToList();
+		if(page is null || pageSize is null) 
+			return tasks;	
+
+		return tasks.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value).ToList();
 	}
 
 	public Task BulkSynchronize(

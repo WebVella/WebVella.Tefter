@@ -1,0 +1,102 @@
+﻿@import '_variables.less';
+
+.tf-layout-list-details {
+	--wrapper-top: var(--tf-layout-header-height);
+	position: relative;
+	height: 100vh;
+	overflow: hidden;
+
+	&--with-toolbar {
+		--wrapper-top: calc(var(--tf-layout-header-height) + var(--tf-layout-toolbar-height));
+	}
+
+	&__header {
+		height: var(--tf-layout-header-height);
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+	}
+
+	&__toolbar {
+		height: var(--tf-layout-toolbar-height);
+		position: absolute;
+		top: var(--tf-layout-header-height);
+		left: 0;
+		right: 0;
+	}
+
+	&__wrapper {
+		position: absolute;
+		top: var(--wrapper-top);
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow: hidden;
+		display: flex;
+	}
+
+	&__aside {
+		flex: 0 0 320px;
+		overflow: hidden;
+		height: 100%;
+		display: flex;
+		flex-flow: column;
+		position: relative;
+		--asidecontent-top: 0;
+		border-right: 5px solid var(--tf-white);
+
+		&--with-toolbar {
+			--asidecontent-top: var(--tf-layout-header-height);
+		}
+	}
+
+	&__aside-toolbar {
+		height: var(--tf-layout-header-height);
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+	}
+
+	&__aside-content {
+		position: absolute;
+		top: var(--asidecontent-top);
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow: auto;
+	}
+
+	&__main {
+		flex: 1 1 auto;
+		overflow: hidden;
+		height: 100%;
+		display: flex;
+		flex-flow: column;
+		position: relative;
+		--content-top: 0;
+
+		&--with-toolbar {
+			--content-top: var(--tf-layout-header-height);
+		}
+	}
+
+	&__main-toolbar {
+		height: var(--tf-layout-header-height);
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+	}
+
+	&__main-content {
+		position: absolute;
+		top: var(--content-top);
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow: auto;
+
+	}
+}

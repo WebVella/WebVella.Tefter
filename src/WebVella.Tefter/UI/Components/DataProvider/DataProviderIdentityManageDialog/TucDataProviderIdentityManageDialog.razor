@@ -1,0 +1,82 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (_identityOptions.Count > 0)
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
+					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	<div>
+		@if (_identityOptions.Count > 0)
+		{
+			<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+							FormName="submit-form" class="tf-form" novalidate>
+				<DataAnnotationsValidator />
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentSelect TOption="string"
+									  Items="_identityOptions"
+									  OptionSelected="(x => x == _form.DataIdentity)"
+									  @bind-SelectedOption="@_form.DataIdentity"
+									  Placeholder="@LOC("select identity...")"
+									  Label="@LOC("Data Identity")" Style="width:100%" />
+						<FluentValidationMessage For="@(() => _form.DataIdentity)" />
+					</FluentGridItem>
+					<FluentGridItem xs="6"></FluentGridItem>
+				</FluentGrid>
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentInputLabel Label="@LOC("Selected Columns")" />
+						<FluentSortableList Id="selection" Group="selection"
+											Style="height:200px;overflow-y:scroll;overflow-x:hidden"
+											TItem="string"
+											OnUpdate="@onSelectionUpdate" OnRemove="@onSelectionRemove"
+											Items="@_form.Columns" Context="item">
+							<ItemTemplate>
+								<div class="sortable-grab">
+									<FluentIcon Value="@TfConstants.GetIcon("ArrowMove")" />
+								</div>
+								<div class="sortable-item-content" style="flex-grow: 1;">@item</div>
+							</ItemTemplate>
+						</FluentSortableList>
+						<FluentValidationMessage For="@(() => _form.Columns)" />
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						<FluentInputLabel Label="@LOC("Available Columns")" />
+						<FluentSortableList Id="provider" Group="provider"
+											Sort="false"
+											Style="height:200px;overflow-y:scroll;overflow-x:hidden"
+											TItem="string"
+											OnRemove="@onProviderRemove"
+											Items="@_providerColumns" Context="item">
+							<ItemTemplate>
+								<div class="sortable-grab">
+									<FluentIcon Value="@TfConstants.GetIcon("ArrowMove")" />
+								</div>
+								<div class="sortable-item-content" style="flex-grow: 1;">@item</div>
+							</ItemTemplate>
+						</FluentSortableList>
+					</FluentGridItem>
+				</FluentGrid>
+			</FluentEditForm>
+		}
+		else
+		{
+			<FluentMessageBar AllowDismiss="false"
+							  Intent="@MessageIntent.Info">
+				<div>All Data Identities are implemented.</div>
+			</FluentMessageBar>
+		}
+	</div>
+</FluentDialogBody>

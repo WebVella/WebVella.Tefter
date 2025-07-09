@@ -1,0 +1,48 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
+					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+	}
+	else
+	{
+		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+						FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator />
+
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Status")" />
+					<FluentSwitch @bind-Value=@_form.SynchScheduleEnabled>
+						 <span slot="checked-message">@LOC("ON")</span>
+						<span slot="unchecked-message">@LOC("OFF")</span>
+					</FluentSwitch>
+					<FluentValidationMessage For="@(() => _form.SynchScheduleEnabled)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentNumberField TValue="short" Required="true" 
+									 @bind-Value=@_form.SynchScheduleMinutes AutoComplete="off"
+									 Label="@LOC("Interval Minutes")" Style="width:100%" />
+					<FluentValidationMessage For="@(() => _form.SynchScheduleMinutes)" />
+				</FluentGridItem>
+			</FluentGrid>
+		</FluentEditForm>
+	}
+</FluentDialogBody>

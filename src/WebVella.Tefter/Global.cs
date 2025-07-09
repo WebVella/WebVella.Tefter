@@ -51,21 +51,7 @@ global using WebVella.Tefter.Migrations;
 global using WebVella.Tefter.Addons;
 global using WebVella.Tefter.Models;
 global using WebVella.Tefter.Services;
+global using WebVella.Tefter.UIServices;
 global using WebVella.Tefter.Exceptions;
 global using WebVella.BlazorTrace;
-
-/// Use cases
-global using WebVella.Tefter.UseCases.AppState;
-global using WebVella.Tefter.UseCases.Login;
-global using WebVella.Tefter.UseCases.UserState;
-global using WebVella.Tefter.UseCases.Export;
-global using WebVella.Tefter.UseCases.Recipe;
 global using WebVella.Tefter.Utility;
-/// Components
-global using WebVella.Tefter.Web.Components;
-global using WebVella.Tefter.Web.Addons;
-global using WebVella.Tefter.Web.Models;
-
-//State
-global using WebVella.Tefter.Web.Store;
-global using WebVella.Tefter.Web.Utils;

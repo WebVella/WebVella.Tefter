@@ -9,14 +9,14 @@ namespace WebVella.Tefter.Models;
 public class TfUser
 {
 	public Guid Id { get; init; }
-	public string Email { get; init; }
-	public string FirstName { get; init; }
-	public string LastName { get; init; }
-	internal string Password { get; init; }
+	public string Email { get; init; } = default!;
+	public string FirstName { get; init; } = default!;
+	public string LastName { get; init; } = default!;
+	internal string Password { get; init; } = default!;
 	public bool Enabled { get; init; }
 	public DateTime CreatedOn { get; init; }
 	public TfUserSettings Settings { get; init; } = new();
-	public ReadOnlyCollection<TfRole> Roles { get; init; }
+	public ReadOnlyCollection<TfRole> Roles { get; init; } = default!;
 
 	public string Names
 	{
@@ -27,6 +27,16 @@ public class TfUser
 			if (!String.IsNullOrWhiteSpace(LastName)) sb.Add(LastName);
 
 			return String.Join(" ", sb);
+		}
+	}
+
+	public bool IsAdmin
+	{
+		get
+		{
+			if (Roles is not null && Roles.Any(x => x.Id == TfConstants.ADMIN_ROLE_ID))
+				return true;
+			return false;
 		}
 	}
 }

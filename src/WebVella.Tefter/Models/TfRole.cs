@@ -2,9 +2,9 @@
 
 public class TfRole
 {
-	public Guid Id { get; init; }
-	public string Name { get; init; }
-	internal bool IsSystem { get; init; }
+	public Guid Id { get; set; }
+	public string Name { get; set; }
+	internal bool IsSystem { get; set; }
 }
 
 [DboCacheModel]

@@ -36,12 +36,12 @@ public partial class TfAdminRoleDetails : TfBaseComponent
 		ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
 	}
 
-	private void On_AppChanged(SetAppStateAction action)
+	private async void On_AppChanged(SetAppStateAction action)
 	{
-		InvokeAsync(async () =>
+		await InvokeAsync(async () =>
 		{
 			_roleUsers = await UC.GetUsersForRoleAsync(TfAppState.Value.AdminManagedRole.Id);
-			await InvokeAsync(StateHasChanged);
+			StateHasChanged();
 		});
 	}
 

@@ -3,7 +3,7 @@
 public partial interface ITfMetaService
 {
 	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMeta();
-	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMeta(Type context = null, TfScreenRegionScope scope = null);
+	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMeta(Type? context = null, TfScreenRegionScope? scope = null);
 }
 
 public partial class TfMetaService : ITfMetaService
@@ -19,7 +19,7 @@ public partial class TfMetaService : ITfMetaService
 			.ToList()
 			.AsReadOnly();
 	}
-	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMeta(Type context = null, TfScreenRegionScope scope = null)
+	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMeta(Type? context = null, TfScreenRegionScope? scope = null)
 	{
 		var result = new List<TfScreenRegionComponentMeta>();
 		foreach (var comp in _regionComponentMeta)

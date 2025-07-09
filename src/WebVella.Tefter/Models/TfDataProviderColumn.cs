@@ -13,12 +13,11 @@ public class TfDataProviderColumn
 	[TfDboModelProperty("data_provider_id")]
 	public Guid DataProviderId { get; set; }
 
-	[Required]
 	[TfDboModelProperty("source_name")]
-	public string SourceName { get; set; }
+	public string? SourceName { get; set; }
 
 	[TfDboModelProperty("source_type")]
-	public string SourceType { get; set; }
+	public string SourceType { get; set; } = default!;
 
 	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
 	[TfDboModelProperty("created_on")]
@@ -26,14 +25,14 @@ public class TfDataProviderColumn
 
 	[Required]
 	[TfDboModelProperty("db_name")]
-	public string DbName { get; set; }
+	public string? DbName { get; set; }
 
 	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfDatabaseColumnType>))]
 	[TfDboModelProperty("db_type")]
-	public TfDatabaseColumnType DbType { get; set; }
+	public TfDatabaseColumnType DbType { get; set; } = TfDatabaseColumnType.Text;
 
 	[TfDboModelProperty("default_value")]
-	public string DefaultValue { get; set; }
+	public string? DefaultValue { get; set; }
 
 	[TfDboModelProperty("auto_default_value")]
 	public bool AutoDefaultValue { get; set; }
@@ -53,14 +52,14 @@ public class TfDataProviderColumn
 
 	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfDataProviderColumnSearchType>))]
 	[TfDboModelProperty("preferred_search_type")]
-	public TfDataProviderColumnSearchType PreferredSearchType { get; set; }
+	public TfDataProviderColumnSearchType PreferredSearchType { get; set; } = TfDataProviderColumnSearchType.Contains;
 
 	[TfDboModelProperty("include_in_table_search")]
 	public bool IncludeInTableSearch { get; set; }
 
 	public void FixPrefix(string prefix)
 	{
-		if (!DbName.StartsWith(prefix))
+		if (!String.IsNullOrWhiteSpace(DbName) && !DbName.StartsWith(prefix))
 			DbName = prefix + DbName;
 	}
 }

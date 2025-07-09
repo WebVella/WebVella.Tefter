@@ -33,13 +33,13 @@ public partial class TfThemeDefinition : TfBaseComponent
 		}
 	}
 
-	private void On_UserStateChanged(SetUserStateAction action)
+	private async void On_UserStateChanged(SetUserStateAction action)
 	{
-		InvokeAsync(async () =>
+		await InvokeAsync(async () =>
 		{
 			await _initThemeStyles();
 			RegenRenderLock();
-			await InvokeAsync(StateHasChanged);
+			StateHasChanged();
 		});
 	}
 

@@ -30,14 +30,14 @@ public partial class TfAdminDataProviderJoinedData : TfBaseComponent
 		}
 	}
 
-	private void On_AppChanged(SetAppStateAction action)
+	private async void On_AppChanged(SetAppStateAction action)
 	{
-		InvokeAsync(async () =>
+		await InvokeAsync(async () =>
 		{
 			if (TfAppState.Value.AdminDataProvider is not null)
 			{
 				_joinedProviders = await UC.GetDataProviderJoinedProvidersAsync(TfAppState.Value.AdminDataProvider.Id);
-				await InvokeAsync(StateHasChanged);
+				StateHasChanged();
 			}
 		});
 	}

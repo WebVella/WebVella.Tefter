@@ -36,6 +36,7 @@ public partial interface ITfService
 	/// </summary>
 	/// <returns></returns>
 	public ReadOnlyCollection<TfDataProvider> GetDataProviders();
+	public ReadOnlyCollection<TfDataProvider> GetDataProviders(string? search = null);
 
 
 	/// <summary>
@@ -80,7 +81,7 @@ public partial interface ITfService
 	/// </summary>
 	/// <param name="dataProviderId">The unique identifier of the data provider to check for join availability.</param>
 	/// <returns>A list of data providers that can be joined with the specified data provider.</returns>
-	public List<TfDataProvider> GetAuxDataProviders(Guid dataProviderId);
+	public List<TfDataProvider> GetDataProviderConnectedProviders(Guid dataProviderId);
 
 	/// <summary>
 	/// Calculates the aux data schema based on the implemented data identities. Returns only shared columns or column from other data providers
@@ -271,6 +272,23 @@ public partial class TfService : ITfService
 		{
 			throw ProcessException(ex);
 		}
+	}
+
+	public ReadOnlyCollection<TfDataProvider> GetDataProviders(string? search = null){ 
+		try
+		{
+			var allItems = GetDataProviders();
+			if (String.IsNullOrWhiteSpace(search))
+				return allItems;
+			search = search.Trim().ToLowerInvariant();
+			return allItems.Where(x =>
+				x.Name.ToLowerInvariant().Contains(search)
+				).ToList().AsReadOnly();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}		
 	}
 
 	/// <summary>
@@ -525,7 +543,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfDataProvider> GetAuxDataProviders(Guid dataProviderId)
+	public List<TfDataProvider> GetDataProviderConnectedProviders(Guid dataProviderId)
 	{
 		List<TfDataProvider> result = new List<TfDataProvider>();
 

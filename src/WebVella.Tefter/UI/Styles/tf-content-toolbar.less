@@ -1,0 +1,127 @@
+﻿@import '_variables.less';
+
+.tf-content-toolbar {
+	display: flex;
+	height: 100%;
+	width: 100%;
+	justify-content: space-between;
+	font-size: var(--tf-font-size-sm);
+	background: var(--tf-white);
+	color: var(--tf-font-color-base);
+	padding: 0 1rem;
+	padding-top: 0.75rem;
+
+	a {
+		text-decoration: none;
+		color: var(--tf-font-color-link);
+	}
+
+	&__left, &__right {
+		display: flex;
+	}
+
+
+	.tf-menu {
+		height: 100%;
+		display: flex;
+
+		&__item {
+
+			fluent-anchor {
+				height: 100%;
+				--accent-foreground-rest: var(--tf-font-color-base);
+				--accent-foreground-hover: var(--tf-font-color-link-hover);
+				--accent-foreground-active: var(--tf-font-color-link-hover);
+				--accent-fill-rest: var(--tf-font-color-base);
+
+
+				&::part(control) {
+					text-decoration: none !important;
+					padding: 0 1em;
+					display: flex;
+					align-items: center;
+					box-sizing: border-box;
+					border-radius: 0;
+
+					&:focus-visible {
+						outline: none !important;
+					}
+
+					&:hover {
+						--accent-fill-rest: var(--tf-font-color-link-hover);
+					}
+				}
+
+				&::part(start) {
+					top: 1px !important;
+					margin-inline-end:5px;
+				}
+
+				&::part(end) {
+					top: 1px !important;
+				}
+			}
+
+			&--disabled {
+				fluent-anchor {
+					--accent-foreground-rest: var(--tf-font-color-mute);
+					--accent-foreground-hover: var(--tf-font-color-mute);
+					--accent-foreground-active: var(--tf-font-color-mute);
+					--accent-fill-rest: var(--tf-font-color-mute);
+					color: var(--tf-font-color-mute);
+
+					&::part(control):hover {
+						--accent-fill-rest: var(--tf-font-color-mute);
+					}
+				}
+			}
+
+			&--expand {
+				fluent-anchor {
+					&::part(control) {
+						padding: 0 0.25em;
+					}
+				}
+			}
+
+			&--active {
+				fluent-anchor {
+					&::part(control) {
+						background: var(--tf-fill-color-base);
+						border-radius: 4px 4px 0 0;
+					}
+				}
+			}
+		}
+	}
+
+	fluent-menu {
+		background: var(--tf-white);
+		color: var(--tf-font-color-mute);
+		border-radius: 0;
+
+		fluent-menu-item {
+			&:hover {
+				background: var(--tf-fill-color-hover);
+			}
+
+			&::part(content) {
+				color: var(--tf-font-color-base);
+			}
+
+			&::part(expand-collapse-glyph-container) {
+				color: var(--tf-font-color-base);
+			}
+
+			&::part(start) {
+				position: relative;
+				top: 1px !important;
+			}
+
+			&::part(end) {
+				position: relative;
+				top: 1px !important;
+			}
+		}
+	}
+}
