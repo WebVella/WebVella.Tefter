@@ -5,7 +5,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 
 	private TfUser _currentUser = default!;
-	private TfRole _role = default!;
+	private TfRole? _role = null;
 	private List<TfUser> _userOptions = new();
 	private TfUser? _selectedUser = null;
 	internal List<TfUser> _roleUsers = new();
@@ -42,7 +42,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 		try
 		{
 			_currentUser = (await TfUserUIService.GetCurrentUser())!;
-			if (role is not null && role.Id == _role.Id)
+			if (role is not null && role.Id == _role?.Id)
 			{
 				_role = role;
 			}
@@ -51,7 +51,9 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 				var routeData = Navigator.GetRouteState();
 				if (routeData.RoleId is not null)
 					_role = TfUserUIService.GetRole(routeData.RoleId.Value);
+
 			}
+			if(_role is null) return;
 			_roleUsers = TfUserUIService.GetUsersForRole(_role.Id).ToList();
 			_userOptions = TfUserUIService.GetUsers().Where(x => !_roleUsers.Any(u => x.Id == u.Id)).ToList();
 		}

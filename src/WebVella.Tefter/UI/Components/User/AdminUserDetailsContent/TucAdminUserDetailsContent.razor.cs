@@ -5,7 +5,7 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 
 	private TfUser _currentUser = default!;
-	private TfUser _user = default!;
+	private TfUser? _user = null;
 	private List<TfRole> _roleOptions = new();
 	private TfRole? _selectedRole = null;
 	public bool _submitting = false;
@@ -50,6 +50,7 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 				if (navData.State.UserId is not null)
 					_user = TfUserUIService.GetUser(navData.State.UserId.Value);
 			}
+			if(_user is null) return;
 			_roleOptions = TfUserUIService.GetRoles().Where(x => !_user.Roles.Any(u => x.Id == u.Id)).ToList();
 		}
 		finally

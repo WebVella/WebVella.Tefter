@@ -4,7 +4,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 	[Inject] public ITfDataIdentityUIService TfDataIdentityUIService { get; set; } = default!;
 	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 
-	private TfDataIdentity _identity = default!;
+	private TfDataIdentity? _identity = null;
 	public bool _submitting = false;
 
 	public void Dispose()
@@ -38,7 +38,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 			navData = await TfSpaceUIService.GetSpaceNavigationData(Navigator);
 		try
 		{
-			if (identity is not null && identity.DataIdentity == _identity.DataIdentity)
+			if (identity is not null && identity.DataIdentity == _identity?.DataIdentity)
 			{
 				_identity = identity;
 			}

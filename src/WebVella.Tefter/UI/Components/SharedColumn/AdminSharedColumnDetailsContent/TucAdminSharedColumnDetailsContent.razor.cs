@@ -4,7 +4,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 	[Inject] public ITfSharedColumnUIService TfSharedColumnUIService { get; set; } = default!;
 	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 
-	private TfSharedColumn _column = default!;
+	private TfSharedColumn? _column = null;
 	private bool _isDeleting = false;
 
 	internal ReadOnlyCollection<TfDataProvider> _dataProviders = default!;
@@ -39,7 +39,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 
 		try
 		{
-			if (column is not null && column.Id == _column.Id)
+			if (column is not null && column.Id == _column?.Id)
 			{
 				_column = column;
 			}
@@ -49,6 +49,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 				if (routeData.SharedColumnId is not null)
 					_column = TfSharedColumnUIService.GetSharedColumn(routeData.SharedColumnId.Value);
 			}
+			if(_column is null) return;
 			_dataProviders = TfSharedColumnUIService.GetSharedColumnConnectedDataProviders(_column.Id);
 		}
 		finally

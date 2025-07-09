@@ -4,7 +4,7 @@
 	<div style="padding:var(--tf-layout-content-padding)">
 		@if (_column is null)
 		{
-			<TucSkeletonMenu HasIcon=true IsAside=true BackgroundColor="var(--tf-fill-color-hover)" />
+			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
 		}
 		else
 		{
