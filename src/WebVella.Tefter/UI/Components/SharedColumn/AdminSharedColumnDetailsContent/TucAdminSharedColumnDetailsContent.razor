@@ -30,7 +30,7 @@
 						</FluentGridItem>
 						<FluentGridItem xs="3">
 							<FluentTextField Value="@(_column.DbType.ToString())"
-											 Label="@LOC("Data type")" Style="width:100%" ReadOnly="true"/>
+											 Label="@LOC("Data type")" Style="width:100%" ReadOnly="true" />
 						</FluentGridItem>
 						<FluentGridItem xs="3">
 							<FluentTextField Value="@(_column.DataIdentity)"
@@ -61,32 +61,30 @@
 					}
 					else
 					{
-						<div class="tf-grid-wrapper">
-							<table class="tf-grid">
-								<thead class="tf-grid-thead">
-									<tr class="tf-grid-thead-bkg"></tr>
-									<tr class="tf-grid-tr">
-										<th class="tf-grid-th">name</th>
-										<th class="tf-grid-th">columns</th>
+						<table class="tf-grid">
+							<thead class="tf-grid-thead">
+								<tr class="tf-grid-thead-bkg"></tr>
+								<tr class="tf-grid-tr">
+									<th class="tf-grid-th">name</th>
+									<th class="tf-grid-th">columns</th>
+								</tr>
+							</thead>
+							<tbody class="tf-grid-tbody">
+								@foreach (var context in _dataProviders)
+								{
+									<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+										<td class="tf-grid-td">
+											<div>@context.Name</div>
+										</td>
+										<td class="tf-grid-td">
+											<div>
+												@_getProviderImplementation(context)
+											</div>
+										</td>
 									</tr>
-								</thead>
-								<tbody class="tf-grid-tbody">
-									@foreach (var context in _dataProviders)
-									{
-										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
-											<td class="tf-grid-td">
-												<div>@context.Name</div>
-											</td>
-											<td class="tf-grid-td">
-												<div>
-													@_getProviderImplementation(context)
-												</div>
-											</td>
-										</tr>
-									}
-								</tbody>
-							</table>
-						</div>
+								}
+							</tbody>
+						</table>
 					}
 				</ChildContent>
 			</TucCard>

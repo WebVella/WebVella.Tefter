@@ -58,7 +58,7 @@ try
 		builder.Services.AddControllers();
 
 		//Blazor Trace Core Service
-		builder.Services.AddBlazorTrace(new WvBlazorTraceConfiguration(){ EnableTracing = false});
+		builder.Services.AddBlazorTrace(new WvBlazorTraceConfiguration(){ EnableTracing = true});
 
 		//IMPORTANT: Do not remove. Required for the application to work
 		builder.Services.AddTefter();

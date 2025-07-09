@@ -1,8 +1,8 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-<TucPageHeader Area="Administration" Title="Dashboard" 
-	Icon="@TfConstants.AdminDashboardIcon"
+<TucPageHeader Area="Administration" Title="Dashboard"
+			   Icon="@TfConstants.AdminDashboardIcon"
 			   IconColor="TfConstants.AdminColor" />
 
 <FluentGrid>
@@ -26,35 +26,33 @@
 				}
 				else if (_data.ProvidersInfo.Count > 0)
 				{
-					<div class="tf-grid-wrapper">
-						<table class="tf-grid">
-							<thead>
-								<tr>
-									<th>name</th>
-									<th>type</th>
-									<th>data</th>
+					<table class="tf-grid">
+						<thead>
+							<tr>
+								<th>name</th>
+								<th>type</th>
+								<th>data</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var context in _data.ProvidersInfo.OrderByDescending(x => x.RowsCount).Take(5))
+							{
+								<tr @key=@context.Id>
+									<td>
+										<div>
+											@context.Name
+										</div>
+									</td>
+									<td>
+										<div>@context.ProviderType.AddonName</div>
+									</td>
+									<td>
+										<div>@context.RowsCount rows</div>
+									</td>
 								</tr>
-							</thead>
-							<tbody>
-								@foreach (var context in _data.ProvidersInfo.OrderByDescending(x => x.RowsCount).Take(5))
-								{
-									<tr @key=@context.Id>
-										<td>
-											<div>
-												@context.Name
-											</div>
-										</td>
-										<td>
-											<div>@context.ProviderType.AddonName</div>
-										</td>
-										<td>
-											<div>@context.RowsCount rows</div>
-										</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
+							}
+						</tbody>
+					</table>
 				}
 				else
 				{
@@ -83,28 +81,26 @@
 				}
 				else if (_data.SyncInfo.Count > 0)
 				{
-					<div class="tf-grid-wrapper">
-						<table class="tf-grid">
-							<tbody class="tf-grid-tbody">
-								@foreach (var context in _data.SyncInfo)
-								{
-									<tr @key=@context.Id class="tf-grid-tr">
-										<td class="tf-grid-td">
-											<div>
-												@context.Name
-											</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>@context.ProviderType.AddonName</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>@context.NextSyncOn!.Value.ToString(TfConstants.DateTimeFormat)</div>
-										</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
+					<table class="tf-grid">
+						<tbody class="tf-grid-tbody">
+							@foreach (var context in _data.SyncInfo)
+							{
+								<tr @key=@context.Id class="tf-grid-tr">
+									<td class="tf-grid-td">
+										<div>
+											@context.Name
+										</div>
+									</td>
+									<td class="tf-grid-td">
+										<div>@context.ProviderType.AddonName</div>
+									</td>
+									<td class="tf-grid-td">
+										<div>@context.NextSyncOn!.Value.ToString(TfConstants.DateTimeFormat)</div>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
 				}
 				else
 				{

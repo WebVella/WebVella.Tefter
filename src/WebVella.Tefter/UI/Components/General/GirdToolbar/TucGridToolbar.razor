@@ -1,0 +1,24 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<div class="tf-grid-toolbar" style="@Style">
+	@if (ToolbarSearch is not null)
+	{
+		<div class="tf-grid-toolbar__search">
+			@ToolbarSearch
+		</div>
+	}
+	@if (ToolbarLeft is not null)
+	{
+		<div class="tf-grid-toolbar__left">
+			@ToolbarLeft
+		</div>
+	}
+	@if (ToolbarRight is not null)
+	{
+		<div class="tf-grid-toolbar__right">
+			@ToolbarRight
+		</div>
+	}
+</div>
+
+

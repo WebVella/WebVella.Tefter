@@ -4,6 +4,7 @@ namespace WebVella.Tefter.UI.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.General.Pager.TfPager", "WebVella.Tefter")]
 public partial class TucPager : TfBaseComponent
 {
+
 	[Parameter] public int Page { get; set; }
 	[Parameter] public int PageSize { get; set; }
 	[Parameter] public string? Style { get; set; }
@@ -61,7 +62,7 @@ public partial class TucPager : TfBaseComponent
 
 	private void _pageChanged(int page)
 	{
-		_page = page;
+		if(page == _page) return;
 		_currentSelectedChangedDebounce.Run(_throttleMS, () => InvokeAsync(async () =>
 		{
 			await GoOnPage.InvokeAsync(page);
@@ -70,7 +71,7 @@ public partial class TucPager : TfBaseComponent
 
 	private void _pageSizeChanged(int pageSize)
 	{
-		_pageSize = pageSize;
+		if(pageSize == _pageSize) return;
 		_currentSelectedChangedDebounce.Run(_throttleMS, () => InvokeAsync(async () =>
 		{
 			await ChangePageSize.InvokeAsync(pageSize);

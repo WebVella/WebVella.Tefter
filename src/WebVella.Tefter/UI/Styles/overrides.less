@@ -145,14 +145,22 @@ fluent-button {
 	--neutral-fill-hover: var(--neutral-fill-rest);
 	background-color: var(--tf-white) !important;
 	border-radius: var(--tf-border-radius-xl);
-	color: var(--tf-font-color-link);
+	color: var(--tf-font-color-base);
 
 	&::part(control):focus-visible {
 		outline: none !important;
 	}
 
 	&:hover {
-		color: var(--tf-font-color-link-hover);
+		background-color: var(--tf-fill-color-hover) !important;
+	}
+
+	&::part(start) {
+		margin-inline-end: 0.25rem;
+	}
+
+	&::part(end) {
+		margin-inline-start: 0.25rem;
 	}
 }
 

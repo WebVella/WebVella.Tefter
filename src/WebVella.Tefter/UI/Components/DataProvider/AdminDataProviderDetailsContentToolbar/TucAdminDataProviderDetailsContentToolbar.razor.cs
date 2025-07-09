@@ -49,8 +49,8 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 				Id = Guid.NewGuid().ToString(),
 				Url = string.Format(TfConstants.AdminDataProviderAuxPageUrl, navData.State.DataProviderId),
 				Selected = navData.State.HasNode(RouteDataNode.Aux, 3),
-				Text = LOC("Aux Data"),
-				IconCollapsed = TfConstants.GetIcon("Attach")
+				Text = LOC("Connected Data"),
+				IconCollapsed = TfConstants.GetIcon("PlugConnected")
 			});
 			_menu.Add(new TfMenuItem
 			{

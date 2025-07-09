@@ -29,66 +29,64 @@
 					}
 				</ToolbarTemplate>
 				<ChildContent>
-					<div class="tf-grid-wrapper">
-						<table class="tf-grid">
-							<thead class="tf-grid-thead">
-								<tr class="tf-grid-thead-bkg"></tr>
-								<tr class="tf-grid-tr">
-									<th class="tf-grid-th" style="width:110px;min-width:110px;"></th>
-									<th class="tf-grid-th">name</th>
-									<th class="tf-grid-th">columns</th>
-									@* <th class="tf-grid-th" style="width:220px;min-width:220px;">details</th> *@
-								</tr>
-							</thead>
-							<tbody class="tf-grid-tbody">
-								@foreach (var context in _provider.Identities)
-								{
-									<tr @key=context.Id class="tf-grid-tr">
-										<td class="tf-grid-td">
-											<div>
-												@if (context.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-												{
-													<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.LockIcon"
-																  Title="@LOC("always implemented")" Disabled=true />
-												}
-												else
-												{
-													<FluentStack Wrap="false">
-														<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
-																	  Title="@LOC("Edit column")" OnClick="@(()=> _editIdentity(context))" />
-														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteIdentity(context))" Title="@LOC("Delete")">
-															<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
-														</FluentButton>
-													</FluentStack>
-												}
-											</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>
-												@context.DataIdentity
-											</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>
-												<FluentStack>
-													@foreach (var item in context.Columns)
-													{
-														<FluentBadge Appearance="@Appearance.Neutral">@item</FluentBadge>
-													}
+					<table class="tf-grid">
+						<thead class="tf-grid-thead">
+							<tr class="tf-grid-thead-bkg"></tr>
+							<tr class="tf-grid-tr">
+								<th class="tf-grid-th" style="width:110px;min-width:110px;"></th>
+								<th class="tf-grid-th">name</th>
+								<th class="tf-grid-th">columns</th>
+								@* <th class="tf-grid-th" style="width:220px;min-width:220px;">details</th> *@
+							</tr>
+						</thead>
+						<tbody class="tf-grid-tbody">
+							@foreach (var context in _provider.Identities)
+							{
+								<tr @key=context.Id class="tf-grid-tr">
+									<td class="tf-grid-td">
+										<div>
+											@if (context.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
+											{
+												<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.LockIcon"
+															  Title="@LOC("always implemented")" Disabled=true />
+											}
+											else
+											{
+												<FluentStack Wrap="false">
+													<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
+																  Title="@LOC("Edit column")" OnClick="@(()=> _editIdentity(context))" />
+													<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteIdentity(context))" Title="@LOC("Delete")">
+														<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+													</FluentButton>
 												</FluentStack>
-											</div>
-										</td>
-										@* 							<td class="tf-grid-td">
+											}
+										</div>
+									</td>
+									<td class="tf-grid-td">
+										<div>
+											@context.DataIdentity
+										</div>
+									</td>
+									<td class="tf-grid-td">
+										<div>
+											<FluentStack>
+												@foreach (var item in context.Columns)
+												{
+													<FluentBadge Appearance="@Appearance.Neutral">@item</FluentBadge>
+												}
+											</FluentStack>
+										</div>
+									</td>
+									@* 							<td class="tf-grid-td">
 								<div>
 									<div>@context.Id</div>
 									<div class="td-description">ver. @context.Version</div>
 								</div>
 							</td> *@
-									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
+								</tr>
+							}
+						</tbody>
+					</table>
 				</ChildContent>
 			</TucCard>
 			<FluentGrid Style="margin-top:1rem;">
@@ -102,47 +100,45 @@
 							}
 							else
 							{
-								<div class="tf-grid-wrapper">
-									<table class="tf-grid">
-										<thead class="tf-grid-thead">
-											<tr class="tf-grid-thead-bkg"></tr>
-											<tr class="tf-grid-tr">
-												<th class="tf-grid-th">name</th>
-												<th class="tf-grid-th">type</th>
-												<th class="tf-grid-th" style="width:80px">in search</th>
-												<th class="tf-grid-th">common identity</th>
+								<table class="tf-grid">
+									<thead class="tf-grid-thead">
+										<tr class="tf-grid-thead-bkg"></tr>
+										<tr class="tf-grid-tr">
+											<th class="tf-grid-th">name</th>
+											<th class="tf-grid-th">type</th>
+											<th class="tf-grid-th" style="width:80px">in search</th>
+											<th class="tf-grid-th">common identity</th>
+										</tr>
+									</thead>
+									<tbody class="tf-grid-tbody">
+										@foreach (var context in _provider.SharedColumns)
+										{
+											<tr @key=context.Id class="tf-grid-tr">
+												<td class="tf-grid-td">
+													<div>@context.DbName</div>
+												</td>
+												<td class="tf-grid-td">
+													<div>@context.DbType.ToString()</div>
+												</td>
+												<td class="tf-grid-td">
+													<div>
+														@if (context.IncludeInTableSearch)
+														{
+															<FluentBadge Appearance="@Appearance.Neutral">yes</FluentBadge>
+														}
+														else
+														{
+															<FluentBadge>no</FluentBadge>
+														}
+													</div>
+												</td>
+												<td class="tf-grid-td">
+													<div>@context.DataIdentity</div>
+												</td>
 											</tr>
-										</thead>
-										<tbody class="tf-grid-tbody">
-											@foreach (var context in _provider.SharedColumns)
-											{
-												<tr @key=context.Id class="tf-grid-tr">
-													<td class="tf-grid-td">
-														<div>@context.DbName</div>
-													</td>
-													<td class="tf-grid-td">
-														<div>@context.DbType.ToString()</div>
-													</td>
-													<td class="tf-grid-td">
-														<div>
-															@if (context.IncludeInTableSearch)
-															{
-																<FluentBadge Appearance="@Appearance.Neutral">yes</FluentBadge>
-															}
-															else
-															{
-																<FluentBadge>no</FluentBadge>
-															}
-														</div>
-													</td>
-													<td class="tf-grid-td">
-														<div>@context.DataIdentity</div>
-													</td>
-												</tr>
-											}
-										</tbody>
-									</table>
-								</div>
+										}
+									</tbody>
+								</table>
 							}
 						</ChildContent>
 					</TucCard>
@@ -158,38 +154,36 @@
 							}
 							else
 							{
-								<div class="tf-grid-wrapper">
-									<table class="tf-grid">
-										<thead class="tf-grid-thead">
-											<tr class="tf-grid-thead-bkg"></tr>
-											<tr class="tf-grid-tr">
-												<th class="tf-grid-th" style="width:80px;min-width:80px;">code</th>
-												<th class="tf-grid-th">name</th>
-												<th class="tf-grid-th">type</th>
-												<th class="tf-grid-th">common identities</th>
+								<table class="tf-grid">
+									<thead class="tf-grid-thead">
+										<tr class="tf-grid-thead-bkg"></tr>
+										<tr class="tf-grid-tr">
+											<th class="tf-grid-th" style="width:80px;min-width:80px;">code</th>
+											<th class="tf-grid-th">name</th>
+											<th class="tf-grid-th">type</th>
+											<th class="tf-grid-th">common identities</th>
+										</tr>
+									</thead>
+									<tbody class="tf-grid-tbody">
+										@foreach (var context in _joinedProviders)
+										{
+											<tr @key=context.Id class="tf-grid-tr">
+												<td class="tf-grid-td">
+													<div>@context.Code</div>
+												</td>
+												<td class="tf-grid-td">
+													<div>@context.Name</div>
+												</td>
+												<td class="tf-grid-td">
+													<div>@context.ProviderType.AddonName</div>
+												</td>
+												<td class="tf-grid-td">
+													<div>@_showCommonIdentities(context)</div>
+												</td>
 											</tr>
-										</thead>
-										<tbody class="tf-grid-tbody">
-											@foreach (var context in _joinedProviders)
-											{
-												<tr @key=context.Id class="tf-grid-tr">
-													<td class="tf-grid-td">
-														<div>@context.Code</div>
-													</td>
-													<td class="tf-grid-td">
-														<div>@context.Name</div>
-													</td>
-													<td class="tf-grid-td">
-														<div>@context.ProviderType.AddonName</div>
-													</td>
-													<td class="tf-grid-td">
-														<div>@_showCommonIdentities(context)</div>
-													</td>
-												</tr>
-											}
-										</tbody>
-									</table>
-								</div>
+										}
+									</tbody>
+								</table>
 							}
 						</ChildContent>
 					</TucCard>
