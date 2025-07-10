@@ -14,7 +14,7 @@
 
 			<TucGridToolbar>
 				<ToolbarSearch>
-					<FluentSearch Value="@_navData.State.Search" ValueChanged="_onSearch" AutoComplete="off" Placeholder="@LOC("search...")" />
+					<FluentSearch Value="@_navState.Search" ValueChanged="_onSearch" AutoComplete="off" Placeholder="@LOC("search...")" />
 				</ToolbarSearch>
 				<ToolbarLeft>
 					<FluentButton Id="view-filter-selector" Title="toggle system columns" OnClick="_toggleSystemColumns"
@@ -49,7 +49,7 @@
 					</FluentStack>
 				</ToolbarRight>
 			</TucGridToolbar>
-			@if (_data is not null && (_data.Rows.Count > 0 || _navData.State.Page != 1))
+			@if (_data is not null)
 			{
 				<div class="tf-grid-wrapper">
 					<table class="tf-grid">
@@ -69,6 +69,19 @@
 							{
 								<tr class="tf-grid-tr">
 									<td class="tf-grid-td" colspan="@columnCount"><div>Loading...</div></td>
+								</tr>
+							}
+							else if (_data.Columns.Count == 0)
+							{
+								<tr class="tf-grid-tr">
+									<td class="tf-grid-td" colspan="@columnCount"><div>@LOC("No columns are created for this data provider yet")</div></td>
+								</tr>
+
+							}
+							else if(_data.Rows.Count == 0)
+							{
+								<tr class="tf-grid-tr">
+									<td class="tf-grid-td" colspan="@columnCount"><div>@LOC("No records")</div></td>
 								</tr>
 							}
 							else
@@ -103,14 +116,6 @@
 						</tbody>
 					</table>
 				</div>
-			}
-			else if (_data is not null && _data.Columns.Count == 0)
-			{
-				<FluentMessageBar AllowDismiss="false">@LOC("No columns are created for this data provider yet")</FluentMessageBar>
-			}
-			else
-			{
-				<FluentMessageBar AllowDismiss="false">@LOC("No records")</FluentMessageBar>
 			}
 			<div class="tf-grid__pager">
 				<TucPager Page="@(_data?.QueryInfo.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"

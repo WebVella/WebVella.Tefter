@@ -2,7 +2,7 @@
 public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfSharedColumnUIService TfSharedColumnUIService { get; set; } = default!;
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
+	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private TfSharedColumn? _column = null;
 	private bool _isDeleting = false;
@@ -11,14 +11,14 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 	public void Dispose()
 	{
 		TfSharedColumnUIService.SharedColumnUpdated -= On_SharedColumnUpdated;
-		TfSpaceUIService.NavigationDataChanged -= On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
 		TfSharedColumnUIService.SharedColumnUpdated += On_SharedColumnUpdated;
-		TfSpaceUIService.NavigationDataChanged += On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_SharedColumnUpdated(object? caller, TfSharedColumn column)
@@ -26,16 +26,16 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 		await _init(column: column);
 	}
 
-	private async void On_NavigationDataChanged(object? caller, TfSpaceNavigationData args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
-			await _init(navData: args);
+			await _init(navState: args);
 	}
 
-	private async Task _init(TfSpaceNavigationData? navData = null, TfSharedColumn? column = null)
+	private async Task _init(TfNavigationState? navState = null, TfSharedColumn? column = null)
 	{
-		if (navData == null)
-			navData = await TfSpaceUIService.GetSpaceNavigationData(Navigator);
+		if (navState == null)
+			navState = await TfNavigationUIService.GetNavigationState(Navigator);
 
 		try
 		{
@@ -54,7 +54,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 		}
 		finally
 		{
-			UriInitialized = navData.Uri;
+			UriInitialized = navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

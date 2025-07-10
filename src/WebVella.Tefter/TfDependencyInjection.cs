@@ -66,6 +66,7 @@ public static class TfDependencyInjection
 		services.AddSingleton<ITfService, TfService>();
 
 		//UI
+		services.AddScoped<ITfNavigationUIService, TfNavigationUIService>();
 		services.AddScoped<ITfRecipeUIService, TfRecipeUIService>();
 		services.AddScoped<ITfUserUIService, TfUserUIService>();
 		services.AddScoped<ITfGeneralUIService, TfDashboardUIService>();

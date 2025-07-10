@@ -1,23 +1,23 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
+	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 
 	private TfDataProvider? _provider = null;
 	private Guid? _deletedColumnId = null;
 	public void Dispose()
 	{
-		TfSpaceUIService.NavigationDataChanged -= On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 		TfDataProviderUIService.DataProviderUpdated -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfSpaceUIService.NavigationDataChanged += On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
 	}
-	private async void On_NavigationDataChanged(object? caller, TfSpaceNavigationData args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await _init(args);
@@ -27,25 +27,25 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 		await _init();
 	}
 
-	private async Task _init(TfSpaceNavigationData? navData = null)
+	private async Task _init(TfNavigationState? navState = null)
 	{
-		if (navData == null)
-			navData = await TfSpaceUIService.GetSpaceNavigationData(Navigator);
+		if (navState == null)
+			navState = await TfNavigationUIService.GetNavigationState(Navigator);
 		try
 		{
-			if (navData.State.DataProviderId is null)
+			if (navState.DataProviderId is null)
 			{
 				_provider = null;
 				await InvokeAsync(StateHasChanged);
 				return;
 			}
-			_provider = TfDataProviderUIService.GetDataProvider(navData.State.DataProviderId.Value);
+			_provider = TfDataProviderUIService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
 		}
 		finally
 		{
-			UriInitialized = navData.Uri;
+			UriInitialized = navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

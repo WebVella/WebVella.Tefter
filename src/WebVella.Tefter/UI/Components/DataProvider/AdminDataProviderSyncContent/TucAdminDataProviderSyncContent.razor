@@ -116,9 +116,9 @@
 								}
 							</tbody>
 						</table>
-						<TucPager Page="@(_navData.State.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
+						<TucPager Page="@(_navState.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
 								  GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
-						PageSize="@(_navData.State.PageSize ?? TfConstants.PageSize)" Style="margin-top:1rem;"/>
+						PageSize="@(_navState.PageSize ?? TfConstants.PageSize)" Style="margin-top:1rem;"/>
 
 
 

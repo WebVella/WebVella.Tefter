@@ -1,6 +1,7 @@
 ﻿namespace WebVella.Tefter.Models;
-public partial record TfRouteState
+public partial record TfNavigationState
 {
+	public string Uri { get; init; } = default!;
 	public Dictionary<int, string> NodesDict { get; init; } = new();
 	public Guid? SpaceId { get; init; }
 	public Guid? SpaceDataId { get; init; }
@@ -27,7 +28,7 @@ public partial record TfRouteState
 	public bool SearchInSaves { get; init; } = true;
 	public bool SearchInViews { get; init; } = true;
 
-	public TfRouteState AddRouteNodes(params RouteDataNode[] nodes)
+	public TfNavigationState AddRouteNodes(params RouteDataNode[] nodes)
 	{
 		var routeData = RouteNodes.ToList();
 		routeData.AddRange(nodes);

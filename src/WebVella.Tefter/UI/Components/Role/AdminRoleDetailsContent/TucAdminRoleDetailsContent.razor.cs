@@ -2,7 +2,7 @@
 public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
+	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private TfUser _currentUser = default!;
 	private TfRole? _role = null;
@@ -14,14 +14,14 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		TfUserUIService.RoleUpdated -= On_RoleUpdated;
-		TfSpaceUIService.NavigationDataChanged -= On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
 		TfUserUIService.RoleUpdated += On_RoleUpdated;
-		TfSpaceUIService.NavigationDataChanged += On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_RoleUpdated(object? caller, TfRole args)
@@ -29,16 +29,16 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 		await _init(role: args);
 	}
 
-	private async void On_NavigationDataChanged(object? caller, TfSpaceNavigationData args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
-			await _init(navData: args);
+			await _init(navState: args);
 	}
 
-	private async Task _init(TfSpaceNavigationData? navData = null, TfRole? role = null)
+	private async Task _init(TfNavigationState? navState = null, TfRole? role = null)
 	{
-		if (navData == null)
-			navData = await TfSpaceUIService.GetSpaceNavigationData(Navigator);
+		if (navState == null)
+			navState = await TfNavigationUIService.GetNavigationState(Navigator);
 		try
 		{
 			_currentUser = (await TfUserUIService.GetCurrentUser())!;
@@ -59,7 +59,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 		}
 		finally
 		{
-			UriInitialized = navData.Uri;
+			UriInitialized = navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

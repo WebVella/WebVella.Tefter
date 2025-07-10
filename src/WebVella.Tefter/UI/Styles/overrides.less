@@ -55,11 +55,16 @@ fluent-select::part(listbox) {
 fluent-text-field,
 fluent-number-field,
 fluent-select,
+fluent-search,
 fluent-text-area,
-fluent-combobox{
+fluent-combobox {
 
 	&::part(root), &::part(control) {
 		border-color: var(--tf-stroke-input);
+
+		&::placeholder {
+			color: var(--tf-font-color-mute) !important;
+		}
 	}
 
 	&.disabled {
@@ -87,6 +92,7 @@ fluent-combobox{
 		}
 	}
 }
+
 
 .tf-select-btn {
 	border-radius: 4px;

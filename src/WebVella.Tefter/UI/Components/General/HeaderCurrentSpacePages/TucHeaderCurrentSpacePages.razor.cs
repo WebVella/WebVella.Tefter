@@ -1,39 +1,39 @@
 namespace WebVella.Tefter.UI.Components;
 public partial class TucHeaderCurrentSpacePages : TfBaseComponent
 {
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
+	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	private List<TfMenuItem> _menu = new();
 	private bool _isLoading = true;
 
 	public void Dispose()
 	{
-		TfSpaceUIService.NavigationDataChanged -= On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		await _init();
-		TfSpaceUIService.NavigationDataChanged += On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async void On_NavigationDataChanged(object? caller, TfSpaceNavigationData args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await _init(args);
 	}
-	private async Task _init(TfSpaceNavigationData? navData = null)
+	private async Task _init(TfNavigationState? navState = null)
 	{
-		if (navData is null)
-			navData = await TfSpaceUIService.GetSpaceNavigationData(Navigator);
+		if (navState is null)
+			navState = await TfNavigationUIService.GetNavigationState(Navigator);
 		try
 		{
-			_menu = navData.Menu;
+			_menu = (await TfNavigationUIService.GetNavigationMenu(Navigator)).Menu;
 		}
 		finally
 		{
 			_isLoading = false;
-			UriInitialized = navData.Uri;
+			UriInitialized = navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

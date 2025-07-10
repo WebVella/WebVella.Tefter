@@ -2,7 +2,7 @@
 public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
+	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
@@ -13,7 +13,7 @@ public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, 
 		TfDataProviderUIService.DataProviderCreated -= On_DataProviderCreated;
 		TfDataProviderUIService.DataProviderUpdated -= On_DataProviderUpdated;
 		TfDataProviderUIService.DataProviderDeleted -= On_DataProviderDeleted;
-		TfSpaceUIService.NavigationDataChanged -= On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -23,7 +23,7 @@ public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, 
 		TfDataProviderUIService.DataProviderCreated += On_DataProviderCreated;
 		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
 		TfDataProviderUIService.DataProviderDeleted += On_DataProviderDeleted;
-		TfSpaceUIService.NavigationDataChanged += On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_DataProviderCreated(object? caller, TfDataProvider user)
@@ -42,19 +42,19 @@ public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, 
 	}
 
 
-	private async void On_NavigationDataChanged(object? caller, TfSpaceNavigationData args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await _init(args);
 	}
 
-	private async Task _init(TfSpaceNavigationData? navData = null)
+	private async Task _init(TfNavigationState? navState = null)
 	{
-		if (navData is null)
-			navData = await TfSpaceUIService.GetSpaceNavigationData(Navigator);
+		if (navState is null)
+			navState = await TfNavigationUIService.GetNavigationState(Navigator);
 		try
 		{
-			_search = navData.State.Search;
+			_search = navState.Search;
 			var items = TfDataProviderUIService.GetDataProviders(_search).ToList();
 			_items = new();
 			foreach (var item in items)
@@ -64,14 +64,14 @@ public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, 
 					Url = string.Format(TfConstants.AdminDataProviderDetailsPageUrl, item.Id),
 					Description = item.ProviderType.AddonName,
 					Text = TfConverters.StringOverflow(item.Name, _stringLimit),
-					Selected = navData.State.DataProviderId == item.Id
+					Selected = navState.DataProviderId == item.Id
 				});
 			}
 		}
 		finally
 		{
 			_isLoading = false;
-			UriInitialized = navData.Uri;
+			UriInitialized = navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

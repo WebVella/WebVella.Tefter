@@ -1,26 +1,26 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
+	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 
 	private TfDataProvider? _provider = null;
-	private TfSpaceNavigationData _navData = new();
+	private TfNavigationState _navState = new();
 
 	private string _nextSyncronization = default!;
 	private List<TfDataProviderSynchronizeTask> _syncTasks = new();
 	public void Dispose()
 	{
-		TfSpaceUIService.NavigationDataChanged -= On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 		TfDataProviderUIService.DataProviderUpdated -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfSpaceUIService.NavigationDataChanged += On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
 	}
-	private async void On_NavigationDataChanged(object? caller, TfSpaceNavigationData args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await _init(args);
@@ -31,20 +31,20 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 		await _init();
 	}
 
-	private async Task _init(TfSpaceNavigationData? navData = null)
+	private async Task _init(TfNavigationState? navState = null)
 	{
-		if (navData == null)
-			navData = await TfSpaceUIService.GetSpaceNavigationData(Navigator);
+		if (navState == null)
+			navState = await TfNavigationUIService.GetNavigationState(Navigator);
 		try
 		{
-			if (navData.State.DataProviderId is null)
+			if (navState.DataProviderId is null)
 			{
 				_provider = null;
 				await InvokeAsync(StateHasChanged);
 				return;
 			}
-			_navData = navData;
-			_provider = TfDataProviderUIService.GetDataProvider(_navData.State.DataProviderId.Value);
+			_navState = navState;
+			_provider = TfDataProviderUIService.GetDataProvider(_navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
 
@@ -53,11 +53,11 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 			if (providerNextTaskCreatedOn is not null)
 				_nextSyncronization = providerNextTaskCreatedOn.Value.ToString(TfConstants.DateTimeFormat);
 
-			_syncTasks = TfDataProviderUIService.GetDataProviderSynchronizationTasks(_provider.Id, _navData.State.Page, _navData.State.PageSize ?? TfConstants.PageSize);
+			_syncTasks = TfDataProviderUIService.GetDataProviderSynchronizationTasks(_provider.Id, _navState.Page, _navState.PageSize ?? TfConstants.PageSize);
 		}
 		finally
 		{
-			UriInitialized = navData.Uri;
+			UriInitialized = navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
@@ -81,7 +81,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	}
 	private async Task _editSchedule()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TucDataProviderSyncManageDialog>(_provider,
+		var dialog = await DialogService.ShowDialogAsync<TucDataProviderSyncManageDialog>(_provider!,
 				new DialogParameters()
 				{
 					PreventDismissOnOverlayClick = true,
@@ -95,18 +95,18 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 
 	private async Task _goFirstPage()
 	{
-		if (_navData.State.Page == 1) return;
-		var queryDict = new Dictionary<string, object>{
+		if (_navState.Page == 1) return;
+		var queryDict = new Dictionary<string, object?>{
 			{ TfConstants.PageQueryName, 1}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goPreviousPage()
 	{
-		var page = _navData.State.Page - 1;
+		var page = _navState.Page - 1;
 		if (page < 1) page = 1;
-		if (_navData.State.Page == page) return;
-		var queryDict = new Dictionary<string, object>{
+		if (_navState.Page == page) return;
+		var queryDict = new Dictionary<string, object?>{
 			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
@@ -117,18 +117,18 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 			|| _syncTasks.Count == 0)
 			return;
 
-		var page = _navData.State.Page + 1;
+		var page = _navState.Page + 1;
 		if (page < 1) page = 1;
-		if (_navData.State.Page == page) return;
-		var queryDict = new Dictionary<string, object>{
+		if (_navState.Page == page) return;
+		var queryDict = new Dictionary<string, object?>{
 			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goLastPage()
 	{
-		if (_navData.State.Page == -1) return;
-		var queryDict = new Dictionary<string, object>{
+		if (_navState.Page == -1) return;
+		var queryDict = new Dictionary<string, object?>{
 			{ TfConstants.PageQueryName, -1}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
@@ -136,8 +136,8 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	private async Task _goOnPage(int page)
 	{
 		if (page < 1 && page != -1) page = 1;
-		if (_navData.State.Page == page) return;
-		var queryDict = new Dictionary<string, object>{
+		if (_navState.Page == page) return;
+		var queryDict = new Dictionary<string, object?>{
 			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);

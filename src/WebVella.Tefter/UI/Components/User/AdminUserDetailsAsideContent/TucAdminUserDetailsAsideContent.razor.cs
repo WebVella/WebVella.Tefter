@@ -2,7 +2,7 @@
 public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
+	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
@@ -12,14 +12,14 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 	{
 		TfUserUIService.UserCreated -= On_UserCreated;
 		TfUserUIService.UserUpdated -= On_UserUpdated;
-		TfSpaceUIService.NavigationDataChanged -= On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
 		TfUserUIService.UserCreated += On_UserCreated;
 		TfUserUIService.UserUpdated += On_UserUpdated;
-		TfSpaceUIService.NavigationDataChanged += On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 
@@ -33,20 +33,20 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 		await _init();
 	}
 
-	private async void On_NavigationDataChanged(object? caller, TfSpaceNavigationData args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await _init(args);
 	}
 
-	private async Task _init(TfSpaceNavigationData? navData = null)
+	private async Task _init(TfNavigationState? navState = null)
 	{
-		if (navData is null)
-			navData = await TfSpaceUIService.GetSpaceNavigationData(Navigator);
+		if (navState is null)
+			navState = await TfNavigationUIService.GetNavigationState(Navigator);
 
 		try
 		{
-			_search = navData.State.Search;
+			_search = navState.Search;
 			var users = TfUserUIService.GetUsers(_search).ToList();
 			_items = new();
 			foreach (var user in users)
@@ -58,14 +58,14 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 					Url = string.Format(TfConstants.AdminUserDetailsPageUrl, user.Id),
 					Description = user.Email,
 					Text = TfConverters.StringOverflow(user.Names, _stringLimit),
-					Selected = navData.State.UserId == user.Id
+					Selected = navState.UserId == user.Id
 				});
 			}
 		}
 		finally
 		{
 			_isLoading = false;
-			UriInitialized = navData.Uri;
+			UriInitialized = navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

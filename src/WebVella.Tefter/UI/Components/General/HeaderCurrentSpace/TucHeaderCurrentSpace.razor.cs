@@ -1,7 +1,7 @@
 namespace WebVella.Tefter.UI.Components;
 public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
+	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private int _ellipsisCount = 30;
 	private List<TfMenuItem> _menu = new();
@@ -24,22 +24,23 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 	}
 	private async Task _init()
 	{
-		var navData = await TfSpaceUIService.GetSpaceNavigationData(Navigator);
+		var navState = await TfNavigationUIService.GetNavigationState(Navigator);
+		var navMenu = await TfNavigationUIService.GetNavigationMenu(Navigator);
 		try
 		{
 			_menu = new();
 			List<string> menuText = new();
 
-			if (navData.State.RouteNodes.Count == 0)
+			if (navState.RouteNodes.Count == 0)
 			{
 				menuText.Add(TfConstants.HomeMenuTitle);
 			}
 			else
 			{
-				menuText.Add(navData.State.RouteNodes[0].ToDescriptionString());
-				if (navData.State.RouteNodes.Count > 1)
+				menuText.Add(navState.RouteNodes[0].ToDescriptionString());
+				if (navState.RouteNodes.Count > 1)
 				{
-					menuText.Add(navData.State.RouteNodes[1].ToDescriptionString());
+					menuText.Add(navState.RouteNodes[1].ToDescriptionString());
 				}
 			}
 
@@ -50,8 +51,8 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 				Disabled = true,
 			});
 
-			var colorName = navData.SpaceColor.GetAttribute().Name;
-			var colorVariable = navData.SpaceColor.GetAttribute().Variable;
+			var colorName = navMenu.SpaceColor.GetAttribute().Name;
+			var colorVariable = navMenu.SpaceColor.GetAttribute().Variable;
 			var sb = new StringBuilder();
 			sb.AppendLine("<style>");
 			sb.AppendLine($"html:root body {{");

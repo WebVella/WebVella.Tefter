@@ -2,7 +2,7 @@
 public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
+	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
@@ -13,7 +13,7 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 		TfUserUIService.RoleCreated -= On_RoleCreated;
 		TfUserUIService.RoleUpdated -= On_RoleUpdated;
 		TfUserUIService.RoleDeleted -= On_RoleDeleted;
-		TfSpaceUIService.NavigationDataChanged -= On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
@@ -21,7 +21,7 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 		TfUserUIService.RoleCreated += On_RoleCreated;
 		TfUserUIService.RoleUpdated += On_RoleUpdated;
 		TfUserUIService.RoleDeleted += On_RoleDeleted;
-		TfSpaceUIService.NavigationDataChanged += On_NavigationDataChanged;
+		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_RoleCreated(object? caller, TfRole user)
@@ -40,20 +40,20 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 	}
 
 
-	private async void On_NavigationDataChanged(object? caller, TfSpaceNavigationData args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await _init(args);
 	}
 
-	private async Task _init(TfSpaceNavigationData? navData = null)
+	private async Task _init(TfNavigationState? navState = null)
 	{
-		if (navData is null)
-			navData = await TfSpaceUIService.GetSpaceNavigationData(Navigator);
+		if (navState is null)
+			navState = await TfNavigationUIService.GetNavigationState(Navigator);
 
 		try
 		{
-			_search = navData.State.Search;
+			_search = navState.Search;
 			var roles = TfUserUIService.GetRoles(_search).ToList();
 
 			_items = new();
@@ -64,14 +64,14 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 					Url = string.Format(TfConstants.AdminRoleDetailsPageUrl, role.Id),
 					Description = role.IsSystem ? "system created" : "user created",
 					Text = TfConverters.StringOverflow(role.Name, _stringLimit),
-					Selected = navData.State.RoleId == role.Id
+					Selected = navState.RoleId == role.Id
 				});
 			}
 		}
 		finally
 		{
 			_isLoading = false;
-			UriInitialized = navData.Uri;
+			UriInitialized = navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

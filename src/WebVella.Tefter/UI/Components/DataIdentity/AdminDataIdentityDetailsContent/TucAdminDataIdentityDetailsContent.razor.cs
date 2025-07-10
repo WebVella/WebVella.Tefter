@@ -2,7 +2,7 @@
 public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfDataIdentityUIService TfDataIdentityUIService { get; set; } = default!;
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
+	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private TfDataIdentity? _identity = null;
 	public bool _submitting = false;
@@ -10,7 +10,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 	public void Dispose()
 	{
 		TfDataIdentityUIService.DataIdentityUpdated -= On_DataIdentityUpdated;
-		TfSpaceUIService.NavigationDataChanged -= On_NavigationDataChanged;
+	TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -18,7 +18,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 		await base.OnInitializedAsync();
 		await _init();
 		TfDataIdentityUIService.DataIdentityUpdated += On_DataIdentityUpdated;
-		TfSpaceUIService.NavigationDataChanged += On_NavigationDataChanged;
+	TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_DataIdentityUpdated(object? caller, TfDataIdentity args)
@@ -26,16 +26,16 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 		await _init(identity: args);
 	}
 
-	private async void On_NavigationDataChanged(object? caller, TfSpaceNavigationData args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
-			await _init(navData: args);
+			await _init(navState: args);
 	}
 
-	private async Task _init(TfSpaceNavigationData? navData = null, TfDataIdentity? identity = null)
+	private async Task _init(TfNavigationState? navState = null, TfDataIdentity? identity = null)
 	{
-		if (navData is null)
-			navData = await TfSpaceUIService.GetSpaceNavigationData(Navigator);
+		if (navState is null)
+			navState = await TfNavigationUIService.GetNavigationState(Navigator);
 		try
 		{
 			if (identity is not null && identity.DataIdentity == _identity?.DataIdentity)
@@ -44,13 +44,13 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 			}
 			else
 			{
-				if (navData.State.DataIdentityId is not null)
-					_identity = TfDataIdentityUIService.GetDataIdentity(navData.State.DataIdentityId);
+				if (navState.DataIdentityId is not null)
+					_identity = TfDataIdentityUIService.GetDataIdentity(navState.DataIdentityId);
 			}
 		}
 		finally
 		{
-			UriInitialized = navData.Uri;
+			UriInitialized = navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

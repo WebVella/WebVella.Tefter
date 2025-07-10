@@ -13,7 +13,7 @@ public static partial class NavigatorExt
 		return false;
 	}
 
-	internal static TfRouteState GetRouteState(this NavigationManager navigator, string? url = null)
+	internal static TfNavigationState GetRouteState(this NavigationManager navigator, string? url = null)
 	{
 		Uri? uri = null;
 		if (String.IsNullOrWhiteSpace(url))
@@ -30,10 +30,10 @@ public static partial class NavigatorExt
 			uri = new Uri(url);
 		}
 
-		return GetNodeData(uri);
+		return uri.GetNodeData(navigator.Uri);
 	}
 
-	public static async Task ApplyChangeToUrlQuery(this NavigationManager navigator, Dictionary<string, object> replaceDict, bool forceLoad = false)
+	public static async Task ApplyChangeToUrlQuery(this NavigationManager navigator, Dictionary<string, object?> replaceDict, bool forceLoad = false)
 	{
 		var currentUrl = navigator.Uri;
 		var uri = new System.Uri(currentUrl);
