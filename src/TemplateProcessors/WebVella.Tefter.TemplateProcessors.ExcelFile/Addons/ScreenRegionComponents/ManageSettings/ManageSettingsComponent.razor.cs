@@ -7,6 +7,7 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorManageSettingsScreenRegionContext>
 {
+	[Inject] public ITfService TfService { get; set; } = default!;
 	public const string ID = "51157e04-9849-48ec-9bf3-de31308c4b0c";
 	public const string NAME = "Excel Template Manage Seettings";
 	public const string DESCRIPTION = "";

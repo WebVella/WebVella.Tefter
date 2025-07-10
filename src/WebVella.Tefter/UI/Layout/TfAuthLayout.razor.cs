@@ -17,7 +17,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	{
 		await base.OnInitializedAsync();
 
-		var user = await TfUserUIService.GetCurrentUser();
+		var user = await TfUserUIService.GetCurrentUserAsync();
 
 		if (user is null)
 		{
@@ -57,7 +57,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	private async Task _checkAccess()
 	{
-		var currentUser = await TfUserUIService.GetCurrentUser();
+		var currentUser = await TfUserUIService.GetCurrentUserAsync();
 		if (currentUser is not null && TfUserUIService.UserHasAccess(currentUser, Navigator))
 			return;
 

@@ -7,6 +7,7 @@ namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Addons;
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorManageSettingsScreenRegionContext>
 {
+	[Inject] public ITfService TfService { get; set; } = default!;
 	public const string ID = "d3c8a6d1-02b0-4611-81ae-ac1581fe93a3";
 	public const string NAME = "Document Template Manage Seettings";
 	public const string DESCRIPTION = "";

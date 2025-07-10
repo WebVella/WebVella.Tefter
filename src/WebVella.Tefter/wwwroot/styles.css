@@ -716,6 +716,81 @@ fluent-dialog .tf-divider,
   height: 2px;
   background: var(--tf-divider-background);
 }
+.tf-editor .toolbar {
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+.tf-editor .toolbar button {
+  border-radius: calc(var(--control-corner-radius)*1px);
+  background: transparent;
+  /*border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-rest);*/
+  border: calc(var(--stroke-width) * 1px) solid transparent;
+  line-height: var(--type-ramp-base-line-height);
+  height: calc((var(--base-height-multiplier) + var(--density))*var(--design-unit)*1px);
+  min-width: calc((var(--base-height-multiplier) + var(--density))*var(--design-unit)*1px);
+  fill: currentcolor;
+  font-size: var(--type-ramp-base-font-size);
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+.tf-editor .toolbar button:hover {
+  border-color: var(--neutral-stroke-hover);
+}
+.tf-editor .toolbar button svg {
+  fill: var(--neutral-base-color) !important;
+  width: 14px !important;
+}
+.tf-editor .toolbar button.ql-active {
+  color: var(--foreground-on-accent-rest) !important;
+  background: var(--neutral-base-color);
+}
+.tf-editor .toolbar button.ql-active svg {
+  fill: var(--foreground-on-accent-rest) !important;
+}
+.tf-editor .toolbar .separator {
+  background: var(--neutral-stroke-rest);
+  flex-shrink: 0;
+  align-self: center;
+  width: 1px;
+  height: 20px;
+  margin: 2px 4px;
+  display: inline-block;
+}
+.tf-editor .editor-area .ql-editor {
+  min-height: 60px;
+  border-radius: calc(var(--control-corner-radius)*1px);
+  background: var(--neutral-fill-input-focus);
+  border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-rest);
+  outline: none;
+  padding: 5px 10px;
+  max-height: 200px;
+  position: relative;
+}
+.tf-editor .editor-area .ql-editor:active,
+.tf-editor .editor-area .ql-editor:focus,
+.tf-editor .editor-area .ql-editor:hover {
+  border: 1px solid var(--neutral-stroke-strong-hover);
+}
+.tf-editor--readonly .tf-editor .editor-area .ql-editor:hover {
+  border-color: var(--neutral-stroke-rest) !important;
+}
+.tf-editor .editor-area .ql-editor.ql-blank::before {
+  color: var(--neutral-stroke-rest);
+  left: 10px;
+  right: 10px;
+}
+/*	::deep .ql-editor ol > li[data-list=bullet] {
+		list-style: none;
+		margin-left: -10px;
+	}
+
+		::deep .ql-editor ol > li[data-list=bullet]:before {
+			content: '\2022';
+			padding-right: 5px;
+		}*/
 .tf-grid {
   table-layout: fixed;
   min-width: 100%;
@@ -1276,6 +1351,79 @@ fluent-dialog .tf-divider,
 }
 .tf-paginator-nav-description {
   color: var(--neutral-foreground-hover);
+}
+.tf-select-component {
+  width: 100%;
+}
+.tf-select-component .tf-component {
+  display: flex;
+  width: 100%;
+}
+.tf-select-component .tf-component-icon {
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+.tf-select-component .tf-component-icon svg {
+  width: 32px !important;
+}
+.tf-select-component .tf-component-icon tf-component-meta {
+  flex: 1 1 auto;
+}
+.tf-select-component .tf-component-title {
+  font-size: 1.15em;
+}
+.tf-select-component .tf-component-description {
+  color: var(--neutral-base-color);
+}
+.tf-select-component .tf-component-caret {
+  flex: 1 1 20px;
+  display: flex;
+  align-items: center;
+}
+.tf-select-component .tf-component--small .tf-component-icon {
+  flex-basis: 24px;
+}
+.tf-select-component .tf-component--small .tf-component-icon svg {
+  width: 18px !important;
+}
+.tf-select-component .tf-component--small .tf-component-title {
+  font-size: 1em;
+}
+.tf-select-component .tf-component--small .tf-component-description {
+  font-size: 0.85em;
+}
+.tf-select-component fluent-menu-item {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 1rem;
+  height: auto;
+  display: flex !important;
+}
+.tf-select-component fluent-menu-item::part(start) {
+  display: none;
+}
+.tf-select-component fluent-menu-item::part(content) {
+  flex: 1 1 auto;
+}
+.tf-select-list {
+  width: 100%;
+}
+.tf-select-list .tf-select-list-input-wrapper {
+  width: 100%;
+  margin-bottom: 5px;
+}
+.tf-select-list .tf-select-list-input {
+  width: 100%;
+}
+.tf-select-list .tf-select-list-values fluent-badge span {
+  padding: 3px 5px;
+  font-size: var(--type-ramp-base-font-size) !important;
+}
+.tf-select-list .tf-select-list-values fluent-badge span svg {
+  margin-left: 5px !important;
+  width: 1rem !important;
 }
 .tf-sidetoolbar {
   display: flex;

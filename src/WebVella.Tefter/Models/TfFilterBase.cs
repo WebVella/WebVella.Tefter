@@ -1,14 +1,14 @@
 ﻿namespace WebVella.Tefter;
 
 [JsonDerivedType(typeof(TfFilterBase), "fb")]
-[JsonDerivedType(typeof(TfFilterBoolean), typeDiscriminator: "boolean")]
-[JsonDerivedType(typeof(TfFilterDateTime), typeDiscriminator: "datetime")]
-[JsonDerivedType(typeof(TfFilterGuid), typeDiscriminator: "guid")]
-[JsonDerivedType(typeof(TfFilterNumeric), typeDiscriminator: "numeric")]
-[JsonDerivedType(typeof(TfFilterOr), typeDiscriminator: "or")]
-[JsonDerivedType(typeof(TfFilterAnd), typeDiscriminator: "and")]
-[JsonDerivedType(typeof(TfFilterText), typeDiscriminator: "text")]
-public abstract class TfFilterBase
+[JsonDerivedType(typeof(TfFilterAnd), "and")]
+[JsonDerivedType(typeof(TfFilterOr), "or")]
+[JsonDerivedType(typeof(TfFilterBoolean), "bool")]
+[JsonDerivedType(typeof(TfFilterDateTime), "datetime")]
+[JsonDerivedType(typeof(TfFilterGuid), "guid")]
+[JsonDerivedType(typeof(TfFilterNumeric), "numeric")]
+[JsonDerivedType(typeof(TfFilterText), "text")]
+public record TfFilterBase
 {
 	[JsonIgnore]
 	public Guid Id { get; set; } = Guid.NewGuid();

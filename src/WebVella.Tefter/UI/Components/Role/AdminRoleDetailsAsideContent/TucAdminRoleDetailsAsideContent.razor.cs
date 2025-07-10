@@ -2,6 +2,7 @@
 public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
+	[Inject] public ITfRoleUIService TfRoleUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private bool _isLoading = true;
@@ -10,17 +11,17 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfUserUIService.RoleCreated -= On_RoleCreated;
-		TfUserUIService.RoleUpdated -= On_RoleUpdated;
-		TfUserUIService.RoleDeleted -= On_RoleDeleted;
+		TfRoleUIService.RoleCreated -= On_RoleCreated;
+		TfRoleUIService.RoleUpdated -= On_RoleUpdated;
+		TfRoleUIService.RoleDeleted -= On_RoleDeleted;
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfUserUIService.RoleCreated += On_RoleCreated;
-		TfUserUIService.RoleUpdated += On_RoleUpdated;
-		TfUserUIService.RoleDeleted += On_RoleDeleted;
+		TfRoleUIService.RoleCreated += On_RoleCreated;
+		TfRoleUIService.RoleUpdated += On_RoleUpdated;
+		TfRoleUIService.RoleDeleted += On_RoleDeleted;
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
@@ -54,7 +55,7 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 		try
 		{
 			_search = navState.Search;
-			var roles = TfUserUIService.GetRoles(_search).ToList();
+			var roles = TfRoleUIService.GetRoles(_search).ToList();
 
 			_items = new();
 			foreach (var role in roles)

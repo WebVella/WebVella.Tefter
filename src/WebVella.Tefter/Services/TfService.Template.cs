@@ -5,7 +5,7 @@ public partial interface ITfService
 	public TfTemplate GetTemplate(
 		Guid id);
 
-	public List<TfTemplate> GetTemplates();
+	public List<TfTemplate> GetTemplates(string? search = null);
 
 	public TfTemplate CreateTemplate(
 		TfManageTemplateModel template);
@@ -35,6 +35,9 @@ public partial interface ITfService
 	public void ValidateTemplatePreview(
 		Guid templateId,
 		ITfTemplatePreviewResult preview);
+
+	List<TfSpaceDataAsOption> GetSpaceDataOptionsForTemplate();
+	TfTemplate UpdateTemplateSettings(Guid templateId,string settingsJson);
 }
 
 public partial class TfService : ITfService
@@ -60,7 +63,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfTemplate> GetTemplates()
+	public List<TfTemplate> GetTemplates(string? search = null)
 	{
 		try
 		{
@@ -68,7 +71,13 @@ public partial class TfService : ITfService
 
 			var dt = _dbService.ExecuteSqlQueryCommand(SQL);
 
-			return ToTemplateList(dt);
+			var allTemplates = ToTemplateList(dt);
+
+			if (String.IsNullOrWhiteSpace(search))
+				return allTemplates;
+
+			search = search.Trim().ToLowerInvariant();
+			return allTemplates.Where(x => x.Name.ToLowerInvariant().Contains(search)).ToList();
 		}
 		catch (Exception ex)
 		{
@@ -417,6 +426,49 @@ public partial class TfService : ITfService
 		{
 			throw ProcessException(ex);
 		}
+	}
+
+	public List<TfSpaceDataAsOption> GetSpaceDataOptionsForTemplate()
+	{
+		var result = new List<TfSpaceDataAsOption>();
+		var spaceData = GetAllSpaceData();
+		var spaceDict = GetSpacesList().ToDictionary(x => x.Id);
+		foreach (var item in spaceData)
+		{
+			result.Add(new TfSpaceDataAsOption
+			{
+				Id = item.Id,
+				Name = item.Name,
+				SpaceName = spaceDict[item.SpaceId].Name
+			});
+		}
+
+		result = result.OrderBy(x => x.SpaceName).ThenBy(x => x.Name).ToList();
+		return result;
+	}
+
+	public TfTemplate UpdateTemplateSettings(Guid templateId,string settingsJson){ 
+		try
+		{
+			var template = GetTemplate(templateId);
+			var form = new TfManageTemplateModel{ 
+				ContentProcessorType = template.ContentProcessorType,
+				Description = template.Description,
+				FluentIconName = template.FluentIconName,
+				Id = templateId,
+				IsEnabled = template.IsEnabled,
+				IsSelectable = template.IsSelectable,
+				Name = template.Name,
+				SettingsJson = settingsJson,
+				SpaceDataList = template.SpaceDataList,
+				UserId = template.CreatedBy?.Id
+			};
+			return UpdateTemplate(form);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}	
 	}
 
 	#region <--- validation --->

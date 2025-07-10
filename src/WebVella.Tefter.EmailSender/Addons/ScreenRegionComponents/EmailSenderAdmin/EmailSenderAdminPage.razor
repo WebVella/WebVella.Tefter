@@ -5,7 +5,8 @@
 		<TfPageHeader>@LOC("Sent Emails")</TfPageHeader>
 	</Header>
 	<Toolbar>
-		<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@TfAppState.Value.Route.Search" AutoComplete="off" />
+		<div>TODO: add the search</div>
+		@* <FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@TfAppState.Value.Route.Search" AutoComplete="off" /> *@
 	</Toolbar>
 	<ToolbarAside>
 		<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" Style="margin-bottom:1rem;">
@@ -19,9 +20,10 @@
 	</ChildContent>
 	<Footer>
 		<div class="tf-grid__pager">
-			<TfPager Page="@(TfAppState.Value.Route?.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
+			<div>TODO: add the pager</div>
+@* 			<TucPager Page="@(TfAppState.Value.Route?.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
 					 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
-					 PageSize="@(TfAppState.Value.Route?.PageSize ?? TfConstants.PageSize)" />
+					 PageSize="@(TfAppState.Value.Route?.PageSize ?? TfConstants.PageSize)" /> *@
 		</div>
 	</Footer>
 </TfLayoutBodyMain>

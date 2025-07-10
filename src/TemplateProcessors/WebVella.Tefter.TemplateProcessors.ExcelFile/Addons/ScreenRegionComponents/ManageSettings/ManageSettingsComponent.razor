@@ -5,7 +5,7 @@
 	<FluentGrid>
 		<FluentGridItem xs="12">
 			<FluentInputLabel Label="@LOC("Template File")" />
-			<TfFileField Value=@_downloadUrl Uploaded="_fileChanged" IsLoading="_fileLoading" Accept=".xlsx" />
+			<TucFileField Value=@_downloadUrl Uploaded="_fileChanged" IsLoading="_fileLoading" Accept=".xlsx" />
 			<FluentValidationMessage For="@(() => _form.FileName)" />
 		</FluentGridItem>
 	</FluentGrid>
@@ -13,7 +13,7 @@
 		<FluentGridItem xs="12">
 			<FluentInputLabel Label="@LOC("Group by columns")" />
 			<FluentStack>
-				<TfSelectList @bind-Values=@_form.GroupBy @bind-Values:after=_valueChanged Placeholder="@LOC("type a column name + ENTER")"
+				<TucSelectList @bind-Values=@_form.GroupBy @bind-Values:after=_valueChanged Placeholder="@LOC("type a column name + ENTER")"
 							  NoItemsMessage="@LOC("no data grouping will be applied")" />
 			</FluentStack>
 			<FluentValidationMessage For="@(() => _form.GroupBy)" />

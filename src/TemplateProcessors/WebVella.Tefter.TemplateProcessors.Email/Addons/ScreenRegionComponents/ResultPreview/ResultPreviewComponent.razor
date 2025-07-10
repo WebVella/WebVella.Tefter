@@ -87,7 +87,7 @@ else
 		<FluentGrid>
 			<FluentGridItem xs="12">
 				<FluentInputLabel Label="@LOC("Content")" />
-				<TfEditor @bind-Value=@_form.HtmlContent Size="TfEditorSize.Large" />
+				<TucEditor @bind-Value=@_form.HtmlContent Size="TfEditorSize.Large" />
 				<FluentValidationMessage For="@(() => _form.HtmlContent)" />
 			</FluentGridItem>
 		</FluentGrid>

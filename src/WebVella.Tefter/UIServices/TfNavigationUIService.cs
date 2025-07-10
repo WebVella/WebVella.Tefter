@@ -38,7 +38,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				return _navState;
 			}
 			_navState = navigator.GetRouteState();
-			NavigationStateChanged?.Invoke(this,_navState);
+			NavigationStateChanged?.Invoke(this, _navState);
 			return _navState;
 		}
 	}
@@ -51,7 +51,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			{
 				return _navMenu;
 			}
-			if(_navState.Uri != navigator.Uri)
+			if (_navState.Uri != navigator.Uri)
 				_navState = navigator.GetRouteState();
 			var navMenu = new TfNavigationMenu();
 			navMenu.Uri = navigator.Uri;
@@ -71,6 +71,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 					context: typeof(TfAdminPageScreenRegionContext),
 					scope: null
 				);
+				var templates = _tfService.GetTemplates();
 
 				navMenu.Menu = generateAdminMenu(
 					routeState: _navState,
@@ -79,6 +80,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 					providers: providers,
 					sharedColumns: sharedColumns,
 					identities: dataIdentities,
+					templates:templates,
 					addonPages: addonPages);
 			}
 			else
@@ -95,11 +97,11 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 		ReadOnlyCollection<TfDataProvider> providers,
 		List<TfSharedColumn> sharedColumns,
 		List<TfDataIdentity> identities,
+		List<TfTemplate> templates,
 		ReadOnlyCollection<TfScreenRegionComponentMeta> addonPages
 		)
 	{
 		var menuItems = new List<TfMenuItem>();
-
 		#region << Dashboard >>
 		menuItems.Add(new TfMenuItem()
 		{
@@ -219,16 +221,24 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				Url = null,
 				Text = LOC[TfConstants.AdminContentMenuTitle]
 			};
-			rootMenu.Items.Add(new TfMenuItem()
+			foreach (TfTemplateResultType item in Enum.GetValues<TfTemplateResultType>())
 			{
-				Id = "tf-templates-link",
-				//IconCollapsed = TfConstants.TemplateIcon,
-				//IconExpanded = TfConstants.TemplateIcon,
-				//IconColor = TfConstants.AdminColor,
-				Selected = routeState.HasNode(RouteDataNode.Templates, 1),
-				Url = string.Format(TfConstants.AdminTemplatesPageUrl),
-				Text = LOC[TfConstants.AdminTemplatesMenuTitle]
-			});
+				var typeTemplates = templates.Where(x=> x.ResultType == item).ToList();
+				rootMenu.Items.Add(new TfMenuItem()
+				{
+					Id = $"tf-templates-link-{(int)item}",
+					//IconCollapsed = TfConstants.TemplateIcon,
+					//IconExpanded = TfConstants.TemplateIcon,
+					//IconColor = TfConstants.AdminColor,
+					Selected = routeState.HasNode(RouteDataNode.Templates, 1) && routeState.NodesDict.Count >= 3 
+						&& routeState.NodesDict[2] == ((int)item).ToString(),
+					Url = typeTemplates.Count == 0
+					? string.Format(TfConstants.AdminTemplatesTypePageUrl,((int)item).ToString())
+					: string.Format(TfConstants.AdminTemplatesTemplatePageUrl,((int)item).ToString(),typeTemplates[0].Id),
+					Text = String.Format(LOC[TfConstants.AdminTemplateMenuTitle],LOC[item.ToDescriptionString()])
+				});
+			}
+
 			rootMenu.Items.Add(new TfMenuItem()
 			{
 				Id = "tf-file-repository-link",

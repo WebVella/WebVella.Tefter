@@ -4,6 +4,7 @@
 public partial class ResultComponent : TfBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {
+	[Inject] public ITfService TfService { get; set; } = default!;
 	public const string ID = "ac4317e2-ef23-46b8-875d-c763e50a5d8e";
 	public const string NAME = "Text Content Result";
 	public const string DESCRIPTION = "";

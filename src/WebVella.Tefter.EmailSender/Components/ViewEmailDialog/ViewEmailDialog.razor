@@ -113,16 +113,16 @@
 			<FluentTab Label="@LOC("Text body")" Id="text">
 				<FluentGrid>
 					<FluentGridItem xs="12">
-						<TfCard Class="email-sender-email-body">
+						<TucCard Class="email-sender-email-body">
 							<pre>@Content.ContentText</pre>
-						</TfCard>
+						</TucCard>
 					</FluentGridItem>
 				</FluentGrid>
 			</FluentTab>
 			<FluentTab Label="@LOC("HTML body")" Id="html">
-				<TfCard Class="email-sender-email-body">
+				<TucCard Class="email-sender-email-body">
 					@((MarkupString)Content.ContentHtml)
-				</TfCard>
+				</TucCard>
 			</FluentTab>
 		</FluentTabs>
 	}

@@ -63,6 +63,7 @@ public partial class TfConstants
 
 	public static Icon TemplateIcon = GetIcon("CalendarTemplate");
 	public static string AdminTemplatesMenuTitle = "Templates";
+	public static string AdminTemplateMenuTitle = "Template {0}";
 
 	public static Icon ContentIcon = GetIcon("Folder");
 	public static string AdminContentMenuTitle = "Content";

@@ -8,15 +8,11 @@ public partial interface ITfUserUIService
 	event EventHandler<TfUser> UserUpdated;
 	event EventHandler<TfUser> UserCreated;
 
-	event EventHandler<TfRole> RoleUpdated;
-	event EventHandler<TfRole> RoleCreated;
-	event EventHandler<TfRole> RoleDeleted;
-
 	//User
 	ReadOnlyCollection<TfUser> GetUsers(string? search = null);
 	ReadOnlyCollection<TfUser> GetUsersForRole(Guid roleId);
 	TfUser GetUser(Guid userId);
-	Task<TfUser?> GetCurrentUser();
+	Task<TfUser?> GetCurrentUserAsync();
 	Task<TfUser> CreateUserWithFormAsync(TfUserManageForm form);
 	Task<TfUser> UpdateUserWithFormAsync(TfUserManageForm form);
 
@@ -27,11 +23,6 @@ public partial interface ITfUserUIService
 	Task LogoutAsync();
 
 	//Roles
-	ReadOnlyCollection<TfRole> GetRoles(string? search = null);
-	TfRole GetRole(Guid roleId);
-	TfRole CreateRole(TfRole role);
-	TfRole UpdateRole(TfRole role);
-	void DeleteRole(TfRole role);
 	Task<TfUser> AddRoleToUserAsync(Guid roleId, Guid userId);
 	Task<TfUser> RemoveRoleFromUserAsync(Guid roleId, Guid userId);
 
@@ -67,17 +58,13 @@ public partial class TfUserUIService : ITfUserUIService
 	public event EventHandler<TfUser?> CurrentUserChanged = default!;
 	public event EventHandler<TfUser> UserUpdated = default!;
 	public event EventHandler<TfUser> UserCreated = default!;
-
-	public event EventHandler<TfRole> RoleUpdated = default!;
-	public event EventHandler<TfRole> RoleCreated = default!;
-	public event EventHandler<TfRole> RoleDeleted = default!;
 	#endregion
 
 	#region << User >>
 	public TfUser GetUser(Guid userId) => _tfService.GetUser(userId);
 	public ReadOnlyCollection<TfUser> GetUsers(string? search = null) => _tfService.GetUsers(search);
 	public ReadOnlyCollection<TfUser> GetUsersForRole(Guid roleId) => _tfService.GetUsersForRole(roleId);
-	public async Task<TfUser?> GetCurrentUser()
+	public async Task<TfUser?> GetCurrentUserAsync()
 	{
 		if (_currentUser is not null) return _currentUser;
 
@@ -164,27 +151,6 @@ public partial class TfUserUIService : ITfUserUIService
 	#endregion
 
 	#region << Roles >>
-
-	public ReadOnlyCollection<TfRole> GetRoles(string? search = null) => _tfService.GetRoles(search);
-	public TfRole GetRole(Guid roleId) => _tfService.GetRole(roleId);
-	public TfRole CreateRole(TfRole role)
-	{
-		var roleSM = _tfService.CreateRole(role);
-		RoleCreated?.Invoke(this, roleSM);
-		return roleSM;
-	}
-	public TfRole UpdateRole(TfRole role)
-	{
-		var roleSM = _tfService.UpdateRole(role);
-		RoleUpdated?.Invoke(this, roleSM);
-		return roleSM;
-	}
-	public void DeleteRole(TfRole role)
-	{
-		_tfService.DeleteRole(role);
-		RoleDeleted?.Invoke(this, role);
-	}
-
 	public async Task<TfUser> AddRoleToUserAsync(Guid roleId, Guid userId) => await _tfService.AddUserToRoleAsync(userId: userId, roleId: roleId);
 	public async Task<TfUser> RemoveRoleFromUserAsync(Guid roleId, Guid userId) => await _tfService.RemoveUserFromRoleAsync(userId: userId, roleId: roleId);
 

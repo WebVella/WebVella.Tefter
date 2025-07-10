@@ -5,9 +5,7 @@ namespace WebVella.Tefter.EmailSender.Components;
 public partial class EmailSenderLogAdmin : TfBaseComponent
 {
 	[Inject] public IEmailService EmailService { get; set; }
-	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
-
-
+	private List<EmailMessage> _messages = new();
 	private async Task _viewEmailHandler(EmailMessage message)
 	{
 		var dialog = await DialogService.ShowDialogAsync<ViewEmailDialog>(

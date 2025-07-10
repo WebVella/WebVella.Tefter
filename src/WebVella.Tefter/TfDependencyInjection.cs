@@ -68,6 +68,7 @@ public static class TfDependencyInjection
 		//UI
 		services.AddScoped<ITfNavigationUIService, TfNavigationUIService>();
 		services.AddScoped<ITfRecipeUIService, TfRecipeUIService>();
+		services.AddScoped<ITfRoleUIService, TfRoleUIService>();
 		services.AddScoped<ITfUserUIService, TfUserUIService>();
 		services.AddScoped<ITfGeneralUIService, TfDashboardUIService>();
 		services.AddScoped<ITfSpaceUIService, TfSpaceUIService>();
@@ -75,6 +76,7 @@ public static class TfDependencyInjection
 		services.AddScoped<ITfMetaUIService, TfMetaUIService>();
 		services.AddScoped<ITfDataIdentityUIService, TfDataIdentityUIService>();
 		services.AddScoped<ITfSharedColumnUIService, TfSharedColumnUIService>();
+		services.AddScoped<ITfTemplateUIService, TfTemplateUIService>();
 
 
 		//hosted services

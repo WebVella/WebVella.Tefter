@@ -52,7 +52,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			}
 			_navState = navState;
 			_provider = TfDataProviderUIService.GetDataProvider(_navState.DataProviderId.Value);
-			var user = await TfUserUIService.GetCurrentUser();
+			var user = await TfUserUIService.GetCurrentUserAsync();
 			if (user is null)
 				throw new Exception("Current user not found");
 			_currentUser = user!;

@@ -18,6 +18,7 @@ global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Addons;
 global using WebVella.Tefter.Models;
 global using WebVella.Tefter.Migrations;
+global using WebVella.Tefter.Utility;
 
 global using WebVella.Tefter.EmailSender;
 global using WebVella.Tefter.EmailSender.Models;

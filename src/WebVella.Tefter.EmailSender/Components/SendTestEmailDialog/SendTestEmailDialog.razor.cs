@@ -4,7 +4,6 @@ namespace WebVella.Tefter.EmailSender.Components;
 [LocalizationResource("WebVella.Tefter.EmailSender.Components.SendTestEmailDialog.SendTestEmailDialog", "WebVella.Tefter.EmailSender")]
 public partial class SendTestEmailDialog : TfFormBaseComponent, IDialogContentComponent<EmailMessage>
 {
-	[Inject] public IState<TfAuxDataState> TfAuxDataState { get; set; }
 	[Inject] public IEmailService EmailService { get; set; }
 	[Parameter] public EmailMessage Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }

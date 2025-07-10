@@ -1,15 +1,12 @@
 ﻿namespace WebVella.Tefter.EmailSender.Addons;
 
-public partial class EmailSenderAdminPage : TfBaseComponent, ITfAuxDataState, ITfScreenRegionComponent<TfAdminPageScreenRegionContext>
+public partial class EmailSenderAdminPage : TfBaseComponent, ITfScreenRegionComponent<TfAdminPageScreenRegionContext>
 {
 	public const string ID = "1f6e544e-6a53-4fa1-98ef-9c51a569c2b5";
 	public const string NAME = "Email Sender";
 	public const string DESCRIPTION = "";
 	public const string FLUENT_ICON_NAME = "Mail";
 	public const int POSITION_RANK = 990;
-	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
-
 	public Guid AddonId { get; init; } = new Guid(ID);
 	public string AddonName { get; init; } = NAME;
 	public string AddonDescription { get; init; } = DESCRIPTION;
@@ -21,23 +18,23 @@ public partial class EmailSenderAdminPage : TfBaseComponent, ITfAuxDataState, IT
 	[Parameter]
 	public TfAdminPageScreenRegionContext RegionContext { get; init; }
 
-	public Task OnAppStateInit(IServiceProvider serviceProvider, TucUser currentUser,
-		TfAppState newAppState,
-		TfAppState oldAppState, TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
-	{
-		var mailService = serviceProvider.GetRequiredService<IEmailService>();
-		try
-		{
-			var emails = mailService.GetEmailMessages(newAppState.Route.Search, newAppState.Route.Page, newAppState.Route.PageSize);
-			newAuxDataState.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY] = emails;
-		}
-		catch
-		{
-			newAuxDataState.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY] = new List<EmailMessage>();
-		}
+	//public Task OnAppStateInit(IServiceProvider serviceProvider, TucUser currentUser,
+	//	TfAppState newAppState,
+	//	TfAppState oldAppState, TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
+	//{
+	//	var mailService = serviceProvider.GetRequiredService<IEmailService>();
+	//	try
+	//	{
+	//		var emails = mailService.GetEmailMessages(newAppState.Route.Search, newAppState.Route.Page, newAppState.Route.PageSize);
+	//		newAuxDataState.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY] = emails;
+	//	}
+	//	catch
+	//	{
+	//		newAuxDataState.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY] = new List<EmailMessage>();
+	//	}
 
-		return Task.CompletedTask;
-	}
+	//	return Task.CompletedTask;
+	//}
 
 	private async Task _createTestHandler()
 	{
@@ -53,14 +50,14 @@ public partial class EmailSenderAdminPage : TfBaseComponent, ITfAuxDataState, IT
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			if (TfAppState.Value.Route.Page == 1)
-			{
-				var items = (List<EmailMessage>)TfAuxDataState.Value.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY];
-				items.Insert(0, (EmailMessage)result.Data);
-				Dispatcher.Dispatch(new SetAuxDataStateByKeyAction(component: this,
-					dictKey: EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY,
-					dictData: items));
-			}
+			//if (TfAppState.Value.Route.Page == 1)
+			//{
+			//	var items = (List<EmailMessage>)TfAuxDataState.Value.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY];
+			//	items.Insert(0, (EmailMessage)result.Data);
+			//	Dispatcher.Dispatch(new SetAuxDataStateByKeyAction(component: this,
+			//		dictKey: EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY,
+			//		dictData: items));
+			//}
 		}
 	}
 
@@ -75,49 +72,49 @@ public partial class EmailSenderAdminPage : TfBaseComponent, ITfAuxDataState, IT
 
 	private async Task _goFirstPage()
 	{
-		if (TfAppState.Value.Route.Page == 1) return;
-		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName,1}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		//if (TfAppState.Value.Route.Page == 1) return;
+		//var queryDict = new Dictionary<string, object>{
+		//	{TfConstants.PageQueryName,1}
+		//};
+		//await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goPreviousPage()
 	{
-		var page = TfAppState.Value.Route.Page - 1;
-		if (page < 1) page = 1;
-		if (TfAppState.Value.Route.Page == page) return;
-		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		//var page = TfAppState.Value.Route.Page - 1;
+		//if (page < 1) page = 1;
+		//if (TfAppState.Value.Route.Page == page) return;
+		//var queryDict = new Dictionary<string, object>{
+		//	{TfConstants.PageQueryName, page}
+		//};
+		//await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goNextPage()
 	{
-		var page = TfAppState.Value.Route.Page + 1;
-		if (page < 1) page = 1;
-		if (TfAppState.Value.Route.Page == page) return;
+		//var page = TfAppState.Value.Route.Page + 1;
+		//if (page < 1) page = 1;
+		//if (TfAppState.Value.Route.Page == page) return;
 
-		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName,page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		//var queryDict = new Dictionary<string, object>{
+		//	{TfConstants.PageQueryName,page}
+		//};
+		//await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goLastPage()
 	{
-		if (TfAppState.Value.Route.Page == -1) return;
-		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, -1}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		//if (TfAppState.Value.Route.Page == -1) return;
+		//var queryDict = new Dictionary<string, object>{
+		//	{TfConstants.PageQueryName, -1}
+		//};
+		//await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goOnPage(int page)
 	{
-		if (page < 1 && page != -1) page = 1;
-		if (TfAppState.Value.Route.Page == page) return;
-		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		//if (page < 1 && page != -1) page = 1;
+		//if (TfAppState.Value.Route.Page == page) return;
+		//var queryDict = new Dictionary<string, object>{
+		//	{TfConstants.PageQueryName, page}
+		//};
+		//await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
 

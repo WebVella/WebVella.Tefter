@@ -2,6 +2,7 @@
 public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
+	[Inject] public ITfRoleUIService TfRoleUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private TfUser _currentUser = default!;
@@ -13,14 +14,14 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 	public Guid? _removingUserId = null;
 	public void Dispose()
 	{
-		TfUserUIService.RoleUpdated -= On_RoleUpdated;
+		TfRoleUIService.RoleUpdated -= On_RoleUpdated;
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfUserUIService.RoleUpdated += On_RoleUpdated;
+		TfRoleUIService.RoleUpdated += On_RoleUpdated;
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
@@ -41,7 +42,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 			navState = await TfNavigationUIService.GetNavigationState(Navigator);
 		try
 		{
-			_currentUser = (await TfUserUIService.GetCurrentUser())!;
+			_currentUser = (await TfUserUIService.GetCurrentUserAsync())!;
 			if (role is not null && role.Id == _role?.Id)
 			{
 				_role = role;
@@ -50,7 +51,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 			{
 				var routeData = Navigator.GetRouteState();
 				if (routeData.RoleId is not null)
-					_role = TfUserUIService.GetRole(routeData.RoleId.Value);
+					_role = TfRoleUIService.GetRole(routeData.RoleId.Value);
 
 			}
 			if(_role is null) return;
@@ -91,8 +92,8 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 			return;
 		try
 		{
-			TfUserUIService.DeleteRole(_role);
-			var allRoles = TfUserUIService.GetRoles();
+			TfRoleUIService.DeleteRole(_role);
+			var allRoles = TfRoleUIService.GetRoles();
 			ToastService.ShowSuccess(LOC("User removed from role"));
 			if (allRoles.Count > 0)
 			{

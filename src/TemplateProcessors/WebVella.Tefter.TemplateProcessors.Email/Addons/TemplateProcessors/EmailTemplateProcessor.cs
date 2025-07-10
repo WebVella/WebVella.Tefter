@@ -10,7 +10,7 @@ using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
 using WebVella.Tefter.TemplateProcessors.TextFile;
 using WebVella.Tefter.TemplateProcessors.TextFile.Addons;
 using WebVella.Tefter.TemplateProcessors.TextFile.Models;
-using WebVella.Tefter.Web.Components;
+using WebVella.Tefter.UI.Components;
 
 namespace WebVella.Tefter.TemplateProcessors.Email.Addons;
 

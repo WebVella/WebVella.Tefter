@@ -47,7 +47,7 @@ else
 				<FluentGrid>
 					<FluentGridItem xs="12">
 						<FluentInputLabel Label="@LOC("Content")" />
-						<TfEditor @bind-Value=@_form.HtmlContent @bind-Value:after=_valueChanged Size="TfEditorSize.Large" />
+						<TucEditor @bind-Value=@_form.HtmlContent @bind-Value:after=_valueChanged Size="TfEditorSize.Large" />
 						<FluentValidationMessage For="@(() => _form.HtmlContent)" />
 					</FluentGridItem>
 				</FluentGrid>
@@ -138,7 +138,7 @@ else
 					<FluentGrid>
 						<FluentGridItem xs="12">
 							<FluentInputLabel Label="@LOC("Group by columns")" />
-							<TfSelectList @bind-Values=@_form.GroupBy
+							<TucSelectList @bind-Values=@_form.GroupBy
 										  @bind-Values:after=_valueChanged
 										  Placeholder="@LOC("type a column name + ENTER")"
 										  NoItemsMessage="@LOC("no data grouping will be applied")" />

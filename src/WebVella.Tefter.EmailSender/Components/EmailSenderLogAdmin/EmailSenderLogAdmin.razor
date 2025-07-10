@@ -1,11 +1,7 @@
 ﻿@namespace WebVella.Tefter.EmailSender.Components
 @inherits TfBaseComponent
-@{
-	var messages = new List<EmailMessage>();
-	if (TfAuxDataState.Value.Data.ContainsKey(EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY))
-		messages = (List<EmailMessage>)TfAuxDataState.Value.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY];
-}
-@if (messages.Count == 0)
+
+@if (_messages.Count == 0)
 {
 	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No emails sent yet")</FluentMessageBar>
 }
@@ -23,7 +19,7 @@ else
 			</tr>
 		</thead>
 		<tbody class="tf-grid-tbody">
-			@foreach (var context in messages)
+			@foreach (var context in _messages)
 			{
 				<tr @key=@context.Id class="tf-grid-tr">
 					<td class="tf-grid-td">

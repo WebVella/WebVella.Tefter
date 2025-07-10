@@ -1,0 +1,34 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<div class="tf-select-list-wrapper">
+	@if (_isReadonly)
+	{
+		<FluentStack Class="tf-select-list-values" HorizontalGap="5">
+			@foreach (var item in Values)
+			{
+				<FluentBadge Appearance="Appearance.Neutral">@item</FluentBadge>
+			}
+			@if (Values.Count == 0)
+			{
+				<div class="tf-select-list-placeholder">@_noItemsMessage</div>
+			}
+		</FluentStack>
+	}
+	else
+	{
+		<FluentStack Class="tf-select-list-input-wrapper" HorizontalGap="5">
+			<FluentTextField Class="tf-select-list-input" AutoComplete="off" Value="@_inputValue" ValueChanged="_onInputValueChanged" Placeholder="@Placeholder" />
+			<FluentButton Appearance="@Appearance.Outline" OnClick="_addBtnClicked" IconStart="@TfConstants.AddIcon">@LOC("add")</FluentButton>
+		</FluentStack>
+		<FluentStack Class="tf-select-list-values" HorizontalGap="5">
+			@foreach (var item in Values)
+			{
+				<FluentBadge Appearance="Appearance.Neutral" OnDismissClick="@((e) => _onRemoveColumn(item))">@item</FluentBadge>
+			}
+			@if (Values.Count == 0)
+			{
+				<div class="tf-select-list-placeholder">@_noItemsMessage</div>
+			}
+		</FluentStack>
+	}
+</div>

@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter;
 
-public class TfFilterOr : TfFilterBase
+public record TfFilterOr : TfFilterBase
 {
 	[JsonIncludePrivateProperty]
 	[JsonPropertyName("ft")]

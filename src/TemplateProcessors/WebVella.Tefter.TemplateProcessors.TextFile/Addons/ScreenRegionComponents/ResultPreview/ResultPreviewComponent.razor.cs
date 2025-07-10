@@ -6,6 +6,7 @@ namespace WebVella.Tefter.TemplateProcessors.TextFile.Addons;
 public partial class ResultPreviewComponent : TfBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
 {
+	[Inject] public ITfService TfService { get; set; } = default!;
 	public const string ID = "c940dd21-6151-4c4c-ae5b-e6d21de8b80c";
 	public const string NAME = "Text File Template Result Preview";
 	public const string DESCRIPTION = "";

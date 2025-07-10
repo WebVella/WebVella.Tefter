@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter;
 
-public class TfFilterBoolean : TfFilterBase
+public record TfFilterBoolean : TfFilterBase
 {
 	[JsonPropertyName("m")]
 	public TfFilterBooleanComparisonMethod ComparisonMethod { get; init; }

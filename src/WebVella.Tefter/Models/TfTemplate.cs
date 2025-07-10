@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Models;
 
-public class TfTemplate
+public record TfTemplate
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; }
@@ -20,7 +20,7 @@ public class TfTemplate
 	public TfUser ModifiedBy { get; set; }
 }
 
-public class TfManageTemplateModel
+public record TfManageTemplateModel
 {
 	public Guid Id { get; set; }
 	[Required]

@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.UI.Components.Admin.RoleManageDialog.TfRoleManageDialog", "WebVella.Tefter")]
 public partial class TucRoleManageDialog : TfFormBaseComponent, IDialogContentComponent<TfRole?>
 {
-	[Inject] private ITfUserUIService TfUserUIService { get; set; }
+	[Inject] public ITfRoleUIService TfRoleUIService { get; set; } = default!;
 	[Parameter] public TfRole? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
@@ -54,12 +54,12 @@ public partial class TucRoleManageDialog : TfFormBaseComponent, IDialogContentCo
 
 			if (_isCreate)
 			{
-				result = TfUserUIService.CreateRole(_form);
+				result = TfRoleUIService.CreateRole(_form);
 				ToastService.ShowSuccess(LOC("Access role was successfully created!"));
 			}
 			else
 			{
-				result = TfUserUIService.UpdateRole(_form);
+				result = TfRoleUIService.UpdateRole(_form);
 				ToastService.ShowSuccess(LOC("Access role was successfully created!"));
 			}
 

@@ -10,7 +10,7 @@ public partial class TfSpaceUIService : ITfSpaceUIService
 	private readonly ITfService _tfService;
 	private readonly ITfMetaService _metaService;
 	private readonly IStringLocalizer<TfSpaceUIService> LOC;
-	private TfNavigationMenu _navData = new();
+
 	public TfSpaceUIService(IServiceProvider serviceProvider)
 	{
 		_tfService = serviceProvider.GetService<ITfService>() ?? default!;
