@@ -19,11 +19,11 @@ public partial class TucMenuItem : TfBaseComponent
 
 	protected override void OnParametersSet()
 	{
-		base.OnParametersSet();
 		var hash = Item.Hash;
 		if(_hash != hash){ 
 			_hash = hash;
 			_init();
+			StateHasChanged();
 		}
 	}
 

@@ -12,7 +12,7 @@ public record TfTemplate
 	public bool IsEnabled { get; set; } = true;
 	public bool IsSelectable { get; set; } = true;
 	public TfTemplateResultType ResultType { get; set; }
-	public string SettingsJson { get; set; }
+	public string? SettingsJson { get; set; }
 	public Type ContentProcessorType { get; set; }
 	public DateTime CreatedOn { get; set; }
 	public TfUser CreatedBy { get; set; }
@@ -30,7 +30,7 @@ public record TfManageTemplateModel
 	public string FluentIconName { get; set; }
 	public bool IsEnabled { get; set; } = true;
 	public bool IsSelectable { get; set; } = true;
-	public string SettingsJson { get; set; }
+	public string? SettingsJson { get; set; }
 	public Type ContentProcessorType { get; set; }
 	public Guid? UserId { get; set; }
 	public List<Guid> SpaceDataList { get; set; } = new();

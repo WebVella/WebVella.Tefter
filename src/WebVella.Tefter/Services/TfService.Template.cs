@@ -5,7 +5,7 @@ public partial interface ITfService
 	public TfTemplate GetTemplate(
 		Guid id);
 
-	public List<TfTemplate> GetTemplates(string? search = null);
+	public List<TfTemplate> GetTemplates(string? search = null, TfTemplateResultType? type = null);
 
 	public TfTemplate CreateTemplate(
 		TfManageTemplateModel template);
@@ -37,7 +37,7 @@ public partial interface ITfService
 		ITfTemplatePreviewResult preview);
 
 	List<TfSpaceDataAsOption> GetSpaceDataOptionsForTemplate();
-	TfTemplate UpdateTemplateSettings(Guid templateId,string settingsJson);
+	TfTemplate UpdateTemplateSettings(Guid templateId, string settingsJson);
 }
 
 public partial class TfService : ITfService
@@ -63,21 +63,17 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfTemplate> GetTemplates(string? search = null)
+	public List<TfTemplate> GetTemplates(string? search = null, TfTemplateResultType? type = null)
 	{
 		try
 		{
 			const string SQL = @"SELECT * FROM tf_template";
 
 			var dt = _dbService.ExecuteSqlQueryCommand(SQL);
-
-			var allTemplates = ToTemplateList(dt);
-
-			if (String.IsNullOrWhiteSpace(search))
-				return allTemplates;
-
-			search = search.Trim().ToLowerInvariant();
-			return allTemplates.Where(x => x.Name.ToLowerInvariant().Contains(search)).ToList();
+			var searchProcessed = search?.Trim().ToLowerInvariant() ?? String.Empty;
+			return ToTemplateList(dt).Where(x =>
+				(String.IsNullOrWhiteSpace(search) || x.Name.ToLowerInvariant().Contains(searchProcessed))
+				&& (type is null || x.ResultType == type)).ToList();
 		}
 		catch (Exception ex)
 		{
@@ -447,11 +443,13 @@ public partial class TfService : ITfService
 		return result;
 	}
 
-	public TfTemplate UpdateTemplateSettings(Guid templateId,string settingsJson){ 
+	public TfTemplate UpdateTemplateSettings(Guid templateId, string settingsJson)
+	{
 		try
 		{
 			var template = GetTemplate(templateId);
-			var form = new TfManageTemplateModel{ 
+			var form = new TfManageTemplateModel
+			{
 				ContentProcessorType = template.ContentProcessorType,
 				Description = template.Description,
 				FluentIconName = template.FluentIconName,
@@ -468,7 +466,7 @@ public partial class TfService : ITfService
 		catch (Exception ex)
 		{
 			throw ProcessException(ex);
-		}	
+		}
 	}
 
 	#region <--- validation --->

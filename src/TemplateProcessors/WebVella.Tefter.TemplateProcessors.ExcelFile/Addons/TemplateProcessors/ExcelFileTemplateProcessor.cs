@@ -263,7 +263,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessorAddon
 
 		if (existingTemplate is not null)
 		{
-			if (string.IsNullOrWhiteSpace(existingTemplate.SettingsJson))
+			if (!string.IsNullOrWhiteSpace(existingTemplate.SettingsJson))
 			{
 				var oldSettings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(existingTemplate.SettingsJson);
 				blobId = oldSettings.TemplateFileBlobId;

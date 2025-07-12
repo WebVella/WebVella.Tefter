@@ -58,7 +58,13 @@ public record TfMenuItem
 	{
 		get
 		{
-			return $"{Id}{Url}{Text}{Description}{Expanded}{Selected}";
+			var sb = new StringBuilder();
+			sb.Append($"{Id}{Url}{Text}{Description}{Expanded}{Selected}");
+			foreach (var item in Items)
+			{
+				sb.Append(item.Hash);
+			}
+			return sb.ToString();
 		}
 	}
 

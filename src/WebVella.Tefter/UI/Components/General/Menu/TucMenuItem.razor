@@ -17,7 +17,9 @@
 		}
 		@if (!String.IsNullOrWhiteSpace(Item.Text))
 		{
-			<span class="tf-menu__item__text">@TfConverters.StringOverflow(Item.Text,EllipsesLimit)</span>
+			<span class="tf-menu__item__text">
+				@TfConverters.StringOverflow(Item.Text, EllipsesLimit)
+			</span>
 		}
 		@if (Item.IsSeparateChevron.HasValue && !Item.IsSeparateChevron.Value)
 		{

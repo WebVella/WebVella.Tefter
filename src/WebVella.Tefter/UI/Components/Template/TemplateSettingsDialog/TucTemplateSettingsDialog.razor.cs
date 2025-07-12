@@ -46,6 +46,7 @@ public partial class TucTemplateSettingsDialog : TfBaseComponent, IDialogContent
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			var template = TfTemplateUIService.UpdateTemplateSettings(Content.Id, _form);
+			ToastService.ShowSuccess(LOC("Template settings successfully updated"));
 			await Dialog.CloseAsync(template);
 		}
 		catch (Exception ex)

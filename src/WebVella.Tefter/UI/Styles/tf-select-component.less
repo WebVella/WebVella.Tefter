@@ -4,6 +4,19 @@
 .tf-select-component {
 	width: 100%;
 
+	.tf-card {
+		border: 1px solid var(--tf-stroke-input);
+		padding:5px;
+		border-radius:var(--tf-border-radius-sm);
+		&__content{
+			padding-top:0;
+		}
+
+		&:hover {
+			border: 1px solid var(--tf-stroke-input-hover);
+		}
+	}
+
 	.tf-component {
 		display: flex;
 		width: 100%;
@@ -20,9 +33,7 @@
 		}
 	}
 
-	.tf-component-icon
-
-	tf-component-meta {
+	.tf-component-meta {
 		flex: 1 1 auto;
 	}
 
@@ -35,7 +46,7 @@
 	}
 
 	.tf-component-caret {
-		flex: 1 1 20px;
+		flex: 0 0 20px;
 		display: flex;
 		align-items: center;
 	}

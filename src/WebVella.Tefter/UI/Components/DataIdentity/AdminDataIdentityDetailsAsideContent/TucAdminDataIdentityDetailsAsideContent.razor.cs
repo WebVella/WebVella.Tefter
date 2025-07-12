@@ -53,7 +53,7 @@ public partial class TucAdminDataIdentityDetailsAsideContent : TfBaseComponent, 
 			navState = await TfNavigationUIService.GetNavigationState(Navigator);
 		try
 		{
-			_search = NavigatorExt.GetStringFromQuery(Navigator, TfConstants.AsideSearchQueryName, null);
+			_search = navState.SearchAside;
 			var roles = TfDataIdentityUIService.GetDataIdentities(_search).ToList();
 			_items = new();
 			foreach (var role in roles)

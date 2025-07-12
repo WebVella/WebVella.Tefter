@@ -7,11 +7,19 @@ public partial class TucMenuDropdownItem : TfBaseComponent
 
 	private string? _css  = null;
 	private IReadOnlyDictionary<string, object>? _attributes = null;
-
+	private string _hash = String.Empty;
 	protected override void OnInitialized()
 	{
-		base.OnInitialized();
 		_init();
+	}
+
+	protected override void OnParametersSet()
+	{
+		var hash = Item.Hash;
+		if(_hash != hash){ 
+			_hash = hash;
+			_init();
+		}
 	}
 
 	private void _init()

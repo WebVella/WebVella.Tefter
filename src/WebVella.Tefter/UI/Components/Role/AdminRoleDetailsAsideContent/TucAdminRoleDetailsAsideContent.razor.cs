@@ -54,7 +54,7 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 
 		try
 		{
-			_search = navState.Search;
+			_search = navState.SearchAside;
 			var roles = TfRoleUIService.GetRoles(_search).ToList();
 
 			_items = new();

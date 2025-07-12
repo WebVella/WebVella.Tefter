@@ -99,9 +99,15 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 
 			TfTemplate template = default!;
 			if (_isCreate)
+			{
 				template = TfTemplateUIService.CreateTemplate(submit);
+				ToastService.ShowSuccess(LOC("Template successfully created"));
+			}
 			else
+			{
 				template = TfTemplateUIService.UpdateTemplate(submit);
+				ToastService.ShowSuccess(LOC("Template successfully updated"));
+			}
 
 			await Dialog.CloseAsync(template);
 		}

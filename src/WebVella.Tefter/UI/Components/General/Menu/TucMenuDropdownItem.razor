@@ -3,7 +3,7 @@
 
 @if (Item.Items.Count == 0)
 {
-	<FluentMenuItem Id="@Item.Id" OnClick="Item.OnClick"
+	<FluentMenuItem Id="@Item.Id" OnClick="Item.OnClick" Class="@(Item.Selected ? "active" : "")"
 					AdditionalAttributes="@_attributes" Label="@TfConverters.StringOverflow(Item.Text, EllipsesLimit)">
 		@if (Item.Icon is not null)
 		{
@@ -19,7 +19,7 @@
 }
 else
 {
-	<FluentMenuItem Id="@Item.Id"
+	<FluentMenuItem Id="@Item.Id" Class="@(Item.Selected ? "active" : "")"
 					OnClick="Item.OnClick"
 					AdditionalAttributes="@_attributes"
 					Label="@TfConverters.StringOverflow(Item.Text, EllipsesLimit)">

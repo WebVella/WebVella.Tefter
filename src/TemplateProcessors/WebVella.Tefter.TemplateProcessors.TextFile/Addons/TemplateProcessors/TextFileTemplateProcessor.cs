@@ -336,7 +336,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessorAddon
 
 		if (existingTemplate is not null)
 		{
-			if (string.IsNullOrWhiteSpace(existingTemplate.SettingsJson))
+			if (!string.IsNullOrWhiteSpace(existingTemplate.SettingsJson))
 			{
 				var oldSettings = JsonSerializer.Deserialize<TextFileTemplateSettings>(existingTemplate.SettingsJson);
 				blobId = oldSettings.TemplateFileBlobId;

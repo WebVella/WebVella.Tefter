@@ -53,7 +53,7 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 			navState = await TfNavigationUIService.GetNavigationState(Navigator);
 		try
 		{
-			_search = navState.Search;
+			_search = navState.SearchAside;
 			var items = TfSharedColumnUIService.GetSharedColumns(_search).ToList();
 			_items = new();
 			foreach (var item in items)

@@ -23,7 +23,7 @@
 <div class="tf-select-component">
 	@if (_isReadonly)
 	{
-		<TucCard Style="border:1px solid var(--neutral-fill-input-alt-active) !important">
+		<TucCard>
 			<div class="tf-component">
 				@CardIcon(Value)
 				@CardMeta(Value)
@@ -32,11 +32,11 @@
 	}
 	else
 	{
-		<TucCard Id="@_elementId" OnClick="@(_=> _onOpenChanged(true))" Style="border:1px solid var(--neutral-fill-input-alt-active) !important">
+		<TucCard Id="@_elementId" OnClick="@(_=> _onOpenChanged(true))">
 			<div class="tf-component">
 				@CardIcon(Value)
 				@CardMeta(Value)
-				<div class="tf-component-caret"><FluentIcon Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-fill-strong-focus)" Color="@Color.Custom" /></div>
+				<div class="tf-component-caret"><FluentIcon Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--tf-font-color-mute)" Color="@Color.Custom" /></div>
 			</div>
 		</TucCard>
 		@if (_open)

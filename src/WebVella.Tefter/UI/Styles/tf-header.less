@@ -117,6 +117,10 @@
 		border-radius: 0;
 
 		fluent-menu-item {
+			&.active {
+				background: color-mix(in srgb, var(--tf-layout-color) 20%, var(--tf-fill-color-dark) 80%);
+			}
+
 			&:hover {
 				background: var(--tf-fill-color-dark-hover);
 			}

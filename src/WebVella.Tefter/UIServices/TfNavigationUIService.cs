@@ -231,7 +231,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 					//IconExpanded = TfConstants.TemplateIcon,
 					//IconColor = TfConstants.AdminColor,
 					Selected = routeState.HasNode(RouteDataNode.Templates, 1) && routeState.NodesDict.Count >= 3 
-						&& routeState.NodesDict[2] == ((int)item).ToString(),
+						&& routeState.TemplateResultType == item,
 					Url = typeTemplates.Count == 0
 					? string.Format(TfConstants.AdminTemplatesTypePageUrl,((int)item).ToString())
 					: string.Format(TfConstants.AdminTemplatesTemplatePageUrl,((int)item).ToString(),typeTemplates[0].Id),

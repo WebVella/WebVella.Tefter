@@ -46,7 +46,7 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 
 		try
 		{
-			_search = navState.Search;
+			_search = navState.SearchAside;
 			var users = TfUserUIService.GetUsers(_search).ToList();
 			_items = new();
 			foreach (var user in users)

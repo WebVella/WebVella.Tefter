@@ -21,6 +21,7 @@ public partial record TfNavigationState
 	public int? Page { get; init; } = null;
 	public int? PageSize { get; init; } = null;
 	public string? Search { get; init; } = null;
+	public string? SearchAside { get; init; } = null;
 	public List<TfFilterBase>? Filters { get; init; } = null;
 	public List<TfSort>? Sorts { get; init; } = null;
 	public Guid? ActiveSaveId { get; init; } = null;

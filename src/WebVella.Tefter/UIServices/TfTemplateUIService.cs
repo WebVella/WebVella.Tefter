@@ -8,7 +8,7 @@ public partial interface ITfTemplateUIService
 	event EventHandler<TfTemplate> TemplateDeleted;
 
 	//Templates
-	List<TfTemplate> GetTemplates(string? search = null);
+	List<TfTemplate> GetTemplates(string? search = null, TfTemplateResultType? type = null);
 	TfTemplate GetTemplate(Guid roleId);
 	TfTemplate CreateTemplate(TfManageTemplateModel item);
 	TfTemplate UpdateTemplate(TfManageTemplateModel item);
@@ -45,7 +45,7 @@ public partial class TfTemplateUIService : ITfTemplateUIService
 	#endregion
 
 	#region << Template >>
-	public List<TfTemplate> GetTemplates(string? search = null) => _tfService.GetTemplates(search);
+	public List<TfTemplate> GetTemplates(string? search = null, TfTemplateResultType? type = null) => _tfService.GetTemplates(search, type);
 	public TfTemplate GetTemplate(Guid id) => _tfService.GetTemplate(id);
 	public TfTemplate CreateTemplate(TfManageTemplateModel item)
 	{
@@ -72,7 +72,7 @@ public partial class TfTemplateUIService : ITfTemplateUIService
 		=> _tfService.GetTemplateProcessors();
 	#endregion
 
-	#region << Data Options >>
+	#region << Space Data >>
 	public List<TfSpaceDataAsOption> GetSpaceDataOptionsForTemplate()
 		=> _tfService.GetSpaceDataOptionsForTemplate();
 	#endregion

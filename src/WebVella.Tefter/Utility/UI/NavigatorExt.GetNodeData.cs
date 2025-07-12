@@ -23,6 +23,7 @@ public static partial class NavigatorExt
 		var page = GetIntFromQuery(uri, TfConstants.PageQueryName, 1);
 		var pageSize = GetIntFromQuery(uri, TfConstants.PageSizeQueryName, null);
 		var search = GetStringFromQuery(uri, TfConstants.SearchQueryName, null);
+		var searchAside = GetStringFromQuery(uri, TfConstants.AsideSearchQueryName, null);
 		List<TfFilterBase> filters = null;
 		var filtersString = GetStringFromQuery(uri, TfConstants.FiltersQueryName, null);
 		if (!String.IsNullOrWhiteSpace(filtersString)) filters = DeserializeFiltersFromUrl(filtersString, true);
@@ -42,6 +43,7 @@ public static partial class NavigatorExt
 			Page = page,
 			PageSize = pageSize,
 			Search = search,
+			SearchAside = searchAside,
 			Filters = filters,
 			Sorts = sorts,
 			ActiveSaveId = activeSaveId,

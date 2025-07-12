@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, IDisposable
+public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
+	[Inject] public ITfTemplateUIService TfTemplateUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private bool _isLoading = true;
@@ -10,33 +10,31 @@ public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, 
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfDataProviderUIService.DataProviderCreated -= On_DataProviderCreated;
-		TfDataProviderUIService.DataProviderUpdated -= On_DataProviderUpdated;
-		TfDataProviderUIService.DataProviderDeleted -= On_DataProviderDeleted;
+		TfTemplateUIService.TemplateCreated -= On_TemplateCreated;
+		TfTemplateUIService.TemplateUpdated -= On_TemplateUpdated;
+		TfTemplateUIService.TemplateDeleted -= On_TemplateDeleted;
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
-
 	protected override async Task OnInitializedAsync()
 	{
-		await base.OnInitializedAsync();
 		await _init();
-		TfDataProviderUIService.DataProviderCreated += On_DataProviderCreated;
-		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
-		TfDataProviderUIService.DataProviderDeleted += On_DataProviderDeleted;
+		TfTemplateUIService.TemplateCreated += On_TemplateCreated;
+		TfTemplateUIService.TemplateUpdated += On_TemplateUpdated;
+		TfTemplateUIService.TemplateDeleted += On_TemplateDeleted;
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async void On_DataProviderCreated(object? caller, TfDataProvider user)
+	private async void On_TemplateCreated(object? caller, TfTemplate args)
 	{
 		await _init();
 	}
 
-	private async void On_DataProviderUpdated(object? caller, TfDataProvider user)
+	private async void On_TemplateUpdated(object? caller, TfTemplate args)
 	{
 		await _init();
 	}
 
-	private async void On_DataProviderDeleted(object? caller, TfDataProvider user)
+	private async void On_TemplateDeleted(object? caller, TfTemplate args)
 	{
 		await _init();
 	}
@@ -52,19 +50,21 @@ public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, 
 	{
 		if (navState is null)
 			navState = await TfNavigationUIService.GetNavigationState(Navigator);
+
 		try
 		{
 			_search = navState.SearchAside;
-			var items = TfDataProviderUIService.GetDataProviders(_search).ToList();
+			var items = TfTemplateUIService.GetTemplates(_search,navState.TemplateResultType).ToList();
+
 			_items = new();
 			foreach (var item in items)
 			{
 				_items.Add(new TfMenuItem
 				{
-					Url = string.Format(TfConstants.AdminDataProviderDetailsPageUrl, item.Id),
-					Description = item.ProviderType.AddonName,
+					Url = string.Format(TfConstants.AdminTemplatesTemplatePageUrl, (int)item.ResultType, item.Id),
+					Description = item.ResultType.ToDescriptionString(),
 					Text = TfConverters.StringOverflow(item.Name, _stringLimit),
-					Selected = navState.DataProviderId == item.Id
+					Selected = navState.TemplateId == item.Id
 				});
 			}
 		}
