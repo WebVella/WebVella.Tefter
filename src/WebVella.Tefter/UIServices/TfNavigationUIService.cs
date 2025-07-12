@@ -221,6 +221,17 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				Url = null,
 				Text = LOC[TfConstants.AdminContentMenuTitle]
 			};
+
+			rootMenu.Items.Add(new TfMenuItem()
+			{
+				Id = "tf-file-repository-link",
+				//IconCollapsed = TfConstants.AdminFileRepositoryIcon,
+				//IconExpanded = TfConstants.AdminFileRepositoryIcon,
+				//IconColor = TfConstants.AdminColor,
+				Selected = routeState.HasNode(RouteDataNode.FileRepository, 1),
+				Url = string.Format(TfConstants.AdminFileRepositoryPageUrl),
+				Text = LOC[TfConstants.AdminFileRepositoryMenuTitle]
+			});
 			foreach (TfTemplateResultType item in Enum.GetValues<TfTemplateResultType>())
 			{
 				var typeTemplates = templates.Where(x=> x.ResultType == item).ToList();
@@ -238,17 +249,6 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 					Text = String.Format(LOC[TfConstants.AdminTemplateMenuTitle],LOC[item.ToDescriptionString()])
 				});
 			}
-
-			rootMenu.Items.Add(new TfMenuItem()
-			{
-				Id = "tf-file-repository-link",
-				//IconCollapsed = TfConstants.AdminFileRepositoryIcon,
-				//IconExpanded = TfConstants.AdminFileRepositoryIcon,
-				//IconColor = TfConstants.AdminColor,
-				Selected = routeState.HasNode(RouteDataNode.FileRepository, 1),
-				Url = string.Format(TfConstants.AdminFileRepositoryPageUrl),
-				Text = LOC[TfConstants.AdminFileRepositoryMenuTitle]
-			});
 			menuItems.Add(rootMenu);
 		}
 		#endregion

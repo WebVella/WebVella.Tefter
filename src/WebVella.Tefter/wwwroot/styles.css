@@ -763,7 +763,7 @@ fluent-dialog .tf-divider,
   min-height: 60px;
   border-radius: calc(var(--control-corner-radius)*1px);
   background: var(--neutral-fill-input-focus);
-  border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-rest);
+  border: calc(var(--stroke-width) * 1px) solid var(--tf-stroke-input);
   outline: none;
   padding: 5px 10px;
   max-height: 200px;
@@ -1330,6 +1330,12 @@ fluent-dialog .tf-divider,
 }
 .tf-page-header__divider {
   color: var(--tf-font-color-mute);
+}
+.tf-page-header--skeleton fluent-skeleton {
+  background-color: var(--tf-fill-color-invert);
+}
+.tf-page-header--skeleton .tf-page-header__primary__meta__title {
+  margin-top: 5px;
 }
 .tf-paginator-nav {
   display: flex;

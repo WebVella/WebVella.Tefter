@@ -4,8 +4,8 @@
 .tf-page-header {
 	margin-bottom: 1rem;
 
-	&.page-title{
-		margin-bottom:calc(2 * var(--tf-layout-content-padding));
+	&.page-title {
+		margin-bottom: calc(2 * var(--tf-layout-content-padding));
 	}
 
 	&__primary {
@@ -27,7 +27,7 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			padding-top:5px;
+			padding-top: 5px;
 		}
 
 		&__icon {
@@ -52,7 +52,17 @@
 		}
 	}
 
-	&__divider{
-		color:var(--tf-font-color-mute);
+	&__divider {
+		color: var(--tf-font-color-mute);
+	}
+
+	&--skeleton {
+		fluent-skeleton {
+			background-color: var(--tf-fill-color-invert);
+		}
+
+		.tf-page-header__primary__meta__title{
+			margin-top:5px;
+		}
 	}
 }

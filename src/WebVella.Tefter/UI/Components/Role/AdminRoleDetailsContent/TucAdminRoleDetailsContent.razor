@@ -2,7 +2,11 @@
 @inherits TfBaseComponent
 <TucErrorBoundry>
 	<div style="padding:var(--tf-layout-content-padding)">
-		@if (_role is null)
+		@if (String.IsNullOrWhiteSpace(UriInitialized))
+		{
+			<TucSkeletonPageHeader />
+		}
+		else if (_role is null)
 		{
 			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
 		}
