@@ -37,7 +37,7 @@ else
 		{
 			<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0 && progressPercent < 100)"
 						  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUpload")">@LOC("Upload file")</FluentButton>
-			<TfProgress Value="progressPercent" Visible="@(progressPercent > 0 && progressPercent < 100)" />
+			<TucProgress Value="progressPercent" Visible="@(progressPercent > 0 && progressPercent < 100)" />
 			<FluentInputFile @ref="@fileUploader" Accept="@Accept"
 							 DragDropZoneVisible="false"
 							 Mode="InputFileMode.SaveToTemporaryFolder"

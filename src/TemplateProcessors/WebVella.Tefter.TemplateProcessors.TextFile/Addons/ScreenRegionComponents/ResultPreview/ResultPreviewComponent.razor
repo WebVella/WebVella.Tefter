@@ -3,7 +3,7 @@
 @inherits TfBaseComponent
 @if (_isLoading)
 {
-	<TfLoadingPane />
+	<TucLoadingPane />
 }
 else if (RegionContext is null || RegionContext.Template is null || RegionContext.SpaceData is null)
 {
@@ -16,12 +16,12 @@ else if (_preview is null)
 else if (_previewValidationErrors.Count > 0)
 {
 	<h4>@LOC("Errors")</h4>
-	<TfValidationErrors Errors="_previewValidationErrors" Message="@LOC("Errors occurred while validation the preview")" />
+	<TucValidationErrors Errors="_previewValidationErrors" Message="@LOC("Errors occurred while validation the preview")" />
 }
 else if (_preview.Errors.Count > 0)
 {
 	<h4>@LOC("Errors")</h4>
-	<TfValidationErrors Errors="_preview.Errors" Message="@LOC("Errors occurred while generating the preview")" />
+	<TucValidationErrors Errors="_preview.Errors" Message="@LOC("Errors occurred while generating the preview")" />
 }
 else if (_preview.Items.Count == 0)
 {

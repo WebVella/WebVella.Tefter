@@ -1355,6 +1355,27 @@ fluent-dialog .tf-divider,
 .tf-paginator-nav-description {
   color: var(--neutral-foreground-hover);
 }
+.tf-progress {
+  position: relative;
+  width: 200px;
+}
+.tf-progress fluent-progress::part(progress) {
+  height: 24px;
+  background: var(--neutral-fill-input-rest);
+}
+.tf-progress fluent-progress::part(determinate) {
+  height: 18px;
+}
+.tf-progress .tf-progress-text {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .tf-select-component {
   width: 100%;
 }
@@ -1558,4 +1579,11 @@ fluent-dialog .tf-divider,
 }
 .modal-with-tabs__menu {
   flex: 1 1 auto;
+}
+.tf-validation .fluent-messagebar .fluent-messagebar-message {
+  padding: 5px 0 !important;
+}
+.tf-validation .fluent-messagebar .fluent-messagebar-message ul {
+  margin-bottom: 0 !important;
+  padding-inline-start: 1rem !important;
 }

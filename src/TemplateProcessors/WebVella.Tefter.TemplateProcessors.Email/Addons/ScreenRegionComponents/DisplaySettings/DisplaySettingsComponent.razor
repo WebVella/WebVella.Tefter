@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 @if (_loading)
 {
-	<TfLoadingPane />
+	<TucLoadingPane />
 }
 else
 {
@@ -37,7 +37,7 @@ else
 	<FluentGrid>
 		<FluentGridItem xs="12">
 			<FluentInputLabel Label="@LOC("Content")" />
-			<TfEditor Value=@_form.HtmlContent Size="TfEditorSize.Large" ReadOnly="true" />
+			<TucEditor Value=@_form.HtmlContent Size="TfEditorSize.Large" ReadOnly="true" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>
@@ -99,7 +99,7 @@ else
 	<FluentGrid>
 		<FluentGridItem xs="12">
 			<FluentInputLabel Label="@LOC("Group by columns")" />
-			<TfSelectList Values=@_form.GroupBy
+			<TucSelectList Values=@_form.GroupBy
 						  NoItemsMessage="@LOC("no data grouping will be applied")" />
 		</FluentGridItem>
 	</FluentGrid>

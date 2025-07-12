@@ -1,0 +1,12 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits ComponentBase
+@if (Visible)
+{
+	<div class="@_cssClass" style="@Style">
+		<FluentProgress Min="0" Max="100" Value="@_value" Visible="true"/>
+		@if (_value > 0 && LabelVisible)
+		{
+			<div class="tf-progress-text">@($"{_value}%")</div>
+		}
+	</div>
+}

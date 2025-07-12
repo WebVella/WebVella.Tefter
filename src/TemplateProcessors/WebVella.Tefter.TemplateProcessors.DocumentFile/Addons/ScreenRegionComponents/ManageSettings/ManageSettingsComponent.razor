@@ -14,7 +14,7 @@
 			<FluentInputLabel Label="@LOC("Group by columns")" />
 			<FluentStack>
 				<TucSelectList @bind-Values=@_form.GroupBy @bind-Values:after=_valueChanged Placeholder="@LOC("type a column name + ENTER")"
-							  NoItemsMessage="@LOC("no data grouping will be applied")" />
+							  NoItemsMessage="@LOC("no data grouping will be applied")"/>
 			</FluentStack>
 			<FluentValidationMessage For="@(() => _form.GroupBy)" />
 		</FluentGridItem>

@@ -1,0 +1,34 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfRecipeStepFormBase
+
+<div class="tf-guest-layout__body__content__body__step @(IsSubstep ? "substep" : "")">
+	@if (Addon.Instance.Errors.Any(x => String.IsNullOrWhiteSpace(x.PropertyName)))
+	{
+		<TucValidation Message="@LOC("Service error")" Style="margin-bottom:1rem;" Errors="@Addon.Instance.Errors.Where(x => String.IsNullOrWhiteSpace(x.PropertyName)).ToList()" />
+	}
+	@if (!String.IsNullOrWhiteSpace(Addon.Instance.StepContentTitle))
+	{
+		<div class="tf-guest-layout__body__content__body__step__title">
+			<span>@Addon.Instance.Position. </span>
+			<span>@(!String.IsNullOrWhiteSpace(Addon.Instance.StepContentTitle) ? Addon.Instance.StepContentTitle : Addon.Instance.StepMenuTitle)</span>
+		</div>
+	}
+	@if (!String.IsNullOrWhiteSpace(Addon.Instance.StepContentDescription))
+	{
+		<div class="tf-guest-layout__body__content__body__step__description">@Addon.Instance.StepContentDescription</div>
+	}
+	<div class="tf-guest-layout__body__content__body__step__form">
+		@if (Addon.FormComponent is not null)
+		{
+			<TucErrorBoundry>
+				<DynamicComponent Type="@Addon.FormComponent" Parameters="@_getDynamicComponentParams()" />
+			</TucErrorBoundry>
+		}
+		else
+		{
+			<div>@Addon.FormComponent.GetType().FullName</div>
+			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Recipe step does not have Form Component or it is not inheriting the class TfRecipeStepFormBase")</FluentMessageBar>
+
+		}
+	</div>
+</div>

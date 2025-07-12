@@ -19,7 +19,7 @@
 		<FluentInputLabel Label="@LOC("Content")" />
 		@if (_form.IsHtml)
 		{
-			<TfEditor Value=@_form.Content Size="TfEditorSize.Large" ReadOnly="true" />
+			<TucEditor Value=@_form.Content Size="TfEditorSize.Large" ReadOnly="true" />
 		}
 		else
 		{
@@ -30,6 +30,6 @@
 <FluentGrid>
 	<FluentGridItem xs="12">
 		<FluentInputLabel Label="@LOC("Group by columns")" />
-		<TfSelectList Values=@_form.GroupBy NoItemsMessage="@LOC("no data grouping will be applied")" />
+		<TucSelectList Values=@_form.GroupBy NoItemsMessage="@LOC("no data grouping will be applied")" />
 	</FluentGridItem>
 </FluentGrid>
