@@ -9,9 +9,9 @@ public partial interface ITfService
 		string filename);
 
 	public List<TfRepositoryFile> GetRepositoryFiles(
-	   string filenameStartsWith = null,
-	   string filenameContains = null,
-	   string filenameEndWith = null,
+	   string? filenameStartsWith = null,
+	   string? filenameContains = null,
+	   string? filenameEndWith = null,
 	   int? page = null,
 	   int? pageSize = null);
 
@@ -20,7 +20,7 @@ public partial interface ITfService
 		string localPath,
 		Guid? createdBy = null);
 
-	public void UpdateRepositoryFile(
+	public TfRepositoryFile UpdateRepositoryFile(
 		string filename,
 		string localPath,
 		Guid? updatedBy = null);
@@ -104,9 +104,9 @@ public partial class TfService : ITfService
 	}
 
 	public List<TfRepositoryFile> GetRepositoryFiles(
-		string filenameStartsWith = null,
-		string filenameContains = null,
-		string filenameEndWith = null,
+		string? filenameStartsWith = null,
+		string? filenameContains = null,
+		string? filenameEndWith = null,
 		int? page = null,
 		int? pageSize = null)
 	{
@@ -211,7 +211,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void UpdateRepositoryFile(
+	public TfRepositoryFile UpdateRepositoryFile(
 		string filename,
 		string localPath,
 		Guid? updatedBy = null)
@@ -241,6 +241,7 @@ public partial class TfService : ITfService
 				UpdateBlob(repFile.Id, localPath);
 
 				scope.Complete();
+				return GetRepositoryFile(filename);
 			}
 		}
 		catch (Exception ex)
@@ -349,13 +350,13 @@ public partial class TfService : ITfService
 
 			if (string.IsNullOrWhiteSpace(filename))
 			{
-				return new ValidationResult(new[] { new ValidationFailure("",
+				return new ValidationResult(new[] { new ValidationFailure(nameof(TfFileForm.Filename),
 					"File name is not provided") });
 			}
 
 			if (!File.Exists(localPath))
 			{
-				return new ValidationResult(new[] { new ValidationFailure("",
+				return new ValidationResult(new[] { new ValidationFailure(nameof(TfFileForm.LocalFilePath),
 					"File is not found for specified local path") });
 			}
 
@@ -363,7 +364,7 @@ public partial class TfService : ITfService
 
 			if (fileExists)
 			{
-				return new ValidationResult(new[] { new ValidationFailure("",
+				return new ValidationResult(new[] { new ValidationFailure(nameof(TfFileForm.LocalFilePath),
 					"File with same name already exists") });
 			}
 
@@ -377,13 +378,13 @@ public partial class TfService : ITfService
 
 			if (string.IsNullOrWhiteSpace(filename))
 			{
-				return new ValidationResult(new[] { new ValidationFailure("",
+				return new ValidationResult(new[] { new ValidationFailure(nameof(TfFileForm.Filename),
 					"File name is not provided") });
 			}
 
 			if (!File.Exists(localPath))
 			{
-				return new ValidationResult(new[] { new ValidationFailure("",
+				return new ValidationResult(new[] { new ValidationFailure(nameof(TfFileForm.LocalFilePath),
 					"File is not found for specified local path") });
 			}
 
@@ -391,7 +392,7 @@ public partial class TfService : ITfService
 
 			if (!fileExists)
 			{
-				return new ValidationResult(new[] { new ValidationFailure("",
+				return new ValidationResult(new[] { new ValidationFailure(nameof(TfFileForm.LocalFilePath),
 					"File with specified filename does not exist") });
 			}
 
@@ -404,7 +405,7 @@ public partial class TfService : ITfService
 
 			if (string.IsNullOrWhiteSpace(filename))
 			{
-				return new ValidationResult(new[] { new ValidationFailure("",
+				return new ValidationResult(new[] { new ValidationFailure(nameof(TfFileForm.Filename),
 					"File name is not provided") });
 			}
 
@@ -412,7 +413,7 @@ public partial class TfService : ITfService
 
 			if (fileToDelete is null)
 			{
-				return new ValidationResult(new[] { new ValidationFailure("",
+				return new ValidationResult(new[] { new ValidationFailure(nameof(TfFileForm.LocalFilePath),
 					"File does not exist") });
 			}
 

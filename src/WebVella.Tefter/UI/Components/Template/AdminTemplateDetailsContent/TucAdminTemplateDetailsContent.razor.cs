@@ -40,7 +40,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 	private async Task _init(TfNavigationState? navState = null, TfTemplate? template = null)
 	{
 		if (navState == null)
-			_navState = await TfNavigationUIService.GetNavigationState(Navigator);
+			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		else
 			_navState = navState;
 		try

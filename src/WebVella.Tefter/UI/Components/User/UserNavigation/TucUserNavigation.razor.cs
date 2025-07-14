@@ -1,9 +1,12 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using System.Threading.Tasks;
+
+namespace WebVella.Tefter.UI.Components;
 
 [LocalizationResource("WebVella.Tefter.UI.Components.General.UserNavigation.TucUserNavigation", "WebVella.Tefter")]
 public partial class TucUserNavigation : TfBaseComponent, IDisposable
 {
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
+	[Inject] private ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private TfUser? _currentUser = null;
 	private bool _visible = false;
@@ -21,14 +24,14 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 	{
 		base.OnInitialized();
 		_currentUser = await TfUserUIService.GetCurrentUserAsync();
-		initAdmin(null);
+		await initAdmin(null);
 		Navigator.LocationChanged += Navigator_LocationChanged;
 		TfUserUIService.CurrentUserChanged += CurrentUser_Changed;
 	}
-	private void Navigator_LocationChanged(object? sender, LocationChangedEventArgs e)
+	private async void Navigator_LocationChanged(object? sender, LocationChangedEventArgs e)
 	{
 		if (!Navigator.UrlHasState()) return;
-		initAdmin(e.Location);
+		await initAdmin(e.Location);
 		StateHasChanged();
 	}
 
@@ -38,30 +41,36 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		StateHasChanged();
 	}
 
-	private void initAdmin(string? location)
+	private async Task initAdmin(string? location)
 	{
 
-		Uri? uri = null;
-		if (string.IsNullOrEmpty(location))
-		{
-			uri = new Uri(Navigator.Uri);
-		}
-		else
-		{
-			uri = new Uri(location);
-		}
-		_isAdmin = uri.LocalPath.StartsWith("/admin");
+		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 
 		_adminMenu = new();
 		if (_currentUser!.IsAdmin)
 		{
-			_adminMenu.Add(new TfMenuItem
+			if (navState.RouteNodes.Count > 0 && navState.RouteNodes[0] == RouteDataNode.Admin)
 			{
-				Url = TfConstants.AdminDashboardUrl,
-				Tooltip = @LOC("Administration"),
-				IconCollapsed = TfConstants.AdminIcon,
-				IconExpanded = TfConstants.AdminIcon
-			});
+				_adminMenu.Add(new TfMenuItem
+				{
+					Url = TfConstants.HomePageUrl,
+					Tooltip = LOC("Exit Administration"),
+					IconCollapsed = TfConstants.HomeIcon,
+					IconExpanded = TfConstants.HomeIcon,
+					Text = LOC("Home")
+				});
+			}
+			else
+			{
+				_adminMenu.Add(new TfMenuItem
+				{
+					Url = TfConstants.AdminDashboardUrl,
+					Tooltip = LOC("Administration"),
+					IconCollapsed = TfConstants.AdminIcon,
+					IconExpanded = TfConstants.AdminIcon,
+					Text = LOC("Admin")
+				});
+			}
 		}
 	}
 

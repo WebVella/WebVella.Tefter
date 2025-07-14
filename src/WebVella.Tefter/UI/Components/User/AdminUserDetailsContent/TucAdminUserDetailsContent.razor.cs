@@ -38,7 +38,7 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null, TfUser? user = null)
 	{
 		if (navState == null)
-			navState = await TfNavigationUIService.GetNavigationState(Navigator);
+			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			_currentUser = (await TfUserUIService.GetCurrentUserAsync())!;

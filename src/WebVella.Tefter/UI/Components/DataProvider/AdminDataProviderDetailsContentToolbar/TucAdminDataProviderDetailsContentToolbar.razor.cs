@@ -24,7 +24,7 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationState(Navigator);
+			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			_menu = new();

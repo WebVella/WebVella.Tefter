@@ -3,7 +3,7 @@
 public partial interface ITfNavigationUIService
 {
 	event EventHandler<TfNavigationState> NavigationStateChanged;
-	Task<TfNavigationState> GetNavigationState(NavigationManager navigator);
+	Task<TfNavigationState> GetNavigationStateAsync(NavigationManager navigator);
 	Task<TfNavigationMenu> GetNavigationMenu(NavigationManager navigator);
 }
 public partial class TfNavigationUIService : ITfNavigationUIService
@@ -28,7 +28,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 	#endregion
 
 	#region << Navigation >>
-	public async Task<TfNavigationState> GetNavigationState(NavigationManager navigator)
+	public async Task<TfNavigationState> GetNavigationStateAsync(NavigationManager navigator)
 	{
 
 		using (await _asyncLock.LockAsync())
@@ -67,10 +67,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				var providers = _tfService.GetDataProviders();
 				var sharedColumns = _tfService.GetSharedColumns();
 				var dataIdentities = _tfService.GetDataIdentities();
-				var addonPages = _metaService.GetRegionComponentsMeta(
-					context: typeof(TfAdminPageScreenRegionContext),
-					scope: null
-				);
+				var addonPages = _metaService.GetAdminAddonPages();
 				var templates = _tfService.GetTemplates();
 
 				navMenu.Menu = generateAdminMenu(
@@ -80,7 +77,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 					providers: providers,
 					sharedColumns: sharedColumns,
 					identities: dataIdentities,
-					templates:templates,
+					templates: templates,
 					addonPages: addonPages);
 			}
 			else
@@ -234,19 +231,19 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			});
 			foreach (TfTemplateResultType item in Enum.GetValues<TfTemplateResultType>())
 			{
-				var typeTemplates = templates.Where(x=> x.ResultType == item).ToList();
+				var typeTemplates = templates.Where(x => x.ResultType == item).ToList();
 				rootMenu.Items.Add(new TfMenuItem()
 				{
 					Id = $"tf-templates-link-{(int)item}",
 					//IconCollapsed = TfConstants.TemplateIcon,
 					//IconExpanded = TfConstants.TemplateIcon,
 					//IconColor = TfConstants.AdminColor,
-					Selected = routeState.HasNode(RouteDataNode.Templates, 1) && routeState.NodesDict.Count >= 3 
+					Selected = routeState.HasNode(RouteDataNode.Templates, 1) && routeState.NodesDict.Count >= 3
 						&& routeState.TemplateResultType == item,
 					Url = typeTemplates.Count == 0
-					? string.Format(TfConstants.AdminTemplatesTypePageUrl,((int)item).ToString())
-					: string.Format(TfConstants.AdminTemplatesTemplatePageUrl,((int)item).ToString(),typeTemplates[0].Id),
-					Text = String.Format(LOC[TfConstants.AdminTemplateMenuTitle],LOC[item.ToDescriptionString()])
+					? string.Format(TfConstants.AdminTemplatesTypePageUrl, ((int)item).ToString())
+					: string.Format(TfConstants.AdminTemplatesTemplatePageUrl, ((int)item).ToString(), typeTemplates[0].Id),
+					Text = String.Format(LOC[TfConstants.AdminTemplateMenuTitle], LOC[item.ToDescriptionString()])
 				});
 			}
 			menuItems.Add(rootMenu);
@@ -265,7 +262,6 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				Url = String.Format(TfConstants.AdminPagesSingleUrl, addonPages[0].Id),
 				Text = LOC[TfConstants.AdminAddonsMenuTitle]
 			};
-
 			menuItems.Add(rootMenu);
 		}
 		#endregion

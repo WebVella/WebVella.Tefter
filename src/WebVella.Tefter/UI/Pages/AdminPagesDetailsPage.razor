@@ -1,0 +1,21 @@
+﻿@namespace WebVella.Tefter.UI.Pages
+@page "/admin/pages/{PageId:guid}"
+@inherits TfBasePage
+
+<TucLayoutListDetails>
+	<Header>
+		<TucHeader />
+	</Header>
+	<AsideToolbar>
+		<TucAdminPageDetailsAsideToolbar/>
+	</AsideToolbar>
+	<AsideContent>
+		<TucAdminPageDetailsAsideContent />
+	</AsideContent>
+	<Content>
+		<TucAdminPageDetailsContent />
+	</Content>
+</TucLayoutListDetails>
+
+
+

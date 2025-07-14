@@ -7,6 +7,10 @@ namespace WebVella.Tefter.EmailSender.Services;
 
 public partial interface IEmailService
 {
+	//Events
+	event EventHandler<EmailMessage> EmailCreated;
+	event EventHandler<EmailMessage> EmailUpdated;
+
 	public List<EmailMessage> GetEmailMessages(
 		string search = null,
 		int? page = null,
@@ -19,6 +23,12 @@ public partial interface IEmailService
 
 	public EmailMessage CreateEmailMessage(
 		CreateEmailMessageModel emailMessage);
+
+	public EmailMessage ResendEmailMessage(
+		Guid emailId);
+
+	public EmailMessage CancelEmailMessage(
+		Guid emailId);
 
 	public EmailMessage GetEmailMessageById(
 		Guid id);
@@ -49,6 +59,11 @@ internal partial class EmailService : IEmailService
 		_tfService = tfService;
 		_config = config;
 	}
+
+	#region << Events >>
+	public event EventHandler<EmailMessage> EmailCreated = default!;
+	public event EventHandler<EmailMessage> EmailUpdated = default!;
+	#endregion
 
 	public EmailMessage GetEmailMessageById(
 		Guid id)
@@ -287,7 +302,33 @@ VALUES
 		if (dbResult != 1)
 			throw new Exception("Tefter failed to save email to database");
 
-		return GetEmailMessageById(id);
+		var email = GetEmailMessageById(id);
+		EmailCreated?.Invoke(this, email);
+		return email;
+	}
+
+	public EmailMessage ResendEmailMessage(
+		Guid emailId)
+	{
+		var email = GetEmailMessageById(emailId);
+		if (email is null)
+			throw new Exception("Email not found");
+		//TODO RUMEN: implement
+		EmailCreated?.Invoke(this, email);
+		return email;
+
+	}
+
+	public EmailMessage CancelEmailMessage(
+		Guid emailId)
+	{
+		var email = GetEmailMessageById(emailId);
+		if (email is null)
+			throw new Exception("Email not found");
+		//TODO RUMEN: implement
+		EmailUpdated?.Invoke(this, email);
+		return email;
+
 	}
 
 	public List<EmailMessage> GetPendingEmails()

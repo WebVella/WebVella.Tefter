@@ -24,7 +24,7 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 	}
 	private async Task _init()
 	{
-		var navState = await TfNavigationUIService.GetNavigationState(Navigator);
+		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		var navMenu = await TfNavigationUIService.GetNavigationMenu(Navigator);
 		try
 		{

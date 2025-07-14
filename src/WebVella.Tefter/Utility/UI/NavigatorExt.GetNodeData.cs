@@ -684,6 +684,25 @@ public static partial class NavigatorExt
 
 		result = result.AddRouteNodes(RouteDataNode.Pages);
 
+		result = result.Admin_Page_PageId_NodesProcess();
+
+		return result;
+	}
+	private static TfNavigationState Admin_Page_PageId_NodesProcess(this TfNavigationState result)
+	{
+		if (result.RouteNodes.Count < 2
+			|| result.RouteNodes[0] != RouteDataNode.Admin
+			|| result.RouteNodes[1] != RouteDataNode.Pages)
+			return result;
+
+		if (result.NodesDict.Count < 3)
+			return result;
+		if (Guid.TryParse(result.NodesDict[2], out Guid outGuid))
+		{
+			result = result.AddRouteNodes(RouteDataNode.PageId);
+			result = result with { PageId = outGuid };
+
+		}
 		return result;
 	}
 	#endregion

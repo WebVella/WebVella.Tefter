@@ -70,13 +70,14 @@ public static class TfDependencyInjection
 		services.AddScoped<ITfRecipeUIService, TfRecipeUIService>();
 		services.AddScoped<ITfRoleUIService, TfRoleUIService>();
 		services.AddScoped<ITfUserUIService, TfUserUIService>();
-		services.AddScoped<ITfGeneralUIService, TfDashboardUIService>();
+		services.AddScoped<ITfDashboardUIService, TfDashboardUIService>();
 		services.AddScoped<ITfSpaceUIService, TfSpaceUIService>();
 		services.AddScoped<ITfDataProviderUIService, TfDataProviderUIService>();
 		services.AddScoped<ITfMetaUIService, TfMetaUIService>();
 		services.AddScoped<ITfDataIdentityUIService, TfDataIdentityUIService>();
 		services.AddScoped<ITfSharedColumnUIService, TfSharedColumnUIService>();
 		services.AddScoped<ITfTemplateUIService, TfTemplateUIService>();
+		services.AddScoped<ITfFileRepositoryUIService, TfFileRepositoryUIService>();
 
 
 		//hosted services

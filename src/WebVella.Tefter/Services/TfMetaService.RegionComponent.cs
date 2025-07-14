@@ -4,6 +4,7 @@ public partial interface ITfMetaService
 {
 	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMeta();
 	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMeta(Type? context = null, TfScreenRegionScope? scope = null);
+	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetAdminAddonPages(string? search = null);
 }
 
 public partial class TfMetaService : ITfMetaService
@@ -285,6 +286,21 @@ public partial class TfMetaService : ITfMetaService
 			itemTypeMatched = true;
 
 		return compMatched && itemTypeMatched;
+	}
+
+	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetAdminAddonPages(string? search = null)
+	{
+		var addonPages = GetRegionComponentsMeta(
+						context: typeof(TfAdminPageScreenRegionContext),
+						scope: null
+					);
+		if (String.IsNullOrWhiteSpace(search))
+		{
+			return addonPages;
+		}
+
+		search = search.Trim().ToLowerInvariant();
+		return addonPages.Where(x=> x.Name.ToLowerInvariant().Contains(search)).ToList().AsReadOnly();
 	}
 }
 

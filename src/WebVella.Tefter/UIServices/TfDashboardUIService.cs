@@ -1,10 +1,11 @@
 ﻿namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfGeneralUIService
+public partial interface ITfDashboardUIService
 {
 	Task<TfAdminDashboardData> GetAdminDashboardData();
+	TfHomeDashboardData GetHomeDashboardData(Guid userId);
 }
-public partial class TfDashboardUIService : ITfGeneralUIService
+public partial class TfDashboardUIService : ITfDashboardUIService
 {
 	private readonly ITfService _tfService;
 	private readonly ITfMetaService _metaService;
@@ -17,12 +18,10 @@ public partial class TfDashboardUIService : ITfGeneralUIService
 		LOC = serviceProvider.GetService<IStringLocalizer<TfDashboardUIService>>() ?? default!;
 	}
 
-	public Task<TfAdminDashboardData> GetAdminDashboardData(){ 
-		var result = new TfAdminDashboardData();
-		result.ProvidersInfo = _tfService.GetDataProvidersInfo();
-		result.SyncInfo = result.ProvidersInfo.Where(x=> x.NextSyncOn is not null).OrderBy(x => x.NextSyncOn).Take(5).ToList();
+	public async Task<TfAdminDashboardData> GetAdminDashboardData()
+		=> await _tfService.GetAdminDashboardData();
+	public TfHomeDashboardData GetHomeDashboardData(Guid userId)
+		=> _tfService.GetHomeDashboardData(userId);
 
-		return Task.FromResult(result);
-	}
 
 }
