@@ -106,6 +106,9 @@ public partial class TucMenu : TfBaseComponent
 		{
 			Navigator.NavigateTo(item.Href!);
 		}
+		else if(item.Data is not null && OnClick.HasDelegate){ 
+			await OnClick.InvokeAsync(item);
+		}
 		else if (item.Items.Count > 0)
 			await _onExpand(item, !item.Expanded);
 	}

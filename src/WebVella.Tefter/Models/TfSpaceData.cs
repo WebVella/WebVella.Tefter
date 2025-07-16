@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public class TfSpaceData
+public record TfSpaceData
 {
 	public Guid Id { get; set; }
 	public Guid DataProviderId { get; set; }

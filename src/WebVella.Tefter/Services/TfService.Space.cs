@@ -559,7 +559,7 @@ public partial class TfService : ITfService
 			Name = dbo.Name,
 			IsPrivate = dbo.IsPrivate,
 			Position = dbo.Position,
-			Color = dbo.Color,
+			Color = (TfColor)dbo.Color,
 			FluentIconName = dbo.Icon,
 		};
 
@@ -577,7 +577,7 @@ public partial class TfService : ITfService
 			Name = model.Name,
 			IsPrivate = model.IsPrivate,
 			Position = model.Position,
-			Color = model.Color,
+			Color = (short)model.Color,
 			Icon = model.FluentIconName,
 		};
 	}

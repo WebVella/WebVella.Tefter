@@ -1,0 +1,21 @@
+﻿@namespace WebVella.Tefter.UI.Pages
+@page "/space/{SpaceId:guid}/data/{SpaceDataId:guid}/{*Path}"
+@inherits TfBasePage
+
+<TucLayoutListDetails>
+	<Header>
+		<TucHeader />
+	</Header>
+	<AsideToolbar>
+		<TucSpaceDataDetailsAsideToolbar />
+	</AsideToolbar>
+	<AsideContent>
+		@* <TucAdminRoleDetailsAsideContent /> *@
+	</AsideContent>
+	<Content>
+		@* <TucAdminRoleDetailsContent /> *@
+	</Content>
+</TucLayoutListDetails>
+
+
+

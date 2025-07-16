@@ -1,12 +1,12 @@
 ﻿namespace WebVella.Tefter.Models;
-public class TfSpace
+public record TfSpace
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; }
 	public short Position { get; set; }
 	public bool IsPrivate { get; set; }
 	public string FluentIconName { get; set; }
-	public short Color { get; set; }
+	public TfColor Color { get; set; }
 	public List<TfRole> Roles { get; set; } = new();
 }
 

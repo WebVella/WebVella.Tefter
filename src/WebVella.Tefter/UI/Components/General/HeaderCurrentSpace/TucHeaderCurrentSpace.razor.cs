@@ -1,6 +1,7 @@
 namespace WebVella.Tefter.UI.Components;
 public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 {
+	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private int _ellipsisCount = 30;
@@ -25,17 +26,18 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 	private async Task _init()
 	{
 		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
-		var navMenu = await TfNavigationUIService.GetNavigationMenu(Navigator);
+		var currentUser = await TfUserUIService.GetCurrentUserAsync();
+		var navMenu = await TfNavigationUIService.GetNavigationMenu(Navigator,currentUser);
 		try
 		{
 			_menu = new();
 			List<string> menuText = new();
 
-			if (navState.RouteNodes.Count == 0)
+			if (navState.HasNode(RouteDataNode.Home,0))
 			{
 				menuText.Add(TfConstants.HomeMenuTitle);
 			}
-			else
+			else if(navState.HasNode(RouteDataNode.Admin,0))
 			{
 				menuText.Add(navState.RouteNodes[0].ToDescriptionString());
 				if (navState.RouteNodes.Count > 1)
@@ -43,7 +45,22 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 					menuText.Add(navState.RouteNodes[1].ToDescriptionString());
 				}
 			}
-
+			else if(navState.HasNode(RouteDataNode.Space,0))
+			{
+				menuText.Add(navState.RouteNodes[0].ToDescriptionString());
+				if (navState.RouteNodes.Count > 2)
+				{
+					menuText.Add(navState.RouteNodes[2].ToDescriptionString());
+				}
+			}
+			else if(navState.HasNode(RouteDataNode.Pages,0))
+			{
+				menuText.Add(navState.RouteNodes[0].ToDescriptionString());
+				if (navState.RouteNodes.Count > 1)
+				{
+					menuText.Add(navState.RouteNodes[1].ToDescriptionString());
+				}
+			}
 			_menu.Add(new TfMenuItem
 			{
 				Id = "tf-current-space-name",

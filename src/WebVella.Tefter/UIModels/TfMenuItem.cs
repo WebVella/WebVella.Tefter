@@ -51,7 +51,7 @@ public record TfMenuItem
 	}
 	public bool Expanded { get; set; } = false;
 	public bool Selected { get; set; } = false;
-	public object? Data { get; set; }
+	public TfMenuItemData? Data { get; set; } = null;
 	public List<TfMenuItem> Items { get; set; } = new();
 	public ElementReference Reference { get; set; }
 	public string Hash
@@ -73,4 +73,20 @@ public record TfMenuItem
 
 	[JsonIgnore]
 	public Action<bool> OnExpand { get; set; } = default!;
+}
+
+
+public record TfMenuItemData
+{
+	public Guid? SpaceId { get; set; }
+	public TfMenuItemDataType Type { get; set; } = TfMenuItemDataType.None;
+}
+
+public enum TfMenuItemDataType
+{
+	None = 0,
+	CreateSpace = 1,
+	CreateSpacePage = 2,
+	CreateSpaceView = 3,
+	CreateSpaceData = 4
 }

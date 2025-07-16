@@ -153,8 +153,14 @@ fluent-button {
 	border-radius: var(--tf-border-radius-xl);
 	color: var(--tf-font-color-base);
 
-	&::part(control):focus-visible {
-		outline: none !important;
+	&::part(control) {
+		&:focus-visible {
+			outline: none !important;
+		}
+
+		&.icon-only::part(start) {
+			display: none;
+		}
 	}
 
 	&:hover {

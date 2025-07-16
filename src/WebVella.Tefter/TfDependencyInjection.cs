@@ -72,6 +72,8 @@ public static class TfDependencyInjection
 		services.AddScoped<ITfUserUIService, TfUserUIService>();
 		services.AddScoped<ITfDashboardUIService, TfDashboardUIService>();
 		services.AddScoped<ITfSpaceUIService, TfSpaceUIService>();
+		services.AddScoped<ITfSpaceDataUIService, TfSpaceDataUIService>();
+		services.AddScoped<ITfSpaceViewUIService, TfSpaceViewUIService>();
 		services.AddScoped<ITfDataProviderUIService, TfDataProviderUIService>();
 		services.AddScoped<ITfMetaUIService, TfMetaUIService>();
 		services.AddScoped<ITfDataIdentityUIService, TfDataIdentityUIService>();

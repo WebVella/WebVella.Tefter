@@ -17,9 +17,9 @@ public enum RouteDataNode
 	SharedColumns,
 	[Description("Data Identities")]
 	DataIdentities,
-	[Description("Space View")]
+	[Description("View")]
 	SpaceView,
-	[Description("Space Dataset")]
+	[Description("Dataset")]
 	SpaceData,
 	[Description("Space Page")]
 	SpacePage,

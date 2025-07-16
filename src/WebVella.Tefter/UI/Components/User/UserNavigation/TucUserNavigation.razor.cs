@@ -49,28 +49,15 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		_adminMenu = new();
 		if (_currentUser!.IsAdmin)
 		{
-			if (navState.RouteNodes.Count > 0 && navState.RouteNodes[0] == RouteDataNode.Admin)
+			_adminMenu.Add(new TfMenuItem
 			{
-				_adminMenu.Add(new TfMenuItem
-				{
-					Url = TfConstants.HomePageUrl,
-					Tooltip = LOC("Exit Administration"),
-					IconCollapsed = TfConstants.HomeIcon,
-					IconExpanded = TfConstants.HomeIcon,
-					Text = LOC("Home")
-				});
-			}
-			else
-			{
-				_adminMenu.Add(new TfMenuItem
-				{
-					Url = TfConstants.AdminDashboardUrl,
-					Tooltip = LOC("Administration"),
-					IconCollapsed = TfConstants.AdminIcon,
-					IconExpanded = TfConstants.AdminIcon,
-					Text = LOC("Admin")
-				});
-			}
+				Url = TfConstants.AdminDashboardUrl,
+				Tooltip = LOC("Administration"),
+				IconCollapsed = TfConstants.SettingsIcon,
+				IconExpanded = TfConstants.SettingsIcon,
+				//Text = LOC("Admin"),
+				Selected = navState.RouteNodes.Count > 0 && navState.RouteNodes[0] == RouteDataNode.Admin
+			});
 		}
 	}
 

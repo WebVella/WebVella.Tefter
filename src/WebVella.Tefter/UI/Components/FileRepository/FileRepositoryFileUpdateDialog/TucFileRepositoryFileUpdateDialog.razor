@@ -22,7 +22,7 @@
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Filename
-									 Label="@LOC("Name")" Style="width:100%"/>
+									 Label="@LOC("Name")" Style="width:100%" Disabled=true ReadOnly=true/>
 					<FluentValidationMessage For="@(() => _form.Filename)" />
 				</FluentGridItem>
 			</FluentGrid>

@@ -8,9 +8,9 @@ public partial class TucSelectIcon : TfBaseComponent
 	private bool _isReadonly { get => !ValueChanged.HasDelegate; }
 
 	private string _elementId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
-	private IconInfo _icon
+	private IconInfo? _icon
 	{
-		get => TfConstants.GetIcon(Value);
+		get => String.IsNullOrWhiteSpace(Value) ? null : TfConstants.GetIcon(Value) ; 
 	}
 	private bool _open = false;
 	private FluentSearch? _searchInput;

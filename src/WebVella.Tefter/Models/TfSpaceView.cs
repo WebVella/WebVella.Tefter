@@ -53,13 +53,15 @@ public class TfCreateSpaceViewExtended
 	public string SettingsJson { get; set; } = "{}";
 	public List<TfSpaceViewPreset> Presets { get; set; } = new();
 	public List<string> Groups { get; set; } = new();
+	public TfSpaceViewDataSetType DataSetType { get; set; } = TfSpaceViewDataSetType.New;
 	public Guid? SpaceDataId { get; set; } = null;
-	public string NewSpaceDataName { get; set; } = null;
+	public string? NewSpaceDataName { get; set; } = null;
 	public Guid? DataProviderId { get; set; } = null;
 	public bool AddSystemColumns { get; set; } = false;
 	public bool AddProviderColumns { get; set; } = true;
 	public bool AddSharedColumns { get; set; } = true;
 	public bool AddDataSetColumns { get; set; } = true;
+	public TfSpaceViewSettings Settings { get; set; } = new TfSpaceViewSettings();
 }
 
 public class TfSpaceViewPreset
@@ -98,4 +100,20 @@ public enum TfSpaceViewType
 	Form = 1,
 	Chart = 2,
 	Dashboard = 3
+}
+
+public enum TfSpaceViewDataSetType
+{
+	[Description("new dataset")]
+	New = 0,
+	[Description("existing dataset")]
+	Existing = 1
+}
+
+public enum TfSpaceViewSetType
+{
+	[Description("new view")]
+	New = 0,
+	[Description("existing view")]
+	Existing = 1
 }

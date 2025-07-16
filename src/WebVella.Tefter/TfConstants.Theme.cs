@@ -4,7 +4,7 @@ using SystemColor = System.Drawing.Color;
 public partial class TfConstants
 {
 	public static TfColor AdminColor { get; } = TfColor.Red700;
-	public static TfColor DefaultThemeColor { get; } = TfColor.Emerald500;
+	public static TfColor DefaultThemeColor { get; } = TfColor.Teal500;
 	public static IconSize IconSize { get; } = IconSize.Size20;
 	public static IconVariant IconVariant { get; } = IconVariant.Regular;
 

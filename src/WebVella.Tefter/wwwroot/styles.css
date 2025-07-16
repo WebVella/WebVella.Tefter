@@ -466,6 +466,9 @@ fluent-button {
 fluent-button::part(control):focus-visible {
   outline: none !important;
 }
+fluent-button::part(control).icon-only::part(start) {
+  display: none;
+}
 fluent-button:hover {
   background-color: var(--tf-fill-color-hover) !important;
 }
@@ -1109,7 +1112,6 @@ fluent-dialog .tf-divider,
 }
 .tf-header .tf-menu__item fluent-anchor::part(start) {
   top: 1px !important;
-  margin-inline-end: 5px;
 }
 .tf-header .tf-menu__item fluent-anchor::part(end) {
   top: 1px !important;
@@ -1134,7 +1136,7 @@ fluent-dialog .tf-divider,
   background: color-mix(in srgb, var(--tf-layout-color) 20%, var(--tf-fill-color-dark) 80%);
 }
 .tf-header .tf-menu.current-space .tf-menu__item {
-  width: 300px !important;
+  width: 200px !important;
 }
 .tf-header fluent-menu {
   background: var(--tf-fill-color-dark-1);
@@ -1142,7 +1144,7 @@ fluent-dialog .tf-divider,
   border-radius: 0;
 }
 .tf-header fluent-menu fluent-menu-item.active {
-  background: color-mix(in srgb, var(--tf-layout-color) 20%, var(--tf-fill-color-dark) 80%);
+  background: color-mix(in srgb, var(--tf-layout-color) 30%, var(--tf-fill-color-dark) 70%);
 }
 .tf-header fluent-menu fluent-menu-item:hover {
   background: var(--tf-fill-color-dark-hover);

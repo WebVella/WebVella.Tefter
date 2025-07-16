@@ -4,7 +4,7 @@
 <div class="@_css">
 	<FluentAnchor Href="@Item.Href"
 				  Id="@Item.Id" AdditionalAttributes=@_attributes
-				  OnClick="@(()=> {if(!Item.ShouldNavigate) {Item.OnClick();}})" Appearance="@Appearance.Hypertext">
+				  OnClick="Item.OnClick" Appearance="@Appearance.Hypertext">
 		@if (Item.Icon is not null && !String.IsNullOrWhiteSpace(Item.Text))
 		{
 			<span slot="start">
