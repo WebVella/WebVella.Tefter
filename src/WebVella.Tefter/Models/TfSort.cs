@@ -38,6 +38,8 @@ public class TfSort
 
 public enum TfSortDirection
 {
+	[Description("Ascending")]
 	ASC = 0,
+	[Description("Descending")]
 	DESC = 1
 }

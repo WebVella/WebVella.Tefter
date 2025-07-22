@@ -75,6 +75,9 @@
 			</TucCard>
 
 			<TucSpaceDataColumnCard Title="@LOC("Primary and Joined Columns")" Options="_columnOptions" Items="_spaceDataColumns" AddColumn="_onAddColumn" RemoveColumn="_onRemoveColumn" />
+
+			<TucFilterCard Title="@LOC("Query Filters")" DataProvider="_provider" Items="_spaceData.Filters" ItemsChanged="_onFiltersChanged" />
+			<TucSortCard Title="@LOC("Default Sort")" DataProvider="_provider" Items="_spaceData.SortOrders" ItemsChanged="_onSortChanged" />
 		}
 	</div>
 </TucErrorBoundry>

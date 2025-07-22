@@ -27,11 +27,21 @@ public class TfCreateSpaceData
 public class TfUpdateSpaceData
 {
 	public Guid Id { get; set; }
-	public string Name { get; set; }
+	public string? Name { get; set; }
 	public Guid DataProviderId { get; set; }
 	public List<TfFilterBase> Filters { get; set; } = new();
 	public List<string> Columns { get; set; } = new();
 	public List<TfSort> SortOrders { get; set; } = new();
+
+	public TfUpdateSpaceData(){}
+	public TfUpdateSpaceData(TfSpaceData spaceData){
+		Id = spaceData.Id;
+		Name = spaceData.Name;
+		DataProviderId = spaceData.DataProviderId;
+		Filters = spaceData.Filters;
+		Columns = spaceData.Columns;
+		SortOrders = spaceData.SortOrders;
+	}
 }
 
 public class TfAvailableSpaceDataColumn

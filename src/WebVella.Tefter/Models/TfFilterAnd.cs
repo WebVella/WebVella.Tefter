@@ -11,7 +11,6 @@ public record TfFilterAnd : TfFilterBase
 
 	public string GetColumnName() => "AND";
 	public string GetFilterType() => "rule";
-
 	public TfFilterAnd()
 		: base(string.Empty, string.Empty)
 	{

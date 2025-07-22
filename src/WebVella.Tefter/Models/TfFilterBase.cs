@@ -16,8 +16,7 @@ public record TfFilterBase
 	[JsonPropertyName("cn")]
 	public string ColumnName { get; set; }
 	[JsonPropertyName("v")]
-	public string? Value { get; init; }
-
+	public string? Value { get; set; }
 	public TfFilterBase(
 		string columnName,
 		string? value)

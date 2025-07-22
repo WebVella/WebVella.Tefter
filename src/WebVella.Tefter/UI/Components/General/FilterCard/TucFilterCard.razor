@@ -1,0 +1,49 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+<TucCard Title="@Title">
+	<ToolbarTemplate>
+		<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+			<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
+				<FluentLabel Typo="@Typography.Body">AND</FluentLabel>
+				<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">rule</FluentLabel>
+			</FluentStack>
+			<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
+				@if (DataProvider is null)
+				{
+					<FluentBadge Appearance="Appearance.Accent">@LOC("no data provider")</FluentBadge>
+				}
+				else if (AllColumnOptions.Count == 0)
+				{
+					<FluentBadge Appearance="Appearance.Accent">@LOC("no columns")</FluentBadge>
+				}
+				else
+				{
+					<FluentSelect OptionSelected="(x => x == _selectedColumn)"
+								  @bind-SelectedOption="@_selectedColumn"
+								  TOption="string" Required="false"
+								  Items="@AllColumnOptions" Style="width:140px"
+								  Placeholder="@LOC("select...")" />
+					<FluentButton Disabled="_submitting" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
+				}
+				<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TfFilterAnd), null, null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+				<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TfFilterOr), null, null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+			</FluentStack>
+		</FluentStack>
+	</ToolbarTemplate>
+	<ChildContent>
+		@if (Items.Count == 0)
+		{
+			<div>@LOC("No filters added yet")</div>
+		}
+		@foreach (var item in Items)
+		{
+			<TucFilterManage Item="item" Disabled="_submitting"
+							SelectedProvider="DataProvider"
+							AddFilter="@((x) => AddFilter(x.Item1,x.Item2,x.Item3))"
+							AddColumnFilter="@((x) => AddColumnFilter(x.Item1,x.Item2))"
+							RemoveColumnFilter="@((x) => RemoveColumnFilter(x))"
+							UpdateColumnFilter="@((x) => UpdateColumnFilter(x))" />
+		}
+	</ChildContent>
+</TucCard>

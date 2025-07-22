@@ -139,4 +139,51 @@ public partial class TucSpaceDataDetailsContent : TfBaseComponent, IDisposable
 		}
 	}
 
+	private async Task _onFiltersChanged(List<TfFilterBase> filters)
+	{
+		_spaceData.Filters = filters;
+		await _saveFilters();
+	}
+
+	private async Task _saveFilters()
+	{
+		if (_submitting) return;
+		try
+		{
+			_submitting = true;
+			await InvokeAsync(StateHasChanged);
+			TfSpaceDataUIService.UpdateSpaceDataFilters(_spaceData.Id, _spaceData.Filters);
+			ToastService.ShowSuccess("Dataset updated!");
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_submitting = false;
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private async Task _onSortChanged(List<TfSort> sorts)
+	{
+		if (_submitting) return;
+		try
+		{
+			_submitting = true;
+			await InvokeAsync(StateHasChanged);
+			TfSpaceDataUIService.UpdateSpaceDataSorts(_spaceData.Id, sorts);
+			ToastService.ShowSuccess("Dataset updated!");
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
 }

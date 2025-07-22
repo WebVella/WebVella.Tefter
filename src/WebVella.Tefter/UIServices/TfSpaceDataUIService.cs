@@ -21,6 +21,14 @@ public partial interface ITfSpaceDataUIService
 	List<TfSpaceDataColumn> GetSpaceDataColumns(Guid spaceDataId);
 	void AddSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
 	void RemoveSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
+
+	//Filters
+	void UpdateSpaceDataFilters(Guid spaceDataId,
+		List<TfFilterBase> filters);
+
+	//Sorts
+	void UpdateSpaceDataSorts(Guid spaceDataId,
+		List<TfSort> sorts);
 }
 public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 {
@@ -100,13 +108,35 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 		=> _tfService.GetSpaceDataColumns(spaceDataId);
 
 
-	public void AddSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column){
-		_tfService.AddSpaceDataColumn(spaceDataId,column);
+	public void AddSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column)
+	{
+		_tfService.AddSpaceDataColumn(spaceDataId, column);
 		var spaceData = _tfService.GetSpaceData(spaceDataId);
 		SpaceDataUpdated?.Invoke(this, spaceData);
 	}
-	public void RemoveSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column){ 
-		_tfService.RemoveSpaceDataColumn(spaceDataId,column);
+	public void RemoveSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column)
+	{
+		_tfService.RemoveSpaceDataColumn(spaceDataId, column);
+		var spaceData = _tfService.GetSpaceData(spaceDataId);
+		SpaceDataUpdated?.Invoke(this, spaceData);
+	}
+	#endregion
+
+	#region << Filters >>
+	public void UpdateSpaceDataFilters(Guid spaceDataId,
+		List<TfFilterBase> filters)
+	{
+		_tfService.UpdateSpaceDataFilters(spaceDataId, filters);
+		var spaceData = _tfService.GetSpaceData(spaceDataId);
+		SpaceDataUpdated?.Invoke(this, spaceData);
+	}
+	#endregion
+
+	#region << Sorts >>
+	public void UpdateSpaceDataSorts(Guid spaceDataId,
+		List<TfSort> sorts)
+	{
+		_tfService.UpdateSpaceDataSorts(spaceDataId, sorts);
 		var spaceData = _tfService.GetSpaceData(spaceDataId);
 		SpaceDataUpdated?.Invoke(this, spaceData);
 	}

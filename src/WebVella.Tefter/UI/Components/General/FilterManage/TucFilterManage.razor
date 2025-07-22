@@ -1,0 +1,205 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<div class="tf-filter-manage">
+	@if (Item is TfFilterAnd || Item is TfFilterOr)
+	{
+		<TucCard Class="card-logical">
+			<ToolbarTemplate>
+				<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+					<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
+						<FluentLabel Typo="@Typography.Body">@TfFilterBase.GetColumnName(Item)</FluentLabel>
+						<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">@TfFilterBase.GetFieldType(Item)</FluentLabel>
+					</FluentStack>
+					@if (!ReadOnly)
+					{
+						<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
+							@if (SelectedProvider is null)
+							{
+								<FluentBadge Appearance="Appearance.Accent">@LOC("no data provider")</FluentBadge>
+							}
+							else if (SelectedProvider.Columns.Count == 0)
+							{
+								<FluentBadge Appearance="Appearance.Accent">@LOC("no columns")</FluentBadge>
+							}
+							else
+							{
+								<FluentSelect OptionSelected="(x => x == _selectedFilterColumn)"
+											  @bind-SelectedOption="@_selectedFilterColumn"
+											  TOption="string" Required="false"
+											  Items="@AllColumnOptions" Style="width:140px"
+											  Placeholder="@LOC("select...")" />
+								<FluentButton Disabled="@Disabled" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
+							}
+							<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((typeof(TfFilterAnd), null, Item.Id)))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+							<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((typeof(TfFilterOr), null, Item.Id)))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+							<FluentButton Disabled="@Disabled" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+										  Appearance="@Appearance.Outline" Title="@LOC("delete filter")" />
+						</FluentStack>
+					}
+				</FluentStack>
+			</ToolbarTemplate>
+			<ChildContent>
+				@if (TfFilterBase.GetChildFilters(Item).Count == 0)
+				{
+					<div>@LOC("No filters added yet")</div>
+				}
+				@foreach (var item in TfFilterBase.GetChildFilters(Item))
+				{
+					<TucFilterManage Item="item" Disabled="@Disabled"
+									SelectedProvider="SelectedProvider"
+									AddFilter="@((x) => AddFilter.InvokeAsync((x.Item1,x.Item2,x.Item3)))"
+									AddColumnFilter="@((x) => AddColumnFilter.InvokeAsync((x.Item1,x.Item2)))"
+									RemoveColumnFilter="@((x) => RemoveColumnFilter.InvokeAsync(x))"
+									UpdateColumnFilter="@((x) => UpdateColumnFilter.InvokeAsync(x))" ReadOnly="ReadOnly" />
+				}
+			</ChildContent>
+		</TucCard>
+	}
+	else
+	{
+		<TucCard Class="card-rule">
+			<ToolbarTemplate>
+				<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+					<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" VerticalAlignment="@VerticalAlignment.Center">
+						<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" Style="flex:0 0 20px">
+							@if (AllColumnOptions is not null && AllColumnOptions.Contains(Item.ColumnName))
+							{
+								<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
+							}
+							else
+							{
+								<FluentIcon Value="@TfConstants.GetIcon("ErrorCircle")" Color="@Color.Error" Title="@LOC("not found in provider")"></FluentIcon>
+							}
+						</FluentStack>
+						<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" Wrap="false" Style="flex:0 0 300px"
+									 VerticalAlignment="@VerticalAlignment.Center">
+							<FluentLabel Typo="@Typography.Body">@TfFilterBase.GetColumnName(Item)</FluentLabel>
+							<FluentLabel Typo="@Typography.Body" Style="color:var(--neutral-foreground-rest);opacity:0.5">@TfFilterBase.GetFieldType(Item)</FluentLabel>
+						</FluentStack>
+						<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" Wrap="false"
+									 Style="flex:1 1 auto"
+									 VerticalAlignment="@VerticalAlignment.Center">
+
+							@if (Item is TfFilterBoolean)
+							{
+								var context = (TfFilterBoolean)Item;
+								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
+											  SelectedOption="@context.ComparisonMethod"
+											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
+											  Disabled="@(Disabled || ReadOnly)"
+											  TOption="TfFilterBooleanComparisonMethod" Required="true"
+											  Items="@(Enum.GetValues<TfFilterBooleanComparisonMethod>())" Style="width:140px"
+											  OptionValue="@((p)=> ((int)p).ToString())"
+											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
+								@if (context.RequiresValue)
+								{
+									<FluentSelect OptionSelected="(x => x.Value == context.ValueOption.Value)"
+												  SelectedOption="@context.ValueOption"
+												  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+												  Disabled="@(Disabled || ReadOnly)"
+												  TOption="Option<string>" Required="false"
+												  OptionText="@((p)=> p.Text)"
+												  OptionValue="@((p)=> p.Value)"
+												  Items="@context.ValueOptions" Style="width:300px" />
+								}
+							}
+							else if (Item is TfFilterDateTime)
+							{
+								var context = (TfFilterDateTime)Item;
+								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
+											  SelectedOption="@context.ComparisonMethod"
+											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
+											  Disabled="@(Disabled || ReadOnly)"
+											  TOption="TfFilterDateTimeComparisonMethod" Required="true"
+											  Items="@(Enum.GetValues<TfFilterDateTimeComparisonMethod>())" Style="width:140px"
+											  OptionValue="@((p)=> ((int)p).ToString())"
+											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
+								@if (context.RequiresValue)
+								{
+									<FluentStack HorizontalGap="2">
+										<FluentTextField Value="@context.Value"
+														 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+														 Disabled="@Disabled" ReadOnly="ReadOnly"
+														 AutoComplete="off"
+														 Placeholder="@($"{TfConstants.DateTimeFormatInput}, now()... ")" Style="width:300px" />
+										<FluentButton Id="@($"tf-{context.Id}")" IconStart="@TfConstants.HelpIcon" Disabled=true />
+										<FluentTooltip Anchor="@($"tf-{context.Id}")">
+											@((MarkupString)LOC("for dynamic date use one of the following:{0}", "<br/> now(+- decimal hours),<br/> day(+- decimal days),<br/> month(+- decimal months),<br/> year(+- decimal year)"))
+										</FluentTooltip>
+									</FluentStack>
+								}
+							}
+							else if (Item is TfFilterGuid)
+							{
+								var context = (TfFilterGuid)Item;
+								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
+											  SelectedOption="@context.ComparisonMethod"
+											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
+											  Disabled="@(Disabled || ReadOnly)"
+											  TOption="TfFilterGuidComparisonMethod" Required="true"
+											  Items="@(Enum.GetValues<TfFilterGuidComparisonMethod>())" Style="width:140px"
+											  OptionValue="@((p)=> ((int)p).ToString())"
+											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
+								@if (context.RequiresValue)
+								{
+									<FluentTextField Value="@context.ValueProcessed"
+													 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+													 Disabled="@Disabled" ReadOnly="ReadOnly"
+													 AutoComplete="off"
+													 Placeholder="@LOC("enter valid GUID")" Style="width:300px" />
+								}
+							}
+							else if (Item is TfFilterNumeric)
+							{
+								var context = (TfFilterNumeric)Item;
+								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
+											  SelectedOption="@context.ComparisonMethod"
+											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
+											  Disabled="@(Disabled || ReadOnly)"
+											  TOption="TfFilterNumericComparisonMethod" Required="true"
+											  Items="@(Enum.GetValues<TfFilterNumericComparisonMethod>())" Style="width:140px"
+											  OptionValue="@((p)=> ((int)p).ToString())"
+											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
+								@if (context.RequiresValue)
+								{
+									<FluentNumberField TValue="decimal?" Value="@context.ValueAsDecimal"
+													   ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+													   Disabled="@Disabled" ReadOnly="ReadOnly"
+													   Placeholder="@LOC("enter valid decimal")" Style="width:300px" />
+								}
+							}
+							else if (Item is TfFilterText)
+							{
+								var context = (TfFilterText)Item;
+								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
+											  SelectedOption="@context.ComparisonMethod"
+											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
+											  Disabled="@(Disabled || ReadOnly)"
+											  TOption="TfFilterTextComparisonMethod" Required="true"
+											  Items="@(Enum.GetValues<TfFilterTextComparisonMethod>())" Style="width:140px"
+											  OptionValue="@((p)=> ((int)p).ToString())"
+											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
+								@if (context.RequiresValue)
+								{
+									<FluentTextField AutoComplete="off"
+													 Value="@context.Value"
+													 Disabled="@Disabled" ReadOnly="ReadOnly"
+													 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+													 Style="width:300px" Placeholder="@LOC("no value")" />
+								}
+							}
+						</FluentStack>
+					</FluentStack>
+					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
+						@if (!ReadOnly)
+						{
+							<FluentButton Disabled="@Disabled" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+										  Appearance="@Appearance.Outline" Title="@LOC("delete filter")" />
+						}
+					</FluentStack>
+				</FluentStack>
+			</ToolbarTemplate>
+		</TucCard>
+	}
+
+</div>

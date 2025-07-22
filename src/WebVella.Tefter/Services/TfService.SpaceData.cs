@@ -28,6 +28,8 @@ public partial interface ITfService
 
 	public void MoveSpaceDataDown(
 		Guid id);
+
+	//Columns
 	public List<TfAvailableSpaceDataColumn> GetSpaceDataAvailableColumns(
 		Guid spaceDataId);
 
@@ -36,6 +38,12 @@ public partial interface ITfService
 
 	void AddSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
 	void RemoveSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
+
+	//Filters
+	public void UpdateSpaceDataFilters(Guid spaceDataId,
+		List<TfFilterBase> filters);
+	public void UpdateSpaceDataSorts(Guid spaceDataId,
+		List<TfSort> sorts);
 }
 
 public partial class TfService : ITfService
@@ -428,10 +436,11 @@ public partial class TfService : ITfService
 		var result = new List<TfSpaceDataColumn>();
 		var allColumns = GetSpaceDataColumnOptions(spaceDataId);
 		var spaceDataColumns = spaceData.Columns.ToList();
-		foreach (var identity in spaceData.Identities){
+		foreach (var identity in spaceData.Identities)
+		{
 			foreach (var column in identity.Columns)
 			{
-				spaceDataColumns.Add($"{identity.DataIdentity}.{column}");				
+				spaceDataColumns.Add($"{identity.DataIdentity}.{column}");
 			}
 		}
 
@@ -654,6 +663,29 @@ public partial class TfService : ITfService
 
 	}
 
+	//Filters
+	public void UpdateSpaceDataFilters(Guid spaceDataId,
+			List<TfFilterBase> filters)
+	{
+		var spaceData = GetSpaceData(spaceDataId);
+		if (spaceData is null)
+			throw new TfException("spaceData not found");
+		var submit = new TfUpdateSpaceData(spaceData);
+		submit.Filters = filters;
+		var updatedSpaceData = UpdateSpaceData(submit);	
+	}
+
+	//Sorts
+	public void UpdateSpaceDataSorts(Guid spaceDataId,
+			List<TfSort> sorts)
+	{
+		var spaceData = GetSpaceData(spaceDataId);
+		if (spaceData is null)
+			throw new TfException("spaceData not found");
+		var submit = new TfUpdateSpaceData(spaceData);
+		submit.SortOrders = sorts;
+		var updatedSpaceData = UpdateSpaceData(submit);	
+	}
 
 	private TfSpaceData ConvertDboToModel(TfSpaceDataDbo dbo)
 	{

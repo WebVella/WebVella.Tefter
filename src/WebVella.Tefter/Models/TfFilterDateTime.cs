@@ -3,13 +3,41 @@
 public record TfFilterDateTime : TfFilterBase
 {
 	[JsonPropertyName("m")]
-	public TfFilterDateTimeComparisonMethod ComparisonMethod { get; init; }
+	public TfFilterDateTimeComparisonMethod ComparisonMethod { get; set; }
 	public string GetColumnName() => ColumnName;
 	public static string GetFilterType() => "datetime";
+
+	public bool RequiresValue
+	{
+		get
+		{
+			if (ComparisonMethod == TfFilterDateTimeComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TfFilterDateTimeComparisonMethod.HasNoValue) return false;
+			return true;
+		}
+	}
+	public string? ValueProcessed
+	{
+		get => Value?.ToString();
+	}
+
+	public void ValueStringChanged(string value)
+	{
+		if (String.IsNullOrWhiteSpace(value)) Value = null;
+		else if (FormulaUtility.GetDateFromFormulaString(value) != null)
+		{
+			Value = value;
+		}
+		else if (DateTime.TryParse(value, out DateTime outVal))
+			Value = value;
+		else
+			Value = null;
+	}
+	public TfFilterDateTime() : base(String.Empty,String.Empty) { }
 	public TfFilterDateTime(
 		string columnName,
 		TfFilterDateTimeComparisonMethod comparisonMethod,
-		string value)
+		string? value)
 		: base(columnName, value)
 	{
 		ComparisonMethod = comparisonMethod;

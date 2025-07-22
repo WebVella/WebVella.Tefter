@@ -3,14 +3,27 @@
 public record TfFilterText : TfFilterBase
 {
 	[JsonPropertyName("m")]
-	public TfFilterTextComparisonMethod ComparisonMethod { get; init; }
+	public TfFilterTextComparisonMethod ComparisonMethod { get; set; }
 	public string GetColumnName() => ColumnName;
 	public static string GetFilterType() => "text";
-
+	public bool RequiresValue
+	{
+		get
+		{
+			if (ComparisonMethod == TfFilterTextComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TfFilterTextComparisonMethod.HasNoValue) return false;
+			return true;
+		}
+	}
+	public void ValueChanged(string value)
+	{
+		Value = value;
+	}
+	public TfFilterText() : base(String.Empty,String.Empty) { }
 	public TfFilterText(
 		string columnName,
 		TfFilterTextComparisonMethod comparisonMethod,
-		string value)
+		string? value)
 		: base(columnName,  value)
 	{
 		ComparisonMethod = comparisonMethod;
