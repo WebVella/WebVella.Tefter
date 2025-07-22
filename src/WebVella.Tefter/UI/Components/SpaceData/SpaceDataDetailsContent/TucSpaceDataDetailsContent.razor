@@ -1,0 +1,80 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<TucErrorBoundry>
+	<div style="padding:var(--tf-layout-content-padding)">
+		@if (String.IsNullOrWhiteSpace(UriInitialized))
+		{
+			<TucSkeletonPageHeader />
+		}
+		else if (_spaceData is null)
+		{
+			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+		}
+		else
+		{
+			<TucPageHeader Icon="@TfConstants.SpaceDataIcon" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
+						   Area="@_space?.Name" Title="@LOC(TfConstants.SpaceDataMenuTitle)" SubTitle="@_spaceData.Name" />
+
+			<TucCard>
+				<TitleTemplate>
+					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween">
+						<h3>@LOC("Details")</h3>
+						<div>
+							<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteSpaceData">
+								@LOC("Delete")
+								<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(TfColor.Red600.GetAttribute().Value)" Slot="start" />
+							</FluentButton>
+							<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceData">
+								@LOC("Edit")
+								<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
+							</FluentButton>
+						</div>
+					</FluentStack>
+				</TitleTemplate>
+				<ChildContent>
+					<FluentGrid>
+						<FluentGridItem xs="6">
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_spaceData.Name
+											 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+
+						</FluentGridItem>
+						<FluentGridItem xs="6">
+							<FluentInputLabel Label="@LOC("Primary Data provider")" />
+							@if (_provider is not null)
+							{
+								<table class="tf-grid">
+									<tbody class="tf-grid-tbody">
+										<tr @key=_provider.Id class="tf-grid-tr">
+											<td class="tf-grid-td">
+												<div>@_provider.Code</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@_provider.Name</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@_provider.ProviderType.AddonName</div>
+											</td>
+											<td class="tf-grid-td" style="width:80px;">
+												<div>
+													<FluentAnchor Appearance="@Appearance.Outline" title="@LOC("open provider")"
+																  Href="@(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, _provider.Id))"
+																  IconStart="@TfConstants.ViewIcon" Target="_blank">@LOC("view")</FluentAnchor>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							}
+							else
+							{
+								<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Error">@LOC("The data provider no longer exists")</FluentMessageBar>
+							}
+						</FluentGridItem>
+					</FluentGrid>
+				</ChildContent>
+			</TucCard>
+
+			<TucSpaceDataColumnCard Title="@LOC("Primary and Joined Columns")" Options="_columnOptions" Items="_spaceDataColumns" AddColumn="_onAddColumn" RemoveColumn="_onRemoveColumn" />
+		}
+	</div>
+</TucErrorBoundry>

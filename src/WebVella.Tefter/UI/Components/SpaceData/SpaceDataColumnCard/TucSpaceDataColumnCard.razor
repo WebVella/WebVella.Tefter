@@ -1,0 +1,98 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+<TucCard Title="@Title">
+	<ToolbarTemplate>
+		@if (_columnOptions.Count > 0)
+		{
+			<FluentSelect OptionSelected="(x => x == _selectedColumn)"
+						  @bind-SelectedOption="@_selectedColumn"
+						  Disabled="_submitting"
+						  TOption="TfSpaceDataColumn" Required="false"
+						  OptionText="@(p=> p.ColumnName)"
+						  Items="@_columnOptions" Style="width:300px"
+						  Placeholder="@LOC("select provider column")" />
+		}
+		else
+		{
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:300px" Disabled="true" />
+		}
+		<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+	</ToolbarTemplate>
+	<ChildContent>
+		@if (Items.Count == 0)
+		{
+			@if (NoItemsTemplate is not null)
+			{
+				@NoItemsTemplate
+			}
+			else
+			{
+				<span>@LOC(NoItemsMessage)</span>
+			}
+		}
+		else
+		{
+			<table class="tf-grid">
+				<tbody class="tf-grid-tbody">
+					@foreach (var context in Items)
+					{
+						<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+							<td class="tf-grid-td" style="width:120px;min-width:120px;vertical-align:middle">
+								<div>
+									@if (context.SourceType == TfAuxDataSourceType.PrimatyDataProvider)
+									{
+										<FluentBadge Fill="somevalue" Color="white" BackgroundColor="var(--tf-green-700)" Style="width:100%">primary column</FluentBadge>
+									}
+									else if (context.SourceType == TfAuxDataSourceType.SharedColumn)
+									{
+										<FluentBadge Fill="somevalue" Color="white" BackgroundColor="var(--tf-green-700)" Style="width:100%">shared column</FluentBadge>
+									}
+									else if (context.SourceType == TfAuxDataSourceType.AuxDataProvider)
+									{
+										<FluentBadge Fill="somevalue" Color="white" BackgroundColor="var(--tf-orange-700)" Style="width:100%">joined provider</FluentBadge>
+									}
+									else
+									{
+										<FluentBadge Fill="somevalue" Color="white" BackgroundColor="var(--tf-red-700)" Style="width:100%">not found</FluentBadge>
+									}
+								</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>@context.ColumnName</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>
+									@context.DbType.ToDescriptionString()
+								</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>
+									@if (!String.IsNullOrWhiteSpace(context.SourceName))
+									{
+										<div>
+											@if (!String.IsNullOrWhiteSpace(context.SourceCode))
+											{
+												<span>[@context.SourceCode] </span>
+											}
+											<span>@context.SourceName</span>
+										</div>
+									}
+									<div class="td-description">@context.SourceColumnName</div>
+								</div>
+							</td>
+							<td class="tf-grid-td" style="width:1%;">
+								<div>
+									<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteColumn(context))" Title="@LOC("Delete column")"
+												  Disabled="_submitting">
+										<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+									</FluentButton>
+								</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</ChildContent>
+</TucCard>

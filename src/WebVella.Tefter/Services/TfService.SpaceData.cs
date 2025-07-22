@@ -8,7 +8,8 @@ public partial interface ITfService
 	public List<TfSpaceData> GetAllSpaceData(string? search = null);
 
 	public List<TfSpaceData> GetSpaceDataList(
-		Guid spaceId);
+		Guid spaceId,
+		string? search = null);
 
 	public TfSpaceData GetSpaceData(
 		Guid id);
@@ -29,6 +30,12 @@ public partial interface ITfService
 		Guid id);
 	public List<TfAvailableSpaceDataColumn> GetSpaceDataAvailableColumns(
 		Guid spaceDataId);
+
+	List<TfSpaceDataColumn> GetSpaceDataColumns(Guid spaceDataId);
+	List<TfSpaceDataColumn> GetSpaceDataColumnOptions(Guid spaceDataId);
+
+	void AddSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
+	void RemoveSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
 }
 
 public partial class TfService : ITfService
@@ -40,7 +47,7 @@ public partial class TfService : ITfService
 			var dbos = _dboManager.GetList<TfSpaceDataDbo>();
 
 			var spaceDatas = dbos.Select(x => ConvertDboToModel(x)).ToList();
-			foreach(var spaceData in spaceDatas)
+			foreach (var spaceData in spaceDatas)
 			{
 				spaceData.Identities = new ReadOnlyCollection<TfSpaceDataIdentity>(
 					GetSpaceDataIdentities(spaceData.Id).ToList());
@@ -61,7 +68,7 @@ public partial class TfService : ITfService
 	}
 
 	public List<TfSpaceData> GetSpaceDataList(
-		Guid spaceId)
+		Guid spaceId, string? search = null)
 	{
 		try
 		{
@@ -79,7 +86,12 @@ public partial class TfService : ITfService
 				spaceData.Identities = new ReadOnlyCollection<TfSpaceDataIdentity>(
 					GetSpaceDataIdentities(spaceData.Id).ToList());
 			}
-			return spaceDatas;
+			if (String.IsNullOrWhiteSpace(search))
+				return spaceDatas;
+			search = search.Trim().ToLowerInvariant();
+			return spaceDatas.Where(x =>
+				x.Name.ToLowerInvariant().Contains(search)
+				).ToList();
 		}
 		catch (Exception ex)
 		{
@@ -93,8 +105,8 @@ public partial class TfService : ITfService
 		try
 		{
 			var dbo = _dboManager.Get<TfSpaceDataDbo>(id);
-			if(dbo == null)
-				return null;	
+			if (dbo == null)
+				return null;
 
 			var spaceData = ConvertDboToModel(dbo);
 			spaceData.Identities = new ReadOnlyCollection<TfSpaceDataIdentity>(
@@ -187,7 +199,7 @@ public partial class TfService : ITfService
 					spaceData.Filters = createSpaceData.Filters ?? new List<TfFilterBase>();
 					spaceData.Columns = createSpaceData.Columns ?? new List<string>();
 					spaceData.SortOrders = createSpaceData.SortOrders ?? new List<TfSort>();
-					
+
 					if (spaceData.Id == Guid.Empty)
 						spaceData.Id = Guid.NewGuid();
 				}
@@ -295,7 +307,7 @@ public partial class TfService : ITfService
 
 				//delete identities
 				var spaceDataIdentities = GetSpaceDataIdentities(spaceData.Id);
-				foreach(var identity in spaceDataIdentities)
+				foreach (var identity in spaceDataIdentities)
 				{
 					var successDeleteIdentity = _dboManager.Delete<TfSpaceDataIdentityDbo>(identity.Id);
 					if (!successDeleteIdentity)
@@ -407,6 +419,241 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 	}
+
+
+	public List<TfSpaceDataColumn> GetSpaceDataColumns(Guid spaceDataId)
+	{
+		var spaceData = GetSpaceData(spaceDataId);
+		if (spaceData is null) throw new Exception("Space data not found");
+		var result = new List<TfSpaceDataColumn>();
+		var allColumns = GetSpaceDataColumnOptions(spaceDataId);
+		var spaceDataColumns = spaceData.Columns.ToList();
+		foreach (var identity in spaceData.Identities){
+			foreach (var column in identity.Columns)
+			{
+				spaceDataColumns.Add($"{identity.DataIdentity}.{column}");				
+			}
+		}
+
+		foreach (var item in spaceDataColumns)
+		{
+			var column = allColumns.FirstOrDefault(x => x.ColumnName == item);
+			if (column is null)
+			{
+				result.Add(new TfSpaceDataColumn
+				{
+					ColumnName = item,
+					DataIdentity = null,
+					DbType = TfDatabaseColumnType.Text,
+					SourceCode = null,
+					SourceColumnName = null,
+					SourceName = null,
+					SourceType = TfAuxDataSourceType.NotFound
+				});
+			}
+			else
+			{
+				result.Add(column);
+			}
+		}
+
+		return result;
+	}
+
+	public List<TfSpaceDataColumn> GetSpaceDataColumnOptions(Guid spaceDataId)
+	{
+		var spaceData = GetSpaceData(spaceDataId);
+		if (spaceData is null) throw new Exception("Space data not found");
+		var provider = GetDataProvider(spaceData.DataProviderId);
+		var auxDataSchema = GetDataProviderAuxDataSchema(provider.Id);
+
+		var result = new List<TfSpaceDataColumn>();
+
+		foreach (var providerColumn in provider.Columns)
+		{
+			var item = new TfSpaceDataColumn
+			{
+				DataIdentity = null,
+				ColumnName = providerColumn.DbName,
+				SourceColumnName = providerColumn.DbName,
+				SourceName = provider.Name,
+				SourceCode = $"dp{provider.Index}",
+				SourceType = TfAuxDataSourceType.PrimatyDataProvider,
+				DbType = providerColumn.DbType
+			};
+			result.Add(item);
+		}
+
+		foreach (var dataIdentity in auxDataSchema.DataIdentities)
+		{
+			foreach (var schemaColumn in dataIdentity.Columns)
+			{
+				var item = new TfSpaceDataColumn
+				{
+					DataIdentity = schemaColumn.DataIdentity,
+					ColumnName = schemaColumn.DbName,
+				};
+				if (schemaColumn.SharedColumn is not null)
+				{
+					item.SourceColumnName = schemaColumn.SharedColumn.DbName;
+					item.SourceName = schemaColumn.SharedColumn.DbName;
+					item.SourceCode = null;
+					item.SourceType = TfAuxDataSourceType.SharedColumn;
+					item.DbType = schemaColumn.SharedColumn.DbType;
+				}
+				else if (schemaColumn.DataProvider is not null && schemaColumn.DataProviderColumn is not null)
+				{
+					item.SourceColumnName = schemaColumn.DataProviderColumn.DbName;
+					item.SourceName = schemaColumn.DataProvider.Name;
+					item.SourceCode = $"dp{schemaColumn.DataProvider.Index}";
+					item.SourceType = TfAuxDataSourceType.AuxDataProvider;
+					item.DbType = schemaColumn.DataProviderColumn.DbType;
+				}
+
+				result.Add(item);
+
+			}
+		}
+
+		return result;
+	}
+
+	public void AddSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column)
+	{
+		if (column is null)
+			new ArgumentException(nameof(column), "column is required");
+
+		if (String.IsNullOrWhiteSpace(column!.ColumnName))
+			new ArgumentException(nameof(column), "column name is required");
+
+		var spaceData = GetSpaceData(spaceDataId);
+		if (spaceData is null)
+			new TfException("spaceData not found");
+
+		if (column!.SourceType == TfAuxDataSourceType.PrimatyDataProvider)
+		{
+			if (!spaceData!.Columns.Any(x => x.ToLowerInvariant() == column!.ColumnName!.ToLowerInvariant()))
+			{
+				var submit = new TfUpdateSpaceData
+				{
+					Id = spaceData.Id,
+					Columns = spaceData.Columns,
+					DataProviderId = spaceData.DataProviderId,
+					Filters = spaceData.Filters,
+					Name = spaceData.Name,
+					SortOrders = spaceData.SortOrders,
+				};
+				submit.Columns.Add(column.ColumnName!);
+				var updatedSpaceData = UpdateSpaceData(submit);
+			}
+		}
+		else if (column.SourceType == TfAuxDataSourceType.AuxDataProvider
+		|| column.SourceType == TfAuxDataSourceType.SharedColumn)
+		{
+			if (column.DataIdentity is null)
+				throw new Exception("column Data Identity is required");
+
+			if (column.SourceColumnName is null)
+				throw new Exception("column SourceColumnName is required");
+
+			var dataIdentity = spaceData!.Identities.FirstOrDefault(x => x.DataIdentity == column!.DataIdentity!.DataIdentity);
+			if (dataIdentity is null)
+			{
+				CreateSpaceDataIdentity(new TfSpaceDataIdentity
+				{
+					Id = Guid.NewGuid(),
+					SpaceDataId = spaceDataId,
+					Columns = new List<string> { column!.SourceColumnName },
+					DataIdentity = column!.DataIdentity.DataIdentity,
+				});
+			}
+			else
+			{
+				if (dataIdentity.Columns is null)
+					dataIdentity.Columns = new();
+
+				if (!dataIdentity.Columns.Any(x => x == column.SourceColumnName))
+				{
+					dataIdentity.Columns.Add(column.SourceColumnName);
+				}
+				UpdateSpaceDataIdentity(new TfSpaceDataIdentity
+				{
+					Id = dataIdentity.Id,
+					SpaceDataId = dataIdentity.SpaceDataId,
+					Columns = dataIdentity.Columns,
+					DataIdentity = dataIdentity.DataIdentity,
+				});
+			}
+		}
+
+	}
+	public void RemoveSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column)
+	{
+		if (column is null)
+			new ArgumentException(nameof(column), "column is required");
+
+		if (String.IsNullOrWhiteSpace(column!.ColumnName))
+			new ArgumentException(nameof(column), "column name is required");
+
+		var spaceData = GetSpaceData(spaceDataId);
+		if (spaceData is null)
+			new TfException("spaceData not found");
+
+		if (column.SourceType == TfAuxDataSourceType.PrimatyDataProvider)
+		{
+			if (spaceData!.Columns.Any(x => x.ToLowerInvariant() == column!.ColumnName!.ToLowerInvariant()))
+			{
+				var submit = new TfUpdateSpaceData
+				{
+					Id = spaceData.Id,
+					Columns = spaceData.Columns,
+					DataProviderId = spaceData.DataProviderId,
+					Filters = spaceData.Filters,
+					Name = spaceData.Name,
+					SortOrders = spaceData.SortOrders,
+				};
+				submit.Columns = spaceData.Columns.Where(x => x.ToLowerInvariant() != column!.ColumnName!.ToLowerInvariant()).ToList();
+				var updatedSpaceData = UpdateSpaceData(submit);
+			}
+		}
+		else if (column.SourceType == TfAuxDataSourceType.AuxDataProvider
+		|| column.SourceType == TfAuxDataSourceType.SharedColumn)
+		{
+			if (column.DataIdentity is null)
+				throw new Exception("column Data Identity is required");
+
+			if (column.SourceColumnName is null)
+				throw new Exception("column SourceColumnName is required");
+
+			var dataIdentity = spaceData!.Identities.FirstOrDefault(x => x.DataIdentity == column!.DataIdentity!.DataIdentity);
+			if (dataIdentity is not null)
+			{
+				if (dataIdentity.Columns is null)
+					dataIdentity.Columns = new();
+
+				if (dataIdentity.Columns.Any(x => x == column.SourceColumnName))
+				{
+					dataIdentity.Columns.Remove(column.SourceColumnName);
+				}
+				if (dataIdentity.Columns.Count > 0)
+				{
+					UpdateSpaceDataIdentity(new TfSpaceDataIdentity
+					{
+						Id = dataIdentity.Id,
+						SpaceDataId = dataIdentity.SpaceDataId,
+						Columns = dataIdentity.Columns,
+						DataIdentity = dataIdentity.DataIdentity,
+					});
+				}
+				else
+				{
+					DeleteSpaceDataIdentity(dataIdentity.Id);
+				}
+			}
+		}
+
+	}
+
 
 	private TfSpaceData ConvertDboToModel(TfSpaceDataDbo dbo)
 	{

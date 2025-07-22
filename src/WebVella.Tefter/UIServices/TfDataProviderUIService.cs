@@ -44,6 +44,7 @@ public partial interface ITfDataProviderUIService
 	void DeleteAllProviderRows(Guid dataProviderId);
 
 	TfDataTable QueryDataProvider(Guid providerId, string search = null, int? page = null, int? pageSize = null);
+
 }
 public partial class TfDataProviderUIService : ITfDataProviderUIService
 {
@@ -197,5 +198,6 @@ public partial class TfDataProviderUIService : ITfDataProviderUIService
 
 	public TfDataTable QueryDataProvider(Guid providerId, string search = null, int? page = null, int? pageSize = null)
 	=> _tfService.QueryDataProvider(providerId, search, page, pageSize);
+
 	#endregion
 }

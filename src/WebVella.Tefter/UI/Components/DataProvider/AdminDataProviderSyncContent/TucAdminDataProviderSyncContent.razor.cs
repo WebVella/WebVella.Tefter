@@ -57,7 +57,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 		}
 		finally
 		{
-			UriInitialized = navState.Uri;
+			UriInitialized = _navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

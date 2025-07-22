@@ -234,9 +234,29 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.SpaceDataId);
 			result = result with { SpaceDataId = outGuid };
+			result = result.Front_Space_SpaceId_SpaceData_SpaceDataId_Aux_NodesProcess();
 			result = result.Front_Space_SpaceId_SpaceData_SpaceDataId_Views_NodesProcess();
 			result = result.Front_Space_SpaceId_SpaceData_SpaceDataId_Data_NodesProcess();
 
+		}
+		return result;
+	}
+
+	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_Aux_NodesProcess(this TfNavigationState result)
+	{
+		if (result.RouteNodes.Count < 4
+			|| result.RouteNodes[0] != RouteDataNode.Space
+			|| result.RouteNodes[1] != RouteDataNode.SpaceId
+			|| result.RouteNodes[2] != RouteDataNode.SpaceData
+			|| result.RouteNodes[3] != RouteDataNode.SpaceDataId)
+			return result;
+
+		if (result.NodesDict.Count < 5)
+			return result;
+
+		if (result.NodesDict[4] == TfConstants.RouteNameAux)
+		{
+			result = result.AddRouteNodes(RouteDataNode.Aux);
 		}
 		return result;
 	}

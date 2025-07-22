@@ -25,6 +25,7 @@ public partial class TfConstants
 	public static string HomeMenuTitle = "Home";
 	public static string AdminMenuTitle = "Administration";
 	public static string PagesMenuTitle = "Application Pages";
+	public static string SpaceDataMenuTitle = "Space data";
 
 	public static Icon BookmarkONIcon = GetIcon("Bookmark", variant: IconVariant.Filled) ?? ErrorIcon!;
 	public static Icon BookmarkOFFIcon = GetIcon("Bookmark") ?? ErrorIcon!;

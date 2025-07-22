@@ -596,6 +596,7 @@ public partial class TfService : ITfService
 			{
 				resultIdentitySchema.Columns.Add(new TfDataProviderAuxDataSchemaColumn{ 
 					DbName = column.DbName,
+					DataIdentity = resultIdentity,
 					SharedColumn = column,
 					DataProvider = null,
 					DataProviderColumn = null
@@ -608,6 +609,7 @@ public partial class TfService : ITfService
 				{
 					resultIdentitySchema.Columns.Add(new TfDataProviderAuxDataSchemaColumn{ 
 						DbName = $"{identity.DataIdentity}.{providerColumn.DbName}",
+						DataIdentity = resultIdentity,
 						SharedColumn = null,
 						DataProvider = identityProvider,
 						DataProviderColumn = providerColumn

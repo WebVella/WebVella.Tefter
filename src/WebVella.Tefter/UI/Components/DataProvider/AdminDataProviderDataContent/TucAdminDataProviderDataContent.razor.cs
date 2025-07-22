@@ -71,7 +71,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		finally
 		{
 			_isDataLoading = false;
-			UriInitialized = navState.Uri;
+			UriInitialized = _navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

@@ -11,10 +11,16 @@ public partial interface ITfSpaceDataUIService
 	List<TfSpaceData> GetAllSpaceData(string? search = null);
 	List<TfSpaceData> GetAllSpaceData(Guid spaceId);
 	TfSpaceData GetSpaceData(Guid spaceDataId);
-	List<TfSpaceData> GetSpaceDataList(Guid spaceId);
+	List<TfSpaceData> GetSpaceDataList(Guid spaceId, string? search = null);
 	TfSpaceData CreateSpaceData(TfSpaceData item);
 	TfSpaceData UpdateSpaceData(TfSpaceData item);
 	void DeleteSpaceData(Guid itemId);
+
+	//Columns
+	List<TfSpaceDataColumn> GetSpaceDataColumnOptions(Guid spaceDataId);
+	List<TfSpaceDataColumn> GetSpaceDataColumns(Guid spaceDataId);
+	void AddSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
+	void RemoveSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
 }
 public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 {
@@ -44,7 +50,7 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 	public List<TfSpaceData> GetAllSpaceData(Guid spaceId)
 		=> _tfService.GetSpaceDataList(spaceId);
 	public TfSpaceData GetSpaceData(Guid itemId) => _tfService.GetSpaceData(itemId);
-	public List<TfSpaceData> GetSpaceDataList(Guid spaceId) => _tfService.GetSpaceDataList(spaceId);
+	public List<TfSpaceData> GetSpaceDataList(Guid spaceId, string? search = null) => _tfService.GetSpaceDataList(spaceId, search);
 	public TfSpaceData CreateSpaceData(TfSpaceData submit)
 	{
 		var form = new TfCreateSpaceData
@@ -81,6 +87,28 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 		var spaceData = _tfService.GetSpaceData(itemId);
 		_tfService.DeleteSpaceData(itemId);
 		SpaceDataDeleted?.Invoke(this, spaceData);
+	}
+
+	#endregion
+
+	#region << Columns >>
+
+	public List<TfSpaceDataColumn> GetSpaceDataColumnOptions(Guid spaceDataId)
+		=> _tfService.GetSpaceDataColumnOptions(spaceDataId);
+
+	public List<TfSpaceDataColumn> GetSpaceDataColumns(Guid spaceDataId)
+		=> _tfService.GetSpaceDataColumns(spaceDataId);
+
+
+	public void AddSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column){
+		_tfService.AddSpaceDataColumn(spaceDataId,column);
+		var spaceData = _tfService.GetSpaceData(spaceDataId);
+		SpaceDataUpdated?.Invoke(this, spaceData);
+	}
+	public void RemoveSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column){ 
+		_tfService.RemoveSpaceDataColumn(spaceDataId,column);
+		var spaceData = _tfService.GetSpaceData(spaceDataId);
+		SpaceDataUpdated?.Invoke(this, spaceData);
 	}
 	#endregion
 }
