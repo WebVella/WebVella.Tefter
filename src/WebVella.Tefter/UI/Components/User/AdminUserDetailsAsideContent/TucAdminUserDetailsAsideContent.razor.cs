@@ -53,8 +53,6 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 			{
 				_items.Add(new TfMenuItem
 				{
-					IconColor = user.Settings.ThemeColor,
-					Abbriviation = TfConverters.GetUserInitials(user),
 					Url = string.Format(TfConstants.AdminUserDetailsPageUrl, user.Id),
 					Description = user.Email,
 					Text = TfConverters.StringOverflow(user.Names, _stringLimit),

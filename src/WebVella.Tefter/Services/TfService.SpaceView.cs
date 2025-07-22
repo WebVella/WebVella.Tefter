@@ -4,7 +4,7 @@ namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
-	public List<TfSpaceView> GetAllSpaceViews();
+	public List<TfSpaceView> GetAllSpaceViews(string? search = null);
 
 	public List<TfSpaceView> GetSpaceViewsList(
 		Guid spaceId);
@@ -42,12 +42,18 @@ public partial interface ITfService
 
 public partial class TfService : ITfService
 {
-	public List<TfSpaceView> GetAllSpaceViews()
+	public List<TfSpaceView> GetAllSpaceViews(string? search = null)
 	{
 		try
 		{
-			var spaceViews = _dboManager.GetList<TfSpaceViewDbo>();
-			return spaceViews.Select(x => ConvertDboToModel(x)).ToList();
+			var spaceViewsDbo = _dboManager.GetList<TfSpaceViewDbo>();
+			var allSpaceViews = spaceViewsDbo.Select(x => ConvertDboToModel(x)).ToList();
+			if (String.IsNullOrWhiteSpace(search))
+				return allSpaceViews;
+			search = search.Trim().ToLowerInvariant();
+			return allSpaceViews.Where(x =>
+				x.Name.ToLowerInvariant().Contains(search)
+				).ToList();
 		}
 		catch (Exception ex)
 		{

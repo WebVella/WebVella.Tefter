@@ -8,6 +8,8 @@ public partial interface ITfSpaceDataUIService
 	event EventHandler<TfSpaceData> SpaceDataDeleted;
 
 	//Space Data
+	List<TfSpaceData> GetAllSpaceData(string? search = null);
+	List<TfSpaceData> GetAllSpaceData(Guid spaceId);
 	TfSpaceData GetSpaceData(Guid spaceDataId);
 	List<TfSpaceData> GetSpaceDataList(Guid spaceId);
 	TfSpaceData CreateSpaceData(TfSpaceData item);
@@ -37,6 +39,10 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 	#endregion
 
 	#region << Space Data>>
+	public List<TfSpaceData> GetAllSpaceData(string? search = null)
+		=> _tfService.GetAllSpaceData(search);
+	public List<TfSpaceData> GetAllSpaceData(Guid spaceId)
+		=> _tfService.GetSpaceDataList(spaceId);
 	public TfSpaceData GetSpaceData(Guid itemId) => _tfService.GetSpaceData(itemId);
 	public List<TfSpaceData> GetSpaceDataList(Guid spaceId) => _tfService.GetSpaceDataList(spaceId);
 	public TfSpaceData CreateSpaceData(TfSpaceData submit)

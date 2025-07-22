@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public class TfSpacePage
+public record TfSpacePage
 {
 	public Guid Id { get; set; }
 	public Guid? ParentId { get; set; } = null;
@@ -9,11 +9,11 @@ public class TfSpacePage
 	public string Name { get; set; }
 	public string FluentIconName { get; set; } = TfConstants.PageIconString;
 	public short? Position { get; set; }
-	public Guid? ComponentId { get; init; }
+	public Guid? ComponentId { get; set; }
 	public Type ComponentType { get; internal set; }
 	public string ComponentOptionsJson { get; set; } = "{}";
 	public List<TfSpacePage> ChildPages { get; set; } = new();
-	public TfSpacePage ParentPage { get; set; } = null;
+	public TfSpacePage? ParentPage { get; set; } = null;
 
 	internal List<TfSpacePage> GetChildPagesPlainList()
 	{

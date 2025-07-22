@@ -4,7 +4,7 @@ public partial class TucSelectIcon : TfBaseComponent
 	[Parameter] public string? Value { get; set; }
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
 	[Parameter] public string? Placeholder { get; set; }
-	[Parameter] public bool Required { get; set; }
+	[Parameter] public bool Required { get; set; } = false;
 	private bool _isReadonly { get => !ValueChanged.HasDelegate; }
 
 	private string _elementId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());

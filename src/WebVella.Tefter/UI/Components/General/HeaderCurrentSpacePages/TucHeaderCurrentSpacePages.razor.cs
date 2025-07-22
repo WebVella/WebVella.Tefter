@@ -3,12 +3,16 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
+	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	private List<TfMenuItem> _menu = new();
 	private bool _isLoading = true;
 
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfSpaceUIService.SpaceCreated -= On_SpaceChange;
+		TfSpaceUIService.SpaceUpdated -= On_SpaceChange;
+		TfSpaceUIService.SpaceDeleted -= On_SpaceChange;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -16,6 +20,9 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 		await base.OnInitializedAsync();
 		await _init();
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfSpaceUIService.SpaceCreated += On_SpaceChange;
+		TfSpaceUIService.SpaceUpdated += On_SpaceChange;
+		TfSpaceUIService.SpaceDeleted += On_SpaceChange;
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -23,6 +30,12 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 		if (UriInitialized != args.Uri)
 			await _init(args);
 	}
+
+	private async void On_SpaceChange(object? caller, TfSpace args)
+	{
+		await _init();
+	}
+
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)

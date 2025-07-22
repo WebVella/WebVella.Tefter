@@ -50,12 +50,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 
 		using (await _asyncLock.LockAsync())
 		{
-			if (_navMenu.Uri == navigator.Uri)
-			{
-				return _navMenu;
-			}
-			if (_navState.Uri != navigator.Uri)
-				_navState = navigator.GetRouteState();
+			_navState = navigator.GetRouteState();
 			var navMenu = new TfNavigationMenu();
 			navMenu.Uri = navigator.Uri;
 			if (_navState.RouteNodes[0] == RouteDataNode.Admin)

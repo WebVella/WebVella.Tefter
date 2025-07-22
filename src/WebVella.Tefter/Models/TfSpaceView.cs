@@ -96,9 +96,13 @@ public class TfSpaceViewPreset
 
 public enum TfSpaceViewType
 {
+	[Description("Datagrid")]
 	DataGrid = 0,
+	[Description("Form")]
 	Form = 1,
+	[Description("Chart")]
 	Chart = 2,
+	[Description("Dashboard")]
 	Dashboard = 3
 }
 

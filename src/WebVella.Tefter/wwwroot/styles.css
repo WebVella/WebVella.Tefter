@@ -478,6 +478,9 @@ fluent-button::part(start) {
 fluent-button::part(end) {
   margin-inline-start: 0.25rem;
 }
+fluent-button.outline svg {
+  fill: var(--accent-fill-rest) !important;
+}
 fluent-skeleton + fluent-skeleton {
   margin-top: 5px;
 }
@@ -563,6 +566,9 @@ a:hover {
   flex: 0 0 auto;
   flex-wrap: nowrap;
   padding-left: 1rem;
+  display: grid;
+  grid-gap: 10px;
+  grid-auto-flow: column;
 }
 .tf-card__title h3 {
   margin-bottom: 0;
@@ -1468,6 +1474,29 @@ fluent-dialog .tf-divider,
   margin-left: 5px !important;
   width: 1rem !important;
 }
+.tf-select-menu {
+  display: flex;
+  flex-flow: column;
+  overflow: hidden !important;
+  border-radius: calc(var(--layer-corner-radius) * 1px);
+  box-shadow: var(--elevation-shadow-flyout);
+  padding: calc((var(--design-unit) - var(--stroke-width)) * 1px) 0;
+  border: calc(var(--stroke-width) * 1px) solid transparent;
+}
+.tf-select-menu__header {
+  flex: 0 0 auto;
+  padding: 10px;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+}
+.tf-select-menu__body {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  flex: 1 1 auto;
+  max-height: 300px;
+  overflow-y: auto;
+}
 .tf-sidetoolbar {
   display: flex;
 }
@@ -1507,8 +1536,19 @@ fluent-dialog .tf-divider,
 .tf-sidetoolbar__search .search {
   width: 100%;
 }
+.tf-sidetoolbar__title {
+  flex: 1 1 auto;
+  padding-right: 5px;
+  font-size: var(--tf-font-size-md);
+  font-weight: var(--tf-font-weight-lg);
+  display: flex;
+  align-items: center;
+}
 .tf-sidetoolbar__actions {
   flex: 0 0 auto;
+}
+.tf-sidetoolbar .red-btn {
+  color: var(--tf-red-500);
 }
 .tf-tabnav.fluent-nav-menu {
   display: flex;

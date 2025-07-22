@@ -1,28 +1,21 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
+public partial class TucSpaceManageAsideToolbar : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private TfSpace _space = default!;
 	private TfNavigationState _navState = default!;
-	private string? _menu = null;
-	public bool _submitting = false;
+
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfSpaceUIService.SpaceCreated -= On_SpaceChange;
-		TfSpaceUIService.SpaceUpdated -= On_SpaceChange;
-		TfSpaceUIService.SpaceDeleted -= On_SpaceChange;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfSpaceUIService.SpaceCreated += On_SpaceChange;
-		TfSpaceUIService.SpaceUpdated += On_SpaceChange;
-		TfSpaceUIService.SpaceDeleted += On_SpaceChange;
 	}
 
 
@@ -30,11 +23,6 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 	{
 		if (UriInitialized != args.Uri)
 			await _init(navState: args);
-	}
-
-	private async void On_SpaceChange(object? caller, TfSpace args)
-	{
-		await _init();
 	}
 
 	private async Task _init(TfNavigationState? navState = null, TfSpace? role = null)
@@ -48,12 +36,6 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 		{
 			if (_navState.SpaceId is null) return;
 			_space = TfSpaceUIService.GetSpace(_navState.SpaceId.Value);
-			if (_space is null) return;
-
-			_menu = null;
-			if(_navState.NodesDict.Keys.Count > 3){ 
-				_menu = _navState.NodesDict[3];
-			}
 		}
 		finally
 		{

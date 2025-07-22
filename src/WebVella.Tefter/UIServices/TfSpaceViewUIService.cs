@@ -8,6 +8,8 @@ public partial interface ITfSpaceViewUIService
 	event EventHandler<TfSpaceView> SpaceViewDeleted;
 
 	//Space View
+	List<TfSpaceView> GetAllSpaceViews(string? search = null);
+	List<TfSpaceView> GetAllSpaceViews(Guid spaceId);
 	TfSpaceView GetSpaceView(Guid itemId);
 	TfSpaceView CreateSpaceView(TfCreateSpaceViewExtended item);
 	TfSpaceView UpdateSpaceView(TfCreateSpaceViewExtended item);
@@ -36,13 +38,16 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 	#endregion
 
 	#region << Space View>>
+	public List<TfSpaceView> GetAllSpaceViews(string? search = null)
+		=> _tfService.GetAllSpaceViews(search);
+	public List<TfSpaceView> GetAllSpaceViews(Guid spaceId)
+		=> _tfService.GetSpaceViewsList(spaceId);
 	public TfSpaceView GetSpaceView(Guid itemId) => _tfService.GetSpaceView(itemId);
 	public TfSpaceView CreateSpaceView(TfCreateSpaceViewExtended submit)
 	{
-		//var spaceView = _tfService.CreateSpaceView(form);
-		//SpaceViewCreated?.Invoke(this, spaceView);
-		//return spaceView;
-		return null;
+		var spaceView = _tfService.CreateSpaceView(submit, submit.DataSetType == TfSpaceViewDataSetType.New);
+		SpaceViewCreated?.Invoke(this, spaceView);
+		return spaceView;
 	}
 	public TfSpaceView UpdateSpaceView(TfCreateSpaceViewExtended submit)
 	{

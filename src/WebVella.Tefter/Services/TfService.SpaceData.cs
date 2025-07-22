@@ -5,7 +5,7 @@ namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
-	public List<TfSpaceData> GetAllSpaceData();
+	public List<TfSpaceData> GetAllSpaceData(string? search = null);
 
 	public List<TfSpaceData> GetSpaceDataList(
 		Guid spaceId);
@@ -33,7 +33,7 @@ public partial interface ITfService
 
 public partial class TfService : ITfService
 {
-	public List<TfSpaceData> GetAllSpaceData()
+	public List<TfSpaceData> GetAllSpaceData(string? search = null)
 	{
 		try
 		{
@@ -45,7 +45,14 @@ public partial class TfService : ITfService
 				spaceData.Identities = new ReadOnlyCollection<TfSpaceDataIdentity>(
 					GetSpaceDataIdentities(spaceData.Id).ToList());
 			}
-			return spaceDatas;
+
+			if (String.IsNullOrWhiteSpace(search))
+				return spaceDatas;
+			search = search.Trim().ToLowerInvariant();
+			return spaceDatas.Where(x =>
+				x.Name.ToLowerInvariant().Contains(search)
+				).ToList();
+
 		}
 		catch (Exception ex)
 		{

@@ -16,16 +16,20 @@
 		margin-bottom: 0;
 		font-size: var(--tf-font-size-md);
 		font-weight: var(--tf-font-weight-base);
-		display:flex;
-		align-items:center;
+		display: flex;
+		align-items: center;
 
-		&__left{
-			flex:1 1 auto;
+		&__left {
+			flex: 1 1 auto;
 		}
-		&__right{
-			flex:0 0 auto;
-			flex-wrap:nowrap;
-			padding-left:1rem;
+
+		&__right {
+			flex: 0 0 auto;
+			flex-wrap: nowrap;
+			padding-left: 1rem;
+			display: grid;
+			grid-gap: 10px;
+			grid-auto-flow:column;
 		}
 
 		h3 {
@@ -34,9 +38,10 @@
 			font-weight: var(--tf-font-weight-base);
 		}
 	}
-	&__subtitle{
-		color:var(--tf-font-color-mute);
-		font-size:var(--tf-font-size-sm);
+
+	&__subtitle {
+		color: var(--tf-font-color-mute);
+		font-size: var(--tf-font-size-sm);
 	}
 
 	&__content {

@@ -59,7 +59,7 @@ public record TfMenuItem
 		get
 		{
 			var sb = new StringBuilder();
-			sb.Append($"{Id}{Url}{Text}{Description}{Expanded}{Selected}");
+			sb.Append($"{Id}{Url}{Text}{Description}{Expanded}{Selected}{IconCollapsed?.Name}{IconExpanded?.Name}{(int?)Color}{(int?)IconColor}");
 			foreach (var item in Items)
 			{
 				sb.Append(item.Hash);

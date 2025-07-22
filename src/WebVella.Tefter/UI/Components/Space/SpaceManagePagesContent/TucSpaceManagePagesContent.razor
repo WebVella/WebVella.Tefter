@@ -1,0 +1,58 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<TucErrorBoundry>
+	<div style="padding:var(--tf-layout-content-padding)">
+		@if (String.IsNullOrWhiteSpace(UriInitialized))
+		{
+			<TucSkeletonPageHeader />
+		}
+		else if (_space is null)
+		{
+			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+		}
+		else
+		{
+			<TucPageHeader Icon="@(TfConstants.GetIcon(name: _space.FluentIconName, defaultIcon: TfConstants.SpaceIconName))" IconColor="@_space.Color" Class="page-title"
+						   Area="@LOC("Spaces")" Title="@_space.Name" SubTitle="@LOC("Pages")" />
+
+				 				<TucCard>
+					<TitleTemplate>
+						<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+							<h3>@LOC("Pages")</h3>
+							<div>
+								<FluentButton OnClick="_addPage" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline"
+											  Disabled="@_submitting">@LOC("Add page")</FluentButton>
+							</div>
+						</FluentStack>
+					</TitleTemplate>
+					<ChildContent>
+					@if (_spacePages.Count == 0)
+						{
+							@LOC("No pages or folders created yet.")
+						}
+						else
+						{
+							<div class="tf-grid-wrapper">
+								<table class="tf-grid">
+									<colgroup style="width:1%"></colgroup>
+									<colgroup></colgroup>
+									<colgroup style="width:120px;"></colgroup>
+									<colgroup style="width:120px;"></colgroup>
+									<tbody class="tf-grid-tbody">
+									@foreach (var context in _spacePages)
+										{
+										var contextIndex = _spacePages.FindIndex(x => x.Id == context.Id);
+											<TucSpaceManageNodeItem Item="context" Level="0" OnRemove="_removePage" OnMove="_movePage"
+																IsFirst="(contextIndex == 0)" IsLast="(contextIndex == _spacePages.Count -1)"
+																   OnEdit="_editPage" OnCopy="_copyPage" />
+										}
+									</tbody>
+								</table>
+							</div>
+						}
+					</ChildContent>
+				</TucCard>
+			
+		}
+	</div>
+</TucErrorBoundry>

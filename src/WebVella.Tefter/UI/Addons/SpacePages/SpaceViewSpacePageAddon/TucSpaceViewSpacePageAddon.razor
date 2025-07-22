@@ -1,0 +1,193 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits TucBaseSpacePageComponent
+
+@if (Context.Mode == TfComponentMode.Read)
+{
+	<TucSpaceViewDetails />
+}
+else if (Context.Mode == TfComponentMode.Create)
+{
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentSelect OptionSelected="(x => x == _options.SetType)"
+						  SelectedOption="@_options.SetType"
+						  SelectedOptionChanged="_optionsSetTypeChangeHandler"
+						  TOption="TfSpaceViewSetType"
+						  Items="@(Enum.GetValues<TfSpaceViewSetType>())" Style="width:100%"
+						  OptionValue="@((p)=> ((int)p).ToString())"
+						  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Select view")"
+						  Class="@GetValidationCssClass(nameof(_options.SetType))" />
+			<TucValidationMessage Field="@(nameof(_options.SetType))" Errors="ValidationErrors" />
+		</FluentGridItem>
+	</FluentGrid>
+	@if (_options.SetType == TfSpaceViewSetType.New)
+	{
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_options.Name
+								 Label="@LOC("New view name")" Style="width:100%" AutoComplete="off"
+								 Class="@GetValidationCssClass(nameof(_options.Name))" />
+				<TucValidationMessage Field="@(nameof(_options.Name))" Errors="ValidationErrors" />
+			</FluentGridItem>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_options.Type.ToDescriptionString()
+								 Label="@LOC("Type")" Style="width:100%" Disabled="true" />
+			</FluentGridItem>
+		</FluentGrid>
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentSelect OptionSelected="(x => x == _options?.DataSetType)"
+							  SelectedOption="@_options.DataSetType"
+							  SelectedOptionChanged="_optionsDataSetTypeChangeHandler"
+							  TOption="TfSpaceViewDataSetType"
+							  Items="@(Enum.GetValues<TfSpaceViewDataSetType>())" Style="width:100%"
+							  OptionValue="@((p)=> ((int)p).ToString())"
+							  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Dataset")" />
+				<TucValidationMessage Field="@(nameof(_options.DataSetType))" Errors="ValidationErrors" />
+			</FluentGridItem>
+		</FluentGrid>
+		<FluentGrid>
+			@if (_options.DataSetType == TfSpaceViewDataSetType.New)
+			{
+				<FluentGridItem xs="6">
+					<FluentSelect OptionSelected="(x => x.Id == _optionsDataProvider?.Id)"
+								  SelectedOption="@_optionsDataProvider"
+								  SelectedOptionChanged="_optionsDataProviderSelectedHandler"
+								  TOption="TfDataProvider" Required="false" Placeholder="@LOC("select...")"
+								  Items="@_allDataProviders" Style="width:100%"
+								  OptionValue="@(p => p.Id.ToString())"
+								  OptionText="@(p => p.Name)" Label="@LOC("Data provider")" />
+					<TucValidationMessage Field="@(nameof(_options.DataProviderId))" Errors="ValidationErrors" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_options.NewSpaceDataName
+									 Label="@LOC("Dataset name")" Style="width:100%" AutoComplete="off" />
+					<TucValidationMessage Field="@(nameof(_options.NewSpaceDataName))" Errors="ValidationErrors" />
+				</FluentGridItem>
+			}
+			else
+			{
+				<FluentGridItem xs="6">
+					@if (_allSpaceData.Count == 0)
+					{
+						<FluentTextField Disabled="true" TextFieldType="@TextFieldType.Text"
+										 Label="@LOC("Dataset")" Style="width:100%" Placeholder="@LOC("No dataset create in this space yet")" />
+					}
+					else
+					{
+						<FluentSelect OptionSelected="(x => x.Id == _optionsDataset?.Id)"
+									  SelectedOption="@_optionsDataset"
+									  SelectedOptionChanged="_optionsDatasetSelected"
+									  TOption="TfSpaceData" Placeholder="@LOC("select...")"
+									  Items="@_allSpaceData" Style="width:100%"
+									  OptionValue="@((p)=> p.Id.ToString())"
+									  OptionText="@(p => p.Name)" Label="@LOC("Dataset")" />
+						<TucValidationMessage Field="@(nameof(_options.SpaceDataId))" Errors="ValidationErrors" />
+					}
+				</FluentGridItem>
+			}
+		</FluentGrid>
+		@if ((_optionsDataProvider is not null || _optionsDataset is not null))
+		{
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentInputLabel Label="@LOC("Automatic column generation")" />
+					<FluentStack>
+						@if (_optionsDataProvider is not null)
+						{
+							<FluentCheckbox Value="@_options.AddProviderColumns"
+											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddProviderColumns)))"
+											Label="@LOC("data provided columns")" />
+							<FluentCheckbox Value="@_options.AddSharedColumns"
+											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddSharedColumns)))"
+											Label="@LOC("shared columns")" />
+							<FluentCheckbox Value="@_options.AddSystemColumns"
+											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddSystemColumns)))"
+											Label="@LOC("system columns")" />
+						}
+						else if (_optionsDataset is not null)
+						{
+							<FluentCheckbox Value="@_options.AddDataSetColumns"
+											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddDataSetColumns)))"
+											Label="@LOC("add dateset columns")" />
+						}
+					</FluentStack>
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentDivider Style="margin:1rem 0" />
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentInputLabel>
+						<FluentStack>
+							<span>@LOC("Generated Culumns")</span>
+							<FluentBadge Appearance="Appearance.Neutral">
+								@_generatedColumns.Count
+							</FluentBadge>
+						</FluentStack>
+					</FluentInputLabel>
+					@if (_generatedColumns.Count == 0)
+					{
+						<div>@LOC("No columns will be generated")</div>
+					}
+					else if (_generatedColumns.Count > 0)
+					{
+						foreach (var item in _generatedColumns.Take(_generatedColumnCountLimit))
+						{
+							<FluentBadge Appearance="Appearance.Neutral" Style="margin-right:0.5rem;margin-bottom:0.5rem">@item</FluentBadge>
+						}
+						@if (_generatedColumns.Count > _generatedColumnCountLimit)
+						{
+							<FluentTooltip Anchor="tf-columns-more" Position="@TooltipPosition.Bottom">@(String.Join(", ", _generatedColumns.Skip(_generatedColumnCountLimit)))</FluentTooltip>
+							<FluentBadge Id="tf-columns-more" Appearance="Appearance.Neutral">@LOC("+ {0} more", _generatedColumns.Count - _generatedColumnCountLimit)</FluentBadge>
+						}
+					}
+					else
+					{
+						<div>@LOC("No columns found in data provider")</div>
+					}
+				</FluentGridItem>
+			</FluentGrid>
+		}
+	}
+	else
+	{
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentSelect OptionSelected="(x => x.Id == _optionsExistingSpaceView?.Id)"
+							  SelectedOption="@_optionsExistingSpaceView"
+							  SelectedOptionChanged="_optionsSpaceViewSelected"
+							  TOption="TfSpaceView" Placeholder="@LOC("select...")"
+							  Items="@_allSpaceView" Style="width:100%"
+							  OptionValue="@((p)=> p.Id.ToString())"
+							  OptionText="@(p => p.Name)" Label="@LOC("Existing views")"
+							  Class="@GetValidationCssClass(nameof(_options.SpaceViewId))" />
+				<TucValidationMessage Field="@(nameof(_options.SpaceViewId))" Errors="ValidationErrors" />
+			</FluentGridItem>
+		</FluentGrid>
+	}
+}
+else if (Context.Mode == TfComponentMode.Update)
+{
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentSelect OptionSelected="(x => x.Id == _optionsExistingSpaceView?.Id)"
+						  SelectedOption="@_optionsExistingSpaceView"
+						  SelectedOptionChanged="_optionsSpaceViewSelected"
+						  TOption="TfSpaceView" Placeholder="@LOC("select...")"
+						  Items="@_allSpaceView" Style="width:100%"
+						  OptionValue="@((p)=> p.Id.ToString())"
+						  OptionText="@(p => p.Name)" Label="@LOC("Selected view")"
+						  Class="@GetValidationCssClass(nameof(_options.SpaceViewId))" Disabled=true />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentInputLabel Label="Navigate" />
+			<FluentButton Appearance="Appearance.Outline" OnClick="@_goToView">@LOC("browse view")</FluentButton>
+		</FluentGridItem>
+	</FluentGrid>
+}
+else
+{
+
+}
+
+
