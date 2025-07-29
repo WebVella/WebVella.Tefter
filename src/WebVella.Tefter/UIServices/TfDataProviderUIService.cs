@@ -32,6 +32,7 @@ public partial interface ITfDataProviderUIService
 	TfDataProvider UpdateDataProviderIdentity(TfDataProviderIdentity identity);
 	TfDataProvider DeleteDataProviderIdentity(Guid id);
 
+
 	//Sync
 	DateTime? GetDataProviderNextSynchronizationTime(Guid providerId);
 	List<TfDataProviderSynchronizeTask> GetDataProviderSynchronizationTasks(Guid providerId, int? page = null, int? pageSize = null);
@@ -156,6 +157,7 @@ public partial class TfDataProviderUIService : ITfDataProviderUIService
 		DataProviderUpdated?.Invoke(this, provider);
 		return provider;
 	}
+
 	#endregion
 
 	#region << Sync >>

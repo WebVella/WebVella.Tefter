@@ -1,0 +1,25 @@
+﻿::deep .tf-select-btn {
+	justify-content: start;
+	display: flex;
+	align-items: center;
+	border-radius: calc(var(--control-corner-radius) * 1px);
+	height: calc((var(--base-height-multiplier) + var(--density)) * var(--design-unit) * 1px);
+	line-height: var(--type-ramp-base-line-height);
+	font-size: var(--type-ramp-base-font-size);
+	padding: 0 calc((10 + (var(--design-unit) * 2 * var(--density))) * 1px);
+}
+
+	::deep .tf-select-btn .tf-select-btn__start {
+		flex: 0 0 auto;
+		margin-inline-end: 11px;
+	}
+
+		::deep .tf-select-btn .tf-select-btn__start svg {
+			width: 20px;
+			vertical-align:bottom;
+		}
+
+	::deep .tf-select-btn .tf-select-btn__content {
+		flex: 1 1 auto;
+		text-align: left;
+	}

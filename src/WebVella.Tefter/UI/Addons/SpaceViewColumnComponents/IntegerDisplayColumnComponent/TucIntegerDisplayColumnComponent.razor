@@ -1,0 +1,27 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits TucBaseViewColumn<TucIntegerDisplayColumnComponentOptions>
+@if (RegionContext.Mode == TfComponentPresentationMode.Display)
+{
+	foreach (var item in _value)
+	{
+		<div>@item?.ToString(componentOptions.Format)</div>
+	}
+}
+else if (RegionContext.Mode == TfComponentPresentationMode.Options)
+{
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField Label="@LOC("Format")"
+							 Value="@componentOptions.Format" Style="width:100%" Immediate ImmediateDelay="500"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.Format),x))
+							 Placeholder="@LOC("eg. 'N3'")" />
+		</FluentGridItem>
+		<FluentGridItem xs="6"></FluentGridItem>
+	</FluentGrid>
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
+

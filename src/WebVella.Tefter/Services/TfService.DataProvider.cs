@@ -80,7 +80,7 @@ public partial interface ITfService
 	/// Retrieves a list of data providers that are available for joining with the specified data provider.
 	/// </summary>
 	/// <param name="dataProviderId">The unique identifier of the data provider to check for join availability.</param>
-	/// <returns>A list of data providers that can be joined with the specified data provider.</returns>
+	/// <returns>A list of data providers that are connected with the specified data provider.</returns>
 	public List<TfDataProvider> GetDataProviderConnectedProviders(Guid dataProviderId);
 
 	/// <summary>

@@ -233,15 +233,15 @@ public sealed class TfDataTable
 			var columnName = $"jp$dp{data.Provider.Index}${data.DataIdentity}";
 			foreach (var joinDataColumn in data.Columns)
 			{
-				var joinedProviderColumn = data.Provider.Columns.Single(x => x.DbName == joinDataColumn.DbName);
+				var connectedProviderColumn = data.Provider.Columns.Single(x => x.DbName == joinDataColumn.DbName);
 
-				var combinedColumnName = $"{joinDataColumn.DataIdentity}.{joinedProviderColumn.DbName}";
+				var combinedColumnName = $"{joinDataColumn.DataIdentity}.{connectedProviderColumn.DbName}";
 
 				columns.Add(new TfDataColumn(
 					this,
 					combinedColumnName,
-					joinedProviderColumn.DbType,
-					isNullable: joinedProviderColumn.IsNullable,
+					connectedProviderColumn.DbType,
+					isNullable: connectedProviderColumn.IsNullable,
 					isShared: false,
 					isSystem: false,
 					isJoinColumn: true,

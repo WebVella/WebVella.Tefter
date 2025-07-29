@@ -594,6 +594,35 @@ a:hover {
 .tf-card--clickable:hover {
   background: var(--neutral-fill-secondary-rest);
 }
+.tf-filter-manage .card-logical.tf-card {
+  border: 1px solid var(--tf-blue-200);
+  padding: 0;
+  border-radius: 0;
+}
+.tf-filter-manage .card-logical.tf-card > .tf-card__title {
+  background: var(--tf-blue-100);
+  border-radius: 0;
+}
+.tf-filter-manage .card-logical.tf-card > .tf-card__content {
+  margin: 10px;
+  padding: 0;
+}
+.tf-filter-manage .card-rule.tf-card {
+  border: 1px solid var(--tf-orange-200);
+  padding: 0;
+  border-radius: 0;
+}
+.tf-filter-manage .card-rule.tf-card > .tf-card__title {
+  background: var(--tf-orange-100);
+  border-radius: 0;
+}
+.tf-filter-manage .card-rule.tf-card > .tf-card__content {
+  margin: 10px;
+  padding: 0;
+}
+.tf-filter-manage .tf-card--no-body .tf-card__content {
+  display: none;
+}
 .tf-console-box {
   padding: 10px;
   background: var(--neutral-layer-3);

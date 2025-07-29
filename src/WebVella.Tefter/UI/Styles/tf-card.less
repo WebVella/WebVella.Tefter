@@ -29,7 +29,7 @@
 			padding-left: 1rem;
 			display: grid;
 			grid-gap: 10px;
-			grid-auto-flow:column;
+			grid-auto-flow: column;
 		}
 
 		h3 {
@@ -54,6 +54,7 @@
 	& + & {
 		margin-top: 2rem;
 	}
+
 }
 
 
@@ -72,4 +73,42 @@
 
 .tf-card--clickable:hover {
 	background: var(--neutral-fill-secondary-rest);
+}
+
+.tf-filter-manage .card-logical.tf-card {
+	border: 1px solid var(--tf-blue-200);
+	padding: 0;
+	border-radius: 0;
+
+	& > .tf-card__title {
+		background: var(--tf-blue-100);
+		border-radius: 0;
+	}
+
+	& > .tf-card__content {
+		margin: 10px;
+		padding: 0;
+	}
+}
+
+.tf-filter-manage .card-rule.tf-card {
+	border: 1px solid var(--tf-orange-200);
+	padding: 0;
+	border-radius: 0;
+
+	& > .tf-card__title {
+		background: var(--tf-orange-100);
+		border-radius: 0;
+	}
+
+	& > .tf-card__content {
+		margin: 10px;
+		padding:0;
+	}
+}
+
+.tf-filter-manage .tf-card--no-body {
+	.tf-card__content{
+		display:none;
+	}
 }

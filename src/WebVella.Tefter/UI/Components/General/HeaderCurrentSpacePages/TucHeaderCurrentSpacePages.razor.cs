@@ -67,6 +67,9 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 		else if (item.Data.Type == TfMenuItemDataType.CreateSpaceData){ 
 			await _addSpaceDataHandler(item);
 		}
+		else if (item.Data.Type == TfMenuItemDataType.CreateSpaceView){ 
+			await _addSpaceViewHandler(item);
+		}
 	}
 
 	private async Task _addSpaceHandler(TfMenuItem args)
@@ -104,6 +107,26 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 		{
 			var item = (TfSpaceData)result.Data;
 			Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, args.Data.SpaceId.Value, item.Id));
+		}
+	}
+
+	private async Task _addSpaceViewHandler(TfMenuItem args)
+	{
+		if (args.Data?.SpaceId == null) return;
+		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewManageDialog>(
+		new TfSpaceView() { SpaceId = args.Data.SpaceId.Value },
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var item = (TfSpaceView)result.Data;
+			Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, args.Data.SpaceId.Value, item.Id));
 		}
 	}
 }

@@ -91,7 +91,7 @@ public partial class SampleEditViewColumnComponent : ComponentBase,ITfSpaceViewC
 		//if (column is null)
 		//	throw new Exception("Column not found");
 		//if (column.IsJoinColumn)
-		//	throw new Exception("Joined data cannot be edited");
+		//	throw new Exception("Connected data cannot be edited");
 		_value = String.Empty;//Get and set the column value here
 		return Task.CompletedTask;
 	}

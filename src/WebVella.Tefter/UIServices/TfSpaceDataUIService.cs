@@ -29,6 +29,20 @@ public partial interface ITfSpaceDataUIService
 	//Sorts
 	void UpdateSpaceDataSorts(Guid spaceDataId,
 		List<TfSort> sorts);
+
+	//Data
+	public TfDataTable QuerySpaceData(
+		Guid spaceDataId,
+		List<TfFilterBase>? userFilters = null,
+		List<TfSort>? userSorts = null,
+		List<TfFilterBase>? presetFilters = null,
+		List<TfSort>? presetSorts = null,
+		string? search = null,
+		int? page = null,
+		int? pageSize = null,
+		bool noRows = false,
+		bool returnOnlyTfIds = false);
+
 }
 public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 {
@@ -140,5 +154,30 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 		var spaceData = _tfService.GetSpaceData(spaceDataId);
 		SpaceDataUpdated?.Invoke(this, spaceData);
 	}
+	#endregion
+
+	#region << Data >>
+public TfDataTable QuerySpaceData(
+		Guid spaceDataId,
+		List<TfFilterBase> userFilters = null,
+		List<TfSort> userSorts = null,
+		List<TfFilterBase> presetFilters = null,
+		List<TfSort> presetSorts = null,
+		string search = null,
+		int? page = null,
+		int? pageSize = null,
+		bool noRows = false,
+		bool returnOnlyTfIds = false)
+	=> _tfService.QuerySpaceData(
+		spaceDataId:spaceDataId,
+		userFilters:userFilters,
+		userSorts:userSorts,
+		presetFilters:presetFilters,
+		presetSorts:presetSorts,
+		search:search,
+		page:page,
+		pageSize:pageSize,
+		noRows:noRows,
+		returnOnlyTfIds:returnOnlyTfIds);
 	#endregion
 }

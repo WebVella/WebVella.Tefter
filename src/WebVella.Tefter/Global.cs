@@ -55,3 +55,4 @@ global using WebVella.Tefter.UIServices;
 global using WebVella.Tefter.Exceptions;
 global using WebVella.BlazorTrace;
 global using WebVella.Tefter.Utility;
+global using WebVella.Tefter.UI.Addons;

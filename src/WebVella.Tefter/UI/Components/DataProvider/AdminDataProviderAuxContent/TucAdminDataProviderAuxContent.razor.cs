@@ -7,7 +7,7 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 
 	private TfDataProvider? _provider = null;
 	public bool _allIdentitiesImplemented = false;
-	private List<TfDataProvider> _joinedProviders = new();
+	private List<TfDataProvider> _connectedProviders = new();
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
@@ -55,7 +55,7 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 				if (!_provider.Identities.Any(x => x.DataIdentity == item.DataIdentity))
 					_allIdentitiesImplemented = false;
 			}
-			_joinedProviders = TfDataProviderUIService.GetDataProviderConnectedProviders(_provider.Id);
+			_connectedProviders = TfDataProviderUIService.GetDataProviderConnectedProviders(_provider.Id);
 		}
 		finally
 		{

@@ -19,8 +19,7 @@
 				}
 				else
 				{
-					<div class="tf-grid-wrapper">
-						<table class="tf-grid">
+					<table class="tf-grid">
 							<thead class="tf-grid-thead">
 								<tr class="tf-grid-thead-bkg"></tr>
 								<tr class="tf-grid-tr">
@@ -36,7 +35,14 @@
 
 										<td class="tf-grid-td" style="width:1%;">
 											<div>
-												<FluentIcon Style="width:24px;" Value="@(TfConstants.GetIcon(item.SpaceIcon).WithColor(item.SpaceColor.ToDescriptionString()))" />
+												@if (!String.IsNullOrWhiteSpace(item.SpaceIcon))
+												{
+													<FluentIcon Style="width:24px;" Value="@(TfConstants.GetIcon(item.SpaceIcon).WithColor(item.SpaceColor.ToDescriptionString()))" />
+												}
+												else
+												{
+													<FluentIcon Style="width:24px;" Value="@(TfConstants.SpaceViewIcon.WithColor(item.SpaceColor.ToDescriptionString()))" />
+												}
 											</div>
 										</td>
 										<td class="tf-grid-td">
@@ -62,8 +68,6 @@
 								}
 							</tbody>
 						</table>
-					</div>
-
 				}
 			</ChildContent>
 		</TucCard>

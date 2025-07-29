@@ -151,10 +151,10 @@
 					<TucCard Title="@LOC("Connected Data providers")"
 							 SubTitle="@LOC("Providers have a common data identity implementated. Only the primary provider's data is modifiable.")">
 						<ChildContent>
-							@if (_joinedProviders.Count == 0)
+							@if (_connectedProviders.Count == 0)
 							{
-								<FluentMessageBar Title="@LOC("No data providers can be joined")" AllowDismiss="false"
-												  Intent="@MessageIntent.Info">@LOC("For data from different providers to be joined, they must implement at least one common join key.")</FluentMessageBar>
+								<FluentMessageBar Title="@LOC("No data providers are connected")" AllowDismiss="false"
+												  Intent="@MessageIntent.Info">@LOC("For data from different providers to be connected, they must implement at least one common join key.")</FluentMessageBar>
 							}
 							else
 							{
@@ -169,7 +169,7 @@
 										</tr>
 									</thead>
 									<tbody class="tf-grid-tbody">
-										@foreach (var context in _joinedProviders)
+										@foreach (var context in _connectedProviders)
 										{
 											<tr @key=context.Id class="tf-grid-tr">
 												<td class="tf-grid-td">

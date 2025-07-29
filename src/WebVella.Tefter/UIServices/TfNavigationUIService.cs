@@ -347,6 +347,8 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				Tooltip = space.Name,
 				Text = space.Name
 			};
+			var subNodeIconColor = space.Color;
+			subNodeIconColor = TfColor.Gray400;
 			if (currentUser.IsAdmin)
 			{
 				rootMenu.Items.Add(new TfMenuItem()
@@ -354,7 +356,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 					Id = $"tf-space-link-{space.Id}",
 					IconCollapsed = TfConstants.SettingsIcon,
 					IconExpanded = TfConstants.SettingsIcon,
-					//IconColor = space.Color,
+					IconColor = subNodeIconColor,
 					Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.SpaceId == space.Id && routeState.RouteNodes.Count == 2,
 					Url = String.Format(TfConstants.SpaceManagePageUrl, space.Id),
 					Text = "Manage space",
@@ -367,7 +369,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 						Id = $"tf-space-pages-link-{space.Id}",
 						IconCollapsed = TfConstants.PageIcon,
 						IconExpanded = TfConstants.PageIcon,
-						//IconColor = space.Color,
+						IconColor = subNodeIconColor,
 						Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.HasNode(RouteDataNode.Pages, 2) && routeState.SpaceId == space.Id,
 						Url = String.Format(TfConstants.SpaceNodePageUrl, space.Id, spacePages[0].Id),
 						Text = "Space pages",
@@ -381,7 +383,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 						Id = $"tf-space-{space.Id}-add-page",
 						IconCollapsed = TfConstants.AddIcon,
 						IconExpanded = TfConstants.AddIcon,
-						//IconColor = TfColor.White,
+						IconColor = subNodeIconColor,
 						Selected = false,
 						Url = String.Empty,
 						Text = LOC["space page"],
@@ -400,7 +402,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 						Id = $"tf-space-data-link-{space.Id}",
 						IconCollapsed = TfConstants.SpaceDataIcon,
 						IconExpanded = TfConstants.SpaceDataIcon,
-						//IconColor = space.Color,
+						IconColor = subNodeIconColor,
 						Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.HasNode(RouteDataNode.SpaceData, 2) && routeState.SpaceId == space.Id,
 						Url = String.Format(TfConstants.SpaceDataPageUrl, space.Id, spaceData[0].Id),
 						Text = "Space data",
@@ -414,7 +416,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 						Id = $"tf-space-data-link-{space.Id}",
 						IconCollapsed = TfConstants.AddIcon,
 						IconExpanded = TfConstants.AddIcon,
-						//IconColor = TfColor.White,
+						IconColor = subNodeIconColor,
 						Selected = false,
 						Url = String.Empty,
 						Text = LOC["space dataset"],
@@ -433,7 +435,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 						Id = $"tf-space-views-link-{space.Id}",
 						IconCollapsed = TfConstants.SpaceViewIcon,
 						IconExpanded = TfConstants.SpaceViewIcon,
-						//IconColor = space.Color,
+						IconColor = subNodeIconColor,
 						Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.HasNode(RouteDataNode.SpaceView, 2) && routeState.SpaceId == space.Id,
 						Url = String.Format(TfConstants.SpaceViewPageUrl, space.Id, spaceViews[0].Id),
 						Text = "Space views",
@@ -447,7 +449,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 						Id = $"tf-space-views-link-{space.Id}",
 						IconCollapsed = TfConstants.AddIcon,
 						IconExpanded = TfConstants.AddIcon,
-						//IconColor = TfColor.White,
+						IconColor = subNodeIconColor,
 						Selected = false,
 						Url = String.Empty,
 						Text = LOC["space view"],

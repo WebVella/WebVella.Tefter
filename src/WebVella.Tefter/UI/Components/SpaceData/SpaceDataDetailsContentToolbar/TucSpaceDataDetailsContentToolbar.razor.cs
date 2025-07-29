@@ -39,9 +39,9 @@ public partial class TucSpaceDataDetailsContentToolbar : TfBaseComponent, IDispo
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),
-				Url =  string.Format(TfConstants.SpaceDataJoinedDataPageUrl, navState.SpaceId, navState.SpaceDataId),
+				Url =  string.Format(TfConstants.SpaceDataConnectedDataPageUrl, navState.SpaceId, navState.SpaceDataId),
 				Selected = navState.HasNode(RouteDataNode.Aux, 4),
-				Text = LOC("Joined Data"),
+				Text = LOC("Connected Data"),
 				IconCollapsed = TfConstants.GetIcon("Table")
 			});
 			_menu.Add(new TfMenuItem
