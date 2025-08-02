@@ -1,0 +1,91 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+<tr @key=@Item.Id class="tf-grid-tr">
+	<td class="tf-grid-td">
+		<div>
+			<FluentStack Wrap="false">
+				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
+				Title="@LOC("edit")"
+				OnClick="_onEdit" />
+				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Copy")"
+				Title="@LOC("copy")"
+				OnClick="_onCopy" />
+				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+				Title="@LOC("remove")"
+				OnClick="_onRemove" />
+				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUp")"
+				Title="@LOC("move up")"
+				OnClick="@(_ => _onMove(true))" Disabled="IsFirst" />
+				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowDown")"
+				Title="@LOC("move down")"
+				OnClick="@(_ => _onMove(false))" Disabled="IsLast"/>
+			</FluentStack>
+		</div>
+	</td>
+	@if (Item.IsGroup)
+	{
+		<td class="tf-grid-td" colspan="3">
+			<div>
+				<FluentStack Wrap="false">
+					@for (int i = 0; i < Level; i++)
+					{
+						<span class="tf-grid-td-spacer"></span>
+					}
+					@if (!String.IsNullOrWhiteSpace(Item.Icon))
+					{
+						<FluentIcon Value="@TfConstants.GetIcon(Item.Icon)" />
+					}
+					@if (Item.Color != TfColor.Black)
+					{
+						<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
+									Color="Color.Custom"
+									CustomColor="@Item.Color.GetAttribute().Value" />
+					}
+					<span>@Item.Name</span>
+					<span class="td-description">(@LOC("group"))</span>
+				</FluentStack>
+
+			</div>
+		</td>
+	}
+	else
+	{
+		<td class="tf-grid-td">
+			<div>
+				<FluentStack Wrap="false">
+					@for (int i = 0; i < Level; i++)
+					{
+						<span class="tf-grid-td-spacer"></span>
+					}
+					@if (!String.IsNullOrWhiteSpace(Item.Icon))
+					{
+						<FluentIcon Value="@TfConstants.GetIcon(Item.Icon)" />
+					}
+					@if (Item.Color != TfColor.Black)
+					{
+						<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
+									Color="Color.Custom"
+									CustomColor="@Item.Color.GetAttribute().Value" />
+					}
+					<span>@Item.Name</span>
+				</FluentStack>
+
+			</div>
+		</td>
+		<td class="tf-grid-td">
+			<div>@LOC("{0} filters", Item.Filters.Count)</div>
+		</td>
+		<td class="tf-grid-td">
+			<div>@LOC("{0} sorts", Item.SortOrders.Count)</div>
+		</td>
+	}
+
+</tr>
+@foreach (var context in Item.Pages)
+{
+	var contextIndex = Item.Pages.FindIndex(x => x.Id == context.Id);
+	<TucPresetFiltersCardItem Item="context" Level="(Level+1)" OnEdit="OnEdit" OnMove="OnMove" OnRemove="OnRemove"
+						OnCopy="OnCopy"
+					   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == Item.Pages.Count -1)" />
+}

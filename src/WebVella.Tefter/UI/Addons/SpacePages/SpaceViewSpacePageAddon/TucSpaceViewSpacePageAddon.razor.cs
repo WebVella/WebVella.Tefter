@@ -142,7 +142,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 
 	protected override void OnInitialized()
 	{
-		_allSpaceView = TfSpaceViewUIService.GetAllSpaceViews(Context.SpaceId);
+		_allSpaceView = TfSpaceViewUIService.GetSpaceViewsList(Context.SpaceId);
 		_allSpaceData = TfSpaceDataUIService.GetAllSpaceData(Context.SpaceId);
 		_allDataProviders = TfDataProviderUIService.GetDataProviders();
 	}

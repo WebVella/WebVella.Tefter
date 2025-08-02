@@ -34,6 +34,8 @@ public partial class TfConstants
 	public static string RouteNameSynchronization = "synchronization";
 	public static string RouteNameData = "data";
 	public static string RouteNamePages = "pages";
+	public static string RouteNameColumns = "columns";
+	public static string RouteNameFilters = "filters";
 	public static string RouteNameSharedColumns = "shared-columns";
 	public static string RouteNameDataIdentities = "data-identities";
 	public static string RouteNameFileRepository = "file-repository";
@@ -67,7 +69,6 @@ public partial class TfConstants
 
 	public static string RouteNameSpace = "space";
 	public static string RouteNameSpacePage = "page";
-	public static string RouteNameSpacePages = "pages";
 	public static string RouteNameSpaceView = "view";
 	public static string RouteNameSpaceData = "data";
 	public static string RouteNameManage = "manage";
@@ -77,10 +78,12 @@ public partial class TfConstants
 	public static string SpacePageUrl = $"/{RouteNameSpace}/{{0}}";
 	public static string SpaceNodePageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpacePage}/{{1}}";
 	public static string SpaceManagePageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}";
-	public static string SpaceManagePagesPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}/{RouteNameSpacePages}";
+	public static string SpaceManagePagesPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}/{RouteNamePages}";
 	public static string SpaceManageAccessPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}/{RouteNameAccess}";
 	public static string SpaceViewPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceView}/{{1}}";
-	public static string SpaceViewPagesPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceView}/{{1}}/{RouteNameSpacePages}";
+	public static string SpaceViewPagesPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceView}/{{1}}/{RouteNamePages}";
+	public static string SpaceViewColumnsPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceView}/{{1}}/{RouteNameColumns}";
+	public static string SpaceViewFiltersPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceView}/{{1}}/{RouteNameFilters}";
 	public static string SpaceDataPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}";
 	public static string SpaceDataViewsPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameViews}";
 	public static string SpaceDataConnectedDataPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameAux}";
@@ -90,7 +93,7 @@ public partial class TfConstants
 	public static string InstallDetailsPage = $"/tf-install/{{0}}";
 
 	public static List<string> SupportedUriFirstNodes = new List<string>() {
-		String.Empty,RouteNameAdmin, RouteNameSpacePages,RouteNameSpace
+		String.Empty,RouteNameAdmin, RouteNamePages,RouteNameSpace
 	};
 
 }

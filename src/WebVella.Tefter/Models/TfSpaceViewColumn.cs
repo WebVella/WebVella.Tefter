@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public class TfSpaceViewColumn
+public record TfSpaceViewColumn
 {
 	public Guid Id { get; set; }
 	public Guid SpaceViewId { get; set; }
@@ -13,7 +13,7 @@ public class TfSpaceViewColumn
 	public Guid ComponentId { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string ComponentOptionsJson { get; set; } = "{}";
-	public string SettingsJson { get; set; } = "{}";
+	public TfSpaceViewColumnSettings Settings { get; set; } = new();
 	public void FixPrefix(string prefix)
 	{
 		if (DataMapping is null) return;

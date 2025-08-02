@@ -15,32 +15,27 @@
 			<TucPageHeader Icon="@TfConstants.AdminDataIdentityIcon" IconColor="@TfConstants.AdminColor" Class="page-title"
 						   Area="@LOC(TfConstants.AdminDataIdentitiesMenuTitle)" Title="@_identity.DataIdentity" />
 
-			<TucCard>
-				<TitleTemplate>
-					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween">
-						<h3>@LOC("Details")</h3>
-						<div>
-							@if (_identity.IsSystem)
-							{
-								<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be managed")">
-									@LOC("Locked")
-									<FluentIcon Value="@TfConstants.LockIcon" Slot="start" />
-								</FluentButton>
-							}
-							else
-							{
-								<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteIdentity">
-									@LOC("Delete")
-									<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(TfColor.Red600.GetAttribute().Value)" Slot="start" />
-								</FluentButton>
-								<FluentButton Appearance="@Appearance.Outline" OnClick="_editIdentity">
-									@LOC("Edit")
-									<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
-								</FluentButton>
-							}
-						</div>
-					</FluentStack>
-				</TitleTemplate>
+			<TucCard Title="@LOC("Details")">
+				<ToolbarTemplate>
+					@if (_identity.IsSystem)
+					{
+						<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be managed")">
+							@LOC("Locked")
+							<FluentIcon Value="@TfConstants.LockIcon" Slot="start" />
+						</FluentButton>
+					}
+					else
+					{
+						<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteIdentity">
+							@LOC("Delete")
+							<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(TfColor.Red600.GetAttribute().Value)" Slot="start" />
+						</FluentButton>
+						<FluentButton Appearance="@Appearance.Outline" OnClick="_editIdentity">
+							@LOC("Edit")
+							<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
+						</FluentButton>
+					}
+				</ToolbarTemplate>
 				<ChildContent>
 					<FluentGrid>
 						<FluentGridItem xs="6">

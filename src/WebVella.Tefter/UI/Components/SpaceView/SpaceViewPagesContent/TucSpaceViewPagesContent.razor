@@ -1,0 +1,59 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<TucErrorBoundry>
+	<div style="padding:var(--tf-layout-content-padding)">
+		@if (String.IsNullOrWhiteSpace(UriInitialized))
+		{
+			<TucSkeletonPageHeader />
+		}
+		else if (_spaceView is null)
+		{
+			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+		}
+		else
+		{
+			<TucPageHeader Icon="@TfConstants.SpaceDataIcon" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
+						   Area="@_space?.Name" Title="@LOC(TfConstants.SpaceDataMenuTitle)" SubTitle="@_spaceView.Name" />
+
+			<TucCard Title="@LOC("Pages")">
+				@if (_items.Count == 0)
+				{
+					<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("This view is not connected to a page")</FluentMessageBar>
+
+				}
+				else
+				{
+					<table class="tf-grid">
+						<thead class="tf-grid-thead">
+							<tr class="tf-grid-thead-bkg"></tr>
+							<tr class="tf-grid-tr">
+								<th class="tf-grid-th" style="width:30px;"></th>
+								<th class="tf-grid-th">@LOC("page")</th>
+							</tr>
+						</thead>
+						<tbody class="tf-grid-tbody">
+							@foreach (var context in _items)
+							{
+								<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+									<td class="tf-grid-td" style="width:30px;">
+										<div>
+											<FluentAnchor Appearance="@Appearance.Outline" title="@LOC("view details")"
+														  Href="@String.Format(TfConstants.SpaceNodePageUrl, context.SpaceId, context.Id)">
+												<FluentIcon Value="@TfConstants.ViewIcon" />
+											</FluentAnchor>
+										</div>
+									</td>
+									<td class="tf-grid-td">
+										<div>
+											@context.Name
+										</div>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				}
+			</TucCard>
+		}
+	</div>
+</TucErrorBoundry>

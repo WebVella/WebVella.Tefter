@@ -332,8 +332,48 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.SpaceViewId);
 			result = result with { SpaceViewId = outGuid };
+			result = result.Front_Space_SpaceId_SpaceView_SpaceViewId_Columns_NodesProcess();
+			result = result.Front_Space_SpaceId_SpaceView_SpaceViewId_Filters_NodesProcess();
 			result = result.Front_Space_SpaceId_SpaceView_SpaceViewId_Pages_NodesProcess();
 
+		}
+		return result;
+	}
+
+	private static TfNavigationState Front_Space_SpaceId_SpaceView_SpaceViewId_Columns_NodesProcess(this TfNavigationState result)
+	{
+		if (result.RouteNodes.Count < 4
+			|| result.RouteNodes[0] != RouteDataNode.Space
+			|| result.RouteNodes[1] != RouteDataNode.SpaceId
+			|| result.RouteNodes[2] != RouteDataNode.SpaceView
+			|| result.RouteNodes[3] != RouteDataNode.SpaceViewId)
+			return result;
+
+		if (result.NodesDict.Count < 5)
+			return result;
+
+		if (result.NodesDict[4] == TfConstants.RouteNameColumns)
+		{
+			result = result.AddRouteNodes(RouteDataNode.Columns);
+		}
+		return result;
+	}
+
+	private static TfNavigationState Front_Space_SpaceId_SpaceView_SpaceViewId_Filters_NodesProcess(this TfNavigationState result)
+	{
+		if (result.RouteNodes.Count < 4
+			|| result.RouteNodes[0] != RouteDataNode.Space
+			|| result.RouteNodes[1] != RouteDataNode.SpaceId
+			|| result.RouteNodes[2] != RouteDataNode.SpaceView
+			|| result.RouteNodes[3] != RouteDataNode.SpaceViewId)
+			return result;
+
+		if (result.NodesDict.Count < 5)
+			return result;
+
+		if (result.NodesDict[4] == TfConstants.RouteNameFilters)
+		{
+			result = result.AddRouteNodes(RouteDataNode.Filters);
 		}
 		return result;
 	}
@@ -350,7 +390,7 @@ public static partial class NavigatorExt
 		if (result.NodesDict.Count < 5)
 			return result;
 
-		if (result.NodesDict[4] == TfConstants.RouteNameSpacePages)
+		if (result.NodesDict[4] == TfConstants.RouteNamePages)
 		{
 			result = result.AddRouteNodes(RouteDataNode.Pages);
 		}

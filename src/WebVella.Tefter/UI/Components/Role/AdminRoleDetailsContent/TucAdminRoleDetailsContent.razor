@@ -15,32 +15,27 @@
 			<TucPageHeader Icon="@TfConstants.AdminRoleIcon" IconColor="@TfConstants.AdminColor" Class="page-title"
 						   Area="@LOC(TfConstants.AdminRolesMenuTitle)" Title="@_role.Name" />
 
-			<TucCard>
-				<TitleTemplate>
-					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween">
-						<h3>@LOC("Details")</h3>
-						<div>
-							@if (_role.IsSystem)
-							{
-								<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be managed")">
-									@LOC("Locked")
-									<FluentIcon Value="@TfConstants.LockIcon" Slot="start" />
-								</FluentButton>
-							}
-							else
-							{
-								<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteRole">
-									@LOC("Delete")
-									<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(TfColor.Red600.GetAttribute().Value)" Slot="start" />
-								</FluentButton>
-								<FluentButton Appearance="@Appearance.Outline" OnClick="_editRole">
-									@LOC("Edit")
-									<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
-								</FluentButton>
-							}
-						</div>
-					</FluentStack>
-				</TitleTemplate>
+			<TucCard Title="@LOC("Details")">
+				<ToolbarTemplate>
+					@if (_role.IsSystem)
+					{
+						<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be managed")">
+							@LOC("Locked")
+							<FluentIcon Value="@TfConstants.LockIcon" Slot="start" />
+						</FluentButton>
+					}
+					else
+					{
+						<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteRole">
+							@LOC("Delete")
+							<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(TfColor.Red600.GetAttribute().Value)" Slot="start" />
+						</FluentButton>
+						<FluentButton Appearance="@Appearance.Outline" OnClick="_editRole">
+							@LOC("Edit")
+							<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
+						</FluentButton>
+					}
+				</ToolbarTemplate>
 				<ChildContent>
 					<FluentGrid>
 						<FluentGridItem xs="6">
@@ -68,34 +63,27 @@
 				</ChildContent>
 			</TucCard>
 
-			<TucCard>
-				<TitleTemplate>
-					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
-						<h3>@LOC("Users with the role")</h3>
-						<div>
-							<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
-								@if (_userOptions.Count > 0)
-								{
-									<FluentSelect TOption="TfUser"
-												  Width="200px"
-												  Items="@_userOptions"
-												  Id="listbox"
-												  Placeholder="@LOC("select user")"
-												  OptionValue="@(p => p.Id.ToString())"
-												  OptionText="@(p => p.Names)"
-												  @bind-SelectedOption="@_selectedUser"
-												  Disabled="_submitting" />
-								}
-								else
-								{
-									<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all users added") Style="width:200px" Disabled="true" />
-								}
-								<FluentButton OnClick="_addUser" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline"
-											  Disabled="@(_userOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
-							</FluentStack>
-						</div>
-					</FluentStack>
-				</TitleTemplate>
+			<TucCard Title="@LOC("Users with the role")">
+				<ToolbarTemplate>
+					@if (_userOptions.Count > 0)
+					{
+						<FluentSelect TOption="TfUser"
+									  Width="200px"
+									  Items="@_userOptions"
+									  Id="listbox"
+									  Placeholder="@LOC("select user")"
+									  OptionValue="@(p => p.Id.ToString())"
+									  OptionText="@(p => p.Names)"
+									  @bind-SelectedOption="@_selectedUser"
+									  Disabled="_submitting" />
+					}
+					else
+					{
+						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all users added") Style="width:200px" Disabled="true" />
+					}
+					<FluentButton OnClick="_addUser" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline"
+								  Disabled="@(_userOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+				</ToolbarTemplate>
 				<ChildContent>
 					@if (_roleUsers.Count == 0)
 					{

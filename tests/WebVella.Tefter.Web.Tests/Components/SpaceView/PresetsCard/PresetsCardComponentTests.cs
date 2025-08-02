@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Tests.Components;
+﻿using WebVella.Tefter.UI.Components;
+
+namespace WebVella.Tefter.Web.Tests.Components;
 
 public class PresetsCardComponentTests : BaseTest
 {
@@ -9,7 +11,7 @@ public class PresetsCardComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TfQuickFiltersCard>();
+		var cut = Context.RenderComponent<TucPresetFiltersCard>();
 
 		// Assert
 		cut.Find(".tf-card");

@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Tests.Components;
+﻿using WebVella.Tefter.UI.Components;
+
+namespace WebVella.Tefter.Web.Tests.Components;
 
 public class PresetsCardItemComponentTests : BaseTest
 {
@@ -9,8 +11,8 @@ public class PresetsCardItemComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TfQuickFiltersCardItem>(args => args
-		.Add(x=> x.Item, new TucSpaceViewPreset()));
+		var cut = Context.RenderComponent<TucPresetFiltersCardItem>(args => args
+		.Add(x=> x.Item, new TfSpaceViewPreset()));
 
 		// Assert
 		cut.Find(".tf-grid-tr");

@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Tests.Components;
+﻿using WebVella.Tefter.UI.Components;
+
+namespace WebVella.Tefter.Web.Tests.Components;
 public class PresetManageDialogComponentTests : BaseTest
 {
 
@@ -10,7 +12,7 @@ public class PresetManageDialogComponentTests : BaseTest
 		var dialogProvider = Context.RenderComponent<FluentDialogProvider>();
 		// Act
 		var dialogService = Context.Services.GetRequiredService<IDialogService>();
-		var dialog = await dialogService.ShowDialogAsync<TfQuickFilterManageDialog>(new TucQuickFilterManagementContext(),new DialogParameters());
+		var dialog = await dialogService.ShowDialogAsync<TucPresetFilterManageDialog>(new TfPresetFilterManagementContext(),new DialogParameters());
 		// Assert
 		dialogProvider.Find(".fluent-dialog-main");
 		dialog.Dismiss(null);

@@ -4,11 +4,24 @@ public class TfSpaceView
 {
 	public Guid Id { get; set; }
 	public Guid SpaceDataId { get; set; }
+	public string SpaceDataName { get; set; } = default!;
 	public Guid SpaceId { get; set; }
 	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
-	public string Name { get; set; }
+	public string Name { get; set; } = default!;
 	public short Position { get; set; }
 	public string SettingsJson { get; set; } = "{}";
+	public TfSpaceViewSettings Settings
+	{
+		get
+		{
+			if (!String.IsNullOrWhiteSpace(SettingsJson) && SettingsJson.StartsWith("{")
+				 && SettingsJson.EndsWith("}"))
+			{
+				return JsonSerializer.Deserialize<TfSpaceViewSettings>(SettingsJson) ?? new TfSpaceViewSettings();
+			}
+			return new TfSpaceViewSettings();
+		}
+	}
 	public List<TfSpaceViewPreset> Presets { get; set; } = new();
 }
 
@@ -64,7 +77,7 @@ public class TfCreateSpaceViewExtended
 	public TfSpaceViewSettings Settings { get; set; } = new TfSpaceViewSettings();
 }
 
-public class TfSpaceViewPreset
+public record TfSpaceViewPreset
 {
 	[JsonPropertyName("id")]
 	public Guid Id { get; set; }

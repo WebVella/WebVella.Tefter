@@ -75,4 +75,8 @@ public enum RouteDataNode
 	SpaceViewId,
 	[Description("Page Id")]
 	PageId,
+	[Description("Columns")]
+	Columns,
+	[Description("Filters")]
+	Filters,
 }

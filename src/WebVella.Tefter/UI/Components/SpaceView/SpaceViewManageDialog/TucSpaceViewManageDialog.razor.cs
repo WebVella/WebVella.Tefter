@@ -52,7 +52,17 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 		}
 		else
 		{
-			_form = new TfCreateSpaceViewExtended() { Id = Content.Id, DataSetType = TfSpaceViewDataSetType.Existing };
+			_form = new TfCreateSpaceViewExtended() { 
+				Id = Content.Id, 
+				DataSetType = TfSpaceViewDataSetType.Existing,
+				SpaceDataId = Content.SpaceDataId,
+				Name = Content.Name,
+				Position = Content.Position,
+				SpaceId = Content.SpaceId,
+				Type = Content.Type,
+				SettingsJson = Content.SettingsJson,
+				Presets = Content.Presets
+				};
 			if (!String.IsNullOrWhiteSpace(Content.SettingsJson) && Content.SettingsJson.StartsWith("{")
 			 && Content.SettingsJson.EndsWith("}"))
 			{

@@ -7,7 +7,7 @@ public partial interface ITfService
 	public List<TfSpaceView> GetAllSpaceViews(string? search = null);
 
 	public List<TfSpaceView> GetSpaceViewsList(
-		Guid spaceId);
+		Guid spaceId,string? search = null);
 
 	public TfSpaceView GetSpaceView(
 		Guid id);
@@ -48,6 +48,12 @@ public partial class TfService : ITfService
 		{
 			var spaceViewsDbo = _dboManager.GetList<TfSpaceViewDbo>();
 			var allSpaceViews = spaceViewsDbo.Select(x => ConvertDboToModel(x)).ToList();
+			var spaceDataDict = (GetAllSpaceData() ?? new List<TfSpaceData>()).ToDictionary(x=> x.Id);
+			foreach (var spaceView in allSpaceViews) {
+				if(spaceDataDict.ContainsKey(spaceView.SpaceDataId))
+					spaceView.SpaceDataName = spaceDataDict[spaceView.SpaceDataId].Name;
+			}
+
 			if (String.IsNullOrWhiteSpace(search))
 				return allSpaceViews;
 			search = search.Trim().ToLowerInvariant();
@@ -62,7 +68,7 @@ public partial class TfService : ITfService
 	}
 
 	public List<TfSpaceView> GetSpaceViewsList(
-		Guid spaceId)
+		Guid spaceId, string? search = null)
 	{
 		try
 		{
@@ -75,7 +81,19 @@ public partial class TfService : ITfService
 				nameof(TfSpaceView.SpaceId),
 				order: orderSettings);
 
-			return spaceViews.Select(x => ConvertDboToModel(x)).ToList();
+			var spaceDataDict = (GetSpaceDataList(spaceId) ?? new List<TfSpaceData>()).ToDictionary(x=> x.Id);
+			var allSpaceViews = spaceViews.Select(x => ConvertDboToModel(x)).ToList();
+
+			foreach (var spaceView in allSpaceViews) {
+				if(spaceDataDict.ContainsKey(spaceView.SpaceDataId))
+					spaceView.SpaceDataName = spaceDataDict[spaceView.SpaceDataId].Name;
+			}
+			if (String.IsNullOrWhiteSpace(search))
+				return allSpaceViews;
+			search = search.Trim().ToLowerInvariant();
+			return allSpaceViews.Where(x =>
+				x.Name.ToLowerInvariant().Contains(search)
+				).ToList();
 		}
 		catch (Exception ex)
 		{

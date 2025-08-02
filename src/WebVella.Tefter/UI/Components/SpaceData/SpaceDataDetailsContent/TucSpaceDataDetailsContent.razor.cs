@@ -98,6 +98,9 @@ public partial class TucSpaceDataDetailsContent : TfBaseComponent, IDisposable
 			{
 				Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, _navState.SpaceId, allSpaceData[0].Id));
 			}
+			else{ 
+				Navigator.NavigateTo(TfConstants.HomePageUrl);
+			}
 		}
 		catch (Exception ex)
 		{

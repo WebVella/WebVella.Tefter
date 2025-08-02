@@ -1,0 +1,103 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<TucErrorBoundry>
+	<div style="padding:var(--tf-layout-content-padding)">
+		@if (String.IsNullOrWhiteSpace(UriInitialized))
+		{
+			<TucSkeletonPageHeader />
+		}
+		else if (_spaceView is null)
+		{
+			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+		}
+		else
+		{
+			<TucPageHeader Icon="@TfConstants.SpaceDataIcon" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
+						   Area="@_space?.Name" Title="@LOC(TfConstants.SpaceDataMenuTitle)" SubTitle="@_spaceView.Name" />
+
+			<TucCard Title="@LOC("Details")">
+				<ToolbarTemplate>
+					<FluentButton OnClick="_addColumn" Appearance="@Appearance.Outline">
+						<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
+						@LOC("Add new")
+					</FluentButton>
+				</ToolbarTemplate>
+				<ChildContent>
+
+					@if (_spaceViewColumns.Count == 0)
+					{
+						@LOC("This view has no columns yet.")
+					}
+					else
+					{
+						<table class="tf-grid">
+								<tbody class="tf-grid-tbody">
+									@foreach (var context in _spaceViewColumns.OrderBy(x => x.Position))
+									{
+										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+											<td class="tf-grid-td" style="width:1%;">
+												<div>
+													<FluentStack Wrap="false">
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _editColumn(context))" Title="@LOC("Edit column")"
+																	  Disabled="_submitting" IconStart="@TfConstants.EditIcon" />
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteColumn(context))" Title="@LOC("Delete column")"
+																	  Disabled="_submitting">
+															<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+														</FluentButton>
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _moveColumn(context, true))" Title="@LOC("Move up")"
+																	  Disabled="@(_submitting || context.Position == 1)" IconStart="@TfConstants.GetIcon("ArrowUp")" />
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _moveColumn(context, false))" Title="@LOC("Move down")"
+																	  Disabled="@(_submitting || context.Position == _spaceViewColumns.Count)" IconStart="@TfConstants.GetIcon("ArrowDown")" />
+													</FluentStack>
+												</div>
+											</td>
+											<td class="tf-grid-td" style="width:20px;">
+												<div>@context.Position</div>
+											</td>
+											<td class="tf-grid-td" style="width:100px;">
+												<div>
+													<div>@context.Title</div>
+													<div class="td-description">@context.QueryName</div>
+												</div>
+											</td>
+											<td class="tf-grid-td">
+												@if (_typeMetaDict.ContainsKey(context.TypeId))
+												{
+													<div>
+														<div>
+															<FluentStack>
+																<FluentIcon Value="@TfConstants.GetIcon(_typeMetaDict[context.TypeId].Instance.AddonFluentIconName)" Color="@Color.Accent" />
+																<div>@_typeMetaDict[context.TypeId].Instance.AddonName</div>
+															</FluentStack>
+														</div>
+														<div class="td-description">@_typeMetaDict[context.TypeId].Instance.AddonDescription</div>
+													</div>
+												}
+												else
+												{
+													<div style="color:red">@LOC("unknown")</div>
+												}
+											</td>
+											<td class="tf-grid-td">
+												@if (_componentMetaDict.ContainsKey(context.ComponentId))
+												{
+													<div>
+														<div>@_componentMetaDict[context.ComponentId].Instance.AddonName</div>
+														<div class="td-description">@_componentMetaDict[context.ComponentId].Instance.AddonDescription</div>
+													</div>
+												}
+												else
+												{
+													<div style="color:red">@LOC("unknown")</div>
+												}
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+					}
+				</ChildContent>
+			</TucCard>
+		}
+	</div>
+</TucErrorBoundry>

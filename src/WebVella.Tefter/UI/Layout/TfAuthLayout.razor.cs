@@ -30,9 +30,13 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		if (uri.LocalPath == "/" && !String.IsNullOrWhiteSpace(user.Settings.StartUpUrl)
 			&& queryDictionary[TfConstants.NoDefaultRedirectQueryName] is null)
 		{
-			Navigator.NavigateTo(user.Settings.StartUpUrl);
+			Navigator.NavigateTo(user.Settings.StartUpUrl,true);
 		}
-		_isLoaded = true;
+		else
+		{
+			_isLoaded = true;
+		}
+		
 	}
 
 	protected override void OnAfterRender(bool firstRender)

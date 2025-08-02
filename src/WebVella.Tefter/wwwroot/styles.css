@@ -479,7 +479,7 @@ fluent-button::part(end) {
   margin-inline-start: 0.25rem;
 }
 fluent-button.outline svg {
-  fill: var(--accent-fill-rest) !important;
+  fill: var(--accent-fill-rest);
 }
 fluent-skeleton + fluent-skeleton {
   margin-top: 5px;
@@ -548,6 +548,9 @@ a:hover {
   border-radius: var(--tf-card-border-radius);
   background: var(--tf-white);
   padding: var(--tf-layout-content-padding);
+}
+.fluent-dialog-body .tf-card {
+  border: 1px solid var(--tf-stroke-base);
 }
 .tf-card__title {
   background: var(--tf-fill-color-base);

@@ -5,7 +5,7 @@ public partial interface ITfMetaService
 	public ReadOnlyCollection<TfSpaceViewColumnComponentAddonMeta> GetSpaceViewColumnComponentMeta();
 	public ReadOnlyDictionary<Guid,TfSpaceViewColumnTypeAddonMeta> GetSpaceViewColumnTypeMetaDictionary();
 	public ReadOnlyDictionary<Guid,TfSpaceViewColumnComponentAddonMeta> GetSpaceViewColumnComponentMetaDictionary();
-	public ITfSpaceViewColumnTypeAddon GetSpaceViewColumnType(Guid addonId);
+	public TfSpaceViewColumnTypeAddonMeta GetSpaceViewColumnType(Guid addonId);
 	public ITfSpaceViewColumnComponentAddon GetSpaceViewColumnComponent(Guid addonId);
 	public List<ITfSpaceViewColumnComponentAddon> GetSpaceViewColumnTypeSupportedComponents(Guid addonId);
 }
@@ -37,9 +37,9 @@ public partial class TfMetaService : ITfMetaService
 		return _columnComponentMetaDict.AsReadOnly();
 	}
 
-	public ITfSpaceViewColumnTypeAddon GetSpaceViewColumnType(Guid addonId)
+	public TfSpaceViewColumnTypeAddonMeta? GetSpaceViewColumnType(Guid addonId)
 	{
-		if (_columnTypeMetaDict.ContainsKey(addonId)) return _columnTypeMetaDict[addonId].Instance;
+		if (_columnTypeMetaDict.ContainsKey(addonId)) return _columnTypeMetaDict[addonId];
 		return null;
 	}
 
@@ -49,7 +49,7 @@ public partial class TfMetaService : ITfMetaService
 		if (componentType == null) return new List<ITfSpaceViewColumnComponentAddon>();
 		var result = new List<ITfSpaceViewColumnComponentAddon>();
 		var addedHs = new HashSet<Guid>();
-		foreach (var compId in componentType.SupportedComponents)
+		foreach (var compId in componentType.Instance.SupportedComponents)
 		{
 			if(addedHs.Contains(addonId)) continue;
 			addedHs.Add(compId);

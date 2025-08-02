@@ -1,0 +1,21 @@
+﻿@page "/space/{SpaceId:guid}/view/{SpaceViewId:guid}/columns"
+@inherits TfBasePage
+
+<TucLayoutListDetails>
+	<Header>
+		<TucHeader />
+	</Header>
+	<AsideToolbar>
+		<TucSpaceViewDetailsAsideToolbar />
+	</AsideToolbar>
+	<AsideContent>
+		<TucSpaceViewDetailsAsideContent />
+	</AsideContent>
+	<ContentToolbar>
+		<TucSpaceViewDetailsContentToolbar />
+	</ContentToolbar>
+	<Content>
+		<TucSpaceViewColumnsContent />
+	</Content>
+</TucLayoutListDetails>
+

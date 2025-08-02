@@ -360,9 +360,11 @@ public partial class TfService : ITfService
 			Position = dbo.Position,
 			TypeId = dbo.TypeId,
 			ComponentId = dbo.ComponentId,
-			DataMapping = JsonSerializer.Deserialize<Dictionary<string, string>>(dbo.DataMappingJson),
+			DataMapping = JsonSerializer.Deserialize<Dictionary<string, string>>(dbo.DataMappingJson) ?? new Dictionary<string, string>(),
 			ComponentOptionsJson = dbo.ComponentOptionsJson,
-			SettingsJson = dbo.SettingsJson,
+			Settings = !String.IsNullOrWhiteSpace(dbo.SettingsJson) && dbo.SettingsJson.StartsWith("{") && dbo.SettingsJson.EndsWith("}")
+				? (JsonSerializer.Deserialize<TfSpaceViewColumnSettings>(dbo.SettingsJson) ?? new TfSpaceViewColumnSettings())
+				: new TfSpaceViewColumnSettings()
 		};
 
 	}
@@ -380,12 +382,12 @@ public partial class TfService : ITfService
 			Title = model.Title,
 			Icon = model.Icon ?? string.Empty,
 			OnlyIcon = model.OnlyIcon,
-			Position = model.Position.Value,
+			Position = (model.Position ?? 1),
 			TypeId = model.TypeId,
 			ComponentId = model.ComponentId,
 			DataMappingJson = JsonSerializer.Serialize(model.DataMapping ?? new Dictionary<string, string>()),
 			ComponentOptionsJson = model.ComponentOptionsJson,
-			SettingsJson = model.SettingsJson,
+			SettingsJson = JsonSerializer.Serialize(model.Settings),
 		};
 	}
 

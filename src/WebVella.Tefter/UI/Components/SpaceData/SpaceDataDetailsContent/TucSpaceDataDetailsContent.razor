@@ -15,22 +15,17 @@
 			<TucPageHeader Icon="@TfConstants.SpaceDataIcon" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
 						   Area="@_space?.Name" Title="@LOC(TfConstants.SpaceDataMenuTitle)" SubTitle="@_spaceData.Name" />
 
-			<TucCard>
-				<TitleTemplate>
-					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween">
-						<h3>@LOC("Details")</h3>
-						<div>
-							<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteSpaceData">
-								@LOC("Delete")
-								<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(TfColor.Red600.GetAttribute().Value)" Slot="start" />
-							</FluentButton>
-							<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceData">
-								@LOC("Edit")
-								<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
-							</FluentButton>
-						</div>
-					</FluentStack>
-				</TitleTemplate>
+			<TucCard Title="@LOC("Details")">
+				<ToolbarTemplate>
+					<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteSpaceData">
+						@LOC("Delete")
+						<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(TfColor.Red600.GetAttribute().Value)" Slot="start" />
+					</FluentButton>
+					<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceData">
+						@LOC("Edit")
+						<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
+					</FluentButton>
+				</ToolbarTemplate>
 				<ChildContent>
 					<FluentGrid>
 						<FluentGridItem xs="6">
