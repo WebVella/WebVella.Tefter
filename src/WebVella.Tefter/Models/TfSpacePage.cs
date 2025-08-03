@@ -40,6 +40,31 @@ public record TfSpacePage
 	{
 		return $"{Name} (pos:{Position}; par:{ParentPage?.Name})";
 	}
+
+	public TfMenuItem ToMenuItem(Action<TfMenuItem>? postProcess = null, TfMenuItemData? data = null)
+	{
+		var item = new TfMenuItem
+		{
+			Id = TfConverters.ConvertGuidToHtmlElementId(Id),
+			Expanded = false,
+			IconCollapsed = TfConstants.GetIcon(FluentIconName),
+			IconExpanded = TfConstants.GetIcon(FluentIconName),
+			Text = Name,
+			Items = ChildPages.Select(x => x.ToMenuItem(postProcess)).ToList(),
+			OnClick = null,
+			OnExpand = null,
+			Data = data,
+			Url = Type == TfSpacePageType.Folder ? null : string.Format(TfConstants.SpaceNodePageUrl, SpaceId, Id),
+			Description = null
+		};
+
+		if (postProcess is not null)
+		{
+			postProcess(item);
+		}
+
+		return item;
+	}
 }
 
 

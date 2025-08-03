@@ -391,7 +391,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 						Data = new TfMenuItemData
 						{
 							SpaceId = space.Id,
-							Type = TfMenuItemDataType.CreateSpacePage
+							MenuType = TfMenuItemType.CreateSpacePage
 						}
 					});
 				}
@@ -424,7 +424,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 						Data = new TfMenuItemData
 						{
 							SpaceId = space.Id,
-							Type = TfMenuItemDataType.CreateSpaceData
+							MenuType = TfMenuItemType.CreateSpaceData
 						}
 					});
 				}
@@ -457,7 +457,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 						Data = new TfMenuItemData
 						{
 							SpaceId = space.Id,
-							Type = TfMenuItemDataType.CreateSpaceView
+							MenuType = TfMenuItemType.CreateSpaceView
 						}
 					});
 				}
@@ -478,7 +478,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			Tooltip = LOC["add new space"],
 			Data = new TfMenuItemData
 			{
-				Type = TfMenuItemDataType.CreateSpace
+				MenuType = TfMenuItemType.CreateSpace
 			}
 		});
 		#endregion

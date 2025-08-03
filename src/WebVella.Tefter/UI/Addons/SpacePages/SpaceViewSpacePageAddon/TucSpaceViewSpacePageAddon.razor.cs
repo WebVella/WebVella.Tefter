@@ -111,7 +111,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 				Type = jsonOptions.Type,
 			};
 
-			var createdSpaceView = TfSpaceViewUIService.CreateSpaceView(spaceView);
+			var createdSpaceView = tfService.CreateSpaceView(spaceView);
 			jsonOptions.SpaceViewId = createdSpaceView.Id;
 			jsonOptions.SpaceDataId = createdSpaceView.SpaceDataId;
 			context.ComponentOptionsJson = JsonSerializer.Serialize(jsonOptions);

@@ -27,23 +27,21 @@
 					}
 					else
 					{
-						<div class="tf-grid-wrapper">
-							<table class="tf-grid">
-								<colgroup style="width:1%"></colgroup>
-								<colgroup></colgroup>
-								<colgroup style="width:120px;"></colgroup>
-								<colgroup style="width:120px;"></colgroup>
-								<tbody class="tf-grid-tbody">
-									@foreach (var context in _spacePages)
-									{
-										var contextIndex = _spacePages.FindIndex(x => x.Id == context.Id);
-										<TucSpaceManageNodeItem Item="context" Level="0" OnRemove="_removePage" OnMove="_movePage"
-																IsFirst="(contextIndex == 0)" IsLast="(contextIndex == _spacePages.Count -1)"
-																OnEdit="_editPage" OnCopy="_copyPage" />
-									}
-								</tbody>
-							</table>
-						</div>
+						<table class="tf-grid">
+							<colgroup style="width:1%"></colgroup>
+							<colgroup></colgroup>
+							<colgroup style="width:120px;"></colgroup>
+							<colgroup style="width:120px;"></colgroup>
+							<tbody class="tf-grid-tbody">
+								@foreach (var context in _spacePages)
+								{
+									var contextIndex = _spacePages.FindIndex(x => x.Id == context.Id);
+									<TucSpaceManageNodeItem Item="context" Level="0" OnRemove="_removePage" OnMove="_movePage"
+															IsFirst="(contextIndex == 0)" IsLast="(contextIndex == _spacePages.Count -1)"
+															OnEdit="_editPage" OnCopy="_copyPage" />
+								}
+							</tbody>
+						</table>
 					}
 				</ChildContent>
 			</TucCard>

@@ -31,6 +31,11 @@ public partial interface ITfUserUIService
 	Task<TfUser> SetStartUpUrl(Guid userId, string url);
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
+
+
+	//Bookmarks
+	List<TfBookmark> GetUserBookmarks(Guid userId);
+	List<TfBookmark> GetUserSaves(Guid userId);
 }
 public partial class TfUserUIService : ITfUserUIService
 {
@@ -180,5 +185,13 @@ public partial class TfUserUIService : ITfUserUIService
 		UserUpdated?.Invoke(this,user);
 		return user;
 	}
+	#endregion
+
+	#region << Bookmarks >>
+	public List<TfBookmark> GetUserBookmarks(Guid userId) 
+		=> _tfService.GetBookmarksListForUser(userId).Where(x=> !String.IsNullOrWhiteSpace(x.Url)).ToList();
+	
+	public List<TfBookmark> GetUserSaves(Guid userId)
+		=> _tfService.GetBookmarksListForUser(userId).Where(x=> String.IsNullOrWhiteSpace(x.Url)).ToList();
 	#endregion
 }

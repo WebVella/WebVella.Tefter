@@ -51,6 +51,19 @@ public record TfMenuItem
 	}
 	public bool Expanded { get; set; } = false;
 	public bool Selected { get; set; } = false;
+	public string IdTree
+	{
+		get
+		{
+			var sb = new StringBuilder();
+			sb.Append(Id);
+			foreach (var item in Items)
+			{
+				sb.Append(item.IdTree);
+			}
+			return sb.ToString();
+		}
+	}
 	public TfMenuItemData? Data { get; set; } = null;
 	public List<TfMenuItem> Items { get; set; } = new();
 	public ElementReference Reference { get; set; }
@@ -69,20 +82,21 @@ public record TfMenuItem
 	}
 
 	[JsonIgnore]
-	public Action OnClick { get; set; } = default!;
+	public Action? OnClick { get; set; } = null;
 
 	[JsonIgnore]
-	public Action<bool> OnExpand { get; set; } = default!;
+	public Action<bool>? OnExpand { get; set; } = null;
 }
 
 
 public record TfMenuItemData
 {
 	public Guid? SpaceId { get; set; }
-	public TfMenuItemDataType Type { get; set; } = TfMenuItemDataType.None;
+	public TfMenuItemType MenuType { get; set; } = TfMenuItemType.None;
+	public TfSpacePageType SpacePageType { get; set; } = TfSpacePageType.Page;
 }
 
-public enum TfMenuItemDataType
+public enum TfMenuItemType
 {
 	None = 0,
 	CreateSpace = 1,

@@ -1,0 +1,251 @@
+﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+namespace WebVella.Tefter.UI.Components;
+public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
+{
+	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; } = default!;
+	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
+	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
+	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
+	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
+
+	private bool _isLoading = true;
+	private int _stringLimit = 30;
+	private TfUser _user = default!;
+	private string? _search = String.Empty;
+	private TfSpaceNavigationActiveTab _activeTab = TfSpaceNavigationActiveTab.Pages;
+	private List<string> _expandedNodeIdList = new();
+	private List<TfMenuItem> _items = new();
+	private TfNavigationState _navState = new();
+	public void Dispose()
+	{
+		TfSpaceUIService.SpaceUpdated -= On_SpaceChanged;
+		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+	}
+	protected override async Task OnInitializedAsync()
+	{
+		await _init();
+		TfSpaceUIService.SpaceUpdated += On_SpaceChanged;
+		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+	}
+
+	private async void On_SpaceChanged(object? caller, TfSpace args)
+	{
+		await _init();
+	}
+
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	{
+		if (UriInitialized != args.Uri)
+			await _init(args);
+	}
+
+	private async Task _init(TfNavigationState? navState = null)
+	{
+		_isLoading = true;
+		await InvokeAsync(StateHasChanged);
+
+		if (navState is null)
+			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+		else
+			_navState = navState;
+
+		try
+		{
+			_items = new();
+			if (_navState.SpaceId is null)
+				return;
+
+			var user = await TfUserUIService.GetCurrentUserAsync();
+			if (user is null)
+				return;
+			_user = user;
+			_search = _navState.SearchAside;
+			_activeTab = NavigatorExt.GetEnumFromQuery<TfSpaceNavigationActiveTab>(Navigator, TfConstants.TabQueryName, TfSpaceNavigationActiveTab.Pages)!.Value;
+			await _generateMenu();
+		}
+		finally
+		{
+			_isLoading = false;
+			UriInitialized = _navState.Uri;
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private async Task _addPage()
+	{
+		if (_navState.SpaceId == null) return;
+		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(
+		new TfSpacePage() { SpaceId = _navState.SpaceId.Value },
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var item = (TfSpacePage)result.Data;
+			Navigator.NavigateTo(string.Format(TfConstants.SpaceNodePageUrl, _navState.SpaceId.Value, item.Id));
+		}
+
+	}
+
+	#region << Menu General >>
+	private async Task _generateMenu()
+	{
+		_expandedNodeIdList = await _getExpandedNodesFromStorage();
+		var menuItems = new List<TfMenuItem>();
+		var menuGroups = new List<string>();
+		if (_activeTab == TfSpaceNavigationActiveTab.Pages)
+		{
+			var spacePages = TfSpaceUIService.GetSpacePages(_navState.SpaceId!.Value);
+			foreach (var spacePage in spacePages)
+			{
+				var item = spacePage.ToMenuItem((x) =>
+				{
+					_assignMenuItemActions(x);
+				});
+				if (!String.IsNullOrWhiteSpace(item.Id))
+					item.Expanded = _expandedNodeIdList.Contains(item.Id!);
+				if (_navState.SpacePageId is not null)
+					item.Selected = item.IdTree.Contains(_navState.SpacePageId.Value.ToString());
+				menuItems.Add(item);
+			}
+		}
+		else if (_activeTab == TfSpaceNavigationActiveTab.Bookmarks)
+		{
+			var bookmarks = TfUserUIService.GetUserBookmarks(_user.Id);
+			var spaceViewDict = (TfSpaceViewUIService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
+			foreach (var record in bookmarks
+				.Where(x => spaceViewDict.ContainsKey(x.SpaceViewId)).OrderBy(x => x.Name))
+			{
+				if (!String.IsNullOrWhiteSpace(_search)
+					&& !(record.Name.ToLowerInvariant().Contains(_search) || record.Description.ToLowerInvariant().Contains(_search)))
+					continue;
+
+				var viewMenu = new TfMenuItem
+				{
+					Id = TfConverters.ConvertGuidToHtmlElementId(record.Id),
+					IconCollapsed = TfConstants.BookmarkOFFIcon,
+					Text = record.Name,
+					Url = string.Format(TfConstants.SpaceViewPageUrl, _navState.SpaceId, record.SpaceViewId),
+					Selected = record.SpaceViewId == _navState.SpaceViewId
+				};
+				menuItems.Add(viewMenu);
+			}
+		}
+		else if (_activeTab == TfSpaceNavigationActiveTab.Saves)
+		{
+			var saves = TfUserUIService.GetUserSaves(_user.Id);
+			var spaceViewDict = (TfSpaceViewUIService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
+			foreach (var record in saves
+				.Where(x => spaceViewDict.ContainsKey(x.SpaceViewId)).OrderBy(x => x.Name))
+			{
+				if (!String.IsNullOrWhiteSpace(_search)
+					&& !(record.Name.ToLowerInvariant().Contains(_search) || record.Description.ToLowerInvariant().Contains(_search)))
+					continue;
+
+
+				var viewMenu = new TfMenuItem
+				{
+					Id = TfConverters.ConvertGuidToHtmlElementId(record.Id),
+					IconCollapsed = TfConstants.GetIcon("Link"),
+					Text = record.Name,
+					Url = NavigatorExt.AddQueryValueToUri(record.Url, TfConstants.ActiveSaveQueryName, record.Id.ToString()),
+					Selected = record.Id == _navState.ActiveSaveId
+				};
+				menuItems.Add(viewMenu);
+			}
+		}
+		_items = menuItems;
+	}
+	private void _assignMenuItemActions(TfMenuItem item)
+	{
+		item.OnClick = async () => await _onMenuItemClick(item);
+		item.OnExpand = async (bool expanded) => await _onMenuItemExpand(item);
+	}
+
+	private async Task _onMenuItemExpand(TfMenuItem item)
+	{
+		if (item.Expanded)
+		{
+			item.Expanded = false;
+			await _removeExpandedNodesFromStorage(item.Id);
+		}
+		else
+		{
+			item.Expanded = true;
+			await _addExpandedNodesToStorage(item.Id);
+		}
+
+	}
+
+	private async Task _onMenuItemClick(TfMenuItem item)
+	{
+		if (item.Data is not null)
+		{
+			if (item.Data.SpacePageType == TfSpacePageType.Folder)
+			{
+				await _onMenuItemExpand(item);
+				return;
+			}
+		}
+		if (!String.IsNullOrWhiteSpace(item.Url))
+		{
+			Navigator.NavigateTo(item.Url);
+		}
+		else
+		{
+			item.Selected = !item.Selected;
+		}
+		return;
+	}
+
+	#endregion
+
+	#region << Expanded Local Storage>>
+
+	private async Task<List<string>> _getExpandedNodesFromStorage()
+	{
+		try
+		{
+			var result = await ProtectedLocalStorage.GetAsync<List<string>>(TfConstants.SpaceViewOpenedGroupsLocalStorageKey);
+			if (result.Success) return result.Value;
+			return new List<string>();
+		}
+		catch
+		{
+			//if decryption fail delete Protected LocalStoravge
+			await ProtectedLocalStorage.DeleteAsync(TfConstants.SpaceViewOpenedGroupsLocalStorageKey);
+			return new List<string>();
+		}
+
+	}
+
+	private async Task<List<string>> _addExpandedNodesToStorage(string itemId)
+	{
+		ToastService.ShowInfo("expanded");
+		var current = await _getExpandedNodesFromStorage();
+		if (!current.Contains(itemId))
+		{
+			current.Add(itemId);
+			await ProtectedLocalStorage.SetAsync(TfConstants.SpaceViewOpenedGroupsLocalStorageKey, current);
+		}
+		return current;
+	}
+	private async Task<List<string>> _removeExpandedNodesFromStorage(string itemId)
+	{
+		ToastService.ShowInfo("collapsed");
+		var current = await _getExpandedNodesFromStorage();
+		if (current.Contains(itemId))
+		{
+			current.Remove(itemId);
+			await ProtectedLocalStorage.SetAsync(TfConstants.SpaceViewOpenedGroupsLocalStorageKey, current);
+		}
+		return current;
+	}
+	#endregion
+
+}

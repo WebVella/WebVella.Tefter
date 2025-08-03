@@ -57,17 +57,18 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 	private async Task _onClick(TfMenuItem item)
 	{
 		if (item.Data is null) return;
-		if (item.Data.Type == TfMenuItemDataType.CreateSpace)
+		if (item.Data.MenuType == TfMenuItemType.CreateSpace)
 		{
 			await _addSpaceHandler(item);
 		}
-		else if (item.Data.Type == TfMenuItemDataType.CreateSpacePage)
+		else if (item.Data.MenuType == TfMenuItemType.CreateSpacePage)
 		{
+			await _addSpacePageHandler(item);
 		}
-		else if (item.Data.Type == TfMenuItemDataType.CreateSpaceData){ 
+		else if (item.Data.MenuType == TfMenuItemType.CreateSpaceData){ 
 			await _addSpaceDataHandler(item);
 		}
-		else if (item.Data.Type == TfMenuItemDataType.CreateSpaceView){ 
+		else if (item.Data.MenuType == TfMenuItemType.CreateSpaceView){ 
 			await _addSpaceViewHandler(item);
 		}
 	}
@@ -109,7 +110,6 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 			Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, args.Data.SpaceId.Value, item.Id));
 		}
 	}
-
 	private async Task _addSpaceViewHandler(TfMenuItem args)
 	{
 		if (args.Data?.SpaceId == null) return;
@@ -127,6 +127,25 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 		{
 			var item = (TfSpaceView)result.Data;
 			Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, args.Data.SpaceId.Value, item.Id));
+		}
+	}
+	private async Task _addSpacePageHandler(TfMenuItem args)
+	{
+		if (args.Data?.SpaceId == null) return;
+		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(
+		new TfSpacePage() { SpaceId = args.Data.SpaceId.Value },
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var item = (TfSpacePage)result.Data;
+			Navigator.NavigateTo(string.Format(TfConstants.SpaceNodePageUrl, args.Data.SpaceId.Value, item.Id));
 		}
 	}
 }
