@@ -33,11 +33,9 @@
 
 	&:hover {
 		color: var(--neutral-foreground-rest);
+		background:var(--tf-fill-color-hover);
 	}
 
-	&:not(.tf-selected):hover {
-		background: transparent;
-	}
 
 	&__content {
 		display: flex;
@@ -108,6 +106,13 @@
 
 		&::before {
 			display: none !important;
+		}
+	}
+
+	&&--folder.tf-selected{
+		background:transparent;
+		&:hover{
+			background:var(--tf-fill-color-hover);
 		}
 	}
 }

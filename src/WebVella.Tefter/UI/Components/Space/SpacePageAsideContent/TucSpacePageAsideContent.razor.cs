@@ -107,12 +107,10 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 				{
 					_assignMenuItemActions(x);
 				});
-				if (!String.IsNullOrWhiteSpace(item.Id))
-					item.Expanded = _expandedNodeIdList.Contains(item.Id!);
-				if (_navState.SpacePageId is not null)
-					item.Selected = item.IdTree.Contains(_navState.SpacePageId.Value.ToString());
+
 				menuItems.Add(item);
 			}
+			menuItems.ForEach(x=> _setFlags(x));
 		}
 		else if (_activeTab == TfSpaceNavigationActiveTab.Bookmarks)
 		{
@@ -161,10 +159,23 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		}
 		_items = menuItems;
 	}
+
 	private void _assignMenuItemActions(TfMenuItem item)
 	{
 		item.OnClick = async () => await _onMenuItemClick(item);
 		item.OnExpand = async (bool expanded) => await _onMenuItemExpand(item);
+	}
+
+	private void _setFlags(TfMenuItem item){ 
+		if (!String.IsNullOrWhiteSpace(item.Id))
+			item.Expanded = _expandedNodeIdList.Contains(item.Id!);
+		if (_navState.SpacePageId is not null)
+			item.Selected = item.IdTree.Contains(_navState.SpacePageId.Value.ToString());
+
+		foreach (var childItem in item.Items ?? new List<TfMenuItem>())
+		{
+			_setFlags(childItem);
+		}
 	}
 
 	private async Task _onMenuItemExpand(TfMenuItem item)
@@ -226,7 +237,6 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 
 	private async Task<List<string>> _addExpandedNodesToStorage(string itemId)
 	{
-		ToastService.ShowInfo("expanded");
 		var current = await _getExpandedNodesFromStorage();
 		if (!current.Contains(itemId))
 		{
@@ -237,7 +247,6 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 	}
 	private async Task<List<string>> _removeExpandedNodesFromStorage(string itemId)
 	{
-		ToastService.ShowInfo("collapsed");
 		var current = await _getExpandedNodesFromStorage();
 		if (current.Contains(itemId))
 		{

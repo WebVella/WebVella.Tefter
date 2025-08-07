@@ -35,6 +35,10 @@ public partial class TucMenuDropdownItem : TfBaseComponent
 
 		if (Item.Disabled)
 			classList.Add("tf-menu__item--disabled");
+
+		if(Item.Data is not null) 
+			classList.Add($"tf-menu__item--{Item.Data.SpacePageType.ToDescriptionString()}");
+
 		_css = String.Join(" ", classList);
 	}
 }

@@ -57,9 +57,12 @@ public record TfMenuItem
 		{
 			var sb = new StringBuilder();
 			sb.Append(Id);
-			foreach (var item in Items)
+			if (String.IsNullOrWhiteSpace(Url))
 			{
-				sb.Append(item.IdTree);
+				foreach (var item in Items)
+				{
+					sb.Append(item.IdTree);
+				}
 			}
 			return sb.ToString();
 		}
@@ -93,7 +96,7 @@ public record TfMenuItemData
 {
 	public Guid? SpaceId { get; set; }
 	public TfMenuItemType MenuType { get; set; } = TfMenuItemType.None;
-	public TfSpacePageType SpacePageType { get; set; } = TfSpacePageType.Page;
+	public TfSpacePageType SpacePageType { get; set; } = TfSpacePageType.None;
 }
 
 public enum TfMenuItemType

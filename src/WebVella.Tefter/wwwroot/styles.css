@@ -1355,9 +1355,7 @@ fluent-dialog .tf-divider,
 }
 .tf-menu-item:hover {
   color: var(--neutral-foreground-rest);
-}
-.tf-menu-item:not(.tf-selected):hover {
-  background: transparent;
+  background: var(--tf-fill-color-hover);
 }
 .tf-menu-item__content {
   display: flex;
@@ -1419,6 +1417,12 @@ fluent-dialog .tf-divider,
 }
 .tf-menu-item.tf-selected::before {
   display: none !important;
+}
+.tf-menu-item.tf-menu-item--folder.tf-selected {
+  background: transparent;
+}
+.tf-menu-item.tf-menu-item--folder.tf-selected:hover {
+  background: var(--tf-fill-color-hover);
 }
 /*::deep.tf-menu-item {
 	display: flex;

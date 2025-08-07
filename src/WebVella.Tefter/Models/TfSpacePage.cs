@@ -41,7 +41,7 @@ public record TfSpacePage
 		return $"{Name} (pos:{Position}; par:{ParentPage?.Name})";
 	}
 
-	public TfMenuItem ToMenuItem(Action<TfMenuItem>? postProcess = null, TfMenuItemData? data = null)
+	public TfMenuItem ToMenuItem(Action<TfMenuItem>? postProcess = null)
 	{
 		var item = new TfMenuItem
 		{
@@ -53,7 +53,12 @@ public record TfSpacePage
 			Items = ChildPages.Select(x => x.ToMenuItem(postProcess)).ToList(),
 			OnClick = null,
 			OnExpand = null,
-			Data = data,
+			Data = new TfMenuItemData
+			{
+				MenuType = TfMenuItemType.None,
+				SpacePageType = Type,
+				SpaceId = SpaceId
+			},
 			Url = Type == TfSpacePageType.Folder ? null : string.Format(TfConstants.SpaceNodePageUrl, SpaceId, Id),
 			Description = null
 		};

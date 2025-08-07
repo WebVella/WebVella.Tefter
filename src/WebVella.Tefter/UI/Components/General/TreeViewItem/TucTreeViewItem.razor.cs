@@ -10,22 +10,27 @@ public partial class TucTreeViewItem : ComponentBase
 		{
 			var classList = new List<string>();
 			classList.Add("tf-menu-item");
-			if(Item.OnClick is not null) classList.Add("tf-clickable");
-			if(Item.OnExpand is not null) classList.Add("tf-expandable");
-			if(Item.Expanded) classList.Add("tf-expanded");
-			if(Item.Selected) classList.Add("tf-selected");
-			if(Item.Items.Count > 0) classList.Add("tf-parent");
+			if (Item.Data is not null)
+				classList.Add($"tf-menu-item--{Item.Data.SpacePageType.ToDescriptionString()}");
+
+			if (Item.OnClick is not null) classList.Add("tf-clickable");
+			if (Item.OnExpand is not null) classList.Add("tf-expandable");
+			if (Item.Expanded) classList.Add("tf-expanded");
+			if (Item.Selected) classList.Add("tf-selected");
+			if (Item.Items.Count > 0) classList.Add("tf-parent");
 
 			return String.Join(" ", classList);
 		}
 	}
 
-	private void _onClick(){ 
-		if(Item.OnClick != null) {
+	private void _onClick()
+	{
+		if (Item.OnClick != null)
+		{
 			Item.OnClick();
 			return;
 		}
-		if(!String.IsNullOrWhiteSpace(Item.Url))
+		if (!String.IsNullOrWhiteSpace(Item.Url))
 			Navigator.NavigateTo(Item.Url);
 	}
 }
