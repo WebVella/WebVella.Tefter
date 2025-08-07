@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewDetails.TfSpaceViewDetails", "WebVella.Tefter")]
-public partial class TucSpaceViewDetails : TfBaseComponent
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewPageContent.TucSpaceViewPageContent", "WebVella.Tefter")]
+public partial class TucSpaceViewPageContent : TfBaseComponent
 {
 	// Dependency Injection
 	[Inject] private ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
@@ -97,6 +97,7 @@ public partial class TucSpaceViewDetails : TfBaseComponent
 							page: _page,
 							pageSize: _pageSize
 					);
+
 		}
 		finally
 		{

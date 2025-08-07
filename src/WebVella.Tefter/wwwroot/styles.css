@@ -832,6 +832,28 @@ fluent-dialog .tf-divider,
 			content: '\2022';
 			padding-right: 5px;
 		}*/
+@keyframes gridLoadingBar {
+  0% {
+    left: 0%;
+    right: 100%;
+    width: 0%;
+  }
+  10% {
+    left: 0%;
+    right: 75%;
+    width: 25%;
+  }
+  90% {
+    right: 0%;
+    left: 75%;
+    width: 25%;
+  }
+  100% {
+    left: 100%;
+    right: 0%;
+    width: 0%;
+  }
+}
 .tf-grid {
   table-layout: fixed;
   min-width: 100%;
@@ -850,11 +872,11 @@ fluent-dialog .tf-divider,
   top: 0px;
   z-index: 3;
 }
-.tf-grid thead > tr:not(.tf-grid-thead-bkg) {
+.tf-grid thead > tr:not(.tf-grid-thead-bkg):not(.tf-grid-thead-loading) {
   position: relative;
   z-index: 2;
 }
-.tf-grid thead > tr:not(.tf-grid-thead-bkg):first-child > th {
+.tf-grid thead > tr:not(.tf-grid-thead-bkg):not(.tf-grid-thead-loading):first-child > th {
   border-top: none;
 }
 .tf-grid thead tr > th,
@@ -878,6 +900,19 @@ fluent-dialog .tf-divider,
   right: 0;
   z-index: 1;
   pointer-events: none;
+}
+.tf-grid-thead-loading {
+  position: absolute;
+  content: "";
+  height: 3px;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent 33%, var(--accent-fill-rest) 66%, transparent 100%);
+  width: 0;
+  animation: gridLoadingBar 2s linear infinite;
 }
 .tf-grid tbody tr > th,
 .tf-grid tbody tr > td {

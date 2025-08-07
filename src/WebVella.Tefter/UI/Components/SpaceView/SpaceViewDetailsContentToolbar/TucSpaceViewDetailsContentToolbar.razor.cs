@@ -49,7 +49,7 @@ public partial class TucSpaceViewDetailsContentToolbar : TfBaseComponent, IDispo
 				Id = Guid.NewGuid().ToString(),
 				Url = string.Format(TfConstants.SpaceViewFiltersPageUrl, navState.SpaceId, navState.SpaceViewId),
 				Selected = navState.HasNode(RouteDataNode.Filters,4),
-				Text = LOC("Filters"),
+				Text = LOC("Preset Filters"),
 				IconCollapsed = TfConstants.GetIcon("Filter")
 			});
 			_menu.Add(new TfMenuItem

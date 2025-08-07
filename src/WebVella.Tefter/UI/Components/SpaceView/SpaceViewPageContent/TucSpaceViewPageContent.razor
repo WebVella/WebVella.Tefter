@@ -16,7 +16,7 @@
 		var columnIndex = 1;
 		@((MarkupString)_getEmbeddedStyles())
 		<TucPageHeader Title="@_spacePage!.Name" Icon="TfConstants.GetIcon(_spacePage.FluentIconName)"
-					   Area="@_space!.Name" IconColor="_space!.Color"/>
+					   Area="@_space!.Name" IconColor="_space!.Color" />
 		@* <TfPageHeader>@((MarkupString)$"{TfAppState.Value.SpaceView.Name}{_generatePresetPathHtml()}")</TfPageHeader> *@
 		@* 			<TfSpaceViewToolbar OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" OnClearFilter="_onClearFilter"
 								OnSelectAll="_onSelectAll" SelectAllLoading="_selectAllLoading" OnDeSelectAll="_onDeSelectAll" /> *@
@@ -30,6 +30,10 @@
 				</colgroup>
 				<thead class="tf-grid-thead">
 					<tr class="tf-grid-thead-bkg"></tr>
+					@if (_isDataLoading)
+					{
+						<tr class="tf-grid-thead-loading"></tr>
+					}
 					<tr class="tf-grid-tr">
 						<th class="tf-grid-th tf-grid-th--check @configCss[0].Item2" style="@($"{configCss[0].Item3}")">
 							<div class="check-content">
@@ -76,13 +80,7 @@
 					</tr>
 				</thead>
 				<tbody class="tf-grid-tbody">
-					@if (_isDataLoading)
-					{
-						<tr class="tf-grid-tr">
-							<td class="tf-grid-td" colspan="@(_spaceViewColumns.Count + 1)"><div>@LOC("Loading...")</div></td>
-						</tr>
-					}
-					else if (_data is null)
+					@if (_data is null)
 					{
 						<tr class="tf-grid-tr">
 							<td class="tf-grid-td" colspan="@(_spaceViewColumns.Count + 1)"><div>@LOC("Dataset or DataProvider not found")</div></td>

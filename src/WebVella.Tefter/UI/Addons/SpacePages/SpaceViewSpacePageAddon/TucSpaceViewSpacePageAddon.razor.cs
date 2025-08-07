@@ -132,11 +132,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		if (Context.ComponentOptionsJson != optionsJson)
 		{
 			optionsJson = Context.ComponentOptionsJson;
-			_options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(optionsJson);
-
-
-			//When cannot node has json from another page type
-			if (_options is null) _options = new TfSpaceViewSpacePageAddonOptions();
+			_options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(optionsJson) ?? new TfSpaceViewSpacePageAddonOptions();
 
 			if (_options.SpaceViewId is not null)
 				_optionsExistingSpaceView = _allSpaceView.FirstOrDefault(x => x.Id == _options.SpaceViewId.Value);
