@@ -41,7 +41,20 @@ public record TfSpacePage
 		return $"{Name} (pos:{Position}; par:{ParentPage?.Name})";
 	}
 
-	public TfMenuItem ToMenuItem(Action<TfMenuItem>? postProcess = null)
+	public Guid? GetFirstNavigatedPageId()
+	{
+		if(Type != TfSpacePageType.Folder)
+			return Id;
+		foreach (var child in ChildPages ?? new List<TfSpacePage>())
+		{
+			var childId = child.GetFirstNavigatedPageId();
+			if(childId is not null)
+				return childId;
+		}
+		return null;
+	}
+
+	public TfMenuItem ToMenuItem(Action<TfMenuItem>? postProcess = null, Func<TfSpacePage,bool>? includeChildFunc = null)
 	{
 		var item = new TfMenuItem
 		{
@@ -50,7 +63,7 @@ public record TfSpacePage
 			IconCollapsed = TfConstants.GetIcon(FluentIconName),
 			IconExpanded = TfConstants.GetIcon(FluentIconName),
 			Text = Name,
-			Items = ChildPages.Select(x => x.ToMenuItem(postProcess)).ToList(),
+			Items = new(),
 			OnClick = null,
 			OnExpand = null,
 			Data = new TfMenuItemData
@@ -59,9 +72,17 @@ public record TfSpacePage
 				SpacePageType = Type,
 				SpaceId = SpaceId
 			},
-			Url = Type == TfSpacePageType.Folder ? null : string.Format(TfConstants.SpaceNodePageUrl, SpaceId, Id),
+			Url = Type == TfSpacePageType.Folder ? null : string.Format(TfConstants.SpacePagePageUrl, SpaceId, Id),
 			Description = null
 		};
+
+		foreach (var childPage in ChildPages)
+		{
+			if(includeChildFunc is not null && !includeChildFunc(childPage))	
+				continue;
+			var childItem = childPage.ToMenuItem(postProcess, includeChildFunc);
+			item.Items.Add(childItem);
+		}
 
 		if (postProcess is not null)
 		{

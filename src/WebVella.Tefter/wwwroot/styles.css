@@ -1458,6 +1458,7 @@ fluent-dialog .tf-divider,
 .tf-page-header__primary__left {
   flex: 1 1 auto;
   display: flex;
+  align-items: center;
 }
 .tf-page-header__primary__right {
   flex: 0 0 auto;

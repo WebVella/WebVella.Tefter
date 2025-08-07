@@ -316,7 +316,7 @@ public class NavigatorExtTests
 		#endregion
 
 		#region << Space node >>
-		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceNodePageUrl, spaceId, nodeId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpacePagePageUrl, spaceId, nodeId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);

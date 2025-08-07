@@ -21,6 +21,7 @@ public partial interface ITfSpaceUIService
 	TfSpace RemoveSpacesRole(TfSpace space, TfRole role);
 
 	//Space Page
+	TfSpacePage GetSpacePage(Guid pageId);
 	List<TfSpacePage> GetSpacePages(Guid spaceId);
 	void CreateSpacePage(TfSpacePage page);
 	void UpdateSpacePage(TfSpacePage page);
@@ -104,6 +105,8 @@ public partial class TfSpaceUIService : ITfSpaceUIService
 	#endregion
 
 	#region << Page >>
+	public TfSpacePage GetSpacePage(Guid pageId)
+		=> _tfService.GetSpacePage(pageId);
 	public List<TfSpacePage> GetSpacePages(Guid spaceId)
 		=> _tfService.GetSpacePages(spaceId);
 

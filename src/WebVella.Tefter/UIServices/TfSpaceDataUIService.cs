@@ -43,6 +43,8 @@ public partial interface ITfSpaceDataUIService
 		bool noRows = false,
 		bool returnOnlyTfIds = false);
 
+	TfDataTable SaveDataDataTable(TfDataTable dt);
+
 }
 public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 {
@@ -157,27 +159,31 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 	#endregion
 
 	#region << Data >>
-public TfDataTable QuerySpaceData(
-		Guid spaceDataId,
-		List<TfFilterBase> userFilters = null,
-		List<TfSort> userSorts = null,
-		List<TfFilterBase> presetFilters = null,
-		List<TfSort> presetSorts = null,
-		string search = null,
-		int? page = null,
-		int? pageSize = null,
-		bool noRows = false,
-		bool returnOnlyTfIds = false)
-	=> _tfService.QuerySpaceData(
-		spaceDataId:spaceDataId,
-		userFilters:userFilters,
-		userSorts:userSorts,
-		presetFilters:presetFilters,
-		presetSorts:presetSorts,
-		search:search,
-		page:page,
-		pageSize:pageSize,
-		noRows:noRows,
-		returnOnlyTfIds:returnOnlyTfIds);
+	public TfDataTable QuerySpaceData(
+			Guid spaceDataId,
+			List<TfFilterBase> userFilters = null,
+			List<TfSort> userSorts = null,
+			List<TfFilterBase> presetFilters = null,
+			List<TfSort> presetSorts = null,
+			string search = null,
+			int? page = null,
+			int? pageSize = null,
+			bool noRows = false,
+			bool returnOnlyTfIds = false)
+		=> _tfService.QuerySpaceData(
+			spaceDataId: spaceDataId,
+			userFilters: userFilters,
+			userSorts: userSorts,
+			presetFilters: presetFilters,
+			presetSorts: presetSorts,
+			search: search,
+			page: page,
+			pageSize: pageSize,
+			noRows: noRows,
+			returnOnlyTfIds: returnOnlyTfIds);
+
+	public TfDataTable SaveDataDataTable(TfDataTable dt){ 
+		return _tfService.SaveDataTable(dt);
+	}
 	#endregion
 }

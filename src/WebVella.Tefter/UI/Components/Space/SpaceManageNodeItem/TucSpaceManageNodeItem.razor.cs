@@ -27,8 +27,6 @@ public partial class TucSpaceManageNodeItem : TfBaseComponent
 	public EventCallback<Tuple<TfSpacePage,bool>> OnMove { get; set; }
 
 	private async Task _onRemove(){ 
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this space node removed?")))
-			return;
 		await OnRemove.InvokeAsync(Item);
 	}
 

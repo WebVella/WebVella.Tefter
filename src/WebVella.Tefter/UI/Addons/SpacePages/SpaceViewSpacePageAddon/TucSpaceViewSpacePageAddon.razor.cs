@@ -59,28 +59,6 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		return ValidationErrors;
 	}
 
-	//public override Task<(TfAppState, TfAuxDataState)> InitState(
-	//	IServiceProvider serviceProvider,
-	//	TucUser currentUser,
-	//	TfAppState newAppState, TfAppState oldAppState,
-	//	TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState,
-	//	TfSpacePageAddonContext context)
-	//{
-	//	#region << Init Options >>
-	//	if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) return Task.FromResult((newAppState, newAuxDataState)); ;
-
-	//	var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(context.ComponentOptionsJson);
-	//	if (options is null || options.SpaceViewId is null) return Task.FromResult((newAppState, newAuxDataState)); ;
-	//	#endregion
-
-	//	#region << Init SpaceView>>
-	//	newAppState = newAppState with { Route = newAppState.Route with { SpaceViewId = options.SpaceViewId } };
-	//	#endregion
-
-
-	//	return Task.FromResult((newAppState, newAuxDataState));
-	//}
-
 	public override async Task<string> OnPageCreated(IServiceProvider serviceProvider, TfSpacePageAddonContext context)
 	{
 		await base.OnPageCreated(serviceProvider, context);
@@ -155,6 +133,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		{
 			optionsJson = Context.ComponentOptionsJson;
 			_options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(optionsJson);
+
 
 			//When cannot node has json from another page type
 			if (_options is null) _options = new TfSpaceViewSpacePageAddonOptions();

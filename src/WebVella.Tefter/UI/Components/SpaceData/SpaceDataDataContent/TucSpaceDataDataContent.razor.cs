@@ -62,12 +62,12 @@ public partial class TucSpaceDataDataContent : TfBaseComponent, IDisposable
 			_page = _navState.Page ?? 1;
 			_pageSize = _navState.PageSize ?? TfConstants.PageSize;
 			_data = TfSpaceDataUIService.QuerySpaceData(
-				spaceDataId:_spaceData.Id,
-				userFilters:null,
-				userSorts:null,
-				presetFilters:null,
-				presetSorts:null,
-				search:_navState.Search,
+				spaceDataId: _spaceData.Id,
+				userFilters: null,
+				userSorts: null,
+				presetFilters: null,
+				presetSorts: null,
+				search: _navState.Search,
 				page: _page,
 				pageSize: _pageSize
 			);
@@ -82,7 +82,7 @@ public partial class TucSpaceDataDataContent : TfBaseComponent, IDisposable
 		}
 	}
 
-private async Task _goFirstPage()
+	private async Task _goFirstPage()
 	{
 		if (_page == 1) return;
 		var queryDict = new Dictionary<string, object>{
@@ -92,7 +92,7 @@ private async Task _goFirstPage()
 	}
 	private async Task _goPreviousPage()
 	{
-		var page =_page - 1;
+		var page = _page - 1;
 		if (page < 1) page = 1;
 		if (_page == page) return;
 		var queryDict = new Dictionary<string, object?>{
@@ -140,6 +140,6 @@ private async Task _goFirstPage()
 			{ TfConstants.SearchQueryName, value}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}	
+	}
 
 }

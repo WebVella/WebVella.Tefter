@@ -87,7 +87,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		if (!result.Cancelled && result.Data != null)
 		{
 			var item = (TfSpacePage)result.Data;
-			Navigator.NavigateTo(string.Format(TfConstants.SpaceNodePageUrl, _navState.SpaceId.Value, item.Id));
+			Navigator.NavigateTo(string.Format(TfConstants.SpacePagePageUrl, _navState.SpaceId.Value, item.Id));
 		}
 
 	}
@@ -103,14 +103,16 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 			var spacePages = TfSpaceUIService.GetSpacePages(_navState.SpaceId!.Value);
 			foreach (var spacePage in spacePages)
 			{
+				if (!_filterPage(spacePage))
+					continue;
 				var item = spacePage.ToMenuItem((x) =>
 				{
 					_assignMenuItemActions(x);
-				});
+				}, _filterPage);
 
 				menuItems.Add(item);
 			}
-			menuItems.ForEach(x=> _setFlags(x));
+			menuItems.ForEach(x => _setFlags(x));
 		}
 		else if (_activeTab == TfSpaceNavigationActiveTab.Bookmarks)
 		{
@@ -166,7 +168,17 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		item.OnExpand = async (bool expanded) => await _onMenuItemExpand(item);
 	}
 
-	private void _setFlags(TfMenuItem item){ 
+	private bool _filterPage(TfSpacePage page)
+	{
+		var search = _search?.Trim().ToLowerInvariant();
+		if (!String.IsNullOrWhiteSpace(search) && !page.Name.ToLowerInvariant().Contains(search))
+			return false;
+
+		return true;
+	}
+
+	private void _setFlags(TfMenuItem item)
+	{
 		if (!String.IsNullOrWhiteSpace(item.Id))
 			item.Expanded = _expandedNodeIdList.Contains(item.Id!);
 		if (_navState.SpacePageId is not null)

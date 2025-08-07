@@ -337,7 +337,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			Guid? firstPageId = null;
 			foreach (var page in spacePages)
 			{
-				var pageId = _getFirstNavigatedPageId(page);
+				var pageId = page.GetFirstNavigatedPageId();
 				if(pageId is not null){ 
 					firstPageId = pageId;
 					break;
@@ -352,7 +352,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				Selected = routeState.RouteNodes.Count >= 2 && routeState.RouteNodes[0] == RouteDataNode.Space && routeState.SpaceId == space.Id,
 				Url = firstPageId is null
 				? String.Empty
-				: String.Format(TfConstants.SpaceNodePageUrl, space.Id, firstPageId),
+				: String.Format(TfConstants.SpacePagePageUrl, space.Id, firstPageId),
 				Tooltip = space.Name,
 				Text = space.Name
 			};
@@ -380,7 +380,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 						IconExpanded = TfConstants.PageIcon,
 						IconColor = subNodeIconColor,
 						Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.HasNode(RouteDataNode.Pages, 2) && routeState.SpaceId == space.Id,
-						Url = String.Format(TfConstants.SpaceNodePageUrl, space.Id, spacePages[0].Id),
+						Url = String.Format(TfConstants.SpaceManagePagesPageUrl, space.Id),
 						Text = "Space pages",
 						Tooltip = "Space pages"
 					});
@@ -494,17 +494,5 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 		return menuItems;
 	}
 
-	private Guid? _getFirstNavigatedPageId(TfSpacePage page)
-	{
-		if(page.Type != TfSpacePageType.Folder)
-			return page.Id;
-		foreach (var child in page.ChildPages)
-		{
-			var childId = _getFirstNavigatedPageId(child);
-			if(childId is not null)
-				return childId;
-		}
-		return null;
-	}
 	#endregion
 }

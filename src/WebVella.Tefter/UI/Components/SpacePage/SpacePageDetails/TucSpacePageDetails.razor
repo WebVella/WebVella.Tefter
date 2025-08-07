@@ -1,0 +1,27 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+@if (_spacePage is null)
+{
+	<FluentMessageBar Title="No page found"
+					  Style="border: 1px solid var(--neutral-base-color)"
+					  Intent="MessageIntent.Info"
+					  AllowDismiss="false">
+		No page found
+	</FluentMessageBar>
+}
+else if (_spacePage is null)
+{
+	<FluentMessageBar Title="No page found"
+					  Style="border: 1px solid var(--neutral-base-color)"
+					  Intent="MessageIntent.Info"
+					  AllowDismiss="false">
+		No addon component defined
+	</FluentMessageBar>
+}
+else if (_spacePage.ComponentType is not null)
+{
+	<TucErrorBoundry>
+		<DynamicComponent Type="@_spacePage.ComponentType" Parameters="@_getDynamicComponentParams()" />
+	</TucErrorBoundry>
+}

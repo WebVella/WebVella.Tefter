@@ -145,7 +145,7 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 		if (!result.Cancelled && result.Data != null)
 		{
 			var item = (TfSpacePage)result.Data;
-			Navigator.NavigateTo(string.Format(TfConstants.SpaceNodePageUrl, args.Data.SpaceId.Value, item.Id));
+			Navigator.NavigateTo(string.Format(TfConstants.SpacePagePageUrl, args.Data.SpaceId.Value, item.Id));
 		}
 	}
 }

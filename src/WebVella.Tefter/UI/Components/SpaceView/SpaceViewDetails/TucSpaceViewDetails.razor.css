@@ -1,0 +1,24 @@
+﻿
+::deep .tf-grid fluent-text-area::part(root),
+::deep .tf-grid fluent-text-field::part(root),
+::deep .tf-grid fluent-select::part(control),
+::deep .tf-grid fluent-number-field::part(root) {
+	background: var(--neutral-fill-input-focus);
+	border:1px solid var(--neutral-stroke-input-active);
+}
+
+
+::deep .tf-grid fluent-text-area:hover::part(root),
+::deep .tf-grid fluent-text-field:hover::part(root),
+::deep .tf-grid fluent-select:hover::part(control),
+::deep .tf-grid fluent-number-field:hover::part(root) {
+	border:1px solid var(--neutral-stroke-strong-hover);
+}
+
+::deep fluent-select fluent-option {
+	background:transparent;
+}
+
+::deep fluent-select fluent-option:hover {
+	background:var(--neutral-fill-stealth-hover);
+}

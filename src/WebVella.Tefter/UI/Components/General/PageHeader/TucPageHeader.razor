@@ -13,9 +13,12 @@
 				</div>
 			}
 			<div class="tf-page-header__primary__meta">
+				@if (!String.IsNullOrWhiteSpace(Area))
+				{
 				<div class="tf-page-header__primary__meta__area">
 					@Area
 				</div>
+				}
 				<div class="tf-page-header__primary__meta__title">
 					@if (!String.IsNullOrWhiteSpace(SubTitle))
 					{
