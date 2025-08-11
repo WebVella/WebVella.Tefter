@@ -14,9 +14,9 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	public const string VALUE_ALIAS = "Value";
 
 	#region << Injects >>
-	[Inject] public IDispatcher Dispatcher { get; set; }
-	//[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	//[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
+	[Inject] private ITfService TfService { get; set; } = default!;
+	[Inject] private ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
+	[Inject] private ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
 	#endregion
 
 	#region << Constructor >>
@@ -71,7 +71,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_initStorageKeys();
+		_initContextData();
 	}
 
 	/// <summary>
@@ -267,51 +267,162 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	}
 	private async Task _initValues()
 	{
-		//TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
-		//if (column is null)
-		//	throw new Exception("Column not found");
-		//if (column.IsJoinColumn)
-		//	throw new Exception("Joined data cannot be edited");
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
+		if (column.IsJoinColumn)
+			throw new Exception("Joined data cannot be edited");
 
-		//if (RegionContext.Mode == TfComponentPresentationMode.Options)
-		//{
-		//	_selectedSpaceData = TfAppState.Value.SpaceDataList?.FirstOrDefault(x => x.Id == componentOptions.SpaceDataId);
+		if (RegionContext.Mode == TfComponentPresentationMode.Options)
+		{
+			var spaceView = TfSpaceViewUIService.GetSpaceView(RegionContext.SpaceViewId);
+			_selectedSpaceData = TfSpaceDataUIService.GetSpaceData(spaceView.SpaceDataId);
 
-		//	if (_selectedSpaceData is null && TfAppState.Value.SpaceDataList is not null && TfAppState.Value.SpaceDataList.Count > 0)
-		//	{
-		//		_selectedSpaceData = TfAppState.Value.SpaceDataList[0];
-		//		await OnOptionsChanged(nameof(componentOptions.SpaceDataId), _selectedSpaceData.Id);
-		//	}
-		//	return;
-		//}
+			if (_selectedSpaceData is null)
+			{
+				var spaceDataList = TfSpaceDataUIService.GetSpaceDataList(spaceView.SpaceId);
+				if (spaceDataList is not null && spaceDataList.Count > 0)
+				{
+					_selectedSpaceData = spaceDataList[0];
+					await OnOptionsChanged(nameof(componentOptions.SpaceDataId), _selectedSpaceData.Id);
+				}
+			}
+			return;
+		}
 
-		//_value = GetColumnDataByAlias(VALUE_ALIAS);
-		//if (!TfAuxDataState.Value.Data.ContainsKey(_storageKey)) return;
-		//_selectOptionsList = ((List<TucSelectOption>)TfAuxDataState.Value.Data[_storageKey]).ToList();
-		//if (column is not null && column.IsNullable)
-		//{
-		//	_selectOptionsList.Insert(0, new TucSelectOption(null, LOC("no value")));
-		//}
-
-		//_selectedOption = null;
-		//var valueJson = JsonSerializer.Serialize(_value);
-		//var optionIndex = _selectOptionsList.FindIndex(x => JsonSerializer.Serialize(x.Value) == valueJson);
-		//if (optionIndex > -1)
-		//{
-		//	_selectedOption = _selectOptionsList[optionIndex];
-		//}
-		//else if (_value is not null)
-		//{
-		//	_selectOptionsList.Insert(0, new TucSelectOption(_value, _value.ToString()));
-		//	_selectedOption = _selectOptionsList[0];
-		//}
-
-
+		_value = GetColumnDataByAlias(VALUE_ALIAS);
+		_selectedOption = null;
+		var valueJson = JsonSerializer.Serialize(_value);
+		var optionIndex = _selectOptionsList.FindIndex(x => JsonSerializer.Serialize(x.Value) == valueJson);
+		if (optionIndex > -1)
+		{
+			_selectedOption = _selectOptionsList[optionIndex];
+		}
+		else if (_value is not null)
+		{
+			_selectOptionsList.Insert(0, new TfSelectOption(_value, _value.ToString()));
+			_selectedOption = _selectOptionsList[0];
+		}
 	}
-	private void _initStorageKeys()
+	private void _initContextData()
 	{
 		_storageKey = this.GetType().Name + "_" + RegionContext.SpaceViewColumnId;
+		TfDataColumn currentColumn = GetColumnByAlias(VALUE_ALIAS);
+		if (currentColumn is null)
+			throw new Exception("Column not found");
+		if (currentColumn.IsJoinColumn)
+			throw new Exception("Joined data cannot be edited");
+
+		//Init context data
+		if (!RegionContext.ContextData.ContainsKey(_storageKey))
+		{
+			var selectOptions = new List<TfSelectOption>();
+			var componentOptions = GetOptions();
+			if (componentOptions.Source == TfSelectEditColumnComponentOptionsSourceType.ManuallySet)
+			{
+				selectOptions = _getOptionsFromString(componentOptions.OptionsString);
+			}
+			else if (componentOptions.Source == TfSelectEditColumnComponentOptionsSourceType.SpaceData)
+			{
+				if (componentOptions.SpaceDataId != Guid.Empty)
+				{
+					var optionsDT = TfService.QuerySpaceData(
+						spaceDataId: componentOptions.SpaceDataId,
+						userFilters: null,
+						userSorts: null,
+						search: null,
+						page: 1,
+						pageSize: TfConstants.SelectOptionsMaxLimit
+					);
+
+					for (int i = 0; i < optionsDT.Rows.Count; i++)
+					{
+						object value = null;
+						string label = null;
+						string color = null;
+						string backgroundColor = null;
+						string iconName = null;
+						bool hideLabel = componentOptions.SpaceDataHideLabel;
+
+						if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataValueColumnName))
+						{
+							var columnName = componentOptions.SpaceDataValueColumnName.Trim().ToLowerInvariant();
+							var column = optionsDT.Columns[columnName];
+							if (column is not null)
+							{
+								value = optionsDT.Rows[i][columnName];
+							}
+						}
+						if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataLabelColumnName))
+						{
+							var columnName = componentOptions.SpaceDataLabelColumnName.Trim().ToLowerInvariant();
+							var column = optionsDT.Columns[columnName];
+							if (column is not null)
+							{
+								if (optionsDT.Rows[i][columnName] is not null)
+									label = optionsDT.Rows[i][columnName].ToString();
+							}
+						}
+						if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataIconColumnName))
+						{
+							var columnName = componentOptions.SpaceDataIconColumnName.Trim().ToLowerInvariant();
+							var column = optionsDT.Columns[columnName];
+							if (column is not null)
+							{
+								if (optionsDT.Rows[i][columnName] is not null)
+									iconName = optionsDT.Rows[i][columnName].ToString();
+							}
+						}
+						if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataColorColumnName))
+						{
+							var columnName = componentOptions.SpaceDataColorColumnName.Trim().ToLowerInvariant();
+							var column = optionsDT.Columns[columnName];
+							if (column is not null)
+							{
+								if (optionsDT.Rows[i][columnName] is not null)
+								{
+									color = TfConverters.GetCssColorFromString(optionsDT.Rows[i][columnName].ToString());
+								}
+							}
+						}
+						if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataBackgroundColorColumnName))
+						{
+							var columnName = componentOptions.SpaceDataBackgroundColorColumnName.Trim().ToLowerInvariant();
+							var column = optionsDT.Columns[columnName];
+							if (column is not null)
+							{
+								if (optionsDT.Rows[i][columnName] is not null)
+								{
+									backgroundColor = TfConverters.GetCssColorFromString(optionsDT.Rows[i][columnName].ToString());
+								}
+							}
+						}
+
+						selectOptions.Add(new TfSelectOption(
+							value: value,
+							label: label,
+							iconName: iconName,
+							color: color,
+							backgroundColor: backgroundColor,
+							hideLabel: hideLabel
+						));
+					}
+				}
+			}
+			RegionContext.ContextData[_storageKey] = selectOptions;
+		}
+
+		if (!RegionContext.ContextData.ContainsKey(_storageKey) || RegionContext.ContextData[_storageKey] is not List<TfSelectOption>)
+			throw new Exception("ContextData is not List<TfSelectOption>");
+
+		_selectOptionsList = ((List<TfSelectOption>)RegionContext.ContextData[_storageKey]).ToList();
+
+		if (currentColumn is not null && currentColumn.IsNullable)
+		{
+			_selectOptionsList.Insert(0, new TfSelectOption(null, LOC("no value")));
+		}
 	}
+
 	private List<TfSelectOption> _getOptionsFromString(string optionsString)
 	{
 		var result = new List<TfSelectOption>();

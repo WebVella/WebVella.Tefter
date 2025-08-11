@@ -257,7 +257,8 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 			currentExcelRow++;
 
 			var typeDict = new Dictionary<string, object>();
-			var compContext = new TfSpaceViewColumnScreenRegionContext()
+			var contextData = new Dictionary<string, object>();
+			var compContext = new TfSpaceViewColumnScreenRegionContext(contextData)
 			{
 				DataTable = viewData,
 				Mode = TfComponentPresentationMode.Display, //ignored here

@@ -24,7 +24,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 	private TfDataTable? _data = null;
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
 	private List<Guid> _selectedDataRows = new();
-
+	private Dictionary<string, object> _contextData = new();
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
@@ -301,29 +301,31 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 		return sb.ToString();
 	}
 
-	private Task _onRowChanged(TfDataTable value)
+	private async Task _onRowChanged(TfDataTable value)
 	{
 		try
 		{
 			var dataTable = TfSpaceDataUIService.SaveDataDataTable(value);
 
 			//Apply changed to the datatable
-			var viewData = _data.Clone();
-			if (viewData is null || viewData.Rows.Count == 0 || dataTable.Rows.Count == 0) return Task.CompletedTask;
-			for (int i = 0; i < dataTable.Rows.Count; i++)
+			if (_data is null || _data.Rows.Count == 0 || _data.Rows.Count == 0) return;
+			var changedRow = dataTable.Rows[0];
+			var changedRowTfId = (Guid)changedRow[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+			var clonedData = _data.Clone();
+			for (int i = 0; i < clonedData.Rows.Count; i++)
 			{
-				TfDataRow row = dataTable.Rows[i];
+				TfDataRow row = clonedData.Rows[i];
 				Guid tfId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-				var currentRow = viewData.Rows[tfId];
+				if(changedRowTfId != tfId) continue;
 
-				for (int j = 0; j < dataTable.Columns.Count; j++)
+				for (int j = 0; j < clonedData.Columns.Count; j++)
 				{
-					TfDataColumn column = dataTable.Columns[j];
-					currentRow[column.Name] = row[column.Name];
+					TfDataColumn column = clonedData.Columns[j];
+					row[column.Name] = changedRow[column.Name];
 				}
 			}
-
-			return Task.CompletedTask;
+			_data = clonedData;
+			await InvokeAsync(StateHasChanged);
 		}
 		catch (Exception ex)
 		{
@@ -335,7 +337,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 	{
 		var componentData = new Dictionary<string, object>();
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_ROW_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<TfDataTable>(this, _onRowChanged);
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext(_contextData)
 		{
 			Mode = TfComponentPresentationMode.Display,
 			ComponentOptionsJson = column.ComponentOptionsJson,

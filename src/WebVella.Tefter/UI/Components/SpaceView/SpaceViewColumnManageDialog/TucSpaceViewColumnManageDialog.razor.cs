@@ -190,7 +190,8 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	{
 		var componentData = new Dictionary<string, object>();
 
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext
+		var contextData = new Dictionary<string,object>();
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext(contextData)
 		{
 			Mode = TfComponentPresentationMode.Options,
 			ComponentOptionsJson = _form.ComponentOptionsJson,

@@ -1639,7 +1639,6 @@ fluent-dialog .tf-divider,
   flex: 1 1 auto;
 }
 .tf-page-layout__content {
-  padding-top: var(--tf-layout-content-padding);
   position: absolute;
   top: var(--content-top);
   left: 0;
@@ -1650,7 +1649,6 @@ fluent-dialog .tf-divider,
 .tf-page-layout__content .content-toolbar {
   display: flex;
   padding: var(--tf-layout-content-padding);
-  padding-top: 0;
 }
 .tf-page-layout__content .content-toolbar__left {
   flex: 0 0 auto;

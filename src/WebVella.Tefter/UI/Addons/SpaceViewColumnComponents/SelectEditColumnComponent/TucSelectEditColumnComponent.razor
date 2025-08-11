@@ -3,7 +3,7 @@
 @if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
 	<div>
-		<FluentButton Id="@_valueInputId" Style="width:100%;min-width:80px;"
+		<FluentButton Id="@_valueInputId" class="tf-select-btn" Style="width:100%;min-width:80px;"
 					  OnClick="@(() => _open = !_open)"
 					  Color="@_selectedOption?.Color" BackgroundColor="@_selectedOption?.BackgroundColor">
 			@if (_selectedOption is not null && !_selectedOption.HideLabel)
