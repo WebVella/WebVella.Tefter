@@ -43,6 +43,15 @@ public partial interface ITfSpaceDataUIService
 		bool noRows = false,
 		bool returnOnlyTfIds = false);
 
+	public List<Guid> QuerySpaceDataIdList(
+		Guid spaceDataId,
+		List<TfFilterBase>? userFilters = null,
+		List<TfSort>? userSorts = null,
+		List<TfFilterBase>? presetFilters = null,
+		List<TfSort>? presetSorts = null,
+		string? search = null
+		);
+
 	TfDataTable SaveDataDataTable(TfDataTable dt);
 
 }
@@ -161,11 +170,11 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 	#region << Data >>
 	public TfDataTable QuerySpaceData(
 			Guid spaceDataId,
-			List<TfFilterBase> userFilters = null,
-			List<TfSort> userSorts = null,
-			List<TfFilterBase> presetFilters = null,
-			List<TfSort> presetSorts = null,
-			string search = null,
+			List<TfFilterBase>? userFilters = null,
+			List<TfSort>? userSorts = null,
+			List<TfFilterBase>? presetFilters = null,
+			List<TfSort>? presetSorts = null,
+			string? search = null,
 			int? page = null,
 			int? pageSize = null,
 			bool noRows = false,
@@ -182,7 +191,36 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 			noRows: noRows,
 			returnOnlyTfIds: returnOnlyTfIds);
 
-	public TfDataTable SaveDataDataTable(TfDataTable dt){ 
+
+	public List<Guid> QuerySpaceDataIdList(
+			Guid spaceDataId,
+			List<TfFilterBase>? userFilters = null,
+			List<TfSort>? userSorts = null,
+			List<TfFilterBase>? presetFilters = null,
+			List<TfSort>? presetSorts = null,
+			string? search = null)
+	{
+		var result = new List<Guid>();
+		var dt = _tfService.QuerySpaceData(
+					spaceDataId: spaceDataId,
+					userFilters: userFilters,
+					userSorts: userSorts,
+					presetFilters: presetFilters,
+					presetSorts: presetSorts,
+					search: search,
+					page: null,
+					pageSize: null,
+					noRows: false,
+					returnOnlyTfIds: true);
+
+		for (int i = 0; i < dt.Rows.Count; i++)
+		{
+			result.Add((Guid)dt.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME]);
+		}
+		return result;
+	}
+	public TfDataTable SaveDataDataTable(TfDataTable dt)
+	{
 		return _tfService.SaveDataTable(dt);
 	}
 	#endregion

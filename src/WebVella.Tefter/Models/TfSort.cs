@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public class TfSort
+public record TfSort
 {
 	public string ColumnName { get; set; }
 	public TfSortDirection Direction { get; set; } = TfSortDirection.ASC;

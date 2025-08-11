@@ -11,11 +11,15 @@
 	<AsideContent>
 		<TucSpaceViewDetailsAsideContent />
 	</AsideContent>
-	<ContentToolbar>
-		<TucSpaceViewDetailsContentToolbar />
-	</ContentToolbar>
 	<Content>
-		<TucSpaceViewFiltersContent />
+		<TucPageLayout ShowToolbar=true>
+			<Toolbar>
+				<TucSpaceViewDetailsContentToolbar />
+			</Toolbar>
+			<ChildContent>
+				<TucSpaceViewFiltersContent />
+			</ChildContent>
+		</TucPageLayout>
 	</Content>
 </TucLayoutListDetails>
 

@@ -2,7 +2,7 @@
 
 [DboCacheModel]
 [TfDboModel("tf_bookmark")]
-public class TfBookmark
+public record TfBookmark
 {
 	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }

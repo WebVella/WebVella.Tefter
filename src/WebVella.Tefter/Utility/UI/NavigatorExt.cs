@@ -174,9 +174,9 @@ public static partial class NavigatorExt
 		return newQueryDictionary;
 	}
 
-	public static async Task ApplyChangeToUrlQuery(this NavigationManager navigator, string paramName, object value, bool forceLoad = false)
+	public static async Task ApplyChangeToUrlQuery(this NavigationManager navigator, string paramName, object? value, bool forceLoad = false)
 	{
-		var queryDict = new Dictionary<string, object>();
+		var queryDict = new Dictionary<string, object?>();
 		queryDict[paramName] = value;
 		await navigator.ApplyChangeToUrlQuery(queryDict, forceLoad);
 	}
@@ -508,12 +508,14 @@ public static partial class NavigatorExt
 		foreach (string? key in savedQueryDict.AllKeys)
 		{
 			if(String.IsNullOrWhiteSpace(key)) continue;
+			if(key == TfConstants.TabQueryName) continue;
 			if (key == TfConstants.ActiveSaveQueryName) continue;
 			savedSortedDict[key] = savedQueryDict[key];
 		}
 		foreach (string? key in currentQueryDict.AllKeys)
 		{
 			if(String.IsNullOrWhiteSpace(key)) continue;
+			if(key == TfConstants.TabQueryName) continue;
 			if (key == TfConstants.ActiveSaveQueryName) continue;
 			currentSortedDict[key] = currentQueryDict[key];
 		}

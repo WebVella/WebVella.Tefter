@@ -1,0 +1,23 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@if (_open)
+{
+	<div class="view-export-selector-menu">
+		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector" UseMenuService="false">
+			@if (SpaceView.Settings.CanDeleteRows)
+			{
+				<FluentMenuItem Disabled="@(SelectedRows.Count == 0)" OnClick="_deleteSelectedRecords">
+					@LOC("Delete Selected")
+					<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
+					@if (SelectedRows.Count > 0)
+					{
+						<span slot="end">
+							<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@SelectedRows.Count</FluentBadge>
+						</span>
+					}
+				</FluentMenuItem>
+			}
+			<TucScreenRegionComponent RegionContext="@(new TfSpaceViewSelectorActionScreenRegionContext())" />
+		</FluentMenu>
+	</div>
+}

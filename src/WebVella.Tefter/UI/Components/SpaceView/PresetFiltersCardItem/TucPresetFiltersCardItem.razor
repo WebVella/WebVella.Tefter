@@ -82,10 +82,10 @@
 	}
 
 </tr>
-@foreach (var context in Item.Pages)
+@foreach (var context in Item.Presets)
 {
-	var contextIndex = Item.Pages.FindIndex(x => x.Id == context.Id);
+	var contextIndex = Item.Presets.FindIndex(x => x.Id == context.Id);
 	<TucPresetFiltersCardItem Item="context" Level="(Level+1)" OnEdit="OnEdit" OnMove="OnMove" OnRemove="OnRemove"
 						OnCopy="OnCopy"
-					   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == Item.Pages.Count -1)" />
+					   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == Item.Presets.Count -1)" />
 }

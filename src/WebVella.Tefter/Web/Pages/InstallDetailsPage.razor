@@ -1,8 +1,0 @@
-﻿@page "/tf-install/{RecipeId:guid}"
-@layout GuestLayout
-<TfErrorBoundry>
-	<TfRecipeDetails RecipeId="@RecipeId" />
-</TfErrorBoundry>
-@code {
-	[Parameter] public Guid RecipeId { get; set; }
-}

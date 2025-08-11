@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewPageContent.TucSpaceViewPageContent", "WebVella.Tefter")]
-public partial class TucSpaceViewPageContent : TfBaseComponent
+public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 {
 	// Dependency Injection
 	[Inject] private ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
@@ -8,7 +8,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 	[Inject] private ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] private ITfMetaUIService TfMetaUIService { get; set; } = default!;
-	[Inject] private IKeyCodeService KeyCodeService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	// State
@@ -21,6 +20,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 	private TfSpace? _space = null;
 	private TfSpacePage? _spacePage = null;
 	private TfSpaceView? _spaceView = null;
+	private TfSpaceViewPreset? _preset = null;
 	private TfDataTable? _data = null;
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
 	private List<Guid> _selectedDataRows = new();
@@ -33,16 +33,15 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 	{
 		await base.OnInitializedAsync();
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		_isDataLoading = false;
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		base.OnAfterRender(firstRender);
+		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			_isDataLoading = false;
-			await InvokeAsync(StateHasChanged);
+			TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 		}
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -64,13 +63,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 				return;
 
 			_spacePage = TfSpaceUIService.GetSpacePage(_navState.SpacePageId.Value);
-			if(_spacePage is null || _spacePage.SpaceId != _navState.SpaceId.Value)
+			if (_spacePage is null || _spacePage.SpaceId != _navState.SpaceId.Value)
 				return;
 
-			if(_spacePage.Type != TfSpacePageType.Page && _spacePage.ComponentType.FullName != typeof(TucSpaceViewSpacePageAddon).FullName)
+			if (_spacePage.Type != TfSpacePageType.Page && _spacePage.ComponentType.FullName != typeof(TucSpaceViewSpacePageAddon).FullName)
 				return;
 			var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(_spacePage.ComponentOptionsJson);
-			if(options is null || options.SpaceViewId is null)
+			if (options is null || options.SpaceViewId is null)
 				return;
 
 			//When cannot node has json from another page type
@@ -84,20 +83,25 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 			_page = _navState.Page ?? 1;
 			_pageSize = _navState.PageSize ?? TfConstants.PageSize;
 
-			TfSpaceViewPreset? preset = null;
+			_preset = null;
 			if (_navState.SpaceViewPresetId is not null)
-				preset = _spaceView!.Presets.GetPresetById(_navState.SpaceViewPresetId.Value);
+				_preset = _spaceView!.Presets.GetPresetById(_navState.SpaceViewPresetId.Value);
 			_data = TfSpaceDataUIService.QuerySpaceData(
 							spaceDataId: _spaceView!.SpaceDataId,
-							presetFilters: preset is not null ? preset.Filters : null,
-							presetSorts: preset is not null ? preset.SortOrders : null,
+							presetFilters: _preset is not null ? _preset.Filters : null,
+							presetSorts: _preset is not null ? _preset.SortOrders : null,
 							userFilters: _navState!.Filters,
 							userSorts: _navState.Sorts,
 							search: _navState.Search,
 							page: _page,
 							pageSize: _pageSize
 					);
-
+			//Process last page (-1) case
+			if (_page == -1)
+			{
+				_page = _data.QueryInfo.Page ?? 1;
+				await Navigator.ApplyChangeToUrlQuery(TfConstants.PageQueryName, _page);
+			}
 		}
 		finally
 		{
@@ -108,22 +112,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 	}
 
 
-	public async Task HandleKeyDownAsync(FluentKeyCodeEventArgs args)
-	{
-		if (args.Key == KeyCode.PageUp) await _goNextPage();
-		else if (args.Key == KeyCode.PageDown) await _goPreviousPage();
-	}
-
 	// Navigation Methods
 	private async Task _goFirstPage()
 	{
 		if (_isDataLoading) return;
 		if (_page == 1) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>{
-			{ TfConstants.PageQueryName, 1}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		await Navigator.ApplyChangeToUrlQuery(TfConstants.PageQueryName, null);
 	}
 	private async Task _goPreviousPage()
 	{
@@ -132,10 +127,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 		if (page < 1) page = 1;
 		if (_page == page) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>{
-			{ TfConstants.PageQueryName, page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		await Navigator.ApplyChangeToUrlQuery(TfConstants.PageQueryName, page == 1 ? null : page);
 	}
 	private async Task _goNextPage()
 	{
@@ -147,20 +139,14 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 		if (page < 1) page = 1;
 		if (_page == page) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>{
-			{ TfConstants.PageQueryName, page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		await Navigator.ApplyChangeToUrlQuery(TfConstants.PageQueryName, page == 1 ? null : page);
 	}
 	private async Task _goLastPage()
 	{
 		if (_isDataLoading) return;
 		if (_page == -1) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>{
-			{ TfConstants.PageQueryName, -1}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		await Navigator.ApplyChangeToUrlQuery(TfConstants.PageQueryName, -1);
 	}
 	private async Task _goOnPage(int page)
 	{
@@ -168,10 +154,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 		if (page < 1 && page != -1) page = 1;
 		if (_page == page) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>{
-			{ TfConstants.PageQueryName, page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		await Navigator.ApplyChangeToUrlQuery(TfConstants.PageQueryName, page == 1 ? null : page);
 	}
 	private async Task _pageSizeChange(int pageSize)
 	{
@@ -189,10 +172,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 		catch { }
 
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>{
-			{ TfConstants.PageSizeQueryName, pageSize}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		await Navigator.ApplyChangeToUrlQuery(TfConstants.PageSizeQueryName, pageSize);
 	}
 
 	// Search, Filter, Sort Handlers
@@ -251,17 +231,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 			if (_navState.SpaceViewPresetId is not null)
 				preset = _spaceView!.Presets.GetPresetById(_navState.SpaceViewPresetId.Value);
 
-			var resultSrv = TfSpaceDataUIService.QuerySpaceData(
+			_selectedDataRows = TfSpaceDataUIService.QuerySpaceDataIdList(
 							spaceDataId: _spaceView!.SpaceDataId,
 							presetFilters: preset is not null ? preset.Filters : null,
 							presetSorts: preset is not null ? preset.SortOrders : null,
 							userFilters: _navState!.Filters,
 							userSorts: _navState.Sorts,
-							search: _navState.Search,
-							page: null,
-							pageSize: null,
-							noRows: false,
-							returnOnlyTfIds: true
+							search: _navState.Search
 					);
 		}
 		catch { }
@@ -278,6 +254,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 			_selectAllLoading = true;
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
+			_selectedDataRows = new();
 		}
 		catch { }
 		finally
@@ -386,14 +363,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 	private void _toggleItemSelection(int rowIndex, bool isChecked)
 	{
 		Guid rowId = (Guid)_data.Rows[rowIndex][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-		var selectedItems = _selectedDataRows.ToList();
 		if (isChecked)
 		{
-			if (!selectedItems.Contains(rowId)) selectedItems.Add(rowId);
+			if (!_selectedDataRows.Contains(rowId)) _selectedDataRows.Add(rowId);
 		}
 		else
 		{
-			selectedItems.RemoveAll(x => x == rowId);
+			_selectedDataRows.RemoveAll(x => x == rowId);
 		}
 	}
 
@@ -403,21 +379,19 @@ public partial class TucSpaceViewPageContent : TfBaseComponent
 		|| _data.Rows is null
 		|| _data.Rows.Count == 0)
 			return;
-		var selectedItems = _selectedDataRows.ToList();
 		for (int i = 0; i < _data.Rows.Count; i++)
 		{
 			var rowId = (Guid)_data.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
 			if (!isChecked)
 			{
-				selectedItems.RemoveAll(x => x == rowId);
+				_selectedDataRows.RemoveAll(x => x == rowId);
 			}
-			else if (!selectedItems.Any(x => x == rowId))
+			else if (!_selectedDataRows.Any(x => x == rowId))
 			{
-				selectedItems.Add(rowId);
+				_selectedDataRows.Add(rowId);
 
 			}
 		}
-		_selectedDataRows = selectedItems;
 	}
 
 	private Dictionary<int, Tuple<int?, string, string>> _generateColumnConfigurationCss(TfSpaceView view, List<TfSpaceViewColumn> columns)

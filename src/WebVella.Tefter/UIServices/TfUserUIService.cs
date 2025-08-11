@@ -36,6 +36,10 @@ public partial interface ITfUserUIService
 	//Bookmarks
 	List<TfBookmark> GetUserBookmarks(Guid userId);
 	List<TfBookmark> GetUserSaves(Guid userId);
+
+	void CreateBookmark(TfBookmark bookmark);
+	void UpdateBookmark(TfBookmark bookmark);
+	void DeleteBookmark(TfBookmark bookmark);
 }
 public partial class TfUserUIService : ITfUserUIService
 {
@@ -166,7 +170,7 @@ public partial class TfUserUIService : ITfUserUIService
 	{
 		var user = await _tfService.SetStartUpUrl(userId, url);
 		_currentUser = user;
-		UserUpdated?.Invoke(this,user);
+		UserUpdated?.Invoke(this, user);
 		return await _tfService.SetStartUpUrl(userId, url);
 	}
 
@@ -174,7 +178,7 @@ public partial class TfUserUIService : ITfUserUIService
 	{
 		var user = await _tfService.SetUserCulture(userId, cultureCode);
 		_currentUser = user;
-		UserUpdated?.Invoke(this,user);
+		UserUpdated?.Invoke(this, user);
 		return user;
 	}
 
@@ -182,16 +186,35 @@ public partial class TfUserUIService : ITfUserUIService
 	{
 		var user = await _tfService.SetPageSize(userId, pageSize);
 		_currentUser = user;
-		UserUpdated?.Invoke(this,user);
+		UserUpdated?.Invoke(this, user);
 		return user;
 	}
 	#endregion
 
 	#region << Bookmarks >>
-	public List<TfBookmark> GetUserBookmarks(Guid userId) 
-		=> _tfService.GetBookmarksListForUser(userId).Where(x=> !String.IsNullOrWhiteSpace(x.Url)).ToList();
-	
+	public List<TfBookmark> GetUserBookmarks(Guid userId)
+		=> _tfService.GetBookmarksListForUser(userId).Where(x => String.IsNullOrWhiteSpace(x.Url)).ToList();
+
 	public List<TfBookmark> GetUserSaves(Guid userId)
-		=> _tfService.GetBookmarksListForUser(userId).Where(x=> String.IsNullOrWhiteSpace(x.Url)).ToList();
+		=> _tfService.GetBookmarksListForUser(userId).Where(x => !String.IsNullOrWhiteSpace(x.Url)).ToList();
+
+	public void CreateBookmark(TfBookmark bookmark)
+	{
+		_tfService.CreateBookmark(bookmark);
+		var user = GetUser(bookmark.UserId);
+		UserUpdated?.Invoke(this, user);
+	}
+	public void UpdateBookmark(TfBookmark bookmark)
+	{
+		_tfService.UpdateBookmark(bookmark);
+		var user = GetUser(bookmark.UserId);
+		UserUpdated?.Invoke(this, user);
+	}
+	public void DeleteBookmark(TfBookmark bookmark)
+	{
+		_tfService.DeleteBookmark(bookmark.Id);
+		var user = GetUser(bookmark.UserId);
+		UserUpdated?.Invoke(this, user);
+	}
 	#endregion
 }

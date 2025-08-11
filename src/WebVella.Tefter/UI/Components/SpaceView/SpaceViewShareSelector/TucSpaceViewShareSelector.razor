@@ -1,0 +1,55 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@if (_open)
+{
+	<div class="view-export-selector-menu">
+		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector" UseMenuService="false">
+			<FluentMenuItem OnClick="_copyLinkToClipboard">
+				@LOC("Copy link")
+				<FluentIcon Value="@TfConstants.GetIcon("Link")" Slot="start" Color="@Color.Accent" />
+			</FluentMenuItem>
+
+			@* 	@if (TfAppState.Value.ActiveSpaceViewBookmark is null)
+				{
+					<FluentMenuItem OnClick="_bookmarkView">
+						@LOC("Bookmark View")
+						<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Slot="start" Color="@Color.Accent" />
+					</FluentMenuItem>
+				} *@
+			@if (ActiveSavedUrl is null)
+			{
+				<FluentMenuItem OnClick="_saveViewUrl">
+					@LOC("Save URL")
+					<FluentIcon Value="@TfConstants.GetIcon("LinkAdd")" Slot="start" Color="@Color.Accent" />
+				</FluentMenuItem>
+			}
+			<FluentDivider />
+			<FluentMenuItem Disabled="@(SelectedRows.Count == 0)" OnClick="_exportSelection">
+				@LOC("Export Selection")
+				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Accent" />
+				@if (SelectedRows.Count > 0)
+				{
+					<span slot="end">
+						<FluentBadge Appearance="@Appearance.Accent" Style="margin-left:3px;">@SelectedRows.Count</FluentBadge>
+					</span>
+				}
+			</FluentMenuItem>
+			<FluentMenuItem OnClick="_exportAll">
+				@LOC("Export All")
+				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Accent" />
+			</FluentMenuItem>
+		</FluentMenu>
+		<div style="display:none">
+			<form method="post" name="ExportSelection" action="@_exportExcelUrl" class="ant-form ant-form-vertical">
+				<input type="hidden" name="data" value="@_getExportSelectionData()" />
+				<button type="submit" id="@_exportSelectionBtnId"></button>
+			</form>
+			<form method="post" name="ExportAll" action="@_exportExcelUrl" class="ant-form ant-form-vertical">
+				<input type="hidden" name="data" value="@_getExportAllData()" />
+				<button type="submit" id="@_exportAllBtnId"></button>
+			</form>
+		</div>
+	</div>
+
+}
+

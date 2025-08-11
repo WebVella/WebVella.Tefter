@@ -34,10 +34,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Remove="Web\**" />
-		<Content Remove="Web\**" />
-		<EmbeddedResource Remove="Web\**" />
-		<None Remove="Web\**" />
 		<Compile Remove="UseCases\**" />
 		<Content Remove="UseCases\**" />
 		<None Remove="UseCases\**" />
@@ -63,7 +59,6 @@
 		<None Include="compilerconfig.json">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
-		<None Include="Web\_Imports.razor" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -105,12 +100,6 @@
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
 		<PackageReference Include="WebVella.BlazorTrace" Version="1.0.12" />
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<EmbeddedResource Update="Web\Components\Admin\DataIdentityManageDialog\TfDataIdentityManageDialog.bg.resx">
-			<SubType>Designer</SubType>
-		</EmbeddedResource>
 	</ItemGroup>
 
 </Project>

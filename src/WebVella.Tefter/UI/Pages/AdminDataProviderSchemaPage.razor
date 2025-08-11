@@ -12,11 +12,15 @@
 	<AsideContent>
 		<TucAdminDataProviderDetailsAsideContent />
 	</AsideContent>
-	<ContentToolbar>
-		<TucAdminDataProviderDetailsContentToolbar />
-	</ContentToolbar>
 	<Content>
-		<TucAdminDataProviderSchemaContent />
+		<TucPageLayout ShowToolbar=true>
+			<Toolbar>
+				<TucAdminDataProviderDetailsContentToolbar />
+			</Toolbar>
+			<ChildContent>
+				<TucAdminDataProviderSchemaContent />
+			</ChildContent>
+		</TucPageLayout>
 	</Content>
 </TucLayoutListDetails>
 

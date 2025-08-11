@@ -1,0 +1,58 @@
+﻿namespace WebVella.Tefter.UI.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewBookmarkSelector.TucSpaceViewBookmarkSelector", "WebVella.Tefter")]
+public partial class TucSpaceViewBookmarkSelector : TfBaseComponent
+{
+	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
+	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
+	[Parameter] public TfDataTable Data { get; set; } = default!;
+	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
+	[Parameter] public TfBookmark? ActiveBookmark { get; set; } = null;
+	[Parameter] public TfBookmark? ActiveSavedUrl { get; set; } = null;
+
+	private bool _open = false;
+	public async Task ToggleSelector()
+	{
+		_open = !_open;
+		await InvokeAsync(StateHasChanged);
+	}
+	private async Task _bookmarkEdit()
+	{
+		if(ActiveBookmark is null) return;
+
+		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewBookmarkManageDialog>(
+				ActiveBookmark,
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge,
+					TrapFocus = false
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+		}
+	}
+
+	private async Task _bookmarkRemove()
+	{
+		try
+		{
+		
+			if (ActiveBookmark is null) 
+				return;
+
+			TfUserUIService.DeleteBookmark(ActiveBookmark);
+
+			ToastService.ShowSuccess(LOC("Bookmark removed"));
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+}

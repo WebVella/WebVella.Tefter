@@ -19,7 +19,7 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent, IDialogC
 				Name = Content.Item.Name,
 				Filters = Content.Item.Filters.ToList(),
 				SortOrders = Content.Item.SortOrders.ToList(),
-				Pages = Content.Item.Pages.ToList(),
+				Presets = Content.Item.Presets.ToList(),
 				ParentId = Content.Item.ParentId,
 				Color = Content.Item.Color,
 				Icon = Content.Item.Icon

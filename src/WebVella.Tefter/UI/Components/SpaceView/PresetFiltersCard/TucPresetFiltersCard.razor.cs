@@ -37,14 +37,14 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 			SortOrders = new(),
 			IsGroup = _selectedType == TfPresetFilterItemType.Group,
 			Name = _selectedName,
-			Pages = new()
+			Presets = new()
 		};
 
 		if (_selectedParent is not null)
 		{
 			TfSpaceViewPreset parentNode = ModelHelpers.GetPresetById(Items, _selectedParent.Id);
 			if (parentNode is not null)
-				parentNode.Pages.Add(preset);
+				parentNode.Presets.Add(preset);
 		}
 		else
 		{
@@ -86,10 +86,10 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 			TfSpaceViewPreset parent = ModelHelpers.GetPresetById(Items, source.ParentId.Value);
 			if (parent is null) return;
 
-			var sourceIndex = parent.Pages.FindIndex(x => x.Id == source.Id);
+			var sourceIndex = parent.Presets.FindIndex(x => x.Id == source.Id);
 			if (sourceIndex > -1)
 			{
-				parent.Pages.Insert(sourceIndex + 1, _copyNode(source, parent.Id));
+				parent.Presets.Insert(sourceIndex + 1, _copyNode(source, parent.Id));
 			}
 		}
 		else
@@ -149,8 +149,8 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 
 				if (currentParent is not null)
 				{
-					var findIndex = currentParent.Pages.FindIndex(x => x.Id == record.Id);
-					if (findIndex > -1) currentParent.Pages.RemoveAt(findIndex);
+					var findIndex = currentParent.Presets.FindIndex(x => x.Id == record.Id);
+					if (findIndex > -1) currentParent.Presets.RemoveAt(findIndex);
 				}
 				else
 				{
@@ -160,7 +160,7 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 
 				if (newParent is not null)
 				{
-					newParent.Pages.Add(currentValue);
+					newParent.Presets.Add(currentValue);
 				}
 				else
 				{
@@ -191,7 +191,7 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 	private void _fillParents(List<TfSpaceViewPreset> parents, TfSpaceViewPreset current)
 	{
 		if (current.IsGroup) parents.Add(current);
-		foreach (var item in current.Pages) _fillParents(parents, item);
+		foreach (var item in current.Presets) _fillParents(parents, item);
 	}
 
 	private List<TfSpaceViewPreset> _removeNode(List<TfSpaceViewPreset> nodes, Guid nodeId)
@@ -203,7 +203,7 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 		}
 		foreach (var item in nodes)
 		{
-			item.Pages = _removeNode(item.Pages, nodeId);
+			item.Presets = _removeNode(item.Presets, nodeId);
 		}
 
 		return nodes;
@@ -226,7 +226,7 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 
 		foreach (var item in nodes)
 		{
-			item.Pages = _moveNode(item.Pages, nodeId, isUp);
+			item.Presets = _moveNode(item.Presets, nodeId, isUp);
 		}
 
 		return nodes;
@@ -236,11 +236,11 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 	{
 		var newItem = item with { Id = Guid.NewGuid(), ParentId = parentId };
 		var newNodes = new List<TfSpaceViewPreset>();
-		foreach (var node in item.Pages)
+		foreach (var node in item.Presets)
 		{
 			newNodes.Add(_copyNode(node, newItem.Id));
 		}
-		newItem.Pages = newNodes;
+		newItem.Presets = newNodes;
 		return newItem;
 	}
 }

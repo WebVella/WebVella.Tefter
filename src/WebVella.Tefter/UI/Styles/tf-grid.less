@@ -36,10 +36,6 @@
 	margin-bottom: 0;
 	background: var(--tf-white);
 
-	&-wrapper {
-		margin: 0 calc(-1 * var(--tf-layout-content-padding));
-	}
-
 	thead {
 		position: sticky;
 		top: 0px;
@@ -224,8 +220,9 @@
 
 	thead, tbody {
 		& > tr {
-			& > .tf-grid-th--check {
-				padding: 0;
+			& > .tf-grid-th--check,
+			& > .tf-grid-td--check {
+				padding: 0 !important;
 				text-align: center;
 				width: 40px;
 				min-width: 40px;
@@ -235,11 +232,22 @@
 					display: flex;
 					flex-flow: row;
 					justify-content: center;
+					position: relative;
 
 					fluent-button {
 						display: block;
 						height: 100%;
 						width: 100%;
+						background: transparent !important;
+						--neutral-stroke-input-active: var(--tf-stroke-button);
+
+						&:part(control) {
+							background: transparent !important;
+						}
+
+						&:hover {
+							background: transparent !important;
+						}
 					}
 				}
 			}
@@ -308,4 +316,51 @@
 
 .tf-grid__pager {
 	margin-top: 1rem;
+}
+
+.tf-grid-tr.tf-grid-tr--selected .tf-grid-td-selection {
+	background: var(--tf-blue-200);
+}
+
+.tf-grid-tr:hover .tf-grid-td-hover {
+	background: var(--neutral-fill-secondary-rest);
+}
+
+.tf-grid .tf-grid-td {
+	--tf-td-color-red: var(--tf-red-600);
+	--tf-td-fill-red: var(--tf-red-100);
+	--tf-td-color-orange: var(--tf-orange-600);
+	--tf-td-fill-orange: var(--tf-orange-100);
+	--tf-td-color-amber: var(--tf-amber-600);
+	--tf-td-fill-amber: var(--tf-amber-100);
+	--tf-td-color-yellow: var(--tf-yellow-600);
+	--tf-td-fill-yellow: var(--tf-yellow-100);
+	--tf-td-color-lime: var(--tf-lime-600);
+	--tf-td-fill-lime: var(--tf-lime-100);
+	--tf-td-color-green: var(--tf-green-600);
+	--tf-td-fill-green: var(--tf-green-100);
+	--tf-td-color-emerald: var(--tf-emerald-600);
+	--tf-td-fill-emerald: var(--tf-emerald-100);
+	--tf-td-color-teal: var(--tf-teal-600);
+	--tf-td-fill-teal: var(--tf-teal-100);
+	--tf-td-color-cyan: var(--tf-cyan-600);
+	--tf-td-fill-cyan: var(--tf-cyan-100);
+	--tf-td-color-sky: var(--tf-sky-600);
+	--tf-td-fill-sky: var(--tf-sky-100);
+	--tf-td-color-blue: var(--tf-blue-600);
+	--tf-td-fill-blue: var(--tf-blue-100);
+	--tf-td-color-indigo: var(--tf-indigo-600);
+	--tf-td-fill-indigo: var(--tf-indigo-100);
+	--tf-td-color-violet: var(--tf-violet-600);
+	--tf-td-fill-violet: var(--tf-violet-100);
+	--tf-td-color-purple: var(--tf-purple-600);
+	--tf-td-fill-purple: var(--tf-purple-100);
+	--tf-td-color-fuchsia: var(--tf-fuchsia-600);
+	--tf-td-fill-fuchsia: var(--tf-fuchsia-100);
+	--tf-td-color-pink: var(--tf-pink-600);
+	--tf-td-fill-pink: var(--tf-pink-100);
+	--tf-td-color-rose: var(--tf-rose-600);
+	--tf-td-fill-rose: var(--tf-rose-100);
+	--tf-td-color-slate: var(--tf-slate-600);
+	--tf-td-fill-slate: var(--tf-slate-100);
 }

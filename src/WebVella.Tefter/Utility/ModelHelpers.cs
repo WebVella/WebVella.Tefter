@@ -51,7 +51,7 @@ public static class ModelHelpers
 		foreach (var item in presets)
 		{
 			if (item.Id == presetId) return item;
-			var result = item.Pages.GetPresetById(presetId);
+			var result = item.Presets.GetPresetById(presetId);
 			if (result != null) return result;
 		}
 		return null;

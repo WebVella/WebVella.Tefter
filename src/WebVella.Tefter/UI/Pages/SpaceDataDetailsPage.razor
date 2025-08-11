@@ -12,11 +12,15 @@
 	<AsideContent>
 		<TucSpaceDataDetailsAsideContent />
 	</AsideContent>
-	<ContentToolbar>
-		<TucSpaceDataDetailsContentToolbar/>
-	</ContentToolbar>
 	<Content>
-		<TucSpaceDataDetailsContent /> 
+		<TucPageLayout ShowToolbar=true>
+			<Toolbar>
+				<TucSpaceDataDetailsContentToolbar />
+			</Toolbar>
+			<ChildContent>
+				<TucSpaceDataDetailsContent />
+			</ChildContent>
+		</TucPageLayout>
 	</Content>
 </TucLayoutListDetails>
 

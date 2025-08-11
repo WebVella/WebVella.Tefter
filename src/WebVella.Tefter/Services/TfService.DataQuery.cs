@@ -25,11 +25,11 @@ public partial interface ITfService
 
 	public TfDataTable QuerySpaceData(
 		Guid spaceDataId,
-		List<TfFilterBase> userFilters = null,
-		List<TfSort> userSorts = null,
-		List<TfFilterBase> presetFilters = null,
-		List<TfSort> presetSorts = null,
-		string search = null,
+		List<TfFilterBase>? userFilters = null,
+		List<TfSort>? userSorts = null,
+		List<TfFilterBase>? presetFilters = null,
+		List<TfSort>? presetSorts = null,
+		string? search = null,
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false,
@@ -45,6 +45,10 @@ public partial interface ITfService
 	public void DeleteDataProviderRowByTfId(
 		TfDataProvider provider,
 		Guid tfId);
+
+	public void DeleteDataProviderRowsByTfId(
+		Guid providerId,
+		List<Guid> idList);
 
 	internal TfDataProviderDataRow GetProviderRow(
 		TfDataProvider provider,
@@ -1025,6 +1029,31 @@ public partial class TfService : ITfService
 
 			if (count == 0)
 				throw new TfException("Data row not found in provider table.");
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	public void DeleteDataProviderRowsByTfId(
+			Guid providerId,
+			List<Guid> idList)
+	{
+		try
+		{
+			if (idList.Count == 0)
+				return;
+			var provider = GetDataProvider(providerId);
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				foreach (var tfId in idList)
+				{
+					DeleteDataProviderRowByTfId(provider, tfId);
+				}
+				scope.Complete();
+			}
+
 		}
 		catch (Exception ex)
 		{

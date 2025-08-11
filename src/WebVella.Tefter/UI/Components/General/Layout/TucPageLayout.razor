@@ -1,0 +1,33 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits ComponentBase
+
+<div class="@_cssClass">
+	@if (_showToolbar)
+	{
+		<div class="tf-page-layout__toolbar">
+			@if (!String.IsNullOrWhiteSpace(Title))
+			{
+				<div class="tf-page-layout__toolbar__left">
+					@if (Icon is not null)
+					{
+						<div class="tf-page-layout__toolbar__left__icon-wrapper">
+							<div class="tf-page-layout__toolbar__left__icon">
+								<FluentIcon Value="@Icon.WithColor("var(--tf-font-color-base)")" />
+							</div>
+						</div>
+					}
+					<div class="tf-page-layout__toolbar__left__title" title="@Title">@TfConverters.StringOverflow(Title, 17)</div>
+				</div>
+
+			}
+			<div class="tf-page-layout__toolbar__right">
+				@Toolbar
+			</div>
+		</div>
+	}
+	<div class="tf-page-layout__content">
+		@ChildContent
+	</div>
+</div>
+
+

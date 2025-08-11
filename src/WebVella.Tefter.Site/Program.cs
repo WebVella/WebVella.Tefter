@@ -2,6 +2,7 @@
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Fluxor;
 using Fluxor.Blazor.Web.ReduxDevTools;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.IdentityModel.Abstractions;
@@ -55,7 +56,8 @@ try
 		builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();
 
-		builder.Services.AddControllers();
+		builder.Services.AddControllers()
+		.PartManager.ApplicationParts.Add(new AssemblyPart(typeof(ITfService).Assembly));
 
 		//Blazor Trace Core Service
 		builder.Services.AddBlazorTrace(new WvBlazorTraceConfiguration(){ EnableTracing = false});

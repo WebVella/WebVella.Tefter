@@ -1,0 +1,110 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@if (_navState is not null)
+{
+	<div class="content-toolbar">
+		<div class="content-toolbar__left">
+			@if (OnSelectAll.HasDelegate)
+			{
+				<FluentButton Id="select-all-menu-toggler"
+							  OnClick="@(() => _selectAllMenuVisible = !_selectAllMenuVisible)" Title="@LOC("select all")" Appearance="@Appearance.Outline"
+							  Loading="SelectAllLoading">
+
+					@if (SelectedRows.Count > 0)
+					{
+						<FluentBadge Appearance="Appearance.Accent">@SelectedRows.Count</FluentBadge>
+						<FluentIcon Value="@TfConstants.GetIcon("CheckmarkStarburst")" Slot="start" Color="@Color.Accent" />
+					}
+					else
+					{
+						<FluentIcon Value="@TfConstants.GetIcon("CheckmarkStarburst")" Color="@Color.Accent" />
+					}
+				</FluentButton>
+				<FluentMenu Width="200" @bind-Open="_selectAllMenuVisible" Anchor="select-all-menu-toggler" UseMenuService="false">
+					<FluentMenuItem OnClick="@OnSelectAllClick">select all</FluentMenuItem>
+					<FluentMenuItem OnClick="@OnDeSelectAllClick">deselect all</FluentMenuItem>
+				</FluentMenu>
+			}
+			<FluentSearch Value="@_navState.Search" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")" />
+			<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
+				@if ((_navState.Filters?.Count ?? 0) > 0)
+				{
+					<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" Color="@Color.Accent" />
+					<FluentBadge Appearance="Appearance.Accent">@(_navState.Filters?.Count ?? 0)</FluentBadge>
+				}
+				else
+				{
+					<FluentIcon Value="@TfConstants.GetIcon("Filter")" Color="@Color.Accent" />
+				}
+			</FluentButton>
+			<FluentButton Id="view-sort-selector" OnClick="OnSortClick" Title="data sort" Appearance="@Appearance.Outline">
+				@if ((_navState.Sorts?.Count ?? 0) > 0)
+				{
+					<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" Color="@Color.Accent" />
+					<FluentBadge Appearance="Appearance.Accent">@(_navState.Sorts?.Count ?? 0)</FluentBadge>
+				}
+				else
+				{
+					<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Color="@Color.Accent" />
+				}
+			</FluentButton>
+			@if (_showClearFilter)
+			{
+				<FluentButton OnClick="OnClearFilterClick" Title="@LOC("clear filters and sort")" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@TfConstants.GetIcon("Dismiss")" Color="@Color.Error" />
+				</FluentButton>
+			}
+			@* 		<FluentButton Id="grid-properties-selector" OnClick="OnGridPropertiesClick" Title="grid properties" Appearance="@Appearance.Outline">
+		<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" Color="@Color.Accent" />
+		</FluentButton> *@
+		</div>
+		<div class="content-toolbar__right">
+			<TucScreenRegionComponent RegionContext="@(new TfSpaceViewToolBarActionScreenRegionContext())" />
+			@if (SpaceView.Settings.CanCreateRows)
+			{
+				<FluentButton OnClick="_onAddRowClick" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" />
+				</FluentButton>
+			}
+			<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
+				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Color="@Color.Accent" />
+			</FluentButton>
+			@if (_activeBookmark is not null)
+			{
+				<FluentButton Id="view-bookmark-selector" OnClick="OnBookmarkClick" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Accent" />
+				</FluentButton>
+			}
+			@if (_activeSavedUrl is not null)
+			{
+				@if (Navigator.IsSpaceViewSavedUrlChanged(_activeSavedUrl.Url))
+				{
+					<FluentButton Id="view-save-selector" OnClick="OnSaveLinkClick" Appearance="@Appearance.Outline">
+						<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Warning" />
+					</FluentButton>
+				}
+				else
+				{
+					<FluentButton Id="view-save-selector" OnClick="OnSaveLinkClick" Appearance="@Appearance.Outline">
+						<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Accent" />
+					</FluentButton>
+				}
+			}
+			<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
+				<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Accent" />
+			</FluentButton>
+			@if (_currentUser.IsAdmin)
+			{
+				<FluentButton Id="view-setting-selector" OnClick="OnSettingsClick" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Accent" />
+				</FluentButton>
+			}
+		</div>
+	</div>
+	@* <TucSpaceViewPropertiesSelector @ref="_propertiesSelector" />  *@
+	<TucSpaceViewSettingsSelector @ref="_settingSelector" SpaceView="SpaceView" Data="Data" SelectedRows="SelectedRows" />
+	<TucSpaceViewActionSelector @ref="_actionSelector" SpaceView="SpaceView" Data="Data" SelectedRows="SelectedRows" />
+	<TucSpaceViewShareSelector @ref="_shareSelector" SpaceView="SpaceView" Data="Data" SelectedRows="SelectedRows" ActiveBookmark="_activeBookmark" ActiveSavedUrl="_activeSavedUrl" />
+	<TucSpaceViewBookmarkSelector @ref="_bookmarkSelector" SpaceView="SpaceView" Data="Data" SelectedRows="SelectedRows" ActiveBookmark="_activeBookmark" ActiveSavedUrl="_activeSavedUrl" />
+	<TucSpaceViewLinkSaveSelector @ref="_saveSelector" SpaceView="SpaceView" Data="Data" SelectedRows="SelectedRows" ActiveBookmark="_activeBookmark" ActiveSavedUrl="_activeSavedUrl" />
+}

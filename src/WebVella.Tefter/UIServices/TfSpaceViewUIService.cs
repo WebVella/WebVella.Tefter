@@ -34,18 +34,23 @@ public partial interface ITfSpaceViewUIService
 
 
 	//Presets
-	void UpdateSpaceViewPresets(Guid viewId,List<TfSpaceViewPreset> presets);
+	void UpdateSpaceViewPresets(Guid viewId, List<TfSpaceViewPreset> presets);
+
+	//Export
+	ValueTask<byte[]> ExportViewToExcel(TfExportViewData data);
 }
 public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 {
 	#region << Ctor >>
 	private static readonly AsyncLock _asyncLock = new AsyncLock();
+	private readonly IServiceProvider _serviceProvider;
 	private readonly ITfService _tfService;
 	private readonly ITfMetaService _metaService;
 	private readonly IStringLocalizer<TfSpaceViewUIService> LOC;
 
 	public TfSpaceViewUIService(IServiceProvider serviceProvider)
 	{
+		_serviceProvider = serviceProvider;
 		_tfService = serviceProvider.GetService<ITfService>() ?? default!;
 		_metaService = serviceProvider.GetService<ITfMetaService>() ?? default!;
 		LOC = serviceProvider.GetService<IStringLocalizer<TfSpaceViewUIService>>() ?? default!;
@@ -166,10 +171,137 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 	#endregion
 
 	#region << Presets >>
-	public void UpdateSpaceViewPresets(Guid viewId,List<TfSpaceViewPreset> presets){ 
-		_tfService.UpdateSpaceViewPresets(viewId,presets);		
+	public void UpdateSpaceViewPresets(Guid viewId, List<TfSpaceViewPreset> presets)
+	{
+		_tfService.UpdateSpaceViewPresets(viewId, presets);
 		var spaceView = _tfService.GetSpaceView(viewId);
-		SpaceViewUpdated?.Invoke(this, spaceView);	
+		SpaceViewUpdated?.Invoke(this, spaceView);
+	}
+	#endregion
+
+	#region << Export >>
+	public virtual ValueTask<byte[]> ExportViewToExcel(TfExportViewData data)
+	{
+		Guid? spaceViewId = null;
+
+		if (data.RouteState.SpaceViewId is not null)
+		{
+			spaceViewId = data.RouteState.SpaceViewId.Value;
+		}
+		else if (data.RouteState.SpacePageId is not null)
+		{
+			var resultNode = _tfService.GetSpacePage(data.RouteState.SpacePageId.Value);
+			if (resultNode is null)
+				throw new TfException("GetSpaceNode method failed");
+
+			var spacePagesMeta = _metaService.GetSpacePagesComponentsMeta();
+			var spacePageMeta = spacePagesMeta.SingleOrDefault(x => x.ComponentId == resultNode.ComponentId);
+			if (resultNode.Type == TfSpacePageType.Page && spacePageMeta != null && spacePageMeta.Instance.GetType() == typeof(TucSpaceViewSpacePageAddon))
+			{
+				try
+				{
+					var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(resultNode.ComponentOptionsJson);
+					spaceViewId = options.SpaceViewId;
+				}
+				catch (Exception ex)
+				{
+					throw new Exception($"TfSpaceViewPageComponent options could not deserialize. {ex.Message}");
+				}
+			}
+		}
+
+		if (spaceViewId is null)
+			throw new TfException("SpaceViewId not provided");
+
+		var view = _tfService.GetSpaceView(spaceViewId.Value);
+		if (view is null)
+			throw new TfException("View not found.");
+
+
+		var viewColumns = _tfService.GetSpaceViewColumnsList(view.Id);
+
+		List<TfFilterBase> filters = null;
+		List<TfSort> sorts = null;
+
+		if (data.RouteState.Filters is not null && data.RouteState.Filters.Count > 0)
+			filters = data.RouteState.Filters.ToList();
+
+		if (data.RouteState.Sorts is not null && data.RouteState.Sorts.Count > 0)
+			sorts = data.RouteState.Sorts.ToList();
+
+		var viewData = _tfService.QuerySpaceData(
+			spaceDataId: view.SpaceDataId,
+			userFilters: filters,
+			userSorts: sorts,
+			search: data.RouteState.Search,
+			page: null,
+			pageSize: null
+		);
+
+		using (var workbook = new XLWorkbook())
+		{
+			var ws = workbook.Worksheets.Add(view.Name);
+
+			var currentExcelRow = 1;
+			var currentExcelColumn = 1;
+			//Header
+			foreach (var column in viewColumns)
+			{
+				var rangeColumns = 1;
+				var endColumn = currentExcelColumn + rangeColumns - 1;
+				var cellRange = ws.Range(currentExcelRow, currentExcelColumn, currentExcelRow, endColumn);
+				if (rangeColumns > 1) cellRange.Merge();
+				cellRange.Value = column.Title;
+				currentExcelColumn = currentExcelColumn + rangeColumns;
+			}
+			currentExcelRow++;
+
+			var typeDict = new Dictionary<string, object>();
+			var compContext = new TfSpaceViewColumnScreenRegionContext()
+			{
+				DataTable = viewData,
+				Mode = TfComponentPresentationMode.Display, //ignored here
+				SpaceViewId = view.Id,
+				EditContext = null, //ignored here
+				ValidationMessageStore = null, //ignored here
+				RowIndex = 0,//set in row loop
+				ComponentOptionsJson = null, //set in column loop
+				DataMapping = null,//set in column loop
+				QueryName = null,//set in column loop
+				SpaceViewColumnId = Guid.Empty
+			};
+			for (int i = 0; i < viewData.Rows.Count; i++)
+			{
+				var row = viewData.Rows[i];
+				currentExcelColumn = 1;
+				compContext.RowIndex = i;
+				var rowId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+				if (data.SelectedRows is not null && data.SelectedRows.Count > 0
+					&& !data.SelectedRows.Contains(rowId)) continue;
+				foreach (TfSpaceViewColumn column in viewColumns)
+				{
+					compContext.SpaceViewColumnId = column.Id;
+					compContext.ComponentOptionsJson = column.ComponentOptionsJson;
+					compContext.DataMapping = column.DataMapping;
+					compContext.QueryName = column.QueryName;
+
+					IXLCell excelCell = ws.Cell(currentExcelRow, currentExcelColumn);
+					var component = _metaService.GetSpaceViewColumnComponent(column.ComponentId);
+					if (component is not null)
+					{
+						var componentNewInstance = (ITfSpaceViewColumnComponentAddon)Activator.CreateInstance(component.GetType(), compContext);
+						componentNewInstance.ProcessExcelCell(_serviceProvider, excelCell);
+					}
+					currentExcelColumn++;
+				}
+				currentExcelRow++;
+			}
+
+			ws.Columns(1, viewColumns.Count).AdjustToContents();
+			MemoryStream ms = new MemoryStream();
+			workbook.SaveAs(ms);
+			return ValueTask.FromResult(ms.ToArray());
+		}
 	}
 	#endregion
 }

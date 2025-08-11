@@ -101,7 +101,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 				}
 			}
 			if (firstPageId is not null)
-				Navigator.NavigateTo(string.Format(TfConstants.SpacePagePageUrl, _spacePage.Id, firstPageId.Value));
+				Navigator.NavigateTo(string.Format(TfConstants.SpacePagePageUrl, _spacePage.SpaceId, firstPageId.Value));
 			else
 				Navigator.NavigateTo(TfConstants.HomePageUrl);
 		}
