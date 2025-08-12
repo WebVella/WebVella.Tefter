@@ -66,11 +66,6 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 	#endregion
 
 	#region << Lifecycle >>
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		_initContextData();
-	}
 
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
@@ -82,6 +77,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 		var contextHash = RegionContext.GetHash();
 		if (contextHash != _renderedHash)
 		{
+			_initContextData();
 			await _initValues();
 			_renderedHash = contextHash;
 		}

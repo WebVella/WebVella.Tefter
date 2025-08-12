@@ -68,11 +68,6 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	#endregion
 
 	#region << Lifecycle >>
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		_initContextData();
-	}
 
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
@@ -84,6 +79,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 		var contextHash = RegionContext.GetHash();
 		if (contextHash != _renderedHash)
 		{
+			_initContextData();
 			await _initValues();
 			_renderedHash = contextHash;
 		}
@@ -100,120 +96,6 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 		excelCell.SetValue(XLCellValue.FromObject(GetDataStringByAlias(VALUE_ALIAS)));
 	}
 
-	//public override async Task OnAppStateInit(
-	//	IServiceProvider serviceProvider,
-	//	TucUser currentUser,
-	//	TfAppState newAppState, TfAppState oldAppState,
-	//	TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
-	//{
-	//	await base.OnAppStateInit(
-	//		serviceProvider: serviceProvider,
-	//		currentUser: currentUser,
-	//		newAppState: newAppState,
-	//		oldAppState: oldAppState,
-	//		newAuxDataState: newAuxDataState,
-	//		oldAuxDataState: oldAuxDataState
-	//	);
-	//	_initStorageKeys();
-
-	//	var options = new List<TucSelectOption>();
-	//	var componentOptions = GetOptions();
-	//	if (componentOptions.Source == TfSelectEditColumnComponentOptionsSourceType.ManuallySet)
-	//	{
-	//		options = _getOptionsFromString(componentOptions.OptionsString);
-	//	}
-	//	else if (componentOptions.Source == TfSelectEditColumnComponentOptionsSourceType.SpaceData)
-	//	{
-	//		if (componentOptions.SpaceDataId != Guid.Empty)
-	//		{
-	//			var tfService = serviceProvider.GetService<ITfService>();
-
-	//			var optionsDT = tfService.QuerySpaceData(
-	//				spaceDataId: componentOptions.SpaceDataId,
-	//				userFilters: null,
-	//				userSorts: null,
-	//				search: null,
-	//				page: 1,
-	//				pageSize: TfConstants.SelectOptionsMaxLimit
-	//			);
-
-	//			for (int i = 0; i < optionsDT.Rows.Count; i++)
-	//			{
-	//				object value = null;
-	//				string label = null;
-	//				string color = null;
-	//				string backgroundColor = null;
-	//				string iconName = null;
-	//				bool hideLabel = componentOptions.SpaceDataHideLabel;
-
-	//				if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataValueColumnName))
-	//				{
-	//					var columnName = componentOptions.SpaceDataValueColumnName.Trim().ToLowerInvariant();
-	//					var column = optionsDT.Columns[columnName];
-	//					if (column is not null)
-	//					{
-	//						value = optionsDT.Rows[i][columnName];
-	//					}
-	//				}
-	//				if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataLabelColumnName))
-	//				{
-	//					var columnName = componentOptions.SpaceDataLabelColumnName.Trim().ToLowerInvariant();
-	//					var column = optionsDT.Columns[columnName];
-	//					if (column is not null)
-	//					{
-	//						if (optionsDT.Rows[i][columnName] is not null)
-	//							label = optionsDT.Rows[i][columnName].ToString();
-	//					}
-	//				}
-	//				if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataIconColumnName))
-	//				{
-	//					var columnName = componentOptions.SpaceDataIconColumnName.Trim().ToLowerInvariant();
-	//					var column = optionsDT.Columns[columnName];
-	//					if (column is not null)
-	//					{
-	//						if (optionsDT.Rows[i][columnName] is not null)
-	//							iconName = optionsDT.Rows[i][columnName].ToString();
-	//					}
-	//				}
-	//				if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataColorColumnName))
-	//				{
-	//					var columnName = componentOptions.SpaceDataColorColumnName.Trim().ToLowerInvariant();
-	//					var column = optionsDT.Columns[columnName];
-	//					if (column is not null)
-	//					{
-	//						if (optionsDT.Rows[i][columnName] is not null)
-	//						{
-	//							color = TfConverters.GetCssColorFromString(optionsDT.Rows[i][columnName].ToString());
-	//						}
-	//					}
-	//				}
-	//				if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataBackgroundColorColumnName))
-	//				{
-	//					var columnName = componentOptions.SpaceDataBackgroundColorColumnName.Trim().ToLowerInvariant();
-	//					var column = optionsDT.Columns[columnName];
-	//					if (column is not null)
-	//					{
-	//						if (optionsDT.Rows[i][columnName] is not null)
-	//						{
-	//							backgroundColor = TfConverters.GetCssColorFromString(optionsDT.Rows[i][columnName].ToString());
-	//						}
-	//					}
-	//				}
-
-	//				options.Add(new TucSelectOption(
-	//					value: value,
-	//					label: label,
-	//					iconName: iconName,
-	//					color: color,
-	//					backgroundColor: backgroundColor,
-	//					hideLabel: hideLabel
-	//				));
-	//			}
-	//		}
-	//	}
-	//	newAuxDataState.Data[_storageKey] = options;
-
-	//}
 	#endregion
 
 	#region << Private logic >>
@@ -306,6 +188,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	}
 	private void _initContextData()
 	{
+
 		_storageKey = this.GetType().Name + "_" + RegionContext.SpaceViewColumnId;
 		TfDataColumn currentColumn = GetColumnByAlias(VALUE_ALIAS);
 		if (currentColumn is null)
