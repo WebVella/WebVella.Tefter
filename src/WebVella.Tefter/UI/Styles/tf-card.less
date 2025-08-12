@@ -10,7 +10,7 @@
 	padding: var(--tf-layout-content-padding);
 
 	.fluent-dialog-body & {
-		border:1px solid var(--tf-stroke-base);
+		border: 1px solid var(--tf-stroke-base);
 	}
 
 	&__title {
@@ -49,6 +49,7 @@
 	}
 
 	&__content {
+		padding-top: 0.5rem;
 	}
 
 	&__title + &__content {
@@ -58,25 +59,20 @@
 	& + & {
 		margin-top: 2rem;
 	}
+
+	&--clickable {
+		cursor: pointer;
+
+		&:hover {
+			background: var(--neutral-fill-secondary-rest);
+		}
+	}
+
+	&__footer{
+		padding-top:1rem;
+	}
 }
 
-
-.tf-card__title {
-
-}
-
-
-.tf-card__content {
-	padding-top: 0.5rem;
-}
-
-.tf-card--clickable {
-	cursor: pointer;
-}
-
-.tf-card--clickable:hover {
-	background: var(--neutral-fill-secondary-rest);
-}
 
 .tf-filter-manage .card-logical.tf-card {
 	border: 1px solid var(--tf-blue-200);

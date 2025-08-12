@@ -88,7 +88,7 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 		if (!result.Cancelled && result.Data != null)
 		{
 			var item = (TfSpace)result.Data;
-			Navigator.NavigateTo(string.Format(TfConstants.SpacePageUrl, item.Id));
+			Navigator.NavigateTo(string.Format(TfConstants.SpaceManagePageUrl, item.Id));
 		}
 	}
 	private async Task _addSpaceDataHandler(TfMenuItem args)

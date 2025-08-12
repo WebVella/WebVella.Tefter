@@ -28,8 +28,8 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
-			WvBlazorTraceService.OnSignal(this,"On_NavigationDataChanged");
-			await _init(args);
+			WvBlazorTraceService.OnSignal(this, "On_NavigationDataChanged");
+		await _init(args);
 	}
 
 	private async void On_DataProviderUpdated(object? caller, TfDataProvider args)
@@ -120,7 +120,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			{ TfConstants.PageQueryName, 1}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this,"_goFirstPage");
+		WvBlazorTraceService.OnSignal(this, "_goFirstPage");
 	}
 	private async Task _goPreviousPage()
 	{
@@ -134,7 +134,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		};
 		queryDict[TfConstants.PageQueryName] = page;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this,"_goPreviousPage");
+		WvBlazorTraceService.OnSignal(this, "_goPreviousPage");
 	}
 	private async Task _goNextPage()
 	{
@@ -150,7 +150,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this,"_goNextPage");
+		WvBlazorTraceService.OnSignal(this, "_goNextPage");
 	}
 	private async Task _goLastPage()
 	{
@@ -161,7 +161,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			{ TfConstants.PageQueryName, -1}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this,"_goLastPage");
+		WvBlazorTraceService.OnSignal(this, "_goLastPage");
 	}
 	private async Task _goOnPage(int page)
 	{
@@ -173,7 +173,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this,"_goOnPage");
+		WvBlazorTraceService.OnSignal(this, "_goOnPage");
 	}
 
 	private async Task _pageSizeChange(int pageSize)
@@ -196,7 +196,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		};
 		queryDict[TfConstants.PageSizeQueryName] = pageSize;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this,"_pageSizeChange");
+		WvBlazorTraceService.OnSignal(this, "_pageSizeChange");
 	}
 
 	private bool _columnIsVisible(TfDataColumn column)
@@ -205,6 +205,17 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		if (_showSystemColumns && column.IsSystem) return true;
 		if (_showCustomColumns && !column.IsSystem) return true;
 
+		return false;
+	}
+
+
+	private bool _hasVisibleColumns()
+	{
+		if (_data is null) return false;
+		foreach (var column in _data.Columns)
+		{ 
+			if (_columnIsVisible(column)) return true;
+		}
 		return false;
 	}
 }

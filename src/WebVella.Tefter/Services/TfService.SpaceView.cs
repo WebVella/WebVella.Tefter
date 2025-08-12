@@ -13,8 +13,7 @@ public partial interface ITfService
 		Guid id);
 
 	public TfSpaceView CreateSpaceView(
-		TfCreateSpaceViewExtended spaceViewExt,
-		bool createNewDataSet = true);
+		TfCreateSpaceViewExtended spaceViewExt);
 
 	public TfSpaceView CreateSpaceView(
 		TfSpaceView spaceView);
@@ -23,8 +22,7 @@ public partial interface ITfService
 		TfSpaceView spaceView);
 
 	public TfSpaceView UpdateSpaceView(
-		TfCreateSpaceViewExtended spaceViewExt,
-		bool createNewDataSet = true);
+		TfCreateSpaceViewExtended spaceViewExt);
 
 	public void UpdateSpaceViewPresets(
 		Guid spaceViewId,
@@ -117,8 +115,7 @@ public partial class TfService : ITfService
 	}
 
 	public TfSpaceView CreateSpaceView(
-		TfCreateSpaceViewExtended spaceViewExt,
-		bool createNewDataSet = true)
+		TfCreateSpaceViewExtended spaceViewExt)
 	{
 		try
 		{
@@ -131,7 +128,7 @@ public partial class TfService : ITfService
 			TfSpaceData? spaceData = null;
 			TfSpaceView? spaceView = null;
 			TfDataProvider? dataprovider = null;
-
+			var createNewDataSet = spaceViewExt.DataSetType == TfSpaceViewDataSetType.New;
 			#region << Validate>>
 
 			var valEx = new TfValidationException();
@@ -519,8 +516,7 @@ public partial class TfService : ITfService
 	}
 
 	public TfSpaceView UpdateSpaceView(
-		TfCreateSpaceViewExtended spaceViewExt,
-		bool createNewDataSet = true)
+		TfCreateSpaceViewExtended spaceViewExt)
 	{
 		try
 		{
@@ -528,7 +524,7 @@ public partial class TfService : ITfService
 			TfSpaceData spaceData = null;
 			TfSpaceView spaceView = null;
 			TfDataProvider dataprovider = null;
-
+			var createNewDataSet = spaceViewExt.DataSetType == TfSpaceViewDataSetType.New;
 			#region << Validate>>
 
 			var valEx = new TfValidationException();

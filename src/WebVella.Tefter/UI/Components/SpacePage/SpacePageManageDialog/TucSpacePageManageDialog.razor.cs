@@ -118,7 +118,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitException(ex, EditContext,MessageStore);
 		}
 		finally
 		{

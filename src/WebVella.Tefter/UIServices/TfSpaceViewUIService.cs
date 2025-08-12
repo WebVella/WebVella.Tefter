@@ -73,7 +73,7 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 	public TfSpaceView GetSpaceView(Guid itemId) => _tfService.GetSpaceView(itemId);
 	public TfSpaceView CreateSpaceView(TfCreateSpaceViewExtended submit)
 	{
-		var spaceView = _tfService.CreateSpaceView(submit, submit.DataSetType == TfSpaceViewDataSetType.New);
+		var spaceView = _tfService.CreateSpaceView(submit);
 		SpaceViewCreated?.Invoke(this, spaceView);
 		return spaceView;
 	}

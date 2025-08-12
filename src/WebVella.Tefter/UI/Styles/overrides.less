@@ -180,16 +180,21 @@ fluent-button {
 	}
 
 	&.accent {
-		--neutral-foreground-rest: var(--tf-white);
+		svg {
+			--neutral-foreground-rest: var(--tf-white);
+		}
 	}
 }
 
 fluent-anchor {
-
-	&.accent svg{
-		fill: var(--tf-white) !important;
+	&.accent {
+		svg {
+			fill: var(--tf-white) !important;
+		}
 	}
 }
+
+
 
 fluent-skeleton {
 	& + & {

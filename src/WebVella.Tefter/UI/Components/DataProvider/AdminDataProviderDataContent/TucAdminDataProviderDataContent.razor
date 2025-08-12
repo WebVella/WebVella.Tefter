@@ -25,21 +25,21 @@
 								  Appearance="@(_showSystemColumns ? Appearance.Accent : Appearance.Outline)">
 						<span>system</span>
 						<span slot="end">
-							<FluentBadge Appearance="Appearance.Neutral">@_provider.SystemColumns.Count</FluentBadge>
+							<FluentBadge>@_provider.SystemColumns.Count</FluentBadge>
 						</span>
 					</FluentButton>
 					<FluentButton Id="view-filter-selector" Title="toggle join key columns" OnClick="_toggleJoinKeyColumns"
 								  Appearance="@(_showJoinKeyColumns ? Appearance.Accent : Appearance.Outline)">
 						<span>join key</span>
 						<span slot="end">
-							<FluentBadge Appearance="Appearance.Neutral">@_provider.SharedColumns.Count</FluentBadge>
+							<FluentBadge>@_provider.SharedColumns.Count</FluentBadge>
 						</span>
 					</FluentButton>
 					<FluentButton Id="view-filter-selector" Title="toggle custom columns" OnClick="_toggleCustomColumns"
 								  Appearance="@(_showCustomColumns ? Appearance.Accent : Appearance.Outline)">
 						<span>custom</span>
 						<span slot="end">
-							<FluentBadge Appearance="Appearance.Neutral">@_provider.Columns.Count</FluentBadge>
+							<FluentBadge>@_provider.Columns.Count</FluentBadge>
 						</span>
 					</FluentButton>
 				</ToolbarLeft>
@@ -55,77 +55,88 @@
 			</TucGridToolbar>
 			@if (_data is not null)
 			{
-				<div class="tf-grid-wrapper">
-					<table class="tf-grid">
-						<thead class="tf-grid-thead">
-							<tr class="tf-grid-thead-bkg"></tr>
-							<tr class="tf-grid-tr">
-								@foreach (var column in _data.Columns)
-								{
-									if (!_columnIsVisible(column)) { continue; }
-									<th class="tf-grid-th">@column.Name</th>
-									columnCount++;
-								}
-							</tr>
-						</thead>
-						<tbody class="tf-grid-tbody">
-							@if (_isDataLoading)
-							{
+				if (_hasVisibleColumns())
+				{
+					<div class="tf-grid-wrapper">
+						<table class="tf-grid">
+							<thead class="tf-grid-thead">
+								<tr class="tf-grid-thead-bkg"></tr>
 								<tr class="tf-grid-tr">
-									<td class="tf-grid-td" colspan="@columnCount"><div>Loading...</div></td>
+									@foreach (var column in _data.Columns)
+									{
+										if (!_columnIsVisible(column)) { continue; }
+										<th class="tf-grid-th">@column.Name</th>
+										columnCount++;
+									}
 								</tr>
-							}
-							else if (_data.Columns.Count == 0)
-							{
-								<tr class="tf-grid-tr">
-									<td class="tf-grid-td" colspan="@columnCount"><div>@LOC("No columns are created for this data provider yet")</div></td>
-								</tr>
-
-							}
-							else if(_data.Rows.Count == 0)
-							{
-								<tr class="tf-grid-tr">
-									<td class="tf-grid-td" colspan="@columnCount"><div>@LOC("No records")</div></td>
-								</tr>
-							}
-							else
-							{
-								foreach (TfDataRow row in _data.Rows)
-								{
-									<tr @key=@row["tf_id"] class="tf-grid-tr">
-										@foreach (var column in _data.Columns)
-										{
-											if (!_columnIsVisible(column)) { continue; }
-											<td class="tf-grid-td">
-												<div class="tf-grid-td-hover"></div>
-												@if (column.IsJoinColumn)
-												{
-													<div>@(String.Join(", ", (List<string>)row[column.Name]))</div>
-												}
-												else
-												{
-													<div>@row[column.Name]</div>
-												}
-											</td>
-										}
-									</tr>
-								}
-								@if (_data.Rows.Count == 0)
+							</thead>
+							<tbody class="tf-grid-tbody">
+								@if (_isDataLoading)
 								{
 									<tr class="tf-grid-tr">
-										<td class="tf-grid-td" colspan="@columnCount">No records found</td>
+										<td class="tf-grid-td" colspan="@columnCount"><div>Loading...</div></td>
 									</tr>
 								}
-							}
-						</tbody>
-					</table>
-				</div>
+								else if (_data.Columns.Count == 0)
+								{
+									<tr class="tf-grid-tr">
+										<td class="tf-grid-td" colspan="@columnCount"><div>@LOC("No columns are created for this data provider yet")</div></td>
+									</tr>
+
+								}
+								else if (_data.Rows.Count == 0)
+								{
+									<tr class="tf-grid-tr">
+										<td class="tf-grid-td" colspan="@columnCount"><div>@LOC("No records")</div></td>
+									</tr>
+								}
+								else
+								{
+									foreach (TfDataRow row in _data.Rows)
+									{
+										<tr @key=@row["tf_id"] class="tf-grid-tr">
+											@foreach (var column in _data.Columns)
+											{
+												if (!_columnIsVisible(column)) { continue; }
+												<td class="tf-grid-td">
+													<div class="tf-grid-td-hover"></div>
+													@if (column.IsJoinColumn)
+													{
+														<div>@(String.Join(", ", (List<string>)row[column.Name]))</div>
+													}
+													else
+													{
+														<div>@row[column.Name]</div>
+													}
+												</td>
+											}
+										</tr>
+									}
+									@if (_data.Rows.Count == 0)
+									{
+										<tr class="tf-grid-tr">
+											<td class="tf-grid-td" colspan="@columnCount">No records found</td>
+										</tr>
+									}
+								}
+							</tbody>
+						</table>
+					</div>
+					<div class="tf-grid__pager">
+						<TucPager Page="@(_data?.QueryInfo.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
+								  GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
+								  PageSize="@(_data?.QueryInfo.PageSize ?? TfConstants.PageSize)" ChangePageSize="_pageSizeChange" />
+					</div>
+				}
+				else
+				{
+					<FluentMessageBar Style="margin-top:2rem" AllowDismiss=false Intent="@MessageIntent.Info">@LOC("There are no visible columns selected.")</FluentMessageBar>
+				}
 			}
-			<div class="tf-grid__pager">
-				<TucPager Page="@(_data?.QueryInfo.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
-						  GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
-						  PageSize="@(_data?.QueryInfo.PageSize ?? TfConstants.PageSize)" ChangePageSize="_pageSizeChange" />
-			</div>
+			else
+			{
+				<TucLoadingPane />
+			}
 		}
 	</div>
 </TucErrorBoundry>

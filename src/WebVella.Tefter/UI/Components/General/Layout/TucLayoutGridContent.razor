@@ -1,0 +1,27 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits ComponentBase
+<div class="tf-layout-grid-content-wrapper">
+	<div class="@_cssClass">
+		@if (!String.IsNullOrWhiteSpace(Title))
+		{
+			<div class="tf-layout-grid-content__title">
+				@Title
+			</div>
+		}
+
+		@if (!String.IsNullOrWhiteSpace(SubTitle))
+		{
+			<div class="tf-layout-grid-content__subtitle">
+				@SubTitle
+			</div>
+		}
+
+		@if (ChildContent is not null)
+		{
+			<div class="tf-layout-grid-content__content" style="@_contentStyle">
+				@ChildContent
+			</div>
+		}
+	</div>
+</div>
+

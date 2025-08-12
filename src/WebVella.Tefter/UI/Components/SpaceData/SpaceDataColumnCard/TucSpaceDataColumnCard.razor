@@ -17,7 +17,7 @@
 		{
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:300px" Disabled="true" />
 		}
-		<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+		<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline" Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
 	</ToolbarTemplate>
 	<ChildContent>
 		@if (Items.Count == 0)

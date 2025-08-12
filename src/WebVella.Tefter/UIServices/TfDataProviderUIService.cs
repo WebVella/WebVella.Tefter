@@ -144,7 +144,7 @@ public partial class TfDataProviderUIService : ITfDataProviderUIService
 	public TfDataProvider CreateDataProviderIdentity(TfDataProviderIdentity identity)
 	{
 		var provider = _tfService.CreateDataProviderIdentity(identity);
-		DataProviderCreated?.Invoke(this, provider);
+		DataProviderUpdated?.Invoke(this, provider);
 		return provider;
 	}
 

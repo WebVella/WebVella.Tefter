@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Models;
+﻿using Microsoft.AspNetCore.Components.Forms;
+
+namespace WebVella.Tefter.Models;
 
 public class TfBaseComponent : ComponentBase
 {
@@ -112,6 +114,24 @@ public class TfBaseComponent : ComponentBase
 			exception: ex,
 			toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
 			notificationErrorTitle: LOC("Unexpected Error!"),
+			toastService: ToastService,
+			messageService: MessageService
+		);
+	}
+
+	/// <summary>
+	/// Processes Exception from Server call
+	/// </summary>
+	/// <param name="ex"></param>
+	protected void ProcessFormSubmitException(Exception ex, EditContext editContext,
+		ValidationMessageStore messageStore)
+	{
+		ResultUtils.ProcessFormSubmitException(
+			exception: ex,
+			toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
+			notificationErrorTitle: LOC("Unexpected Error!"),
+			editContext:editContext,
+			messageStore:messageStore,
 			toastService: ToastService,
 			messageService: MessageService
 		);

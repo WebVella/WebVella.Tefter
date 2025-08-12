@@ -76,6 +76,11 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	}
 	private void _synchronizeNow()
 	{
+		if(_provider.Columns.Count == 0){ 
+			ToastService.ShowWarning(LOC("No provider columns created yet!"));
+			return;
+		}
+
 		TfDataProviderUIService.TriggerSynchronization(_provider!.Id);
 		ToastService.ShowSuccess(LOC("Synchronization task created!"));
 	}

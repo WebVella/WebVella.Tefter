@@ -21,7 +21,7 @@ public partial class TfResultRecipeStepForm : TfRecipeStepFormBase
 		_form = (TfResultRecipeStepData)Addon.Data;
 		base.InitForm(_form);
 
-		if (!_form.Result.IsSuccessful)
+		if (_form.Result is not null && !_form.Result.IsSuccessful)
 		{
 			foreach (var stepResult in _form.Result.Steps)
 			{

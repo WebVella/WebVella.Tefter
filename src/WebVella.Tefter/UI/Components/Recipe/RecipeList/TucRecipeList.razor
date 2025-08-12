@@ -1,17 +1,14 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-
-<div class="tf-guest-layout grid">
-	<div class="tf-guest-layout__header">
-		<div class="tf-guest-layout__header__title">@LOC("Initial Setup")</div>
-		<div class="tf-guest-layout__header__description">@LOC("Welcome to Tefter. Begin using it by simply clicking on one of the available preconfiguration options.")</div>
-	</div>
-	<div class="tf-guest-layout__body">
+<TucLayoutGridContent Title="@LOC("Initial Setup")"
+						  SubTitle="@LOC("Welcome to Tefter. Begin using it by simply clicking on one of the available preconfiguration options.")"
+						  ColumnCount="3">
+	<ChildContent>
 		@foreach (var item in _items)
 		{
-			<div class="tf-recipe" @onclick=@(()=> _select(item))>
+			<div class="tf-recipe" @onclick=@(() => _select(item))>
 				<div class="tf-recipe__icon">
-					<FluentIcon Value="@TfConstants.GetIcon(item.AddonFluentIconName)" Color="@Color.Custom"/>
+					<FluentIcon Value="@TfConstants.GetIcon(item.AddonFluentIconName)" Color="@Color.Custom" />
 				</div>
 				<div class="tf-recipe__meta">
 					<div class="tf-recipe__meta__name">@item.AddonName</div>
@@ -20,5 +17,5 @@
 				</div>
 			</div>
 		}
-	</div>
-</div>
+	</ChildContent>
+</TucLayoutGridContent>

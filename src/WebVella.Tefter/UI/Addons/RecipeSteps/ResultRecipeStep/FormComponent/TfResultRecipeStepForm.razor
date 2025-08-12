@@ -1,7 +1,10 @@
 ﻿@namespace WebVella.Tefter.UI.Addons.RecipeSteps
 @inherits TfRecipeStepFormBase
-
-@if (_form.Result.IsSuccessful)
+@if (_form.Result is null)
+{
+	<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Warning">@LOC("Recipe is not applied yet. Please follow the steps")</FluentMessageBar>
+}
+else if (_form.Result.IsSuccessful)
 {
 	<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Success">@LOC("Recipe was successfully applied")</FluentMessageBar>
 }
