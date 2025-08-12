@@ -9,6 +9,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 
 	[Parameter] public EventCallback<string> OnSearch { get; set; }
 	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
+	[Parameter] public TfSpaceData SpaceData { get; set; } = default!;
 	[Parameter] public TfDataTable Data { get; set; } = default!;
 
 	private TfNavigationState _navState = default!;

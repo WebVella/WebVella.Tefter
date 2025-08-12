@@ -108,7 +108,7 @@ fluent-switch::part(label) {
 	border-radius: var(--tf-border-radius-base);
 	padding: 0.5rem 1rem !important;
 	column-gap: 0 !important;
-	/*margin-bottom: var(--dialog-padding);*/
+	margin-bottom: var(--dialog-padding);
 	font-size: var(--tf-font-size-md);
 }
 
@@ -181,6 +181,13 @@ fluent-button {
 
 	&.accent {
 		--neutral-foreground-rest: var(--tf-white);
+	}
+}
+
+fluent-anchor {
+
+	&.accent svg{
+		fill: var(--tf-white) !important;
 	}
 }
 

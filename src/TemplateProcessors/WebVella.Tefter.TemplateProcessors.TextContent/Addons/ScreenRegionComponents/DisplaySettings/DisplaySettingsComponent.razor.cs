@@ -17,7 +17,7 @@ public partial class DisplaySettingsComponent : TfFormBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(TextContentTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorDisplaySettingsScreenRegionContext RegionContext { get; init; }
+	[Parameter] public TfTemplateProcessorDisplaySettingsScreenRegionContext RegionContext { get; set; }
 
 	private TextContentTemplateSettings _form = new();
 

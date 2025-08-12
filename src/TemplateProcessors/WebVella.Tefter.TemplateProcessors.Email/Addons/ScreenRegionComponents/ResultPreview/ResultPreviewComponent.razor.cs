@@ -21,7 +21,7 @@ public partial class ResultPreviewComponent : TfFormBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(EmailTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultPreviewScreenRegionContext RegionContext { get; init; }
+	[Parameter] public TfTemplateProcessorResultPreviewScreenRegionContext RegionContext { get; set; }
 
 	private EmailTemplatePreviewResult _preview = null;
 	private bool _isLoading = true;

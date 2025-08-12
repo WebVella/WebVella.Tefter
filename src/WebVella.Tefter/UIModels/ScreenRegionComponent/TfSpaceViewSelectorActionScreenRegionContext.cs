@@ -5,5 +5,7 @@
 /// </summary>
 public class TfSpaceViewSelectorActionScreenRegionContext : TfBaseScreenRegionContext
 {
-
+	public List<Guid> SelectedDataRows { get; set; } = new();
+	public TfSpaceData SpaceData { get; set; } = default!;
+	public TfUser User { get; set; } = default!;
 }

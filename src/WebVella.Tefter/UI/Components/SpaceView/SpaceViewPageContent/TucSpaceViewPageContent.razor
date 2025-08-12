@@ -24,6 +24,7 @@ else
 			@* 			<TucPageHeader Title="@_spacePage!.Name" Icon="TfConstants.GetIcon(_spacePage.FluentIconName)"
 						   Area="@_space!.Name" IconColor="_space!.Color" SubTitle="@_preset?.Name" /> *@
 			<TucSpaceViewPageContentToolbar SpaceView="_spaceView" Data=_data
+											SpaceData="_spaceData"
 											OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" OnClearFilter="_onClearFilter"
 											OnSelectAll="_onSelectAll" SelectAllLoading="_selectAllLoading" OnDeSelectAll="_onDeSelectAll"
 											SelectedRows="_selectedDataRows" />

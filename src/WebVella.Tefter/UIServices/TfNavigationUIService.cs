@@ -55,6 +55,8 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			navMenu.Uri = navigator.Uri;
 			if (_navState.RouteNodes[0] == RouteDataNode.Admin)
 			{
+				if (!currentUser.IsAdmin)
+					throw new Exception("Current user is not admin");
 				navMenu.SpaceName = TfConstants.AdminMenuTitle;
 				navMenu.SpaceColor = TfConstants.AdminColor;
 				navMenu.SpaceIcon = TfConstants.SettingsIcon;
@@ -291,43 +293,41 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 		Dictionary<Guid, List<TfSpaceView>> viewDict = new();
 		Dictionary<Guid, List<TfSpaceData>> dataDict = new();
 
-		if (currentUser.IsAdmin)
+
+		foreach (var page in pages)
 		{
-			foreach (var page in pages)
-			{
-				if (!pageDict.ContainsKey(page.SpaceId))
-					pageDict[page.SpaceId] = new();
+			if (!pageDict.ContainsKey(page.SpaceId))
+				pageDict[page.SpaceId] = new();
 
-				pageDict[page.SpaceId].Add(page);
-			}
-			foreach (var spaceId in pageDict.Keys)
-			{
-				pageDict[spaceId] = pageDict[spaceId].OrderBy(x => x.Position).ToList();
-			}
+			pageDict[page.SpaceId].Add(page);
+		}
+		foreach (var spaceId in pageDict.Keys)
+		{
+			pageDict[spaceId] = pageDict[spaceId].OrderBy(x => x.Position).ToList();
+		}
 
-			foreach (var view in views)
-			{
-				if (!viewDict.ContainsKey(view.SpaceId))
-					viewDict[view.SpaceId] = new();
+		foreach (var view in views)
+		{
+			if (!viewDict.ContainsKey(view.SpaceId))
+				viewDict[view.SpaceId] = new();
 
-				viewDict[view.SpaceId].Add(view);
-			}
-			foreach (var spaceId in viewDict.Keys)
-			{
-				viewDict[spaceId] = viewDict[spaceId].OrderBy(x => x.Position).ToList();
-			}
+			viewDict[view.SpaceId].Add(view);
+		}
+		foreach (var spaceId in viewDict.Keys)
+		{
+			viewDict[spaceId] = viewDict[spaceId].OrderBy(x => x.Position).ToList();
+		}
 
-			foreach (var item in data)
-			{
-				if (!dataDict.ContainsKey(item.SpaceId))
-					dataDict[item.SpaceId] = new();
+		foreach (var item in data)
+		{
+			if (!dataDict.ContainsKey(item.SpaceId))
+				dataDict[item.SpaceId] = new();
 
-				dataDict[item.SpaceId].Add(item);
-			}
-			foreach (var spaceId in dataDict.Keys)
-			{
-				dataDict[spaceId] = dataDict[spaceId].OrderBy(x => x.Position).ToList();
-			}
+			dataDict[item.SpaceId].Add(item);
+		}
+		foreach (var spaceId in dataDict.Keys)
+		{
+			dataDict[spaceId] = dataDict[spaceId].OrderBy(x => x.Position).ToList();
 		}
 		foreach (var space in spaces.OrderBy(x => x.Position))
 		{
@@ -338,7 +338,8 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			foreach (var page in spacePages)
 			{
 				var pageId = page.GetFirstNavigatedPageId();
-				if(pageId is not null){ 
+				if (pageId is not null)
+				{
 					firstPageId = pageId;
 					break;
 				}
@@ -476,20 +477,23 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 		#endregion
 
 		#region << Add space >>
-		menuItems.Add(new TfMenuItem()
+		if (currentUser.IsAdmin)
 		{
-			Id = "tf-add-space",
-			IconCollapsed = TfConstants.AddIcon,
-			IconExpanded = TfConstants.AddIcon,
-			IconColor = TfColor.White,
-			Selected = false,
-			Url = String.Empty,
-			Tooltip = LOC["add new space"],
-			Data = new TfMenuItemData
+			menuItems.Add(new TfMenuItem()
 			{
-				MenuType = TfMenuItemType.CreateSpace
-			}
-		});
+				Id = "tf-add-space",
+				IconCollapsed = TfConstants.AddIcon,
+				IconExpanded = TfConstants.AddIcon,
+				IconColor = TfColor.White,
+				Selected = false,
+				Url = String.Empty,
+				Tooltip = LOC["add new space"],
+				Data = new TfMenuItemData
+				{
+					MenuType = TfMenuItemType.CreateSpace
+				}
+			});
+		}
 		#endregion
 		return menuItems;
 	}

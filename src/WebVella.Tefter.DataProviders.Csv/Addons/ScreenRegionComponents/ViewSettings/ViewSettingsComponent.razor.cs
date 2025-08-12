@@ -19,7 +19,7 @@ public partial class ViewSettingsComponent : TfBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(CsvDataProvider),null)
 	};
-	[Parameter] public TfDataProviderDisplaySettingsScreenRegionContext RegionContext { get; init; }
+	[Parameter] public TfDataProviderDisplaySettingsScreenRegionContext RegionContext { get; set; }
 
 	private string _advancedSettings
 	{

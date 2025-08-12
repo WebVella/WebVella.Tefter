@@ -23,7 +23,7 @@ public partial class TucLogin : TfFormBaseComponent
 		{
 			//Workaround to wait for the form to be bound 
 			//on enter click without blur
-			//await Task.Delay(10);
+			await Task.Delay(10);
 			var isValid = EditContext.Validate();
 			if (!isValid) return;
 			_isSubmitting = true;

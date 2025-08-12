@@ -21,7 +21,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorManageSettingsScreenRegionContext? RegionContext { get; init; }
+	[Parameter] public TfTemplateProcessorManageSettingsScreenRegionContext? RegionContext { get; set; }
 
 	private DocumentFileTemplateSettings _form = new();
 	private string _downloadUrl

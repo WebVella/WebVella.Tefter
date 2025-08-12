@@ -20,7 +20,7 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(TextContentTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultPreviewScreenRegionContext RegionContext { get; init; }
+	[Parameter] public TfTemplateProcessorResultPreviewScreenRegionContext RegionContext { get; set; }
 
 	private TextContentTemplatePreviewResult _preview = null;
 	private bool _isLoading = true;

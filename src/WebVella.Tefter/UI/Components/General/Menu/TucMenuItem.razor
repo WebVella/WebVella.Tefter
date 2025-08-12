@@ -8,7 +8,15 @@
 		@if (Item.Icon is not null && !String.IsNullOrWhiteSpace(Item.Text))
 		{
 			<span slot="start">
-				<FluentIcon Value="@Item.Icon" />
+				@if (Item.Color is not null)
+				{
+					<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetAttribute().Value)" />
+				}
+
+				else
+				{
+					<FluentIcon Value="@Item.Icon" />
+				}
 			</span>
 		}
 		else if (Item.Icon is not null)

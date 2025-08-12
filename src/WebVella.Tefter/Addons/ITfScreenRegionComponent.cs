@@ -4,7 +4,7 @@ public interface ITfScreenRegionComponent<T> : ITfAddon where T : TfBaseScreenRe
 {
 	public int PositionRank { get; init;}
 	public List<TfScreenRegionScope> Scopes { get; init; }
-	T RegionContext { get; init; }
+	T? RegionContext { get; set; }
 }
 
 public class TfScreenRegionComponentMeta

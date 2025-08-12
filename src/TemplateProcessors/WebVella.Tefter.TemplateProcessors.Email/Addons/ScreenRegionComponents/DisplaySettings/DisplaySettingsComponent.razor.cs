@@ -20,7 +20,7 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 		new TfScreenRegionScope(typeof(EmailTemplateProcessor),null)
 	};
 	[Parameter] 
-	public TfTemplateProcessorDisplaySettingsScreenRegionContext RegionContext { get; init; }
+	public TfTemplateProcessorDisplaySettingsScreenRegionContext RegionContext { get; set; }
 
 	private bool _loading = true;
 	private string _activeTab = SettingsComponentTabs.Content.ToDescriptionString();

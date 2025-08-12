@@ -18,6 +18,6 @@ public partial class EmailSenderAdminPage : TfBaseComponent, ITfScreenRegionComp
 			new TfScreenRegionScope(null,new Guid(ID))
 		};
 	[Parameter]
-	public TfAdminPageScreenRegionContext RegionContext { get; init; }
+	public TfAdminPageScreenRegionContext RegionContext { get; set; }
 
 }

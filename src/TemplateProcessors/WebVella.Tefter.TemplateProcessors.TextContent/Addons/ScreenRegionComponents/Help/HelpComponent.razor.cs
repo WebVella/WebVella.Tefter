@@ -17,5 +17,5 @@ public partial class HelpComponent : TfBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(TextContentTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorHelpScreenRegionContext RegionContext { get; init; }
+	[Parameter] public TfTemplateProcessorHelpScreenRegionContext RegionContext { get; set; }
 }

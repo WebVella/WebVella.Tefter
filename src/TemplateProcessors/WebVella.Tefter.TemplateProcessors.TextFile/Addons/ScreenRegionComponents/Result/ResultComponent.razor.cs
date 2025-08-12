@@ -18,7 +18,7 @@ public partial class ResultComponent : TfBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(TextFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultScreenRegionContext RegionContext { get; init; }
+	[Parameter] public TfTemplateProcessorResultScreenRegionContext RegionContext { get; set; }
 
 	private TextFileTemplateResult _result = null;
 	private bool _isLoading = true;

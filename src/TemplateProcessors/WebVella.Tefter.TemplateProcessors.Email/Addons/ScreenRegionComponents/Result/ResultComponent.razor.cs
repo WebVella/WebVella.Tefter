@@ -18,7 +18,7 @@ public partial class ResultComponent : TfBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(EmailTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultScreenRegionContext RegionContext { get; init; }
+	[Parameter] public TfTemplateProcessorResultScreenRegionContext RegionContext { get; set; }
 
 	private EmailTemplateResult _result = null;
 	private bool _isLoading = true;

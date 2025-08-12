@@ -17,7 +17,7 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(ExcelFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorDisplaySettingsScreenRegionContext RegionContext { get; init; }
+	[Parameter] public TfTemplateProcessorDisplaySettingsScreenRegionContext RegionContext { get; set; }
 	private ExcelFileTemplateSettings _form = new();
 	private string _downloadUrl
 	{

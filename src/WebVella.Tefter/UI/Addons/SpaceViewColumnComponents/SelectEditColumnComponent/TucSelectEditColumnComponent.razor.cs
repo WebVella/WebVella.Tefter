@@ -314,7 +314,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 			throw new Exception("Joined data cannot be edited");
 
 		//Init context data
-		if (!RegionContext.ContextData.ContainsKey(_storageKey))
+		if (!RegionContext.ViewData.ContainsKey(_storageKey))
 		{
 			var selectOptions = new List<TfSelectOption>();
 			var componentOptions = GetOptions();
@@ -409,13 +409,13 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 					}
 				}
 			}
-			RegionContext.ContextData[_storageKey] = selectOptions;
+			RegionContext.ViewData[_storageKey] = selectOptions;
 		}
 
-		if (!RegionContext.ContextData.ContainsKey(_storageKey) || RegionContext.ContextData[_storageKey] is not List<TfSelectOption>)
+		if (!RegionContext.ViewData.ContainsKey(_storageKey) || RegionContext.ViewData[_storageKey] is not List<TfSelectOption>)
 			throw new Exception("ContextData is not List<TfSelectOption>");
 
-		_selectOptionsList = ((List<TfSelectOption>)RegionContext.ContextData[_storageKey]).ToList();
+		_selectOptionsList = ((List<TfSelectOption>)RegionContext.ViewData[_storageKey]).ToList();
 
 		if (currentColumn is not null && currentColumn.IsNullable)
 		{

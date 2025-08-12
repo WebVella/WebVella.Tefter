@@ -21,7 +21,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(ExcelFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorManageSettingsScreenRegionContext RegionContext { get; init; }
+	[Parameter] public TfTemplateProcessorManageSettingsScreenRegionContext RegionContext { get; set; }
 
 	private ExcelFileTemplateSettings _form = new();
 	private string _downloadUrl

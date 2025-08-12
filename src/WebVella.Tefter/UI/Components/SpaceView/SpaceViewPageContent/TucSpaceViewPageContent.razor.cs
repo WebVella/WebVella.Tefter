@@ -20,6 +20,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 	private TfSpace? _space = null;
 	private TfSpacePage? _spacePage = null;
 	private TfSpaceView? _spaceView = null;
+	private TfSpaceData? _spaceData = null;
 	private TfSpaceViewPreset? _preset = null;
 	private TfDataTable? _data = null;
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
@@ -32,6 +33,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		_componentMetaDict = TfMetaUIService.GetSpaceViewColumnComponentDict();
 		await _init();
 		_isDataLoading = false;
 	}
@@ -58,6 +60,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 			_navState = navState;
 		try
 		{
+			Guid? oldViewId = _spaceView is not null ? _spaceView.Id : null;
 			_spaceView = null;
 			if (_navState.SpaceId is null || _navState.SpacePageId is null)
 				return;
@@ -71,15 +74,17 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 			var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(_spacePage.ComponentOptionsJson);
 			if (options is null || options.SpaceViewId is null)
 				return;
-
-			//When cannot node has json from another page type
 			_spaceView = TfSpaceViewUIService.GetSpaceView(options.SpaceViewId.Value);
 			if (_spaceView is null)
 				return;
+			if (oldViewId != options.SpaceViewId.Value)
+			{
+				_space = TfSpaceUIService.GetSpace(_spaceView.SpaceId);
+				_spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
+				_spaceViewColumns = TfSpaceViewUIService.GetViewColumns(_spaceView.Id);
+				_selectedDataRows = new();
+			}
 
-			_space = TfSpaceUIService.GetSpace(_spaceView.SpaceId);
-			_spaceViewColumns = TfSpaceViewUIService.GetViewColumns(_spaceView.Id);
-			_componentMetaDict = TfMetaUIService.GetSpaceViewColumnComponentDict();
 			_page = _navState.Page ?? 1;
 			_pageSize = _navState.PageSize ?? TfConstants.PageSize;
 
@@ -316,7 +321,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 			{
 				TfDataRow row = clonedData.Rows[i];
 				Guid tfId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-				if(changedRowTfId != tfId) continue;
+				if (changedRowTfId != tfId) continue;
 
 				for (int j = 0; j < clonedData.Columns.Count; j++)
 				{

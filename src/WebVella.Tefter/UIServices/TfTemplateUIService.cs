@@ -9,6 +9,7 @@ public partial interface ITfTemplateUIService
 
 	//Templates
 	List<TfTemplate> GetTemplates(string? search = null, TfTemplateResultType? type = null);
+	List<TfTemplate> GetSpaceDataTemplates(Guid spaceDataId, string? search = null);
 	TfTemplate GetTemplate(Guid roleId);
 	TfTemplate CreateTemplate(TfManageTemplateModel item);
 	TfTemplate UpdateTemplate(TfManageTemplateModel item);
@@ -20,7 +21,7 @@ public partial interface ITfTemplateUIService
 	List<TfSpaceDataAsOption> GetSpaceDataOptionsForTemplate();
 
 	//Settings
-	TfTemplate UpdateTemplateSettings(Guid templateId,string settingsJson);
+	TfTemplate UpdateTemplateSettings(Guid templateId, string settingsJson);
 }
 public partial class TfTemplateUIService : ITfTemplateUIService
 {
@@ -46,6 +47,30 @@ public partial class TfTemplateUIService : ITfTemplateUIService
 
 	#region << Template >>
 	public List<TfTemplate> GetTemplates(string? search = null, TfTemplateResultType? type = null) => _tfService.GetTemplates(search, type);
+
+	public List<TfTemplate> GetSpaceDataTemplates(Guid spaceDataId, string? search = null)
+	{
+		var templates = _tfService.GetTemplates();
+		var result = new List<TfTemplate>();
+		foreach (var item in templates)
+		{
+			if (!item.IsEnabled)
+				continue;
+
+			if (!item.IsSelectable)
+				continue;
+
+			if (!item.SpaceDataList.Contains(spaceDataId))
+				continue;
+
+			if (!TemplateMatchSearch(item, search, null))
+				continue;
+
+			result.Add(item);
+		}
+
+		return result.OrderBy(x => x.Name).ToList();
+	}
 	public TfTemplate GetTemplate(Guid id) => _tfService.GetTemplate(id);
 	public TfTemplate CreateTemplate(TfManageTemplateModel item)
 	{
@@ -83,11 +108,33 @@ public partial class TfTemplateUIService : ITfTemplateUIService
 		string settingsJson)
 	{
 		var template = _tfService.UpdateTemplateSettings(
-			templateId:templateId,
-			settingsJson:settingsJson
+			templateId: templateId,
+			settingsJson: settingsJson
 		);
 		TemplateUpdated?.Invoke(this, template);
 		return template;
 	}
 	#endregion
+
+	private static bool TemplateMatchSearch(
+		TfTemplate template,
+		string search = null,
+		TfTemplateResultType? resultType = null)
+	{
+		if (resultType is not null && template.ResultType != resultType.Value)
+			return false;
+
+		var stringProcessed = search?.Trim().ToLowerInvariant();
+		if (String.IsNullOrWhiteSpace(stringProcessed)) return true;
+		else if (template.Name.ToLowerInvariant().Contains(stringProcessed))
+		{
+			return true;
+		}
+		else if ((template.Description ?? string.Empty).ToLowerInvariant().Contains(stringProcessed))
+		{
+			return true;
+		}
+
+		return false;
+	}
 }

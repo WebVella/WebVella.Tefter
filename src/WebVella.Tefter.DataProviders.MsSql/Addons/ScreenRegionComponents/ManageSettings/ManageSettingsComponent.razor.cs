@@ -18,7 +18,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,	ITfScreenReg
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(MsSqlDataProvider),null)
 	};
-	[Parameter] public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; init; }
+	[Parameter] public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; set; }
 
 	private MsSqlDataProviderSettings _form = new();
 

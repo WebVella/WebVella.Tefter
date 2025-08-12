@@ -14,7 +14,7 @@ public class TfSpaceViewColumnScreenRegionContext : TfBaseScreenRegionContext
 	public int RowIndex { get; set; } = -1;
 	public EditContext? EditContext { get; set; } = null;
 	public ValidationMessageStore? ValidationMessageStore { get; set; } = null;
-	public Dictionary<string,object> ContextData { get; init; }
+	public Dictionary<string,object> ViewData { get; init; }
 
 	public string GetHash()
 	{
@@ -32,8 +32,8 @@ public class TfSpaceViewColumnScreenRegionContext : TfBaseScreenRegionContext
 		return sb.ToString();
 	}
 
-	public TfSpaceViewColumnScreenRegionContext(Dictionary<string,object> contextData)
+	public TfSpaceViewColumnScreenRegionContext(Dictionary<string,object> viewData)
 	{
-		ContextData = contextData;
+		ViewData = viewData;
 	}
 }
