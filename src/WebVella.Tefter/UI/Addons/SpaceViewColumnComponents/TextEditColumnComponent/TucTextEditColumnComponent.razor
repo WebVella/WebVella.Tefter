@@ -2,7 +2,7 @@
 @inherits TucBaseViewColumn<TucTextEditColumnComponentOptions>
 @if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
-	<div>
+	<div class="tf-grid-td-input">
 		<FluentTextField Id="@_valueInputId"
 						 @bind-Value="@_value"
 						 @bind-Value:after="_valueChanged"

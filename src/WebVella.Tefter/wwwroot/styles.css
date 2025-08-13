@@ -988,6 +988,7 @@ fluent-dialog .tf-divider,
   /*white-space: nowrap;*/
   text-overflow: ellipsis;
   padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
+  min-height: 42px;
 }
 .tf-grid tbody tr > th.multiline-text,
 .tf-grid tbody tr > td.multiline-text {
@@ -1282,7 +1283,7 @@ fluent-dialog .tf-divider,
   background: color-mix(in srgb, var(--tf-layout-color) 20%, var(--tf-fill-color-dark) 80%);
 }
 .tf-header .tf-menu.current-space .tf-menu__item {
-  width: 200px !important;
+  width: 210px !important;
 }
 .tf-header fluent-menu {
   background: var(--tf-fill-color-dark-1);
@@ -1375,7 +1376,7 @@ fluent-dialog .tf-divider,
   display: flex;
 }
 .tf-layout-list-details__aside {
-  flex: 0 0 320px;
+  flex: 0 0 260px;
   overflow: hidden;
   height: 100%;
   display: flex;
@@ -1644,7 +1645,7 @@ fluent-dialog .tf-divider,
 }
 .tf-page-layout__toolbar__left {
   display: flex;
-  flex: 0 0 250px;
+  flex: 0 0 300px;
   align-items: center;
   padding-left: var(--tf-layout-content-padding);
 }
