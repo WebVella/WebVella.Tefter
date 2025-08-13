@@ -446,7 +446,8 @@ public partial class TfService : ITfService
 
 		foreach (var item in spaceDataColumns)
 		{
-			var column = allColumns.FirstOrDefault(x => x.ColumnName == item);
+			TfSpaceDataColumn? column = null;
+			column = allColumns.FirstOrDefault(x => x.ColumnName == item);
 			if (column is null)
 			{
 				result.Add(new TfSpaceDataColumn
@@ -504,8 +505,9 @@ public partial class TfService : ITfService
 				};
 				if (schemaColumn.SharedColumn is not null)
 				{
+					item.ColumnName = $"{dataIdentity.DataIdentity.DataIdentity}.{schemaColumn.SharedColumn.DbName}";
+					item.SourceName = dataIdentity.DataIdentity.DataIdentity;
 					item.SourceColumnName = schemaColumn.SharedColumn.DbName;
-					item.SourceName = schemaColumn.SharedColumn.DbName;
 					item.SourceCode = null;
 					item.SourceType = TfAuxDataSourceType.SharedColumn;
 					item.DbType = schemaColumn.SharedColumn.DbType;
@@ -672,7 +674,7 @@ public partial class TfService : ITfService
 			throw new TfException("spaceData not found");
 		var submit = new TfUpdateSpaceData(spaceData);
 		submit.Filters = filters;
-		var updatedSpaceData = UpdateSpaceData(submit);	
+		var updatedSpaceData = UpdateSpaceData(submit);
 	}
 
 	//Sorts
@@ -684,7 +686,7 @@ public partial class TfService : ITfService
 			throw new TfException("spaceData not found");
 		var submit = new TfUpdateSpaceData(spaceData);
 		submit.SortOrders = sorts;
-		var updatedSpaceData = UpdateSpaceData(submit);	
+		var updatedSpaceData = UpdateSpaceData(submit);
 	}
 
 	private TfSpaceData ConvertDboToModel(TfSpaceDataDbo dbo)

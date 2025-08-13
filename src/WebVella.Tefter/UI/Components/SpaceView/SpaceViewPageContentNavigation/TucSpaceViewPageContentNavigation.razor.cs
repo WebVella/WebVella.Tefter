@@ -3,6 +3,7 @@
 public partial class TucSpaceViewPageContentNavigation : TfBaseComponent
 {
 	// Dependency Injection
+	[Inject] public IWvBlazorTraceService WvBlazorTraceService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
 
@@ -21,6 +22,7 @@ public partial class TucSpaceViewPageContentNavigation : TfBaseComponent
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
+		WvBlazorTraceService.OnSignal(this,"On_NavigationStateChanged",customData: args.Uri);
 		if (UriInitialized != args.Uri)
 			await _init();
 	}

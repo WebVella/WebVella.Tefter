@@ -703,4 +703,31 @@ public static partial class TfConverters
 	}
 
 	#endregion
+
+	#region << Exception >>
+	public static List<string> GetDataAsErrorList(Exception ex)
+	{
+		List<string> result = new List<string>();
+		if(ex is null || ex.Data is null)
+			return result;
+		foreach (var key in ex.Data.Keys)
+		{
+			if (ex.Data[key] is null) continue;
+
+			if (ex.Data[key] is List<ValidationError>)
+			{
+				foreach (var valEx in (List<ValidationError>)ex.Data[key]!)
+				{
+					if(String.IsNullOrWhiteSpace(valEx.Message)) continue;
+					result.Add(valEx.Message);
+				}
+			}
+			if (ex.Data[key] is List<string>)
+			{
+				result.AddRange((List<string>)ex.Data[key]!);
+			}
+		}
+		return result;
+	}
+	#endregion
 }

@@ -2,6 +2,7 @@
 public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 {
 	[Inject] protected ITfUserUIService TfUserUIService { get; set; } = default!;
+	[Inject] protected ITfConfigurationService TfConfigurationService { get; set; } = default!;
 	[Inject] protected NavigationManager Navigator { get; set; } = default!;
 
 	public ValueTask DisposeAsync()
@@ -26,17 +27,27 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		}
 		var uri = new Uri(Navigator.Uri);
 		var queryDictionary = System.Web.HttpUtility.ParseQueryString(uri.Query);
+		Uri? startupUri = null;
+		if (!String.IsNullOrWhiteSpace(user.Settings.StartUpUrl))
+		{
+			if (user.Settings.StartUpUrl.StartsWith("http:"))
+				startupUri = new Uri(user.Settings.StartUpUrl);
+			else
+				startupUri = new Uri(TfConfigurationService.BaseUrl + user.Settings.StartUpUrl);
+		}
 
-		if (uri.LocalPath == "/" && !String.IsNullOrWhiteSpace(user.Settings.StartUpUrl)
+
+		if (uri.LocalPath == "/" && startupUri is not null && uri.LocalPath != startupUri.LocalPath
 			&& queryDictionary[TfConstants.NoDefaultRedirectQueryName] is null)
 		{
-			Navigator.NavigateTo(user.Settings.StartUpUrl,true);
+			Navigator.NavigateTo(user.Settings.StartUpUrl, true);
 		}
 		else
 		{
+			await _checkAccess();
 			_isLoaded = true;
 		}
-		
+
 	}
 
 	protected override void OnAfterRender(bool firstRender)

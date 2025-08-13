@@ -56,6 +56,7 @@ public partial class TucTextEditColumnComponent : TucBaseViewColumn<TucTextEditC
 	#endregion
 
 	#region << Lifecycle >>
+
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once

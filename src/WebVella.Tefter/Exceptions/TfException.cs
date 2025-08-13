@@ -29,7 +29,7 @@ public class TfException : Exception
 		if (!Data.Contains(key))
 			Data.Add(key, new List<ValidationError>());
 
-		(Data[key] as List<ValidationError>)?.Add(new ValidationError(key,value,null,index));
+		(Data[key] as List<ValidationError>)?.Add(new ValidationError(key, value, null, index));
 	}
 
 	public void ThrowIfContainsErrors()
@@ -75,4 +75,5 @@ public class TfException : Exception
 		}
 		return result;
 	}
+
 }

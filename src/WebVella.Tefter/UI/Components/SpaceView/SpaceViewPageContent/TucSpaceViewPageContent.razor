@@ -132,14 +132,14 @@ else
 									</td>
 									@foreach (var column in _spaceViewColumns)
 									{
-										<td class="tf-grid-td @configCss[columnIndex].Item2" style="@($"{column.CellColorStyle}{configCss[columnIndex].Item3}")">
+										<td @key=@(Guid.NewGuid()) class="tf-grid-td @configCss[columnIndex].Item2" style="@($"{column.CellColorStyle}{configCss[columnIndex].Item3}")">
 											<div class="tf-grid-td-color" style="@column.CellFillColorStyle"></div>
 											<div class="tf-grid-td-selection"></div>
 											<div class="tf-grid-td-hover"></div>
 											@if (_componentMetaDict.ContainsKey(column.ComponentId))
 											{
-												<TucErrorBoundry ShowErrorDetails=false>
-													<DynamicComponent Type="_componentMetaDict[column.ComponentId].Instance.GetType()" Parameters="@_getColumnComponentContext(column, _data, index)" />
+												<TucErrorBoundry>
+													<DynamicComponent Type="_componentMetaDict[column.ComponentId].InstanceType" Parameters="@_getColumnComponentContext(column, _data, index)" />
 												</TucErrorBoundry>
 											}
 										</td>

@@ -53,7 +53,9 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			_navState = navigator.GetRouteState();
 			var navMenu = new TfNavigationMenu();
 			navMenu.Uri = navigator.Uri;
-			if (_navState.RouteNodes[0] == RouteDataNode.Admin)
+			if(_navState.RouteNodes is null || _navState.RouteNodes.Count == 0){ 
+			}
+			else if (_navState.RouteNodes[0] == RouteDataNode.Admin)
 			{
 				if (!currentUser.IsAdmin)
 					throw new Exception("Current user is not admin");
@@ -83,7 +85,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			else if (_navState.RouteNodes[0] == RouteDataNode.Home
 				|| _navState.RouteNodes[0] == RouteDataNode.Space)
 			{
-				var spaces = _tfService.GetSpacesList();
+				var spaces = _tfService.GetSpacesListForUser(currentUser.Id);
 				var pages = _tfService.GetAllSpacePages();
 				var views = _tfService.GetAllSpaceViews();
 				var data = _tfService.GetAllSpaceData();

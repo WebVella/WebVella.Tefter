@@ -63,10 +63,23 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		_renderComponentTypeSelect = true;
 		_spaceView = TfSpaceViewUIService.GetSpaceView(_form.SpaceViewId);
 		_spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
+		_options = new();
 		if (_spaceData is not null)
 		{
-			if (_spaceData.Columns.Count > 0)
-				_options = _spaceData.Columns;
+			if (_spaceData.Columns.Count > 0 || _spaceData.Identities.Count > 0)
+			{ 
+				if(_spaceData.Columns.Count > 0)
+					_options.AddRange(_spaceData.Columns);
+
+				foreach (var identity in _spaceData.Identities)
+				{
+					foreach (var column in identity.Columns)
+					{
+						_options.Add($"{identity.DataIdentity}.{column}");
+					}
+				}
+			}
+				
 			else
 			{
 				//This space dataset uses all the columns from the data provider
@@ -74,6 +87,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 				if (dataProvider is not null)
 				{
 					_options.AddRange(dataProvider.Columns.Select(x => (x.DbName ?? String.Empty)));
+					_options.AddRange(dataProvider.SharedColumns.Select(x => (x.DbName ?? String.Empty)));
 				}
 			}
 		}

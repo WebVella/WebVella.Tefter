@@ -158,7 +158,11 @@ internal static class ResultUtils
 	{
 		string errorMessage = toastErrorMessage;
 		toastService.ShowToast(ToastIntent.Error, errorMessage);
-		SendErrorsToNotifications(notificationErrorTitle, new List<string> { exception.Message }, exception.StackTrace, messageService);
+		var errors = new List<string> { };
+		if (!String.IsNullOrWhiteSpace(exception.Message))
+			errors.Add(exception.Message);
+		errors.AddRange(TfConverters.GetDataAsErrorList(exception));
+		SendErrorsToNotifications(notificationErrorTitle, errors, exception.StackTrace, messageService);
 
 		return errorMessage;
 	}
@@ -200,7 +204,7 @@ internal static class ResultUtils
 			//	}
 			//}
 		}
-		else if(exception.InnerException is not null)
+		else if (exception.InnerException is not null)
 		{
 			generalErrors.Add(exception.InnerException.Message);
 		}

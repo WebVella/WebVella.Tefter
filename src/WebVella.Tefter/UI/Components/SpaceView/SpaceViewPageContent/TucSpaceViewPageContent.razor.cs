@@ -77,8 +77,10 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 			_spaceView = TfSpaceViewUIService.GetSpaceView(options.SpaceViewId.Value);
 			if (_spaceView is null)
 				return;
+
 			if (oldViewId != options.SpaceViewId.Value)
 			{
+				_contextData = new();
 				_space = TfSpaceUIService.GetSpace(_spaceView.SpaceId);
 				_spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
 				_spaceViewColumns = TfSpaceViewUIService.GetViewColumns(_spaceView.Id);

@@ -78,7 +78,8 @@ public partial class TfMetaService : ITfMetaService
 
 			TfSpaceViewColumnComponentAddonMeta meta = new TfSpaceViewColumnComponentAddonMeta
 			{
-				Instance = instance
+				Instance = instance,
+				InstanceType = instance.GetType()
 			};
 			_columnComponentMetaList.Add(meta);
 

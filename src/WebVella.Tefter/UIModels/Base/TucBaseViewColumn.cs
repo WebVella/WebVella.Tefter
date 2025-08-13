@@ -394,22 +394,5 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		await OnRowChanged(dt);
 
 	}
-
-	/// <summary>
-	/// This method will be called after all the baseline space view state
-	/// is initialized in TfAppState.
-	/// Usually used for space view column component initialization of initial data
-	/// in TfAuxDataState.
-	/// The usual context with all the view meta and data is available when this method is called
-	/// </summary>
-	/// <param name="appState">the most current complete appState reference</param>
-	//public virtual Task OnAppStateInit(
-	//	IServiceProvider serviceProvider,
-	//	TucUser currentUser,
-	//	TfAppState newAppState, TfAppState oldAppState,
-	//	TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
-	//{
-	//	return Task.CompletedTask;
-	//}
 	#endregion
 }

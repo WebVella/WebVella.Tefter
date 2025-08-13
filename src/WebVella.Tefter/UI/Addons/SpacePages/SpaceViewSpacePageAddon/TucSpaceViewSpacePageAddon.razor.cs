@@ -76,7 +76,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 				AddDataSetColumns = jsonOptions.AddDataSetColumns,
 				AddProviderColumns = jsonOptions.AddProviderColumns,
 				SpaceDataId = jsonOptions.SpaceDataId,
-				AddSharedColumns = jsonOptions.AddSharedColumns,
+				AddSharedColumns = jsonOptions.AddConnectedColumns,
 				AddSystemColumns = jsonOptions.AddSystemColumns,
 				DataProviderId = jsonOptions.DataProviderId,
 				DataSetType = jsonOptions.DataSetType,
@@ -217,9 +217,9 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		{
 			_options.AddProviderColumns = value;
 		}
-		else if (field == nameof(_options.AddSharedColumns))
+		else if (field == nameof(_options.AddConnectedColumns))
 		{
-			_options.AddSharedColumns = value;
+			_options.AddConnectedColumns = value;
 		}
 		else if (field == nameof(_options.AddSystemColumns))
 		{
@@ -242,8 +242,17 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 				_generatedColumns.AddRange(_optionsDataProvider.Columns.Select(x => x.DbName));
 			if (_options.AddSystemColumns)
 				_generatedColumns.AddRange(_optionsDataProvider.SystemColumns.Select(x => x.DbName));
-			if (_options.AddSharedColumns)
-				_generatedColumns.AddRange(_optionsDataProvider.SharedColumns.Select(x => x.DbName));
+			if (_options.AddConnectedColumns)
+			{
+				foreach (var identity in _optionsDataProvider.Identities)
+				{
+					foreach (var column in identity.Columns)
+					{
+						_generatedColumns.Add($"{identity.DataIdentity}.{column}");
+					}
+				}
+			}
+			//_generatedColumns.AddRange(_optionsDataProvider.SharedColumns.Select(x => x.DbName));
 		}
 		else if (_optionsDataset is not null)
 		{
@@ -306,8 +315,8 @@ public class TfSpaceViewSpacePageAddonOptions
 	public bool AddSystemColumns { get; set; } = false;
 	[JsonPropertyName("AddProviderColumns")]
 	public bool AddProviderColumns { get; set; } = true;
-	[JsonPropertyName("AddSharedColumns")]
-	public bool AddSharedColumns { get; set; } = true;
+	[JsonPropertyName("AddConnectedColumns")]
+	public bool AddConnectedColumns { get; set; } = true;
 	[JsonPropertyName("AddDatasetColumns")]
 	public bool AddDataSetColumns { get; set; } = true;
 

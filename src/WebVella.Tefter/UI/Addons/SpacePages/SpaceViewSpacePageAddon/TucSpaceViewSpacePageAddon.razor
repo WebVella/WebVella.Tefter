@@ -98,9 +98,9 @@ else if (Context.Mode == TfComponentMode.Create)
 							<FluentCheckbox Value="@_options.AddProviderColumns"
 											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddProviderColumns)))"
 											Label="@LOC("data provided columns")" />
-							<FluentCheckbox Value="@_options.AddSharedColumns"
-											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddSharedColumns)))"
-											Label="@LOC("shared columns")" />
+							<FluentCheckbox Value="@_options.AddConnectedColumns"
+											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddConnectedColumns)))"
+											Label="@LOC("connected columns")" />
 							<FluentCheckbox Value="@_options.AddSystemColumns"
 											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddSystemColumns)))"
 											Label="@LOC("system columns")" />

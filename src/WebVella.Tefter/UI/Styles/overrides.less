@@ -176,12 +176,16 @@ fluent-button {
 	}
 
 	&.outline {
-		--neutral-foreground-rest: var(--accent-fill-rest);
+		svg {
+			--neutral-foreground-rest: var(--accent-fill-rest);
+			fill: var(--accent-fill-rest) !important;
+		}
 	}
 
 	&.accent {
 		svg {
 			--neutral-foreground-rest: var(--tf-white);
+			fill: var(--tf-white);
 		}
 	}
 }

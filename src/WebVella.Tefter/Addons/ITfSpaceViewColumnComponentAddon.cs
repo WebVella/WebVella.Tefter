@@ -12,5 +12,6 @@ public interface ITfSpaceViewColumnComponentAddon : ITfAddon
 
 public class TfSpaceViewColumnComponentAddonMeta
 {
-	public ITfSpaceViewColumnComponentAddon Instance { get; init; }
+	public ITfSpaceViewColumnComponentAddon Instance { get; init; } = default!;
+	public Type InstanceType { get; init; } = default!;
 }
