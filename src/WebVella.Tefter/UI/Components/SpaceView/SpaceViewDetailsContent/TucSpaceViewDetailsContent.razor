@@ -16,6 +16,10 @@
 						   Area="@($"{_space?.Name} : {LOC(TfConstants.SpaceViewMenuTitle)}")" Title="@_spaceView.Name" SubTitle="@LOC("Details")" />
 			<TucCard Title="@LOC("Details")">
 				<ToolbarTemplate>
+					<FluentButton Appearance="@Appearance.Outline" OnClick="_copySpaceView">
+						@LOC("Copy")
+						<FluentIcon Value="@TfConstants.GetIcon("Copy")" Slot="start" />
+					</FluentButton>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceView">
 						@LOC("Edit")
 						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />

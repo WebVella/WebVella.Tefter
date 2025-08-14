@@ -1,10 +1,12 @@
 namespace WebVella.Tefter.UI.Components;
-public partial class TucLayoutTable : ComponentBase
+public partial class TucLayoutDetails : ComponentBase
 {
 	[Parameter] public RenderFragment? Header { get; set; }
 	[Parameter] public RenderFragment? Toolbar { get; set; }
+	[Parameter] public RenderFragment? ContentToolbar { get; set; }
 	[Parameter] public RenderFragment? Content { get; set; }
-	private string _layoutClass = "tf-layout-table";
+
+	private string _layoutClass = "tf-layout-details";
 	private string _cssClass
 	{
 		get
@@ -16,7 +18,7 @@ public partial class TucLayoutTable : ComponentBase
 			{
 				classes.Add($"{_layoutClass}--with-toolbar");
 			}
-			return String.Join(" ",classes);
+			return String.Join(" ", classes);
 		}
 	}
 }

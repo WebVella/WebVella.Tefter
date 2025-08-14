@@ -113,7 +113,7 @@ public partial class TucSpaceDataDetailsContent : TfBaseComponent, IDisposable
 		try
 		{
 			TfSpaceDataUIService.CopySpaceData(_spaceData.Id);
-			ToastService.ShowSuccess(LOC("Space copied"));
+			ToastService.ShowSuccess(LOC("Space data copied"));
 		}
 		catch (Exception ex)
 		{

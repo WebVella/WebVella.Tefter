@@ -12,20 +12,6 @@
 		</div>
 	}
 	<div class="@($"{_layoutClass}__wrapper")">
-		@if (AsideContent is not null)
-		{
-			<div class="@($"{_layoutClass}__aside {(AsideToolbar is not null ? $"{_layoutClass}__aside--with-toolbar" : "")}")">
-				@if (AsideToolbar is not null)
-				{
-					<div class="@($"{_layoutClass}__aside__toolbar")">
-						@AsideToolbar
-					</div>
-				}
-				<div class="@($"{_layoutClass}__aside__content")">
-					@AsideContent
-				</div>
-			</div>
-		}
 		<div class="@($"{_layoutClass}__main {(ContentToolbar is not null ? $"{_layoutClass}__main--with-toolbar" : "")}")">
 			@if (ContentToolbar is not null)
 			{
@@ -37,7 +23,6 @@
 				@Content
 			</div>
 		</div>
-
 	</div>
 </div>
 

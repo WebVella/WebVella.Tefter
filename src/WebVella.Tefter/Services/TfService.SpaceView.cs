@@ -7,7 +7,7 @@ public partial interface ITfService
 	public List<TfSpaceView> GetAllSpaceViews(string? search = null);
 
 	public List<TfSpaceView> GetSpaceViewsList(
-		Guid spaceId,string? search = null);
+		Guid spaceId, string? search = null);
 
 	public TfSpaceView GetSpaceView(
 		Guid id);
@@ -31,6 +31,9 @@ public partial interface ITfService
 	public void DeleteSpaceView(
 		Guid id);
 
+	public TfSpaceView CopySpaceView(
+		Guid id);
+
 	public void MoveSpaceViewUp(
 		Guid id);
 
@@ -46,9 +49,10 @@ public partial class TfService : ITfService
 		{
 			var spaceViewsDbo = _dboManager.GetList<TfSpaceViewDbo>();
 			var allSpaceViews = spaceViewsDbo.Select(x => ConvertDboToModel(x)).ToList();
-			var spaceDataDict = (GetAllSpaceData() ?? new List<TfSpaceData>()).ToDictionary(x=> x.Id);
-			foreach (var spaceView in allSpaceViews) {
-				if(spaceDataDict.ContainsKey(spaceView.SpaceDataId))
+			var spaceDataDict = (GetAllSpaceData() ?? new List<TfSpaceData>()).ToDictionary(x => x.Id);
+			foreach (var spaceView in allSpaceViews)
+			{
+				if (spaceDataDict.ContainsKey(spaceView.SpaceDataId))
 					spaceView.SpaceDataName = spaceDataDict[spaceView.SpaceDataId].Name;
 			}
 
@@ -79,11 +83,12 @@ public partial class TfService : ITfService
 				nameof(TfSpaceView.SpaceId),
 				order: orderSettings);
 
-			var spaceDataDict = (GetSpaceDataList(spaceId) ?? new List<TfSpaceData>()).ToDictionary(x=> x.Id);
+			var spaceDataDict = (GetSpaceDataList(spaceId) ?? new List<TfSpaceData>()).ToDictionary(x => x.Id);
 			var allSpaceViews = spaceViews.Select(x => ConvertDboToModel(x)).ToList();
 
-			foreach (var spaceView in allSpaceViews) {
-				if(spaceDataDict.ContainsKey(spaceView.SpaceDataId))
+			foreach (var spaceView in allSpaceViews)
+			{
+				if (spaceDataDict.ContainsKey(spaceView.SpaceDataId))
 					spaceView.SpaceDataName = spaceDataDict[spaceView.SpaceDataId].Name;
 			}
 			if (String.IsNullOrWhiteSpace(search))
@@ -784,6 +789,70 @@ public partial class TfService : ITfService
 		}
 	}
 
+	public TfSpaceView CopySpaceView(
+			Guid originalId)
+	{
+		TfSpaceView originalSV = GetSpaceView(originalId);
+		if (originalSV is null)
+			throw new Exception("Space view not found");
+
+		try
+		{
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var spaceViewList = GetSpaceViewsList(originalSV.SpaceId);
+
+				var copyName = getSpaceViewCopyName(originalSV.Name, spaceViewList);
+				if (String.IsNullOrWhiteSpace(copyName))
+					throw new Exception("Space data copy name could not be generated");
+
+				TfSpaceView spaceView = new()
+				{
+					Id = Guid.NewGuid(),
+					Name = copyName,
+					SpaceId = originalSV.SpaceId,
+					Position = 0,
+					Presets = originalSV.Presets,
+					SettingsJson = originalSV.SettingsJson,
+					SpaceDataId = originalSV.SpaceDataId,
+					SpaceDataName = originalSV.SpaceDataName,
+					Type = originalSV.Type,
+				};
+				spaceView = CreateSpaceView(spaceView);
+
+				var originalColumns = GetSpaceViewColumnsList(originalSV.Id);
+
+				foreach (var orColumn in originalColumns)
+				{
+					_ = CreateSpaceViewColumn(new TfSpaceViewColumn
+					{
+						Id = Guid.NewGuid(),
+						ComponentId = orColumn.ComponentId,
+						ComponentOptionsJson = orColumn.ComponentOptionsJson,
+						DataMapping = orColumn.DataMapping,
+						Icon = orColumn.Icon,
+						OnlyIcon = orColumn.OnlyIcon,
+						Position = orColumn.Position,
+						QueryName = orColumn.QueryName,
+						Settings = orColumn.Settings,
+						SpaceViewId = spaceView.Id,
+						Title = orColumn.Title,
+						TypeId = orColumn.TypeId,
+					});
+				}
+
+				scope.Complete();
+
+				return spaceView;
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+
 	private TfSpaceView ConvertDboToModel(
 		TfSpaceViewDbo dbo)
 	{
@@ -934,5 +1003,26 @@ public partial class TfService : ITfService
 
 	}
 
+	#endregion
+
+	#region << Private >>
+	private string? getSpaceViewCopyName(string originalName, List<TfSpaceView> spaceiewList)
+	{
+		var index = 1;
+		var presentNamesHS = spaceiewList.Select(x => x.Name).ToHashSet();
+
+		while (true)
+		{
+			var suggestion = $"{originalName} {index}";
+			if (!presentNamesHS.Contains(suggestion))
+				return suggestion;
+
+			index++;
+
+			if (index > 100000) break;
+		}
+
+		return null;
+	}
 	#endregion
 }

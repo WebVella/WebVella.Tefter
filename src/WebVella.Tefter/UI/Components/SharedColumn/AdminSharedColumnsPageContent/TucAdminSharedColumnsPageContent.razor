@@ -1,12 +1,14 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucErrorBoundry>
-	<FluentMessageBar Title="Error" AllowDismiss="false"
-					  Intent="@MessageIntent.Info">
-		<div>No Shared Columns are created yet.</div>
-	</FluentMessageBar>
-	<FluentButton Appearance="@Appearance.Outline" OnClick="onAddClick" Style="margin-top:2rem;">
-		<FluentIcon Slot="start" Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" />
-		@LOC("Create Shared Column")
-	</FluentButton>
-</TucErrorBoundry>
+<TucPageLayout>
+	<div style="padding:var(--tf-layout-content-padding)">
+		<FluentMessageBar Title="Error" AllowDismiss="false"
+						  Intent="@MessageIntent.Info">
+			<div>No Shared Columns are created yet.</div>
+		</FluentMessageBar>
+		<FluentButton Appearance="@Appearance.Outline" OnClick="onAddClick" Style="margin-top:2rem;">
+			<FluentIcon Slot="start" Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" />
+			@LOC("Create Shared Column")
+		</FluentButton>
+	</div>
+</TucPageLayout>

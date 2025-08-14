@@ -56,7 +56,13 @@ public partial class TucSpaceDataDetailsContentToolbar : TfBaseComponent, IDispo
 				Selected = navState.HasNode(RouteDataNode.Columns, 4),
 				Text = LOC("Columns"),
 				IconCollapsed = TfConstants.GetIcon("Table"),
-				BadgeCount = spaceData.Columns.Count == 0 ? null : spaceData.Columns.Count
+				BadgeContent = spaceData.Columns.Count == 0 
+					? null 
+					: builder => { 
+						builder.OpenElement(0,"span");
+						builder.AddContent(1,spaceData.Columns.Count);
+						builder.CloseElement();
+					}
 			});
 			_menu.Add(new TfMenuItem
 			{
@@ -65,7 +71,13 @@ public partial class TucSpaceDataDetailsContentToolbar : TfBaseComponent, IDispo
 				Selected = navState.HasNode(RouteDataNode.Filters, 4),
 				Text = LOC("Filters"),
 				IconCollapsed = TfConstants.GetIcon("Filter"),
-				BadgeCount = spaceData.Filters.Count == 0 ? null : spaceData.Filters.Count
+				BadgeContent = spaceData.Filters.Count == 0 
+					? null 
+					: builder => { 
+						builder.OpenElement(0,"span");
+						builder.AddContent(1,spaceData.Filters.Count);
+						builder.CloseElement();
+					}
 			});
 			_menu.Add(new TfMenuItem
 			{
@@ -74,7 +86,13 @@ public partial class TucSpaceDataDetailsContentToolbar : TfBaseComponent, IDispo
 				Selected = navState.HasNode(RouteDataNode.Sorts, 4),
 				Text = LOC("Sort Order"),
 				IconCollapsed = TfConstants.GetIcon("ArrowSortDownLines"),
-				BadgeCount = spaceData.SortOrders.Count == 0 ? null : spaceData.SortOrders.Count
+				BadgeContent = spaceData.SortOrders.Count == 0 
+					? null 
+					: builder => { 
+						builder.OpenElement(0,"span");
+						builder.AddContent(1,spaceData.SortOrders.Count);
+						builder.CloseElement();
+					}
 			});
 			_menu.Add(new TfMenuItem
 			{

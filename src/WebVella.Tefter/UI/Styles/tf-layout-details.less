@@ -1,6 +1,6 @@
 ﻿@import '_variables.less';
 
-.tf-layout-list-details {
+.tf-layout-details {
 	--wrapper-top: var(--tf-layout-header-height);
 	position: relative;
 	height: 100vh;
@@ -33,39 +33,6 @@
 		right: 0;
 		bottom: 0;
 		overflow: hidden;
-		display: flex;
-	}
-
-	&__aside {
-		flex: 0 0 260px;
-		overflow: hidden;
-		height: 100%;
-		display: flex;
-		flex-flow: column;
-		position: relative;
-		--asidecontent-top: 0;
-		border-right: 5px solid var(--tf-white);
-
-		&--with-toolbar {
-			--asidecontent-top: var(--tf-layout-header-height);
-		}
-	}
-
-	&__aside__toolbar {
-		height: var(--tf-layout-header-height);
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-	}
-
-	&__aside__content {
-		position: absolute;
-		top: var(--asidecontent-top);
-		left: 0;
-		right: 0;
-		bottom: 0;
-		overflow: auto;
 	}
 
 	&__main {

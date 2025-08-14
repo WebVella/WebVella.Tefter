@@ -54,7 +54,14 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 				Selected = navState.HasNode(RouteDataNode.Schema, 3),
 				Text = LOC("Columns"),
 				IconCollapsed = TfConstants.GetIcon("Table"),
-				BadgeCount = provider.Columns.Count == 0 ? null : provider.Columns.Count
+				BadgeContent = provider.Columns.Count == 0 
+					? null 
+					: builder => { 
+						builder.OpenElement(0,"span");
+						builder.AddContent(1,provider.Columns.Count);
+						builder.CloseElement();
+					}
+
 			});
 			_menu.Add(new TfMenuItem
 			{

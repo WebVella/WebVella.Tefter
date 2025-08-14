@@ -17,6 +17,7 @@ public partial interface ITfSpaceViewUIService
 	TfSpaceView CreateSpaceView(TfCreateSpaceViewExtended item);
 	TfSpaceView UpdateSpaceView(TfCreateSpaceViewExtended item);
 	void DeleteSpaceView(Guid itemId);
+	void CopySpaceView(Guid itemId);
 
 	//Space View Column
 	TfSpaceViewColumnTypeAddonMeta GetSpaceViewColumnTypeById(Guid typeId);
@@ -103,6 +104,13 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 		_tfService.DeleteSpaceView(itemId);
 		SpaceViewDeleted?.Invoke(this, spaceView);
 	}
+
+	public void CopySpaceView(Guid itemId)
+	{
+		var spaceView = _tfService.CopySpaceView(itemId);
+		SpaceViewCreated?.Invoke(this, spaceView);
+	}
+
 	#endregion
 
 	#region << Space View Column>>

@@ -30,12 +30,12 @@
 			</span>
 		}
 		@if ((Item.IsSeparateChevron.HasValue && !Item.IsSeparateChevron.Value)
-				|| Item.BadgeCount is not null)
+				|| Item.BadgeContent is not null)
 		{
 			<span slot="end">
-				@if (Item.BadgeCount is not null)
+				@if (Item.BadgeContent is not null)
 				{
-					<FluentBadge Appearance="Appearance.Neutral">@Item.BadgeCount</FluentBadge>
+					<FluentBadge Appearance="Appearance.Neutral">@Item.BadgeContent</FluentBadge>
 				}
 				@if (Item.IsSeparateChevron.HasValue && !Item.IsSeparateChevron.Value)
 				{

@@ -51,7 +51,7 @@ public record TfMenuItem
 	}
 	public bool Expanded { get; set; } = false;
 	public bool Selected { get; set; } = false;
-	public int? BadgeCount { get; set; } = null;
+	public RenderFragment? BadgeContent { get; set; } = null;
 	public string IdTree
 	{
 		get

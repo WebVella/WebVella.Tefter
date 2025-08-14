@@ -64,7 +64,14 @@ public partial class TucSpaceViewDetailsContentToolbar : TfBaseComponent, IDispo
 				Selected = navState.HasNode(RouteDataNode.Columns, 4),
 				Text = LOC("Columns"),
 				IconCollapsed = TfConstants.GetIcon("Table"),
-				BadgeCount = spaceViewColumns.Count == 0 ? null : spaceViewColumns.Count
+				BadgeContent = spaceViewColumns.Count == 0
+					? null
+					: builder =>
+					{
+						builder.OpenElement(0, "span");
+						builder.AddContent(1, spaceViewColumns.Count);
+						builder.CloseElement();
+					}
 			});
 			_menu.Add(new TfMenuItem
 			{
@@ -73,7 +80,14 @@ public partial class TucSpaceViewDetailsContentToolbar : TfBaseComponent, IDispo
 				Selected = navState.HasNode(RouteDataNode.Filters, 4),
 				Text = LOC("Preset Filters"),
 				IconCollapsed = TfConstants.GetIcon("Filter"),
-				BadgeCount = spaceView.Presets.Count == 0 ? null : spaceView.Presets.Count
+				BadgeContent = spaceView.Presets.Count == 0
+					? null
+					: builder =>
+					{
+						builder.OpenElement(0, "span");
+						builder.AddContent(1, spaceView.Presets.Count);
+						builder.CloseElement();
+					}
 			});
 			_menu.Add(new TfMenuItem
 			{

@@ -107,4 +107,16 @@ public partial class TucSpaceViewDetailsContent : TfBaseComponent, IDisposable
 		}
 	}
 
+	private void _copySpaceView()
+	{
+		try
+		{
+			TfSpaceViewUIService.CopySpaceView(_spaceView.Id);
+			ToastService.ShowSuccess(LOC("Space view copied"));
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+	}
 }

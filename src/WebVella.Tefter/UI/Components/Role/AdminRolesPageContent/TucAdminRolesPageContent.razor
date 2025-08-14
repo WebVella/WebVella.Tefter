@@ -1,8 +1,10 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits ComponentBase
-<TucErrorBoundry>
-	<FluentMessageBar Title="Error" AllowDismiss="false"
-					  Intent="@MessageIntent.Error">
-		<div>No Access Role ID is provided in the URL</div>
-	</FluentMessageBar>
-</TucErrorBoundry>
+<TucPageLayout>
+	<div style="padding:var(--tf-layout-content-padding)">
+		<FluentMessageBar Title="Error" AllowDismiss="false"
+						  Intent="@MessageIntent.Error">
+			<div>No Access Role ID is provided in the URL</div>
+		</FluentMessageBar>
+	</div>
+</TucPageLayout>

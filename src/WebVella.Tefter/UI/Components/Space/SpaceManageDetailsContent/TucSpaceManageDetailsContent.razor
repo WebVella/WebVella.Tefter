@@ -17,10 +17,6 @@
 
 			<TucCard Title="@LOC("Details")">
 				<ToolbarTemplate>
-					<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteSpace">
-						@LOC("Delete")
-						<FluentIcon Value="@TfConstants.GetIcon("Delete")" Color="@Color.Error" Slot="start" />
-					</FluentButton>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpace">
 						@LOC("Edit")
 						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
@@ -52,6 +48,16 @@
 						</FluentGridItem>
 					</FluentGrid>
 				</ChildContent>
+			</TucCard>
+
+			<TucCard>
+				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+					<div>@LOC("Deleting the space will delete also any related space pages, space views and space data, but will not alter local content or data provider data")</div>
+					<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteSpace">
+						@LOC("Delete this Space")
+						<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
+					</FluentButton>
+				</FluentStack>
 			</TucCard>
 		}
 	</div>
