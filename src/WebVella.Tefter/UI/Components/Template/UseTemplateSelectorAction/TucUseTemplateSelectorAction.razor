@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 <FluentMenuItem Disabled="@(RegionContext.SelectedDataRows.Count == 0)" OnClick="_clickHandler">
 	@LOC("Template Selected")
-	<FluentIcon Value="@TfConstants.TemplateIcon" Slot="start" Color="@Color.Error" />
+	<FluentIcon Value="@TfConstants.GetIcon("CalendarTemplate")" Slot="start" Color="@Color.Error" />
 	@if (RegionContext.SelectedDataRows.Count > 0)
 	{
 		<span slot="end">

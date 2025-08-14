@@ -17,7 +17,10 @@
 		{
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:300px" Disabled="true" />
 		}
-		<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+		<FluentButton OnClick="_addColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
+					  Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+		<FluentButton OnClick="_addColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
+					  Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
 	</ToolbarTemplate>
 	<ChildContent>
 		@if (Items.Count == 0)
@@ -85,7 +88,7 @@
 								<div>
 									<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteColumn(context))" Title="@LOC("Delete column")"
 												  Disabled="_submitting">
-										<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+										<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
 									</FluentButton>
 								</div>
 							</td>

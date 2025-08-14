@@ -26,7 +26,7 @@
 				else if (_currentStep == TfUseTemplateDialogStep.ResultPreview)
 				{
 					<FluentButton Appearance="Appearance.Outline" OnClick="@_back" IconStart="@TfConstants.GetIcon("ArrowLeft")">@LOC("Back")</FluentButton>
-					<FluentButton Appearance="Appearance.Accent" OnClick="@_next" IconEnd="@TfConstants.GetIcon("Send").WithColor(Color.Neutral)">@LOC("Submit")</FluentButton>
+					<FluentButton Appearance="Appearance.Accent" OnClick="@_next" IconEnd="@TfConstants.GetIcon("Send")">@LOC("Submit")</FluentButton>
 				}
 			</FluentStack>
 		</FluentStack>
@@ -91,7 +91,7 @@
 							<div class="tf-grid-td-selection"></div>
 							<div class="tf-grid-td-hover"></div>
 							<div>
-								<FluentIcon Value="@TfConstants.GetIcon(row.FluentIconName).WithColor(Color.Accent)" />
+								<FluentIcon Value="@TfConstants.GetIcon(row.FluentIconName)!.WithColor(Color.Accent)" />
 							</div>
 						</td>
 						<td class="tf-grid-td">
@@ -132,7 +132,7 @@
 				<tr class="@($"tf-grid-tr")">
 					<td class="tf-grid-td" style="max-width:50px;width:50px;">
 						<div>
-							<FluentIcon Value="@TfConstants.GetIcon(_selectedTemplate.FluentIconName).WithColor(Color.Accent)" />
+							<FluentIcon Value="@TfConstants.GetIcon(_selectedTemplate.FluentIconName)!.WithColor(Color.Accent)" />
 						</div>
 					</td>
 					<td class="tf-grid-td">
@@ -171,7 +171,7 @@
 				<tr class="@($"tf-grid-tr")">
 					<td class="tf-grid-td" style="max-width:50px;width:50px;">
 						<div>
-							<FluentIcon Value="@TfConstants.GetIcon(_selectedTemplate.FluentIconName).WithColor(Color.Accent)" />
+							<FluentIcon Value="@TfConstants.GetIcon(_selectedTemplate.FluentIconName)!.WithColor(Color.Accent)" />
 						</div>
 					</td>
 					<td class="tf-grid-td">

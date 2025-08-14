@@ -53,7 +53,7 @@
 							</FluentSelect>
 							@if (_form.ParentId is not null)
 							{
-								<FluentButton IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(_=> _form.ParentId = null)" />
+								<FluentButton IconStart="@TfConstants.GetIcon("Dismiss").WithColor(Color.Error)" OnClick="@(_ => _form.ParentId = null)" />
 							}
 						</FluentStack>
 					}

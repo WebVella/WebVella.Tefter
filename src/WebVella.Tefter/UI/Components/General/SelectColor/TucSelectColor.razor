@@ -10,7 +10,7 @@
 		}
 		else
 		{
-			<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
+			<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape", variant: IconVariant.Filled)"
 						Color="Color.Custom"
 						CustomColor="@Value.GetAttribute().Value" />
 		}
@@ -33,7 +33,7 @@ else
 				}
 				else
 				{
-					<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
+					<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape", variant: IconVariant.Filled)"
 								Color="Color.Custom"
 								CustomColor="@Value.Value.GetAttribute().Value" />
 				}
@@ -41,7 +41,7 @@ else
 			</FluentButton>
 			@if (!Required && Value is not null)
 			{
-				<FluentButton Appearance=@Appearance.Outline IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(()=> _optionChanged(TfColor.Black))" />
+				<FluentButton Appearance=@Appearance.Outline IconStart="@TfConstants.GetIcon("Dismiss").WithColor(Color.Error)" OnClick="@(() => _optionChanged(TfColor.Black))" />
 			}
 		</FluentStack>
 		@if (_open)
@@ -57,7 +57,7 @@ else
 				<div class="tf-select-menu__body">
 					<FluentNavMenu>
 						<Virtualize TItem="TfColor" Items="@_colors" Context="option" ItemSize="32">
-							<FluentMenuItem @key=@((int)option) OnClick="@(()=> _optionChanged(option))" Class="@(option == Value ? "tf-menu-item-selected" : "")">
+							<FluentMenuItem @key=@((int)option) OnClick="@(() => _optionChanged(option))" Class="@(option == Value ? "tf-menu__item--active" : "")">
 								@if (option == TfColor.Black)
 								{
 									<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape")"
@@ -65,7 +65,7 @@ else
 								}
 								else
 								{
-									<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
+									<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape", variant: IconVariant.Filled)"
 												Color="Color.Custom"
 												CustomColor="@option.GetAttribute().Value" />
 								}

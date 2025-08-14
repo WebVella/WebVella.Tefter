@@ -12,10 +12,10 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="@TfConstants.SpaceDataIcon" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
-						   Area="@_space?.Name" Title="@LOC(TfConstants.SpaceDataMenuTitle)" SubTitle="@_spaceView.Name" />
+			<TucPageHeader Icon="@TfConstants.GetIcon("Table")" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
+						   Area="@($"{_space?.Name} : {LOC(TfConstants.SpaceViewMenuTitle)}")" Title="@_spaceView.Name" SubTitle="@LOC("Pages")" />
 
-			<TucCard Title="@LOC("Pages")">
+			<TucCard Title="@LOC("Related Pages")">
 				@if (_items.Count == 0)
 				{
 					<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("This view is not connected to a page")</FluentMessageBar>
@@ -39,7 +39,7 @@
 										<div>
 											<FluentAnchor Appearance="@Appearance.Outline" title="@LOC("view details")"
 														  Href="@String.Format(TfConstants.SpacePagePageUrl, context.SpaceId, context.Id)">
-												<FluentIcon Value="@TfConstants.ViewIcon" />
+												<FluentIcon Value="@TfConstants.GetIcon("Eye")" />
 											</FluentAnchor>
 										</div>
 									</td>

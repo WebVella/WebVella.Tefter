@@ -87,7 +87,7 @@ else
 									<tr @key=row.TemplateId class="tf-grid-tr">
 										<td class="tf-grid-td">
 											<div>
-												<FluentButton IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" OnClick="@(_=> _removeItem(row))" />
+												<FluentButton IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" OnClick="@(_=> _removeItem(row))" />
 											</div>
 										</td>
 										<td class="tf-grid-td">

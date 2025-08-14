@@ -12,7 +12,7 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="@TfConstants.AdminRoleIcon" IconColor="@TfConstants.AdminColor" Class="page-title"
+			<TucPageHeader Icon="@TfConstants.GetIcon("Key")" IconColor="@TfConstants.AdminColor" Class="page-title"
 						   Area="@LOC(TfConstants.AdminRolesMenuTitle)" Title="@_role.Name" />
 
 			<TucCard Title="@LOC("Details")">
@@ -21,18 +21,18 @@
 					{
 						<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be managed")">
 							@LOC("Locked")
-							<FluentIcon Value="@TfConstants.LockIcon" Slot="start" />
+							<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
 						</FluentButton>
 					}
 					else
 					{
 						<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteRole">
 							@LOC("Delete")
-							<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(TfColor.Red600.GetAttribute().Value)" Slot="start" />
+							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" Slot="start" />
 						</FluentButton>
 						<FluentButton Appearance="@Appearance.Outline" OnClick="_editRole">
 							@LOC("Edit")
-							<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
+							<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
 						</FluentButton>
 					}
 				</ToolbarTemplate>
@@ -48,12 +48,12 @@
 								<FluentStack VerticalAlignment="@VerticalAlignment.Center" Class="fluent-plaintext-field">
 									@if (_role.IsSystem)
 									{
-										<FluentIcon Value="@TfConstants.GetIcon("ShieldError").WithColor(TfColor.Red600.GetAttribute().Value)"></FluentIcon>
+										<FluentIcon Value="@TfConstants.GetIcon("ShieldError")!.WithColor(TfColor.Red600.GetAttribute().Value)"></FluentIcon>
 										<span>@LOC("system role")</span>
 									}
 									else
 									{
-										<FluentIcon Value="@TfConstants.GetIcon("Person").WithColor(Color.Info)"></FluentIcon>
+										<FluentIcon Value="@TfConstants.GetIcon("Person")!.WithColor(Color.Info)"></FluentIcon>
 										<span>@LOC("user created")</span>
 									}
 								</FluentStack>
@@ -81,7 +81,7 @@
 					{
 						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all users added") Style="width:200px" Disabled="true" />
 					}
-					<FluentButton OnClick="_addUser" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline"
+					<FluentButton OnClick="_addUser" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
 								  Disabled="@(_userOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
 				</ToolbarTemplate>
 				<ChildContent>
@@ -117,7 +117,7 @@
 												{
 													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("the current user cannot unassign admin role to self")"
 																  Disabled="true">
-														<FluentIcon Value="@TfConstants.LockIcon" Slot="start" />
+														<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
 														<span>@LOC("locked")</span>
 													</FluentButton>
 												}
@@ -125,7 +125,7 @@
 												{
 													<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _removeUser(context))" Title="@LOC("Remove the user")"
 																  Disabled="_submitting">
-														<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" Slot="start" />
+														<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" Slot="start" />
 														<span>@LOC("remove")</span>
 													</FluentButton>
 												}

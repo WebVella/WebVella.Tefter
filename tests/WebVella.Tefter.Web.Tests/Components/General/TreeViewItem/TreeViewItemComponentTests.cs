@@ -13,7 +13,7 @@ public class TreeViewItemComponentTests : BaseTest
 		.Add(x => x.Item, menu));
 
 		// Assert
-		cut.Find(".tf-menu-item");
+		cut.Find(".tf-menu__item");
 
 		Context.DisposeComponents();
 	}

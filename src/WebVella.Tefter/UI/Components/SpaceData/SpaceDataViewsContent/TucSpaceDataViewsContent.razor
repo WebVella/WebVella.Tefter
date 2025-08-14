@@ -12,8 +12,8 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="@TfConstants.SpaceDataIcon" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
-						   Area="@_space?.Name" Title="@LOC(TfConstants.SpaceDataMenuTitle)" SubTitle="@_spaceData.Name" />
+			<TucPageHeader Icon="@TfConstants.GetIcon("Database")" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
+						   Area="@($"{_space?.Name} : {LOC(TfConstants.SpaceDataMenuTitle)}")" Title="@_spaceData.Name" SubTitle="@LOC("Used in Views")" />
 
 			<TucCard Title="@LOC("Connected Data Provider (ReadOnly)")" SubTitle="@LOC("Data that is connected and can be added as readonly columns.")">
 				<ChildContent>
@@ -39,7 +39,7 @@
 										<td class="tf-grid-td" style="width:30px;">
 											<div>
 												<FluentAnchor Appearance="@Appearance.Outline" title="@LOC("view details")" Href="@String.Format(TfConstants.SpaceViewPageUrl, context.SpaceId, context.Id)">
-													<FluentIcon Value="@TfConstants.ViewIcon" />
+													<FluentIcon Value="@TfConstants.GetIcon("Eye")" />
 												</FluentAnchor>
 											</div>
 										</td>

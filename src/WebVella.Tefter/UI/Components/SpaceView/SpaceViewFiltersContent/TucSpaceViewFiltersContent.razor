@@ -12,10 +12,10 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="@TfConstants.SpaceDataIcon" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
-						   Area="@_space?.Name" Title="@LOC(TfConstants.SpaceDataMenuTitle)" SubTitle="@_spaceView.Name" />
+			<TucPageHeader Icon="@TfConstants.GetIcon("Table")" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
+						   Area="@($"{_space?.Name} : {LOC(TfConstants.SpaceViewMenuTitle)}")" Title="@_spaceView.Name" SubTitle="@LOC("Preset Filters")" />
 
-			<TucPresetFiltersCard Title="@LOC("Preset Filters")" DataProvider="_dataProvider" Items="_spaceView.Presets" ItemsChanged="_onPresetsChanged" />
+			<TucPresetFiltersCard Title="@LOC("Preset Filters Navigation")" DataProvider="_dataProvider" Items="_spaceView.Presets" ItemsChanged="_onPresetsChanged" />
 		}
 	</div>
 </TucErrorBoundry>

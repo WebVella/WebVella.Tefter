@@ -6,11 +6,11 @@
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-setting-selector" UseMenuService="false">
 			<FluentMenuItem OnClick="_manageView">
 				@LOC("Manage view")
-				<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Accent" />
+				<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" Color="@Color.Accent" />
 			</FluentMenuItem>
 			<FluentMenuItem OnClick="_deleteView">
 				@LOC("Delete view")
-				<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
+				<FluentIcon Value="@TfConstants.GetIcon("Delete")" Slot="start" Color="@Color.Error" />
 			</FluentMenuItem>
 @* 			<FluentMenuItem>
 				Manage Access
@@ -19,7 +19,7 @@
 			<FluentDivider />
 			<FluentMenuItem OnClick="_manageData">
 				@LOC("Manage dataset")
-				<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" Color="@Color.Accent" />
+				<FluentIcon Value="@TfConstants.GetIcon("Database")" Slot="start" Color="@Color.Accent" />
 			</FluentMenuItem>
 		</FluentMenu>
 	</div>

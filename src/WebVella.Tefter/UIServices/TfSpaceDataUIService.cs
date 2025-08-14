@@ -15,6 +15,7 @@ public partial interface ITfSpaceDataUIService
 	TfSpaceData CreateSpaceData(TfSpaceData item);
 	TfSpaceData UpdateSpaceData(TfSpaceData item);
 	void DeleteSpaceData(Guid itemId);
+	void CopySpaceData(Guid itemId);
 
 	//Columns
 	List<TfSpaceDataColumn> GetSpaceDataColumnOptions(Guid spaceDataId);
@@ -117,9 +118,15 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 	}
 	public void DeleteSpaceData(Guid itemId)
 	{
-		var spaceData = _tfService.GetSpaceData(itemId);
 		_tfService.DeleteSpaceData(itemId);
+		var spaceData = _tfService.GetSpaceData(itemId);
 		SpaceDataDeleted?.Invoke(this, spaceData);
+	}
+
+	public void CopySpaceData(Guid itemId)
+	{
+		var spaceData = _tfService.CopySpaceData(itemId);
+		SpaceDataCreated?.Invoke(this, spaceData);
 	}
 
 	#endregion

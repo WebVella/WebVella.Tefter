@@ -33,7 +33,7 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 		if (_space is null) throw new Exception("Space is null");
 		_title = _isCreate ? LOC("Create view in {0}", _space.Name) : LOC("Manage view in {0}", _space.Name);
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
+		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 		_providers = TfDataProviderUIService.GetDataProviders();
 		_spaceDataList = TfSpaceDataUIService.GetSpaceDataList(_space.Id);
 		if (_isCreate)

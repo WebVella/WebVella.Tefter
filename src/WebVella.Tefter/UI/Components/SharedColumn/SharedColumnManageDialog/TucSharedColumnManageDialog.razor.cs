@@ -27,7 +27,7 @@ public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogC
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create shared column") : LOC("Manage shared column");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
+		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 		_allDataIdentities = TfDataIdentityUIService.GetDataIdentities().Select(x=> x.DataIdentity).ToList();
 		_columnTypeOptions = TfMetaUIService.GetDatabaseColumnTypeInfosList();
 		if (!_isCreate)

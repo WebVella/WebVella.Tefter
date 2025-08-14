@@ -12,18 +12,13 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="@TfConstants.SpaceDataIcon" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
-						   Area="@_space?.Name" Title="@LOC(TfConstants.SpaceDataMenuTitle)" SubTitle="@_spaceView.Name" />
-
+			<TucPageHeader Icon="@TfConstants.GetIcon("Table")" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
+						   Area="@($"{_space?.Name} : {LOC(TfConstants.SpaceViewMenuTitle)}")" Title="@_spaceView.Name" SubTitle="@LOC("Details")" />
 			<TucCard Title="@LOC("Details")">
 				<ToolbarTemplate>
-					<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteSpaceView">
-						@LOC("Delete")
-						<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(TfColor.Red600.GetAttribute().Value)" Slot="start" />
-					</FluentButton>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceView">
 						@LOC("Edit")
-						<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
 					</FluentButton>
 				</ToolbarTemplate>
 				<ChildContent>
@@ -49,7 +44,7 @@
 													 ReadOnly="true" Style="flex:1 1 auto" />
 									<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open dataset")"
 												  Href="@(String.Format(TfConstants.SpaceDataPageUrl, _space!.Id, _spaceData.Id))"
-												  IconStart="@TfConstants.ViewIcon" Target="_blank" />
+												  IconStart="@TfConstants.GetIcon("Eye")" Target="_blank" />
 								</FluentStack>
 							}
 							else
@@ -95,6 +90,16 @@
 						</FluentGridItem>
 					</FluentGrid>
 				</ChildContent>
+			</TucCard>
+
+			<TucCard>
+				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+					<div>@LOC("Any related pages to this space view will not be deleted and will show a message. Any related space data will not be deleted or changed.")</div>
+					<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteSpaceView">
+						@LOC("Delete this Space View")
+						<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
+					</FluentButton>
+				</FluentStack>
 			</TucCard>
 		}
 	</div>

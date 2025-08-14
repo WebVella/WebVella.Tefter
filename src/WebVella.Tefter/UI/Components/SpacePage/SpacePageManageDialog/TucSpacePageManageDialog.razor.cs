@@ -28,7 +28,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 
 		_title = _isCreate ? LOC("Create page") : LOC("Manage page");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
+		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 		_pageComponents = TfMetaService.GetSpacePagesComponentsMeta();
 		_parentNodeOptions = _getParents();
 		if (_isCreate)
@@ -38,7 +38,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 				Id = Guid.NewGuid(),
 				SpaceId = Content.SpaceId,
 				Type = TfSpacePageType.Page,
-				FluentIconName = TfConstants.PageIconString,
+				FluentIconName = "Document",
 				ComponentId = _pageComponents.Count > 0 ? _pageComponents[0].ComponentId : null
 			};
 		}
@@ -156,10 +156,10 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 	private void _typeChanged(TfSpacePageType type)
 	{
 		_form.Type = type;
-		if (type == TfSpacePageType.Folder && _form.FluentIconName == TfConstants.PageIconString)
-			_form.FluentIconName = TfConstants.FolderIconString;
-		else if (type == TfSpacePageType.Page && _form.FluentIconName == TfConstants.FolderIconString)
-			_form.FluentIconName = TfConstants.PageIconString;
+		if (type == TfSpacePageType.Folder && _form.FluentIconName == "Document")
+			_form.FluentIconName = "Folder";
+		else if (type == TfSpacePageType.Page && _form.FluentIconName == "Folder")
+			_form.FluentIconName = "Document";
 
 		if (type == TfSpacePageType.Folder) _selectedPageComponent = null;
 		else if (type == TfSpacePageType.Page && _pageComponents.Any()) _selectedPageComponent = _pageComponents[0];

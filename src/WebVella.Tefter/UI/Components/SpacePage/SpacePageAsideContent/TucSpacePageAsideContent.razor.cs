@@ -133,7 +133,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 				var viewMenu = new TfMenuItem
 				{
 					Id = TfConverters.ConvertGuidToHtmlElementId(record.Id),
-					IconCollapsed = TfConstants.BookmarkOFFIcon,
+					IconCollapsed = TfConstants.GetIcon("Bookmark"),
 					Text = record.Name,
 					Url = url,
 					Selected = record.SpaceViewId == _navState.SpaceViewId

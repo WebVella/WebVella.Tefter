@@ -7,7 +7,7 @@
 		<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@_search" AutoComplete="off" />
 	</ToolbarSearch>
 	<ToolbarRight>
-		<FluentButton Appearance="@Appearance.Outline" OnClick="_createTestHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)">
+		<FluentButton Appearance="@Appearance.Outline" OnClick="_createTestHandler" IconStart="@TfConstants.GetIcon("Add")">
 			@LOC("Sent test email")
 		</FluentButton>
 	</ToolbarRight>
@@ -38,17 +38,17 @@ else
 							<div>
 								<FluentStack>
 									<FluentButton Title="@LOC("view email")" OnClick="@(_ => _viewEmailHandler(context))"
-												  Appearance="@Appearance.Outline" IconStart="@TfConstants.ViewIcon.WithColor(Color.Accent)" />
+												  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Eye")" />
 									@if (context.Status == EmailStatus.Sent || context.Status == EmailStatus.Aborted)
 									{
 										<FluentButton Title="@LOC("resent")" OnClick="@(_ => _resentEmailHandler(context))"
-													  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("MailArrowUp").WithColor(Color.Accent)"
+													  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("MailArrowUp")"
 													  Disabled="@(_submitingEmail is not null)" Loading="@(_submitingEmail == context.Id)" />
 									}
 									else
 									{
 										<FluentButton Title="@LOC("cancel")" OnClick="@(_ => _cancelEmailHandler(context))"
-													  Appearance="@Appearance.Outline" IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)"
+													  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)"
 													  Disabled="@(_submitingEmail is not null)" Loading="@(_submitingEmail == context.Id)" />
 									}
 								</FluentStack>

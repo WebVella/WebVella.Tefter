@@ -5,13 +5,13 @@
 	<td class="tf-grid-td">
 		<div>
 			<FluentStack Wrap="false">
-				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
+				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
 				Title="@LOC("edit")"
 				OnClick="_onEdit" />
 				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Copy")"
 				Title="@LOC("copy")"
 				OnClick="_onCopy" />
-				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)"
 				Title="@LOC("remove")"
 				OnClick="_onRemove" />
 				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUp")"
@@ -38,7 +38,7 @@
 					}
 					@if (Item.Color != TfColor.Black)
 					{
-						<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
+						<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape", variant: IconVariant.Filled)"
 									Color="Color.Custom"
 									CustomColor="@Item.Color.GetAttribute().Value" />
 					}
@@ -64,7 +64,7 @@
 					}
 					@if (Item.Color != TfColor.Black)
 					{
-						<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
+						<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape", variant: IconVariant.Filled)"
 									Color="Color.Custom"
 									CustomColor="@Item.Color.GetAttribute().Value" />
 					}

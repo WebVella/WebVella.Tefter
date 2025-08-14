@@ -1,0 +1,28 @@
+﻿@namespace WebVella.Tefter.UI.Pages
+@page "/space/{SpaceId:guid}/data/{SpaceDataId:guid}/columns"
+@inherits TfBasePage
+
+<TucLayoutListDetails>
+	<Header>
+		<TucHeader />
+	</Header>
+	<AsideToolbar>
+		<TucSpaceDataDetailsAsideToolbar />
+	</AsideToolbar>
+	<AsideContent>
+		<TucSpaceDataDetailsAsideContent />
+	</AsideContent>
+	<Content>
+		<TucPageLayout ShowToolbar=true>
+			<Toolbar>
+				<TucSpaceDataDetailsContentToolbar />
+			</Toolbar>
+			<ChildContent>
+				<TucSpaceDataColumnsContent />
+			</ChildContent>
+		</TucPageLayout>
+	</Content>
+</TucLayoutListDetails>
+
+
+

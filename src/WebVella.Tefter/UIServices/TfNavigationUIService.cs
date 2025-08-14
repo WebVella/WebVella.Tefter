@@ -61,7 +61,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 					throw new Exception("Current user is not admin");
 				navMenu.SpaceName = TfConstants.AdminMenuTitle;
 				navMenu.SpaceColor = TfConstants.AdminColor;
-				navMenu.SpaceIcon = TfConstants.SettingsIcon;
+				navMenu.SpaceIcon = TfConstants.GetIcon("Settings")!;
 
 
 				var users = _tfService.GetUsers();
@@ -116,8 +116,8 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 		menuItems.Add(new TfMenuItem()
 		{
 			Id = "tf-dashboard-link",
-			IconCollapsed = TfConstants.AdminDashboardIcon,
-			IconExpanded = TfConstants.AdminDashboardIcon,
+			IconCollapsed = TfConstants.GetIcon("Board"),
+			IconExpanded = TfConstants.GetIcon("Board"),
 			IconColor = TfConstants.AdminColor,
 			Selected = routeState.RouteNodes.Count == 1,
 			Url = "/admin",
@@ -129,8 +129,8 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			var rootMenu = new TfMenuItem()
 			{
 				Id = "tf-access-link",
-				IconCollapsed = TfConstants.AdminUsersIcon,
-				IconExpanded = TfConstants.AdminUsersIcon,
+				IconCollapsed = TfConstants.GetIcon("People"),
+				IconExpanded = TfConstants.GetIcon("People"),
 				IconColor = TfConstants.AdminColor,
 				Selected = routeState.HasNode(RouteDataNode.Users, 1)
 					|| routeState.HasNode(RouteDataNode.Roles, 1),
@@ -170,8 +170,8 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			var rootMenu = new TfMenuItem()
 			{
 				Id = "tf-data-link",
-				IconCollapsed = TfConstants.AdminDataIcon,
-				IconExpanded = TfConstants.AdminDataIcon,
+				IconCollapsed = TfConstants.GetIcon("Database"),
+				IconExpanded = TfConstants.GetIcon("Database"),
 				IconColor = TfConstants.AdminColor,
 				Selected = routeState.HasNode(RouteDataNode.DataProviders, 1)
 					|| routeState.HasNode(RouteDataNode.SharedColumns, 1)
@@ -223,8 +223,8 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			var rootMenu = new TfMenuItem()
 			{
 				Id = "tf-content-link",
-				IconCollapsed = TfConstants.ContentIcon,
-				IconExpanded = TfConstants.ContentIcon,
+				IconCollapsed = TfConstants.GetIcon("Folder"),
+				IconExpanded = TfConstants.GetIcon("Folder"),
 				IconColor = TfConstants.AdminColor,
 				Selected = routeState.HasNode(RouteDataNode.Templates, 1)
 					|| routeState.HasNode(RouteDataNode.FileRepository, 1),
@@ -268,8 +268,8 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			var rootMenu = new TfMenuItem()
 			{
 				Id = "tf-pages-link",
-				IconCollapsed = TfConstants.ApplicationIcon,
-				IconExpanded = TfConstants.ApplicationIcon,
+				IconCollapsed = TfConstants.GetIcon("AppFolder"),
+				IconExpanded = TfConstants.GetIcon("AppFolder"),
 				IconColor = TfConstants.AdminColor,
 				Selected = routeState.HasNode(RouteDataNode.Pages, 1),
 				Url = String.Format(TfConstants.AdminPagesSingleUrl, addonPages[0].Id),
@@ -366,54 +366,21 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				rootMenu.Items.Add(new TfMenuItem()
 				{
 					Id = $"tf-space-link-{space.Id}",
-					IconCollapsed = TfConstants.SettingsIcon,
-					IconExpanded = TfConstants.SettingsIcon,
+					IconCollapsed = TfConstants.GetIcon("Settings"),
+					IconExpanded = TfConstants.GetIcon("Settings"),
 					IconColor = subNodeIconColor,
 					Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.SpaceId == space.Id && routeState.RouteNodes.Count == 2,
 					Url = String.Format(TfConstants.SpaceManagePageUrl, space.Id),
 					Text = "Manage space",
 					Tooltip = "Manage space"
 				});
-				if (spacePages.Count > 0)
-				{
-					rootMenu.Items.Add(new TfMenuItem()
-					{
-						Id = $"tf-space-pages-link-{space.Id}",
-						IconCollapsed = TfConstants.PageIcon,
-						IconExpanded = TfConstants.PageIcon,
-						IconColor = subNodeIconColor,
-						Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.HasNode(RouteDataNode.Pages, 2) && routeState.SpaceId == space.Id,
-						Url = String.Format(TfConstants.SpaceManagePagesPageUrl, space.Id),
-						Text = "Space pages",
-						Tooltip = "Space pages"
-					});
-				}
-				else
-				{
-					rootMenu.Items.Add(new TfMenuItem()
-					{
-						Id = $"tf-space-{space.Id}-add-page",
-						IconCollapsed = TfConstants.AddIcon,
-						IconExpanded = TfConstants.AddIcon,
-						IconColor = subNodeIconColor,
-						Selected = false,
-						Url = String.Empty,
-						Text = LOC["space page"],
-						Tooltip = LOC["space page"],
-						Data = new TfMenuItemData
-						{
-							SpaceId = space.Id,
-							MenuType = TfMenuItemType.CreateSpacePage
-						}
-					});
-				}
 				if (spaceData.Count > 0)
 				{
 					rootMenu.Items.Add(new TfMenuItem()
 					{
 						Id = $"tf-space-data-link-{space.Id}",
-						IconCollapsed = TfConstants.SpaceDataIcon,
-						IconExpanded = TfConstants.SpaceDataIcon,
+						IconCollapsed = TfConstants.GetIcon("Database"),
+						IconExpanded = TfConstants.GetIcon("Database"),
 						IconColor = subNodeIconColor,
 						Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.HasNode(RouteDataNode.SpaceData, 2) && routeState.SpaceId == space.Id,
 						Url = String.Format(TfConstants.SpaceDataPageUrl, space.Id, spaceData[0].Id),
@@ -426,8 +393,8 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 					rootMenu.Items.Add(new TfMenuItem()
 					{
 						Id = $"tf-space-data-link-{space.Id}",
-						IconCollapsed = TfConstants.AddIcon,
-						IconExpanded = TfConstants.AddIcon,
+						IconCollapsed = TfConstants.GetIcon("Add"),
+						IconExpanded = TfConstants.GetIcon("Add"),
 						IconColor = subNodeIconColor,
 						Selected = false,
 						Url = String.Empty,
@@ -445,8 +412,8 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 					rootMenu.Items.Add(new TfMenuItem()
 					{
 						Id = $"tf-space-views-link-{space.Id}",
-						IconCollapsed = TfConstants.SpaceViewIcon,
-						IconExpanded = TfConstants.SpaceViewIcon,
+						IconCollapsed = TfConstants.GetIcon("Table"),
+						IconExpanded = TfConstants.GetIcon("Table"),
 						IconColor = subNodeIconColor,
 						Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.HasNode(RouteDataNode.SpaceView, 2) && routeState.SpaceId == space.Id,
 						Url = String.Format(TfConstants.SpaceViewPageUrl, space.Id, spaceViews[0].Id),
@@ -459,8 +426,8 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 					rootMenu.Items.Add(new TfMenuItem()
 					{
 						Id = $"tf-space-views-link-{space.Id}",
-						IconCollapsed = TfConstants.AddIcon,
-						IconExpanded = TfConstants.AddIcon,
+						IconCollapsed = TfConstants.GetIcon("Add"),
+						IconExpanded = TfConstants.GetIcon("Add"),
 						IconColor = subNodeIconColor,
 						Selected = false,
 						Url = String.Empty,
@@ -470,6 +437,39 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 						{
 							SpaceId = space.Id,
 							MenuType = TfMenuItemType.CreateSpaceView
+						}
+					});
+				}
+				if (spacePages.Count > 0)
+				{
+					rootMenu.Items.Add(new TfMenuItem()
+					{
+						Id = $"tf-space-pages-link-{space.Id}",
+						IconCollapsed = TfConstants.GetIcon("Document"),
+						IconExpanded = TfConstants.GetIcon("Document"),
+						IconColor = subNodeIconColor,
+						Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.HasNode(RouteDataNode.Pages, 2) && routeState.SpaceId == space.Id,
+						Url = String.Format(TfConstants.SpaceManagePagesPageUrl, space.Id),
+						Text = "Space pages",
+						Tooltip = "Space pages"
+					});
+				}
+				else
+				{
+					rootMenu.Items.Add(new TfMenuItem()
+					{
+						Id = $"tf-space-{space.Id}-add-page",
+						IconCollapsed = TfConstants.GetIcon("Add"),
+						IconExpanded = TfConstants.GetIcon("Add"),
+						IconColor = subNodeIconColor,
+						Selected = false,
+						Url = String.Empty,
+						Text = LOC["space page"],
+						Tooltip = LOC["space page"],
+						Data = new TfMenuItemData
+						{
+							SpaceId = space.Id,
+							MenuType = TfMenuItemType.CreateSpacePage
 						}
 					});
 				}
@@ -484,8 +484,8 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			menuItems.Add(new TfMenuItem()
 			{
 				Id = "tf-add-space",
-				IconCollapsed = TfConstants.AddIcon,
-				IconExpanded = TfConstants.AddIcon,
+				IconCollapsed = TfConstants.GetIcon("Add"),
+				IconExpanded = TfConstants.GetIcon("Add"),
 				IconColor = TfColor.White,
 				Selected = false,
 				Url = String.Empty,

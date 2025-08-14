@@ -2,6 +2,7 @@
 public partial class TucSpaceViewDetailsContentToolbar : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
+	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
 
 	private bool _isLoading = true;
 	private List<TfMenuItem> _menu = new();
@@ -9,16 +10,29 @@ public partial class TucSpaceViewDetailsContentToolbar : TfBaseComponent, IDispo
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfSpaceViewUIService.SpaceViewUpdated -= On_SpaceViewUpdated;
+		TfSpaceViewUIService.SpaceViewColumnsChanged -= On_SpaceViewColumnsUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfSpaceViewUIService.SpaceViewUpdated += On_SpaceViewUpdated;
+		TfSpaceViewUIService.SpaceViewColumnsChanged += On_SpaceViewColumnsUpdated;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await _init(args);
+	}
+	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
+	{
+		await _init(null);
+	}
+
+	private async void On_SpaceViewColumnsUpdated(object? caller, List<TfSpaceViewColumn> args)
+	{
+		await _init(null);
 	}
 
 	private async Task _init(TfNavigationState? navState = null)
@@ -28,6 +42,13 @@ public partial class TucSpaceViewDetailsContentToolbar : TfBaseComponent, IDispo
 		try
 		{
 			_menu = new();
+			if (navState is null || navState.SpaceId is null || navState.SpaceViewId is null)
+				return;
+
+			var spaceView = TfSpaceViewUIService.GetSpaceView(navState.SpaceViewId.Value);
+			if (spaceView is null)
+				return;
+			var spaceViewColumns = TfSpaceViewUIService.GetViewColumns(spaceView.Id);
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),
@@ -39,26 +60,28 @@ public partial class TucSpaceViewDetailsContentToolbar : TfBaseComponent, IDispo
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),
-				Url =  string.Format(TfConstants.SpaceViewColumnsPageUrl, navState.SpaceId, navState.SpaceViewId),
+				Url = string.Format(TfConstants.SpaceViewColumnsPageUrl, navState.SpaceId, navState.SpaceViewId),
 				Selected = navState.HasNode(RouteDataNode.Columns, 4),
 				Text = LOC("Columns"),
-				IconCollapsed = TfConstants.GetIcon("Table")
+				IconCollapsed = TfConstants.GetIcon("Table"),
+				BadgeCount = spaceViewColumns.Count == 0 ? null : spaceViewColumns.Count
 			});
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),
 				Url = string.Format(TfConstants.SpaceViewFiltersPageUrl, navState.SpaceId, navState.SpaceViewId),
-				Selected = navState.HasNode(RouteDataNode.Filters,4),
+				Selected = navState.HasNode(RouteDataNode.Filters, 4),
 				Text = LOC("Preset Filters"),
-				IconCollapsed = TfConstants.GetIcon("Filter")
+				IconCollapsed = TfConstants.GetIcon("Filter"),
+				BadgeCount = spaceView.Presets.Count == 0 ? null : spaceView.Presets.Count
 			});
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),
-				Url = string.Format(TfConstants.SpaceViewPagesPageUrl,navState.SpaceId, navState.SpaceViewId),
+				Url = string.Format(TfConstants.SpaceViewPagesPageUrl, navState.SpaceId, navState.SpaceViewId),
 				Selected = navState.HasNode(RouteDataNode.Pages, 4),
 				Text = LOC("Pages"),
-				IconCollapsed = TfConstants.PageIcon
+				IconCollapsed = TfConstants.GetIcon("Document")
 			});
 		}
 		finally

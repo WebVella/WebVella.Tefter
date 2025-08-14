@@ -15,7 +15,7 @@ else
 {
 	var configCss = _generateColumnConfigurationCss(_spaceView, _spaceViewColumns);
 	var columnIndex = 1;
-	<TucPageLayout ShowToolbar=@(_spaceView.Presets.Count > 0) Title="@_spacePage.Name" Icon="@TfConstants.SpaceViewIcon" Color="@_space!.Color">
+	<TucPageLayout ShowToolbar=@(_spaceView.Presets.Count > 0) Title="@_spacePage.Name" Icon="@TfConstants.GetIcon("Table")" Color="@_space!.Color">
 		<Toolbar>
 			<TucSpaceViewPageContentNavigation SpaceView="_spaceView" />
 		</Toolbar>

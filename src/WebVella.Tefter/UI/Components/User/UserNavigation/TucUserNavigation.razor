@@ -26,19 +26,19 @@
 					<FluentMenuItem Disabled="true">
 						@_currentUser.FirstName @_currentUser.LastName
 						<span slot="start">
-							<FluentIcon Value="@TfConstants.GetIcon("Person").WithColor("var(--tf-layout-color)")" Slot="start" />
+							<FluentIcon Value="@TfConstants.GetIcon("Person")!.WithColor("var(--tf-layout-color)")" Slot="start" />
 						</span>
 					</FluentMenuItem>
 					<FluentMenuItem OnClick="_setUrlAsStartup">
 						@LOC("Set as Startup URL")
 						<span slot="start">
-							<FluentIcon Value="@TfConstants.GetIcon("Pin").WithColor("var(--tf-layout-color)")" Slot="start" />
+							<FluentIcon Value="@TfConstants.GetIcon("Pin")!.WithColor("var(--tf-layout-color)")" Slot="start" />
 						</span>
 					</FluentMenuItem>
 					<FluentMenuItem OnClick="_logout">
 						@LOC("Logout")
 						<span slot="start">
-							<FluentIcon Value="@TfConstants.GetIcon("SignOut").WithColor("var(--tf-layout-color)")" Slot="start" />
+							<FluentIcon Value="@TfConstants.GetIcon("SignOut")!.WithColor("var(--tf-layout-color)")" Slot="start" />
 						</span>
 					</FluentMenuItem>
 				</FluentMenu>

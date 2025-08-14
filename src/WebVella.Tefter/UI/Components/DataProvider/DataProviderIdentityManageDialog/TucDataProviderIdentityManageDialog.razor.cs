@@ -35,7 +35,7 @@ public partial class TucDataProviderIdentityManageDialog : TfFormBaseComponent, 
 		}
 		_title = _isCreate ? LOC("Create identity implementation") : LOC("Manage identity implementation");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
+		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 		_allDataIdentities = TfDataIdentityUIService.GetDataIdentities();
 
 		_providerColumns = _provider.Columns.OrderBy(x => x.DbName).Select(x => x.DbName).ToList();

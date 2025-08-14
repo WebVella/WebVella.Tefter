@@ -12,14 +12,14 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="@TfConstants.AdminUserIcon" IconColor="@_user.Settings.ThemeColor" Class="page-title"
+			<TucPageHeader Icon="@TfConstants.GetIcon("Person")" IconColor="@_user.Settings.ThemeColor" Class="page-title"
 						   Area="@LOC(TfConstants.AdminUsersMenuTitle)" Title="@_user.Names" />
 
 			<TucCard Title="@LOC("Details")">
 				<ToolbarTemplate>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_editUser">
 						@LOC("Edit")
-						<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
 					</FluentButton>
 				</ToolbarTemplate>
 				<ChildContent>
@@ -97,7 +97,7 @@
 					{
 						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all roles added") Style="width:200px" Disabled="true" />
 					}
-					<FluentButton OnClick="_addRole" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_roleOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+					<FluentButton OnClick="_addRole" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline" Disabled="@(_roleOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
 				</ToolbarTemplate>
 				<ChildContent>
 					@if (_user.Roles is null || _user.Roles.Count == 0)
@@ -128,7 +128,7 @@
 												{
 													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("the current user cannot unassign admin role to self")"
 																  Disabled="true">
-														<FluentIcon Value="@TfConstants.LockIcon" Slot="start" />
+														<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
 														<span>@LOC("locked")</span>
 													</FluentButton>
 												}
@@ -136,7 +136,7 @@
 												{
 													<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _removeRole(context))" Title="@LOC("Remove the role")"
 																  Disabled="_submitting">
-														<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" Slot="start" />
+														<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" Slot="start" />
 														<span>@LOC("remove")</span>
 													</FluentButton>
 												}

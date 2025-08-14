@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 
 <TucPageHeader Area="Home" Title="Dashboard"
-			   Icon="@TfConstants.HomeIcon"
+			   Icon="@TfConstants.GetIcon("Home")"
 			   IconColor="TfConstants.DefaultThemeColor" />
 
 <FluentGrid Spacing="0">
@@ -37,11 +37,11 @@
 											<div>
 												@if (!String.IsNullOrWhiteSpace(item.SpaceIcon))
 												{
-													<FluentIcon Style="width:24px;" Value="@(TfConstants.GetIcon(item.SpaceIcon).WithColor(item.SpaceColor.ToDescriptionString()))" />
+													<FluentIcon Style="width:24px;" Value="@(TfConstants.GetIcon(item.SpaceIcon)!.WithColor(item.SpaceColor.ToDescriptionString()))" />
 												}
 												else
 												{
-													<FluentIcon Style="width:24px;" Value="@(TfConstants.SpaceViewIcon.WithColor(item.SpaceColor.ToDescriptionString()))" />
+												<FluentIcon Style="width:24px;" Value="@(TfConstants.GetIcon("Table")!.WithColor(item.SpaceColor.ToDescriptionString()))" />
 												}
 											</div>
 										</td>
@@ -98,7 +98,7 @@
 				<FluentNavMenu>
 					@foreach (var item in _data.HomeSaves)
 					{
-						<FluentNavLink Icon="@TfConstants.SaveIcon"
+						<FluentNavLink Icon="@TfConstants.GetIcon("Save")"
 									   Href="@NavigatorExt.AddQueryValueToUri(item.Url, TfConstants.ActiveSaveQueryName, item.Id.ToString())" ActiveClass="noclass">
 							@item.Name
 						</FluentNavLink>
@@ -134,7 +134,7 @@
 				<FluentNavMenu>
 					@foreach (var item in _data.HomeViews)
 					{
-						<FluentNavLink Icon="@TfConstants.SpaceViewIcon"
+						<FluentNavLink Icon="@TfConstants.GetIcon("Table")"
 									   Href="@(String.Format(TfConstants.SpaceViewPageUrl, item.SpaceId, item.Id))" ActiveClass="noclass">
 							@item.Name
 						</FluentNavLink>

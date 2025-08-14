@@ -79,4 +79,6 @@ public enum RouteDataNode
 	Columns,
 	[Description("Filters")]
 	Filters,
+	[Description("Sorts")]
+	Sorts,
 }

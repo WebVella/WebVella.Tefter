@@ -24,7 +24,7 @@
 					</FluentButton>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
 						@LOC("Add Column")
-						<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start" />
 					</FluentButton>
 				</ToolbarTemplate>
 				<ChildContent>
@@ -55,11 +55,11 @@
 										<td class="tf-grid-td">
 											<div>
 												<FluentStack Wrap="false">
-													<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
+													<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
 																  Title="@LOC("Edit column")" OnClick="@(()=> _editColumn(context))" />
 													<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteColumn(context))" Title="@LOC("Delete column")"
 																  Loading="@(_deletedColumnId == context.Id)" Disabled="@(_deletedColumnId is not null)"
-																  IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" />
+																  IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" />
 												</FluentStack>
 											</div>
 										</td>

@@ -18,7 +18,7 @@
 	{
 		<FluentStack Class="tf-select-list-input-wrapper" HorizontalGap="5">
 			<FluentTextField Class="tf-select-list-input" AutoComplete="off" Value="@_inputValue" ValueChanged="_onInputValueChanged" Placeholder="@Placeholder" />
-			<FluentButton Appearance="@Appearance.Outline" OnClick="_addBtnClicked" IconStart="@TfConstants.AddIcon">@LOC("add")</FluentButton>
+			<FluentButton Appearance="@Appearance.Outline" OnClick="_addBtnClicked" IconStart="@TfConstants.GetIcon("Add")">@LOC("add")</FluentButton>
 		</FluentStack>
 		<FluentStack Class="tf-select-list-values" HorizontalGap="5">
 			@foreach (var item in Values)

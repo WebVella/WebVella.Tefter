@@ -12,17 +12,17 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="TfConstants.AdminDataProviderIcon" Area="@LOC(TfConstants.AdminDataProvidersMenuTitle)"
+			<TucPageHeader Icon="TfConstants.GetIcon("CloudDatabase")" Area="@LOC(TfConstants.AdminDataProvidersMenuTitle)"
 						   Title="@_provider.Name" SubTitle="@LOC("Details")" IconColor="TfConstants.AdminColor" />
 			<TucCard Title="@LOC("Details")">
 				<ToolbarTemplate>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteProvider" Loading="_isDeleting" Disabled="_isDeleting">
 						@LOC("Delete")
-						<FluentIcon Value="@TfConstants.DeleteIcon" Color="@Color.Error" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Delete")" Color="@Color.Error" Slot="start" />
 					</FluentButton>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_editProvider">
 						@LOC("Edit")
-						<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
 					</FluentButton>
 				</ToolbarTemplate>
 				<ChildContent>

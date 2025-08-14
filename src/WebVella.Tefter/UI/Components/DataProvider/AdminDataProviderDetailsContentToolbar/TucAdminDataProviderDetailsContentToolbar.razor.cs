@@ -2,6 +2,7 @@
 public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
+	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 
 	private bool _isLoading = true;
 	private List<TfMenuItem> _menu = new();
@@ -9,16 +10,23 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfDataProviderUIService.DataProviderUpdated -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await _init(args);
+	}
+
+	private async void On_DataProviderUpdated(object? caller, TfDataProvider args)
+	{
+		await _init(null);
 	}
 
 	private async Task _init(TfNavigationState? navState = null)
@@ -28,6 +36,9 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 		try
 		{
 			_menu = new();
+			if(navState is null || navState.DataProviderId is null) return;
+			var provider = TfDataProviderUIService.GetDataProvider(navState.DataProviderId.Value);
+			if (provider is null) return;
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),
@@ -41,8 +52,9 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 				Id = Guid.NewGuid().ToString(),
 				Url = string.Format(TfConstants.AdminDataProviderSchemaPageUrl, navState.DataProviderId),
 				Selected = navState.HasNode(RouteDataNode.Schema, 3),
-				Text = LOC("Provider Columns"),
-				IconCollapsed = TfConstants.GetIcon("Table")
+				Text = LOC("Columns"),
+				IconCollapsed = TfConstants.GetIcon("Table"),
+				BadgeCount = provider.Columns.Count == 0 ? null : provider.Columns.Count
 			});
 			_menu.Add(new TfMenuItem
 			{

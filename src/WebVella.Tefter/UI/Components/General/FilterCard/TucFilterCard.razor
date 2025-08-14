@@ -24,10 +24,10 @@
 								  TOption="string" Required="false"
 								  Items="@AllColumnOptions" Style="width:140px"
 								  Placeholder="@LOC("select...")" />
-					<FluentButton Disabled="_submitting" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
+					<FluentButton Disabled="_submitting" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
 				}
-				<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TfFilterAnd), null, null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
-				<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TfFilterOr), null, null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+				<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TfFilterAnd), null, null))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+				<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TfFilterOr), null, null))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
 			</FluentStack>
 		</FluentStack>
 	</ToolbarTemplate>

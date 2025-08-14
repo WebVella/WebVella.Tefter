@@ -20,7 +20,7 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 		if (!String.IsNullOrWhiteSpace(Content.Url)) _isBookmark = false;
 		_title = _isBookmark ? LOC("Bookmark") : LOC("Saved URL");
 		_btnText = LOC("Save");
-		_iconBtn = TfConstants.SaveIcon.WithColor(Color.Neutral);
+		_iconBtn = TfConstants.GetIcon("Save")!;
 
 		_form = Content with { Id = Content.Id };
 

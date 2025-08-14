@@ -28,11 +28,11 @@
 											  TOption="string" Required="false"
 											  Items="@AllColumnOptions" Style="width:140px"
 											  Placeholder="@LOC("select...")" />
-								<FluentButton Disabled="@Disabled" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
+								<FluentButton Disabled="@Disabled" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
 							}
-							<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((typeof(TfFilterAnd), null, Item.Id)))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
-							<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((typeof(TfFilterOr), null, Item.Id)))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
-							<FluentButton Disabled="@Disabled" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+							<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((typeof(TfFilterAnd), null, Item.Id)))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+							<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((typeof(TfFilterOr), null, Item.Id)))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+							<FluentButton Disabled="@Disabled" OnClick="_deleteFilterHandler" IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)"
 										  Appearance="@Appearance.Outline" Title="@LOC("delete filter")" />
 						</FluentStack>
 					}
@@ -122,7 +122,7 @@
 														 Disabled="@Disabled" ReadOnly="ReadOnly"
 														 AutoComplete="off"
 														 Placeholder="@($"{TfConstants.DateTimeFormatInput}, now()... ")" Style="width:300px" />
-										<FluentButton Id="@($"tf-{context.Id}")" IconStart="@TfConstants.HelpIcon" Disabled=true />
+										<FluentButton Id="@($"tf-{context.Id}")" IconStart="@TfConstants.GetIcon("QuestionCircle")" Disabled=true />
 										<FluentTooltip Anchor="@($"tf-{context.Id}")">
 											@((MarkupString)LOC("for dynamic date use one of the following:{0}", "<br/> now(+- decimal hours),<br/> day(+- decimal days),<br/> month(+- decimal months),<br/> year(+- decimal year)"))
 										</FluentTooltip>
@@ -193,7 +193,7 @@
 					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
 						@if (!ReadOnly)
 						{
-							<FluentButton Disabled="@Disabled" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+							<FluentButton Disabled="@Disabled" OnClick="_deleteFilterHandler" IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)"
 										  Appearance="@Appearance.Outline" Title="@LOC("delete filter")" />
 						}
 					</FluentStack>

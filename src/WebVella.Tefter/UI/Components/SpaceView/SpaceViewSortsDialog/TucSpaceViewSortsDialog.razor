@@ -7,7 +7,7 @@
 
 @* Footer *@
 <FluentDialogFooter>
-	<FluentButton Appearance="Appearance.Accent" OnClick="@_submit" IconStart="TfConstants.SaveIcon.WithColor(Color.Neutral)">@LOC("Save")</FluentButton>
+	<FluentButton Appearance="Appearance.Accent" OnClick="@_submit" IconStart="@TfConstants.GetIcon("Save")">@LOC("Save")</FluentButton>
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
 
@@ -30,7 +30,7 @@
 									<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 										<td class="tf-grid-td" style="width:1%;vertical-align:middle">
 											<div>
-												<FluentIcon Value="@TfConstants.SpaceDataIcon" Color="@Color.Accent"></FluentIcon>
+												<FluentIcon Value="@TfConstants.GetIcon("Database")" Color="@Color.Accent"></FluentIcon>
 											</div>
 										</td>
 										<td class="tf-grid-td" style="width:300px;">

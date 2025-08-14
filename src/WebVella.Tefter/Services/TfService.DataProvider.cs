@@ -557,9 +557,9 @@ public partial class TfService : ITfService
 				continue;
 
 			var foundSimilarJoinKey = provider
-							.Identities
+							.Identities.Where(x=> x.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY)
 							.Select(x => x.DataIdentity)
-							.Intersect(dataProvider.Identities.Select(x => x.DataIdentity))
+							.Intersect(dataProvider.Identities.Where(x=> x.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY).Select(x => x.DataIdentity))
 							.Any();
 			
 			if (foundSimilarJoinKey)

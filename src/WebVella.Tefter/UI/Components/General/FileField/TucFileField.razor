@@ -31,7 +31,7 @@ else
 			{
 				<FluentButton OnClick="_resetFile" Title="@LOC("download file")" IconStart="@TfConstants.GetIcon("ArrowReset")" />
 			}
-			<FluentButton OnClick="_clearFile" IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" />
+			<FluentButton OnClick="_clearFile" IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)" />
 		}
 		else
 		{

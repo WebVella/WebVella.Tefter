@@ -12,7 +12,7 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="@TfConstants.AdminDataIdentityIcon" IconColor="@TfConstants.AdminColor" Class="page-title"
+			<TucPageHeader Icon="@TfConstants.GetIcon("KeyMultiple")" IconColor="@TfConstants.AdminColor" Class="page-title"
 						   Area="@LOC(TfConstants.AdminDataIdentitiesMenuTitle)" Title="@_identity.DataIdentity" />
 
 			<TucCard Title="@LOC("Details")">
@@ -21,18 +21,18 @@
 					{
 						<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be managed")">
 							@LOC("Locked")
-							<FluentIcon Value="@TfConstants.LockIcon" Slot="start" />
+							<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
 						</FluentButton>
 					}
 					else
 					{
 						<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteIdentity">
 							@LOC("Delete")
-							<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(TfColor.Red600.GetAttribute().Value)" Slot="start" />
+							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" Slot="start" />
 						</FluentButton>
 						<FluentButton Appearance="@Appearance.Outline" OnClick="_editIdentity">
 							@LOC("Edit")
-							<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
+							<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
 						</FluentButton>
 					}
 				</ToolbarTemplate>

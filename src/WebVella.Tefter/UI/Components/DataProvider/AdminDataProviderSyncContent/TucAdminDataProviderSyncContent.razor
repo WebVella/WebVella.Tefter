@@ -12,7 +12,7 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="TfConstants.AdminDataProviderIcon" Area="@LOC(TfConstants.AdminDataProvidersMenuTitle)"
+			<TucPageHeader Icon="@TfConstants.GetIcon("CloudDatabase")" Area="@LOC(TfConstants.AdminDataProvidersMenuTitle)"
 						   Title="@_provider.Name" SubTitle="@LOC("Synchronization")" IconColor="TfConstants.AdminColor" />
 			<FluentGrid>
 				<FluentGridItem xs="12" md="6">
@@ -29,7 +29,7 @@
 				<FluentGridItem xs="12" md="6">
 					<TucCard Title="@LOC("Synchronization schedule")">
 						<ToolbarTemplate>
-							<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon.WithColor(Color.Accent)"
+							<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
 										  OnClick="_editSchedule">@LOC("Manage")</FluentButton>
 						</ToolbarTemplate>
 						<ChildContent>
@@ -67,7 +67,7 @@
 
 			<TucCard Style="margin-top:1rem;" Title="@LOC("Synchronization tasks")">
 				<ToolbarTemplate>
-					<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowSync").WithColor(Color.Accent)"
+					<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowSync")"
 								  OnClick="_synchronizeNow">@LOC("Synchronize now")</FluentButton>
 				</ToolbarTemplate>
 				<ChildContent>

@@ -23,7 +23,7 @@ public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentCo
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create user") : LOC("Manage user");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
+		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 
 		if (_isCreate)
 		{

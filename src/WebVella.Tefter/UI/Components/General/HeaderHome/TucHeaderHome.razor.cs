@@ -43,8 +43,8 @@ public partial class TucHeaderHome : TfBaseComponent, IDisposable
 				Text = null,
 				Url = "/",
 				Tooltip = LOC(TfConstants.HomeMenuTitle),
-				IconCollapsed = TfConstants.HomeIcon,
-				IconExpanded = TfConstants.HomeIcon,
+				IconCollapsed = TfConstants.GetIcon("Home"),
+				IconExpanded = TfConstants.GetIcon("Home"),
 				Selected = navState.RouteNodes.Count == 1 && navState.RouteNodes[0] == RouteDataNode.Home,
 			});
 		}

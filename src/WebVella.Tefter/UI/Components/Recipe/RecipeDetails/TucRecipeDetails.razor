@@ -34,7 +34,7 @@
 											<div class="tf-wizard__steps__step__index">@step.Instance.Position. </div>
 											<div class="tf-wizard__steps__step__title">@step.Instance.StepMenuTitle</div>
 											<div class="tf-wizard__steps__step__icon">
-												<FluentIcon Class="arrow" Value="@TfConstants.GetIcon("ArrowRight").WithColor(Color.Accent)" />
+												<FluentIcon Class="arrow" Value="@TfConstants.GetIcon("ArrowRight")!.WithColor(Color.Accent)" />
 											</div>
 										</div>
 									}
@@ -44,9 +44,9 @@
 											<div class="tf-wizard__steps__step__index">@step.Instance.Position. </div>
 											<div class="tf-wizard__steps__step__title">@step.Instance.StepMenuTitle</div>
 											<div class="tf-wizard__steps__step__icon">
-												<FluentIcon Class="check" Value="@TfConstants.GetIcon("Checkmark").WithColor(Color.Success)" />
-												<FluentIcon Class="arrow" Value="@TfConstants.GetIcon("ArrowRight").WithColor(Color.Accent)" />
-												<FluentIcon Class="error" Value="@TfConstants.GetIcon("ErrorCircle").WithColor(Color.Error)" />
+												<FluentIcon Class="check" Value="@TfConstants.GetIcon("Checkmark")!.WithColor(Color.Success)" />
+												<FluentIcon Class="arrow" Value="@TfConstants.GetIcon("ArrowRight")!.WithColor(Color.Accent)" />
+												<FluentIcon Class="error" Value="@TfConstants.GetIcon("ErrorCircle")!.WithColor(Color.Error)" />
 											</div>
 										</div>
 									}

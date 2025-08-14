@@ -7,7 +7,7 @@
 
 @* Footer *@
 <FluentDialogFooter>
-	<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.SaveIcon.WithColor(Color.Neutral)"
+	<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
 				  Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
@@ -45,7 +45,7 @@
 										  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")" />
 							@if (_selectedParent is not null)
 							{
-								<FluentButton Disabled="@(_selectedParent is null)" IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(_ => _selectedParent = null)" />
+								<FluentButton Disabled="@(_selectedParent is null)" IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)" OnClick="@(_ => _selectedParent = null)" />
 							}
 						</FluentStack>
 					</FluentGridItem>

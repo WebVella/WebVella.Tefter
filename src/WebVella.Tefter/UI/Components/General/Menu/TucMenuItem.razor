@@ -29,16 +29,24 @@
 				@TfConverters.StringOverflow(Item.Text, EllipsesLimit)
 			</span>
 		}
-		@if (Item.IsSeparateChevron.HasValue && !Item.IsSeparateChevron.Value)
+		@if ((Item.IsSeparateChevron.HasValue && !Item.IsSeparateChevron.Value)
+				|| Item.BadgeCount is not null)
 		{
 			<span slot="end">
-				<FluentIcon Value="@TfConstants.GetIcon("ChevronDown")" />
+				@if (Item.BadgeCount is not null)
+				{
+					<FluentBadge Appearance="Appearance.Neutral">@Item.BadgeCount</FluentBadge>
+				}
+				@if (Item.IsSeparateChevron.HasValue && !Item.IsSeparateChevron.Value)
+				{
+					<FluentIcon Value="@TfConstants.GetIcon("ChevronDown")" />
+				}
 			</span>
 		}
-		@if (Item.Color is not null)
+		@* 		@if (Item.Color is not null)
 		{
 			<span class="tf-menu__item__color" style="@($"background-color:{Item.Color.GetAttribute().Value}")"></span>
-		}
+		} *@
 	</FluentAnchor>
 	@if (!Item.Disabled && Item.Items.Count > 0)
 	{

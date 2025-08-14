@@ -16,18 +16,18 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="@TfConstants.TemplateIcon" IconColor="@TfConstants.AdminColor" Class="page-title"
+			<TucPageHeader Icon="@TfConstants.GetIcon("CalendarTemplate")" IconColor="@TfConstants.AdminColor" Class="page-title"
 						   Area="@LOC(String.Format(TfConstants.AdminTemplateMenuTitle,_template!.ResultType.ToDescriptionString()))" Title="@_template!.Name" />
 
 			<TucCard Title="@LOC("General")">
 				<ToolbarTemplate>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteTemplate">
 						@LOC("Delete")
-						<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(TfColor.Red600.GetAttribute().Value)" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" Slot="start" />
 					</FluentButton>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_editTemplate">
 						@LOC("Update")
-						<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
 					</FluentButton>
 				</ToolbarTemplate>
 				<ChildContent>
@@ -127,7 +127,7 @@
 					</FluentButton>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="onUpdateSettingsClick">
 						@LOC("Update")
-						<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
 					</FluentButton>
 				</ToolbarTemplate>
 				<ChildContent>

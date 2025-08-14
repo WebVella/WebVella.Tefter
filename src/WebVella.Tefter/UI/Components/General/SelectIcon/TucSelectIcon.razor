@@ -30,7 +30,7 @@ else
 			</FluentButton>
 			@if (!Required && !String.IsNullOrWhiteSpace(Value))
 			{
-				<FluentButton IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(_=>_optionChanged(null))" />
+				<FluentButton IconStart="@TfConstants.GetIcon("Dismiss").WithColor(Color.Error)" OnClick="@(_ => _optionChanged(null))" />
 			}
 		</FluentStack>
 		@if (_open)
@@ -49,7 +49,7 @@ else
 				<div class="tf-select-menu__body">
 					<FluentNavMenu>
 						<Virtualize TItem="string" Items="@_icons" Context="option" ItemSize="32">
-							<FluentMenuItem @key=@option OnClick="@(()=> _optionChanged(option))" Class="@(option == Value ? "tf-menu-item-selected" : "")">
+							<FluentMenuItem @key=@option OnClick="@(() => _optionChanged(option))" Class="@(option == Value ? "tf-menu__item--active" : "")">
 								<FluentIcon Value="@TfConstants.GetIcon(option)" Slot="start" />
 								<FluentLabel>@option</FluentLabel>
 							</FluentMenuItem>

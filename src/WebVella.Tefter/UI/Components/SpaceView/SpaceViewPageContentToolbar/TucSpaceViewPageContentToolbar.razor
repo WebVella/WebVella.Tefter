@@ -63,7 +63,7 @@
 			@if (SpaceView.Settings.CanCreateRows)
 			{
 				<FluentButton OnClick="_onAddRowClick" Appearance="@Appearance.Outline">
-					<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" />
+					<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" />
 				</FluentButton>
 			}
 			<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
@@ -72,7 +72,7 @@
 			@if (_activeBookmark is not null)
 			{
 				<FluentButton Id="view-bookmark-selector" OnClick="OnBookmarkClick" Appearance="@Appearance.Outline">
-					<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Accent" />
+					<FluentIcon Value="@TfConstants.GetIcon("Bookmark")" Color="@Color.Accent" />
 				</FluentButton>
 			}
 			@if (_activeSavedUrl is not null)

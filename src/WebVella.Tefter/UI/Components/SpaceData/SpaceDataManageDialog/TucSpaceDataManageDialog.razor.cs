@@ -28,7 +28,7 @@ public partial class TucSpaceDataManageDialog : TfFormBaseComponent, IDialogCont
 		if(_space is null) throw new Exception("Space is null");
 		_title = _isCreate ? LOC("Create dataset in {0}", _space.Name) : LOC("Manage dataset in {0}", _space.Name);
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
+		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 		if (_isCreate)
 			_form = Content with { Id = Guid.NewGuid() };
 		else

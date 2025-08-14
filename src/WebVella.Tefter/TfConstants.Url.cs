@@ -36,6 +36,7 @@ public partial class TfConstants
 	public static string RouteNamePages = "pages";
 	public static string RouteNameColumns = "columns";
 	public static string RouteNameFilters = "filters";
+	public static string RouteNameSorts = "sorts";
 	public static string RouteNameSharedColumns = "shared-columns";
 	public static string RouteNameDataIdentities = "data-identities";
 	public static string RouteNameFileRepository = "file-repository";
@@ -85,6 +86,9 @@ public partial class TfConstants
 	public static string SpaceViewColumnsPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceView}/{{1}}/{RouteNameColumns}";
 	public static string SpaceViewFiltersPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceView}/{{1}}/{RouteNameFilters}";
 	public static string SpaceDataPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}";
+	public static string SpaceDataColumnsPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameColumns}";
+	public static string SpaceDataFiltersPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameFilters}";
+	public static string SpaceDataSortsPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameSorts}";
 	public static string SpaceDataViewsPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameViews}";
 	public static string SpaceDataConnectedDataPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameAux}";
 	public static string SpaceDataDataPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameData}";

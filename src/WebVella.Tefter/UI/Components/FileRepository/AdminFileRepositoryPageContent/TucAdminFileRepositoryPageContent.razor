@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <TucErrorBoundry>
-	<TucPageHeader Icon="TfConstants.AdminFileRepositoryIcon" Area="@LOC(TfConstants.AdminFileRepositoryMenuTitle)"
+	<TucPageHeader Icon="@TfConstants.GetIcon("DocumentDatabase")" Area="@LOC(TfConstants.AdminFileRepositoryMenuTitle)"
 				   Title="@LOC("Files")" IconColor="TfConstants.AdminColor" />
 
 	<TucGridToolbar>
@@ -22,7 +22,7 @@
 					</div>
 				}
 				<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0)"
-							  Appearance="Appearance.Outline" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)">@LOC("Upload file")</FluentButton>
+							  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">@LOC("Upload file")</FluentButton>
 			</FluentStack>
 			<FluentInputFile @ref="@fileUploader"
 							 DragDropZoneVisible="false"
@@ -65,12 +65,12 @@
 							<td class="tf-grid-td">
 								<div>
 									<FluentStack Wrap="false">
-										<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon.WithColor(Color.Accent)"
+										<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
 													  Title="@LOC("Change file content")" OnClick="@(()=> _editFile(context))" />
 										<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete column")"
-													  OnClick="@(() => _deleteFile(context))" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" />
+													  OnClick="@(() => _deleteFile(context))" IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" />
 										<FluentAnchor Appearance="@Appearance.Outline" Target="_blank"
-													  Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload").WithColor(Color.Accent)" />
+													  Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload")" />
 									</FluentStack>
 								</div>
 							</td>

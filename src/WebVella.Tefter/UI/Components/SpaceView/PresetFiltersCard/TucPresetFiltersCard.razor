@@ -21,7 +21,7 @@
 					  Items="@_getParents()" Style="min-width:180px"
 					  OptionValue="@((p)=> p.Id.ToString())"
 					  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")" />
-		<FluentButton OnClick="_addPreset" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline"
+		<FluentButton OnClick="_addPreset" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
 					  Disabled="@_submitting">@LOC("Add new")</FluentButton>
 	</ToolbarTemplate>
 	<ChildContent>

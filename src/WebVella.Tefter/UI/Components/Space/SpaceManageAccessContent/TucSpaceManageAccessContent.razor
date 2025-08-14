@@ -12,7 +12,7 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="@(TfConstants.GetIcon(name: _space.FluentIconName, defaultIcon: TfConstants.SpaceIconName))" IconColor="@_space.Color" Class="page-title"
+			<TucPageHeader Icon="@(TfConstants.GetIcon(name: _space.FluentIconName, defaultIcon: "Folder"))" IconColor="@_space.Color" Class="page-title"
 						   Area="@LOC("Spaces")" Title="@_space.Name" SubTitle="@LOC("Access")" />
 
 			<table class="tf-grid">
@@ -55,7 +55,7 @@
 					{
 						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all roles added") Style="width:250px" Disabled="true" />
 					}
-					<FluentButton OnClick="_addRole" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_roleOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+					<FluentButton OnClick="_addRole" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline" Disabled="@(_roleOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
 				</ToolbarTemplate>
 				<ChildContent>
 					<table class="tf-grid">
@@ -75,7 +75,7 @@
 									<div>
 										<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Administrators has always access")"
 													  Disabled="true">
-											<FluentIcon Value="@TfConstants.LockIcon" Slot="start" />
+											<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
 											<span>@LOC("locked")</span>
 										</FluentButton>
 									</div>
@@ -91,7 +91,7 @@
 										<div>
 											<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _removeRole(context))" Title="@LOC("Remove the role")"
 														  Disabled="_submitting">
-												<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" Slot="start" />
+												<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" Slot="start" />
 												<span>@LOC("remove")</span>
 											</FluentButton>
 										</div>

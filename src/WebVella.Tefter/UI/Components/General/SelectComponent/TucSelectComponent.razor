@@ -52,7 +52,7 @@
 				<div class="tf-select-menu__body">
 					<FluentNavMenu>
 						<Virtualize TItem="TOption" Items="@Items" Context="option" ItemSize="32">
-							<FluentMenuItem @key=@option OnClick="@(()=> _optionChanged(option))" Class="@(_matchOptions(Value,option) ? "tf-menu-item-selected" : "")">
+							<FluentMenuItem @key=@option OnClick="@(() => _optionChanged(option))" Class="@(_matchOptions(Value, option) ? "tf-menu__item--actived" : "")">
 								<div class="tf-component tf-component--small">
 									@CardIcon(option)
 									@CardMeta(option)

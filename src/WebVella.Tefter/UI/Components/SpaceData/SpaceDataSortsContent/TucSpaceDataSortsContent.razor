@@ -1,0 +1,21 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<TucErrorBoundry>
+	<div style="padding:var(--tf-layout-content-padding)">
+		@if (String.IsNullOrWhiteSpace(UriInitialized))
+		{
+			<TucSkeletonPageHeader />
+		}
+		else if (_spaceData is null)
+		{
+			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+		}
+		else
+		{
+			<TucPageHeader Icon="@TfConstants.GetIcon("Database")" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
+						   Area="@($"{_space?.Name} : {LOC(TfConstants.SpaceDataMenuTitle)}")" Title="@_spaceData.Name" SubTitle="@LOC("Sort Order")" />
+
+			<TucSortCard Title="@LOC("Default Sort")" DataProvider="_provider" Items="_spaceData.SortOrders" ItemsChanged="_onSortChanged" />
+		}
+	</div>
+</TucErrorBoundry>

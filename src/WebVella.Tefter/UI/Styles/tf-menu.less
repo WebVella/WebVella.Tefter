@@ -4,37 +4,28 @@
 	width: 100%;
 }
 
-.tf-submenu .tf-menu-item__content {
+.tf-submenu .tf-menu__item__content {
 	padding-left: 1rem;
 }
 
-.tf-submenu .tf-submenu .tf-menu-item__content {
+.tf-submenu .tf-submenu .tf-menu__item__content {
 	padding-left: 2rem;
 }
 
-.tf-submenu .tf-submenu .tf-submenu .tf-menu-item__content {
+.tf-submenu .tf-submenu .tf-submenu .tf-menu__item__content {
 	padding-left: 3rem;
 }
 
-.tf-submenu .tf-submenu .tf-submenu .tf-submenu .tf-menu-item__content {
+.tf-submenu .tf-submenu .tf-submenu .tf-submenu .tf-menu__item__content {
 	padding-left: 4rem;
 }
 
-.tf-menu-item {
-	display: flex;
-	align-items: center;
-	width: 100%;
-	margin: calc(var(--design-unit) * 1px) 0;
-	text-decoration: none;
-	min-height: calc(((var(--base-height-multiplier) + var(--density))* var(--design-unit) + 1)* 1px);
-	padding-left: 8px;
-	color: var(--neutral-foreground-rest);
+.tf-menu__item {
 	border-radius: 0;
-
-	&:hover {
+	/*	&:hover {
 		color: var(--neutral-foreground-rest);
-		background:var(--tf-fill-color-hover);
-	}
+		background: var(--tf-fill-color-hover);
+	}*/
 
 
 	&__content {
@@ -100,7 +91,7 @@
 		}
 	}
 
-	&.tf-selected {
+	&.tf-active {
 		position: relative;
 		background: var(--tf-white);
 
@@ -109,16 +100,35 @@
 		}
 	}
 
-	&&--folder.tf-selected{
-		background:transparent;
-		&:hover{
-			background:var(--tf-fill-color-hover);
+	&&--folder.tf-active {
+		background: transparent;
+
+		&:hover {
+			background: var(--tf-fill-color-hover);
+		}
+	}
+
+	fluent-badge {
+		margin-left: -5px;
+
+		&::part(control) {
+			border-radius: 50%;
+			font-size: 12px;
+			min-width:12px;
+			padding:1px 3px;
+			background: var(--tf-fill-color-base);
+		}
+	}
+
+	&--active {
+		fluent-badge::part(control) {
+			background: var(--tf-white);
 		}
 	}
 }
 
 
-/*::deep.tf-menu-item {
+/*::deep.tf-menu__item {
 	display: flex;
 	padding-left: calc(var(--design-unit) * 2px);
 }
@@ -126,7 +136,7 @@
 
 
 
-::deep .tf-menu-item.selected a .positioning-region::before {
+::deep .tf-menu__item.selected a .positioning-region::before {
 	display: block !important;
 	content: "";
 	position: absolute;

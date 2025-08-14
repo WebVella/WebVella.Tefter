@@ -19,7 +19,7 @@ public record TfSpaceViewColumnType
 		Id = model.AddonId;
 		Name = model.AddonName;
 		Description = model.AddonDescription;
-		FluentIcon = TfConstants.GetIcon(model.AddonFluentIconName) ?? TfConstants.PageIcon;
+		FluentIcon = TfConstants.GetIcon(model.AddonFluentIconName) ?? TfConstants.GetIcon("Document") ?? TfConstants.ErrorIcon;
 		DataMapping = model.DataMapping;
 		DefaultComponentId = model.DefaultComponentId;
 		SupportedComponents = model.SupportedComponents;

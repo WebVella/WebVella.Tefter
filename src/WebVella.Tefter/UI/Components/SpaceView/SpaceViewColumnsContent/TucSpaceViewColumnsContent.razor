@@ -12,13 +12,13 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="@TfConstants.SpaceDataIcon" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
-						   Area="@_space?.Name" Title="@LOC(TfConstants.SpaceDataMenuTitle)" SubTitle="@_spaceView.Name" />
+			<TucPageHeader Icon="@TfConstants.GetIcon("Table")" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
+						   Area="@($"{_space?.Name} : {LOC(TfConstants.SpaceViewMenuTitle)}")" Title="@_spaceView.Name" SubTitle="@LOC("Columns")" />
 
-			<TucCard Title="@LOC("Details")">
+			<TucCard Title="@LOC("Presented Columns")">
 				<ToolbarTemplate>
 					<FluentButton OnClick="_addColumn" Appearance="@Appearance.Outline">
-						<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start" />
 						@LOC("Add new")
 					</FluentButton>
 				</ToolbarTemplate>
@@ -39,10 +39,10 @@
 												<div>
 													<FluentStack Wrap="false">
 														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _editColumn(context))" Title="@LOC("Edit column")"
-																	  Disabled="_submitting" IconStart="@TfConstants.EditIcon" />
+																  Disabled="_submitting" IconStart="@TfConstants.GetIcon("Edit")" />
 														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteColumn(context))" Title="@LOC("Delete column")"
 																	  Disabled="_submitting">
-															<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+														<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
 														</FluentButton>
 														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _moveColumn(context, true))" Title="@LOC("Move up")"
 																	  Disabled="@(_submitting || context.Position == 1)" IconStart="@TfConstants.GetIcon("ArrowUp")" />

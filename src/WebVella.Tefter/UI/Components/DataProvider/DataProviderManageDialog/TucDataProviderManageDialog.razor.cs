@@ -42,7 +42,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create data provider") : LOC("Manage data provider");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
+		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 		if (_isCreate)
 		{
 			_form = new TfCreateDataProvider

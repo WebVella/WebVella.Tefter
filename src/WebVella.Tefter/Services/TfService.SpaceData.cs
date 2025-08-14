@@ -23,6 +23,9 @@ public partial interface ITfService
 	public void DeleteSpaceData(
 		Guid id);
 
+	public TfSpaceData CopySpaceData(
+		Guid id);
+
 	public void MoveSpaceDataUp(
 		Guid id);
 
@@ -328,6 +331,58 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfSpaceDataDbo> failed.");
 
 				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	public TfSpaceData CopySpaceData(
+		Guid originalId)
+	{
+		TfSpaceData originalSD = GetSpaceData(originalId);
+		if (originalSD is null)
+			throw new Exception("Space data not found");
+
+		try
+		{
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var spaceDataList = GetSpaceDataList(originalSD.SpaceId);
+
+				var copyName = getSpaceDataCopyName(originalSD.Name, spaceDataList);
+				if (String.IsNullOrWhiteSpace(copyName))
+					throw new Exception("Space data copy name could not be generated");
+
+				TfSpaceData spaceData = new()
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = originalSD.DataProviderId,
+					Name = copyName,
+					SpaceId = originalSD.SpaceId,
+					Filters = originalSD.Filters ?? new List<TfFilterBase>(),
+					Columns = originalSD.Columns ?? new List<string>(),
+					SortOrders = originalSD.SortOrders ?? new List<TfSort>(),
+					Identities = originalSD.Identities,
+				};
+				new TfSpaceDataValidator(this)
+					.ValidateCreate(spaceData)
+					.ToValidationException()
+					.ThrowIfContainsErrors();
+
+				var dbo = ConvertModelToDbo(spaceData);
+				dbo.Position = (short)(spaceDataList.Count + 1);
+
+				var success = _dboManager.Insert<TfSpaceDataDbo>(dbo);
+
+				if (!success)
+					throw new TfDboServiceException("Insert<TfSpaceDataDbo> failed.");
+
+				scope.Complete();
+
+				return GetSpaceData(spaceData.Id);
 			}
 		}
 		catch (Exception ex)
@@ -887,5 +942,26 @@ public partial class TfService : ITfService
 		}
 	}
 
+	#endregion
+
+	#region << Private >>
+	private string? getSpaceDataCopyName(string originalName, List<TfSpaceData> spaceDataList)
+	{
+		var index = 1;
+		var presentNamesHS = spaceDataList.Select(x => x.Name).ToHashSet();
+
+		while (true)
+		{
+			var suggestion = $"{originalName} {index}";
+			if (!presentNamesHS.Contains(suggestion))
+				return suggestion;
+
+			index++;
+
+			if (index > 100000) break;
+		}
+
+		return null;
+	}
 	#endregion
 }

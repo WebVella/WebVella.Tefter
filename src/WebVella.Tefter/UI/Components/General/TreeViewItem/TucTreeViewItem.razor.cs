@@ -9,14 +9,14 @@ public partial class TucTreeViewItem : ComponentBase
 		get
 		{
 			var classList = new List<string>();
-			classList.Add("tf-menu-item");
+			classList.Add("tf-menu__item");
 			if (Item.Data is not null)
-				classList.Add($"tf-menu-item--{Item.Data.SpacePageType.ToDescriptionString()}");
+				classList.Add($"tf-menu__item--{Item.Data.SpacePageType.ToDescriptionString()}");
 
 			if (Item.OnClick is not null) classList.Add("tf-clickable");
 			if (Item.OnExpand is not null) classList.Add("tf-expandable");
 			if (Item.Expanded) classList.Add("tf-expanded");
-			if (Item.Selected) classList.Add("tf-selected");
+			if (Item.Selected) classList.Add("tf-active");
 			if (Item.Items.Count > 0) classList.Add("tf-parent");
 
 			return String.Join(" ", classList);

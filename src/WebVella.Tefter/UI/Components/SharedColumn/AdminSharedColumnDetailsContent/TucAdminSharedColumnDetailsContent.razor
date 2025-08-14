@@ -12,18 +12,18 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="@TfConstants.AdminRoleIcon" IconColor="@TfConstants.AdminColor" Class="page-title"
+			<TucPageHeader Icon="@TfConstants.GetIcon("BookDatabase")" IconColor="@TfConstants.AdminColor" Class="page-title"
 						   Area="@LOC(TfConstants.AdminSharedColumnsMenuTitle)" Title="@_column.DbName" />
 
 			<TucCard Title="@LOC("Details")">
 				<ToolbarTemplate>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteRole">
 						@LOC("Delete")
-						<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(TfColor.Red600.GetAttribute().Value)" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" Slot="start" />
 					</FluentButton>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_editRole">
 						@LOC("Edit")
-						<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
 					</FluentButton>
 				</ToolbarTemplate>
 				<ChildContent>

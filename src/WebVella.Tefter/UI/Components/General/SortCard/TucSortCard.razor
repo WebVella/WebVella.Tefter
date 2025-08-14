@@ -25,7 +25,7 @@
 			{
 				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
 			}
-			<FluentButton OnClick="_addSortColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline"
+			<FluentButton OnClick="_addSortColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
 						  Disabled="@(AllColumnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
 		</FluentStack>
 	</ToolbarTemplate>
@@ -63,7 +63,7 @@
 									<div>
 										<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteSortColumn(context))" Title="@LOC("Delete sort order")"
 													  Disabled="_submitting">
-											<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+										<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
 										</FluentButton>
 									</div>
 								</td>

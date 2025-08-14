@@ -108,85 +108,18 @@ public partial class TucSpaceDataDetailsContent : TfBaseComponent, IDisposable
 		}
 	}
 
-	private async Task _onAddColumn(TfSpaceDataColumn column)
+	private void _copySpaceData()
 	{
 		try
 		{
-			TfSpaceDataUIService.AddSpaceDataColumn(_spaceData.Id, column);
-			ToastService.ShowSuccess("Dataset column added!");
+			TfSpaceDataUIService.CopySpaceData(_spaceData.Id);
+			ToastService.ShowSuccess(LOC("Space copied"));
 		}
 		catch (Exception ex)
 		{
 			ProcessException(ex);
 		}
-		finally
-		{
-			await InvokeAsync(StateHasChanged);
-		}
 	}
 
-	private async Task _onRemoveColumn(TfSpaceDataColumn column)
-	{
-		try
-		{
-			TfSpaceDataUIService.RemoveSpaceDataColumn(_spaceData.Id, column);
-			ToastService.ShowSuccess("Dataset column removed!");
-		}
-		catch (Exception ex)
-		{
-			ProcessException(ex);
-		}
-		finally
-		{
-			await InvokeAsync(StateHasChanged);
-		}
-	}
-
-	private async Task _onFiltersChanged(List<TfFilterBase> filters)
-	{
-		_spaceData.Filters = filters;
-		await _saveFilters();
-	}
-
-	private async Task _saveFilters()
-	{
-		if (_submitting) return;
-		try
-		{
-			_submitting = true;
-			await InvokeAsync(StateHasChanged);
-			TfSpaceDataUIService.UpdateSpaceDataFilters(_spaceData.Id, _spaceData.Filters);
-			ToastService.ShowSuccess("Dataset updated!");
-		}
-		catch (Exception ex)
-		{
-			ProcessException(ex);
-		}
-		finally
-		{
-			_submitting = false;
-			await InvokeAsync(StateHasChanged);
-		}
-	}
-
-	private async Task _onSortChanged(List<TfSort> sorts)
-	{
-		if (_submitting) return;
-		try
-		{
-			_submitting = true;
-			await InvokeAsync(StateHasChanged);
-			TfSpaceDataUIService.UpdateSpaceDataSorts(_spaceData.Id, sorts);
-			ToastService.ShowSuccess("Dataset updated!");
-		}
-		catch (Exception ex)
-		{
-			ProcessException(ex);
-		}
-		finally
-		{
-			await InvokeAsync(StateHasChanged);
-		}
-	}
 
 }
