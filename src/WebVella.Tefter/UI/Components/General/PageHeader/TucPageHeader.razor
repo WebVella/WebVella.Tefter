@@ -1,9 +1,15 @@
 ﻿@namespace WebVella.Tefter.UI.Components
-@inherits ComponentBase
+@inherits TfBaseComponent
 
 <div class="@_cssClass" style="@Style">
 	<div class="tf-page-header__primary">
 		<div class="tf-page-header__primary__left">
+			@if (!String.IsNullOrWhiteSpace(_returnUrl))
+			{
+				<div class="tf-page-header__primary__back-btn">
+					<FluentAnchor Appearance="@Appearance.Outline" Href="@_returnUrl" IconStart="@TfConstants.GetIcon("ChevronLeft")">@LOC("Back")</FluentAnchor>
+				</div>
+			}
 			@if (Icon is not null)
 			{
 				<div class="tf-page-header__primary__icon-wrapper">

@@ -26,10 +26,6 @@
 					}
 					else
 					{
-						<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteRole">
-							@LOC("Delete")
-							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" Slot="start" />
-						</FluentButton>
 						<FluentButton Appearance="@Appearance.Outline" OnClick="_editRole">
 							@LOC("Edit")
 							<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
@@ -137,6 +133,28 @@
 						</table>
 					}
 				</ChildContent>
+			</TucCard>
+
+			<TucCard>
+				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+					<div>@LOC("Before you can delete the role, you need to remove all assigned users first")</div>
+					<div>
+					@if (_role.IsSystem)
+					{
+						<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be deleted")">
+							@LOC("Locked")
+							<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
+						</FluentButton>
+					}
+					else
+					{
+						<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteRole">
+							@LOC("Delete Role")
+							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
+						</FluentButton>
+					}
+					</div>
+				</FluentStack>
 			</TucCard>
 		}
 	</div>

@@ -28,7 +28,7 @@ public partial record TfNavigationState
 	public bool SearchInBookmarks { get; init; } = true;
 	public bool SearchInSaves { get; init; } = true;
 	public bool SearchInViews { get; init; } = true;
-
+	public string? ReturnUrl { get; init; } = null;
 	public TfNavigationState AddRouteNodes(params RouteDataNode[] nodes)
 	{
 		var routeData = RouteNodes.ToList();

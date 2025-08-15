@@ -17,11 +17,7 @@
 
 			<TucCard Title="@LOC("Details")">
 				<ToolbarTemplate>
-					<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteRole">
-						@LOC("Delete")
-						<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" Slot="start" />
-					</FluentButton>
-					<FluentButton Appearance="@Appearance.Outline" OnClick="_editRole">
+					<FluentButton Appearance="@Appearance.Outline" OnClick="_editItem">
 						@LOC("Edit")
 						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
 					</FluentButton>
@@ -91,6 +87,18 @@
 						</table>
 					}
 				</ChildContent>
+			</TucCard>
+
+			<TucCard>
+				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+					<div>@LOC("Deleting this shared column will remove all its data, but will not alter the data of any related data providers or applications ")</div>
+					<div>
+						<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteItem">
+							@LOC("Delete this Shared column")
+							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
+						</FluentButton>
+					</div>
+				</FluentStack>
 			</TucCard>
 		}
 	</div>

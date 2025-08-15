@@ -12,6 +12,7 @@ public partial class TfConstants
 	public static string ActiveSaveQueryName = "svid";
 	public static string TabQueryName = "tab";
 	public static string PresetIdQueryName = "preset";
+	public static string ReturnUrlQueryName = "returnUrl";
 
 	public static string SearchInBookmarksQueryName = "sbkm";
 	public static string SearchInSavesQueryName = "ssvs";

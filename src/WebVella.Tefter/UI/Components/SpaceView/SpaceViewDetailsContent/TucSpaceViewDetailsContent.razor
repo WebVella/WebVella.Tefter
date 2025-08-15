@@ -99,10 +99,12 @@
 			<TucCard>
 				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
 					<div>@LOC("Any related pages to this space view will not be deleted and will show a message. Any related space data will not be deleted or changed.")</div>
+					<div>
 					<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteSpaceView">
 						@LOC("Delete this Space View")
 						<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
 					</FluentButton>
+					</div>
 				</FluentStack>
 			</TucCard>
 		}

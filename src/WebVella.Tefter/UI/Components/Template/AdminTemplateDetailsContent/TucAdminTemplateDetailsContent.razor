@@ -21,10 +21,6 @@
 
 			<TucCard Title="@LOC("General")">
 				<ToolbarTemplate>
-					<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteTemplate">
-						@LOC("Delete")
-						<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" Slot="start" />
-					</FluentButton>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_editTemplate">
 						@LOC("Update")
 						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
@@ -133,6 +129,17 @@
 				<ChildContent>
 					<TucScreenRegionComponent RegionContext="_dynamicComponentContext" Scope="@_dynamicComponentScope" Placeholder="@LOC("Template does not require additional settings")" />
 				</ChildContent>
+			</TucCard>
+			<TucCard>
+				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+					<div>@LOC("Deleting the template will make it unavailable for future use.")</div>
+					<div>
+						<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteTemplate">
+							@LOC("Delete this Template")
+							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
+						</FluentButton>
+					</div>
+				</FluentStack>
 			</TucCard>
 		}
 	</div>

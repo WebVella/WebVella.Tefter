@@ -72,10 +72,12 @@
 			<TucCard>
 				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
 					<div>@LOC("Deleting the Space Data will stop any related views from displaying data in their columns and show an error message instead")</div>
-					<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteSpaceData">
-						@LOC("Delete this Space Data")
-						<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
-					</FluentButton>
+					<div>
+						<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteSpaceData">
+							@LOC("Delete this Space Data")
+							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
+						</FluentButton>
+					</div>
 				</FluentStack>
 			</TucCard>
 		}

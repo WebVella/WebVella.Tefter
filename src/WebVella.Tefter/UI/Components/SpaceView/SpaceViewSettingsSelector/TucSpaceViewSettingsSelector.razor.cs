@@ -22,48 +22,21 @@ public partial class TucSpaceViewSettingsSelector : TfBaseComponent
 
 	private void _manageView()
 	{
-		Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, SpaceView.SpaceId, SpaceView.Id));
+		var url = NavigatorExt.AddQueryValueToUri(
+			url: string.Format(TfConstants.SpaceViewPageUrl, SpaceView.SpaceId, SpaceView.Id),
+			paramName: TfConstants.ReturnUrlQueryName,
+			Navigator.GetLocalUrl()
+			);
+		Navigator.NavigateTo(url);
 	}
 	private void _manageData()
 	{
-		Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, SpaceView.SpaceId, SpaceView.SpaceDataId));
+		var url = NavigatorExt.AddQueryValueToUri(
+			url: string.Format(TfConstants.SpaceDataPageUrl, SpaceView.SpaceId, SpaceView.SpaceDataId),
+			paramName: TfConstants.ReturnUrlQueryName,
+			Navigator.GetLocalUrl()
+			);
+		Navigator.NavigateTo(url);
 	}
-
-	private async Task _deleteView()
-	{
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this view deleted?")))
-			return;
-		try
-		{
-
-			TfSpaceViewUIService.DeleteSpaceView(SpaceView.Id);
-			ToastService.ShowSuccess(LOC("Space view deleted"));
-
-			var spacePages = TfSpaceUIService.GetSpacePages(SpaceView.SpaceId);
-			Guid? firstPageId = null;
-			foreach (var page in spacePages)
-			{
-				var pageId = page.GetFirstNavigatedPageId();
-				if (pageId is not null)
-				{
-					firstPageId = pageId;
-					break;
-				}
-			}
-			if (firstPageId is not null)
-				Navigator.NavigateTo(string.Format(TfConstants.SpacePagePageUrl,SpaceView.SpaceId, firstPageId.Value));
-			else
-				Navigator.NavigateTo(TfConstants.HomePageUrl);
-		}
-		catch (Exception ex)
-		{
-			ProcessException(ex);
-		}
-		finally
-		{
-			await InvokeAsync(StateHasChanged);
-		}
-	}
-
 
 }

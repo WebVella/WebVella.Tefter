@@ -19,10 +19,10 @@
 				}
 			</span>
 		}
-		@if (Item.Color is not null)
+@* 		@if (Item.Color is not null)
 		{
 			<span class="tf-menu__item__color" style="@($"background-color:{Item.Color.GetAttribute().Value}")"></span>
-		}
+		} *@
 	</FluentMenuItem>
 }
 else
@@ -46,10 +46,10 @@ else
 					}
 				</span>
 			}
-			@if (Item.Color is not null)
+@* 			@if (Item.Color is not null)
 			{
 				<span class="tf-menu__item__color" style="@($"background-color:{Item.Color.GetAttribute().Value}")"></span>
-			}
+			} *@
 		</ChildContent>
 		<MenuItems>
 			@foreach (var node in Item.Items)

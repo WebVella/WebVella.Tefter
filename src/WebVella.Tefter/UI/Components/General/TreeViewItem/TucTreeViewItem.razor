@@ -6,26 +6,26 @@ else
 {
 	<a id="@Item.Id" class="@_cssClass" href="@(String.IsNullOrWhiteSpace(Item.Url) ? "#" : Item.Url)"
 	   @onclick="@_onClick" @onclick:stopPropagation @onclick:preventDefault>
-		<span class=tf-menu__item__content>
+		<span class=tf-treemenu__item__content>
 			@if (Item.Icon is not null)
 			{
-				<span class="tf-menu__item__icon"><FluentIcon Value="@Item.Icon" /></span>
+				<span class="tf-treemenu__item__icon"><FluentIcon Value="@Item.Icon" /></span>
 			}
 			@if (!String.IsNullOrWhiteSpace(Item.Text) && !String.IsNullOrWhiteSpace(Item.Description))
 			{
-				<span class="tf-menu__item__titleblock">
-					<span class="tf-menu__item__title" title="@Item.Text">@Item.Text</span>
-					<span class="tf-menu__item__description" title="@Item.Description">@Item.Description</span>
+				<span class="tf-treemenu__item__titleblock">
+					<span class="tf-treemenu__item__title" title="@Item.Text">@Item.Text</span>
+					<span class="tf-treemenu__item__description" title="@Item.Description">@Item.Description</span>
 				</span>
 			}
 			else if (!String.IsNullOrWhiteSpace(Item.Text))
 			{
-				<span class="tf-menu__item__title" title="@Item.Text">@Item.Text</span>
+				<span class="tf-treemenu__item__title" title="@Item.Text">@Item.Text</span>
 			}
 			@if (Item.Items.Count > 0)
 			{
-				<span class="tf-menu__item__expander" @onclick=@(() => Item.OnExpand(!Item.Expanded)) @onclick:stopPropagation @onclick:preventDefault>
-					<FluentIcon Value="@(Item.Expanded ? TfConstants.GetIcon("ChevronDown") : TfConstants.GetIcon("ChevronRight"))" />
+				<span class="tf-treemenu__item__expander" @onclick=@(() => Item.OnExpand(!Item.Expanded)) @onclick:stopPropagation @onclick:preventDefault>
+					<FluentIcon Value="@(Item.Expanded? TfConstants.GetIcon("Subtract") : TfConstants.GetIcon("Add"))" />
 				</span>
 			}
 		</span>
@@ -33,7 +33,7 @@ else
 
 	@if (Item.Items.Count > 0 && Item.Expanded)
 	{
-		<div class="tf-menu tf-submenu">
+		<div class="tf-treemenu tf-submenu">
 			@foreach (var item in Item.Items)
 			{
 				<TucTreeViewItem Item="item" />

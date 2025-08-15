@@ -492,6 +492,7 @@ fluent-button::part(end) {
   margin-inline-start: 0.25rem;
 }
 fluent-anchor {
+  border-radius: var(--tf-border-radius-xl);
   /*&.accent {
 		svg {
 			fill: var(--tf-white) !important;
@@ -900,6 +901,7 @@ fluent-dialog .tf-divider,
   background: var(--tf-fill-color-invert);
   border-color: var(--tf-stroke-invert-base);
   font-weight: var(--tf-font-weight-lg);
+  min-width: 90px;
 }
 .tf-grid thead tr > th,
 .tf-grid thead tr > td {
@@ -991,7 +993,7 @@ fluent-dialog .tf-divider,
 .tf-grid tbody tr > th > div,
 .tf-grid tbody tr > td > div {
   border-radius: calc(var(--tf-border-radius-sm) * 1px);
-  /*white-space: nowrap;*/
+  white-space: nowrap;
   text-overflow: ellipsis;
   padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
   min-height: 42px;
@@ -1652,6 +1654,16 @@ fluent-dialog .tf-divider,
   justify-content: center;
   align-items: center;
 }
+.tf-page-header__primary__back-btn {
+  flex: 0 0 auto;
+  padding-right: 0.5rem;
+  display: flex;
+  align-items: center;
+  padding-top: 5px;
+}
+.tf-page-header__primary__back-btn fluent-anchor {
+  background: var(--tf-white);
+}
 .tf-page-header__primary__meta__area {
   color: var(--tf-font-color-mute);
   font-size: var(--tf-font-size-sm);
@@ -2063,6 +2075,125 @@ fluent-dialog .tf-divider,
 .modal-with-tabs__menu {
   flex: 1 1 auto;
 }
+.tf-treemenu {
+  width: 100%;
+}
+.tf-submenu .tf-treemenu__item__content {
+  padding-left: 24px;
+}
+.tf-submenu .tf-submenu .tf-treemenu__item__content {
+  padding-left: 48px;
+}
+.tf-submenu .tf-submenu .tf-submenu .tf-treemenu__item__content {
+  padding-left: 72px;
+}
+.tf-submenu .tf-submenu .tf-submenu .tf-submenu .tf-treemenu__item__content {
+  padding-left: 96px;
+}
+.tf-treemenu__item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: calc(var(--design-unit) * 1px) 0;
+  text-decoration: none;
+  min-height: calc(((var(--base-height-multiplier) + var(--density))*var(--design-unit) + 1)*1px);
+  padding-left: 0.5rem;
+  padding-right: 0.25rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  color: var(--neutral-foreground-rest);
+  border-radius: 0;
+  /*	&:hover {
+		background-color: var(--tf-fill-color-hover);
+	}
+*/
+  /*	&:not(.tf-active):hover {
+		background: transparent;
+	}*/
+}
+.tf-treemenu__item__content {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+.tf-treemenu__item__icon {
+  flex: 0 0 23px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+.tf-treemenu__item__icon svg {
+  width: 20px;
+}
+.tf-treemenu__item__titleblock {
+  flex: 1 1 auto;
+  display: flex;
+  flex-flow: column;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tf-treemenu__item__title {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+.tf-treemenu__item__description {
+  font-size: 0.85em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  line-height: 1em;
+}
+.tf-treemenu__item__expander {
+  flex: 0 0 24px;
+  /*pointer-events: none;*/
+  border-radius: 50%;
+  background: var(--tf-white);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.tf-active .tf-treemenu__item__expander {
+  background: var(--tf-fill-color-invert);
+}
+.tf-treemenu__item__expander svg {
+  width: 16px !important;
+  /*fill: var(--neutral-foreground-rest) !important;*/
+}
+.tf-treemenu__item.tf-active {
+  position: relative;
+  background: var(--tf-white);
+}
+.tf-treemenu__item.tf-active::before {
+  display: none !important;
+}
+/*::deep.tf-treemenu-item {
+	display: flex;
+	padding-left: calc(var(--design-unit) * 2px);
+}
+
+
+
+
+::deep .tf-treemenu-item.selected a .positioning-region::before {
+	display: block !important;
+	content: "";
+	position: absolute;
+	background-color: var(--accent-fill-rest);
+	border-radius: calc(var(--control-corner-radius)* 1px);
+	right: unset;
+	width: 3px;
+	height: calc(((var(--base-height-multiplier) + var(--density))* var(--design-unit) / 2)* 1px);
+	margin: 0 2px;
+	z-index: 5;
+}
+*/
 .tf-validation .fluent-messagebar .fluent-messagebar-message {
   padding: 5px 0 !important;
 }

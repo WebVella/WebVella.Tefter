@@ -9,9 +9,9 @@ public partial class TucTreeViewItem : ComponentBase
 		get
 		{
 			var classList = new List<string>();
-			classList.Add("tf-menu__item");
+			classList.Add("tf-treemenu__item");
 			if (Item.Data is not null)
-				classList.Add($"tf-menu__item--{Item.Data.SpacePageType.ToDescriptionString()}");
+				classList.Add($"tf-treemenu__item--{Item.Data.SpacePageType.ToDescriptionString()}");
 
 			if (Item.OnClick is not null) classList.Add("tf-clickable");
 			if (Item.OnExpand is not null) classList.Add("tf-expandable");

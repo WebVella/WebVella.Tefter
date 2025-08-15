@@ -59,7 +59,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 		}
 	}
 
-	private async Task _editRole()
+	private async Task _editItem()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSharedColumnManageDialog>(
 				_column,
@@ -77,7 +77,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 		}
 	}
 
-	private async Task _deleteRole()
+	private async Task _deleteItem()
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?") + "\r\n" + LOC("This will delete all related data too!")))
 			return;

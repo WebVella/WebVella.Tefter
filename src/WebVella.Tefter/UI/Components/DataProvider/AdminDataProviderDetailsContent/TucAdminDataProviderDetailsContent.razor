@@ -16,10 +16,6 @@
 						   Title="@_provider.Name" SubTitle="@LOC("Details")" IconColor="TfConstants.AdminColor" />
 			<TucCard Title="@LOC("Details")">
 				<ToolbarTemplate>
-					<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteProvider" Loading="_isDeleting" Disabled="_isDeleting">
-						@LOC("Delete")
-						<FluentIcon Value="@TfConstants.GetIcon("Delete")" Color="@Color.Error" Slot="start" />
-					</FluentButton>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_editProvider">
 						@LOC("Edit")
 						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
@@ -70,6 +66,17 @@
 						</FluentGridItem>
 					</FluentGrid>
 				</ChildContent>
+			</TucCard>
+			<TucCard>
+				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+					<div>@LOC("When a data provider is deleted all data that it holds will be deleted too. Data related to this data provider, but stored in shared columns, applications or other data providers will not be deleted. Thus, if recreate matching data identities in the future these relations will hold")</div>
+					<div>
+						<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteProvider">
+							@LOC("Delete this Data Provider")
+							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
+						</FluentButton>
+					</div>
+				</FluentStack>
 			</TucCard>
 		}
 	</div>
