@@ -26,6 +26,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
 	private List<Guid> _selectedDataRows = new();
 	private Dictionary<string, object> _contextData = new();
+	private string _tableId = "space-view-table";
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
@@ -44,6 +45,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 		if (firstRender)
 		{
 			TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+			await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable",_tableId);
 		}
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -218,12 +220,18 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 	{
 		if (_isDataLoading) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>{
+		var queryDict = new Dictionary<string, object?>{
 			{ TfConstants.SearchQueryName, null},
 			{ TfConstants.FiltersQueryName, null},
-			{ TfConstants.SortsQueryName, null}
+			{ TfConstants.SortsQueryName, null},
+			{TfConstants.PageQueryName,1}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
+	}
+
+	private async Task _onClearPersonalization()
+	{
+
 	}
 
 	//Select Handlers

@@ -882,6 +882,9 @@ fluent-dialog .tf-divider,
   margin-bottom: 0;
   background: var(--tf-white);
 }
+.tf-grid-wrapper {
+  margin-right: var(--tf-layout-content-padding);
+}
 .tf-grid thead {
   position: sticky;
   top: 0px;
@@ -902,6 +905,31 @@ fluent-dialog .tf-divider,
   border-color: var(--tf-stroke-invert-base);
   font-weight: var(--tf-font-weight-lg);
   min-width: 90px;
+  position: relative;
+}
+.tf-grid thead tr > th .resize-handle,
+.tf-grid thead tr > td .resize-handle {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: var(--accent-fill-rest);
+  content: "";
+  cursor: col-resize;
+}
+.tf-grid thead tr > th:hover .resize-handle,
+.tf-grid thead tr > td:hover .resize-handle,
+.tf-grid thead tr > th.tf-resizing .resize-handle,
+.tf-grid thead tr > td.tf-resizing .resize-handle {
+  display: block;
+}
+.tf-grid thead tr > th.tf-resizing .resize-handle,
+.tf-grid thead tr > td.tf-resizing .resize-handle,
+.tf-grid thead tr > th .resize-handle:hover,
+.tf-grid thead tr > td .resize-handle:hover {
+  background: var(--tf-orange-600);
 }
 .tf-grid thead tr > th,
 .tf-grid thead tr > td {
@@ -993,7 +1021,7 @@ fluent-dialog .tf-divider,
 .tf-grid tbody tr > th > div,
 .tf-grid tbody tr > td > div {
   border-radius: calc(var(--tf-border-radius-sm) * 1px);
-  white-space: nowrap;
+  /*white-space: nowrap;*/
   text-overflow: ellipsis;
   padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
   min-height: 42px;
@@ -1317,6 +1345,18 @@ fluent-dialog .tf-divider,
 .tf-header fluent-menu fluent-menu-item::part(end) {
   position: relative;
   top: 1px !important;
+}
+.tf-hover-switch__unhover {
+  display: block;
+}
+.tf-hover-switch:hover .tf-hover-switch__unhover {
+  display: none;
+}
+.tf-hover-switch__hover {
+  display: none;
+}
+.tf-hover-switch:hover .tf-hover-switch__hover {
+  display: block;
 }
 .tf-layout-centered-content {
   height: 100vh;

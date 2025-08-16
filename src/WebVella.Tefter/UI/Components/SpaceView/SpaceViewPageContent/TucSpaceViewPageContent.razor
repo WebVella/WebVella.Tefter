@@ -27,9 +27,11 @@ else
 											SpaceData="_spaceData"
 											OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" OnClearFilter="_onClearFilter"
 											OnSelectAll="_onSelectAll" SelectAllLoading="_selectAllLoading" OnDeSelectAll="_onDeSelectAll"
-											SelectedRows="_selectedDataRows" />
+											SelectedRows="_selectedDataRows" OnClearPersonalization="_onClearPersonalization" />
+
+			<div>NOTE: View personalization is based on view+column+preset key. Size customization, color+background customization, sort order personalization</div>
 			<div class="tf-grid-wrapper">
-				<table class="tf-grid">
+				<table class="tf-grid" id="@_tableId">
 					<colgroup>
 						@foreach (var index in configCss.Keys)
 						{
@@ -82,6 +84,7 @@ else
 											</div>
 										}
 									</div>
+									<div class="resize-handle" data-column="@column.Position"></div>
 								</th>
 								columnIndex++;
 							}

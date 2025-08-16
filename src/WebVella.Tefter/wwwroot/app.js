@@ -170,6 +170,93 @@
 			return true;
 		}
 		return false;
+	},
+	makeTableResizable: function (tableId) {
+		const table = document.getElementById(tableId);
+		if(table == null) return;
+		const colgroup = table.querySelector('colgroup');
+		if(colgroup == null) return;
+		const headers = table.querySelectorAll('th');
+		if(headers == null) return;
+		if (!colgroup) {
+			console.warn('No colgroup found in table');
+			return;
+		}
+
+		// Get all col elements
+		const cols = colgroup.querySelectorAll('col');
+
+		// Add resize handles to each header (except first)
+		headers.forEach((header, index) => {
+			if (index === 0) return; // First column is unresizable
+
+			const handle = document.createElement('div');
+			handle.className = 'resize-handle';
+			handle.setAttribute('data-column', index);
+
+			header.appendChild(handle);
+
+			// Add mouse event listeners
+			handle.addEventListener('mousedown', (e) => {
+				e.preventDefault();
+				startResize(e, index, cols, headers);
+			});
+		});
+
+		function startResize(e, columnIndex, cols, headers) {
+			const startX = e.clientX;
+			const colElement = cols[columnIndex];
+			const thElement = headers[columnIndex];
+
+			if (!colElement) return;
+
+			//remove minWith
+			colElement.style.minWidth = "unset";
+
+			//add resizing class to th
+			thElement.classList.add("tf-resizing");
+
+			// Get current width and min-width
+			const startWidth = parseFloat(getComputedStyle(colElement).width);
+			const startMinWidth = parseFloat(getComputedStyle(colElement).minWidth) || 30;
+
+			document.body.style.cursor = 'col-resize';
+			document.body.style.userSelect = 'none';
+
+			// Create a temporary element to track resize
+			const resizeTracker = document.createElement('div');
+			resizeTracker.style.position = 'fixed';
+			resizeTracker.style.top = '0';
+			resizeTracker.style.left = '0';
+			resizeTracker.style.width = '100%';
+			resizeTracker.style.height = '100%';
+			resizeTracker.style.zIndex = '9999';
+			document.body.appendChild(resizeTracker);
+
+			function doResize(e) {
+				const diff = e.clientX - startX;
+				const newWidth = Math.max(startMinWidth, startWidth + diff); // Respect min-width
+
+				// Update both width and min-width styles
+				colElement.style.width = newWidth + 'px';
+				colElement.style.minWidth = newWidth + 'px';
+
+				// Also update the header width for visual consistency
+				//headers[columnIndex].style.width = newWidth + 'px';
+			}
+
+			function stopResize() {
+				document.body.style.cursor = '';
+				document.body.style.userSelect = '';
+				document.removeEventListener('mousemove', doResize);
+				document.removeEventListener('mouseup', stopResize);
+				document.body.removeChild(resizeTracker);
+				thElement.classList.remove("tf-resizing");
+			}
+
+			document.addEventListener('mousemove', doResize);
+			document.addEventListener('mouseup', stopResize);
+		}
 	}
 
 }

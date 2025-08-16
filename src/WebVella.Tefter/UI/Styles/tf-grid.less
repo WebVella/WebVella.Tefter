@@ -36,6 +36,10 @@
 	margin-bottom: 0;
 	background: var(--tf-white);
 
+	&-wrapper {
+		margin-right: var(--tf-layout-content-padding);
+	}
+
 	thead {
 		position: sticky;
 		top: 0px;
@@ -59,7 +63,30 @@
 			background: var(--tf-fill-color-invert);
 			border-color: var(--tf-stroke-invert-base);
 			font-weight: var(--tf-font-weight-lg);
-			min-width:90px;
+			min-width: 90px;
+			position: relative;
+
+			.resize-handle {
+				display: none;
+				position: absolute;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				width: 5px;
+				background: var(--accent-fill-rest);
+				content: "";
+				cursor: col-resize;
+			}
+
+			&:hover, &.tf-resizing {
+				.resize-handle {
+					display: block;
+				}
+			}
+
+			&.tf-resizing .resize-handle, .resize-handle:hover {
+				background: var(--tf-orange-600);
+			}
 		}
 
 		& tr > th,
@@ -159,10 +186,10 @@
 
 				& > div {
 					border-radius: calc(var(--tf-border-radius-sm) * 1px);
-					white-space: nowrap;
+					/*white-space: nowrap;*/
 					text-overflow: ellipsis;
 					padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
-					min-height:42px;
+					min-height: 42px;
 				}
 
 				&.multiline-text {
