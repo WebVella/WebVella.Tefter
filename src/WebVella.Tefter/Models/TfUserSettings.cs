@@ -15,4 +15,7 @@ public class TfUserSettings
 	public CultureInfo Culture { get =>  new CultureInfo(String.IsNullOrWhiteSpace(CultureName) ? "en-US" : CultureName); }
 	public string StartUpUrl { get; init; } = null;
 	public int? PageSize { get; init; } = null;
+
+	public List<TfUserViewColumnPersonalization> ViewColumnPersonalizations { get; init; } = new();
+	public List<TfUserPresetSortPersonalization> PresetSortPersonalizations { get; init; } = new();
 }

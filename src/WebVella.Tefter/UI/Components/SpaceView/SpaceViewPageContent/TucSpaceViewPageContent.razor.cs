@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewPageContent.TucSpaceViewPageContent", "WebVella.Tefter")]
-public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
+public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 {
 	// Dependency Injection
 	[Inject] private ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
@@ -11,12 +11,14 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	// State
+	private DotNetObjectReference<TucSpaceViewPageContent> _objectRef;
 	private bool _isDataLoading = true;
 	private bool _selectAllLoading = false;
 	private ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> _componentMetaDict = default!;
 	public TfNavigationState _navState = default!;
 	private int _page = 1;
 	private int _pageSize = TfConstants.PageSize;
+	private TfUser _currentUser = default!;
 	private TfSpace? _space = null;
 	private TfSpacePage? _spacePage = null;
 	private TfSpaceView? _spaceView = null;
@@ -27,14 +29,21 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 	private List<Guid> _selectedDataRows = new();
 	private Dictionary<string, object> _contextData = new();
 	private string _tableId = "space-view-table";
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		_objectRef?.Dispose();
+		try
+		{
+			await JSRuntime.InvokeAsync<bool>("Tefter.removeColumnResizeListener", ComponentId);
+		}
+		catch { }
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		_componentMetaDict = TfMetaUIService.GetSpaceViewColumnComponentDict();
+		_objectRef = DotNetObjectReference.Create(this);
 		await _init();
 		_isDataLoading = false;
 	}
@@ -45,7 +54,10 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 		if (firstRender)
 		{
 			TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-			await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable",_tableId);
+			await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable", _tableId);
+			await JSRuntime.InvokeAsync<bool>(
+								 "Tefter.addColumnResizeListener",
+								 _objectRef, ComponentId, "OnColumnResized");
 		}
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -88,7 +100,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 				_spaceViewColumns = TfSpaceViewUIService.GetViewColumns(_spaceView.Id);
 				_selectedDataRows = new();
 			}
-
+			_currentUser = await TfUserUIService.GetCurrentUserAsync()
+				?? throw new Exception("User cannot be null");
 			_page = _navState.Page ?? 1;
 			_pageSize = _navState.PageSize ?? TfConstants.PageSize;
 
@@ -477,5 +490,17 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IDisposable
 		}
 
 		return allSelected;
+	}
+
+	[JSInvokable("OnColumnResized")]
+	public async Task OnColumnResized(int position, int width)
+	{
+		var column = _spaceViewColumns.SingleOrDefault(x => x.Position == position);
+		if (column is null) return;
+		await TfUserUIService.SetViewColumnPersonalizationWidth(
+		 userId: _currentUser.Id,
+		 spaceViewId: _spaceView.Id,
+		 spaceViewColumnId: column.Id,
+		 width: width);
 	}
 }

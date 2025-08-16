@@ -2,10 +2,12 @@
 	HtmlEditors: {},
 	HtmlEditorsChangeListeners: {},
 	HtmlEditorsEnterListeners: {},
+	ColumnResizeListeners: {},
 	dispose: function () {
 		Tefter.HtmlEditors = {};
 		Tefter.HtmlEditorsChangeListeners = {};
 		Tefter.HtmlEditorsEnterListeners = {};
+		ColumnResizeListeners = {};
 	},
 	copyToClipboard: function (text) {
 		if (window.isSecureContext) {
@@ -173,11 +175,11 @@
 	},
 	makeTableResizable: function (tableId) {
 		const table = document.getElementById(tableId);
-		if(table == null) return;
+		if (table == null) return;
 		const colgroup = table.querySelector('colgroup');
-		if(colgroup == null) return;
+		if (colgroup == null) return;
 		const headers = table.querySelectorAll('th');
-		if(headers == null) return;
+		if (headers == null) return;
 		if (!colgroup) {
 			console.warn('No colgroup found in table');
 			return;
@@ -190,12 +192,8 @@
 		headers.forEach((header, index) => {
 			if (index === 0) return; // First column is unresizable
 
-			const handle = document.createElement('div');
-			handle.className = 'resize-handle';
-			handle.setAttribute('data-column', index);
-
-			header.appendChild(handle);
-
+			let handle = header.querySelector('.resize-handle');
+			if (handle == null) return;
 			// Add mouse event listeners
 			handle.addEventListener('mousedown', (e) => {
 				e.preventDefault();
@@ -207,7 +205,7 @@
 			const startX = e.clientX;
 			const colElement = cols[columnIndex];
 			const thElement = headers[columnIndex];
-
+			let newWidth = 0;
 			if (!colElement) return;
 
 			//remove minWith
@@ -235,14 +233,15 @@
 
 			function doResize(e) {
 				const diff = e.clientX - startX;
-				const newWidth = Math.max(startMinWidth, startWidth + diff); // Respect min-width
-
+				newWidth = Math.max(startMinWidth, startWidth + diff); // Respect min-width
+				newWidth = parseInt(newWidth);
 				// Update both width and min-width styles
 				colElement.style.width = newWidth + 'px';
 				colElement.style.minWidth = newWidth + 'px';
 
 				// Also update the header width for visual consistency
 				//headers[columnIndex].style.width = newWidth + 'px';
+
 			}
 
 			function stopResize() {
@@ -252,11 +251,48 @@
 				document.removeEventListener('mouseup', stopResize);
 				document.body.removeChild(resizeTracker);
 				thElement.classList.remove("tf-resizing");
+
+				const event = new CustomEvent('tf-column-resize', {
+					detail: {
+						position: columnIndex,
+						width: newWidth
+					}
+				});
+				document.dispatchEvent(event);
 			}
 
 			document.addEventListener('mousemove', doResize);
 			document.addEventListener('mouseup', stopResize);
 		}
-	}
+	},
+	addColumnResizeListener: function (dotNetHelper, listenerId, methodName) {
+		Tefter.ColumnResizeListeners[listenerId] = { dotNetHelper: dotNetHelper, methodName: methodName };
+		return true;
+	},
+	removeColumnResizeListener: function (listenerId) {
+		if (Tefter.ColumnResizeListeners[listenerId]) {
+			delete Tefter.ColumnResizeListeners[listenerId];
+		}
+		return true;
+	},
+	executeColumnResizeListenerCallbacks: function (evtObj) {
+		if (Tefter.ColumnResizeListeners) {
+			for (const listenerId in Tefter.ColumnResizeListeners) {
+				const dotNetHelper = Tefter.ColumnResizeListeners[listenerId].dotNetHelper;
+				const methodName = Tefter.ColumnResizeListeners[listenerId].methodName;
+				if (dotNetHelper && methodName) {
+					dotNetHelper.invokeMethodAsync(methodName, evtObj.detail.position, evtObj.detail.width);
+				}
 
+				return true;
+			}
+		}
+		return false;
+	},
 }
+
+//Listeners
+document.addEventListener("tf-column-resize", function (evtObj) {
+	Tefter.executeColumnResizeListenerCallbacks(evtObj)
+
+});

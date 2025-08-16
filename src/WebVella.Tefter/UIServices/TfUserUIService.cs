@@ -31,6 +31,8 @@ public partial interface ITfUserUIService
 	Task<TfUser> SetStartUpUrl(Guid userId, string url);
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
+	Task<TfUser> SetViewColumnPersonalizationWidth(Guid userId, Guid spaceViewId, Guid spaceViewColumnId, int width);
+	Task<TfUser> RemoveSpaceViewColumnPersonalizations(Guid userId, Guid spaceViewId);
 
 
 	//Bookmarks
@@ -185,6 +187,22 @@ public partial class TfUserUIService : ITfUserUIService
 	public async Task<TfUser> SetPageSize(Guid userId, int? pageSize)
 	{
 		var user = await _tfService.SetPageSize(userId, pageSize);
+		_currentUser = user;
+		UserUpdated?.Invoke(this, user);
+		return user;
+	}
+
+	public async Task<TfUser> SetViewColumnPersonalizationWidth(Guid userId, Guid spaceViewId, Guid spaceViewColumnId, int width)
+	{
+		var user = await _tfService.SetSpaceViewColumnPersonalization(userId, spaceViewId, spaceViewColumnId, width);
+		_currentUser = user;
+		UserUpdated?.Invoke(this, user);
+		return user;
+	}
+
+	public async Task<TfUser> RemoveSpaceViewColumnPersonalizations(Guid userId, Guid spaceViewId)
+	{
+		var user = await _tfService.RemoveSpaceViewColumnPersonalizations(userId, spaceViewId);
 		_currentUser = user;
 		UserUpdated?.Invoke(this, user);
 		return user;

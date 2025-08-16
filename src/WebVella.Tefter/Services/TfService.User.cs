@@ -193,6 +193,8 @@ public partial interface ITfService
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
 
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
+	Task<TfUser> SetSpaceViewColumnPersonalization(Guid userId, Guid spaceViewId, Guid spaceViewColumnId, int width);
+	Task<TfUser> RemoveSpaceViewColumnPersonalizations(Guid userId, Guid spaceViewId);
 }
 
 public partial class TfService : ITfService
@@ -728,7 +730,9 @@ public partial class TfService : ITfService
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
 					.WithStartUpUrl(userDbo.Settings.StartUpUrl)
-					.WithPageSize(userDbo.Settings.PageSize);
+					.WithPageSize(userDbo.Settings.PageSize)
+					.WithViewColumnPersonalizations(userDbo.Settings.ViewColumnPersonalizations)
+					.WithPresetSortPersonalizations(userDbo.Settings.PresetSortPersonalizations);
 			}
 
 			return userBuilder.Build();
@@ -1188,6 +1192,45 @@ public partial class TfService : ITfService
 		TfUser user = GetUser(userId);
 		var userBld = CreateUserBuilder(user);
 		userBld.WithPageSize(pageSize);
+		await SaveUserAsync(userBld.Build());
+		return GetUser(userId);
+	}
+
+	public virtual async Task<TfUser> SetSpaceViewColumnPersonalization(Guid userId, Guid spaceViewId, Guid spaceViewColumnId, int width)
+	{
+		TfUser user = GetUser(userId);
+		var allPersonalization = user.Settings.ViewColumnPersonalizations.ToList();
+		var personalizationIndex = allPersonalization.FindIndex(x =>
+			x.SpaceViewId == spaceViewId
+			&& x.SpaceViewColumnId == spaceViewColumnId);
+		if (personalizationIndex == -1)
+		{
+			allPersonalization.Add(new TfUserViewColumnPersonalization
+			{
+				SpaceViewColumnId = spaceViewColumnId,
+				SpaceViewId = spaceViewColumnId,
+				Width = width
+			});
+		}
+		else
+		{
+			allPersonalization[personalizationIndex] = allPersonalization[personalizationIndex] with
+			{
+				Width = width
+			};
+		}
+		var userBld = CreateUserBuilder(user);
+		userBld.WithViewColumnPersonalizations(allPersonalization);
+		await SaveUserAsync(userBld.Build());
+		return GetUser(userId);
+	}
+
+	public virtual async Task<TfUser> RemoveSpaceViewColumnPersonalizations(Guid userId, Guid spaceViewId)
+	{
+		TfUser user = GetUser(userId);
+		var otherPersonalization = user.Settings.ViewColumnPersonalizations.Where(x=> x.SpaceViewId == spaceViewId).ToList();
+		var userBld = CreateUserBuilder(user);
+		userBld.WithViewColumnPersonalizations(otherPersonalization);
 		await SaveUserAsync(userBld.Build());
 		return GetUser(userId);
 	}

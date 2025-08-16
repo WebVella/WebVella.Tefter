@@ -16,6 +16,8 @@ public class TfUserBuilder
 	private string _cultureCode;
 	private string _startUpUrl;
 	private int? _pageSize;
+	private List<TfUserViewColumnPersonalization> _columnPersonalization = new();
+	private List<TfUserPresetSortPersonalization> _sortPersonalization = new();
 
 	private List<TfRole> _roles = new();
 
@@ -146,6 +148,24 @@ public class TfUserBuilder
 		return this;
 	}
 
+	public TfUserBuilder WithViewColumnPersonalizations(
+		List<TfUserViewColumnPersonalization> columnPersonalizations)
+	{
+		if(columnPersonalizations is null)
+			columnPersonalizations = new();
+		_columnPersonalization = columnPersonalizations;
+		return this;
+	}
+
+	public TfUserBuilder WithPresetSortPersonalizations(
+		List<TfUserPresetSortPersonalization> sortPersonalizations)
+	{
+		if(sortPersonalizations is null)
+			sortPersonalizations = new();
+		_sortPersonalization = sortPersonalizations;
+		return this;
+	}
+
 	public TfUserBuilder WithRoles(
 		params TfRole[] roles)
 	{
@@ -211,6 +231,8 @@ public class TfUserBuilder
 				CultureName = _cultureCode,
 				StartUpUrl = _startUpUrl,
 				PageSize = _pageSize,
+				ViewColumnPersonalizations = _columnPersonalization,
+				PresetSortPersonalizations = _sortPersonalization,
 			}
 		};
 	}
