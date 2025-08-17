@@ -159,13 +159,12 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 					}
 				}
 			}
-			var sortPersonalization = _currentUser.Settings.ViewPresetSortPersonalizations.FirstOrDefault(x =>
-				x.SpaceViewId == _spaceView.Id && x.PresetId == _preset?.Id);
-			if (sortPersonalization is not null)
+
+			if (_navState.Sorts is not null && _navState.Sorts.Count > 0)
 			{
 				foreach (var column in _spaceViewColumns)
 				{
-					var columnSort = sortPersonalization.Sorts.FirstOrDefault(x => x.ColumnName == column.QueryName);
+					var columnSort = _navState.Sorts.FirstOrDefault(x => x.ColumnName == column.QueryName);
 					if (columnSort != null)
 					{
 						column.PersonalizedSort = columnSort.Direction;
@@ -558,19 +557,16 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	[JSInvokable("OnColumnSort")]
 	public async void OnColumnSort(int position, bool hasShift)
 	{
+		if(_isDataLoading == true) return;
 		var column = _spaceViewColumns.SingleOrDefault(x => x.Position == position);
 		if (column is null) return;
-		var user = await TfUserUIService.SetViewPresetSortPersonalization(
-		 userId: _currentUser.Id,
+		var sorts = TfUserUIService.CalculateViewPresetSortPersonalization(
+		 currentSorts: _navState.Sorts,
 		 spaceViewId: _spaceView.Id,
-		 preset: _preset?.Id,
 		 spaceViewColumnId: column.Id,
-		 hasShiftKey: hasShift,
-		 sendUserUpdated: false);
+		 hasShiftKey: hasShift);
 
-		var sortPersonalization = user.Settings.ViewPresetSortPersonalizations.FirstOrDefault(x =>
-		   x.SpaceViewId == _spaceView.Id && x.PresetId == _preset?.Id);
-		await _onSort(sortPersonalization is null ? new List<TfSort>() : sortPersonalization.Sorts);
+		await _onSort(sorts is null ? new List<TfSort>() : sorts);
 	}
 
 	[JSInvokable("OnColumnResized")]

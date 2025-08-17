@@ -194,7 +194,7 @@ public partial interface ITfService
 
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
 	Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? presetId, Guid spaceViewColumnId, int width);
-	Task<TfUser> SetViewPresetSortPersonalization(Guid userId, Guid spaceViewId, Guid? presetId, Guid spaceViewColumnId, bool hasShiftKey);
+	List<TfSort> CalculateViewPresetSortPersonalization(List<TfSort> currentSorts, Guid spaceViewId, Guid spaceViewColumnId, bool hasShiftKey);
 	Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId);
 }
 
@@ -1245,100 +1245,67 @@ public partial class TfService : ITfService
 		return GetUser(userId);
 	}
 
-	public virtual async Task<TfUser> SetViewPresetSortPersonalization(Guid userId, Guid spaceViewId, Guid? presetId,
-		Guid spaceViewColumnId, bool hasShiftKey)
+	public virtual List<TfSort> CalculateViewPresetSortPersonalization(List<TfSort> currentSorts,
+		Guid spaceViewId, Guid spaceViewColumnId, bool hasShiftKey)
 	{
-		TfUser user = GetUser(userId);
-		if (user is null) throw new Exception("User not found");
+		if (currentSorts is null) currentSorts = new();
+		currentSorts = currentSorts.ToList();
 		var spaceView = GetSpaceView(spaceViewId);
 		if (spaceView is null) throw new Exception("Space view not found");
 		var columns = GetSpaceViewColumnsList(spaceViewId);
 		var column = columns.FirstOrDefault(x => x.Id == spaceViewColumnId);
 		if (column is null) throw new Exception("Space view column not found");
 
-		var allPersonalization = user.Settings.ViewPresetSortPersonalizations.ToList();
-		var personalizationIndex = allPersonalization.FindIndex(x =>
-			x.SpaceViewId == spaceViewId
-			&& x.PresetId == presetId);
-
-		if (personalizationIndex == -1)
+		var columnIndex = currentSorts.FindIndex(x => x.ColumnName == column.QueryName);
+		if (!hasShiftKey)
 		{
-			var columnSort = new TfSort
+			//if column found toggle its state between asc, desc, null
+			if (columnIndex > -1)
 			{
-				ColumnName = column.QueryName,
-				Direction = TfSortDirection.ASC
-			};
-			allPersonalization.Add(new TfViewPresetSortPersonalization
-			{
-				SpaceViewId = spaceViewId,
-				PresetId = presetId,
-				Sorts = new List<TfSort> { columnSort }
-			});
-		}
-		else
-		{
-			var columnPersonalization = allPersonalization[personalizationIndex].Sorts.FirstOrDefault(x => x.ColumnName == column.QueryName);
-			if (!hasShiftKey)
-			{
-				//if column found toggle its state between asc, desc, null
-				if (columnPersonalization is not null)
+				currentSorts = new List<TfSort> { currentSorts[columnIndex] };
+				if (currentSorts[0].Direction == TfSortDirection.ASC)
 				{
-					if (columnPersonalization.Direction == TfSortDirection.ASC)
-					{
-						columnPersonalization.Direction = TfSortDirection.DESC;
-					}
-					else if (columnPersonalization.Direction == TfSortDirection.DESC)
-					{
-						allPersonalization.RemoveAt(personalizationIndex);
-					}
+					currentSorts[0].Direction = TfSortDirection.DESC;
 				}
-				else
+				else if (currentSorts[0].Direction == TfSortDirection.DESC)
 				{
-					var columnSort = new TfSort
-					{
-						ColumnName = column.QueryName,
-						Direction = TfSortDirection.ASC
-					};
-					allPersonalization.Add(new TfViewPresetSortPersonalization
-					{
-						SpaceViewId = spaceViewId,
-						PresetId = presetId,
-						Sorts = new List<TfSort> { columnSort }
-					});
+					currentSorts.RemoveAt(columnIndex);
 				}
 			}
 			else
 			{
-				if (columnPersonalization is not null)
+				currentSorts = new List<TfSort>{new TfSort
 				{
-					if (columnPersonalization.Direction == TfSortDirection.ASC)
-					{
-						columnPersonalization.Direction = TfSortDirection.DESC;
-					}
-					else if (columnPersonalization.Direction == TfSortDirection.DESC)
-					{
-						allPersonalization[personalizationIndex] = allPersonalization[personalizationIndex] with
-						{
-							Sorts = allPersonalization[personalizationIndex].Sorts.Where(x => x.ColumnName != column.QueryName).ToList()
-						};
-					}
-				}
-				else
-				{
-					var columnSort = new TfSort
-					{
-						ColumnName = column.QueryName,
-						Direction = TfSortDirection.ASC
-					};
-					allPersonalization[personalizationIndex].Sorts.Add(columnSort);
-				}
+					ColumnName = column.QueryName,
+					Direction = TfSortDirection.ASC
+				}};
 			}
 		}
-		var userBld = CreateUserBuilder(user);
-		allPersonalization = allPersonalization.Where(x => x.Sorts.Count > 0).ToList();
-		userBld.WithViewPresetSortPersonalizations(allPersonalization);
-		await SaveUserAsync(userBld.Build());
-		return GetUser(userId);
+		else
+		{
+			if (columnIndex > -1)
+			{
+				if (currentSorts[columnIndex].Direction == TfSortDirection.ASC)
+				{
+					currentSorts[columnIndex].Direction = TfSortDirection.DESC;
+				}
+				else if (currentSorts[columnIndex].Direction == TfSortDirection.DESC)
+				{
+					currentSorts.RemoveAt(columnIndex);
+				}
+			}
+			else
+			{
+				var columnSort = new TfSort
+				{
+					ColumnName = column.QueryName,
+					Direction = TfSortDirection.ASC
+				};
+				currentSorts.Add(columnSort);
+			}
+		}
+
+		return currentSorts;
 
 	}
 

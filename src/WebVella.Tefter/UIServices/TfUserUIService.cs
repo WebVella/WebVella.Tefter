@@ -32,7 +32,7 @@ public partial interface ITfUserUIService
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
 	Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, int width);
-	Task<TfUser> SetViewPresetSortPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, bool hasShiftKey, bool sendUserUpdated = true);
+	List<TfSort> CalculateViewPresetSortPersonalization(List<TfSort> currentSorts,Guid spaceViewId, Guid spaceViewColumnId, bool hasShiftKey);
 	Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId);
 
 
@@ -201,14 +201,10 @@ public partial class TfUserUIService : ITfUserUIService
 		return user;
 	}
 
-	public async Task<TfUser> SetViewPresetSortPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, 
-		bool hasShiftKey, bool sendUserUpdated = true)
+	public List<TfSort> CalculateViewPresetSortPersonalization(List<TfSort> currentSorts, Guid spaceViewId, Guid spaceViewColumnId,
+		bool hasShiftKey)
 	{
-		var user = await _tfService.SetViewPresetSortPersonalization(userId, spaceViewId, preset, spaceViewColumnId, hasShiftKey);
-		_currentUser = user;
-		if(sendUserUpdated)
-			UserUpdated?.Invoke(this, user);
-		return user;
+		return _tfService.CalculateViewPresetSortPersonalization(currentSorts, spaceViewId, spaceViewColumnId, hasShiftKey);
 	}
 
 	public async Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId)

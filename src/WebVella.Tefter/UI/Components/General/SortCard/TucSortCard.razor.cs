@@ -45,8 +45,6 @@ public partial class TucSortCard : TfBaseComponent
 	private async Task _deleteSortColumn(TfSort sort)
 	{
 		if (_submitting) return;
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this sort order removed?")))
-			return;
 
 		Items = Items.Where(x=> x.ColumnName != sort.ColumnName).ToList();
 
