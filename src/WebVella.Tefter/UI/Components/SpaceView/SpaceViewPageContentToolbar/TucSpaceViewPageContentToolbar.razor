@@ -57,19 +57,21 @@
 			@* 		<FluentButton Id="grid-properties-selector" OnClick="OnGridPropertiesClick" Title="grid properties" Appearance="@Appearance.Outline">
 		<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" Color="@Color.Accent" />
 		</FluentButton> *@
-		<div class="tf-hover-switch">
-			<div class="tf-hover-switch__unhover">
-					<FluentButton OnClick="OnClearPersonalizationClick" Title="@LOC("this view was personalized.Click to remove the personalization")"
-								  Appearance="@Appearance.Outline"
-								  IconStart="@TfConstants.GetIcon("PersonEdit")!.WithColor(Color.Warning)" />
-			</div>
-			<div class="tf-hover-switch__hover">
-					<FluentButton OnClick="OnClearPersonalizationClick" Title="@LOC("this view was personalized.Click to remove the personalization")"
-								  Appearance="@Appearance.Outline"
-								  IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)" />
-			</div>
-		</div>
-
+			@if (_hasViewPersonalization)
+			{
+				<div class="tf-hover-switch">
+					<div class="tf-hover-switch__unhover">
+						<FluentButton OnClick="OnClearPersonalizationClick" Title="@LOC("this view was personalized.Click to remove the personalization")"
+									  Appearance="@Appearance.Outline"
+									  IconStart="@TfConstants.GetIcon("PersonEdit")!.WithColor(Color.Warning)" />
+					</div>
+					<div class="tf-hover-switch__hover">
+						<FluentButton OnClick="OnClearPersonalizationClick" Title="@LOC("this view was personalized.Click to remove the personalization")"
+									  Appearance="@Appearance.Outline"
+									  IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)" />
+					</div>
+				</div>
+			}
 		</div>
 		<div class="content-toolbar__right">
 			<TucScreenRegionComponent RegionContext="@(new TfSpaceViewToolBarActionScreenRegionContext())" />

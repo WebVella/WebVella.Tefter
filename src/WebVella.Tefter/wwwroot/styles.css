@@ -915,7 +915,7 @@ fluent-dialog .tf-divider,
   top: 0;
   bottom: 0;
   width: 5px;
-  background: var(--accent-fill-rest);
+  background: var(--tf-stroke-invert-base);
   content: "";
   cursor: col-resize;
 }
@@ -929,7 +929,66 @@ fluent-dialog .tf-divider,
 .tf-grid thead tr > td.tf-resizing .resize-handle,
 .tf-grid thead tr > th .resize-handle:hover,
 .tf-grid thead tr > td .resize-handle:hover {
-  background: var(--tf-orange-600);
+  background: var(--accent-fill-rest);
+}
+.tf-grid thead tr > th .tf-column-sort,
+.tf-grid thead tr > td .tf-column-sort {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  bottom: 0;
+  margin-left: -10px;
+  width: 20px;
+  height: 20px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--tf-stroke-base);
+  content: "";
+  cursor: pointer;
+  --tf-caret-color: var(--tf-fill-color-dark);
+  justify-content: center;
+  align-items: center;
+}
+.tf-grid thead tr > th .tf-column-sort svg,
+.tf-grid thead tr > td .tf-column-sort svg {
+  display: block;
+}
+.tf-grid thead tr > th .tf-column-sort:hover,
+.tf-grid thead tr > td .tf-column-sort:hover {
+  background: var(--accent-fill-rest) !important;
+  --tf-caret-color: var(--tf-white);
+}
+.tf-grid thead tr > th .tf-column-sort--descending,
+.tf-grid thead tr > td .tf-column-sort--descending,
+.tf-grid thead tr > th .tf-column-sort--ascending,
+.tf-grid thead tr > td .tf-column-sort--ascending {
+  display: flex;
+}
+.tf-grid thead tr > th .tf-column-sort__caret,
+.tf-grid thead tr > td .tf-column-sort__caret,
+.tf-grid thead tr > th .tf-column-sort__caret-down,
+.tf-grid thead tr > td .tf-column-sort__caret-down,
+.tf-grid thead tr > th .tf-column-sort__caret-up,
+.tf-grid thead tr > td .tf-column-sort__caret-up {
+  display: none;
+}
+.tf-grid thead tr > th .tf-column-sort--none .tf-column-sort__caret,
+.tf-grid thead tr > td .tf-column-sort--none .tf-column-sort__caret {
+  display: block;
+}
+.tf-grid thead tr > th .tf-column-sort--ascending .tf-column-sort__caret-up,
+.tf-grid thead tr > td .tf-column-sort--ascending .tf-column-sort__caret-up {
+  display: block;
+}
+.tf-grid thead tr > th .tf-column-sort--descending .tf-column-sort__caret-down,
+.tf-grid thead tr > td .tf-column-sort--descending .tf-column-sort__caret-down {
+  display: block;
+}
+.tf-grid thead tr > th:hover .tf-column-sort,
+.tf-grid thead tr > td:hover .tf-column-sort {
+  display: flex;
+  background: var(--tf-stroke-invert-base);
 }
 .tf-grid thead tr > th,
 .tf-grid thead tr > td {

@@ -16,8 +16,8 @@ public class TfUserBuilder
 	private string _cultureCode;
 	private string _startUpUrl;
 	private int? _pageSize;
-	private List<TfUserViewColumnPersonalization> _columnPersonalization = new();
-	private List<TfUserPresetSortPersonalization> _sortPersonalization = new();
+	private List<TfViewPresetColumnPersonalization> _columnPersonalization = new();
+	private List<TfViewPresetSortPersonalization> _sortPersonalization = new();
 
 	private List<TfRole> _roles = new();
 
@@ -148,8 +148,8 @@ public class TfUserBuilder
 		return this;
 	}
 
-	public TfUserBuilder WithViewColumnPersonalizations(
-		List<TfUserViewColumnPersonalization> columnPersonalizations)
+	public TfUserBuilder WithViewPresetColumnPersonalizations(
+		List<TfViewPresetColumnPersonalization> columnPersonalizations)
 	{
 		if(columnPersonalizations is null)
 			columnPersonalizations = new();
@@ -157,8 +157,8 @@ public class TfUserBuilder
 		return this;
 	}
 
-	public TfUserBuilder WithPresetSortPersonalizations(
-		List<TfUserPresetSortPersonalization> sortPersonalizations)
+	public TfUserBuilder WithViewPresetSortPersonalizations(
+		List<TfViewPresetSortPersonalization> sortPersonalizations)
 	{
 		if(sortPersonalizations is null)
 			sortPersonalizations = new();
@@ -231,8 +231,8 @@ public class TfUserBuilder
 				CultureName = _cultureCode,
 				StartUpUrl = _startUpUrl,
 				PageSize = _pageSize,
-				ViewColumnPersonalizations = _columnPersonalization,
-				PresetSortPersonalizations = _sortPersonalization,
+				ViewPresetColumnPersonalizations = _columnPersonalization,
+				ViewPresetSortPersonalizations = _sortPersonalization,
 			}
 		};
 	}

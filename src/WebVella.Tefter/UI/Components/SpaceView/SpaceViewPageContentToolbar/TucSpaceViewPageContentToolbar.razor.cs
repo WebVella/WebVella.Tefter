@@ -10,21 +10,25 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 	[Parameter] public EventCallback<string> OnSearch { get; set; }
 	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
 	[Parameter] public TfSpaceData SpaceData { get; set; } = default!;
+	[Parameter] public TfSpaceViewPreset? SpaceViewPreset { get; set; } = null;
 	[Parameter] public TfDataTable Data { get; set; } = default!;
 
 	private TfNavigationState _navState = default!;
 	private TfUser _currentUser = default!;
+	private bool _hasViewPersonalization = false;
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUserUIService.UserUpdated -= On_UserChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
-		_currentUser = await TfUserUIService.GetCurrentUserAsync() ?? new();
+
 		await _init();
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUserUIService.UserUpdated += On_UserChanged;
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -32,18 +36,29 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 		if (UriInitialized != args.Uri)
 			await _init();
 	}
-
+	private async void On_UserChanged(object? caller, TfUser args)
+	{
+		await _init();
+	}
 	private async Task _init()
 	{
 		_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
-		if(_navState is null) return;
+		if (_navState is null) return;
 		try
 		{
+			_currentUser = await TfUserUIService.GetCurrentUserAsync() ?? new();
 			var bookmarks = TfUserUIService.GetUserBookmarks(_currentUser.Id);
 			var saves = TfUserUIService.GetUserSaves(_currentUser.Id);
 
-			_activeBookmark = bookmarks.FirstOrDefault(x=> x.SpaceViewId == _navState.SpaceViewId);
-			_activeSavedUrl = saves.FirstOrDefault(x=> x.Id == _navState.ActiveSaveId);			
+			_activeBookmark = bookmarks.FirstOrDefault(x => x.SpaceViewId == _navState.SpaceViewId);
+			_activeSavedUrl = saves.FirstOrDefault(x => x.Id == _navState.ActiveSaveId);
+			_hasViewPersonalization = _currentUser.Settings.ViewPresetColumnPersonalizations.Any(x =>
+				x.SpaceViewId == SpaceView.Id && x.PresetId == SpaceViewPreset?.Id);
+			if (!_hasViewPersonalization)
+			{
+				_hasViewPersonalization = _currentUser.Settings.ViewPresetSortPersonalizations.Any(x => x.SpaceViewId == SpaceView.Id
+				 && x.PresetId == SpaceViewPreset?.Id);
+			}
 		}
 		finally
 		{

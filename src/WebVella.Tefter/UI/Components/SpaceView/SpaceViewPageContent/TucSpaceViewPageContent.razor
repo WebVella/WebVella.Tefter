@@ -24,13 +24,12 @@ else
 			@* 			<TucPageHeader Title="@_spacePage!.Name" Icon="TfConstants.GetIcon(_spacePage.FluentIconName)"
 						   Area="@_space!.Name" IconColor="_space!.Color" SubTitle="@_preset?.Name" /> *@
 			<TucSpaceViewPageContentToolbar SpaceView="_spaceView" Data=_data
-											SpaceData="_spaceData"
+											SpaceData="_spaceData" SpaceViewPreset=_preset
 											OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" OnClearFilter="_onClearFilter"
 											OnSelectAll="_onSelectAll" SelectAllLoading="_selectAllLoading" OnDeSelectAll="_onDeSelectAll"
 											SelectedRows="_selectedDataRows" OnClearPersonalization="_onClearPersonalization" />
 
-			<div>NOTE: View personalization is based on view+column+preset key. Size customization, color+background customization, sort order personalization</div>
-			<div class="tf-grid-wrapper">
+		<div class="tf-grid-wrapper">
 				<table class="tf-grid" id="@_tableId">
 					<colgroup>
 						@foreach (var index in configCss.Keys)
@@ -85,6 +84,11 @@ else
 										}
 									</div>
 									<div class="resize-handle" data-column="@column.Position"></div>
+									<div class="@_getSortColumnClass(column)" data-column="@column.Position">
+										<div class="tf-column-sort__caret-down">@_caretDown</div>
+										<div class="tf-column-sort__caret-up">@_caretUp</div>
+										<div class="tf-column-sort__caret">@_caretDownInactive</div>
+									</div>
 								</th>
 								columnIndex++;
 							}

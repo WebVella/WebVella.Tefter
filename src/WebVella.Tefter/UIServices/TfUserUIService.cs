@@ -31,8 +31,9 @@ public partial interface ITfUserUIService
 	Task<TfUser> SetStartUpUrl(Guid userId, string url);
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
-	Task<TfUser> SetViewColumnPersonalizationWidth(Guid userId, Guid spaceViewId, Guid spaceViewColumnId, int width);
-	Task<TfUser> RemoveSpaceViewColumnPersonalizations(Guid userId, Guid spaceViewId);
+	Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, int width);
+	Task<TfUser> SetViewPresetSortPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, bool hasShiftKey, bool sendUserUpdated = true);
+	Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId);
 
 
 	//Bookmarks
@@ -192,17 +193,27 @@ public partial class TfUserUIService : ITfUserUIService
 		return user;
 	}
 
-	public async Task<TfUser> SetViewColumnPersonalizationWidth(Guid userId, Guid spaceViewId, Guid spaceViewColumnId, int width)
+	public async Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, int width)
 	{
-		var user = await _tfService.SetSpaceViewColumnPersonalization(userId, spaceViewId, spaceViewColumnId, width);
+		var user = await _tfService.SetViewPresetColumnPersonalization(userId, spaceViewId, preset, spaceViewColumnId, width);
 		_currentUser = user;
 		UserUpdated?.Invoke(this, user);
 		return user;
 	}
 
-	public async Task<TfUser> RemoveSpaceViewColumnPersonalizations(Guid userId, Guid spaceViewId)
+	public async Task<TfUser> SetViewPresetSortPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, 
+		bool hasShiftKey, bool sendUserUpdated = true)
 	{
-		var user = await _tfService.RemoveSpaceViewColumnPersonalizations(userId, spaceViewId);
+		var user = await _tfService.SetViewPresetSortPersonalization(userId, spaceViewId, preset, spaceViewColumnId, hasShiftKey);
+		_currentUser = user;
+		if(sendUserUpdated)
+			UserUpdated?.Invoke(this, user);
+		return user;
+	}
+
+	public async Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId)
+	{
+		var user = await _tfService.RemoveSpaceViewPersonalizations(userId, spaceViewId, presetId);
 		_currentUser = user;
 		UserUpdated?.Invoke(this, user);
 		return user;

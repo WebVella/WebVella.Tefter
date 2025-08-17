@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WebVella.Tefter.Models;
-public record TfUserPresetSortPersonalization
+public record TfViewPresetColumnPersonalization
 {
 	public Guid SpaceViewId { get; init; } = default;
-	public Guid SpaceViewPresetId { get; init; } = default;
-	public List<TfSort> Sorts { get; init; } = new();
+	public Guid SpaceViewColumnId { get; init; } = default;
+	public Guid? PresetId { get; init; } = null;
+	public int Width { get; init; } = default!;
 }

@@ -79,6 +79,9 @@ public record TfSpaceViewColumn
 			return sb.ToString();
 		}
 	}
+
+	//Render only helpers
+	public TfSortDirection? PersonalizedSort { get; set; } = null;
 }
 
 [DboCacheModel]

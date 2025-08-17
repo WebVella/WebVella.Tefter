@@ -3,11 +3,13 @@
 	HtmlEditorsChangeListeners: {},
 	HtmlEditorsEnterListeners: {},
 	ColumnResizeListeners: {},
+	ColumnSortListeners: {},
 	dispose: function () {
 		Tefter.HtmlEditors = {};
 		Tefter.HtmlEditorsChangeListeners = {};
 		Tefter.HtmlEditorsEnterListeners = {};
 		ColumnResizeListeners = {};
+		ColumnSortListeners = {};
 	},
 	copyToClipboard: function (text) {
 		if (window.isSecureContext) {
@@ -289,10 +291,43 @@
 		}
 		return false;
 	},
+	addColumnSortListener: function (dotNetHelper, listenerId, methodName) {
+		Tefter.ColumnSortListeners[listenerId] = { dotNetHelper: dotNetHelper, methodName: methodName };
+		return true;
+	},
+	removeColumnSortListener: function (listenerId) {
+		if (Tefter.ColumnSortListeners[listenerId]) {
+			delete Tefter.ColumnSortListeners[listenerId];
+		}
+		return true;
+	},
+	executeColumnSortListenerCallbacks: function (column, shiftKey) {
+		if (Tefter.ColumnSortListeners) {
+			for (const listenerId in Tefter.ColumnSortListeners) {
+				const dotNetHelper = Tefter.ColumnSortListeners[listenerId].dotNetHelper;
+				const methodName = Tefter.ColumnSortListeners[listenerId].methodName;
+				if (dotNetHelper && methodName) {
+					dotNetHelper.invokeMethodAsync(methodName, column, shiftKey);
+				}
+
+				return true;
+			}
+		}
+		return false;
+	},
 }
 
 //Listeners
 document.addEventListener("tf-column-resize", function (evtObj) {
 	Tefter.executeColumnResizeListenerCallbacks(evtObj)
-
+});
+document.addEventListener("click", function (evtObj) {
+	let target = evtObj.target.closest(".tf-column-sort");
+	if (target) {
+		evtObj.preventDefault();
+		evtObj.stopPropagation();
+		var shiftKey = evtObj.shiftKey;
+		document.getSelection().removeAllRanges();
+		Tefter.executeColumnSortListenerCallbacks(parseInt(target.dataset.column), shiftKey);
+	}
 });

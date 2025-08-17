@@ -193,8 +193,9 @@ public partial interface ITfService
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
 
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
-	Task<TfUser> SetSpaceViewColumnPersonalization(Guid userId, Guid spaceViewId, Guid spaceViewColumnId, int width);
-	Task<TfUser> RemoveSpaceViewColumnPersonalizations(Guid userId, Guid spaceViewId);
+	Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? presetId, Guid spaceViewColumnId, int width);
+	Task<TfUser> SetViewPresetSortPersonalization(Guid userId, Guid spaceViewId, Guid? presetId, Guid spaceViewColumnId, bool hasShiftKey);
+	Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId);
 }
 
 public partial class TfService : ITfService
@@ -264,7 +265,9 @@ public partial class TfService : ITfService
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
 					.WithStartUpUrl(userDbo.Settings.StartUpUrl)
-					.WithPageSize(userDbo.Settings.PageSize);
+					.WithPageSize(userDbo.Settings.PageSize)
+					.WithViewPresetColumnPersonalizations(userDbo.Settings.ViewPresetColumnPersonalizations)
+					.WithViewPresetSortPersonalizations(userDbo.Settings.ViewPresetSortPersonalizations);
 			}
 
 			return userBuilder.Build();
@@ -313,7 +316,9 @@ public partial class TfService : ITfService
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
 					.WithStartUpUrl(userDbo.Settings.StartUpUrl)
-					.WithPageSize(userDbo.Settings.PageSize);
+					.WithPageSize(userDbo.Settings.PageSize)
+					.WithViewPresetColumnPersonalizations(userDbo.Settings.ViewPresetColumnPersonalizations)
+					.WithViewPresetSortPersonalizations(userDbo.Settings.ViewPresetSortPersonalizations);
 			}
 
 			return userBuilder.Build();
@@ -370,7 +375,9 @@ public partial class TfService : ITfService
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
 					.WithStartUpUrl(userDbo.Settings.StartUpUrl)
-					.WithPageSize(userDbo.Settings.PageSize);
+					.WithPageSize(userDbo.Settings.PageSize)
+					.WithViewPresetColumnPersonalizations(userDbo.Settings.ViewPresetColumnPersonalizations)
+					.WithViewPresetSortPersonalizations(userDbo.Settings.ViewPresetSortPersonalizations);
 			}
 
 			return userBuilder.Build();
@@ -419,7 +426,9 @@ public partial class TfService : ITfService
 						.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 						.WithCultureCode(userDbo.Settings.CultureName)
 						.WithStartUpUrl(userDbo.Settings.StartUpUrl)
-						.WithPageSize(userDbo.Settings.PageSize);
+						.WithPageSize(userDbo.Settings.PageSize)
+					.WithViewPresetColumnPersonalizations(userDbo.Settings.ViewPresetColumnPersonalizations)
+					.WithViewPresetSortPersonalizations(userDbo.Settings.ViewPresetSortPersonalizations);
 				}
 
 				if (userRolesDict.ContainsKey(userDbo.Id))
@@ -731,8 +740,8 @@ public partial class TfService : ITfService
 					.WithCultureCode(userDbo.Settings.CultureName)
 					.WithStartUpUrl(userDbo.Settings.StartUpUrl)
 					.WithPageSize(userDbo.Settings.PageSize)
-					.WithViewColumnPersonalizations(userDbo.Settings.ViewColumnPersonalizations)
-					.WithPresetSortPersonalizations(userDbo.Settings.PresetSortPersonalizations);
+					.WithViewPresetColumnPersonalizations(userDbo.Settings.ViewPresetColumnPersonalizations)
+					.WithViewPresetSortPersonalizations(userDbo.Settings.ViewPresetSortPersonalizations);
 			}
 
 			return userBuilder.Build();
@@ -781,7 +790,9 @@ public partial class TfService : ITfService
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
 					.WithStartUpUrl(userDbo.Settings.StartUpUrl)
-					.WithPageSize(userDbo.Settings.PageSize);
+					.WithPageSize(userDbo.Settings.PageSize)
+					.WithViewPresetColumnPersonalizations(userDbo.Settings.ViewPresetColumnPersonalizations)
+					.WithViewPresetSortPersonalizations(userDbo.Settings.ViewPresetSortPersonalizations);
 			}
 
 			return userBuilder.Build();
@@ -839,7 +850,9 @@ public partial class TfService : ITfService
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
 					.WithStartUpUrl(userDbo.Settings.StartUpUrl)
-					.WithPageSize(userDbo.Settings.PageSize);
+					.WithPageSize(userDbo.Settings.PageSize)
+					.WithViewPresetColumnPersonalizations(userDbo.Settings.ViewPresetColumnPersonalizations)
+					.WithViewPresetSortPersonalizations(userDbo.Settings.ViewPresetSortPersonalizations);
 			}
 
 			return userBuilder.Build();
@@ -888,7 +901,9 @@ public partial class TfService : ITfService
 						.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 						.WithCultureCode(userDbo.Settings.CultureName)
 						.WithStartUpUrl(userDbo.Settings.StartUpUrl)
-						.WithPageSize(userDbo.Settings.PageSize);
+						.WithPageSize(userDbo.Settings.PageSize)
+						.WithViewPresetColumnPersonalizations(userDbo.Settings.ViewPresetColumnPersonalizations)
+					.WithViewPresetSortPersonalizations(userDbo.Settings.ViewPresetSortPersonalizations);
 				}
 
 				if (userRolesDict.ContainsKey(userDbo.Id))
@@ -1196,19 +1211,24 @@ public partial class TfService : ITfService
 		return GetUser(userId);
 	}
 
-	public virtual async Task<TfUser> SetSpaceViewColumnPersonalization(Guid userId, Guid spaceViewId, Guid spaceViewColumnId, int width)
+	public virtual async Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? presetId, Guid spaceViewColumnId, int width)
 	{
 		TfUser user = GetUser(userId);
-		var allPersonalization = user.Settings.ViewColumnPersonalizations.ToList();
+		if (user is null) throw new Exception("User not found");
+		var spaceView = GetSpaceView(spaceViewId);
+		if (spaceView is null) throw new Exception("Space view not found");
+		var allPersonalization = user.Settings.ViewPresetColumnPersonalizations.ToList();
 		var personalizationIndex = allPersonalization.FindIndex(x =>
 			x.SpaceViewId == spaceViewId
-			&& x.SpaceViewColumnId == spaceViewColumnId);
+			&& x.SpaceViewColumnId == spaceViewColumnId
+			&& x.PresetId == presetId);
 		if (personalizationIndex == -1)
 		{
-			allPersonalization.Add(new TfUserViewColumnPersonalization
+			allPersonalization.Add(new TfViewPresetColumnPersonalization
 			{
 				SpaceViewColumnId = spaceViewColumnId,
-				SpaceViewId = spaceViewColumnId,
+				SpaceViewId = spaceViewId,
+				PresetId = presetId,
 				Width = width
 			});
 		}
@@ -1220,17 +1240,118 @@ public partial class TfService : ITfService
 			};
 		}
 		var userBld = CreateUserBuilder(user);
-		userBld.WithViewColumnPersonalizations(allPersonalization);
+		userBld.WithViewPresetColumnPersonalizations(allPersonalization);
 		await SaveUserAsync(userBld.Build());
 		return GetUser(userId);
 	}
 
-	public virtual async Task<TfUser> RemoveSpaceViewColumnPersonalizations(Guid userId, Guid spaceViewId)
+	public virtual async Task<TfUser> SetViewPresetSortPersonalization(Guid userId, Guid spaceViewId, Guid? presetId,
+		Guid spaceViewColumnId, bool hasShiftKey)
 	{
 		TfUser user = GetUser(userId);
-		var otherPersonalization = user.Settings.ViewColumnPersonalizations.Where(x=> x.SpaceViewId == spaceViewId).ToList();
+		if (user is null) throw new Exception("User not found");
+		var spaceView = GetSpaceView(spaceViewId);
+		if (spaceView is null) throw new Exception("Space view not found");
+		var columns = GetSpaceViewColumnsList(spaceViewId);
+		var column = columns.FirstOrDefault(x => x.Id == spaceViewColumnId);
+		if (column is null) throw new Exception("Space view column not found");
+
+		var allPersonalization = user.Settings.ViewPresetSortPersonalizations.ToList();
+		var personalizationIndex = allPersonalization.FindIndex(x =>
+			x.SpaceViewId == spaceViewId
+			&& x.PresetId == presetId);
+
+		if (personalizationIndex == -1)
+		{
+			var columnSort = new TfSort
+			{
+				ColumnName = column.QueryName,
+				Direction = TfSortDirection.ASC
+			};
+			allPersonalization.Add(new TfViewPresetSortPersonalization
+			{
+				SpaceViewId = spaceViewId,
+				PresetId = presetId,
+				Sorts = new List<TfSort> { columnSort }
+			});
+		}
+		else
+		{
+			var columnPersonalization = allPersonalization[personalizationIndex].Sorts.FirstOrDefault(x => x.ColumnName == column.QueryName);
+			if (!hasShiftKey)
+			{
+				//if column found toggle its state between asc, desc, null
+				if (columnPersonalization is not null)
+				{
+					if (columnPersonalization.Direction == TfSortDirection.ASC)
+					{
+						columnPersonalization.Direction = TfSortDirection.DESC;
+					}
+					else if (columnPersonalization.Direction == TfSortDirection.DESC)
+					{
+						allPersonalization.RemoveAt(personalizationIndex);
+					}
+				}
+				else
+				{
+					var columnSort = new TfSort
+					{
+						ColumnName = column.QueryName,
+						Direction = TfSortDirection.ASC
+					};
+					allPersonalization.Add(new TfViewPresetSortPersonalization
+					{
+						SpaceViewId = spaceViewId,
+						PresetId = presetId,
+						Sorts = new List<TfSort> { columnSort }
+					});
+				}
+			}
+			else
+			{
+				if (columnPersonalization is not null)
+				{
+					if (columnPersonalization.Direction == TfSortDirection.ASC)
+					{
+						columnPersonalization.Direction = TfSortDirection.DESC;
+					}
+					else if (columnPersonalization.Direction == TfSortDirection.DESC)
+					{
+						allPersonalization[personalizationIndex] = allPersonalization[personalizationIndex] with
+						{
+							Sorts = allPersonalization[personalizationIndex].Sorts.Where(x => x.ColumnName != column.QueryName).ToList()
+						};
+					}
+				}
+				else
+				{
+					var columnSort = new TfSort
+					{
+						ColumnName = column.QueryName,
+						Direction = TfSortDirection.ASC
+					};
+					allPersonalization[personalizationIndex].Sorts.Add(columnSort);
+				}
+			}
+		}
 		var userBld = CreateUserBuilder(user);
-		userBld.WithViewColumnPersonalizations(otherPersonalization);
+		allPersonalization = allPersonalization.Where(x => x.Sorts.Count > 0).ToList();
+		userBld.WithViewPresetSortPersonalizations(allPersonalization);
+		await SaveUserAsync(userBld.Build());
+		return GetUser(userId);
+
+	}
+
+	public virtual async Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId)
+	{
+		TfUser user = GetUser(userId);
+		var otherPersonalization = user.Settings.ViewPresetColumnPersonalizations.Where(x =>
+			!(x.SpaceViewId == spaceViewId && x.PresetId == presetId)).ToList();
+		var otherSorts = user.Settings.ViewPresetSortPersonalizations.Where(x =>
+			!(x.SpaceViewId == spaceViewId && x.PresetId == presetId)).ToList();
+		var userBld = CreateUserBuilder(user);
+		userBld.WithViewPresetColumnPersonalizations(otherPersonalization);
+		userBld.WithViewPresetSortPersonalizations(otherSorts);
 		await SaveUserAsync(userBld.Build());
 		return GetUser(userId);
 	}
