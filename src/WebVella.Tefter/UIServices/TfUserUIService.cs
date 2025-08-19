@@ -104,7 +104,7 @@ public partial class TfUserUIService : ITfUserUIService
 				ThemeColor = form.ThemeColor,
 				ThemeMode = form.ThemeMode,
 				IsSidebarOpen = form.IsSidebarOpen,
-				CultureName = form.Culture?.Name ?? TfConstants.DefaultCulture.Name,
+				CultureName = form.Culture?.CultureInfo.Name ?? TfConstants.DefaultCulture.Name,
 			}
 		};
 		user = await _tfService.CreateUserAsync(user);

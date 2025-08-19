@@ -32,19 +32,10 @@
 	<ItemGroup>
 		<Content Remove="compilerconfig.json" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<Compile Remove="UseCases\**" />
-		<Content Remove="UseCases\**" />
-		<None Remove="UseCases\**" />
-		<EmbeddedResource Remove="UseCases\**" />
-		<!--<Compile Remove="Web\Components\**" />
-		<Content Remove="Web\Components\**" />-->
-		<!--<Compile Remove="Web\**" />
-		<Content Remove="Web\**" />
-		<EmbeddedResource Remove="Web\**" />
-		<None Remove="Web\**" />-->
-	</ItemGroup>
+	<!--<ItemGroup>
+		<EmbeddedResource Include="Resources\**\*.resx" />
+		<EmbeddedResource Include="UI\Components\**\*.resx" />
+	</ItemGroup>-->
 
 	<ItemGroup>
 		<None Include="..\..\LICENSE">

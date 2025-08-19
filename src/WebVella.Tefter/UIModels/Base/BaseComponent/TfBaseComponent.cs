@@ -41,7 +41,8 @@ public class TfBaseComponent : ComponentBase
 		{
 			using (_lock.Lock())
 			{
-				GL = StringLocalizerFactory.Create(type.BaseType);
+				var assemblyName = new AssemblyName(typeof(TfService).Assembly.FullName!);
+				GL = StringLocalizerFactory.Create("Resources.SharedResource", assemblyName.Name!);
 			}
 		}
 	}
@@ -130,8 +131,8 @@ public class TfBaseComponent : ComponentBase
 			exception: ex,
 			toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
 			notificationErrorTitle: LOC("Unexpected Error!"),
-			editContext:editContext,
-			messageStore:messageStore,
+			editContext: editContext,
+			messageStore: messageStore,
 			toastService: ToastService,
 			messageService: MessageService
 		);

@@ -5,5 +5,4 @@ public class TfCultureOption
 	[JsonIgnore]
 	public CultureInfo CultureInfo { get => CultureInfo.GetCultureInfo(CultureCode); }
 	public string IconUrl { get; set; }
-	public string Name { get; set; }
 }

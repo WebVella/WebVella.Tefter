@@ -117,13 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Access" xml:space="preserve">
-    <value>Достъп</value>
+  <data name="test" xml:space="preserve">
+    <value>testEN</value>
   </data>
-  <data name="Details" xml:space="preserve">
-    <value>Детайли</value>
-  </data>
-  <data name="Saved Views" xml:space="preserve">
-    <value>Запомнени Изгледи</value>
+  <data name="test123" xml:space="preserve">
+    <value>test123EN</value>
   </data>
 </root>
