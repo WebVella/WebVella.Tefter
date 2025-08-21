@@ -42,7 +42,7 @@ public partial class TucHeaderHome : TfBaseComponent, IDisposable
 				Id = (new Guid("176c9d30-58bb-4ff9-8101-ba90252147f4")).ToString(),
 				Text = null,
 				Url = "/",
-				Tooltip = LOC(TfConstants.HomeMenuTitle),
+				Tooltip = LOC("Home"),
 				IconCollapsed = TfConstants.GetIcon("Home"),
 				IconExpanded = TfConstants.GetIcon("Home"),
 				Selected = navState.RouteNodes.Count == 1 && navState.RouteNodes[0] == RouteDataNode.Home,

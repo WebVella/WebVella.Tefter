@@ -12,6 +12,7 @@ public class TfBaseComponent : ComponentBase
 	[Inject] protected ITfConfigurationService ConfigurationService { get; set; } = default!;
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = default!;
 	[Inject] protected IWvBlazorTraceService WvBlazorTraceService { get; set; } = default!;
+	[Inject] protected IHostEnvironment HostEnvironment { get; set; } = default!;
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
 	protected IStringLocalizer LC = default!;
@@ -84,6 +85,7 @@ public class TfBaseComponent : ComponentBase
 	{
 		if (LC is not null && LC[key, arguments] != key) return LC[key, arguments];
 		if (GL is not null && GL[key, arguments] != key) return GL[key, arguments];
+		Console.WriteLine($"+++++++++ {key}");
 		return key;
 	}
 

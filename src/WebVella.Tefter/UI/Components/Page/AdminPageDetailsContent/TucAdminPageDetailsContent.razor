@@ -13,7 +13,7 @@
 		else
 		{
 			<TucPageHeader Icon="@TfConstants.GetIcon("Document")" IconColor="@TfConstants.AdminColor" Class="page-title"
-						   Area="@LOC(TfConstants.AdminRolesMenuTitle)" Title="@_item.Name" />
+						   Area="@LOC("Page")" Title="@_item.Name" />
 
 			<TucScreenRegionComponent RegionContext="@(new TfAdminPageScreenRegionContext())" Scope="@(new TfScreenRegionScope(null, _item.Id))" />
 		}
