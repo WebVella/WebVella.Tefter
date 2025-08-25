@@ -58,6 +58,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfResourceImporter", "TfRes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfResourceTranslator", "TfResourceTranslator\TfResourceTranslator.csproj", "{CC45BA05-F6B4-4166-8993-F04019E03604}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Tests", "tests\WebVella.Tefter.Tests\WebVella.Tefter.Tests.csproj", "{8502B0F5-9CB3-8B53-4702-10924A2D2413}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -136,6 +138,10 @@ Global
 		{CC45BA05-F6B4-4166-8993-F04019E03604}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC45BA05-F6B4-4166-8993-F04019E03604}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC45BA05-F6B4-4166-8993-F04019E03604}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8502B0F5-9CB3-8B53-4702-10924A2D2413}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8502B0F5-9CB3-8B53-4702-10924A2D2413}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8502B0F5-9CB3-8B53-4702-10924A2D2413}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8502B0F5-9CB3-8B53-4702-10924A2D2413}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -154,6 +160,7 @@ Global
 		{AD958E29-2066-03F1-5D18-6028446F3732} = {0BE2A8B7-E29A-485A-8935-92D76CFC665D}
 		{B732E840-C88A-48B5-8830-F9ADC070C568} = {0BE2A8B7-E29A-485A-8935-92D76CFC665D}
 		{CC45BA05-F6B4-4166-8993-F04019E03604} = {0BE2A8B7-E29A-485A-8935-92D76CFC665D}
+		{8502B0F5-9CB3-8B53-4702-10924A2D2413} = {FBDDD2A3-E610-424E-B64E-58B4662A4583}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C1A4AC87-0ABF-4D69-AB37-06B038019BBB}
