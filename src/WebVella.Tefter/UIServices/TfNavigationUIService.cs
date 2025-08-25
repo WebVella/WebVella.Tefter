@@ -121,7 +121,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			IconColor = TfConstants.AdminColor,
 			Selected = routeState.RouteNodes.Count == 1,
 			Url = "/admin",
-			Text = LOC[TfConstants.AdminDashboardMenuTitle]
+			Text = LOC["Dashboard"]
 		});
 		#endregion
 		#region << Users >>
@@ -135,7 +135,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				Selected = routeState.HasNode(RouteDataNode.Users, 1)
 					|| routeState.HasNode(RouteDataNode.Roles, 1),
 				Url = null,
-				Text = LOC[TfConstants.AdminAccessMenuTitle]
+				Text = LOC["Access"]
 			};
 			rootMenu.Items.Add(new TfMenuItem()
 			{
@@ -147,7 +147,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				Url = users.Count == 0
 					? string.Format(TfConstants.AdminUsersPageUrl)
 					: string.Format(TfConstants.AdminUserDetailsPageUrl, users[0].Id),
-				Text = LOC[TfConstants.AdminUsersMenuTitle]
+				Text = LOC["Users"]
 			});
 			rootMenu.Items.Add(new TfMenuItem()
 			{
@@ -159,7 +159,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				Url = roles.Count == 0
 					? string.Format(TfConstants.AdminRolesPageUrl)
 					: string.Format(TfConstants.AdminRoleDetailsPageUrl, roles[0].Id),
-				Text = LOC[TfConstants.AdminRolesMenuTitle]
+				Text = LOC["Roles"]
 			});
 
 			menuItems.Add(rootMenu);
@@ -177,7 +177,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 					|| routeState.HasNode(RouteDataNode.SharedColumns, 1)
 					|| routeState.HasNode(RouteDataNode.DataIdentities, 1),
 				Url = null,
-				Text = LOC[TfConstants.AdminDataMenuTitle]
+				Text = LOC["Data"]
 			};
 			rootMenu.Items.Add(new TfMenuItem()
 			{
@@ -189,7 +189,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				Url = providers.Count == 0
 					? string.Format(TfConstants.AdminDataProvidersPageUrl)
 					: string.Format(TfConstants.AdminDataProviderDetailsPageUrl, providers[0].Id),
-				Text = LOC[TfConstants.AdminDataProvidersMenuTitle]
+				Text = LOC["Data Providers"]
 			});
 			rootMenu.Items.Add(new TfMenuItem()
 			{
@@ -201,7 +201,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				Url = sharedColumns.Count == 0
 					? string.Format(TfConstants.AdminSharedColumnsPageUrl)
 					: string.Format(TfConstants.AdminSharedColumnDetailsPageUrl, sharedColumns[0].Id),
-				Text = LOC[TfConstants.AdminSharedColumnsMenuTitle]
+				Text = LOC["Shared Columns"]
 			});
 			rootMenu.Items.Add(new TfMenuItem()
 			{
@@ -213,7 +213,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				Url = identities.Count == 0
 					? string.Format(TfConstants.AdminDataIdentitiesPageUrl)
 					: string.Format(TfConstants.AdminDataIdentityDetailsPageUrl, identities[0].DataIdentity),
-				Text = LOC[TfConstants.AdminDataIdentitiesMenuTitle]
+				Text = LOC["Data Identities"]
 			});
 			menuItems.Add(rootMenu);
 		}
@@ -229,7 +229,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				Selected = routeState.HasNode(RouteDataNode.Templates, 1)
 					|| routeState.HasNode(RouteDataNode.FileRepository, 1),
 				Url = null,
-				Text = LOC[TfConstants.AdminContentMenuTitle]
+				Text = LOC["Content"]
 			};
 
 			rootMenu.Items.Add(new TfMenuItem()
@@ -240,7 +240,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				//IconColor = TfConstants.AdminColor,
 				Selected = routeState.HasNode(RouteDataNode.FileRepository, 1),
 				Url = string.Format(TfConstants.AdminFileRepositoryPageUrl),
-				Text = LOC[TfConstants.AdminFileRepositoryMenuTitle]
+				Text = LOC["File Repository"]
 			});
 			foreach (TfTemplateResultType item in Enum.GetValues<TfTemplateResultType>())
 			{
@@ -256,7 +256,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 					Url = typeTemplates.Count == 0
 					? string.Format(TfConstants.AdminTemplatesTypePageUrl, ((int)item).ToString())
 					: string.Format(TfConstants.AdminTemplatesTemplatePageUrl, ((int)item).ToString(), typeTemplates[0].Id),
-					Text = String.Format(LOC[TfConstants.AdminTemplateMenuTitle], LOC[item.ToDescriptionString()])
+					Text = String.Format(LOC["Template {0}"], LOC[item.ToDescriptionString()])
 				});
 			}
 			menuItems.Add(rootMenu);
@@ -273,7 +273,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				IconColor = TfConstants.AdminColor,
 				Selected = routeState.HasNode(RouteDataNode.Pages, 1),
 				Url = String.Format(TfConstants.AdminPagesSingleUrl, addonPages[0].Id),
-				Text = LOC[TfConstants.AdminAddonsMenuTitle]
+				Text = LOC["Addons"]
 			};
 			menuItems.Add(rootMenu);
 		}

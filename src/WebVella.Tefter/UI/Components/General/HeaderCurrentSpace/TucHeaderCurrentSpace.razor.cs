@@ -35,7 +35,7 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 
 			if (navState.HasNode(RouteDataNode.Home,0))
 			{
-				menuText.Add(TfConstants.HomeMenuTitle);
+				menuText.Add(LOC("Home"));
 			}
 			else if(navState.HasNode(RouteDataNode.Admin,0))
 			{
