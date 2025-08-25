@@ -20,7 +20,7 @@ public class AssetsMigration2024110101 : ITfApplicationMigration
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
 					.AddShortTextColumn("name", c => { c.NotNullable(); })
-					.AddShortTextColumn("join_key", c => { c.NotNullable(); })
+					.AddShortTextColumn("data_identity", c => { c.Nullable(); })
 					.AddShortTextColumn("count_shared_column_name", c => { c.Nullable(); });
 			})
 			.WithConstraints(constraints =>
@@ -35,6 +35,7 @@ public class AssetsMigration2024110101 : ITfApplicationMigration
 			{
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
+					.AddShortTextColumn("identity_row_id", c => { c.AsGeneratedSHA1FromColumns("id"); })
 					.AddGuidColumn("folder_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 					.AddShortIntegerColumn("type", c => { c.NotNullable(); })
 					.AddTextColumn("content_json", c => { c.NotNullable(); })
@@ -56,29 +57,5 @@ public class AssetsMigration2024110101 : ITfApplicationMigration
 						.WithColumns("folder_id");
 					});
 			});
-
-
-		dbBuilder
-			.NewTableBuilder(Guid.NewGuid(), "assets_related_jk")
-			.WithColumns(columns =>
-			{
-				columns
-					.AddGuidColumn("id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-					.AddGuidColumn("asset_id", c => { c.WithoutAutoDefaultValue().NotNullable(); });
-			})
-			.WithConstraints(constraints =>
-			{
-				constraints
-					.AddPrimaryKeyConstraint("pk_assets_related_jk", c => { c.WithColumns("id", "asset_id"); })
-					.AddForeignKeyConstraint("fk_assets_related_jk_asset", c =>
-					{
-						c
-						.WithForeignTable("assets_asset")
-						.WithForeignColumns("id")
-						.WithColumns("asset_id");
-					});
-			});
-
-
 	}
 }

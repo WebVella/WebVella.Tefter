@@ -1,4 +1,4 @@
-﻿@namespace WebVella.Tefter.Talk.Components
+﻿@* @namespace WebVella.Tefter.Talk.Components
 @inherits TfBaseComponent
 
 @if (_isLoading)
@@ -18,7 +18,7 @@ else if (_channel is null)
 		</ChildContent>
 	</TfLayoutBodyMain>
 }
-else if (String.IsNullOrWhiteSpace(_channel.JoinKey))
+else if (String.IsNullOrWhiteSpace(_channel.DataIdentity))
 {
 	<TfLayoutBodyMain>
 		<Header>
@@ -36,7 +36,7 @@ else if (JoinKeyValue is null)
 			<TfPageHeader>@LOC("Error")</TfPageHeader>
 		</Header>
 		<ChildContent>
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the join key '{0}' of channel '{1}'!", _channel.JoinKey, _channel.Name)</FluentMessageBar>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the join key '{0}' of channel '{1}'!", _channel.DataIdentity, _channel.Name)</FluentMessageBar>
 		</ChildContent>
 	</TfLayoutBodyMain>
 }
@@ -47,7 +47,7 @@ else if (JoinKeyValue == Guid.Empty)
 			<TfPageHeader>@LOC("Error")</TfPageHeader>
 		</Header>
 		<ChildContent>
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected join key '{0}' value is not yet generated for this row of the dataset!", _channel.JoinKey)</FluentMessageBar>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected join key '{0}' value is not yet generated for this row of the dataset!", _channel.DataIdentity)</FluentMessageBar>
 		</ChildContent>
 	</TfLayoutBodyMain>
 }
@@ -110,7 +110,7 @@ else
 			<div class="talk-panel__right" style="@(_activeThread is null ? "display:none" : "")">
 				@if (_activeThread is not null)
 				{
-					@if (_activeThread.RelatedSK.Keys.Count > 1)
+					@if (_activeThread.ConnectedDataIdentityValues.Keys.Count > 1)
 					{
 						<div class="talk-panel__right__header broadcast">
 							<div class="talk-panel__right__header-icon">
@@ -132,10 +132,10 @@ else
 							<div class="talk-panel__right__subheader">
 								<table class="tf-grid">
 									<tbody class="tf-grid-tbody">
-										@foreach (var key in _activeThread.RelatedSK.Keys)
+										@foreach (var key in _activeThread.ConnectedDataIdentityValues.Keys)
 										{
 											<tr @key=@key class="tf-grid-tr">
-												<td class="tf-grid-td"><div>@_activeThread.RelatedSK[key]</div></td>
+												<td class="tf-grid-td"><div>@_activeThread.ConnectedDataIdentityValues[key]</div></td>
 											</tr>
 										}
 									</tbody>
@@ -227,3 +227,4 @@ else
 	</TfLayoutBodyMain>
 }
 
+ *@

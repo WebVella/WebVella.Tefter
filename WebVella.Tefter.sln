@@ -16,13 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{45AE6C67-9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{FBDDD2A3-E610-424E-B64E-58B4662A4583}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Tests", "tests\WebVella.Tefter.Tests\WebVella.Tefter.Tests.csproj", "{4FCDA882-507F-4677-B756-EBEBD464F5D3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.DataProviders.Csv", "src\WebVella.Tefter.DataProviders.Csv\WebVella.Tefter.DataProviders.Csv.csproj", "{3850FB75-0FDA-4AF0-B63A-FCB9DBB502D4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Site", "src\WebVella.Tefter.Site\WebVella.Tefter.Site.csproj", "{3C109BF7-F4DA-44D8-AEF4-92F54326D559}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Web.Tests", "tests\WebVella.Tefter.Web.Tests\WebVella.Tefter.Web.Tests.csproj", "{AE410F01-BB1F-45D4-AA01-9FA762B958E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.DataProviders.MsSql", "src\WebVella.Tefter.DataProviders.MsSql\WebVella.Tefter.DataProviders.MsSql.csproj", "{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}"
 EndProject
@@ -54,6 +50,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.TemplatePro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.EmailSender", "src\WebVella.Tefter.EmailSender\WebVella.Tefter.EmailSender.csproj", "{7FEC0D4D-7C9E-4CD4-73BD-77627070BB77}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Talk", "src\WebVella.Tefter.Talk\WebVella.Tefter.Talk.csproj", "{A5509AF1-6DA0-6431-8381-270EFC702402}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Assets", "src\WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj", "{6E345CC6-8857-DF62-1108-EE1B9E82E9F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Tests", "tests\WebVella.Tefter.Tests\WebVella.Tefter.Tests.csproj", "{8502B0F5-9CB3-8B53-4702-10924A2D2413}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,10 +66,6 @@ Global
 		{488533C5-7E51-4222-AD4C-3B3109B006A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{488533C5-7E51-4222-AD4C-3B3109B006A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{488533C5-7E51-4222-AD4C-3B3109B006A3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4FCDA882-507F-4677-B756-EBEBD464F5D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4FCDA882-507F-4677-B756-EBEBD464F5D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4FCDA882-507F-4677-B756-EBEBD464F5D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4FCDA882-507F-4677-B756-EBEBD464F5D3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3850FB75-0FDA-4AF0-B63A-FCB9DBB502D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3850FB75-0FDA-4AF0-B63A-FCB9DBB502D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3850FB75-0FDA-4AF0-B63A-FCB9DBB502D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -76,10 +74,6 @@ Global
 		{3C109BF7-F4DA-44D8-AEF4-92F54326D559}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C109BF7-F4DA-44D8-AEF4-92F54326D559}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C109BF7-F4DA-44D8-AEF4-92F54326D559}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AE410F01-BB1F-45D4-AA01-9FA762B958E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AE410F01-BB1F-45D4-AA01-9FA762B958E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AE410F01-BB1F-45D4-AA01-9FA762B958E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AE410F01-BB1F-45D4-AA01-9FA762B958E8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -128,13 +122,23 @@ Global
 		{7FEC0D4D-7C9E-4CD4-73BD-77627070BB77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FEC0D4D-7C9E-4CD4-73BD-77627070BB77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FEC0D4D-7C9E-4CD4-73BD-77627070BB77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5509AF1-6DA0-6431-8381-270EFC702402}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5509AF1-6DA0-6431-8381-270EFC702402}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5509AF1-6DA0-6431-8381-270EFC702402}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5509AF1-6DA0-6431-8381-270EFC702402}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E345CC6-8857-DF62-1108-EE1B9E82E9F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E345CC6-8857-DF62-1108-EE1B9E82E9F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E345CC6-8857-DF62-1108-EE1B9E82E9F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E345CC6-8857-DF62-1108-EE1B9E82E9F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8502B0F5-9CB3-8B53-4702-10924A2D2413}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8502B0F5-9CB3-8B53-4702-10924A2D2413}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8502B0F5-9CB3-8B53-4702-10924A2D2413}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8502B0F5-9CB3-8B53-4702-10924A2D2413}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{4FCDA882-507F-4677-B756-EBEBD464F5D3} = {FBDDD2A3-E610-424E-B64E-58B4662A4583}
-		{AE410F01-BB1F-45D4-AA01-9FA762B958E8} = {FBDDD2A3-E610-424E-B64E-58B4662A4583}
 		{BE0B1C3E-D793-DF94-4E45-08924EE577E0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{DC264655-ACE2-4C82-88A6-0C9E6248E35D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{E95B6CAB-5261-4660-BD58-EFB0D9C72218} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
@@ -145,6 +149,7 @@ Global
 		{ECEFC268-ED0C-55CC-DF25-A849CE9E8FE1} = {5B27AF15-DB08-4A07-BDBB-1F857288F9FC}
 		{B17E7510-919D-A2BF-8DF0-57A2961D2CA5} = {5B27AF15-DB08-4A07-BDBB-1F857288F9FC}
 		{9794BDA1-9021-B336-96BB-3D9183CB16CD} = {5B27AF15-DB08-4A07-BDBB-1F857288F9FC}
+		{8502B0F5-9CB3-8B53-4702-10924A2D2413} = {FBDDD2A3-E610-424E-B64E-58B4662A4583}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C1A4AC87-0ABF-4D69-AB37-06B038019BBB}

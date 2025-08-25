@@ -11,4 +11,9 @@ public class TfDataIdentity
 	public string Label { get; set; } = default!;
 
 	public bool IsSystem { get { return DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY; } }
+
+	public override string ToString()
+	{
+		return DataIdentity;
+	}
 }

@@ -204,7 +204,7 @@ public partial class TfServiceTest : BaseTest
 		{
 			Id = Guid.NewGuid(),
 			Name = "Space Unit Test",
-			Color = 10,
+			Color = TfColor.Amber100,
 			FluentIconName = "icon1",
 			IsPrivate = false,
 			Position = 0

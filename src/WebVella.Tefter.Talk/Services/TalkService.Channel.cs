@@ -61,8 +61,8 @@ internal partial class TalkService : ITalkService
 			.ToValidationException()
 			.ThrowIfContainsErrors();
 
-		var SQL = "INSERT INTO talk_channel(id,name,join_key,count_shared_column_name) " +
-			"VALUES( @id,@name,@join_key,@count_shared_column_name)";
+		var SQL = "INSERT INTO talk_channel(id,name,data_identity,count_shared_column_name) " +
+            "VALUES( @id,@name,@data_identity,@count_shared_column_name)";
 
 		var idPar = TalkUtility.CreateParameter(
 			"id",
@@ -75,8 +75,8 @@ internal partial class TalkService : ITalkService
 			DbType.StringFixedLength);
 
 		var joinKeyPar = TalkUtility.CreateParameter(
-			"join_key",
-			channel.JoinKey,
+            "data_identity",
+			channel.DataIdentity,
 			DbType.StringFixedLength);
 
 		var countSharedColumnNamePar = TalkUtility.CreateParameter(
@@ -110,7 +110,7 @@ internal partial class TalkService : ITalkService
 
 		var SQL = "UPDATE talk_channel SET " +
 			"name=@name, " +
-			"join_key=@join_key, " +
+			"data_identity=@data_identity, " +
 			"count_shared_column_name=@count_shared_column_name " +
 			"WHERE id = @id";
 
@@ -124,9 +124,9 @@ internal partial class TalkService : ITalkService
 			channel.Name,
 			DbType.StringFixedLength);
 
-		var joinKeyPar = TalkUtility.CreateParameter(
-			"join_key",
-			channel.JoinKey,
+		var dataIdentityPar = TalkUtility.CreateParameter(
+			"data_identity",
+			channel.DataIdentity,
 			DbType.StringFixedLength);
 
 		var countSharedColumnNamePar = TalkUtility.CreateParameter(
@@ -138,7 +138,7 @@ internal partial class TalkService : ITalkService
 			SQL,
 			idPar,
 			namePar,
-			joinKeyPar,
+			dataIdentityPar,
 			countSharedColumnNamePar);
 
 		if (dbResult != 1)
@@ -179,7 +179,7 @@ internal partial class TalkService : ITalkService
 		{
 			Id = dr.Field<Guid>("id"),
 			Name = dr.Field<string>("name") ?? string.Empty,
-			JoinKey = dr.Field<string>("join_key"),
+			DataIdentity = dr.Field<string>("data_identity"),
 			CountSharedColumnName = dr.Field<string>("count_shared_column_name")
 		};
 	}

@@ -22,7 +22,7 @@ public class TfCreateTalkChannelRecipeStep : ITfRecipeStepAddon
 		var step = (TfCreateTalkChannelRecipeStepData)addon.Data;
 		var channel = new TalkChannel{ 
 			Id = step.ChannelId != Guid.Empty ? step.ChannelId : Guid.NewGuid(),
-			JoinKey = step.JoinKey,
+			DataIdentity = step.JoinKey,
 			CountSharedColumnName = step.CountSharedColumnName,
 			Name = step.Name,
 		};

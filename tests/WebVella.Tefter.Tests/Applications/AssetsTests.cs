@@ -1,135 +1,161 @@
-﻿//namespace WebVella.Tefter.Tests;
+﻿namespace WebVella.Tefter.Tests;
 
-//using WebVella.Tefter.Assets.Models;
-//using WebVella.Tefter.Assets.Services;
+using WebVella.Tefter.Assets.Models;
+using WebVella.Tefter.Assets.Services;
+using WebVella.Tefter.Utility;
 
+public partial class AssetsTests : BaseTest
+{
+	[Fact]
+	public async Task Assests_Folder_CRUD()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			IAssetsService assetService = ServiceProvider.GetRequiredService<IAssetsService>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-//public partial class AssetsTests : BaseTest
-//{
-//	[Fact]
-//	public async Task Assests_Folder_CRUD()
-//	{
-//		using (await locker.LockAsync())
-//		{
-//			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-//			IAssetsService assetService = ServiceProvider.GetRequiredService<IAssetsService>();
-//			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-//			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var user = tfService.GetUser("rumen@webvella.com");
 
+				AssetsFolder folder = new AssetsFolder
+				{
+					Id = Guid.NewGuid(),
+					Name = "Test Folder",
+					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					CountSharedColumnName = ""
+				};
 
-//			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-//			{
-//				var user = identityManager.GetUser("rumen@webvella.com").Value;
+				var folderResult = assetService.CreateFolder(folder);
+				folderResult.Should().NotBeNull();
+								
+				folder.Name = "Test folder 1";
+				folderResult = assetService.UpdateFolder(folder);
+				folder.Name.Should().Be("Test folder 1");
 
-//				Folder folder = new Folder
-//				{
-//					Id = Guid.NewGuid(),
-//					Name = "Test Folder",
-//					JoinKey = "talk_join_key",
-//					CountSharedColumnName = ""
-//				};
+				assetService.DeleteFolder(folder.Id);
+			}
+		}
+	}
 
-//				var folderResult = assetService.CreateFolder(folder);
-//				folderResult.IsSuccess.Should().BeTrue();
+	[Fact]
+	public async Task Assets_Asset_CRUD()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			IAssetsService assetService = ServiceProvider.GetRequiredService<IAssetsService>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-//				folder = folderResult.Value;
-//				folder.Should().NotBeNull();
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
+				var dataTable = tfService.QueryDataProvider(provider);
 
-//				folder.Name = "Test folder 1";
-//				folderResult = assetService.UpdateFolder(folder);
-//				folderResult.IsSuccess.Should().BeTrue();
+				List<string> rowIdentityIds = new List<string>();
+				for (int i = 0; i < 5; i++)
+					rowIdentityIds.Add((string)dataTable.Rows[i]["tf_row_id"]);
 
-//				folder.Name.Should().Be("Test folder 1");
+				var user = tfService.GetDefaultSystemUser();
+				if (user == null) throw new Exception("No default system user found");
 
-//				folderResult = assetService.DeleteFolder(folder.Id);
-//				folderResult.IsSuccess.Should().BeTrue();
-//			}
-//		}
-//	}
+				AssetsFolder folder = new AssetsFolder
+				{
+					Id = Guid.NewGuid(),
+					Name = "Test Folder",
+					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					CountSharedColumnName = ""
+				};
+				folder = assetService.CreateFolder(folder);
 
-//	[Fact]
-//	public async Task Assets_Asset_CRUD()
-//	{
-//		using (await locker.LockAsync())
-//		{
-//			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-//			IAssetsService assetService = ServiceProvider.GetRequiredService<IAssetsService>();
-//			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-//			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
+				CreateLinkAssetModel asset = new CreateLinkAssetModel
+				{
+					FolderId = folder.Id,
+					Label = "Test link",
+					Url = "http://google.com",
+					CreatedBy = user.Id,
+					DataIdentityValues = rowIdentityIds,
+				};
 
+				var createdAsset = assetService.CreateLinkAsset(asset);
+				createdAsset.Should().NotBeNull();
 
-//			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-//			{
-//				var (provider, spaceData) = await SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider, dbService);
-//				var dataTable = dataManager.QueryDataProvider(provider).Value;
+				createdAsset = assetService.GetAsset(createdAsset.Id);
+				createdAsset.Should().NotBeNull();
 
-//				List<Guid> rowIds = new List<Guid>();
-//				for (int i = 0; i < 5; i++)
-//					rowIds.Add((Guid)dataTable.Rows[i]["tf_id"]);
+				var assets = assetService.GetAssets(folder.Id, null);
+				assets.Count.Should().Be(1);
 
-//				var user = identityManager.GetUser("rumen@webvella.com").Value;
+				var dataIdentityValueToSearchOn = assets[0].ConnectedDataIdentityValues.Keys.First();
 
-//				Folder folder = new Folder
-//				{
-//					Id = Guid.NewGuid(),
-//					Name = "Test Folder",
-//					JoinKey = "join_key_text",
-//					CountSharedColumnName = ""
-//				};
-//				var folderCreatedResult = assetService.CreateFolder(folder);
+				assets = assetService.GetAssets(folder.Id, dataIdentityValueToSearchOn);
+				assets.Count.Should().Be(1);
 
-//				Guid skId = dataManager.GetId("join_key_value", "1").Value;
+				var randomDataIdentityValue = Guid.NewGuid().ToSha1();
 
-//				CreateLinkAssetModel asset = new CreateLinkAssetModel
-//				{
-//					FolderId = folder.Id,
-//					Label = "Test link",
-//					Url = "http://google.com",
-//					CreatedBy = user.Id,
-//					RowIds = rowIds.ToList(),
-//					DataProviderId = provider.Id,
-//				};
+				assets = assetService.GetAssets(folder.Id, randomDataIdentityValue);
+				assets.Count.Should().Be(0);
 
-//				var id1 = assetService.CreateLinkAsset(asset).Value;
+				List<string> rowIdentityIds2 = new List<string>();
+				for (int i = 5; i < 10; i++)
+					rowIdentityIds2.Add((string)dataTable.Rows[i]["tf_row_id"]);
 
-//				var asset1 = assetService.GetAsset(id1).Value;
-//				asset1.Should().NotBeNull();
+				//using tmp file because local file is moved
+				var appSettingsFilePath = ToApplicationPath("appsettings.json");
+				var tmpFilePath = Path.GetTempPath() + "appsettings.json";
+				File.Copy(appSettingsFilePath, tmpFilePath, true);
 
-//				var assets = assetService.GetAssets(folder.Id, null).Value;
-//				assets.Count.Should().Be(1);
+				//create file asset
+				CreateFileAssetModel fileAssetModel = new CreateFileAssetModel
+				{
+					FolderId = folder.Id,
+					CreatedBy = user.Id,
+					Label = "Test file",
+					DataIdentityValues = rowIdentityIds2,
+					LocalPath = tmpFilePath
+				};
 
-//				var relSKId = assets[0].RelatedSK.Keys.First();
+				var fileAsset = assetService.CreateFileAsset(fileAssetModel);
+				fileAsset.Should().NotBeNull();
 
-//				assets = assetService.GetAssets(folder.Id, relSKId).Value;
-//				assets.Count.Should().Be(1);
+				dataIdentityValueToSearchOn = fileAsset.ConnectedDataIdentityValues.Keys.First();
 
-//				relSKId = Guid.NewGuid();
+				assets = assetService.GetAssets(folder.Id, dataIdentityValueToSearchOn);
+				assets.Count.Should().Be(1);
 
-//				assets = assetService.GetAssets(folder.Id, relSKId).Value;
-//				assets.Count.Should().Be(0);
+				List<string> rowIdentityIds3 = new List<string>();
+				rowIdentityIds3.Add((string)dataTable.Rows[0]["tf_row_id"]);
+				rowIdentityIds3.Add((string)dataTable.Rows[5]["tf_row_id"]);
 
+				CreateLinkAssetModel dupIdentityValueAsset = new CreateLinkAssetModel
+				{
+					FolderId = folder.Id,
+					Label = "Test link",
+					Url = "http://google.com",
+					CreatedBy = user.Id,
+					DataIdentityValues = rowIdentityIds3,
+				};
 
-//				//create file asset
-//				CreateFileAssetModel fileAssetModel = new CreateFileAssetModel
-//				{
-//					FolderId = folder.Id,
-//					CreatedBy = user.Id,
-//					RowIds = rowIds.ToList(),
-//					DataProviderId = provider.Id,
-//					LocalPath = ToApplicationPath("appsettings.json")
-//				};
+				createdAsset = assetService.CreateLinkAsset(dupIdentityValueAsset);
+				createdAsset.Should().NotBeNull();
+				createdAsset.ConnectedDataIdentityValues.Count.Should().Be(2);
 
-//				var fileAssetResult = assetService.CreateFileAsset(fileAssetModel);
-//				fileAssetResult.IsSuccess.Should().BeTrue();
-//			}
-//		}
-//	}
+				assets = assetService.GetAssets(folder.Id, rowIdentityIds3[0]);
+				assets.Count.Should().Be(2);
 
-//	public static string ToApplicationPath(string fileName)
-//	{
-//		var exePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-//		Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
-//		var appRoot = appPathMatcher.Match(exePath).Value;
-//		return Path.Combine(appRoot, fileName);
-//	}
-//}
+				assets = assetService.GetAssets(folder.Id, rowIdentityIds3[1]);
+				assets.Count.Should().Be(2);
+
+			}
+		}
+	}
+
+	public static string ToApplicationPath(string fileName)
+	{
+		var exePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+		Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
+		var appRoot = appPathMatcher.Match(exePath).Value;
+		return Path.Combine(appRoot, fileName);
+	}
+}

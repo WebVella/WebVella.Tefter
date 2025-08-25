@@ -24,7 +24,7 @@ public class TalkMigration2024100101 : ITfApplicationMigration
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
 					.AddShortTextColumn("name", c => { c.NotNullable(); })
-					.AddShortTextColumn("join_key", c => { c.NotNullable(); })
+					.AddShortTextColumn("data_identity", c => { c.Nullable(); })
 					.AddShortTextColumn("count_shared_column_name", c => { c.Nullable(); });
 			})
 			.WithConstraints(constraints =>
@@ -39,12 +39,16 @@ public class TalkMigration2024100101 : ITfApplicationMigration
 			{
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
+					.AddShortTextColumn("identity_row_id", c => { c.AsGeneratedSHA1FromColumns("id"); })
 					.AddGuidColumn("channel_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 					.AddGuidColumn("thread_id", c => { c.Nullable(); })
 					.AddShortIntegerColumn("type", c => { c.NotNullable(); })
 					.AddTextColumn("content", c => { c.NotNullable(); })
 					.AddGuidColumn("user_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-					.AddDateTimeColumn("created_on", c => { c.WithAutoDefaultValue().NotNullable(); });
+					.AddBooleanColumn("visible_in_channel", c => { c.WithDefaultValue(false); })
+					.AddDateTimeColumn("created_on", c => { c.WithAutoDefaultValue().NotNullable(); })
+					.AddDateTimeColumn("last_updated_on", c => { c.WithoutAutoDefaultValue().Nullable(); })
+					.AddDateTimeColumn("deleted_on", c => { c.WithoutAutoDefaultValue().Nullable(); });
 			})
 			.WithConstraints(constraints =>
 			{
@@ -57,30 +61,6 @@ public class TalkMigration2024100101 : ITfApplicationMigration
 						.WithForeignColumns("id")
 						.WithColumns("channel_id");
 					});
-			});
-		
-
-		dbBuilder
-			.NewTableBuilder(Guid.NewGuid(), "talk_related_jk")
-			.WithColumns(columns =>
-			{
-				columns
-					.AddGuidColumn("id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-					.AddGuidColumn("thread_id", c => { c.WithoutAutoDefaultValue().NotNullable(); });
-			})
-			.WithConstraints(constraints =>
-			{
-				constraints
-					.AddPrimaryKeyConstraint("pk_talk_related_jk_id", c => { c.WithColumns("id", "thread_id"); })
-					.AddForeignKeyConstraint("fk_talk_related_jk_thread", c =>
-					{
-						c
-						.WithForeignTable("talk_thread")
-						.WithForeignColumns("id")
-						.WithColumns("thread_id");
-					});
-			});
-
-		
+			});		
 	}
 }

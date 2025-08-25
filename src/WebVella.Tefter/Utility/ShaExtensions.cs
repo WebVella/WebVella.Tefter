@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Utility;
 
-public static class GuidExtensions
+public static class ShaExtensions
 {
 	static string ToSha1(this Guid? guid)
 	{
@@ -30,5 +30,19 @@ public static class GuidExtensions
 			}
 			return sb.ToString();
 		}
+	}
+
+	public static bool IsSha1(this string value)
+	{
+		if (string.IsNullOrEmpty(value) || value.Length != 40)
+			return false;
+		
+		foreach (char c in value)
+		{
+			if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')))
+				return false;
+		}
+
+		return true;
 	}
 }

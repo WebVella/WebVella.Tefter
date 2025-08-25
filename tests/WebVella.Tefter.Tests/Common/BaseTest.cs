@@ -210,7 +210,7 @@ public class BaseTest
 		{
 			Id = Guid.NewGuid(),
 			Name = "TestSpace",
-			Color = 10,
+			Color = TfColor.Amber100,
 			FluentIconName = "icon1",
 			IsPrivate = false,
 			Position = 0

@@ -8,7 +8,7 @@ public record TalkChannel
 	public Guid Id { get; set; }
 	[Required]
 	public string Name { get; set; }
-	public string JoinKey { get; set; } = null;
+	public string DataIdentity { get; set; } = null;
 	public string CountSharedColumnName { get; set; } = null;
 
 	public TalkChannel() :
@@ -19,12 +19,12 @@ public record TalkChannel
 	public TalkChannel(
 		Guid id,
 		string name,
-		string joinKey = null,
+		string dataIdentity = null,
 		string countSharedColumnName = null)
 	{
 		Id = id;
 		Name = name;
-		JoinKey = joinKey;
+		DataIdentity = dataIdentity;
 		CountSharedColumnName = countSharedColumnName;
 	}
 }

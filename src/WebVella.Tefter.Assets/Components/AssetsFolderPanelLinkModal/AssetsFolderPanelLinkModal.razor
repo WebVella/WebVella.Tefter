@@ -1,22 +1,22 @@
 ﻿@namespace WebVella.Tefter.Assets.Components
 @inherits TfFormBaseComponent
 @* Header *@
-<FluentDialogHeader ShowDismiss="true">
+@* <FluentDialogHeader ShowDismiss="true">
 	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
-</FluentDialogHeader>
+</FluentDialogHeader> *@
 
 @* Footer *@
-<FluentDialogFooter>
+@* <FluentDialogFooter>
 	@if (String.IsNullOrWhiteSpace(_error))
 	{
 		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
 					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
 	}
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
-</FluentDialogFooter>
+</FluentDialogFooter> *@
 
 @* Body *@
-<FluentDialogBody>
+@* <FluentDialogBody>
 	@if (!string.IsNullOrWhiteSpace(_error))
 	{
 		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
@@ -62,4 +62,4 @@
 			</FluentGrid>
 		</FluentEditForm>
 	}
-</FluentDialogBody>
+</FluentDialogBody> *@

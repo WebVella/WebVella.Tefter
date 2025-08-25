@@ -7,13 +7,10 @@ public partial interface ITalkService
 
 	public List<TalkThread> GetThreads(
 		Guid channelId,
-		Guid? skId);
+		string dataIdentityValue = null);
 
-	public Guid CreateThread(
+    public Guid CreateThread(
 		CreateTalkThread thread);
-
-	public Guid CreateThread(
-		CreateTalkThreadWithJoinKey thread);
 
 	public Guid CreateSubThread(
 		CreateTalkSubThread thread);
@@ -44,7 +41,7 @@ internal partial class TalkService : ITalkService
 
 		Guid channelId = (Guid)dt.Rows[0]["channel_id"];
 
-		var threads = GetThreads(channelId, null);
+		var threads = GetThreads(channelId, dataIdentityValue: null);
 
 		var threadsAsFlatList = new List<TalkThread>();
 
@@ -60,19 +57,29 @@ internal partial class TalkService : ITalkService
 
 	public List<TalkThread> GetThreads(
 		Guid channelId,
-		Guid? skId)
+		string dataIdentityValue = null)
 	{
-		const string SQL_NO_SK =
-@"WITH sk_info AS (
-	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
-	FROM talk_related_jk trs
-		LEFT OUTER JOIN tf_id_dict idd ON idd.id = trs.id
-	GROUP BY trs.thread_id
+
+		string channelDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
+		var channel = GetChannel(channelId);
+		if( channel is null)
+			throw new Exception($"Failed to find channel with id '{channelId}'");
+		else if (!string.IsNullOrWhiteSpace(channel.DataIdentity))
+            channelDataIdentity = channel?.DataIdentity;
+
+        string SQL_WITHOUT_DATA_IDENTITY =
+$@"WITH sk_identity_info AS (
+	SELECT trs.id, JSON_AGG( dic.* ) AS json_result
+	FROM talk_thread trs
+		LEFT OUTER JOIN tf_data_identity_connection dic ON 
+			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_1 = '{channelDataIdentity}' ) OR
+			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_2 = '{channelDataIdentity}' ) 
+	GROUP BY trs.id
 ), 
 root_threads AS (
 	SELECT id 
 	FROM talk_thread
-	WHERE channel_id = @channel_id AND thread_id IS NULL
+	WHERE channel_id = @channel_id AND thread_id IS NULL 
 )
 SELECT 
 	tt.id,
@@ -85,25 +92,33 @@ SELECT
 	tt.last_updated_on,
 	tt.visible_in_channel,
 	tt.deleted_on,
-	sk_info.json_result AS related_join_key_json
+	sk_identity_info.json_result AS identity_connection_json
 FROM talk_thread tt
-	LEFT OUTER JOIN sk_info  ON tt.id = sk_info.thread_id
+	LEFT OUTER JOIN sk_identity_info  ON tt.id = sk_identity_info.id
 	LEFT OUTER JOIN root_threads  rt ON rt.id = tt.id OR tt.thread_id = rt.id
 WHERE rt.id IS NOT NULL
 ORDER BY tt.created_on DESC
 ";
 
-		const string SQL_WITH_SK = @"WITH sk_info AS (
-	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
-	FROM talk_related_jk trs
-		LEFT OUTER JOIN tf_id_dict idd ON idd.id = trs.id
-	GROUP BY trs.thread_id
-),
+		string SQL_WITH_DATA_IDENTITY =
+$@"WITH sk_identity_info AS (
+	SELECT trs.id, JSON_AGG( dic.* ) AS json_result
+	FROM talk_thread trs
+			LEFT OUTER JOIN tf_data_identity_connection dic ON 
+			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_1 = '{channelDataIdentity}' ) OR
+			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_2 = '{channelDataIdentity}' ) 
+	GROUP BY trs.id
+), 
 root_threads AS (
-	SELECT tt.id 
+	SELECT id 
 	FROM talk_thread tt
-		LEFT OUTER JOIN talk_related_jk sk ON sk.thread_id = tt.id AND sk.id = @sk_id
-	WHERE tt.channel_id = @channel_id AND tt.thread_id IS NULL AND sk.id IS NOT NULL
+		LEFT OUTER JOIN tf_data_identity_connection dic ON 
+			  ( dic.value_2 = tt.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND 
+				dic.data_identity_1 = '{channelDataIdentity}' AND dic.value_1 = @identity_value ) 
+			OR
+			  ( dic.value_1 = tt.identity_row_id AND dic.data_identity_1 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND 
+				dic.data_identity_2 = '{channelDataIdentity}' AND dic.value_2 = @identity_value ) 
+	WHERE channel_id = @channel_id AND thread_id IS NULL AND dic.data_identity_1 IS NOT NULL AND dic.data_identity_2 IS NOT NULL
 )
 SELECT 
 	tt.id,
@@ -116,9 +131,9 @@ SELECT
 	tt.last_updated_on,
 	tt.visible_in_channel,
 	tt.deleted_on,
-	sk_info.json_result AS related_join_key_json
+	sk_identity_info.json_result AS identity_connection_json
 FROM talk_thread tt
-	LEFT OUTER JOIN sk_info  ON tt.id = sk_info.thread_id
+	LEFT OUTER JOIN sk_identity_info  ON tt.id = sk_identity_info.id
 	LEFT OUTER JOIN root_threads  rt ON rt.id = tt.id OR tt.thread_id = rt.id
 WHERE rt.id IS NOT NULL
 ORDER BY tt.created_on DESC";
@@ -127,9 +142,9 @@ ORDER BY tt.created_on DESC";
 
 		List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
 
-		if (skId is not null)
+		if (dataIdentityValue is not null)
 		{
-			sql = SQL_WITH_SK;
+			sql = SQL_WITH_DATA_IDENTITY;
 
 			var channelIdPar = TalkUtility.CreateParameter(
 				"channel_id",
@@ -139,15 +154,15 @@ ORDER BY tt.created_on DESC";
 			parameters.Add(channelIdPar);
 
 			var skIdPar = TalkUtility.CreateParameter(
-				"sk_id",
-				skId,
-				DbType.Guid);
+                "identity_value",
+				dataIdentityValue,
+				DbType.String);
 
 			parameters.Add(skIdPar);
 		}
 		else
 		{
-			sql = SQL_NO_SK;
+			sql = SQL_WITHOUT_DATA_IDENTITY;
 
 			var channelIdPar = TalkUtility.CreateParameter(
 				"channel_id",
@@ -243,137 +258,38 @@ ORDER BY tt.created_on DESC";
 			if (dbResult != 1)
 				throw new Exception("Failed to insert new row in database for thread object");
 
-
-			if (thread.RowIds != null && thread.RowIds.Count > 0)
+			if (thread.DataIdentityValues != null && thread.DataIdentityValues.Count > 0)
 			{
-				var channel = GetChannel(thread.ChannelId);
-				var provider = _tfService.GetDataProvider(thread.DataProviderId);
+				var threadIdentityRowId = id.ToSha1();
+				TalkChannel channel = null;
+				channel = GetChannel(thread.ChannelId);
+				if (channel is null)
+					throw new Exception($"Failed to find channel with id '{thread.ChannelId}' for thread");
+				
 
-				if (provider is null)
-					throw new Exception($"Failed to find data provider with id='{thread.DataProviderId}'");
-
-				var dataTable = _tfService.QueryDataProvider(provider, thread.RowIds);
-
-				List<Guid> relatedSK = new List<Guid>();
-
-				foreach (TfDataRow row in dataTable.Rows)
+				TfDataIdentity channelDataIdentity = null;
+				if (!string.IsNullOrWhiteSpace(channel.DataIdentity))
 				{
-					var skIdValue = row.GetJoinKeyValue(channel.JoinKey);
-					if (skIdValue is not null && !relatedSK.Contains(skIdValue.Value))
-						relatedSK.Add(skIdValue.Value);
+					channelDataIdentity = _tfService.GetDataIdentity(channel.DataIdentity);
+					if (channelDataIdentity is null)
+						throw new Exception($"Failed to find data identity '{channel.DataIdentity}' for channel");
 				}
+				
+				if(channelDataIdentity is null)
+					channelDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
 
-				foreach (var skId in relatedSK)
+				foreach(var dataIdentityValue in thread.DataIdentityValues )
 				{
-					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-						"INSERT INTO talk_related_jk (id,thread_id) VALUES (@id, @thread_id)",
-							new NpgsqlParameter("@id", skId),
-							new NpgsqlParameter("@thread_id", id));
+					if (!dataIdentityValue.IsSha1())
+						throw new Exception($"Data identity value '{dataIdentityValue}' is not a valid SHA1 value");
 
-					if (skDbResult != 1)
-						throw new Exception("Failed to insert new row in database for related join key object");
-				}
-			}
-
-			scope.Complete();
-
-			return id;
-		}
-	}
-
-	public Guid CreateThread(
-		CreateTalkThreadWithJoinKey thread)
-	{
-		if (thread == null)
-			throw new NullReferenceException("Thread object is null");
-
-		Guid id = Guid.NewGuid();
-
-		new TalkThreadValidator(this)
-			.ValidateCreate(thread, id)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-		var SQL = @"INSERT INTO talk_thread
-						(id, channel_id, thread_id, type, content, user_id,
-						created_on, last_updated_on, deleted_on, visible_in_channel)
-					VALUES(@id, @channel_id, @thread_id, @type, @content, @user_id,
-						@created_on, @last_updated_on, @deleted_on,@visible_in_channel); ";
-
-		var idPar = TalkUtility.CreateParameter(
-			"@id",
-			id,
-			DbType.Guid);
-
-		var channelIdPar = TalkUtility.CreateParameter(
-			"@channel_id",
-			thread.ChannelId,
-			DbType.Guid);
-
-		var threadIdPar = TalkUtility.CreateParameter(
-			"@thread_id",
-			null,
-			DbType.Guid);
-
-		var typePar = TalkUtility.CreateParameter(
-			"@type",
-			(short)thread.Type,
-			DbType.Int16);
-
-		var contentPar = TalkUtility.CreateParameter(
-			"@content",
-			thread.Content,
-			DbType.String);
-
-		var visibleInChannelPar = TalkUtility.CreateParameter(
-			"@visible_in_channel",
-			true,
-			DbType.Boolean);
-
-		var userIdPar = TalkUtility.CreateParameter(
-			"@user_id",
-			thread.UserId,
-			DbType.Guid);
-
-		var createdOnPar = TalkUtility.CreateParameter(
-			"@created_on",
-			DateTime.Now,
-			DbType.DateTime2);
-
-		var lastUpdatedOnPar = TalkUtility.CreateParameter(
-			"@last_updated_on",
-			null,
-			DbType.DateTime2);
-
-		var deletedOnPar = TalkUtility.CreateParameter(
-			"@deleted_on",
-			null,
-			DbType.DateTime2);
-
-		using (var scope = _dbService.CreateTransactionScope())
-		{
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-				SQL,
-				idPar, channelIdPar, threadIdPar,
-				typePar, contentPar, userIdPar,
-				createdOnPar, lastUpdatedOnPar,
-				deletedOnPar, visibleInChannelPar);
-
-			if (dbResult != 1)
-				throw new Exception("Failed to insert new row in database for thread object");
-
-
-			if (thread.SKValueIds != null && thread.SKValueIds.Count > 0)
-			{
-				foreach (var skId in thread.SKValueIds)
-				{
-					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-						"INSERT INTO talk_related_jk (id,thread_id) VALUES (@id, @thread_id)",
-							new NpgsqlParameter("@id", skId),
-							new NpgsqlParameter("@thread_id", id));
-
-					if (skDbResult != 1)
-						throw new Exception("Failed to insert new row in database for related join key object");
+                    _tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
+					{
+						DataIdentity1 = channelDataIdentity.DataIdentity,
+						Value1 = dataIdentityValue,
+						DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+						Value2 = threadIdentityRowId
+                    });
 				}
 			}
 
@@ -555,7 +471,7 @@ ORDER BY tt.created_on DESC";
 		if (dt == null)
 			throw new Exception("DataTable is null");
 
-
+		var channels = GetChannels();
 		List<TalkThread> threadList = new List<TalkThread>();
 
 		foreach (DataRow dr in dt.Rows)
@@ -575,22 +491,40 @@ ORDER BY tt.created_on DESC";
 				LastUpdatedOn = dr.Field<DateTime?>("last_updated_on"),
 				DeletedOn = dr.Field<DateTime?>("deleted_on"),
 				SubThread = new List<TalkThread>(),
-				RelatedSK = new Dictionary<Guid, string>()
-			};
+                ConnectedDataIdentityValues = new Dictionary<string,string>()
+            };
 
-			var relatedJoinKeysJson = dr.Field<string>("related_join_key_json");
-			if (!String.IsNullOrWhiteSpace(relatedJoinKeysJson) &&
-				relatedJoinKeysJson.StartsWith("[") &&
-				relatedJoinKeysJson != "[null]")
-			{
-				var items = JsonSerializer.Deserialize<List<IdDictModel>>(relatedJoinKeysJson);
-				foreach (var item in items)
-					thread.RelatedSK[item.Id] = item.TextId;
-			}
+			TalkChannel channel = channels.SingleOrDefault(x => x.Id == thread.ChannelId);
+			string channelDataIdentity = channel.DataIdentity;
 
-			//thread.SubThread.Add(thread);
+			if( string.IsNullOrWhiteSpace(channelDataIdentity))
+                channelDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
+
+            var dataIdentityConnectionsJson = dr.Field<string>("identity_connection_json");
+            if (!String.IsNullOrWhiteSpace(dataIdentityConnectionsJson) &&
+                dataIdentityConnectionsJson.StartsWith("[") &&
+                dataIdentityConnectionsJson != "[null]")
+            {
+                var dataIdentityConnections = 
+					JsonSerializer.Deserialize<List<TfDataIdentityConnection>>(dataIdentityConnectionsJson);
+
+				foreach(var dic in dataIdentityConnections)
+				{
+					if(dic.Value1 == thread.IdentityRowId)
+					{
+						if(!thread.ConnectedDataIdentityValues.Keys.Contains(dic.Value2))
+                            thread.ConnectedDataIdentityValues[dic.Value2] = channelDataIdentity;
+                    }
+                    if (dic.Value2 == thread.IdentityRowId)
+                    {
+                        if (!thread.ConnectedDataIdentityValues.Keys.Contains(dic.Value1))
+                            thread.ConnectedDataIdentityValues[dic.Value1] = channelDataIdentity;
+                    }
+                }
+            }
+
 			threadList.Add(thread);
-		}
+        }
 
 		//fill sub thread
 		foreach (var thread in threadList.OrderBy(x => x.CreatedOn))
@@ -604,15 +538,6 @@ ORDER BY tt.created_on DESC";
 		}
 
 		return threadList.Where(x => x.VisibleInChannel).ToList();
-	}
-
-	private class IdDictModel
-	{
-		[JsonPropertyName("id")]
-		public Guid Id { get; set; }
-
-		[JsonPropertyName("text_id")]
-		public string TextId { get; set; }
 	}
 
 	#region <--- validation --->
@@ -641,28 +566,28 @@ ORDER BY tt.created_on DESC";
 					"The content is empty.") });
 			}
 
-			return new ValidationResult();
+            return new ValidationResult();
 		}
 
-		public ValidationResult ValidateCreate(
-			CreateTalkThreadWithJoinKey thread,
-			Guid id)
-		{
-			if (thread == null)
-			{
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The channel object is null.") });
-			}
+		//public ValidationResult ValidateCreate(
+		//	CreateTalkThreadWithDataIdentity thread,
+		//	Guid id)
+		//{
+		//	if (thread == null)
+		//	{
+		//		return new ValidationResult(new[] { new ValidationFailure("",
+		//			"The channel object is null.") });
+		//	}
 
-			if (string.IsNullOrWhiteSpace(thread.Content))
-			{
-				return new ValidationResult(new[] { new ValidationFailure(
-					nameof(CreateTalkThread.Content),
-					"The content is empty.") });
-			}
+		//	if (string.IsNullOrWhiteSpace(thread.Content))
+		//	{
+		//		return new ValidationResult(new[] { new ValidationFailure(
+		//			nameof(CreateTalkThread.Content),
+		//			"The content is empty.") });
+		//	}
 
-			return new ValidationResult();
-		}
+		//	return new ValidationResult();
+		//}
 
 
 		public ValidationResult ValidateCreateSubThread(

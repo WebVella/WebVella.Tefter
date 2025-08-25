@@ -1,10 +1,4 @@
-﻿using Bogus;
-using System;
-using WebVella.Tefter.Exceptions;
-using WebVella.Tefter.Models;
-using WebVella.Tefter.Web.Addons;
-
-namespace WebVella.Tefter.Tests.Services;
+﻿namespace WebVella.Tefter.Tests.Services;
 
 public partial class TfServiceTest : BaseTest
 {
@@ -30,7 +24,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space1",
-					Color = 10,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0,
@@ -50,7 +44,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space2",
-					Color = 12,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon2",
 					IsPrivate = false,
 					Position = 0,
@@ -80,7 +74,7 @@ public partial class TfServiceTest : BaseTest
 
 				space1.Name = "updated name";
 				space1.FluentIconName = "updated icon";
-				space1.Color = 100;
+				space1.Color = TfColor.Amber100;
 				space1.IsPrivate = true;
 
 				result = tfService.UpdateSpace(space1);
@@ -136,7 +130,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space1",
-					Color = 10,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0,
@@ -156,7 +150,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space2",
-					Color = 10,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon1",
 					IsPrivate = true,
 					Position = 0,
@@ -215,7 +209,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space1",
-					Color = 10,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0,
@@ -235,7 +229,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space2",
-					Color = 10,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0,
@@ -302,7 +296,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space1",
-					Color = 10,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
@@ -407,7 +401,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space1",
-					Color = 10,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
@@ -418,7 +412,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space2",
-					Color = 10,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
@@ -535,7 +529,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space1",
-					Color = 10,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
@@ -633,7 +627,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space1",
-					Color = 10,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
@@ -728,7 +722,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space1",
-					Color = 10,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
@@ -815,7 +809,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space1",
-					Color = 10,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
@@ -864,7 +858,8 @@ public partial class TfServiceTest : BaseTest
 											.Replace("(", "")
 											.Replace(")", ""),
 						Title = availableColumnType.AddonName,
-						ComponentId = new Guid(TfTextDisplayColumnComponent.ID),
+						//TODO FIX - speak with boz
+						//ComponentId = new Guid(TfTextDisplayColumnComponent.ID),
 						SpaceViewId = view.Id,
 						ComponentOptionsJson = "{}",
 						DataMapping = new Dictionary<string, string> { { "Value", "test" } }
@@ -924,7 +919,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Space1",
-					Color = 10,
+					Color = TfColor.Amber100,
 					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0

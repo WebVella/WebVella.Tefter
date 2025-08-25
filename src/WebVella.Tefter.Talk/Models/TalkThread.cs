@@ -3,6 +3,7 @@
 public class TalkThread
 {
 	public Guid Id { get; set; }
+	public string IdentityRowId { get { return Id.ToSha1(); }  }
 	public Guid ChannelId { get; set; }
 	public Guid? ThreadId { get; set; }
 	public TalkThread ParentThread { get; set; } = null;
@@ -13,8 +14,8 @@ public class TalkThread
 	public DateTime CreatedOn { get; set; }
 	public DateTime? LastUpdatedOn { get; set; } = null;
 	public DateTime? DeletedOn { get; set; } = null;
-	public Dictionary<Guid, string> RelatedSK { get; set; }
-	public List<TalkThread> SubThread { get; set; }
+	public Dictionary<string,string> ConnectedDataIdentityValues { get; set; }
+    public List<TalkThread> SubThread { get; set; }
 }
 
 
@@ -24,17 +25,7 @@ public class CreateTalkThread
 	public TalkThreadType Type { get; set; }
 	public string Content { get; set; }
 	public Guid UserId { get; set; }
-	public List<Guid> RowIds { get; set; }
-	public Guid DataProviderId { get; set; }
-}
-
-public class CreateTalkThreadWithJoinKey
-{
-	public Guid ChannelId { get; set; }
-	public TalkThreadType Type { get; set; }
-	public string Content { get; set; }
-	public Guid UserId { get; set; }
-	public List<Guid> SKValueIds { get; set; }
+	public List<string> DataIdentityValues { get; set; }
 }
 
 public class CreateTalkSubThread

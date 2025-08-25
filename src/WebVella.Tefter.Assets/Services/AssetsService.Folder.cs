@@ -61,8 +61,8 @@ internal partial class AssetsService : IAssetsService
 			.ToValidationException()
 			.ThrowIfContainsErrors();
 
-		var SQL = "INSERT INTO assets_folder(id,name,join_key,count_shared_column_name) " +
-			"VALUES( @id,@name,@join_key,@count_shared_column_name)";
+		var SQL = "INSERT INTO assets_folder(id,name,data_identity,count_shared_column_name) " +
+			"VALUES( @id,@name,@data_identity,@count_shared_column_name)";
 
 		var idPar = CreateParameter(
 			"id",
@@ -74,9 +74,9 @@ internal partial class AssetsService : IAssetsService
 			folder.Name,
 			DbType.StringFixedLength);
 
-		var joinKeyPar = CreateParameter(
-			"join_key",
-			folder.JoinKey,
+		var dataIdentityPar = CreateParameter(
+			"data_identity",
+			folder.DataIdentity,
 			DbType.StringFixedLength);
 
 		var countSharedColumnNamePar = CreateParameter(
@@ -88,7 +88,7 @@ internal partial class AssetsService : IAssetsService
 			SQL,
 			idPar,
 			namePar,
-			joinKeyPar,
+			dataIdentityPar,
 			countSharedColumnNamePar);
 
 		if (dbResult != 1)
@@ -110,7 +110,7 @@ internal partial class AssetsService : IAssetsService
 
 		var SQL = "UPDATE assets_folder SET " +
 			"name=@name, " +
-			"join_key=@join_key, " +
+            "data_identity=@data_identity, " +
 			"count_shared_column_name=@count_shared_column_name " +
 			"WHERE id = @id";
 
@@ -124,9 +124,9 @@ internal partial class AssetsService : IAssetsService
 			folder.Name,
 			DbType.StringFixedLength);
 
-		var joinKeyPar = CreateParameter(
-			"join_key",
-			folder.JoinKey,
+		var dataIdentityPar = CreateParameter(
+			"data_identity",
+			folder.DataIdentity,
 			DbType.StringFixedLength);
 
 		var countSharedColumnNamePar = CreateParameter(
@@ -138,7 +138,7 @@ internal partial class AssetsService : IAssetsService
 			SQL,
 			idPar,
 			namePar,
-			joinKeyPar,
+			dataIdentityPar,
 			countSharedColumnNamePar);
 
 		if (dbResult != 1)
@@ -179,7 +179,7 @@ internal partial class AssetsService : IAssetsService
 		{
 			Id = dr.Field<Guid>("id"),
 			Name = dr.Field<string>("name") ?? string.Empty,
-			JoinKey = dr.Field<string>("join_key"),
+			DataIdentity = dr.Field<string>("data_identity"),
 			CountSharedColumnName = dr.Field<string>("count_shared_column_name")
 		};
 	}

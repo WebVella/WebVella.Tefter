@@ -26,7 +26,7 @@ global using WebVella.Tefter.Database.Dbo;
 global using WebVella.Tefter.Services;
 global using WebVella.Tefter.Exceptions;
 global using WebVella.Tefter.Addons;
-global using WebVella.Tefter.Web.Addons;
+//global using WebVella.Tefter.Web.Addons;
 global using WebVella.Tefter.Models;
 
 
