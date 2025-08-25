@@ -9,7 +9,7 @@
 	@foreach (var item in TfConstants.CultureOptions)
 	{
 		<FluentMenuItem OnClick="@(() => _select(item))">
-			@item.Name
+			@item.CultureInfo.NativeName
 			<span slot="start">
 				<img style="height:16px;vertical-align:text-bottom;" src="@item.IconUrl" />
 			</span>

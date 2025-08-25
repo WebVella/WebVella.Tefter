@@ -32,19 +32,10 @@
 	<ItemGroup>
 		<Content Remove="compilerconfig.json" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<Compile Remove="UseCases\**" />
-		<Content Remove="UseCases\**" />
-		<None Remove="UseCases\**" />
-		<EmbeddedResource Remove="UseCases\**" />
-		<!--<Compile Remove="Web\Components\**" />
-		<Content Remove="Web\Components\**" />-->
-		<!--<Compile Remove="Web\**" />
-		<Content Remove="Web\**" />
-		<EmbeddedResource Remove="Web\**" />
-		<None Remove="Web\**" />-->
-	</ItemGroup>
+	<!--<ItemGroup>
+		<EmbeddedResource Include="Resources\**\*.resx" />
+		<EmbeddedResource Include="UI\Components\**\*.resx" />
+	</ItemGroup>-->
 
 	<ItemGroup>
 		<None Include="..\..\LICENSE">
@@ -100,6 +91,18 @@
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.2" />
 		<PackageReference Include="WebVella.BlazorTrace" Version="1.1.0" />
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\SharedResource.es-ES.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\SharedResource.fr-FR.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\SharedResource.de-DE.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

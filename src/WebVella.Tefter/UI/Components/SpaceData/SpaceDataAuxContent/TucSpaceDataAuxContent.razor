@@ -13,7 +13,7 @@
 		else
 		{
 			<TucPageHeader Icon="@TfConstants.GetIcon("Database")" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
-						   Area="@($"{_space?.Name} : {LOC(TfConstants.SpaceDataMenuTitle)}")" Title="@_spaceData.Name" SubTitle="@LOC("Connected Data")" />
+						   Area="@($"{_space?.Name} : {LOC("Space Data")}")" Title="@_spaceData.Name" SubTitle="@LOC("Connected Data")" />
 
 			<TucCard Title="@LOC("Shared column Joins")" SubTitle="@LOC("Columns that match one of the identity implemented for this data source")">
 				<ChildContent>

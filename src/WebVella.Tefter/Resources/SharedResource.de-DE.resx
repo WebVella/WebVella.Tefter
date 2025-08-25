@@ -1,0 +1,1851 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="space dataset" xml:space="preserve">
+    <value>räumlicher Datensatz</value>
+  </data>
+  <data name="space view" xml:space="preserve">
+    <value>Raumansicht</value>
+  </data>
+  <data name="space page" xml:space="preserve">
+    <value>Raumseite</value>
+  </data>
+  <data name="add new space" xml:space="preserve">
+    <value>Neuen Raum hinzufügen</value>
+  </data>
+  <data name="Unexpected Error! Check Notifications for details" xml:space="preserve">
+    <value>Unerwarteter Fehler! Prüfen Sie die Benachrichtigungen für Details.</value>
+  </data>
+  <data name="Unexpected Error!" xml:space="preserve">
+    <value>Unerwarteter Fehler!</value>
+  </data>
+  <data name="Please confirm the data change!" xml:space="preserve">
+    <value>Bitte bestätige die Datenänderung!</value>
+  </data>
+  <data name="change applied" xml:space="preserve">
+    <value>Änderung angewendet</value>
+  </data>
+  <data name="Invalid email format" xml:space="preserve">
+    <value>Ungültiges E‑Mail-Format</value>
+  </data>
+  <data name="Invalid GUID format" xml:space="preserve">
+    <value>Ungültiges GUID‑Format</value>
+  </data>
+  <data name="no value" xml:space="preserve">
+    <value>Kein Wert</value>
+  </data>
+  <data name="Invalid URL format" xml:space="preserve">
+    <value>Ungültiges URL-Format</value>
+  </data>
+  <data name="Are you sure that you need this identity deleted?" xml:space="preserve">
+    <value>Bist du sicher, dass diese Identität gelöscht werden soll?</value>
+  </data>
+  <data name="Data identity removed" xml:space="preserve">
+    <value>Datenidentität entfernt</value>
+  </data>
+  <data name="Create Identity" xml:space="preserve">
+    <value>Identität erstellen</value>
+  </data>
+  <data name="Manage Identity" xml:space="preserve">
+    <value>Identität verwalten</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Erstellen</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="Data identity created" xml:space="preserve">
+    <value>Datenidentität erstellt</value>
+  </data>
+  <data name="Data identity updated" xml:space="preserve">
+    <value>Datenidentität aktualisiert</value>
+  </data>
+  <data name="Are you sure that you need this key deleted?" xml:space="preserve">
+    <value>Bist du sicher, dass du diesen Schlüssel löschen musst?</value>
+  </data>
+  <data name="The implementation is successfully deleted!" xml:space="preserve">
+    <value>Die Implementierung wurde erfolgreich gelöscht!</value>
+  </data>
+  <data name="Are you sure that you need all data deleted? This operation can take minutes!" xml:space="preserve">
+    <value>Bist du sicher, dass alle Daten gelöscht werden müssen? Dieser Vorgang kann Minuten dauern!</value>
+  </data>
+  <data name="Data provider data deletion is triggered!" xml:space="preserve">
+    <value>Datenlöschung des Datenanbieters ausgelöst!</value>
+  </data>
+  <data name="Are you sure that you need this data provider deleted?" xml:space="preserve">
+    <value>Bist du sicher, dass dieser Datenanbieter gelöscht werden muss?</value>
+  </data>
+  <data name="Will proceeed only if there are not existing columns attached" xml:space="preserve">
+    <value>Wird fortfahren, nur wenn keine vorhandenen Spalten angehängt sind.</value>
+  </data>
+  <data name="Data provider was successfully deleted" xml:space="preserve">
+    <value>Datenanbieter wurde erfolgreich gelöscht</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Columns" xml:space="preserve">
+    <value>Spalten</value>
+  </data>
+  <data name="Connected Data" xml:space="preserve">
+    <value>Verbundene Daten</value>
+  </data>
+  <data name="Synchronization" xml:space="preserve">
+    <value>Synchronisierung</value>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>Daten</value>
+  </data>
+  <data name="Column successfully updated!" xml:space="preserve">
+    <value>Spalte erfolgreich aktualisiert!</value>
+  </data>
+  <data name="Are you sure that you need this column deleted?" xml:space="preserve">
+    <value>Bist du sicher, dass diese Spalte gelöscht werden muss?</value>
+  </data>
+  <data name="This will delete all related data too!" xml:space="preserve">
+    <value>Dies wird auch alle zugehörigen Daten löschen!</value>
+  </data>
+  <data name="The column is successfully deleted!" xml:space="preserve">
+    <value>Die Spalte wurde erfolgreich gelöscht!</value>
+  </data>
+  <data name="Column successfully created!" xml:space="preserve">
+    <value>Spalte erfolgreich erstellt!</value>
+  </data>
+  <data name="not scheduled" xml:space="preserve">
+    <value>nicht geplant</value>
+  </data>
+  <data name="No provider columns created yet!" xml:space="preserve">
+    <value>Noch keine Provider‑Spalten erstellt!</value>
+  </data>
+  <data name="Synchronization task created!" xml:space="preserve">
+    <value>Synchronisationsaufgabe erstellt!</value>
+  </data>
+  <data name="Create column" xml:space="preserve">
+    <value>Spalte erstellen</value>
+  </data>
+  <data name="Manage column" xml:space="preserve">
+    <value>Spalte verwalten</value>
+  </data>
+  <data name="required if attached" xml:space="preserve">
+    <value>erforderlich, falls angehängt</value>
+  </data>
+  <data name="Data provider column was created successfully" xml:space="preserve">
+    <value>Spalte für Datenanbieter wurde erfolgreich erstellt</value>
+  </data>
+  <data name="Data provider column was updated successfully" xml:space="preserve">
+    <value>Datenanbieter‑Spalte wurde erfolgreich aktualisiert.</value>
+  </data>
+  <data name="Create identity implementation" xml:space="preserve">
+    <value>Identitätsimplementierung erstellen</value>
+  </data>
+  <data name="Manage identity implementation" xml:space="preserve">
+    <value>Identitätsimplementierung verwalten</value>
+  </data>
+  <data name="Data identity is implemented" xml:space="preserve">
+    <value>Datenidentität wird implementiert</value>
+  </data>
+  <data name="Data identity implementation is updated" xml:space="preserve">
+    <value>Die Datenidentitätsimplementierung wurde aktualisiert.</value>
+  </data>
+  <data name="Invalid Data" xml:space="preserve">
+    <value>Ungültige Daten</value>
+  </data>
+  <data name="Create data provider" xml:space="preserve">
+    <value>Datenanbieter erstellen</value>
+  </data>
+  <data name="Manage data provider" xml:space="preserve">
+    <value>Datenanbieter verwalten</value>
+  </data>
+  <data name="Synchronization log" xml:space="preserve">
+    <value>Synchronisationsprotokoll</value>
+  </data>
+  <data name="Provider synchronization is updated" xml:space="preserve">
+    <value>Die Synchronisierung des Anbieters wurde aktualisiert.</value>
+  </data>
+  <data name="File uploaded successfully!" xml:space="preserve">
+    <value>Datei erfolgreich hochgeladen!</value>
+  </data>
+  <data name="File successfully updated!" xml:space="preserve">
+    <value>Datei erfolgreich aktualisiert!</value>
+  </data>
+  <data name="Are you sure that you need this file deleted?" xml:space="preserve">
+    <value>Bist du sicher, dass du diese Datei löschen musst?</value>
+  </data>
+  <data name="The file is successfully deleted!" xml:space="preserve">
+    <value>Die Datei wurde erfolgreich gelöscht!</value>
+  </data>
+  <data name="Tefter Uri copied" xml:space="preserve">
+    <value>Tefter Uri kopiert</value>
+  </data>
+  <data name="Shift + Enter for new line. Enter to send." xml:space="preserve">
+    <value>Shift + Enter für neue Zeile. Enter zum Senden.</value>
+  </data>
+  <data name="no file" xml:space="preserve">
+    <value>keine Datei</value>
+  </data>
+  <data name="Invalid GUID value" xml:space="preserve">
+    <value>Ungültiger GUID‑Wert</value>
+  </data>
+  <data name="Browse Spaces" xml:space="preserve">
+    <value>Räume durchsuchen</value>
+  </data>
+  <data name="The language is successfully changed!" xml:space="preserve">
+    <value>Die Sprache wurde erfolgreich geändert!</value>
+  </data>
+  <data name="no items" xml:space="preserve">
+    <value>keine Artikel</value>
+  </data>
+  <data name="Column already added for sort" xml:space="preserve">
+    <value>Spalte bereits für Sortierung hinzugefügt</value>
+  </data>
+  <data name="Invalid Data!" xml:space="preserve">
+    <value>Ungültige Daten!</value>
+  </data>
+  <data name="Please unassign all users first" xml:space="preserve">
+    <value>Bitte entfernen Sie zunächst alle Benutzer.</value>
+  </data>
+  <data name="Are you sure that you need this role deleted?" xml:space="preserve">
+    <value>Bist du sicher, dass diese Rolle gelöscht werden muss?</value>
+  </data>
+  <data name="User removed from role" xml:space="preserve">
+    <value>Benutzer aus Rolle entfernt</value>
+  </data>
+  <data name="User added to role" xml:space="preserve">
+    <value>Benutzer wurde der Rolle hinzugefügt</value>
+  </data>
+  <data name="Are you sure that you need this user unassigned?" xml:space="preserve">
+    <value>Bist du sicher, dass dieser Benutzer unverknüpft bleiben soll?</value>
+  </data>
+  <data name="Create Role" xml:space="preserve">
+    <value>Rolle erstellen</value>
+  </data>
+  <data name="Manage Role" xml:space="preserve">
+    <value>Rolle verwalten</value>
+  </data>
+  <data name="Access role was successfully created!" xml:space="preserve">
+    <value>Zugriffsrolle wurde erfolgreich erstellt!</value>
+  </data>
+  <data name="Create shared column" xml:space="preserve">
+    <value>Geteilte Spalte erstellen</value>
+  </data>
+  <data name="Manage shared column" xml:space="preserve">
+    <value>Geteilte Spalte verwalten</value>
+  </data>
+  <data name="Shared column successfully created" xml:space="preserve">
+    <value>Gemeinsam geteilte Spalte wurde erfolgreich erstellt.</value>
+  </data>
+  <data name="Shared column successfully updated" xml:space="preserve">
+    <value>Gemeinsame Spalte erfolgreich aktualisiert</value>
+  </data>
+  <data name="Space role added" xml:space="preserve">
+    <value>Space Rolle hinzugefügt</value>
+  </data>
+  <data name="Are you sure that you need this role unassigned?" xml:space="preserve">
+    <value>Bist du sicher, dass du diese Rolle nicht zuweisen möchtest?</value>
+  </data>
+  <data name="Space role removed" xml:space="preserve">
+    <value>Raumrolle entfernt</value>
+  </data>
+  <data name="Space access changed" xml:space="preserve">
+    <value>Space-Zugriff geändert</value>
+  </data>
+  <data name="Are you sure that you need this space deleted?" xml:space="preserve">
+    <value>Bist du sicher, dass dieser Raum gelöscht werden soll?</value>
+  </data>
+  <data name="Space deleted" xml:space="preserve">
+    <value>Raum gelöscht</value>
+  </data>
+  <data name="Access" xml:space="preserve">
+    <value>Zugriff</value>
+  </data>
+  <data name="Pages" xml:space="preserve">
+    <value>Seiten</value>
+  </data>
+  <data name="Create space" xml:space="preserve">
+    <value>Raum erstellen</value>
+  </data>
+  <data name="Manage space" xml:space="preserve">
+    <value>Raum verwalten</value>
+  </data>
+  <data name="Space created successfully!" xml:space="preserve">
+    <value>Raum erfolgreich erstellt!</value>
+  </data>
+  <data name="Space updated successfully!" xml:space="preserve">
+    <value>Raum erfolgreich aktualisiert!</value>
+  </data>
+  <data name="Are you sure that you need this page deleted?" xml:space="preserve">
+    <value>Bist du sicher, dass diese Seite gelöscht werden soll?</value>
+  </data>
+  <data name="Space node deleted!" xml:space="preserve">
+    <value>Raumknoten gelöscht!</value>
+  </data>
+  <data name="Space node updated!" xml:space="preserve">
+    <value>Raumknoten aktualisiert!</value>
+  </data>
+  <data name="Space node not found" xml:space="preserve">
+    <value>Raumknoten nicht gefunden</value>
+  </data>
+  <data name="Are you sure that you need this space data deleted?" xml:space="preserve">
+    <value>Sind Sie sicher, dass Sie diese Rauminformationen löschen möchten?</value>
+  </data>
+  <data name="Space data removed" xml:space="preserve">
+    <value>Raumdaten entfernt</value>
+  </data>
+  <data name="Space data copied" xml:space="preserve">
+    <value>Raumdaten kopiert</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Sort Order" xml:space="preserve">
+    <value>Sortierreihenfolge</value>
+  </data>
+  <data name="Used in Views" xml:space="preserve">
+    <value>Verwendet in Ansichten</value>
+  </data>
+  <data name="Space data successfully created!" xml:space="preserve">
+    <value>Space-Daten erfolgreich erstellt!</value>
+  </data>
+  <data name="Space data successfully updated!" xml:space="preserve">
+    <value>Raumdaten erfolgreich aktualisiert!</value>
+  </data>
+  <data name="Are you sure that you need this space page removed?" xml:space="preserve">
+    <value>Bist du sicher, dass du diese Space-Seite entfernen musst?</value>
+  </data>
+  <data name="Space page deleted!" xml:space="preserve">
+    <value>Space‑Seite gelöscht!</value>
+  </data>
+  <data name="Space page successfully saved!" xml:space="preserve">
+    <value>Space-Seite erfolgreich gespeichert!</value>
+  </data>
+  <data name="Create page" xml:space="preserve">
+    <value>Seite erstellen</value>
+  </data>
+  <data name="Manage page" xml:space="preserve">
+    <value>Seite verwalten</value>
+  </data>
+  <data name="Space page created!" xml:space="preserve">
+    <value>Space-Seite erstellt!</value>
+  </data>
+  <data name="Space page updated!" xml:space="preserve">
+    <value>Space-Seite aktualisiert!</value>
+  </data>
+  <data name="Please select a name" xml:space="preserve">
+    <value>Bitte wählen Sie einen Namen</value>
+  </data>
+  <data name="Preset Filter updated!" xml:space="preserve">
+    <value>Voreinstellungen-Filter aktualisiert!</value>
+  </data>
+  <data name="Are you sure that you need this preset filter removed?" xml:space="preserve">
+    <value>Sind Sie sicher, dass dieser voreingestellte Filter entfernt werden muss?</value>
+  </data>
+  <data name="Records deleted" xml:space="preserve">
+    <value>Datensätze gelöscht</value>
+  </data>
+  <data name="Bookmark" xml:space="preserve">
+    <value>Lesezeichen</value>
+  </data>
+  <data name="Saved URL" xml:space="preserve">
+    <value>Gespeicherte URL</value>
+  </data>
+  <data name="Bookmark removed" xml:space="preserve">
+    <value>Lesezeichen entfernt</value>
+  </data>
+  <data name="Space View updated!" xml:space="preserve">
+    <value>Raumansicht aktualisiert!</value>
+  </data>
+  <data name="Are you sure that you need this space view deleted?" xml:space="preserve">
+    <value>Sind Sie sicher, dass diese Space-Ansicht gelöscht werden muss?</value>
+  </data>
+  <data name="Space view deleted" xml:space="preserve">
+    <value>Raumansicht gelöscht</value>
+  </data>
+  <data name="Space view copied" xml:space="preserve">
+    <value>Raumansicht kopiert</value>
+  </data>
+  <data name="Preset Filters" xml:space="preserve">
+    <value>Voreingestellte Filter</value>
+  </data>
+  <data name="URL updated" xml:space="preserve">
+    <value>URL aktualisiert</value>
+  </data>
+  <data name="Saved URL removed" xml:space="preserve">
+    <value>Gespeicherte URL entfernt</value>
+  </data>
+  <data name="Data change failed!" xml:space="preserve">
+    <value>Datenänderung fehlgeschlagen!</value>
+  </data>
+  <data name="Row added" xml:space="preserve">
+    <value>Zeile hinzugefügt</value>
+  </data>
+  <data name="Link copied" xml:space="preserve">
+    <value>Link kopiert</value>
+  </data>
+  <data name="View is now bookmarked" xml:space="preserve">
+    <value>Ansicht wurde jetzt als Lesezeichen markiert.</value>
+  </data>
+  <data name="URL is now saved" xml:space="preserve">
+    <value>URL ist jetzt gespeichert</value>
+  </data>
+  <data name="Are you sure that you need this template deleted?" xml:space="preserve">
+    <value>Bist du sicher, dass du diese Vorlage löschen musst?</value>
+  </data>
+  <data name="Template removed" xml:space="preserve">
+    <value>Vorlage entfernt</value>
+  </data>
+  <data name="Create template" xml:space="preserve">
+    <value>Vorlage erstellen</value>
+  </data>
+  <data name="Manage template" xml:space="preserve">
+    <value>Vorlage verwalten</value>
+  </data>
+  <data name="No content processors found" xml:space="preserve">
+    <value>Keine Inhaltsprozessoren gefunden</value>
+  </data>
+  <data name="Template successfully created" xml:space="preserve">
+    <value>Template erfolgreich erstellt</value>
+  </data>
+  <data name="Template successfully updated" xml:space="preserve">
+    <value>Template erfolgreich aktualisiert</value>
+  </data>
+  <data name="Update settings" xml:space="preserve">
+    <value>Einstellungen aktualisieren</value>
+  </data>
+  <data name="Template settings successfully updated" xml:space="preserve">
+    <value>Vorlageneinstellungen erfolgreich aktualisiert</value>
+  </data>
+  <data name="Content is null" xml:space="preserve">
+    <value>Inhalt ist null</value>
+  </data>
+  <data name="SpaceData is null" xml:space="preserve">
+    <value>SpaceData ist null</value>
+  </data>
+  <data name="You need to select a template first" xml:space="preserve">
+    <value>Du musst zuerst ein Template auswählen.</value>
+  </data>
+  <data name="User role added" xml:space="preserve">
+    <value>Benutzerrolle hinzugefügt</value>
+  </data>
+  <data name="User role removed" xml:space="preserve">
+    <value>Benutzerrolle entfernt</value>
+  </data>
+  <data name="Create user" xml:space="preserve">
+    <value>Benutzer erstellen</value>
+  </data>
+  <data name="Manage user" xml:space="preserve">
+    <value>Benutzer verwalten</value>
+  </data>
+  <data name="Passwords do not match" xml:space="preserve">
+    <value>Passwörter stimmen nicht überein</value>
+  </data>
+  <data name="User account was successfully created!" xml:space="preserve">
+    <value>Benutzerkonto wurde erfolgreich erstellt!</value>
+  </data>
+  <data name="User account was successfully updated!" xml:space="preserve">
+    <value>Benutzerkonto wurde erfolgreich aktualisiert!</value>
+  </data>
+  <data name="Administration" xml:space="preserve">
+    <value>Verwaltung</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
+  <data name="Startup URL was successfully changed!" xml:space="preserve">
+    <value>Startup-URL wurde erfolgreich geändert!</value>
+  </data>
+  <data name="required" xml:space="preserve">
+    <value>erforderlich</value>
+  </data>
+  <data name="invalid email" xml:space="preserve">
+    <value>Ungültige E‑Mail</value>
+  </data>
+  <data name="Select view" xml:space="preserve">
+    <value>Ansicht auswählen</value>
+  </data>
+  <data name="New view name" xml:space="preserve">
+    <value>Neuer Ansichtsname</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Dataset" xml:space="preserve">
+    <value>Datensatz</value>
+  </data>
+  <data name="select..." xml:space="preserve">
+    <value>Auswählen...</value>
+  </data>
+  <data name="Data provider" xml:space="preserve">
+    <value>Datenanbieter</value>
+  </data>
+  <data name="Dataset name" xml:space="preserve">
+    <value>Datensatzname</value>
+  </data>
+  <data name="No dataset create in this space yet" xml:space="preserve">
+    <value>Noch kein Datensatz in diesem Bereich erstellt.</value>
+  </data>
+  <data name="Automatic column generation" xml:space="preserve">
+    <value>Automatische Spaltenerzeugung</value>
+  </data>
+  <data name="data provided columns" xml:space="preserve">
+    <value>Bereitgestellte Spalten</value>
+  </data>
+  <data name="connected columns" xml:space="preserve">
+    <value>verbundene Spalten</value>
+  </data>
+  <data name="system columns" xml:space="preserve">
+    <value>Systemspalten</value>
+  </data>
+  <data name="add dateset columns" xml:space="preserve">
+    <value>Datensatzspalten hinzufügen</value>
+  </data>
+  <data name="Generated Culumns" xml:space="preserve">
+    <value>Generierte Spalten</value>
+  </data>
+  <data name="No columns will be generated" xml:space="preserve">
+    <value>Es werden keine Spalten erzeugt.</value>
+  </data>
+  <data name="No columns found in data provider" xml:space="preserve">
+    <value>Keine Spalten im Datenprovider gefunden.</value>
+  </data>
+  <data name="Existing views" xml:space="preserve">
+    <value>Bestehende Ansichten</value>
+  </data>
+  <data name="Selected view" xml:space="preserve">
+    <value>Ausgewählte Ansicht</value>
+  </data>
+  <data name="browse view" xml:space="preserve">
+    <value>Durchsuchen-Ansicht</value>
+  </data>
+  <data name="on TRUE (text with priority)" xml:space="preserve">
+    <value>auf TRUE (Text mit Priorität)</value>
+  </data>
+  <data name="default value" xml:space="preserve">
+    <value>Standardwert</value>
+  </data>
+  <data name="render as icon" xml:space="preserve">
+    <value>als Symbol darstellen</value>
+  </data>
+  <data name="on FALSE (text with priority)" xml:space="preserve">
+    <value>auf FALSE (Text mit Priorität)</value>
+  </data>
+  <data name="on NULL (text with priority)" xml:space="preserve">
+    <value>auf NULL (Text mit Priorität)</value>
+  </data>
+  <data name="Component Mode Not implemented" xml:space="preserve">
+    <value>Komponentenmodus nicht implementiert</value>
+  </data>
+  <data name="Label" xml:space="preserve">
+    <value>Etikett</value>
+  </data>
+  <data name="show label" xml:space="preserve">
+    <value>Label anzeigen</value>
+  </data>
+  <data name="TRUE label" xml:space="preserve">
+    <value>Wahrer Etikett</value>
+  </data>
+  <data name="empty shows a system one" xml:space="preserve">
+    <value>Leeres zeigt ein System an.</value>
+  </data>
+  <data name="FALSE label" xml:space="preserve">
+    <value>FALSCH</value>
+  </data>
+  <data name="NULL label" xml:space="preserve">
+    <value>NULL‑Label</value>
+  </data>
+  <data name="Change confirmation" xml:space="preserve">
+    <value>Änderungsbestätigung</value>
+  </data>
+  <data name="requires confirmation" xml:space="preserve">
+    <value>erfordert Bestätigung</value>
+  </data>
+  <data name="Confirmation message" xml:space="preserve">
+    <value>Bestätigungsnachricht</value>
+  </data>
+  <data name="Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="eg. 'dd MMM yyyy'" xml:space="preserve">
+    <value>z.B. 'dd MMM yyyy'</value>
+  </data>
+  <data name="defaults to the system's short date format" xml:space="preserve">
+    <value>Verwendet standardmäßig das kurze Datumsformat des Systems.</value>
+  </data>
+  <data name="Selection method" xml:space="preserve">
+    <value>Auswahlmethode</value>
+  </data>
+  <data name="eg. 'dd MMM yyyy HH:mm'" xml:space="preserve">
+    <value>z.B. 'dd MMM yyyy HH:mm'</value>
+  </data>
+  <data name="defaults to the system's short date and time format" xml:space="preserve">
+    <value>verwendet standardmäßig das Kurzdatum- und Zeitformat des Systems</value>
+  </data>
+  <data name="The selected component has no options" xml:space="preserve">
+    <value>Der ausgewählte Bestandteil hat keine Optionen.</value>
+  </data>
+  <data name="eg. 'N3'" xml:space="preserve">
+    <value>z.B. „N3“</value>
+  </data>
+  <data name="Display Format" xml:space="preserve">
+    <value>Anzeigeformat</value>
+  </data>
+  <data name="Locale" xml:space="preserve">
+    <value>Locale</value>
+  </data>
+  <data name="en-US" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="get from server" xml:space="preserve">
+    <value>Abrufen vom Server</value>
+  </data>
+  <data name="Excel Format" xml:space="preserve">
+    <value>Excel‑Format</value>
+  </data>
+  <data name="eg. '0.000'" xml:space="preserve">
+    <value>z.B. ‘0,000’</value>
+  </data>
+  <data name="Options source type" xml:space="preserve">
+    <value>Options-Quellentyp</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Optionen</value>
+  </data>
+  <data name="Hide Label" xml:space="preserve">
+    <value>Label verbergen</value>
+  </data>
+  <data name="Value column name" xml:space="preserve">
+    <value>Wertspaltenname</value>
+  </data>
+  <data name="any column data" xml:space="preserve">
+    <value>beliebige Spaltendaten</value>
+  </data>
+  <data name="Label column name" xml:space="preserve">
+    <value>Spaltenbeschriftung</value>
+  </data>
+  <data name="column data string or object that will be case to string" xml:space="preserve">
+    <value>Spaltendatensatz als Zeichenkette oder Objekt, der in eine Zeichenkette konvertiert wird.</value>
+  </data>
+  <data name="Color column name" xml:space="preserve">
+    <value>Farbspaltenname</value>
+  </data>
+  <data name="column data string or int. String is css color value. Int is converted to enum of TfColor" xml:space="preserve">
+    <value>Spalten-Daten: Zeichenkette oder Ganzzahl. Die Zeichenkette ist ein CSS-Farbcodeswert. Eine Ganzzahl wird in einen Aufzählungstyp von TfColor umgewandelt.</value>
+  </data>
+  <data name="Background color column name" xml:space="preserve">
+    <value>Spaltenname für Hintergrundfarbe</value>
+  </data>
+  <data name="column datastring or int. String is css color value. Int is converted to enum of TfColor" xml:space="preserve">
+    <value>Spalte Datenstring oder Ganzzahl. Der String ist ein CSS-Farbwert. Die Ganzzahl wird in eine Aufzählung von TfColor umgewandelt.</value>
+  </data>
+  <data name="Icon column name" xml:space="preserve">
+    <value>Symbolspaltenname</value>
+  </data>
+  <data name="column datastring, fluent icon name" xml:space="preserve">
+    <value>Spalte Datenzeichenkette, Fluent-Symbolname</value>
+  </data>
+  <data name="eg. 'HH:mm:ss'" xml:space="preserve">
+    <value>z.B. 'HH:mm:ss'</value>
+  </data>
+  <data name="defaults to the system's short time format" xml:space="preserve">
+    <value>Verwendet standardmäßig das Kurzzeitformat des Systems</value>
+  </data>
+  <data name="Top Data Providers" xml:space="preserve">
+    <value>Top-Datenanbieter</value>
+  </data>
+  <data name="No data prividers created yet" xml:space="preserve">
+    <value>Noch keine Datenanbieter erstellt</value>
+  </data>
+  <data name="Next Data Synchronizations" xml:space="preserve">
+    <value>Nächste Daten-Synchronisationen</value>
+  </data>
+  <data name="No pending synchronization tasks" xml:space="preserve">
+    <value>Keine ausstehenden Synchronisierungsvorgänge</value>
+  </data>
+  <data name="Recent" xml:space="preserve">
+    <value>Neueste</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="view/space" xml:space="preserve">
+    <value>Ansicht/Platz</value>
+  </data>
+  <data name="My Tags" xml:space="preserve">
+    <value>Meine Tags</value>
+  </data>
+  <data name="My Saved URLs" xml:space="preserve">
+    <value>Meine gespeicherten URLs</value>
+  </data>
+  <data name="My Bookmarks" xml:space="preserve">
+    <value>Meine Lesezeichen</value>
+  </data>
+  <data name="My Views Visits" xml:space="preserve">
+    <value>Meine Ansichten Besuche</value>
+  </data>
+  <data name="search..." xml:space="preserve">
+    <value>Suche...</value>
+  </data>
+  <data name="No identities match your query" xml:space="preserve">
+    <value>Keine Identitäten entsprechen Ihrer Abfrage.</value>
+  </data>
+  <data name="Create a new data identity" xml:space="preserve">
+    <value>Erstellen Sie eine neue Datenidentität</value>
+  </data>
+  <data name="New Identity" xml:space="preserve">
+    <value>Neue Identität</value>
+  </data>
+  <data name="Item not found" xml:space="preserve">
+    <value>Element nicht gefunden</value>
+  </data>
+  <data name="System roles cannot be managed" xml:space="preserve">
+    <value>Systemrollen können nicht verwaltet werden</value>
+  </data>
+  <data name="Locked" xml:space="preserve">
+    <value>Gesperrt</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="system role" xml:space="preserve">
+    <value>Systemrolle</value>
+  </data>
+  <data name="user created" xml:space="preserve">
+    <value>Benutzer erstellt</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="Deleting this identity will remove all data relations that depend on it, but will not alter any source data from providers, shared columns or applications. " xml:space="preserve">
+    <value>Das Löschen dieser Identität entfernt alle Datenbeziehungen, die davon abhängen, verändert jedoch keine Quelldaten von Anbietern, geteilten Spalten oder Anwendungen.</value>
+  </data>
+  <data name="Delete this Data Identity" xml:space="preserve">
+    <value>Diese Datenidentität löschen</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="Implemented Data Identities" xml:space="preserve">
+    <value>Implementierte Datenidentitäten</value>
+  </data>
+  <data name="Data Identities are used to generate keys for joining auxilary data. Each record can have several data identities." xml:space="preserve">
+    <value>Datenidentitäten werden verwendet, um Schlüssel für das Verbinden ergänzender Daten zu generieren. Jeder Datensatz kann mehrere Datenidentitäten besitzen.</value>
+  </data>
+  <data name="All identities implemented" xml:space="preserve">
+    <value>Alle Identitäten implementiert</value>
+  </data>
+  <data name="Data identity" xml:space="preserve">
+    <value>Datenidentität</value>
+  </data>
+  <data name="always implemented" xml:space="preserve">
+    <value>immer implementiert</value>
+  </data>
+  <data name="Edit column" xml:space="preserve">
+    <value>Spalte bearbeiten</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="Connected Shared columns" xml:space="preserve">
+    <value>Verbundene gemeinsame Spalten</value>
+  </data>
+  <data name="Shared Columns that match one of the implemented data identities" xml:space="preserve">
+    <value>Geteilte Spalten, die mit einer der implementierten Datenidentitäten übereinstimmen</value>
+  </data>
+  <data name="No shared columns matched" xml:space="preserve">
+    <value>Keine gemeinsam genutzten Spalten übereinstimmen</value>
+  </data>
+  <data name="No shared columns are matching any of the join keys for this data source" xml:space="preserve">
+    <value>Keine gemeinsamen Spalten stimmen mit einem der Join‑Keys für diese Datenquelle überein.</value>
+  </data>
+  <data name="Connected Data providers" xml:space="preserve">
+    <value>Verbundene Datenanbieter</value>
+  </data>
+  <data name="Providers have a common data identity implementated. Only the primary provider's data is modifiable." xml:space="preserve">
+    <value>Die Anbieter haben eine gemeinsame Datenidentität implementiert. Nur die Daten des primären Anbieters sind veränderbar.</value>
+  </data>
+  <data name="No data providers are connected" xml:space="preserve">
+    <value>Keine Datenanbieter sind verbunden</value>
+  </data>
+  <data name="For data from different providers to be connected, they must implement at least one common join key." xml:space="preserve">
+    <value>Damit Daten von verschiedenen Anbietern verbunden werden können, müssen sie mindestens einen gemeinsamen Join-Schlüssel implementieren.</value>
+  </data>
+  <data name="delete all data" xml:space="preserve">
+    <value>Alle Daten löschen</value>
+  </data>
+  <data name="No columns are created for this data provider yet" xml:space="preserve">
+    <value>Noch wurden keine Spalten für diesen Datenanbieter erstellt.</value>
+  </data>
+  <data name="No records" xml:space="preserve">
+    <value>Keine Datensätze</value>
+  </data>
+  <data name="There are no visible columns selected." xml:space="preserve">
+    <value>Es sind keine sichtbaren Spalten ausgewählt.</value>
+  </data>
+  <data name="No users match your query" xml:space="preserve">
+    <value>Keine Benutzer entsprechen Ihrer Anfrage</value>
+  </data>
+  <data name="Create a new data provider" xml:space="preserve">
+    <value>Erstelle einen neuen Datenanbieter</value>
+  </data>
+  <data name="New Provider" xml:space="preserve">
+    <value>Neuer Anbieter</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Supported Source data types" xml:space="preserve">
+    <value>Unterstützte Quell‑Datenarten</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warnung</value>
+  </data>
+  <data name="The data provider does not support any  type of source data!" xml:space="preserve">
+    <value>Der Datenanbieter unterstützt keine Art von Quelldaten!</value>
+  </data>
+  <data name="When a data provider is deleted all data that it holds will be deleted too. Data related to this data provider, but stored in shared columns, applications or other data providers will not be deleted. Thus, if recreate matching data identities in the future these relations will hold" xml:space="preserve">
+    <value>Wenn ein Datenanbieter gelöscht wird, werden alle von ihm gehaltenen Daten ebenfalls gelöscht. Daten, die mit diesem Datenanbieter zusammenhängen, aber in gemeinsam genutzten Spalten, Anwendungen oder anderen Datenanbietern gespeichert sind, werden nicht gelöscht. Daher bleiben diese Beziehungen erhalten, wenn in der Zukunft passende Dateneinträge wiederhergestellt werden.</value>
+  </data>
+  <data name="Delete this Data Provider" xml:space="preserve">
+    <value>Diesen Datenanbieter löschen</value>
+  </data>
+  <data name="Provider Columns" xml:space="preserve">
+    <value>Anbieter‑Spalten</value>
+  </data>
+  <data name="Import from source" xml:space="preserve">
+    <value>Aus Quelle importieren</value>
+  </data>
+  <data name="Add Column" xml:space="preserve">
+    <value>Spalte hinzufügen</value>
+  </data>
+  <data name="No columns" xml:space="preserve">
+    <value>Keine Spalten</value>
+  </data>
+  <data name="No columns are created yet for this data source" xml:space="preserve">
+    <value>Noch keine Spalten für diese Datenquelle erstellt.</value>
+  </data>
+  <data name="Delete column" xml:space="preserve">
+    <value>Spalte löschen</value>
+  </data>
+  <data name="synchronized" xml:space="preserve">
+    <value>synchronisiert</value>
+  </data>
+  <data name="NOT synchronized" xml:space="preserve">
+    <value>Nicht synchronisiert</value>
+  </data>
+  <data name="Row Identity key" xml:space="preserve">
+    <value>Zeilen-Identitätsschlüssel</value>
+  </data>
+  <data name="Data row position in the list will be used for comparison." xml:space="preserve">
+    <value>Datenzeilenposition in der Liste wird für den Vergleich verwendet.</value>
+  </data>
+  <data name="Row position" xml:space="preserve">
+    <value>Zeilenposition</value>
+  </data>
+  <data name="When no columns are submitted to be used as identity key the row position in the list will be used to identify the row." xml:space="preserve">
+    <value>Wenn keine Spalten als Identitäts­schlüssel übergeben werden, wird die Zeilenposition in der Liste verwendet, um die Zeile zu identifizieren.</value>
+  </data>
+  <data name="Synchronization schedule" xml:space="preserve">
+    <value>Synchronisierungszeitplan</value>
+  </data>
+  <data name="Manage" xml:space="preserve">
+    <value>Verwalten</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Interval" xml:space="preserve">
+    <value>Intervall</value>
+  </data>
+  <data name="Scheduled on" xml:space="preserve">
+    <value>Geplant am</value>
+  </data>
+  <data name="Synchronization tasks" xml:space="preserve">
+    <value>Synchronisationsaufgaben</value>
+  </data>
+  <data name="Synchronize now" xml:space="preserve">
+    <value>Jetzt synchronisieren</value>
+  </data>
+  <data name="view" xml:space="preserve">
+    <value>Ansicht</value>
+  </data>
+  <data name="No synchronization tasks" xml:space="preserve">
+    <value>Keine Synchronisationstätigkeiten</value>
+  </data>
+  <data name="column name" xml:space="preserve">
+    <value>Spaltenname</value>
+  </data>
+  <data name="select SOURCE column type" xml:space="preserve">
+    <value>Spaltentyp SOURCE auswählen</value>
+  </data>
+  <data name="data type" xml:space="preserve">
+    <value>Datentyp</value>
+  </data>
+  <data name="Data Link" xml:space="preserve">
+    <value>Datenlink</value>
+  </data>
+  <data name="local data only" xml:space="preserve">
+    <value>nur lokale Daten</value>
+  </data>
+  <data name="synchronized with source" xml:space="preserve">
+    <value>Synchronisiert mit der Quelle</value>
+  </data>
+  <data name="leave empty, if no source" xml:space="preserve">
+    <value>Leer lassen, wenn keine Quelle.</value>
+  </data>
+  <data name="column type" xml:space="preserve">
+    <value>Spaltentyp</value>
+  </data>
+  <data name="data stored but NOT synchronized" xml:space="preserve">
+    <value>Daten gespeichert, aber NICHT synchronisiert</value>
+  </data>
+  <data name="Nullable" xml:space="preserve">
+    <value>kann null sein</value>
+  </data>
+  <data name="can be NULL" xml:space="preserve">
+    <value>kann NULL sein</value>
+  </data>
+  <data name="Autogenerated" xml:space="preserve">
+    <value>Automatisch generiert</value>
+  </data>
+  <data name="autogenerate value" xml:space="preserve">
+    <value>Automatisch generierter Wert</value>
+  </data>
+  <data name="Unique" xml:space="preserve">
+    <value>Einzigartig</value>
+  </data>
+  <data name="only unique values" xml:space="preserve">
+    <value>nur eindeutige Werte</value>
+  </data>
+  <data name="Sortable" xml:space="preserve">
+    <value>Sortierbar</value>
+  </data>
+  <data name="used for sorting" xml:space="preserve">
+    <value>verwendet zum Sortieren</value>
+  </data>
+  <data name="Searchable" xml:space="preserve">
+    <value>Durchsuchbar</value>
+  </data>
+  <data name="used in filters" xml:space="preserve">
+    <value>in Filtern verwendet</value>
+  </data>
+  <data name="Global search" xml:space="preserve">
+    <value>Globale Suche</value>
+  </data>
+  <data name="included" xml:space="preserve">
+    <value>eingeschlossen</value>
+  </data>
+  <data name="Preferred search type" xml:space="preserve">
+    <value>Bevorzugter Suchtyp</value>
+  </data>
+  <data name="select identity..." xml:space="preserve">
+    <value>Wähle Identität…</value>
+  </data>
+  <data name="Selected Columns" xml:space="preserve">
+    <value>Ausgewählte Spalten</value>
+  </data>
+  <data name="Available Columns" xml:space="preserve">
+    <value>Verfügbare Spalten</value>
+  </data>
+  <data name="Import schema" xml:space="preserve">
+    <value>Schema importieren</value>
+  </data>
+  <data name="New Columns" xml:space="preserve">
+    <value>Neue Spalten</value>
+  </data>
+  <data name="Already Present" xml:space="preserve">
+    <value>Bereits vorhanden</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Importieren</value>
+  </data>
+  <data name="SOURCE column" xml:space="preserve">
+    <value>Quellspalte</value>
+  </data>
+  <data name="SOURCE type" xml:space="preserve">
+    <value>Quelltyp</value>
+  </data>
+  <data name="default" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="autogen" xml:space="preserve">
+    <value>Autogen</value>
+  </data>
+  <data name="searched" xml:space="preserve">
+    <value>gesucht</value>
+  </data>
+  <data name="search type" xml:space="preserve">
+    <value>Suchtyp</value>
+  </data>
+  <data name="No new columns are found in the source" xml:space="preserve">
+    <value>Es werden keine neuen Spalten im Quelltext gefunden.</value>
+  </data>
+  <data name="No existing columns are yet created" xml:space="preserve">
+    <value>Noch keine Spalten erstellt.</value>
+  </data>
+  <data name="ON" xml:space="preserve">
+    <value>AN</value>
+  </data>
+  <data name="OFF" xml:space="preserve">
+    <value>AUS</value>
+  </data>
+  <data name="Interval Minutes" xml:space="preserve">
+    <value>Intervall Minuten</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>Dateien</value>
+  </data>
+  <data name="file uploaded" xml:space="preserve">
+    <value>Datei hochgeladen</value>
+  </data>
+  <data name="Upload file" xml:space="preserve">
+    <value>Datei hochladen</value>
+  </data>
+  <data name="No Files" xml:space="preserve">
+    <value>Kein(e) Datei(en)</value>
+  </data>
+  <data name="No files are created yet" xml:space="preserve">
+    <value>Noch keine Dateien erstellt.</value>
+  </data>
+  <data name="No columns found" xml:space="preserve">
+    <value>Keine Spalten gefunden</value>
+  </data>
+  <data name="No shared columns are found for this search" xml:space="preserve">
+    <value>Keine gemeinsamen Spalten für diese Suche gefunden.</value>
+  </data>
+  <data name="Change file content" xml:space="preserve">
+    <value>Dateiinhalt ändern</value>
+  </data>
+  <data name="last updated" xml:space="preserve">
+    <value>Zuletzt aktualisiert</value>
+  </data>
+  <data name="Update file content" xml:space="preserve">
+    <value>Inhalt der Datei aktualisieren</value>
+  </data>
+  <data name="Upload new content" xml:space="preserve">
+    <value>Neuen Inhalt hochladen</value>
+  </data>
+  <data name="select provider column" xml:space="preserve">
+    <value>Provider‑Spalte auswählen</value>
+  </data>
+  <data name="all columns added" xml:space="preserve">
+    <value>Alle Spalten hinzugefügt</value>
+  </data>
+  <data name="Add new" xml:space="preserve">
+    <value>Neu hinzufügen</value>
+  </data>
+  <data name="download file" xml:space="preserve">
+    <value>Datei herunterladen</value>
+  </data>
+  <data name="no data provider" xml:space="preserve">
+    <value>kein Datenanbieter</value>
+  </data>
+  <data name="Column" xml:space="preserve">
+    <value>Spalte</value>
+  </data>
+  <data name="AND" xml:space="preserve">
+    <value>UND</value>
+  </data>
+  <data name="OR" xml:space="preserve">
+    <value>ODER</value>
+  </data>
+  <data name="No filters added yet" xml:space="preserve">
+    <value>Noch keine Filter hinzugefügt</value>
+  </data>
+  <data name="delete filter" xml:space="preserve">
+    <value>Filter löschen</value>
+  </data>
+  <data name="found in provider" xml:space="preserve">
+    <value>Gefunden im Anbieter.</value>
+  </data>
+  <data name="not found in provider" xml:space="preserve">
+    <value>Nicht im Anbieter gefunden</value>
+  </data>
+  <data name="for dynamic date use one of the following:{0}&quot;, &quot;&lt;br/&gt; now(+- decimal hours),&lt;br/&gt; day(+- decimal days),&lt;br/&gt; month(+- decimal months),&lt;br/&gt; year(+- decimal year)" xml:space="preserve">
+    <value>Für ein dynamisches Datum verwenden Sie eines der folgenden:{0}", "&lt;br/&gt; jetzt(± Dezimalstunden),&lt;br/&gt; Tag(± Dezimaltage),&lt;br/&gt; Monat(± Dezimalmonate),&lt;br/&gt; Jahr(± Dezimaljahr)</value>
+  </data>
+  <data name="enter valid GUID" xml:space="preserve">
+    <value>Gültige GUID eingeben</value>
+  </data>
+  <data name="enter valid decimal" xml:space="preserve">
+    <value>Geben Sie eine gültige Dezimalzahl ein</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Benachrichtigungen</value>
+  </data>
+  <data name="Dismiss All" xml:space="preserve">
+    <value>Alle schließen</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="Go to first page" xml:space="preserve">
+    <value>Zur ersten Seite gehen</value>
+  </data>
+  <data name="Go to previous page" xml:space="preserve">
+    <value>Zurück zur vorherigen Seite</value>
+  </data>
+  <data name="Go to next page" xml:space="preserve">
+    <value>Gehe zur nächsten Seite</value>
+  </data>
+  <data name="Go to last page" xml:space="preserve">
+    <value>Gehe zur letzten Seite</value>
+  </data>
+  <data name="add" xml:space="preserve">
+    <value>hinzufügen</value>
+  </data>
+  <data name="No data sort order defined yet" xml:space="preserve">
+    <value>Noch keine Daten‑Sortierreihenfolge definiert</value>
+  </data>
+  <data name="Delete sort order" xml:space="preserve">
+    <value>Sortierreihenfolge löschen</value>
+  </data>
+  <data name="property" xml:space="preserve">
+    <value>Eigenschaft</value>
+  </data>
+  <data name="error" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="Setup Selected Recipe" xml:space="preserve">
+    <value>Ausgewähltes Rezept einrichten</value>
+  </data>
+  <data name="Provide information for the recipe setup" xml:space="preserve">
+    <value>Informationen zur Rezeptaufstellung bereitstellen</value>
+  </data>
+  <data name="This recipe has no configuration steps" xml:space="preserve">
+    <value>Diese Rezeptur hat keine Konfigurationsschritte</value>
+  </data>
+  <data name="No step selected" xml:space="preserve">
+    <value>Kein Schritt ausgewählt</value>
+  </data>
+  <data name="Apply Configuration" xml:space="preserve">
+    <value>Konfiguration anwenden</value>
+  </data>
+  <data name="Forward" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="To Login Page" xml:space="preserve">
+    <value>Zur Anmeldeseite</value>
+  </data>
+  <data name="Initial Setup" xml:space="preserve">
+    <value>Ersteinrichtung</value>
+  </data>
+  <data name="Welcome to Tefter. Begin using it by simply clicking on one of the available preconfiguration options." xml:space="preserve">
+    <value>Willkommen bei Tefter. Beginnen Sie damit, einfach auf eine der verfügbaren Voreinstellungen zu klicken.</value>
+  </data>
+  <data name="Service error" xml:space="preserve">
+    <value>Dienstfehler</value>
+  </data>
+  <data name="Recipe step does not have Form Component or it is not inheriting the class TfRecipeStepFormBase" xml:space="preserve">
+    <value>Rezeptschritt hat keine Formularkomponente oder er erbt nicht von der Klasse TfRecipeStepFormBase</value>
+  </data>
+  <data name="Create a new access role" xml:space="preserve">
+    <value>Erstelle eine neue Zugriffsrolle</value>
+  </data>
+  <data name="New Role" xml:space="preserve">
+    <value>Neue Rolle</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E‑Mail</value>
+  </data>
+  <data name="Users with the role" xml:space="preserve">
+    <value>Benutzer mit der Rolle</value>
+  </data>
+  <data name="select user" xml:space="preserve">
+    <value>Benutzer auswählen</value>
+  </data>
+  <data name="all users added" xml:space="preserve">
+    <value>Alle Benutzer hinzugefügt</value>
+  </data>
+  <data name="This role has no users assigned" xml:space="preserve">
+    <value>Diese Rolle hat keine zugewiesenen Benutzer.</value>
+  </data>
+  <data name="the current user cannot unassign admin role to self" xml:space="preserve">
+    <value>Der aktuelle Benutzer kann sich die Administratorrolle nicht selbst entziehen.</value>
+  </data>
+  <data name="Remove the user" xml:space="preserve">
+    <value>Benutzer entfernen</value>
+  </data>
+  <data name="remove" xml:space="preserve">
+    <value>entfernen</value>
+  </data>
+  <data name="Before you can delete the role, you need to remove all assigned users first" xml:space="preserve">
+    <value>Bevor Sie die Rolle löschen können, müssen Sie zunächst alle zugewiesenen Benutzer entfernen.</value>
+  </data>
+  <data name="System roles cannot be deleted" xml:space="preserve">
+    <value>Systemrollen können nicht gelöscht werden</value>
+  </data>
+  <data name="Delete Role" xml:space="preserve">
+    <value>Rolle löschen</value>
+  </data>
+  <data name="Create a new shared column" xml:space="preserve">
+    <value>Erstelle eine neue gemeinsame Spalte</value>
+  </data>
+  <data name="New Column" xml:space="preserve">
+    <value>Neue Spalte</value>
+  </data>
+  <data name="No data providers implement the identity" xml:space="preserve">
+    <value>Keine Datenanbieter implementieren die Identität.</value>
+  </data>
+  <data name="Deleting this shared column will remove all its data, but will not alter the data of any related data providers or applications " xml:space="preserve">
+    <value>Diese gemeinsam genutzte Spalte zu löschen entfernt alle ihre Daten, ändert jedoch nicht die Daten der verknüpften Datenanbieter oder Anwendungen.</value>
+  </data>
+  <data name="Delete this Shared column" xml:space="preserve">
+    <value>Diese gemeinsame Spalte löschen</value>
+  </data>
+  <data name="select or add..." xml:space="preserve">
+    <value>Auswählen oder hinzufügen…</value>
+  </data>
+  <data name="Target data identity" xml:space="preserve">
+    <value>Ziel-Datenidentität</value>
+  </data>
+  <data name="not included" xml:space="preserve">
+    <value>nicht enthalten</value>
+  </data>
+  <data name="Spaces" xml:space="preserve">
+    <value>Räume</value>
+  </data>
+  <data name="Access Restricted" xml:space="preserve">
+    <value>Zugriff eingeschränkt</value>
+  </data>
+  <data name="Only users with the explicitly listed roles will be granted entry." xml:space="preserve">
+    <value>Nur Benutzer mit den explizit aufgeführten Rollen erhalten Zugang.</value>
+  </data>
+  <data name="Free Access" xml:space="preserve">
+    <value>Freier Zugang</value>
+  </data>
+  <data name="All users will have access." xml:space="preserve">
+    <value>Alle Benutzer werden Zugriff haben.</value>
+  </data>
+  <data name="restricted access" xml:space="preserve">
+    <value>beschränkter Zugriff</value>
+  </data>
+  <data name="Roles with Access" xml:space="preserve">
+    <value>Rollen mit Zugriff</value>
+  </data>
+  <data name="select role" xml:space="preserve">
+    <value>Rolle auswählen</value>
+  </data>
+  <data name="all roles added" xml:space="preserve">
+    <value>Alle Rollen hinzugefügt</value>
+  </data>
+  <data name="Administrators has always access" xml:space="preserve">
+    <value>Administratoren haben immer Zugriff</value>
+  </data>
+  <data name="Remove the role" xml:space="preserve">
+    <value>Rolle entfernen</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Farbe</value>
+  </data>
+  <data name="Icon" xml:space="preserve">
+    <value>Symbol</value>
+  </data>
+  <data name="Deleting the space will delete also any related space pages, space views and space data, but will not alter local content or data provider data" xml:space="preserve">
+    <value>Das Löschen des Raums löscht auch alle zugehörigen Raumseiten, Raumansichten und Raumdaten, ändert jedoch keine lokalen Inhalte oder Daten des Datenanbieters.</value>
+  </data>
+  <data name="Delete this Space" xml:space="preserve">
+    <value>Diesen Raum löschen</value>
+  </data>
+  <data name="limited access" xml:space="preserve">
+    <value>beschränkter Zugriff</value>
+  </data>
+  <data name="no icon" xml:space="preserve">
+    <value>Kein Icon</value>
+  </data>
+  <data name="copy" xml:space="preserve">
+    <value>Kopieren</value>
+  </data>
+  <data name="move up" xml:space="preserve">
+    <value>nach oben</value>
+  </data>
+  <data name="move down" xml:space="preserve">
+    <value>nach unten</value>
+  </data>
+  <data name="folder" xml:space="preserve">
+    <value>Ordner</value>
+  </data>
+  <data name="page" xml:space="preserve">
+    <value>Seite</value>
+  </data>
+  <data name="Add page" xml:space="preserve">
+    <value>Seite hinzufügen</value>
+  </data>
+  <data name="No pages or folders created yet." xml:space="preserve">
+    <value>Noch keine Seiten oder Ordner erstellt.</value>
+  </data>
+  <data name="Shared column Joins" xml:space="preserve">
+    <value>Geteilte Spaltenverknüpfungen</value>
+  </data>
+  <data name="Columns that match one of the identity implemented for this data source" xml:space="preserve">
+    <value>Spalten, die einer der für diese Datenquelle implementierten Identitäten entsprechen.</value>
+  </data>
+  <data name="This dataset is not connected to any shared columns" xml:space="preserve">
+    <value>Dieses Datenset ist nicht mit gemeinsamen Spalten verbunden.</value>
+  </data>
+  <data name="Connected Data Provider (ReadOnly)" xml:space="preserve">
+    <value>Verbundener Datenanbieter (Nur-lesen)</value>
+  </data>
+  <data name="Data that is connected and can be added as readonly columns." xml:space="preserve">
+    <value>Daten, die verbunden sind und als schreibgeschützte Spalten hinzugefügt werden können.</value>
+  </data>
+  <data name="This dataset is not connected to other data providers" xml:space="preserve">
+    <value>Dieses Datensatz ist nicht mit anderen Datenanbietern verbunden.</value>
+  </data>
+  <data name="Primary and Connected Columns" xml:space="preserve">
+    <value>Primäre und verbundene Spalten</value>
+  </data>
+  <data name="Create a new dataset" xml:space="preserve">
+    <value>Erstelle einen neuen Datensatz</value>
+  </data>
+  <data name="New Dataset" xml:space="preserve">
+    <value>Neues Datenset</value>
+  </data>
+  <data name="Primary Data provider" xml:space="preserve">
+    <value>Primärer Datenanbieter</value>
+  </data>
+  <data name="open provider" xml:space="preserve">
+    <value>Anbieter öffnen</value>
+  </data>
+  <data name="The data provider no longer exists" xml:space="preserve">
+    <value>Der Datenanbieter existiert nicht mehr.</value>
+  </data>
+  <data name="Deleting the Space Data will stop any related views from displaying data in their columns and show an error message instead" xml:space="preserve">
+    <value>Das Löschen der Space-Daten wird alle damit verbundenen Ansichten daran hindern, Daten in ihren Spalten anzuzeigen, und stattdessen eine Fehlermeldung anzeigen.</value>
+  </data>
+  <data name="Delete this Space Data" xml:space="preserve">
+    <value>Diesen Space-Daten löschen</value>
+  </data>
+  <data name="Query Filters" xml:space="preserve">
+    <value>Abfragefilter</value>
+  </data>
+  <data name="If the data provider is changed you will need to change the data mapping in all related views as well to reflect the new column names." xml:space="preserve">
+    <value>Wenn der Datenanbieter geändert wird, müssen Sie die Datenzuordnung in allen zugehörigen Ansichten ebenfalls ändern, um die neuen Spaltennamen widerzuspiegeln.</value>
+  </data>
+  <data name="Aux Data Providers" xml:space="preserve">
+    <value>Zusätzliche Datenanbieter</value>
+  </data>
+  <data name="When data providers share at least one common identity, their data is connected. Only the data from the primary provider is modifiable." xml:space="preserve">
+    <value>Wenn Datenanbieter mindestens eine gemeinsame Identität teilen, sind ihre Daten verbunden. Nur die Daten des Primäranbieters können geändert werden.</value>
+  </data>
+  <data name="Default Sort" xml:space="preserve">
+    <value>Standardsortierung</value>
+  </data>
+  <data name="This dataset does not provide data to views" xml:space="preserve">
+    <value>Dieser Datensatz liefert keine Daten an die Ansichten.</value>
+  </data>
+  <data name="view details" xml:space="preserve">
+    <value>Details anzeigen</value>
+  </data>
+  <data name="No pages found in the space" xml:space="preserve">
+    <value>Keine Seiten im Space gefunden.</value>
+  </data>
+  <data name="You have not bookmarks yet" xml:space="preserve">
+    <value>Sie haben noch keine Lesezeichen.</value>
+  </data>
+  <data name="You have no save views yet" xml:space="preserve">
+    <value>Sie haben noch keine gespeicherten Ansichten.</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>Elternteil</value>
+  </data>
+  <data name="no parent options found" xml:space="preserve">
+    <value>Keine Elternoptionen gefunden</value>
+  </data>
+  <data name="Page type" xml:space="preserve">
+    <value>Seitentyp</value>
+  </data>
+  <data name="Select a page type" xml:space="preserve">
+    <value>Wählen Sie einen Seitentyp</value>
+  </data>
+  <data name="Manage Preset Filter" xml:space="preserve">
+    <value>Preset‑Filter verwalten</value>
+  </data>
+  <data name="group" xml:space="preserve">
+    <value>Gruppe</value>
+  </data>
+  <data name="preset filter" xml:space="preserve">
+    <value>Voreingestellter Filter</value>
+  </data>
+  <data name="Parent Group" xml:space="preserve">
+    <value>Elterngruppe</value>
+  </data>
+  <data name="without group" xml:space="preserve">
+    <value>ohne Gruppe</value>
+  </data>
+  <data name="Groups do not have filter and sort selection." xml:space="preserve">
+    <value>Gruppen verfügen nicht über Filter- und Sortierauswahl.</value>
+  </data>
+  <data name="Sort" xml:space="preserve">
+    <value>Sortieren</value>
+  </data>
+  <data name="No preset filters defined. Standard view will be presented." xml:space="preserve">
+    <value>Kein voreingestellter Filter definiert. Die Standardansicht wird angezeigt.</value>
+  </data>
+  <data name="Delete Selected" xml:space="preserve">
+    <value>Ausgewählte löschen</value>
+  </data>
+  <data name="Your notes with the ability to used hashtags. (eg. #budget)" xml:space="preserve">
+    <value>Deine Notizen mit der Möglichkeit, Hashtags zu benutzen. (z. B. #budget)</value>
+  </data>
+  <data name="Edit Bookmark" xml:space="preserve">
+    <value>Lesezeichen bearbeiten</value>
+  </data>
+  <data name="Remove Bookmark" xml:space="preserve">
+    <value>Lesezeichen entfernen</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Titel</value>
+  </data>
+  <data name="Query Name" xml:space="preserve">
+    <value>Abfrage‑Name</value>
+  </data>
+  <data name="Only icon" xml:space="preserve">
+    <value>Nur Symbol</value>
+  </data>
+  <data name="Insert in position" xml:space="preserve">
+    <value>Einfügen an Position</value>
+  </data>
+  <data name="leave empty for last" xml:space="preserve">
+    <value>Für das Letzte leer lassen.</value>
+  </data>
+  <data name="Presentation component" xml:space="preserve">
+    <value>Präsentationskomponente</value>
+  </data>
+  <data name="Data mapping" xml:space="preserve">
+    <value>Datenzuordnung</value>
+  </data>
+  <data name="Component alias" xml:space="preserve">
+    <value>Komponentenalias</value>
+  </data>
+  <data name="Data column name" xml:space="preserve">
+    <value>Datenspaltenname</value>
+  </data>
+  <data name="Sort by alias" xml:space="preserve">
+    <value>Nach Alias sortieren</value>
+  </data>
+  <data name="column cannot be sorted" xml:space="preserve">
+    <value>Spalte kann nicht sortiert werden</value>
+  </data>
+  <data name="Filter by alias" xml:space="preserve">
+    <value>Nach Alias filtern</value>
+  </data>
+  <data name="column cannot be filtered" xml:space="preserve">
+    <value>Spalte kann nicht gefiltert werden</value>
+  </data>
+  <data name="This component does not require data mapping" xml:space="preserve">
+    <value>Diese Komponente erfordert keine Datenzuordnung.</value>
+  </data>
+  <data name="Please select data provider first" xml:space="preserve">
+    <value>Bitte wählen Sie zunächst den Datenanbieter.</value>
+  </data>
+  <data name="Component options" xml:space="preserve">
+    <value>Komponentenoptionen</value>
+  </data>
+  <data name=" Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!" xml:space="preserve">
+    <value>Datenanbieter-Einstellungen-Komponente implementiert nicht ITfDataProviderSettings und kann nicht gerendert werden!</value>
+  </data>
+  <data name="Styling" xml:space="preserve">
+    <value>Gestaltung</value>
+  </data>
+  <data name="Width, px" xml:space="preserve">
+    <value>Breite, px</value>
+  </data>
+  <data name="auto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="Background Color" xml:space="preserve">
+    <value>Hintergrundfarbe</value>
+  </data>
+  <data name="Presented Columns" xml:space="preserve">
+    <value>Präsentierte Spalten</value>
+  </data>
+  <data name="This view has no columns yet." xml:space="preserve">
+    <value>Diese Ansicht hat noch keine Spalten.</value>
+  </data>
+  <data name="unknown" xml:space="preserve">
+    <value>unbekannt</value>
+  </data>
+  <data name="Create a new space view" xml:space="preserve">
+    <value>Erstelle eine neue Raumansicht</value>
+  </data>
+  <data name="New View" xml:space="preserve">
+    <value>Neue Ansicht</value>
+  </data>
+  <data name="open dataset" xml:space="preserve">
+    <value>Datensatz öffnen</value>
+  </data>
+  <data name="the dataset no longer exists" xml:space="preserve">
+    <value>Der Datensatz existiert nicht mehr.</value>
+  </data>
+  <data name="Freeze Starting Columns" xml:space="preserve">
+    <value>Startspalten einfrieren</value>
+  </data>
+  <data name="Freeze Final Columns" xml:space="preserve">
+    <value>Letzte Spalten einfrieren</value>
+  </data>
+  <data name="New Rows (Experimental)" xml:space="preserve">
+    <value>Neue Zeilen (Experimentell)</value>
+  </data>
+  <data name="can create new rows" xml:space="preserve">
+    <value>kann neue Zeilen erstellen</value>
+  </data>
+  <data name="Delete Rows (Experimental)" xml:space="preserve">
+    <value>Zeilen löschen (Experimentell)</value>
+  </data>
+  <data name="can delete rows" xml:space="preserve">
+    <value>kann Zeilen löschen</value>
+  </data>
+  <data name="Any related pages to this space view will not be deleted and will show a message. Any related space data will not be deleted or changed." xml:space="preserve">
+    <value>Alle zugehörigen Seiten dieser Space-Ansicht werden nicht gelöscht und zeigen eine Meldung an. Alle zugehörigen Space-Daten werden weder gelöscht noch geändert.</value>
+  </data>
+  <data name="Delete this Space View" xml:space="preserve">
+    <value>Diese Raumansicht löschen</value>
+  </data>
+  <data name="Preset Filters Navigation" xml:space="preserve">
+    <value>Navigation zu vorgegebenen Filtern</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Aktuell</value>
+  </data>
+  <data name="Always applied" xml:space="preserve">
+    <value>Immer angewendet</value>
+  </data>
+  <data name="There are no filters that are always applied" xml:space="preserve">
+    <value>Es gibt keine Filter, die immer angewendet werden.</value>
+  </data>
+  <data name="This view's related data source is missing" xml:space="preserve">
+    <value>Die zu dieser Ansicht gehörende Datenquelle fehlt.</value>
+  </data>
+  <data name="how many columns from the start to freeze, not counting the checkbox column" xml:space="preserve">
+    <value>Wie viele Spalten von Anfang an einfrieren, ohne die Kontrollkästchen-Spalte zu zählen?</value>
+  </data>
+  <data name="how many columns from the end to freeze" xml:space="preserve">
+    <value>Wie viele Spalten sollen von rechts eingefroren werden?</value>
+  </data>
+  <data name="shared columns" xml:space="preserve">
+    <value>gemeinsame Spalten</value>
+  </data>
+  <data name="Dataset or DataProvider not found" xml:space="preserve">
+    <value>Datensatz oder Datenanbieter nicht gefunden</value>
+  </data>
+  <data name="No data" xml:space="preserve">
+    <value>Kein Daten</value>
+  </data>
+  <data name="select all" xml:space="preserve">
+    <value>Alle auswählen</value>
+  </data>
+  <data name="clear filters and sort" xml:space="preserve">
+    <value>Filter löschen und sortieren</value>
+  </data>
+  <data name="this view was personalized.Click to remove the personalization" xml:space="preserve">
+    <value>Diese Ansicht wurde personalisiert. Klicken, um die Personalisierung zu entfernen.</value>
+  </data>
+  <data name="Related Pages" xml:space="preserve">
+    <value>Verwandte Seiten</value>
+  </data>
+  <data name="This view is not connected to a page" xml:space="preserve">
+    <value>Diese Ansicht ist nicht mit einer Seite verbunden.</value>
+  </data>
+  <data name="Manage view" xml:space="preserve">
+    <value>Ansicht verwalten</value>
+  </data>
+  <data name="Manage dataset" xml:space="preserve">
+    <value>Datensatz verwalten</value>
+  </data>
+  <data name="Copy link" xml:space="preserve">
+    <value>Link kopieren</value>
+  </data>
+  <data name="Bookmark View" xml:space="preserve">
+    <value>Lesezeichenansicht</value>
+  </data>
+  <data name="Save URL" xml:space="preserve">
+    <value>URL speichern</value>
+  </data>
+  <data name="Export Selection" xml:space="preserve">
+    <value>Auswahl exportieren</value>
+  </data>
+  <data name="Export All" xml:space="preserve">
+    <value>Alle exportieren</value>
+  </data>
+  <data name="No default sort is applied in data source" xml:space="preserve">
+    <value>Es wird keine Standardsortierung auf die Datenquelle angewendet.</value>
+  </data>
+  <data name="No templates match your query" xml:space="preserve">
+    <value>Keine Vorlagen entsprechen Ihrer Anfrage.</value>
+  </data>
+  <data name="No items created yet" xml:space="preserve">
+    <value>Noch keine Elemente erstellt.</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>Allgemein</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="Usable" xml:space="preserve">
+    <value>Nutzbar</value>
+  </data>
+  <data name="Target Space Dataset" xml:space="preserve">
+    <value>Zielraum‑Datensatz</value>
+  </data>
+  <data name="No targeted space dataset found" xml:space="preserve">
+    <value>Kein zielgerichteter Space‑Datensatz gefunden</value>
+  </data>
+  <data name="Template Settings" xml:space="preserve">
+    <value>Vorlageneinstellungen</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Hilfe</value>
+  </data>
+  <data name="Template does not require additional settings" xml:space="preserve">
+    <value>Das Template erfordert keine zusätzlichen Einstellungen</value>
+  </data>
+  <data name="Deleting the template will make it unavailable for future use." xml:space="preserve">
+    <value>Das Löschen der Vorlage macht sie für zukünftige Verwendung nicht mehr verfügbar.</value>
+  </data>
+  <data name="Delete this Template" xml:space="preserve">
+    <value>Dieses Template löschen</value>
+  </data>
+  <data name="Template does not have help" xml:space="preserve">
+    <value>Vorlage hat keine Hilfe</value>
+  </data>
+  <data name="enabled" xml:space="preserve">
+    <value>aktiviert</value>
+  </data>
+  <data name="Use" xml:space="preserve">
+    <value>Verwenden</value>
+  </data>
+  <data name="selectable" xml:space="preserve">
+    <value>auswählbar</value>
+  </data>
+  <data name="select space dataset..." xml:space="preserve">
+    <value>Space-Datensatz auswählen…</value>
+  </data>
+  <data name="Template type" xml:space="preserve">
+    <value>Vorlagentyp</value>
+  </data>
+  <data name="Template does not have additional settings" xml:space="preserve">
+    <value>Das Template hat keine zusätzlichen Einstellungen</value>
+  </data>
+  <data name="Use template" xml:space="preserve">
+    <value>Vorlage verwenden</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Einreichen</value>
+  </data>
+  <data name="There are no templates applicable for this space dataset!" xml:space="preserve">
+    <value>Es gibt keine Vorlagen, die für diesen Space-Datensatz gelten!</value>
+  </data>
+  <data name="This template does not have a content processor definition" xml:space="preserve">
+    <value>Dieses Template hat keine Definition für einen Content‑Processor.</value>
+  </data>
+  <data name="Template Selected" xml:space="preserve">
+    <value>Vorlage ausgewählt</value>
+  </data>
+  <data name="Create a new User" xml:space="preserve">
+    <value>Neuen Benutzer erstellen</value>
+  </data>
+  <data name="New User" xml:space="preserve">
+    <value>Neuer Benutzer</value>
+  </data>
+  <data name="Created On" xml:space="preserve">
+    <value>Erstellt am</value>
+  </data>
+  <data name="First Name" xml:space="preserve">
+    <value>Vorname</value>
+  </data>
+  <data name="Last Name" xml:space="preserve">
+    <value>Nachname</value>
+  </data>
+  <data name="Theme Mode" xml:space="preserve">
+    <value>Thema‑Modus</value>
+  </data>
+  <data name="Theme Color" xml:space="preserve">
+    <value>Themenfarbe</value>
+  </data>
+  <data name="Localization" xml:space="preserve">
+    <value>Lokalisierung</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Rollen</value>
+  </data>
+  <data name="This user has no roles assigned" xml:space="preserve">
+    <value>Dieser Benutzer hat keine Rollen zugewiesen.</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Passwort</value>
+  </data>
+  <data name="Remember Me" xml:space="preserve">
+    <value>Angemeldet bleiben</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Anmelden</value>
+  </data>
+  <data name="leave empty too keep the password" xml:space="preserve">
+    <value>Leer lassen, um das Passwort zu behalten.</value>
+  </data>
+  <data name="Confirm Password" xml:space="preserve">
+    <value>Passwort bestätigen</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Passwort bestätigen</value>
+  </data>
+  <data name="Set as Startup URL" xml:space="preserve">
+    <value>Als Start‑URL festlegen</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Abmelden</value>
+  </data>
+  <data name="Recipe is not applied yet. Please follow the steps" xml:space="preserve">
+    <value>Rezept wurde noch nicht angewendet. Bitte folgen Sie den Schritten.</value>
+  </data>
+  <data name="Recipe was successfully applied" xml:space="preserve">
+    <value>Rezept wurde erfolgreich angewendet</value>
+  </data>
+  <data name="Recipe application finished with errors" xml:space="preserve">
+    <value>Rezeptanwendung beendet mit Fehlern</value>
+  </data>
+  <data name="step" xml:space="preserve">
+    <value>Schritt</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Startseite</value>
+  </data>
+  <data name="Data Identities" xml:space="preserve">
+    <value>Datenidentitäten</value>
+  </data>
+  <data name="Data Providers" xml:space="preserve">
+    <value>Datenanbieter</value>
+  </data>
+  <data name="File Repository" xml:space="preserve">
+    <value>Datei-Repository</value>
+  </data>
+  <data name="Space Data" xml:space="preserve">
+    <value>Raumdaten</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Benutzer</value>
+  </data>
+</root>

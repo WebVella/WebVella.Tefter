@@ -1,0 +1,1851 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="space dataset" xml:space="preserve">
+    <value>Данни в областта</value>
+  </data>
+  <data name="space view" xml:space="preserve">
+    <value>Преглед на пространството</value>
+  </data>
+  <data name="space page" xml:space="preserve">
+    <value>страница на пространството</value>
+  </data>
+  <data name="add new space" xml:space="preserve">
+    <value>добави ново пространство</value>
+  </data>
+  <data name="Unexpected Error! Check Notifications for details" xml:space="preserve">
+    <value>Неочаквана грешка! Проверете известията за подробности</value>
+  </data>
+  <data name="Unexpected Error!" xml:space="preserve">
+    <value>Неочаквана грешка!</value>
+  </data>
+  <data name="Please confirm the data change!" xml:space="preserve">
+    <value>Моля потвърдете промяната на данните!</value>
+  </data>
+  <data name="change applied" xml:space="preserve">
+    <value>промяната е приложена</value>
+  </data>
+  <data name="Invalid email format" xml:space="preserve">
+    <value>Невалиден имейл формат</value>
+  </data>
+  <data name="Invalid GUID format" xml:space="preserve">
+    <value>Невалиден GUID формат</value>
+  </data>
+  <data name="no value" xml:space="preserve">
+    <value>без стойност</value>
+  </data>
+  <data name="Invalid URL format" xml:space="preserve">
+    <value>Невалиден интернет адрес</value>
+  </data>
+  <data name="Are you sure that you need this identity deleted?" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изтриеш тази самоличност?</value>
+  </data>
+  <data name="Data identity removed" xml:space="preserve">
+    <value>Идентификацията на данните е премахната</value>
+  </data>
+  <data name="Create Identity" xml:space="preserve">
+    <value>Създаване на идентичност</value>
+  </data>
+  <data name="Manage Identity" xml:space="preserve">
+    <value>Управление на идентичността</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Създай</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Запомни</value>
+  </data>
+  <data name="Data identity created" xml:space="preserve">
+    <value>Идентификация на данни създадена</value>
+  </data>
+  <data name="Data identity updated" xml:space="preserve">
+    <value>Идентификация на данните е актуализирана</value>
+  </data>
+  <data name="Are you sure that you need this key deleted?" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изтриете този ключ?</value>
+  </data>
+  <data name="The implementation is successfully deleted!" xml:space="preserve">
+    <value>Реализацията е успешно изтрита!</value>
+  </data>
+  <data name="Are you sure that you need all data deleted? This operation can take minutes!" xml:space="preserve">
+    <value>Сигурен ли си, че искаш да изтриеш всички данни? Тази операция може да отнеме минути!</value>
+  </data>
+  <data name="Data provider data deletion is triggered!" xml:space="preserve">
+    <value>Изтриването на данни на източника започна!</value>
+  </data>
+  <data name="Are you sure that you need this data provider deleted?" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изтриете този доставчик на данни?</value>
+  </data>
+  <data name="Will proceeed only if there are not existing columns attached" xml:space="preserve">
+    <value>Ще бъде изтрит само ако няма асоциирани колони</value>
+  </data>
+  <data name="Data provider was successfully deleted" xml:space="preserve">
+    <value>Провайдерът на данни бе успешно изтрит.</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Детайли</value>
+  </data>
+  <data name="Columns" xml:space="preserve">
+    <value>Колони</value>
+  </data>
+  <data name="Connected Data" xml:space="preserve">
+    <value>Свързани данни</value>
+  </data>
+  <data name="Synchronization" xml:space="preserve">
+    <value>Синхронизация</value>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>Данни</value>
+  </data>
+  <data name="Column successfully updated!" xml:space="preserve">
+    <value>Колоната е успешно обновена!</value>
+  </data>
+  <data name="Are you sure that you need this column deleted?" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изтриете колоната?</value>
+  </data>
+  <data name="This will delete all related data too!" xml:space="preserve">
+    <value>Това ще изтрие и всички свързани данни!</value>
+  </data>
+  <data name="The column is successfully deleted!" xml:space="preserve">
+    <value>Колоната е успешно изтрита!</value>
+  </data>
+  <data name="Column successfully created!" xml:space="preserve">
+    <value>Колоната е успешно създадена!</value>
+  </data>
+  <data name="not scheduled" xml:space="preserve">
+    <value>не е насрочено</value>
+  </data>
+  <data name="No provider columns created yet!" xml:space="preserve">
+    <value>Няма създадени колони за доставчици още!</value>
+  </data>
+  <data name="Synchronization task created!" xml:space="preserve">
+    <value>Успешно е създадена задача за синхронизация!</value>
+  </data>
+  <data name="Create column" xml:space="preserve">
+    <value>Създай колона</value>
+  </data>
+  <data name="Manage column" xml:space="preserve">
+    <value>Редактирай колона</value>
+  </data>
+  <data name="required if attached" xml:space="preserve">
+    <value>изисква се, ако е приложено</value>
+  </data>
+  <data name="Data provider column was created successfully" xml:space="preserve">
+    <value>Колоната „поставчик на данни“ е създадена успешно</value>
+  </data>
+  <data name="Data provider column was updated successfully" xml:space="preserve">
+    <value>Колоната на доставчика на данни беше актуализирана успешно</value>
+  </data>
+  <data name="Create identity implementation" xml:space="preserve">
+    <value>Създаване на имплементация за идентичност</value>
+  </data>
+  <data name="Manage identity implementation" xml:space="preserve">
+    <value>Управлявайте внедряването на идентификацията</value>
+  </data>
+  <data name="Data identity is implemented" xml:space="preserve">
+    <value>Идентификацията на данните е реализирана.</value>
+  </data>
+  <data name="Data identity implementation is updated" xml:space="preserve">
+    <value>Реализацията на идентичността на данните е актуализирана.</value>
+  </data>
+  <data name="Invalid Data" xml:space="preserve">
+    <value>Невалидни данни</value>
+  </data>
+  <data name="Create data provider" xml:space="preserve">
+    <value>Създай доставчик на данни</value>
+  </data>
+  <data name="Manage data provider" xml:space="preserve">
+    <value>Редактирай доставчика на данни</value>
+  </data>
+  <data name="Synchronization log" xml:space="preserve">
+    <value>Дневник на синхронизацията</value>
+  </data>
+  <data name="Provider synchronization is updated" xml:space="preserve">
+    <value>Синхронизацията на доставчика е актуализирана</value>
+  </data>
+  <data name="File uploaded successfully!" xml:space="preserve">
+    <value>Файлът е качен успешно!</value>
+  </data>
+  <data name="File successfully updated!" xml:space="preserve">
+    <value>Файлът беше успешно актуализиран!</value>
+  </data>
+  <data name="Are you sure that you need this file deleted?" xml:space="preserve">
+    <value>Сигурни ли сте, че трябва да изтриете този файл?</value>
+  </data>
+  <data name="The file is successfully deleted!" xml:space="preserve">
+    <value>Файлът е успешно изтрит!</value>
+  </data>
+  <data name="Tefter Uri copied" xml:space="preserve">
+    <value>Тефтер Ури копирано</value>
+  </data>
+  <data name="Shift + Enter for new line. Enter to send." xml:space="preserve">
+    <value>Shift + Enter за нов ред. Enter за изпращане.</value>
+  </data>
+  <data name="no file" xml:space="preserve">
+    <value>няма файл</value>
+  </data>
+  <data name="Invalid GUID value" xml:space="preserve">
+    <value>Невалидно GUID значение</value>
+  </data>
+  <data name="Browse Spaces" xml:space="preserve">
+    <value>Разглеждане на пространства</value>
+  </data>
+  <data name="The language is successfully changed!" xml:space="preserve">
+    <value>Езика е успешно променен!</value>
+  </data>
+  <data name="no items" xml:space="preserve">
+    <value>няма записи</value>
+  </data>
+  <data name="Column already added for sort" xml:space="preserve">
+    <value>Колоната е вече добавена за сортиране</value>
+  </data>
+  <data name="Invalid Data!" xml:space="preserve">
+    <value>Невалидни данни!</value>
+  </data>
+  <data name="Please unassign all users first" xml:space="preserve">
+    <value>Моля, първо отдалечете всички потребители.</value>
+  </data>
+  <data name="Are you sure that you need this role deleted?" xml:space="preserve">
+    <value>Сигурен ли сте, че трябва да изтриете тази роля?</value>
+  </data>
+  <data name="User removed from role" xml:space="preserve">
+    <value>Потребителят е премахнат от ролята</value>
+  </data>
+  <data name="User added to role" xml:space="preserve">
+    <value>Потребителят е добавен към роля</value>
+  </data>
+  <data name="Are you sure that you need this user unassigned?" xml:space="preserve">
+    <value>Сигурен ли си, че искаш потребителя да няма тази роля?</value>
+  </data>
+  <data name="Create Role" xml:space="preserve">
+    <value>Създай роля</value>
+  </data>
+  <data name="Manage Role" xml:space="preserve">
+    <value>Редакция на роля</value>
+  </data>
+  <data name="Access role was successfully created!" xml:space="preserve">
+    <value>Ролята за достъп беше успешно създадена!</value>
+  </data>
+  <data name="Create shared column" xml:space="preserve">
+    <value>Създай споделена колона</value>
+  </data>
+  <data name="Manage shared column" xml:space="preserve">
+    <value>Редактирай споделена колона</value>
+  </data>
+  <data name="Shared column successfully created" xml:space="preserve">
+    <value>Споделената колона беше създадена успешно</value>
+  </data>
+  <data name="Shared column successfully updated" xml:space="preserve">
+    <value>Споделената колона е успешно актуализирана</value>
+  </data>
+  <data name="Space role added" xml:space="preserve">
+    <value>Добавена е ролята за пространство</value>
+  </data>
+  <data name="Are you sure that you need this role unassigned?" xml:space="preserve">
+    <value>Сигурен ли сте, че тази роля трябва да остане неприсвоена?</value>
+  </data>
+  <data name="Space role removed" xml:space="preserve">
+    <value>Ролята в пространството е премахната.</value>
+  </data>
+  <data name="Space access changed" xml:space="preserve">
+    <value>Достъпът до пространството е променен</value>
+  </data>
+  <data name="Are you sure that you need this space deleted?" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изтриете тази област?</value>
+  </data>
+  <data name="Space deleted" xml:space="preserve">
+    <value>Място изтрито</value>
+  </data>
+  <data name="Access" xml:space="preserve">
+    <value>Достъп</value>
+  </data>
+  <data name="Pages" xml:space="preserve">
+    <value>Страници</value>
+  </data>
+  <data name="Create space" xml:space="preserve">
+    <value>Създай област</value>
+  </data>
+  <data name="Manage space" xml:space="preserve">
+    <value>Редактирай област</value>
+  </data>
+  <data name="Space created successfully!" xml:space="preserve">
+    <value>Пространството е създадено успешно!</value>
+  </data>
+  <data name="Space updated successfully!" xml:space="preserve">
+    <value>Пространството е обновено успешно!</value>
+  </data>
+  <data name="Are you sure that you need this page deleted?" xml:space="preserve">
+    <value>Сигурни ли сте, че трябва да изтриете тази страница?</value>
+  </data>
+  <data name="Space node deleted!" xml:space="preserve">
+    <value>Възелът на пространството е изтрит!</value>
+  </data>
+  <data name="Space node updated!" xml:space="preserve">
+    <value>Узелът в пространството е обновен!</value>
+  </data>
+  <data name="Space node not found" xml:space="preserve">
+    <value>Възелът на пространството не е намерен</value>
+  </data>
+  <data name="Are you sure that you need this space data deleted?" xml:space="preserve">
+    <value>Сигурен ли сте, че искате да изтриете тези данни за пространството?</value>
+  </data>
+  <data name="Space data removed" xml:space="preserve">
+    <value>Данни за пространството са премахнати</value>
+  </data>
+  <data name="Space data copied" xml:space="preserve">
+    <value>Копирани данни за пространството</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Филтри</value>
+  </data>
+  <data name="Sort Order" xml:space="preserve">
+    <value>Подредка</value>
+  </data>
+  <data name="Used in Views" xml:space="preserve">
+    <value>Използвано в изгледи</value>
+  </data>
+  <data name="Space data successfully created!" xml:space="preserve">
+    <value>Данните за пространството са успешно създадени!</value>
+  </data>
+  <data name="Space data successfully updated!" xml:space="preserve">
+    <value>Данните за пространството са обновени успешно!</value>
+  </data>
+  <data name="Are you sure that you need this space page removed?" xml:space="preserve">
+    <value>Сигурен ли сте, че трябва да премахнете тази страница с пространство?</value>
+  </data>
+  <data name="Space page deleted!" xml:space="preserve">
+    <value>Страницата на пространството е изтрита!</value>
+  </data>
+  <data name="Space page successfully saved!" xml:space="preserve">
+    <value>Страницата на пространството е успешно запазена!</value>
+  </data>
+  <data name="Create page" xml:space="preserve">
+    <value>Създай страница</value>
+  </data>
+  <data name="Manage page" xml:space="preserve">
+    <value>Редактирай страница</value>
+  </data>
+  <data name="Space page created!" xml:space="preserve">
+    <value>Страницата за пространство е създадена!</value>
+  </data>
+  <data name="Space page updated!" xml:space="preserve">
+    <value>Страницата на пространството е актуализирана!</value>
+  </data>
+  <data name="Please select a name" xml:space="preserve">
+    <value>Моля изберете име</value>
+  </data>
+  <data name="Preset Filter updated!" xml:space="preserve">
+    <value>Предварително зададен филтър актуализиран!</value>
+  </data>
+  <data name="Are you sure that you need this preset filter removed?" xml:space="preserve">
+    <value>Сигурен ли сте, че трябва да се премахне този предварителен филтър?</value>
+  </data>
+  <data name="Records deleted" xml:space="preserve">
+    <value>Записи изтрити</value>
+  </data>
+  <data name="Bookmark" xml:space="preserve">
+    <value>Отметка</value>
+  </data>
+  <data name="Saved URL" xml:space="preserve">
+    <value>Запазена URL</value>
+  </data>
+  <data name="Bookmark removed" xml:space="preserve">
+    <value>Отметката е махната</value>
+  </data>
+  <data name="Space View updated!" xml:space="preserve">
+    <value>Прегледът на пространството е обновен!</value>
+  </data>
+  <data name="Are you sure that you need this space view deleted?" xml:space="preserve">
+    <value>Сигурни ли сте, че искате този изглед на пространството да се изтрие?</value>
+  </data>
+  <data name="Space view deleted" xml:space="preserve">
+    <value>Пространствен изглед е изтрит</value>
+  </data>
+  <data name="Space view copied" xml:space="preserve">
+    <value>Изгледът на пространството е копиран</value>
+  </data>
+  <data name="Preset Filters" xml:space="preserve">
+    <value>Предустановени филтри</value>
+  </data>
+  <data name="URL updated" xml:space="preserve">
+    <value>Адреса е обновен</value>
+  </data>
+  <data name="Saved URL removed" xml:space="preserve">
+    <value>Запазеният URL е премахнат</value>
+  </data>
+  <data name="Data change failed!" xml:space="preserve">
+    <value>промяната на данни е неуспешна!</value>
+  </data>
+  <data name="Row added" xml:space="preserve">
+    <value>Редът е добавен</value>
+  </data>
+  <data name="Link copied" xml:space="preserve">
+    <value>Линкът е копиран</value>
+  </data>
+  <data name="View is now bookmarked" xml:space="preserve">
+    <value>Прегледът е добавен към отметките</value>
+  </data>
+  <data name="URL is now saved" xml:space="preserve">
+    <value>URL вече е запазен.</value>
+  </data>
+  <data name="Are you sure that you need this template deleted?" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изтриете този шаблон?</value>
+  </data>
+  <data name="Template removed" xml:space="preserve">
+    <value>Шаблонът е премахнат</value>
+  </data>
+  <data name="Create template" xml:space="preserve">
+    <value>Създайте шаблон</value>
+  </data>
+  <data name="Manage template" xml:space="preserve">
+    <value>Управление на шаблона</value>
+  </data>
+  <data name="No content processors found" xml:space="preserve">
+    <value>Не са намерени процесори на съдържание</value>
+  </data>
+  <data name="Template successfully created" xml:space="preserve">
+    <value>Шаблонът е създаден успешно</value>
+  </data>
+  <data name="Template successfully updated" xml:space="preserve">
+    <value>Шаблонът е успешно обновен</value>
+  </data>
+  <data name="Update settings" xml:space="preserve">
+    <value>Обнови настройки</value>
+  </data>
+  <data name="Template settings successfully updated" xml:space="preserve">
+    <value>Настройките на шаблона бяха успешно обновени</value>
+  </data>
+  <data name="Content is null" xml:space="preserve">
+    <value>Съдържанието е NULL</value>
+  </data>
+  <data name="SpaceData is null" xml:space="preserve">
+    <value>SpaceData е нула</value>
+  </data>
+  <data name="You need to select a template first" xml:space="preserve">
+    <value>Трябва първо да изберете шаблон</value>
+  </data>
+  <data name="User role added" xml:space="preserve">
+    <value>Потребителска роля добавена</value>
+  </data>
+  <data name="User role removed" xml:space="preserve">
+    <value>Потребителската роля е премахната</value>
+  </data>
+  <data name="Create user" xml:space="preserve">
+    <value>Създай потребител</value>
+  </data>
+  <data name="Manage user" xml:space="preserve">
+    <value>Редакция на потребител</value>
+  </data>
+  <data name="Passwords do not match" xml:space="preserve">
+    <value>Паролите не съвпадат</value>
+  </data>
+  <data name="User account was successfully created!" xml:space="preserve">
+    <value>Потребителският акаунт е създаден успешно!</value>
+  </data>
+  <data name="User account was successfully updated!" xml:space="preserve">
+    <value>Потребителският акаунт беше успешно актуализиран!</value>
+  </data>
+  <data name="Administration" xml:space="preserve">
+    <value>Администрация</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Админ</value>
+  </data>
+  <data name="Startup URL was successfully changed!" xml:space="preserve">
+    <value>Стартиращият адрес е успешно променен!</value>
+  </data>
+  <data name="required" xml:space="preserve">
+    <value>задължително</value>
+  </data>
+  <data name="invalid email" xml:space="preserve">
+    <value>невалиден имейл</value>
+  </data>
+  <data name="Select view" xml:space="preserve">
+    <value>Избери изглед</value>
+  </data>
+  <data name="New view name" xml:space="preserve">
+    <value>Ново име на изглед</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Dataset" xml:space="preserve">
+    <value>Набор от данни</value>
+  </data>
+  <data name="select..." xml:space="preserve">
+    <value>избери...</value>
+  </data>
+  <data name="Data provider" xml:space="preserve">
+    <value>поставчик на данни</value>
+  </data>
+  <data name="Dataset name" xml:space="preserve">
+    <value>Име на набора от данни</value>
+  </data>
+  <data name="No dataset create in this space yet" xml:space="preserve">
+    <value>Няма създаден набор от данни в това пространство.</value>
+  </data>
+  <data name="Automatic column generation" xml:space="preserve">
+    <value>Автоматично генериране на колони</value>
+  </data>
+  <data name="data provided columns" xml:space="preserve">
+    <value>предоставени колони</value>
+  </data>
+  <data name="connected columns" xml:space="preserve">
+    <value>свързани колони</value>
+  </data>
+  <data name="system columns" xml:space="preserve">
+    <value>системни колони</value>
+  </data>
+  <data name="add dateset columns" xml:space="preserve">
+    <value>добави колони към набора от данни</value>
+  </data>
+  <data name="Generated Culumns" xml:space="preserve">
+    <value>Генерирани колони</value>
+  </data>
+  <data name="No columns will be generated" xml:space="preserve">
+    <value>Няма да се генерират колони</value>
+  </data>
+  <data name="No columns found in data provider" xml:space="preserve">
+    <value>Няма намерени колони в доставчика на данни</value>
+  </data>
+  <data name="Existing views" xml:space="preserve">
+    <value>Съществуващи изгледи</value>
+  </data>
+  <data name="Selected view" xml:space="preserve">
+    <value>Избран изглед</value>
+  </data>
+  <data name="browse view" xml:space="preserve">
+    <value>изглед за разглеждане</value>
+  </data>
+  <data name="on TRUE (text with priority)" xml:space="preserve">
+    <value>при ВЯРНО (текста е с приоритет)</value>
+  </data>
+  <data name="default value" xml:space="preserve">
+    <value>Стойност по подразбиране</value>
+  </data>
+  <data name="render as icon" xml:space="preserve">
+    <value>покажи като икона</value>
+  </data>
+  <data name="on FALSE (text with priority)" xml:space="preserve">
+    <value>при НЕВЯРНО (текста е с приоритет)</value>
+  </data>
+  <data name="on NULL (text with priority)" xml:space="preserve">
+    <value>на NULL (текст с приоритет)</value>
+  </data>
+  <data name="Component Mode Not implemented" xml:space="preserve">
+    <value>Режимът на компонента не е имплементиран</value>
+  </data>
+  <data name="Label" xml:space="preserve">
+    <value>Етикет</value>
+  </data>
+  <data name="show label" xml:space="preserve">
+    <value>показвай етикет</value>
+  </data>
+  <data name="TRUE label" xml:space="preserve">
+    <value>Етикет ВЯРНО</value>
+  </data>
+  <data name="empty shows a system one" xml:space="preserve">
+    <value>празно показва системно</value>
+  </data>
+  <data name="FALSE label" xml:space="preserve">
+    <value>Етикет НЕВЯРНО</value>
+  </data>
+  <data name="NULL label" xml:space="preserve">
+    <value>Етикет НЯМА</value>
+  </data>
+  <data name="Change confirmation" xml:space="preserve">
+    <value>Потвърждаване на промяната</value>
+  </data>
+  <data name="requires confirmation" xml:space="preserve">
+    <value>изисква потвърждение</value>
+  </data>
+  <data name="Confirmation message" xml:space="preserve">
+    <value>Съобщение за потвърждение</value>
+  </data>
+  <data name="Format" xml:space="preserve">
+    <value>Формат</value>
+  </data>
+  <data name="eg. 'dd MMM yyyy'" xml:space="preserve">
+    <value>напр. 'dd MMM yyyy'</value>
+  </data>
+  <data name="defaults to the system's short date format" xml:space="preserve">
+    <value>по подразбиране ще използва системната кратка дата</value>
+  </data>
+  <data name="Selection method" xml:space="preserve">
+    <value>Метод за избор</value>
+  </data>
+  <data name="eg. 'dd MMM yyyy HH:mm'" xml:space="preserve">
+    <value>напр. 'dd MMM yyyy  HH:mm'</value>
+  </data>
+  <data name="defaults to the system's short date and time format" xml:space="preserve">
+    <value>по подразбиране ще използва системната кратка дата и час</value>
+  </data>
+  <data name="The selected component has no options" xml:space="preserve">
+    <value>Избраният компонент няма опции</value>
+  </data>
+  <data name="eg. 'N3'" xml:space="preserve">
+    <value>напр. 'N3'</value>
+  </data>
+  <data name="Display Format" xml:space="preserve">
+    <value>Формат на показване</value>
+  </data>
+  <data name="Locale" xml:space="preserve">
+    <value>Локализация</value>
+  </data>
+  <data name="en-US" xml:space="preserve">
+    <value>en-US</value>
+  </data>
+  <data name="get from server" xml:space="preserve">
+    <value>вземи от сървъра</value>
+  </data>
+  <data name="Excel Format" xml:space="preserve">
+    <value>Excel формат</value>
+  </data>
+  <data name="eg. '0.000'" xml:space="preserve">
+    <value>напр. '0,000'</value>
+  </data>
+  <data name="Options source type" xml:space="preserve">
+    <value>Тип на източник за опции</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Опции</value>
+  </data>
+  <data name="Hide Label" xml:space="preserve">
+    <value>Скрий етикет</value>
+  </data>
+  <data name="Value column name" xml:space="preserve">
+    <value>Име на колона със стойност</value>
+  </data>
+  <data name="any column data" xml:space="preserve">
+    <value>всеки колона данни</value>
+  </data>
+  <data name="Label column name" xml:space="preserve">
+    <value>Име на колоната за етикет</value>
+  </data>
+  <data name="column data string or object that will be case to string" xml:space="preserve">
+    <value>Колонни данни като низ или обект, които ще се преобразуват в низ.</value>
+  </data>
+  <data name="Color column name" xml:space="preserve">
+    <value>Име на колоната „Цвят“</value>
+  </data>
+  <data name="column data string or int. String is css color value. Int is converted to enum of TfColor" xml:space="preserve">
+    <value>колонна данни като низ или цяло число. Низът е стойност на CSS цвят. Целото число се преобразува в изброяване (enum) от TfColor</value>
+  </data>
+  <data name="Background color column name" xml:space="preserve">
+    <value>Име на колона за фонов цвят</value>
+  </data>
+  <data name="column datastring or int. String is css color value. Int is converted to enum of TfColor" xml:space="preserve">
+    <value>столбецът е данни от тип низ или цяло число. Низът представлява CSS цвят, а числото се преобразува в изброен тип TfColor.</value>
+  </data>
+  <data name="Icon column name" xml:space="preserve">
+    <value>Икона на колоната</value>
+  </data>
+  <data name="column datastring, fluent icon name" xml:space="preserve">
+    <value>колонка данни низ, името на иконата Fluent</value>
+  </data>
+  <data name="eg. 'HH:mm:ss'" xml:space="preserve">
+    <value>напр. „HH:mm:ss“</value>
+  </data>
+  <data name="defaults to the system's short time format" xml:space="preserve">
+    <value>по подразбиране използва краткия часов формат на системата</value>
+  </data>
+  <data name="Top Data Providers" xml:space="preserve">
+    <value>Най-добри доставчици на данни</value>
+  </data>
+  <data name="No data prividers created yet" xml:space="preserve">
+    <value>Все още не са създадени доставчици на данни.</value>
+  </data>
+  <data name="Next Data Synchronizations" xml:space="preserve">
+    <value>Следващи синхронизации на данни</value>
+  </data>
+  <data name="No pending synchronization tasks" xml:space="preserve">
+    <value>Няма изчакащи задачи за синхронизация</value>
+  </data>
+  <data name="Recent" xml:space="preserve">
+    <value>Недавни</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>Име</value>
+  </data>
+  <data name="view/space" xml:space="preserve">
+    <value>преглед/пространство</value>
+  </data>
+  <data name="My Tags" xml:space="preserve">
+    <value>Моите тагове</value>
+  </data>
+  <data name="My Saved URLs" xml:space="preserve">
+    <value>Моите запазени URL‑адреси</value>
+  </data>
+  <data name="My Bookmarks" xml:space="preserve">
+    <value>Моите отметки</value>
+  </data>
+  <data name="My Views Visits" xml:space="preserve">
+    <value>Мои изгледи за посещения</value>
+  </data>
+  <data name="search..." xml:space="preserve">
+    <value>търси...</value>
+  </data>
+  <data name="No identities match your query" xml:space="preserve">
+    <value>Няма съвпадения на идентичности с вашето запитване</value>
+  </data>
+  <data name="Create a new data identity" xml:space="preserve">
+    <value>Създайте нова идентификация на данните</value>
+  </data>
+  <data name="New Identity" xml:space="preserve">
+    <value>Нова идентичност</value>
+  </data>
+  <data name="Item not found" xml:space="preserve">
+    <value>Елементът не е намерен</value>
+  </data>
+  <data name="System roles cannot be managed" xml:space="preserve">
+    <value>Системните роли не могат да бъдат променяни</value>
+  </data>
+  <data name="Locked" xml:space="preserve">
+    <value>Заключено</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>редакция</value>
+  </data>
+  <data name="system role" xml:space="preserve">
+    <value>системна роля</value>
+  </data>
+  <data name="user created" xml:space="preserve">
+    <value>създадена от потребител</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="Deleting this identity will remove all data relations that depend on it, but will not alter any source data from providers, shared columns or applications. " xml:space="preserve">
+    <value>Изтриването на тази идентичност ще премахне всички данни за връзки, които зависят от нея, но няма да променя никакви източникови данни от доставчиците, споделени колони или приложения.</value>
+  </data>
+  <data name="Delete this Data Identity" xml:space="preserve">
+    <value>Изтрий тази идентичност на данни</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Откажи</value>
+  </data>
+  <data name="Implemented Data Identities" xml:space="preserve">
+    <value>Приложени Идентификатори на данни</value>
+  </data>
+  <data name="Data Identities are used to generate keys for joining auxilary data. Each record can have several data identities." xml:space="preserve">
+    <value>Идентификаторите на данни се използват за генериране на ключове за свързване на допълнителни данни. Всеки запис може да има няколко идентификатора на данни.</value>
+  </data>
+  <data name="All identities implemented" xml:space="preserve">
+    <value>Всички идентичности са реализирани</value>
+  </data>
+  <data name="Data identity" xml:space="preserve">
+    <value>Идентификация на данни</value>
+  </data>
+  <data name="always implemented" xml:space="preserve">
+    <value>винаги имплементирано</value>
+  </data>
+  <data name="Edit column" xml:space="preserve">
+    <value>Редакция на колоната</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Изтрий</value>
+  </data>
+  <data name="Connected Shared columns" xml:space="preserve">
+    <value>Свързани споделени колони</value>
+  </data>
+  <data name="Shared Columns that match one of the implemented data identities" xml:space="preserve">
+    <value>Споделени колони, които съвпадат с едно от реализирани идентификатори на данни</value>
+  </data>
+  <data name="No shared columns matched" xml:space="preserve">
+    <value>Няма споделени колони</value>
+  </data>
+  <data name="No shared columns are matching any of the join keys for this data source" xml:space="preserve">
+    <value>Няма споделени колони, които да използват свързващ ключ на този източник</value>
+  </data>
+  <data name="Connected Data providers" xml:space="preserve">
+    <value>Свързани доставчици на данни</value>
+  </data>
+  <data name="Providers have a common data identity implementated. Only the primary provider's data is modifiable." xml:space="preserve">
+    <value>Поставчиците имат имплементирана обща идентичност на данните. Само данните от основния доставчик могат да се променят.</value>
+  </data>
+  <data name="No data providers are connected" xml:space="preserve">
+    <value>Няма свързани доставчици на данни</value>
+  </data>
+  <data name="For data from different providers to be connected, they must implement at least one common join key." xml:space="preserve">
+    <value>За да бъдат свързани данни от различни доставчици, те трябва да реализират поне един общ ключ за обединение.</value>
+  </data>
+  <data name="delete all data" xml:space="preserve">
+    <value>изтрий всички данни</value>
+  </data>
+  <data name="No columns are created for this data provider yet" xml:space="preserve">
+    <value>Няма създадени колони за този доставчик на данни.</value>
+  </data>
+  <data name="No records" xml:space="preserve">
+    <value>Няма записи</value>
+  </data>
+  <data name="There are no visible columns selected." xml:space="preserve">
+    <value>Няма видими избрани колони.</value>
+  </data>
+  <data name="No users match your query" xml:space="preserve">
+    <value>Няма потребители, които отговарят на вашето запитване.</value>
+  </data>
+  <data name="Create a new data provider" xml:space="preserve">
+    <value>Създайте нов доставчик на данни</value>
+  </data>
+  <data name="New Provider" xml:space="preserve">
+    <value>Нов доставчик</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Код</value>
+  </data>
+  <data name="Supported Source data types" xml:space="preserve">
+    <value>Поддържани типове данни при източника</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Внимание</value>
+  </data>
+  <data name="The data provider does not support any  type of source data!" xml:space="preserve">
+    <value>Доставчикът на данни не поддържа нито един тип изходни данни!</value>
+  </data>
+  <data name="When a data provider is deleted all data that it holds will be deleted too. Data related to this data provider, but stored in shared columns, applications or other data providers will not be deleted. Thus, if recreate matching data identities in the future these relations will hold" xml:space="preserve">
+    <value>Когато доставчикът на данни бъде изтрит, всички данни, които съдържа, ще бъдат изтрити също. Данните, свързани с този доставчик, но съхранявани в споделени колони, приложения или други доставчици на данни, няма да бъдат изтрити. Следователно, ако по-късно се възстановят съответстващите идентификации на данните, тези връзки ще останат валидни.</value>
+  </data>
+  <data name="Delete this Data Provider" xml:space="preserve">
+    <value>Изтрий този доставчик на данни</value>
+  </data>
+  <data name="Provider Columns" xml:space="preserve">
+    <value>Източник Колони</value>
+  </data>
+  <data name="Import from source" xml:space="preserve">
+    <value>Импортиране от източник</value>
+  </data>
+  <data name="Add Column" xml:space="preserve">
+    <value>Добави колона</value>
+  </data>
+  <data name="No columns" xml:space="preserve">
+    <value>няма колони</value>
+  </data>
+  <data name="No columns are created yet for this data source" xml:space="preserve">
+    <value>Все още няма създадени колони за този доставчик на данни</value>
+  </data>
+  <data name="Delete column" xml:space="preserve">
+    <value>Изтриване на колоната</value>
+  </data>
+  <data name="synchronized" xml:space="preserve">
+    <value>синхронизирано</value>
+  </data>
+  <data name="NOT synchronized" xml:space="preserve">
+    <value>НЕ синхронизирано</value>
+  </data>
+  <data name="Row Identity key" xml:space="preserve">
+    <value>Ключ за идентификация на реда</value>
+  </data>
+  <data name="Data row position in the list will be used for comparison." xml:space="preserve">
+    <value>Позицията на реда в списъка ще се използва за сравнение.</value>
+  </data>
+  <data name="Row position" xml:space="preserve">
+    <value>Позиция на реда</value>
+  </data>
+  <data name="When no columns are submitted to be used as identity key the row position in the list will be used to identify the row." xml:space="preserve">
+    <value>Когато не се подадат колони, които да се използват като ключ за идентификация, позицията на реда в списъка ще бъде използвана за идентифициране на реда.</value>
+  </data>
+  <data name="Synchronization schedule" xml:space="preserve">
+    <value>Планиране на синхронизация</value>
+  </data>
+  <data name="Manage" xml:space="preserve">
+    <value>Редакция</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="Interval" xml:space="preserve">
+    <value>Интервал</value>
+  </data>
+  <data name="Scheduled on" xml:space="preserve">
+    <value>Планирано на</value>
+  </data>
+  <data name="Synchronization tasks" xml:space="preserve">
+    <value>Задачи за синхронизация</value>
+  </data>
+  <data name="Synchronize now" xml:space="preserve">
+    <value>Синхронизирай сега</value>
+  </data>
+  <data name="view" xml:space="preserve">
+    <value>преглед</value>
+  </data>
+  <data name="No synchronization tasks" xml:space="preserve">
+    <value>Няма задачи за синхронизация</value>
+  </data>
+  <data name="column name" xml:space="preserve">
+    <value>Име на колоната</value>
+  </data>
+  <data name="select SOURCE column type" xml:space="preserve">
+    <value>избери ИЗТОЧНИК тип данни</value>
+  </data>
+  <data name="data type" xml:space="preserve">
+    <value>Тип данни</value>
+  </data>
+  <data name="Data Link" xml:space="preserve">
+    <value>Данни връзка</value>
+  </data>
+  <data name="local data only" xml:space="preserve">
+    <value>само локални данни</value>
+  </data>
+  <data name="synchronized with source" xml:space="preserve">
+    <value>синхронизиран с източник</value>
+  </data>
+  <data name="leave empty, if no source" xml:space="preserve">
+    <value>остави празно, ако няма източник</value>
+  </data>
+  <data name="column type" xml:space="preserve">
+    <value>Тип на колоната</value>
+  </data>
+  <data name="data stored but NOT synchronized" xml:space="preserve">
+    <value>данните се съхраняват но БЕЗ синхронизация</value>
+  </data>
+  <data name="Nullable" xml:space="preserve">
+    <value>NULL</value>
+  </data>
+  <data name="can be NULL" xml:space="preserve">
+    <value>може да бъде NULL</value>
+  </data>
+  <data name="Autogenerated" xml:space="preserve">
+    <value>Автоматична генерация</value>
+  </data>
+  <data name="autogenerate value" xml:space="preserve">
+    <value>генерирай стойност</value>
+  </data>
+  <data name="Unique" xml:space="preserve">
+    <value>Уникалност</value>
+  </data>
+  <data name="only unique values" xml:space="preserve">
+    <value>само уникални стойности</value>
+  </data>
+  <data name="Sortable" xml:space="preserve">
+    <value>сортиране</value>
+  </data>
+  <data name="used for sorting" xml:space="preserve">
+    <value>използва се за сортиране</value>
+  </data>
+  <data name="Searchable" xml:space="preserve">
+    <value>Търсене</value>
+  </data>
+  <data name="used in filters" xml:space="preserve">
+    <value>участва във филтри</value>
+  </data>
+  <data name="Global search" xml:space="preserve">
+    <value>Глобално търсене</value>
+  </data>
+  <data name="included" xml:space="preserve">
+    <value>участва</value>
+  </data>
+  <data name="Preferred search type" xml:space="preserve">
+    <value>Предпочитан тип търсене</value>
+  </data>
+  <data name="select identity..." xml:space="preserve">
+    <value>избиране на идентичност...</value>
+  </data>
+  <data name="Selected Columns" xml:space="preserve">
+    <value>Избрани колони</value>
+  </data>
+  <data name="Available Columns" xml:space="preserve">
+    <value>Налични колони</value>
+  </data>
+  <data name="Import schema" xml:space="preserve">
+    <value>Импорт на схема</value>
+  </data>
+  <data name="New Columns" xml:space="preserve">
+    <value>Нови колони</value>
+  </data>
+  <data name="Already Present" xml:space="preserve">
+    <value>Вече присъства</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Импорт</value>
+  </data>
+  <data name="SOURCE column" xml:space="preserve">
+    <value>ИЗТОЧНИК колона</value>
+  </data>
+  <data name="SOURCE type" xml:space="preserve">
+    <value>ИЗТОЧНИК тип</value>
+  </data>
+  <data name="default" xml:space="preserve">
+    <value>по подразбиране</value>
+  </data>
+  <data name="autogen" xml:space="preserve">
+    <value>автоген</value>
+  </data>
+  <data name="searched" xml:space="preserve">
+    <value>търсене</value>
+  </data>
+  <data name="search type" xml:space="preserve">
+    <value>тип търсене</value>
+  </data>
+  <data name="No new columns are found in the source" xml:space="preserve">
+    <value>Няма намерени нови колони в източника</value>
+  </data>
+  <data name="No existing columns are yet created" xml:space="preserve">
+    <value>В момента все още няма създадени колони.</value>
+  </data>
+  <data name="ON" xml:space="preserve">
+    <value>Включено</value>
+  </data>
+  <data name="OFF" xml:space="preserve">
+    <value>Изключено</value>
+  </data>
+  <data name="Interval Minutes" xml:space="preserve">
+    <value>Интервал минути</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>Файлове</value>
+  </data>
+  <data name="file uploaded" xml:space="preserve">
+    <value>файлът е качен</value>
+  </data>
+  <data name="Upload file" xml:space="preserve">
+    <value>Качване на файл</value>
+  </data>
+  <data name="No Files" xml:space="preserve">
+    <value>Няма файлове</value>
+  </data>
+  <data name="No files are created yet" xml:space="preserve">
+    <value>В се съществуват временно няма създадени файлове.</value>
+  </data>
+  <data name="No columns found" xml:space="preserve">
+    <value>Няма намерени колони</value>
+  </data>
+  <data name="No shared columns are found for this search" xml:space="preserve">
+    <value>Няма колони, които да отговарят на търсенето</value>
+  </data>
+  <data name="Change file content" xml:space="preserve">
+    <value>Промени съдържанието на файла</value>
+  </data>
+  <data name="last updated" xml:space="preserve">
+    <value>последно актуализирано</value>
+  </data>
+  <data name="Update file content" xml:space="preserve">
+    <value>Актуализирайте съдържанието на файла</value>
+  </data>
+  <data name="Upload new content" xml:space="preserve">
+    <value>Качете ново съдържание</value>
+  </data>
+  <data name="select provider column" xml:space="preserve">
+    <value>Изберете колоната за доставчик</value>
+  </data>
+  <data name="all columns added" xml:space="preserve">
+    <value>Всички колони добавени</value>
+  </data>
+  <data name="Add new" xml:space="preserve">
+    <value>Добави нов</value>
+  </data>
+  <data name="download file" xml:space="preserve">
+    <value>изтегли файл</value>
+  </data>
+  <data name="no data provider" xml:space="preserve">
+    <value>няма източник на данни</value>
+  </data>
+  <data name="Column" xml:space="preserve">
+    <value>Колона</value>
+  </data>
+  <data name="AND" xml:space="preserve">
+    <value>И</value>
+  </data>
+  <data name="OR" xml:space="preserve">
+    <value>ИЛИ</value>
+  </data>
+  <data name="No filters added yet" xml:space="preserve">
+    <value>Все още няма добавени филтри</value>
+  </data>
+  <data name="delete filter" xml:space="preserve">
+    <value>изтрий филтъра</value>
+  </data>
+  <data name="found in provider" xml:space="preserve">
+    <value>намирано в доставчика</value>
+  </data>
+  <data name="not found in provider" xml:space="preserve">
+    <value>не е намерен в доставчика</value>
+  </data>
+  <data name="for dynamic date use one of the following:{0}&quot;, &quot;&lt;br/&gt; now(+- decimal hours),&lt;br/&gt; day(+- decimal days),&lt;br/&gt; month(+- decimal months),&lt;br/&gt; year(+- decimal year)" xml:space="preserve">
+    <value>за динамична дата използвайте едно от следните: {0}", "&lt;br/&gt; now(± десетична часове),&lt;br/&gt; day(± десетични дни),&lt;br/&gt; month(± десетични месеци),&lt;br/&gt; year(± десетични години)</value>
+  </data>
+  <data name="enter valid GUID" xml:space="preserve">
+    <value>Въведете валиден GUID</value>
+  </data>
+  <data name="enter valid decimal" xml:space="preserve">
+    <value>Въведете валиден десетичен номер</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Известия</value>
+  </data>
+  <data name="Dismiss All" xml:space="preserve">
+    <value>Отхвърли всички</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="Go to first page" xml:space="preserve">
+    <value>Към първа станица</value>
+  </data>
+  <data name="Go to previous page" xml:space="preserve">
+    <value>Към предишна страница</value>
+  </data>
+  <data name="Go to next page" xml:space="preserve">
+    <value>Към следваща страница</value>
+  </data>
+  <data name="Go to last page" xml:space="preserve">
+    <value>Към последна страница</value>
+  </data>
+  <data name="add" xml:space="preserve">
+    <value>добави</value>
+  </data>
+  <data name="No data sort order defined yet" xml:space="preserve">
+    <value>Все още не е дефинирано подреждане на данните</value>
+  </data>
+  <data name="Delete sort order" xml:space="preserve">
+    <value>Изтрий сортирането</value>
+  </data>
+  <data name="property" xml:space="preserve">
+    <value>поле</value>
+  </data>
+  <data name="error" xml:space="preserve">
+    <value>грешка</value>
+  </data>
+  <data name="Setup Selected Recipe" xml:space="preserve">
+    <value>Настройка на избраната рецепта</value>
+  </data>
+  <data name="Provide information for the recipe setup" xml:space="preserve">
+    <value>Предоставете информация за настройката на рецептата</value>
+  </data>
+  <data name="This recipe has no configuration steps" xml:space="preserve">
+    <value>Тази рецепта няма стъпки за конфигуриране</value>
+  </data>
+  <data name="No step selected" xml:space="preserve">
+    <value>Няма избрана стъпка</value>
+  </data>
+  <data name="Apply Configuration" xml:space="preserve">
+    <value>Прилагане на конфигурация</value>
+  </data>
+  <data name="Forward" xml:space="preserve">
+    <value>Напред</value>
+  </data>
+  <data name="To Login Page" xml:space="preserve">
+    <value>Към страница за вход</value>
+  </data>
+  <data name="Initial Setup" xml:space="preserve">
+    <value>Начална настройка</value>
+  </data>
+  <data name="Welcome to Tefter. Begin using it by simply clicking on one of the available preconfiguration options." xml:space="preserve">
+    <value>Добре дошли в Tefter. Започнете да го използвате, като просто кликнете върху една от наличните предварителни конфигурационни опции.</value>
+  </data>
+  <data name="Service error" xml:space="preserve">
+    <value>Грешка в услугата</value>
+  </data>
+  <data name="Recipe step does not have Form Component or it is not inheriting the class TfRecipeStepFormBase" xml:space="preserve">
+    <value>Стъпката на рецептата няма компонент за форма или не наследява клас TfRecipeStepFormBase</value>
+  </data>
+  <data name="Create a new access role" xml:space="preserve">
+    <value>Създайте нова роля за достъп</value>
+  </data>
+  <data name="New Role" xml:space="preserve">
+    <value>Нова роля</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Имейл</value>
+  </data>
+  <data name="Users with the role" xml:space="preserve">
+    <value>Потребители с ролята</value>
+  </data>
+  <data name="select user" xml:space="preserve">
+    <value>избери потребител</value>
+  </data>
+  <data name="all users added" xml:space="preserve">
+    <value>всички потребители са добавени</value>
+  </data>
+  <data name="This role has no users assigned" xml:space="preserve">
+    <value>Тази роля няма потребители</value>
+  </data>
+  <data name="the current user cannot unassign admin role to self" xml:space="preserve">
+    <value>текущият потребител не може да си отстрани администраторската роля самоот себе си</value>
+  </data>
+  <data name="Remove the user" xml:space="preserve">
+    <value>Махни потребителят</value>
+  </data>
+  <data name="remove" xml:space="preserve">
+    <value>махни</value>
+  </data>
+  <data name="Before you can delete the role, you need to remove all assigned users first" xml:space="preserve">
+    <value>Преди да изтриете ролята, първо трябва да премахнете всички назначени потребители.</value>
+  </data>
+  <data name="System roles cannot be deleted" xml:space="preserve">
+    <value>Системните роли не могат да бъдат изтрити</value>
+  </data>
+  <data name="Delete Role" xml:space="preserve">
+    <value>Изтрий ролята</value>
+  </data>
+  <data name="Create a new shared column" xml:space="preserve">
+    <value>Създайте нова споделена колона</value>
+  </data>
+  <data name="New Column" xml:space="preserve">
+    <value>Нова колона</value>
+  </data>
+  <data name="No data providers implement the identity" xml:space="preserve">
+    <value>Нито един доставчик на данни не реализира идентификационната система.</value>
+  </data>
+  <data name="Deleting this shared column will remove all its data, but will not alter the data of any related data providers or applications " xml:space="preserve">
+    <value>Изтриването на този споделен колона ще премахне всички данни от нея, но няма да промени данните на никакви свързани доставчици или приложения.</value>
+  </data>
+  <data name="Delete this Shared column" xml:space="preserve">
+    <value>Изтрий тази споделена колона.</value>
+  </data>
+  <data name="select or add..." xml:space="preserve">
+    <value>избери или добави...</value>
+  </data>
+  <data name="Target data identity" xml:space="preserve">
+    <value>Идентификация на целевите данни</value>
+  </data>
+  <data name="not included" xml:space="preserve">
+    <value>Не е включено</value>
+  </data>
+  <data name="Spaces" xml:space="preserve">
+    <value>Пространства</value>
+  </data>
+  <data name="Access Restricted" xml:space="preserve">
+    <value>Достъп ограничен</value>
+  </data>
+  <data name="Only users with the explicitly listed roles will be granted entry." xml:space="preserve">
+    <value>Само потребители с изрично изброени роли ще получат достъп.</value>
+  </data>
+  <data name="Free Access" xml:space="preserve">
+    <value>Безплатен достъп</value>
+  </data>
+  <data name="All users will have access." xml:space="preserve">
+    <value>Всички потребители ще имат достъп.</value>
+  </data>
+  <data name="restricted access" xml:space="preserve">
+    <value>ограничен достъп</value>
+  </data>
+  <data name="Roles with Access" xml:space="preserve">
+    <value>Роли с достъп</value>
+  </data>
+  <data name="select role" xml:space="preserve">
+    <value>Избери роля</value>
+  </data>
+  <data name="all roles added" xml:space="preserve">
+    <value>всички роли добавени</value>
+  </data>
+  <data name="Administrators has always access" xml:space="preserve">
+    <value>Администраторите винаги имат достъп</value>
+  </data>
+  <data name="Remove the role" xml:space="preserve">
+    <value>Премахни ролята</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Цвят</value>
+  </data>
+  <data name="Icon" xml:space="preserve">
+    <value>Икона</value>
+  </data>
+  <data name="Deleting the space will delete also any related space pages, space views and space data, but will not alter local content or data provider data" xml:space="preserve">
+    <value>Изтриването на пространството ще изтрие и всички свързани страници, изгледи и данни на пространството, но няма да промени локалното съдържание или данните от доставчика.</value>
+  </data>
+  <data name="Delete this Space" xml:space="preserve">
+    <value>Изтрий това пространство</value>
+  </data>
+  <data name="limited access" xml:space="preserve">
+    <value>ограничен достъп</value>
+  </data>
+  <data name="no icon" xml:space="preserve">
+    <value>без икона</value>
+  </data>
+  <data name="copy" xml:space="preserve">
+    <value>копирай</value>
+  </data>
+  <data name="move up" xml:space="preserve">
+    <value>премести нагоре</value>
+  </data>
+  <data name="move down" xml:space="preserve">
+    <value>премести надолу</value>
+  </data>
+  <data name="folder" xml:space="preserve">
+    <value>папка</value>
+  </data>
+  <data name="page" xml:space="preserve">
+    <value>страница</value>
+  </data>
+  <data name="Add page" xml:space="preserve">
+    <value>Добави страница</value>
+  </data>
+  <data name="No pages or folders created yet." xml:space="preserve">
+    <value>Няма създадени страници или папки.</value>
+  </data>
+  <data name="Shared column Joins" xml:space="preserve">
+    <value>Споделени колони – Обединения</value>
+  </data>
+  <data name="Columns that match one of the identity implemented for this data source" xml:space="preserve">
+    <value>Колони, които съвпадат с една от идентичностите, имплементирани за този източник на данни</value>
+  </data>
+  <data name="This dataset is not connected to any shared columns" xml:space="preserve">
+    <value>Този набор от данни не е свързан с никакви споделени колони</value>
+  </data>
+  <data name="Connected Data Provider (ReadOnly)" xml:space="preserve">
+    <value>Свързан доставчик на данни (само за четене)</value>
+  </data>
+  <data name="Data that is connected and can be added as readonly columns." xml:space="preserve">
+    <value>Данни, които са свързани и могат да се добавят като колони само за четене.</value>
+  </data>
+  <data name="This dataset is not connected to other data providers" xml:space="preserve">
+    <value>Този набор от данни не е свързан с други доставчици на данни.</value>
+  </data>
+  <data name="Primary and Connected Columns" xml:space="preserve">
+    <value>Главни и свързани колони</value>
+  </data>
+  <data name="Create a new dataset" xml:space="preserve">
+    <value>Създайте нов набор от данни</value>
+  </data>
+  <data name="New Dataset" xml:space="preserve">
+    <value>Нов набор от данни</value>
+  </data>
+  <data name="Primary Data provider" xml:space="preserve">
+    <value>Основен Източник на данни</value>
+  </data>
+  <data name="open provider" xml:space="preserve">
+    <value>Отвори доставчика</value>
+  </data>
+  <data name="The data provider no longer exists" xml:space="preserve">
+    <value>Източника на данни не е намерен</value>
+  </data>
+  <data name="Deleting the Space Data will stop any related views from displaying data in their columns and show an error message instead" xml:space="preserve">
+    <value>Изтриването на данните в пространството ще спре всички свързани изгледи да показват данни в колоните им и вместо това ще се покаже съобщение за грешка.</value>
+  </data>
+  <data name="Delete this Space Data" xml:space="preserve">
+    <value>Изтрий тази Space Data</value>
+  </data>
+  <data name="Query Filters" xml:space="preserve">
+    <value>Филтри</value>
+  </data>
+  <data name="If the data provider is changed you will need to change the data mapping in all related views as well to reflect the new column names." xml:space="preserve">
+    <value>Ако доставчикът на данни се промени, ще трябва да промените съответствието на данните във всички свързани изгледи, за да отразят новите имена на колоните.</value>
+  </data>
+  <data name="Aux Data Providers" xml:space="preserve">
+    <value>Допълнителни източници на данни</value>
+  </data>
+  <data name="When data providers share at least one common identity, their data is connected. Only the data from the primary provider is modifiable." xml:space="preserve">
+    <value>Когато доставчиците на данни споделят поне една обща идентичност, техните данни се свързват. Само данните от основния доставчик могат да бъдат променяни.</value>
+  </data>
+  <data name="Default Sort" xml:space="preserve">
+    <value>Подреждане</value>
+  </data>
+  <data name="This dataset does not provide data to views" xml:space="preserve">
+    <value>Този набор от данни не предоставя данни за изгледи.</value>
+  </data>
+  <data name="view details" xml:space="preserve">
+    <value>Разгледайте подробностите</value>
+  </data>
+  <data name="No pages found in the space" xml:space="preserve">
+    <value>Няма намерени страници в областта</value>
+  </data>
+  <data name="You have not bookmarks yet" xml:space="preserve">
+    <value>Все още нямате отметки</value>
+  </data>
+  <data name="You have no save views yet" xml:space="preserve">
+    <value>Нямате още запазени изгледи.</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>Родител</value>
+  </data>
+  <data name="no parent options found" xml:space="preserve">
+    <value>няма намерени родителски опции</value>
+  </data>
+  <data name="Page type" xml:space="preserve">
+    <value>Тип страница</value>
+  </data>
+  <data name="Select a page type" xml:space="preserve">
+    <value>Избери тип страница</value>
+  </data>
+  <data name="Manage Preset Filter" xml:space="preserve">
+    <value>Управление на предварителния филтър</value>
+  </data>
+  <data name="group" xml:space="preserve">
+    <value>група</value>
+  </data>
+  <data name="preset filter" xml:space="preserve">
+    <value>предустановен филтър</value>
+  </data>
+  <data name="Parent Group" xml:space="preserve">
+    <value>Родителска група</value>
+  </data>
+  <data name="without group" xml:space="preserve">
+    <value>без група</value>
+  </data>
+  <data name="Groups do not have filter and sort selection." xml:space="preserve">
+    <value>Групите нямат избор на филтри и сортиране.</value>
+  </data>
+  <data name="Sort" xml:space="preserve">
+    <value>Сортиране</value>
+  </data>
+  <data name="No preset filters defined. Standard view will be presented." xml:space="preserve">
+    <value>Няма зададени предварителни филтри. Ще се покаже стандартният изглед.</value>
+  </data>
+  <data name="Delete Selected" xml:space="preserve">
+    <value>Изтрий избраното</value>
+  </data>
+  <data name="Your notes with the ability to used hashtags. (eg. #budget)" xml:space="preserve">
+    <value>Твоите бележки с възможност да се ползват хаштагове. (напр. #budget)</value>
+  </data>
+  <data name="Edit Bookmark" xml:space="preserve">
+    <value>Редактирай отметка</value>
+  </data>
+  <data name="Remove Bookmark" xml:space="preserve">
+    <value>Премахни отметка</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Заглавие</value>
+  </data>
+  <data name="Query Name" xml:space="preserve">
+    <value>Име за URL</value>
+  </data>
+  <data name="Only icon" xml:space="preserve">
+    <value>Само икона</value>
+  </data>
+  <data name="Insert in position" xml:space="preserve">
+    <value>Вмъкни на позиция</value>
+  </data>
+  <data name="leave empty for last" xml:space="preserve">
+    <value>оставете празно за последното</value>
+  </data>
+  <data name="Presentation component" xml:space="preserve">
+    <value>Компонент за представяне</value>
+  </data>
+  <data name="Data mapping" xml:space="preserve">
+    <value>Картографиране на данни</value>
+  </data>
+  <data name="Component alias" xml:space="preserve">
+    <value>Алиас на компонента</value>
+  </data>
+  <data name="Data column name" xml:space="preserve">
+    <value>Име на колоната с данни</value>
+  </data>
+  <data name="Sort by alias" xml:space="preserve">
+    <value>Сортирай по псевдоним</value>
+  </data>
+  <data name="column cannot be sorted" xml:space="preserve">
+    <value>Колоната не може да се сортира</value>
+  </data>
+  <data name="Filter by alias" xml:space="preserve">
+    <value>Филтрирай по псевдоним</value>
+  </data>
+  <data name="column cannot be filtered" xml:space="preserve">
+    <value>Колоната не може да бъде филтрирана</value>
+  </data>
+  <data name="This component does not require data mapping" xml:space="preserve">
+    <value>Този компонент не изисква картографиране на данни.</value>
+  </data>
+  <data name="Please select data provider first" xml:space="preserve">
+    <value>Моля, изберете доставчик на данни първо.</value>
+  </data>
+  <data name="Component options" xml:space="preserve">
+    <value>Опции на компонент</value>
+  </data>
+  <data name=" Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!" xml:space="preserve">
+    <value>Компонентът за настройки на доставчика данни не имплементира ITfDataProviderSettings и не може да се визуализира!</value>
+  </data>
+  <data name="Styling" xml:space="preserve">
+    <value>Стилиране</value>
+  </data>
+  <data name="Width, px" xml:space="preserve">
+    <value>Ширина, пиксели</value>
+  </data>
+  <data name="auto" xml:space="preserve">
+    <value>авто</value>
+  </data>
+  <data name="Background Color" xml:space="preserve">
+    <value>Фонов цвят</value>
+  </data>
+  <data name="Presented Columns" xml:space="preserve">
+    <value>Представени колони</value>
+  </data>
+  <data name="This view has no columns yet." xml:space="preserve">
+    <value>Този изглед все още няма колони.</value>
+  </data>
+  <data name="unknown" xml:space="preserve">
+    <value>непознат</value>
+  </data>
+  <data name="Create a new space view" xml:space="preserve">
+    <value>Създай нов изглед на пространство</value>
+  </data>
+  <data name="New View" xml:space="preserve">
+    <value>Нов изглед</value>
+  </data>
+  <data name="open dataset" xml:space="preserve">
+    <value>отвори данните</value>
+  </data>
+  <data name="the dataset no longer exists" xml:space="preserve">
+    <value>Наборът от данни вече не съществува.</value>
+  </data>
+  <data name="Freeze Starting Columns" xml:space="preserve">
+    <value>Замрази първите колони</value>
+  </data>
+  <data name="Freeze Final Columns" xml:space="preserve">
+    <value>Замрази последние колони</value>
+  </data>
+  <data name="New Rows (Experimental)" xml:space="preserve">
+    <value>Нови редове (Експериментално)</value>
+  </data>
+  <data name="can create new rows" xml:space="preserve">
+    <value>може да създава нови редове</value>
+  </data>
+  <data name="Delete Rows (Experimental)" xml:space="preserve">
+    <value>Изтриване на редове (Експериментално)</value>
+  </data>
+  <data name="can delete rows" xml:space="preserve">
+    <value>може да изтрива редове</value>
+  </data>
+  <data name="Any related pages to this space view will not be deleted and will show a message. Any related space data will not be deleted or changed." xml:space="preserve">
+    <value>Никакви свързани страници към този изглед на пространство няма да бъдат изтрити и ще се покаже съобщение. Свързаните данни от пространството няма да бъдат изтрити или променени.</value>
+  </data>
+  <data name="Delete this Space View" xml:space="preserve">
+    <value>Изтрий този изглед на пространство</value>
+  </data>
+  <data name="Preset Filters Navigation" xml:space="preserve">
+    <value>Навигация на предварително зададени филтри</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Текущ</value>
+  </data>
+  <data name="Always applied" xml:space="preserve">
+    <value>Винаги приложено</value>
+  </data>
+  <data name="There are no filters that are always applied" xml:space="preserve">
+    <value>Няма филтри, които винаги се прилагат.</value>
+  </data>
+  <data name="This view's related data source is missing" xml:space="preserve">
+    <value>Този изглед има липсващ свързан източник на данни.</value>
+  </data>
+  <data name="how many columns from the start to freeze, not counting the checkbox column" xml:space="preserve">
+    <value>колко колони от началото да замрази, без да брои чек колоната</value>
+  </data>
+  <data name="how many columns from the end to freeze" xml:space="preserve">
+    <value>колко колони от края да замрази</value>
+  </data>
+  <data name="shared columns" xml:space="preserve">
+    <value>Споделени колони</value>
+  </data>
+  <data name="Dataset or DataProvider not found" xml:space="preserve">
+    <value>Набор от данни или доставчик на данни не е намерен</value>
+  </data>
+  <data name="No data" xml:space="preserve">
+    <value>Няма данни</value>
+  </data>
+  <data name="select all" xml:space="preserve">
+    <value>Избери всичко</value>
+  </data>
+  <data name="clear filters and sort" xml:space="preserve">
+    <value>Изчисти филтрите и сортирай</value>
+  </data>
+  <data name="this view was personalized.Click to remove the personalization" xml:space="preserve">
+    <value>Този изглед е персонализиран. Кликнете, за да премахнете персонализацията.</value>
+  </data>
+  <data name="Related Pages" xml:space="preserve">
+    <value>Свързани страници</value>
+  </data>
+  <data name="This view is not connected to a page" xml:space="preserve">
+    <value>Този изглед не е свързан със страница</value>
+  </data>
+  <data name="Manage view" xml:space="preserve">
+    <value>Редакция на изглед</value>
+  </data>
+  <data name="Manage dataset" xml:space="preserve">
+    <value>Редакция на данни</value>
+  </data>
+  <data name="Copy link" xml:space="preserve">
+    <value>Копиране на адрес</value>
+  </data>
+  <data name="Bookmark View" xml:space="preserve">
+    <value>Сложи отметка на изгледа</value>
+  </data>
+  <data name="Save URL" xml:space="preserve">
+    <value>Запомни адреса</value>
+  </data>
+  <data name="Export Selection" xml:space="preserve">
+    <value>Експорт избрани</value>
+  </data>
+  <data name="Export All" xml:space="preserve">
+    <value>Експорт всички</value>
+  </data>
+  <data name="No default sort is applied in data source" xml:space="preserve">
+    <value>Няма приложено подразбиращо се сортиране в източника на данни.</value>
+  </data>
+  <data name="No templates match your query" xml:space="preserve">
+    <value>Няма шаблони, съответстващи на вашето запитване</value>
+  </data>
+  <data name="No items created yet" xml:space="preserve">
+    <value>Няма създадени елементи</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>Общ</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Обнови</value>
+  </data>
+  <data name="Usable" xml:space="preserve">
+    <value>Ползваем</value>
+  </data>
+  <data name="Target Space Dataset" xml:space="preserve">
+    <value>Данни за целево пространство</value>
+  </data>
+  <data name="No targeted space dataset found" xml:space="preserve">
+    <value>Няма открито таргетирано пространство от данни</value>
+  </data>
+  <data name="Template Settings" xml:space="preserve">
+    <value>Настройки на шаблона</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Помощ</value>
+  </data>
+  <data name="Template does not require additional settings" xml:space="preserve">
+    <value>Шаблонът не изисква допълнителни настройки</value>
+  </data>
+  <data name="Deleting the template will make it unavailable for future use." xml:space="preserve">
+    <value>Изтриването на шаблона ще го направи недостъпен за бъдеща употреба.</value>
+  </data>
+  <data name="Delete this Template" xml:space="preserve">
+    <value>Изтрий този шаблон</value>
+  </data>
+  <data name="Template does not have help" xml:space="preserve">
+    <value>Шаблона няма помощ</value>
+  </data>
+  <data name="enabled" xml:space="preserve">
+    <value>активен</value>
+  </data>
+  <data name="Use" xml:space="preserve">
+    <value>Използвай</value>
+  </data>
+  <data name="selectable" xml:space="preserve">
+    <value>избираемо</value>
+  </data>
+  <data name="select space dataset..." xml:space="preserve">
+    <value>Избери пространство за набор от данни…</value>
+  </data>
+  <data name="Template type" xml:space="preserve">
+    <value>Тип шаблон</value>
+  </data>
+  <data name="Template does not have additional settings" xml:space="preserve">
+    <value>Шаблонът няма допълнителни настройки.</value>
+  </data>
+  <data name="Use template" xml:space="preserve">
+    <value>Използвайте шаблон</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Затвори</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Следващ</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Изпрати</value>
+  </data>
+  <data name="There are no templates applicable for this space dataset!" xml:space="preserve">
+    <value>Няма шаблони, приложими за този набор от данни!</value>
+  </data>
+  <data name="This template does not have a content processor definition" xml:space="preserve">
+    <value>Този шаблон няма дефиниция на процесор за съдържание.</value>
+  </data>
+  <data name="Template Selected" xml:space="preserve">
+    <value>Избран шаблон</value>
+  </data>
+  <data name="Create a new User" xml:space="preserve">
+    <value>Създай нов потребител</value>
+  </data>
+  <data name="New User" xml:space="preserve">
+    <value>Нов потребител</value>
+  </data>
+  <data name="Created On" xml:space="preserve">
+    <value>Създаден на</value>
+  </data>
+  <data name="First Name" xml:space="preserve">
+    <value>Име</value>
+  </data>
+  <data name="Last Name" xml:space="preserve">
+    <value>Фамилия</value>
+  </data>
+  <data name="Theme Mode" xml:space="preserve">
+    <value>Режим на темата</value>
+  </data>
+  <data name="Theme Color" xml:space="preserve">
+    <value>Цвят на темата</value>
+  </data>
+  <data name="Localization" xml:space="preserve">
+    <value>Локализация</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Роли</value>
+  </data>
+  <data name="This user has no roles assigned" xml:space="preserve">
+    <value>Този потребител няма присвоени роли</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Парола</value>
+  </data>
+  <data name="Remember Me" xml:space="preserve">
+    <value>Запомни ме</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Влез</value>
+  </data>
+  <data name="leave empty too keep the password" xml:space="preserve">
+    <value>остави празно за да запазиш паролата</value>
+  </data>
+  <data name="Confirm Password" xml:space="preserve">
+    <value>Потвърди Парола</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Потвърждаване на паролата</value>
+  </data>
+  <data name="Set as Startup URL" xml:space="preserve">
+    <value>Задаване на началния URL</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Излез</value>
+  </data>
+  <data name="Recipe is not applied yet. Please follow the steps" xml:space="preserve">
+    <value>Рецептата все още не е приложена. Моля, следвайте стъпките.</value>
+  </data>
+  <data name="Recipe was successfully applied" xml:space="preserve">
+    <value>Рецептата беше успешно приложена</value>
+  </data>
+  <data name="Recipe application finished with errors" xml:space="preserve">
+    <value>Рецепта приложението завърши с грешки</value>
+  </data>
+  <data name="step" xml:space="preserve">
+    <value>стъпка</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Начало</value>
+  </data>
+  <data name="Data Identities" xml:space="preserve">
+    <value>Идентичности на данните</value>
+  </data>
+  <data name="Data Providers" xml:space="preserve">
+    <value>Доставчици на данни</value>
+  </data>
+  <data name="File Repository" xml:space="preserve">
+    <value>Файлно хранилище</value>
+  </data>
+  <data name="Space Data" xml:space="preserve">
+    <value>Пространствени данни</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Потребители</value>
+  </data>
+</root>

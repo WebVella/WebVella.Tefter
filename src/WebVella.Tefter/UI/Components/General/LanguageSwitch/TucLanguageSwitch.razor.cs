@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Localization;
 namespace WebVella.Tefter.UI.Components;
 
-[LocalizationResource("WebVella.Tefter.UI.Components.User.LanguageSwitch.TucLanguageSwitch", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.UI.Components.General.LanguageSwitch.TucLanguageSwitch", "WebVella.Tefter")]
 public partial class TucLanguageSwitch : TfBaseComponent
 {
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
@@ -19,6 +19,14 @@ public partial class TucLanguageSwitch : TfBaseComponent
 				cultureCode: option.CultureCode);
 
 				ToastService.ShowSuccess(LOC("The language is successfully changed!"));
+
+				var culture = CultureInfo.GetCultureInfo(option.CultureCode);
+				await new CookieService(JSRuntime).SetAsync(CookieRequestCultureProvider.DefaultCookieName,
+						CookieRequestCultureProvider.MakeCookieValue(
+							new RequestCulture(
+								culture,
+								culture)), DateTimeOffset.Now.AddYears(30));
+				//Needs to reload the whole page so the Localizer can reinit from the cookie
 				Navigator.ReloadCurrentUrl();
 		}
 		catch (Exception ex)

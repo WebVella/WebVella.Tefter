@@ -12,6 +12,7 @@ public class TfBaseComponent : ComponentBase
 	[Inject] protected ITfConfigurationService ConfigurationService { get; set; } = default!;
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = default!;
 	[Inject] protected IWvBlazorTraceService WvBlazorTraceService { get; set; } = default!;
+	[Inject] protected IHostEnvironment HostEnvironment { get; set; } = default!;
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
 	protected IStringLocalizer LC = default!;
@@ -41,7 +42,8 @@ public class TfBaseComponent : ComponentBase
 		{
 			using (_lock.Lock())
 			{
-				GL = StringLocalizerFactory.Create(type.BaseType);
+				var assemblyName = new AssemblyName(typeof(TfService).Assembly.FullName!);
+				GL = StringLocalizerFactory.Create("Resources.SharedResource", assemblyName.Name!);
 			}
 		}
 	}
@@ -83,6 +85,7 @@ public class TfBaseComponent : ComponentBase
 	{
 		if (LC is not null && LC[key, arguments] != key) return LC[key, arguments];
 		if (GL is not null && GL[key, arguments] != key) return GL[key, arguments];
+		Console.WriteLine($"+++++++++ {key}");
 		return key;
 	}
 
@@ -130,8 +133,8 @@ public class TfBaseComponent : ComponentBase
 			exception: ex,
 			toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
 			notificationErrorTitle: LOC("Unexpected Error!"),
-			editContext:editContext,
-			messageStore:messageStore,
+			editContext: editContext,
+			messageStore: messageStore,
 			toastService: ToastService,
 			messageService: MessageService
 		);

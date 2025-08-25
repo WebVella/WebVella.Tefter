@@ -3,8 +3,11 @@
 public partial class TfConstants
 {
 	public static List<TfCultureOption> CultureOptions = new List<TfCultureOption>(){
-		new TfCultureOption{ CultureCode = "en-US", IconUrl ="/_content/WebVella.Tefter/media/us.svg", Name = "English (US)"},
-		new TfCultureOption{ CultureCode = "bg-BG", IconUrl ="/_content/WebVella.Tefter/media/bg.svg", Name = "Български"}
+		new TfCultureOption{ CultureCode = "en-US", IconUrl ="/_content/WebVella.Tefter/media/us.svg"},
+		new TfCultureOption{ CultureCode = "es-ES", IconUrl ="/_content/WebVella.Tefter/media/es.svg"},
+		new TfCultureOption{ CultureCode = "de-DE", IconUrl ="/_content/WebVella.Tefter/media/de.svg"},
+		new TfCultureOption{ CultureCode = "fr-FR", IconUrl ="/_content/WebVella.Tefter/media/fr.svg"},
+		new TfCultureOption{ CultureCode = "bg-BG", IconUrl ="/_content/WebVella.Tefter/media/bg.svg"},
 	};
 	public static CultureInfo DefaultCulture = new CultureInfo("en-US");
 	public static string TimeZoneName = "Europe/Sofia";
