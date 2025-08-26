@@ -3,10 +3,10 @@
 public partial interface ITfService
 {
 	public List<TfDataIdentityConnection> GetDataIdentityConnections(
-		string sourceDataIndentity = null,
-		string sourceDataValue = null,
-		string targetDataIdentity = null,
-		string targetDataValue = null);
+		string? dataIndentity1 = null,
+		string? value1 = null,
+		string? dataIdentity2 = null,
+		string? value2 = null);
 
 	public bool DataIdentityConnectionExists(
 		TfDataIdentityConnection dataIdentityConnection);
@@ -21,10 +21,10 @@ public partial interface ITfService
 public partial class TfService : ITfService
 {
 	public List<TfDataIdentityConnection> GetDataIdentityConnections(
-		string dataIndentity1 = null,
-		string value1 = null,
-		string dataIdentity2 = null,
-		string value2 = null)
+		string? dataIndentity1 = null,
+		string? value1 = null,
+		string? dataIdentity2 = null,
+		string? value2 = null)
 	{
 		try
 		{
@@ -40,10 +40,10 @@ public partial class TfService : ITfService
 				" ( @data_identity_1 IS NULL OR data_identity_2 = @data_identity_1 ) AND " +
 				" ( @value_1 IS NULL OR value_2 = @value_1 ) )",
 				order: null,
-				new NpgsqlParameter<string>("data_identity_1", dataIndentity1),
-				new NpgsqlParameter<string>("value_1", value1),
-				new NpgsqlParameter<string>("data_identity_2", dataIdentity2),
-				new NpgsqlParameter<string>("value_2", value2)
+				new NpgsqlParameter<string?>("data_identity_1", dataIndentity1),
+				new NpgsqlParameter<string?>("value_1", value1),
+				new NpgsqlParameter<string?>("data_identity_2", dataIdentity2),
+				new NpgsqlParameter<string?>("value_2", value2)
 			);
 		}
 		catch (Exception ex)

@@ -2,6 +2,7 @@
 using NpgsqlTypes;
 using Serilog;
 using System;
+using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Services;
 
@@ -191,6 +192,28 @@ public partial class TfService : ITfService
 						//ignore missing columns
 					}
 				}
+
+
+				foreach (var sharedColumn in _dataProvider.SharedColumns)
+				{
+					var sqlBuilderColumn = _availableColumns.SingleOrDefault(x => x.DbName == sharedColumn.DbName);
+					if (sqlBuilderColumn == null)
+					{
+						continue;
+					}
+
+					var sharedColumnData = new SqlBuilderSharedColumnData
+					{
+						DbName = sharedColumn.DbName,
+						DbType = sharedColumn.DbType,
+						BuilderColumnInfo = sqlBuilderColumn,
+						DataIdentity = sharedColumn.DataIdentity,
+						TableAlias = sqlBuilderColumn.TableAlias,
+						TableName = GetSharedColumnValueTableNameByType(sharedColumn.DbType)
+					};
+
+					_sharedColumnsData.Add(sharedColumnData);
+				}
 			}
 			else
 			{
@@ -213,6 +236,7 @@ public partial class TfService : ITfService
 						{
 							spaceDataHasAtLeastOneValidColumn = true;
 							_selectColumns.Add(column);
+
 						}
 
 						//ignore missing columns

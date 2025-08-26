@@ -213,40 +213,44 @@ public class UtilityTestsChildGenericClass : UtilityTestsBaseGenericClass<Utilit
 
 }
 
-//TODO FIX
-public class UtilityTestsClassDynamicComponentWithoutScope //: ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
+public class UtilityTestsClassDynamicComponentWithoutScope : ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
-	public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; init; }
-	public Guid AddonId { get; init; }
-	public int PositionRank { get; init; }
-	public string AddonName { get; init; }
-	public string AddonDescription { get; init; }
-	public string AddonFluentIconName { get; init; }
-	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>() { };
+    public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; set; }
+    public Guid AddonId { get; init; }
+    public int PositionRank { get; init; }
+    public string AddonName { get; init; }
+    public string AddonDescription { get; init; }
+    public string AddonFluentIconName { get; init; }
+    public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>() { };
 
-	public UtilityTestsClassDynamicComponentWithoutScope()
-	{
-		AddonId = new Guid("cff347c8-ff47-4e93-ae46-fb2b1451c80f");
-	}
+    public UtilityTestsClassDynamicComponentWithoutScope()
+    {
+        AddonId = new Guid("cff347c8-ff47-4e93-ae46-fb2b1451c80f");
+    }
 }
 
 //TODO FIX
-public class UtilityTestsClassDynamicComponentWithScope //: ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
+public class UtilityTestsClassDynamicComponentWithScope : ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
-	public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; init; }
-	public Guid AddonId { get; init; }
-	public int PositionRank { get; init; }
-	public string AddonName { get; init; }
-	public string AddonDescription { get; init; }
-	public string AddonFluentIconName { get; init; }
-	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){
-		new TfScreenRegionScope(typeof(UtilityTestsDataProviderTypeClass),null)
-	};
+    private TfDataProviderManageSettingsScreenRegionContext _regionContext;
+    public TfDataProviderManageSettingsScreenRegionContext RegionContext
+    {
+        get => _regionContext;
+        set => _regionContext = value;
+    }
+    public Guid AddonId { get; init; }
+    public int PositionRank { get; init; }
+    public string AddonName { get; init; }
+    public string AddonDescription { get; init; }
+    public string AddonFluentIconName { get; init; }
+    public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){
+                        new TfScreenRegionScope(typeof(UtilityTestsDataProviderTypeClass),null)
+                    };
 
-	public UtilityTestsClassDynamicComponentWithScope()
-	{
-		AddonId = new Guid("4ce31e80-60e1-4bc9-a6ac-8328606d102f");
-	}
+    public UtilityTestsClassDynamicComponentWithScope()
+    {
+        AddonId = new Guid("4ce31e80-60e1-4bc9-a6ac-8328606d102f");
+    }
 }
 
 public class UtilityTestsDataProviderTypeClass : ITfDataProviderAddon

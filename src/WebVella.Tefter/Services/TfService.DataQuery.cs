@@ -714,7 +714,8 @@ public partial class TfService : ITfService
 			if (tableColumn.IsJoinColumn)
 				continue;
 
-			var sharedColumn = provider.SharedColumns.Single(x => x.DbName == tableColumn.Name);
+
+			var sharedColumn = provider.SharedColumns.Single(x => $"{x.DataIdentity}.{x.DbName}" == tableColumn.Name);
 
 			var dataIdentity = provider.Identities.Single(x => x.DataIdentity == sharedColumn.DataIdentity);
 
@@ -940,7 +941,7 @@ public partial class TfService : ITfService
 			if (tableColumn.IsJoinColumn)
 				continue;
 
-			var sharedColumn = provider.SharedColumns.Single(x => x.DbName == tableColumn.Name);
+			var sharedColumn = provider.SharedColumns.Single(x => $"{x.DataIdentity}.{x.DbName}" == tableColumn.Name);
 
 			var identity = provider.Identities.Single(x => x.DataIdentity == sharedColumn.DataIdentity);
 

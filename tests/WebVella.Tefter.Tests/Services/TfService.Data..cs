@@ -61,19 +61,18 @@ public partial class TfServiceTest : BaseTest
 				newRow[$"dp{provider.Index}_long_int_column"] = faker.Random.Long(1000, 10000);
 				newRow[$"dp{provider.Index}_number_column"] = faker.Random.Decimal(100000, 1000000);
 
-				newRow["sc_text"] = "this is join key text test " + i;
-				newRow["sc_int"] = i;
+				newRow["test_data_identity_1.sc_text"] = "this is join key text test " + i;
+				newRow["test_data_identity_2.sc_int"] = i;
 
 				newTable.Rows.Add(newRow);
 			}
 
 			result = tfService.SaveDataTable(newTable);
 
-			string skRowIdValue = result.Rows[0].GetDataIdentityValue("tf_row_id");
-			string skIntValue = result.Rows[0].GetDataIdentityValue("test_data_identity_1");
-			string skTextValue = result.Rows[0].GetDataIdentityValue("test_data_identity_2");
+			string rowIdDataIdentityValue = result.Rows[0].GetDataIdentityValue("tf_row_id");
+			string intDataIdentityValue = result.Rows[0].GetDataIdentityValue("test_data_identity_1");
+			string textDataIdentityValue = result.Rows[0].GetDataIdentityValue("test_data_identity_2");
 
-			//result = tfService.QuerySpaceData(spaceData.Id);
 			result = tfService.QueryDataProvider(provider);
 
 			var tableToUpdate = result;
@@ -92,8 +91,8 @@ public partial class TfServiceTest : BaseTest
 				row[$"dp{provider.Index}_long_int_column"] = faker.Random.Long(1000, 10000);
 				row[$"dp{provider.Index}_number_column"] = faker.Random.Decimal(100000, 1000000);
 
-				row["sc_text"] = "this is join key text test " + i + "update";
-				row["sc_int"] = i + i;
+				row["test_data_identity_1.sc_text"] = "this is join key text test " + i + "update";
+				row["test_data_identity_2.sc_int"] = i + i;
 			}
 
 			result = tfService.SaveDataTable(tableToUpdate);
@@ -117,8 +116,9 @@ public partial class TfServiceTest : BaseTest
 				row[$"dp{provider.Index}_long_int_column"] = null;
 				row[$"dp{provider.Index}_number_column"] = null;
 
-				row["sc_text"] = null;
-				row["sc_int"] = null;
+				row["test_data_identity_1.sc_text"] =null;
+				row["test_data_identity_2.sc_int"] = null;
+
 			}
 
 			result = tfService.SaveDataTable(tableToUpdate);

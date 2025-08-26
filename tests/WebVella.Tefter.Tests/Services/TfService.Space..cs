@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Tests.Services;
+﻿using WebVella.Tefter.UI.Addons;
+
+namespace WebVella.Tefter.Tests.Services;
 
 public partial class TfServiceTest : BaseTest
 {
@@ -858,8 +860,7 @@ public partial class TfServiceTest : BaseTest
 											.Replace("(", "")
 											.Replace(")", ""),
 						Title = availableColumnType.AddonName,
-						//TODO FIX - speak with boz
-						//ComponentId = new Guid(TfTextDisplayColumnComponent.ID),
+						ComponentId = new Guid(TucTextDisplayColumnComponent.ID),
 						SpaceViewId = view.Id,
 						ComponentOptionsJson = "{}",
 						DataMapping = new Dictionary<string, string> { { "Value", "test" } }
