@@ -60,6 +60,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfResourceTranslator", "TfR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Tests", "tests\WebVella.Tefter.Tests\WebVella.Tefter.Tests.csproj", "{8502B0F5-9CB3-8B53-4702-10924A2D2413}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Assets", "src\WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj", "{6E345CC6-8857-DF62-1108-EE1B9E82E9F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Talk", "src\WebVella.Tefter.Talk\WebVella.Tefter.Talk.csproj", "{A5509AF1-6DA0-6431-8381-270EFC702402}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -142,6 +146,14 @@ Global
 		{8502B0F5-9CB3-8B53-4702-10924A2D2413}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8502B0F5-9CB3-8B53-4702-10924A2D2413}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8502B0F5-9CB3-8B53-4702-10924A2D2413}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E345CC6-8857-DF62-1108-EE1B9E82E9F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E345CC6-8857-DF62-1108-EE1B9E82E9F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E345CC6-8857-DF62-1108-EE1B9E82E9F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E345CC6-8857-DF62-1108-EE1B9E82E9F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5509AF1-6DA0-6431-8381-270EFC702402}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5509AF1-6DA0-6431-8381-270EFC702402}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5509AF1-6DA0-6431-8381-270EFC702402}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5509AF1-6DA0-6431-8381-270EFC702402}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
