@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Talk.Services;
+﻿using WebVella.Tefter.Models;
+
+namespace WebVella.Tefter.Talk.Services;
 
 public partial interface ITalkService
 {
@@ -189,21 +191,157 @@ ORDER BY tt.created_on DESC";
 		return ToThreadList(dt);
 	}
 
-	public TalkThread CreateThread(
-		CreateTalkThreadWithRowIdModel asset)
-	{
-		//TODO RUMEN: Implement this case here as it cannot be skipped.
-		//It needs to get the data identity values by its own, based on 
-		//provider, rowIds, folder id(data identity)
-		throw new NotImplementedException();
+	//public TalkThread CreateThread(
+	//	CreateTalkThreadWithRowIdModel asset)
+	//{
+	//	//TODO RUMEN: Implement this case here as it cannot be skipped.
+	//	//It needs to get the data identity values by its own, based on 
+	//	//provider, rowIds, folder id(data identity)
+	//	throw new NotImplementedException();
 
-		//Do not forget to add
-		//var createdThread = GetThread(id);
-		//ThreadCreated?.Invoke(this,createdThread);
-		//return createdThread;
-	}
+	//	//Do not forget to add
+	//	//var createdThread = GetThread(id);
+	//	//ThreadCreated?.Invoke(this,createdThread);
+	//	//return createdThread;
+	//}
 
-	public TalkThread CreateThread(
+    public TalkThread CreateThread(
+        CreateTalkThreadWithRowIdModel thread)
+    {
+        if (thread == null)
+            throw new NullReferenceException("Thread object is null");
+
+		Guid id = Guid.NewGuid();
+
+        new TalkThreadValidator(this, _tfService)
+            .ValidateCreate(thread, id)
+            .ToValidationException()
+            .ThrowIfContainsErrors();
+
+        var dataProvider = _tfService.GetDataProvider(thread.DataProviderId);
+
+        TalkChannel channel = null;
+        channel = GetChannel(thread.ChannelId);
+        if (channel is null)
+            throw new Exception($"Failed to find channel with id '{thread.ChannelId}' for thread");
+
+
+        TfDataIdentity channelDataIdentity = null;
+        if (!string.IsNullOrWhiteSpace(channel.DataIdentity))
+        {
+            channelDataIdentity = _tfService.GetDataIdentity(channel.DataIdentity);
+            if (channelDataIdentity is null)
+                throw new Exception($"Failed to find data identity '{channel.DataIdentity}' for channel");
+        }
+
+        if (channelDataIdentity is null)
+            channelDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
+
+        var SQL = @"INSERT INTO talk_thread
+						(id, channel_id, thread_id, type, content, user_id,
+						created_on, last_updated_on, deleted_on, visible_in_channel)
+					VALUES(@id, @channel_id, @thread_id, @type, @content, @user_id,
+						@created_on, @last_updated_on, @deleted_on,@visible_in_channel); ";
+
+        var idPar = TalkUtility.CreateParameter(
+            "@id",
+            id,
+            DbType.Guid);
+
+        var channelIdPar = TalkUtility.CreateParameter(
+            "@channel_id",
+            thread.ChannelId,
+            DbType.Guid);
+
+        var threadIdPar = TalkUtility.CreateParameter(
+            "@thread_id",
+            null,
+            DbType.Guid);
+
+        var typePar = TalkUtility.CreateParameter(
+            "@type",
+            (short)thread.Type,
+            DbType.Int16);
+
+        var contentPar = TalkUtility.CreateParameter(
+            "@content",
+            thread.Content,
+            DbType.String);
+
+        var visibleInChannelPar = TalkUtility.CreateParameter(
+            "@visible_in_channel",
+            true,
+            DbType.Boolean);
+
+        var userIdPar = TalkUtility.CreateParameter(
+            "@user_id",
+            thread.UserId,
+            DbType.Guid);
+
+        var createdOnPar = TalkUtility.CreateParameter(
+            "@created_on",
+            DateTime.Now,
+            DbType.DateTime2);
+
+        var lastUpdatedOnPar = TalkUtility.CreateParameter(
+            "@last_updated_on",
+            null,
+            DbType.DateTime2);
+
+        var deletedOnPar = TalkUtility.CreateParameter(
+            "@deleted_on",
+            null,
+            DbType.DateTime2);
+
+        using (var scope = _dbService.CreateTransactionScope())
+        {
+            var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+                SQL,
+                idPar, channelIdPar, threadIdPar,
+                typePar, contentPar, userIdPar,
+                createdOnPar, lastUpdatedOnPar,
+                deletedOnPar, visibleInChannelPar);
+
+            if (dbResult != 1)
+                throw new Exception("Failed to insert new row in database for thread object");
+
+            if (thread.RowIds != null && thread.RowIds.Count > 0)
+            {
+                var threadIdentityRowId = id.ToSha1();
+
+                var rowIdentityValuesDict = _tfService.GetDataIdentityValuesForRowIds(dataProvider, channelDataIdentity, thread.RowIds);
+
+                HashSet<string> dataIdentityValues = new HashSet<string>();
+                foreach (var rowId in thread.RowIds)
+                {
+                    if (rowIdentityValuesDict.ContainsKey(rowId))
+                    {
+                        var identityValue = rowIdentityValuesDict[rowId];
+                        if (!dataIdentityValues.Contains(identityValue))
+                            dataIdentityValues.Add(identityValue);
+                    }
+                }
+
+                foreach (var dataIdentityValue in dataIdentityValues)
+                {
+                    _tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
+                    {
+                        DataIdentity1 = channelDataIdentity.DataIdentity,
+                        Value1 = dataIdentityValue,
+                        DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+                        Value2 = threadIdentityRowId
+                    });
+                }
+            }
+
+            scope.Complete();
+            var createdThread = GetThread(id);
+            ThreadCreated?.Invoke(this, createdThread);
+            return createdThread;
+        }
+    }
+
+    public TalkThread CreateThread(
 		CreateTalkThreadWithDataIdentityModel thread)
 	{
 		if (thread == null)
@@ -211,7 +349,7 @@ ORDER BY tt.created_on DESC";
 
 		Guid id = Guid.NewGuid();
 
-		new TalkThreadValidator(this)
+		new TalkThreadValidator(this, _tfService)
 			.ValidateCreate(thread, id)
 			.ToValidationException()
 			.ThrowIfContainsErrors();
@@ -337,7 +475,7 @@ ORDER BY tt.created_on DESC";
 		var parentThread = GetThread(thread.ThreadId);
 
 
-		new TalkThreadValidator(this)
+		new TalkThreadValidator(this, _tfService)
 			.ValidateCreateSubThread(
 				thread,
 				parentThread,
@@ -426,7 +564,7 @@ ORDER BY tt.created_on DESC";
 	{
 		var existingThread = GetThread(threadId);
 
-		new TalkThreadValidator(this)
+		new TalkThreadValidator(this, _tfService)
 			.ValidateUpdate(existingThread, content)
 			.ToValidationException()
 			.ThrowIfContainsErrors();
@@ -469,7 +607,7 @@ ORDER BY tt.created_on DESC";
 	{
 		var existingThread = GetThread(threadId);
 
-		new TalkThreadValidator(this)
+		new TalkThreadValidator(this,_tfService)
 			.ValidateDelete(existingThread)
 			.ToValidationException()
 			.ThrowIfContainsErrors();
@@ -578,9 +716,16 @@ ORDER BY tt.created_on DESC";
 	internal class TalkThreadValidator
 		: AbstractValidator<TalkThread>
 	{
-		public TalkThreadValidator(ITalkService service)
+		public readonly ITalkService _talkService;
+		public readonly ITfService _tfService;
+
+        public TalkThreadValidator(
+			ITalkService talkService,
+			ITfService tfService)
 		{
-		}
+			_talkService = talkService;
+			_tfService = tfService;
+        }
 
 		public ValidationResult ValidateCreate(
 			CreateTalkThreadWithDataIdentityModel thread,
@@ -589,7 +734,7 @@ ORDER BY tt.created_on DESC";
 			if (thread == null)
 			{
 				return new ValidationResult(new[] { new ValidationFailure("",
-					"The channel object is null.") });
+					"The thread object is null.") });
 			}
 
 			if (string.IsNullOrWhiteSpace(thread.Content))
@@ -599,31 +744,61 @@ ORDER BY tt.created_on DESC";
 					"The content is empty.") });
 			}
 
+            var channel = _talkService.GetChannel(thread.ChannelId);
+            if (channel == null)
+            {
+                return new ValidationResult(new[] { new ValidationFailure(
+                    nameof(CreateTalkThreadWithRowIdModel.ChannelId),
+                    "The channel is not found.") });
+            }
+
             return new ValidationResult();
 		}
 
-		//public ValidationResult ValidateCreate(
-		//	CreateTalkThreadWithDataIdentity thread,
-		//	Guid id)
-		//{
-		//	if (thread == null)
-		//	{
-		//		return new ValidationResult(new[] { new ValidationFailure("",
-		//			"The channel object is null.") });
-		//	}
+        public ValidationResult ValidateCreate(
+            CreateTalkThreadWithRowIdModel thread,
+            Guid id)
+        {
+            if (thread == null)
+            {
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "The thread object is null.") });
+            }
 
-		//	if (string.IsNullOrWhiteSpace(thread.Content))
-		//	{
-		//		return new ValidationResult(new[] { new ValidationFailure(
-		//			nameof(CreateTalkThread.Content),
-		//			"The content is empty.") });
-		//	}
+            if (string.IsNullOrWhiteSpace(thread.Content))
+            {
+                return new ValidationResult(new[] { new ValidationFailure(
+                    nameof(CreateTalkThreadWithDataIdentityModel.Content),
+                    "The content is empty.") });
+            }
+          
+			var dataProvider = _tfService.GetDataProvider(thread.DataProviderId);
+            if (dataProvider == null)
+            {
+                return new ValidationResult(new[] { new ValidationFailure(
+                    nameof(CreateTalkThreadWithRowIdModel.DataProviderId),
+                    "The data provider is not found.") });
+            }
 
-		//	return new ValidationResult();
-		//}
+            var channel = _talkService.GetChannel(thread.ChannelId);
+            if (channel == null)
+            {
+                return new ValidationResult(new[] { new ValidationFailure(
+                    nameof(CreateTalkThreadWithRowIdModel.ChannelId),
+                    "The channel is not found.") });
+            }
 
+            if (!dataProvider.Identities.Any(x => x.DataIdentity == channel.DataIdentity))
+            {
+                return new ValidationResult(new[] { new ValidationFailure(
+                    nameof(CreateTalkThreadWithRowIdModel.ChannelId),
+                    "The channel data identity is not associated with the data provider.") });
+            }
 
-		public ValidationResult ValidateCreateSubThread(
+            return new ValidationResult();
+        }
+
+        public ValidationResult ValidateCreateSubThread(
 			CreateTalkSubThread thread,
 			TalkThread parent,
 			Guid id)

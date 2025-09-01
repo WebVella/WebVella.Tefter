@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using WebVella.Tefter.Services;
 
 namespace WebVella.Tefter.Assets.Services;
 
@@ -121,7 +122,8 @@ WHERE aa.id = @id
 
 	public List<Asset> GetAssets(
 		Guid? folderId,
-		string dataIdentityValue = null)
+		string dataIdentityValue = null,
+		string search = null)
 	{
 		string folderDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
 		if (folderId is not null)
@@ -164,7 +166,9 @@ SELECT
 FROM assets_asset aa
 	LEFT OUTER JOIN sk_identity_info sk ON aa.id = sk.id
     LEFT OUTER JOIN sk_identity_filter sf ON aa.id = sf.id
-WHERE ( @folder_id IS NULL OR aa.folder_id = @folder_id ) AND  sf.id is not null AND sk.id is not null
+WHERE ( @folder_id IS NULL OR aa.folder_id = @folder_id ) AND
+	  ( @x_search IS NULL OR aa.x_search ILIKE '%' + @x_search + '%' ) AND
+	  sf.id is not null AND sk.id is not null
 ORDER BY aa.created_on DESC;";
 
 		var folderIdPar = CreateParameter(
@@ -177,31 +181,145 @@ ORDER BY aa.created_on DESC;";
 			dataIdentityValue,
 			DbType.String);
 
-		var dt = _dbService.ExecuteSqlQueryCommand(SQL, folderIdPar, skIdPar);
+		string x_search = null;
+		if(!string.IsNullOrWhiteSpace(search))
+			x_search = search.Trim();
+
+        var skXSearch = CreateParameter(
+            "x_search",
+            x_search,
+            DbType.String);
+
+        var dt = _dbService.ExecuteSqlQueryCommand(SQL, folderIdPar, skIdPar);
 
 		return ToAssetList(dt);
 	}
 
-	public Asset CreateFileAsset(
-		CreateFileAssetWithRowIdModel asset)
-	{
-		//TODO RUMEN: Implement this case here as it cannot be skipped.
-		//It needs to get the data identity values by its own, based on 
-		//provider, rowIds, folder id(data identity)
-		throw new NotImplementedException();
+    public Asset CreateFileAsset(
+        CreateFileAssetWithRowIdModel asset)
+    {
+        Guid id = Guid.NewGuid();
 
-		//Do not forget to add
-		//var resultAsset = GetAsset(id);
-		//AssetCreated?.Invoke(this, resultAsset);
-		//return resultAsset;
-	}
+        new AssetValidator(this,_tfService)
+            .ValidateCreateFileAsset(asset, id)
+            .ToValidationException()
+            .ThrowIfContainsErrors();
 
-	public Asset CreateFileAsset(
+        using (var scope = _dbService.CreateTransactionScope())
+        {
+			var dataProvider = _tfService.GetDataProvider(asset.DataProviderId);
+          
+			AssetsFolder folder = GetFolder(asset.FolderId);
+
+            TfDataIdentity folderDataIdentity = null;
+            if (!string.IsNullOrWhiteSpace(folder.DataIdentity))
+            {
+                folderDataIdentity = _tfService.GetDataIdentity(folder.DataIdentity);
+                if (folderDataIdentity is null)
+                    throw new Exception($"Failed to find data identity '{folder.DataIdentity}' for folder");
+            }
+
+            if (folderDataIdentity is null)
+                folderDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
+
+
+            string filename = asset.FileName;
+            if (string.IsNullOrWhiteSpace(filename))
+                filename = Path.GetFileName(asset.LocalPath);
+
+            Guid blobId = _tfService.CreateBlob(asset.LocalPath);
+
+            DateTime now = DateTime.Now;
+
+            var SQL = @"INSERT INTO assets_asset
+						(id, folder_id, type, content_json, created_by,
+						created_on, modified_by, modified_on, x_search)
+					VALUES(@id, @folder_id, @type, @content_json, @created_by,
+						@created_on, @modified_by, @modified_on, @x_search); ";
+
+            var idPar = CreateParameter("@id", id, DbType.Guid);
+
+            var folderIdPar = CreateParameter("@folder_id", asset.FolderId, DbType.Guid);
+
+            var typePar = CreateParameter("@type", (short)AssetType.File, DbType.Int16);
+
+            FileAssetContent content = new FileAssetContent
+            {
+                BlobId = blobId,
+                Filename = filename,
+                Label = asset.Label,
+                DownloadUrl = $"/fs/assets/{id}/{filename}"
+            };
+
+            var contentJson = JsonSerializer.Serialize(content);
+
+            var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
+
+            var createdByPar = CreateParameter("@created_by", asset.CreatedBy, DbType.Guid);
+
+            var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
+
+            var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
+
+            var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
+
+            var xSearchPar = CreateParameter("@x_search", $"{asset.Label} {filename}", DbType.String);
+
+            var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+                SQL,
+                idPar, folderIdPar,
+                typePar, contentJsonPar,
+                createdByPar, createdOnPar,
+                modifiedByPar, modifiedOnPar,
+                xSearchPar);
+
+            if (dbResult != 1)
+                throw new Exception("Failed to insert new row in database for thread object");
+
+            if (asset.RowIds != null && asset.RowIds.Count > 0)
+            {
+                var assetIdentityRowId = id.ToSha1();
+             
+				var rowIdentityValuesDict = _tfService.GetDataIdentityValuesForRowIds(dataProvider, folderDataIdentity, asset.RowIds);
+
+				HashSet<string> dataIdentityValues = new HashSet<string>();
+				foreach (var rowId in asset.RowIds)
+				{
+					if (rowIdentityValuesDict.ContainsKey(rowId))
+					{
+						var identityValue = rowIdentityValuesDict[rowId];
+                        if (!dataIdentityValues.Contains(identityValue))
+							dataIdentityValues.Add(identityValue);
+                    }
+                }
+
+                foreach (var dataIdentityValue in dataIdentityValues)
+                {
+                    _tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
+                    {
+                        DataIdentity1 = folderDataIdentity.DataIdentity,
+                        Value1 = dataIdentityValue,
+                        DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+                        Value2 = assetIdentityRowId
+                    });
+                }
+            }
+
+            scope.Complete();
+
+            var resultAsset = GetAsset(id);
+            AssetCreated?.Invoke(this, resultAsset);
+            return resultAsset;
+        }
+    }
+
+
+    public Asset CreateFileAsset(
 		CreateFileAssetWithDataIdentityModel asset)
 	{
 		Guid id = Guid.NewGuid();
 
-		new AssetValidator(this)
+		new AssetValidator(this, _tfService)
 			.ValidateCreateFileAsset(asset, id)
 			.ToValidationException()
 			.ThrowIfContainsErrors();
@@ -301,25 +419,11 @@ ORDER BY aa.created_on DESC;";
 	}
 
 	public Asset CreateLinkAsset(
-		CreateLinkAssetWithRowIdModel asset)
-	{
-		//TODO RUMEN: Implement this case here as it cannot be skipped.
-		//It needs to get the data identity values by its own, based on 
-		//provider, rowIds, folder id(data identity)
-		throw new NotImplementedException();
-
-		//Do not forget to add
-		//var resultAsset = GetAsset(id);
-		//AssetCreated?.Invoke(this, resultAsset);
-		//return resultAsset;
-	}
-
-	public Asset CreateLinkAsset(
 		CreateLinkAssetWithDataIdentityModel asset)
 	{
 		Guid id = Guid.NewGuid();
 
-		new AssetValidator(this)
+		new AssetValidator(this, _tfService)
 			.ValidateCreateLinkAsset(asset, id)
 			.ToValidationException()
 			.ThrowIfContainsErrors();
@@ -413,7 +517,119 @@ ORDER BY aa.created_on DESC;";
 		}
 	}
 
-	public Asset UpdateFileAsset(
+    public Asset CreateLinkAsset(
+        CreateLinkAssetWithRowIdModel asset)
+    {
+        Guid id = Guid.NewGuid();
+
+        new AssetValidator(this, _tfService)
+            .ValidateCreateLinkAsset(asset, id)
+            .ToValidationException()
+            .ThrowIfContainsErrors();
+
+        using (var scope = _dbService.CreateTransactionScope())
+        {
+            var dataProvider = _tfService.GetDataProvider(asset.DataProviderId);
+
+            AssetsFolder folder = GetFolder(asset.FolderId);
+
+            TfDataIdentity folderDataIdentity = null;
+            if (!string.IsNullOrWhiteSpace(folder.DataIdentity))
+            {
+                folderDataIdentity = _tfService.GetDataIdentity(folder.DataIdentity);
+                if (folderDataIdentity is null)
+                    throw new Exception($"Failed to find data identity '{folder.DataIdentity}' for folder");
+            }
+
+            if (folderDataIdentity is null)
+                folderDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
+
+            DateTime now = DateTime.Now;
+
+            var SQL = @"INSERT INTO assets_asset
+						(id, folder_id, type, content_json, created_by,
+						created_on, modified_by, modified_on, x_search)
+					VALUES(@id, @folder_id, @type, @content_json, @created_by,
+						@created_on, @modified_by, @modified_on, @x_search); ";
+
+            var idPar = CreateParameter("@id", id, DbType.Guid);
+
+            var folderIdPar = CreateParameter("@folder_id", asset.FolderId, DbType.Guid);
+
+            var typePar = CreateParameter("@type", (short)AssetType.Link, DbType.Int16);
+
+            LinkAssetContent content = new LinkAssetContent
+            {
+                Url = asset.Url,
+                Label = asset.Label,
+                IconUrl = asset.IconUrl
+            };
+
+            var contentJson = JsonSerializer.Serialize(content);
+
+            var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
+
+            var createdByPar = CreateParameter("@created_by", asset.CreatedBy, DbType.Guid);
+
+            var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
+
+            var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
+
+            var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
+
+            var xSearchPar = CreateParameter("@x_search", $"{asset.Label} {asset.Url}", DbType.String);
+
+            var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+                SQL,
+                idPar, folderIdPar,
+                typePar, contentJsonPar,
+                createdByPar, createdOnPar,
+                modifiedByPar, modifiedOnPar,
+                xSearchPar);
+
+            if (dbResult != 1)
+            {
+                throw new Exception("Failed to insert new row in database for thread object");
+            }
+
+            if (asset.RowIds != null && asset.RowIds.Count > 0)
+            {
+                var assetIdentityRowId = id.ToSha1();
+
+                var rowIdentityValuesDict = _tfService.GetDataIdentityValuesForRowIds(dataProvider, folderDataIdentity, asset.RowIds);
+
+                HashSet<string> dataIdentityValues = new HashSet<string>();
+                foreach (var rowId in asset.RowIds)
+                {
+                    if (rowIdentityValuesDict.ContainsKey(rowId))
+                    {
+                        var identityValue = rowIdentityValuesDict[rowId];
+                        if (!dataIdentityValues.Contains(identityValue))
+                            dataIdentityValues.Add(identityValue);
+                    }
+                }
+
+                foreach (var dataIdentityValue in dataIdentityValues)
+                {
+                    _tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
+                    {
+                        DataIdentity1 = folderDataIdentity.DataIdentity,
+                        Value1 = dataIdentityValue,
+                        DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+                        Value2 = assetIdentityRowId
+                    });
+                }
+            }
+
+            scope.Complete();
+
+            var resultAsset = GetAsset(id);
+            AssetCreated?.Invoke(this, resultAsset);
+            return resultAsset;
+        }
+    }
+
+    public Asset UpdateFileAsset(
 		Guid id,
 		string label,
 		string localPath,
@@ -423,7 +639,7 @@ ORDER BY aa.created_on DESC;";
 
 		var user = _tfService.GetUser(userId);
 
-		new AssetValidator(this)
+		new AssetValidator(this, _tfService)
 			.ValidateUpdateFileAsset(
 				existingAsset,
 				label,
@@ -510,7 +726,7 @@ ORDER BY aa.created_on DESC;";
 
 		var user = _tfService.GetUser(userId);
 
-		new AssetValidator(this)
+		new AssetValidator(this, _tfService)
 			.ValidateUpdateLinkAsset(
 				existingAsset,
 				label,
@@ -523,7 +739,7 @@ ORDER BY aa.created_on DESC;";
 		{
 			var SQL = "UPDATE assets_asset SET " +
 			"content_json=@content_json, " +
-			"modified_on=@modified_on, " +
+            "modified_on=@modified_on, " +
 			"modified_by=@modified_by, " +
 			"x_search = @x_search " +
 			"WHERE id = @id";
@@ -589,24 +805,14 @@ ORDER BY aa.created_on DESC;";
 	{
 		var existingAsset = GetAsset(assetId);
 
-		new AssetValidator(this)
+		new AssetValidator(this, _tfService)
 			.ValidateDelete(existingAsset)
 			.ToValidationException()
 			.ThrowIfContainsErrors();
 
 		using (var scope = _dbService.CreateTransactionScope())
 		{
-			//delete link to related join keys
-
-			var SQL = "DELETE FROM assets_related_jk WHERE asset_id = @asset_id";
-
-			var assetIdPar = CreateParameter("asset_id", assetId, DbType.Guid);
-
-			_dbService.ExecuteSqlNonQueryCommand(SQL, assetIdPar);
-
-			//delete asset record
-
-			SQL = "DELETE FROM assets_asset WHERE id = @id";
+			var SQL = "DELETE FROM assets_asset WHERE id = @id";
 
 			var idPar = CreateParameter("id", assetId, DbType.Guid);
 
@@ -720,12 +926,16 @@ ORDER BY aa.created_on DESC;";
 	internal class AssetValidator
 		: AbstractValidator<Asset>
 	{
-		private readonly IAssetsService _service;
+		private readonly IAssetsService _assetService;
+        private readonly ITfService _tfService;
 
-		public AssetValidator(IAssetsService service)
+        public AssetValidator(
+			IAssetsService service,
+			ITfService tfService )
 		{
-			_service = service;
-		}
+			_assetService = service;
+			_tfService = tfService;
+        }
 
 		public ValidationResult ValidateCreateFileAsset(
 			CreateFileAssetWithDataIdentityModel asset,
@@ -755,10 +965,73 @@ ORDER BY aa.created_on DESC;";
 					"File is not found for specified local path.") });
 			}
 
-			return new ValidationResult();
+            var folder = _assetService.GetFolder(asset.FolderId);
+            if (folder == null)
+            {
+                return new ValidationResult(new[] { new ValidationFailure(
+                    nameof(CreateLinkAssetWithRowIdModel.FolderId),
+                    "The folder is not found.") });
+            }
+
+
+            return new ValidationResult();
 		}
 
-		public ValidationResult ValidateCreateLinkAsset(
+        public ValidationResult ValidateCreateFileAsset(
+            CreateFileAssetWithRowIdModel asset,
+            Guid id)
+        {
+            if (asset == null)
+            {
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "The asset object is null.") });
+            }
+
+            if (string.IsNullOrWhiteSpace(asset.Label))
+            {
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "Label is not specified.") });
+            }
+
+            if (string.IsNullOrWhiteSpace(asset.LocalPath))
+            {
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "LocalPath is not specified.") });
+            }
+
+            if (!File.Exists(asset.LocalPath))
+            {
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "File is not found for specified local path.") });
+            }
+
+            var dataProvider = _tfService.GetDataProvider(asset.DataProviderId);
+            if (dataProvider == null)
+            {
+                return new ValidationResult(new[] { new ValidationFailure(
+                    nameof(CreateLinkAssetWithRowIdModel.DataProviderId),
+                    "The data provider is not found.") });
+            }
+
+            var folder = _assetService.GetFolder(asset.FolderId);
+            if (folder == null)
+            {
+                return new ValidationResult(new[] { new ValidationFailure(
+                    nameof(CreateLinkAssetWithRowIdModel.FolderId),
+                    "The folder is not found.") });
+            }
+
+            if (!dataProvider.Identities.Any(x => x.DataIdentity == folder.DataIdentity))
+            {
+                return new ValidationResult(new[] { new ValidationFailure(
+                    nameof(CreateLinkAssetWithRowIdModel.FolderId),
+                    "The folder data identity is not associated with the data provider.") });
+            }
+
+            return new ValidationResult();
+        }
+
+        public ValidationResult ValidateCreateLinkAsset(
 			CreateLinkAssetWithDataIdentityModel asset,
 			Guid id)
 		{
@@ -792,10 +1065,79 @@ ORDER BY aa.created_on DESC;";
 					"The url is not valid.") });
 			}
 
-			return new ValidationResult();
+            var folder = _assetService.GetFolder(asset.FolderId);
+            if (folder == null)
+            {
+                return new ValidationResult(new[] { new ValidationFailure(
+                    nameof(CreateLinkAssetWithRowIdModel.FolderId),
+                    "The folder is not found.") });
+            }
+
+
+            return new ValidationResult();
 		}
 
-		public ValidationResult ValidateUpdateFileAsset(
+        public ValidationResult ValidateCreateLinkAsset(
+           CreateLinkAssetWithRowIdModel asset,
+           Guid id)
+        {
+            if (asset == null)
+            {
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "The asset object is null.") });
+            }
+
+            if (string.IsNullOrWhiteSpace(asset.Label))
+            {
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "Label is not specified.") });
+            }
+
+            if (string.IsNullOrWhiteSpace(asset.Url))
+            {
+                return new ValidationResult(new[] { new ValidationFailure(
+                    nameof(CreateLinkAssetWithDataIdentityModel.Url),
+                    "The url is empty.") });
+            }
+
+            try
+            {
+                Uri uri = new Uri(asset.Url);
+            }
+            catch
+            {
+                return new ValidationResult(new[] { new ValidationFailure(
+                    nameof(CreateLinkAssetWithDataIdentityModel.Url),
+                    "The url is not valid.") });
+            }
+
+			var dataProvider = _tfService.GetDataProvider(asset.DataProviderId);
+			if(dataProvider == null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure(
+					nameof(CreateLinkAssetWithRowIdModel.DataProviderId),
+					"The data provider is not found.") });
+            }
+
+			var folder = _assetService.GetFolder(asset.FolderId);
+			if(folder == null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure(
+					nameof(CreateLinkAssetWithRowIdModel.FolderId),
+					"The folder is not found.") });
+            }	
+			
+			if(!dataProvider.Identities.Any(x => x.DataIdentity == folder.DataIdentity))
+			{
+				return new ValidationResult(new[] { new ValidationFailure(
+					nameof(CreateLinkAssetWithRowIdModel.FolderId),
+					"The folder data identity is not associated with the data provider.") });
+            }
+
+            return new ValidationResult();
+        }
+
+        public ValidationResult ValidateUpdateFileAsset(
 			Asset asset,
 			string label,
 			string localPath,
