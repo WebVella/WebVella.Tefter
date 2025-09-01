@@ -89,7 +89,7 @@ public partial class TalkTests : BaseTest
 
 				var id1 = talkService.CreateThread(thread);
 
-				var th = talkService.GetThread(id1);
+				var th = talkService.GetThread(id1.Id);
 				th.Should().NotBeNull();
 
 				var threads = talkService.GetThreads(channel.Id, dataIdentityValue: null);
@@ -102,7 +102,7 @@ public partial class TalkTests : BaseTest
 
 				CreateTalkSubThread thread2 = new CreateTalkSubThread
 				{
-					ThreadId = id1,
+					ThreadId = id1.Id,
 					Content = "sub thread content2",
 					UserId = user.Id,
 				};
@@ -114,7 +114,7 @@ public partial class TalkTests : BaseTest
 
 				CreateTalkSubThread thread3 = new CreateTalkSubThread
 				{
-					ThreadId = id1,
+					ThreadId = id1.Id,
 					Content = "sub thread content3",
 					UserId = user.Id,
 					VisibleInChannel = true

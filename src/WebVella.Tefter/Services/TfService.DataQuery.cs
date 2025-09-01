@@ -1,5 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Office2013.PowerPoint.Roaming;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Newtonsoft.Json.Linq;
+using NpgsqlTypes;
 
 namespace WebVella.Tefter.Services;
 
@@ -7,13 +9,13 @@ public partial interface ITfService
 {
 	public TfDataTable QueryDataProvider(
 		Guid providerId,
-		string search = null,
+		string? search = null,
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false);
 	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
-		string search = null,
+		string? search = null,
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false);
@@ -74,20 +76,27 @@ public partial interface ITfService
 		Guid rowId,
 		string dbName,
 		object value);
+
 	void DeleteAllProviderRows(
 			Guid providerId);
+
 	internal void DeleteAllProviderRows(
 		TfDataProvider provider);
 
 	internal void DeleteSharedColumnData(
 		TfSharedColumn sharedColumn);
+
+	public Dictionary<Guid, string> GetDataIdentityValuesForRowIds(
+		TfDataProvider provider,
+		TfDataIdentity dataIdentity,
+		List<Guid> rowIds);
 }
 
 public partial class TfService : ITfService
 {
 	public TfDataTable QueryDataProvider(
 		Guid providerId,
-		string search = null,
+		string? search = null,
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false)
@@ -113,7 +122,7 @@ public partial class TfService : ITfService
 	}
 	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
-		string search = null,
+		string? search = null,
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false)
@@ -1292,27 +1301,27 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private void UpdateProviderRowJoinKeysOnly(
-		TfDataProvider provider,
-		Guid tfId,
-		Dictionary<string, object> values)
-	{
-		try
-		{
-			List<NpgsqlParameter> parameters;
-			var sql = BuildUpdateRowJoinKeysOnlySql(provider, tfId, values, out parameters);
+	//private void UpdateProviderRowJoinKeysOnly(
+	//	TfDataProvider provider,
+	//	Guid tfId,
+	//	Dictionary<string, object> values)
+	//{
+	//	try
+	//	{
+	//		List<NpgsqlParameter> parameters;
+	//		var sql = BuildUpdateRowJoinKeysOnlySql(provider, tfId, values, out parameters);
 
-			var count = _dbService.ExecuteSqlNonQueryCommand(sql, parameters);
-			if (count != 1)
-			{
-				throw new Exception("Failed to update row");
-			}
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
+	//		var count = _dbService.ExecuteSqlNonQueryCommand(sql, parameters);
+	//		if (count != 1)
+	//		{
+	//			throw new Exception("Failed to update row");
+	//		}
+	//	}
+	//	catch (Exception ex)
+	//	{
+	//		throw ProcessException(ex);
+	//	}
+	//}
 
 	public void DeleteProviderRowsAfterIndex(
 		TfDataProvider provider,
@@ -1500,37 +1509,37 @@ public partial class TfService : ITfService
 		return sql.ToString();
 	}
 
-	private string BuildUpdateRowJoinKeysOnlySql(
-		TfDataProvider provider,
-		Guid tfId,
-		Dictionary<string, object> values,
-		out List<NpgsqlParameter> parameters)
-	{
-		parameters = new List<NpgsqlParameter>();
-		StringBuilder sql = new StringBuilder();
+	//private string BuildUpdateRowJoinKeysOnlySql(
+	//	TfDataProvider provider,
+	//	Guid tfId,
+	//	Dictionary<string, object> values,
+	//	out List<NpgsqlParameter> parameters)
+	//{
+	//	parameters = new List<NpgsqlParameter>();
+	//	StringBuilder sql = new StringBuilder();
 
-		sql.AppendLine($"UPDATE dp{provider.Index} SET ");
+	//	sql.AppendLine($"UPDATE dp{provider.Index} SET ");
 
-		foreach (var joinKey in provider.JoinKeys)
-		{
-			var joinKeyName = $"tf_jk_{joinKey.DbName}_id";
-			parameters.Add(new NpgsqlParameter($"@{joinKeyName}", (Guid)values[joinKeyName]));
-			sql.Append($"{joinKeyName} = @{joinKeyName}");
-			sql.AppendLine(",");
+	//	foreach (var joinKey in provider.JoinKeys)
+	//	{
+	//		var joinKeyName = $"tf_jk_{joinKey.DbName}_id";
+	//		parameters.Add(new NpgsqlParameter($"@{joinKeyName}", (Guid)values[joinKeyName]));
+	//		sql.Append($"{joinKeyName} = @{joinKeyName}");
+	//		sql.AppendLine(",");
 
-			var joinKeyVersion = $"tf_jk_{joinKey.DbName}_version";
-			parameters.Add(new NpgsqlParameter($"@{joinKeyVersion}", (short)values[joinKeyVersion]));
-			sql.Append($"{joinKeyVersion} = @{joinKeyVersion}");
-			sql.AppendLine(",");
-		}
+	//		var joinKeyVersion = $"tf_jk_{joinKey.DbName}_version";
+	//		parameters.Add(new NpgsqlParameter($"@{joinKeyVersion}", (short)values[joinKeyVersion]));
+	//		sql.Append($"{joinKeyVersion} = @{joinKeyVersion}");
+	//		sql.AppendLine(",");
+	//	}
 
-		sql.AppendLine("tf_id = @tf_id");
-		parameters.Add(new NpgsqlParameter("@tf_id", tfId));
-		sql.AppendLine("WHERE tf_id = @tf_id ");
+	//	sql.AppendLine("tf_id = @tf_id");
+	//	parameters.Add(new NpgsqlParameter("@tf_id", tfId));
+	//	sql.AppendLine("WHERE tf_id = @tf_id ");
 
-		sql.AppendLine();
-		return sql.ToString();
-	}
+	//	sql.AppendLine();
+	//	return sql.ToString();
+	//}
 
 	public void UpdateValue(
 		TfDataProvider provider,
@@ -1549,6 +1558,7 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 	}
+
 	public void DeleteAllProviderRows(
 		Guid providerId)
 	{
@@ -1623,5 +1633,41 @@ public partial class TfService : ITfService
 				throw new Exception("Not supported column type.");
 		}
 
+	}
+
+	public Dictionary<Guid,string> GetDataIdentityValuesForRowIds(
+		TfDataProvider provider,
+		TfDataIdentity dataIdentity,
+		List<Guid> rowIds )
+	{
+		if(provider is null)
+			throw new Exception("Provider object is null");
+
+		if(dataIdentity is null)
+			throw new Exception("Data identity object is null");
+
+		if( !provider.Identities.Any(x => x.DataIdentity == dataIdentity.DataIdentity) )
+			throw new Exception("Data identity not found in provider.");
+
+		var result = new Dictionary<Guid, string>();
+
+		if (rowIds is null || rowIds.Count == 0)
+			return result;
+
+		var sql = $"SELECT tf_id, tf_ide_{dataIdentity.DataIdentity} FROM dp{provider.Index} WHERE tf_id = ANY(@ids)";
+
+		var idsParameter = new NpgsqlParameter("@ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
+		idsParameter.Value = rowIds.ToArray();
+
+		DataTable dataTable = _dbService.ExecuteSqlQueryCommand(sql, idsParameter);
+
+		foreach (DataRow row in dataTable.Rows)
+		{
+			Guid id = (Guid)row["tf_id"];
+			string value = (string)row[$"tf_ide_{dataIdentity.DataIdentity}"];
+			result.Add(id, value);
+		}
+
+		return result;
 	}
 }

@@ -19,6 +19,8 @@ public partial class TfServiceTest : BaseTest
 			{
 				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
 
+				Data_GetDataIdentityValue(provider);
+
 				Data_InsertUpdateTableTest(provider.Id,spaceData.Id);
 
 				Data_SimpleQueryTest(provider.Id, spaceData.Id);
@@ -220,6 +222,29 @@ public partial class TfServiceTest : BaseTest
 
 			result.Rows.Count.Should().Be(100);
 			result.Columns.Count.Should().Be(1);
+		}
+	}
+
+	public void Data_GetDataIdentityValue(TfDataProvider provider)
+	{
+		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+		ITfService tfService = ServiceProvider.GetService<ITfService>();
+
+		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+		{
+			var dataIdentity = tfService.GetDataIdentity("test_data_identity_1");
+
+			var dataProviderRows = tfService.QueryDataProvider( provider.Id );
+
+			List<Guid> ids = new List<Guid>();
+			foreach (TfDataRow row in dataProviderRows.Rows)
+			{
+				var id = (Guid)row["tf_id"];
+				ids .Add(id);
+			}
+
+			var dataIdentityValues = tfService.GetDataIdentityValuesForRowIds(provider, dataIdentity, ids);
+			dataIdentityValues.Count.Should().Be( dataProviderRows.Rows.Count);
 		}
 	}
 }
