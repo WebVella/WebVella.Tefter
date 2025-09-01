@@ -218,7 +218,6 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		}
 	}
 
-
 	/// <summary>
 	/// The implementing components are referencing data based on the Data Mapping provided by the user, 
 	/// which maps value needed by the component and its corresponding datatable comlumn name.
@@ -227,9 +226,8 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// <param name="alias">the expected data alias as defined by the implementing component</param>
 	/// <param name="defaultValue">what value to return if value is not found in the provided datatable</param>
 	/// <returns></returns>
-	protected virtual object GetDataStringByAlias(string alias, string defaultValue = null)
+	protected virtual object GetDataString(string dbName, string defaultValue = null)
 	{
-		string dbName = GetColumnNameFromAlias(alias);
 
 		if (String.IsNullOrWhiteSpace(dbName))
 		{
@@ -254,9 +252,8 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// <param name="alias">the expected data alias as defined by the implementing component</param>
 	/// <param name="defaultValue">what value to return if value is not found in the provided datatable</param>
 	/// <returns></returns>
-	protected virtual object GetDataStructByAlias<T>(string alias, Nullable<T> defaultValue = null) where T : struct
+	protected virtual object GetDataStruct<T>(string dbName, Nullable<T> defaultValue = null) where T : struct
 	{
-		string dbName = GetColumnNameFromAlias(alias);
 		if (String.IsNullOrWhiteSpace(dbName))
 		{
 			return defaultValue;
@@ -273,6 +270,36 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		else if (value is T) return (T)value;
 		else if (value.GetType().ImplementsInterface(typeof(IList))) return (List<Nullable<T>>)value;
 		return TfConverters.Convert<T>(value.ToString());
+	}
+
+
+	/// <summary>
+	/// The implementing components are referencing data based on the Data Mapping provided by the user, 
+	/// which maps value needed by the component and its corresponding datatable comlumn name.
+	/// This method deals when the value needs to be returned as a string
+	/// </summary>
+	/// <param name="alias">the expected data alias as defined by the implementing component</param>
+	/// <param name="defaultValue">what value to return if value is not found in the provided datatable</param>
+	/// <returns></returns>
+	protected virtual object GetDataStringByAlias(string alias, string defaultValue = null)
+	{
+		string dbName = GetColumnNameFromAlias(alias);
+		return GetDataString(dbName,defaultValue);
+	}
+
+	/// <summary>
+	/// The implementing components are referencing data based on the Data Mapping provided by the user, 
+	/// which maps value needed by the component and its corresponding datatable comlumn name.
+	/// This method deals when the value needs to be returned as a primitive value different than string
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="alias">the expected data alias as defined by the implementing component</param>
+	/// <param name="defaultValue">what value to return if value is not found in the provided datatable</param>
+	/// <returns></returns>
+	protected virtual object GetDataStructByAlias<T>(string alias, Nullable<T> defaultValue = null) where T : struct
+	{
+		string dbName = GetColumnNameFromAlias(alias);
+		return GetDataStruct<T>(dbName,defaultValue);
 	}
 
 	/// <summary>
@@ -331,7 +358,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 
 		PropertyInfo propertyInfo = typeof(TItem).GetProperty(propName);
 		if (propertyInfo is null) return;
-		if (value is IConvertible)
+		if(value is null)
+			propertyInfo.SetValue(componentOptions, null, null);
+		else if (value is IConvertible)
 			propertyInfo.SetValue(componentOptions, Convert.ChangeType(value, propertyInfo.PropertyType), null);
 		else if (value is Guid)
 			propertyInfo.SetValue(componentOptions, (Guid?)value, null);

@@ -1,4 +1,5 @@
-﻿@* @namespace WebVella.Tefter.Assets.Components
+﻿@namespace WebVella.Tefter.Assets.Components
+@using WebVella.Tefter.UI.Components
 @inherits TfFormBaseComponent
 
 <FluentDialogHeader Style="display:none" />
@@ -7,7 +8,7 @@
 	<div>
 		@if (_isLoading)
 		{
-			<TfLoadingPane />
+			<TucLoadingPane />
 		}
 		else if (Content.FolderId is null)
 		{
@@ -17,7 +18,7 @@
 					<div class="asset-panel__header__actions">
 						<FluentButton Appearance="@Appearance.Stealth"
 									  OnClick="_cancel"
-									  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+									  IconStart="@TfConstants.GetIcon("Dismiss")" />
 					</div>
 				</div>
 				<div class="asset-panel__body" style="padding:10px">
@@ -33,7 +34,7 @@
 					<div class="asset-panel__header__actions">
 						<FluentButton Appearance="@Appearance.Stealth"
 									  OnClick="_cancel"
-									  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+									  IconStart="@TfConstants.GetIcon("Dismiss")" />
 					</div>
 				</div>
 				<div class="asset-panel__body" style="padding:10px">
@@ -41,7 +42,7 @@
 				</div>
 			</div>
 		}
-		else if (String.IsNullOrWhiteSpace(_folder.JoinKey))
+		else if (String.IsNullOrWhiteSpace(_folder.DataIdentity))
 		{
 			<div class="asset-panel">
 				<div class="asset-panel__header">
@@ -49,43 +50,11 @@
 					<div class="asset-panel__header__actions">
 						<FluentButton Appearance="@Appearance.Stealth"
 									  OnClick="_cancel"
-									  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+									  IconStart="@TfConstants.GetIcon("Dismiss")" />
 					</div>
 				</div>
 				<div class="asset-panel__body" style="padding:10px">
 					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The folder has no join key set!")</FluentMessageBar>
-				</div>
-			</div>
-		}
-		else if (_skValue is null)
-		{
-			<div class="asset-panel">
-				<div class="asset-panel__header">
-					<div class="asset-panel__header__content">@LOC("Error")</div>
-					<div class="asset-panel__header__actions">
-						<FluentButton Appearance="@Appearance.Stealth"
-									  OnClick="_cancel"
-									  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
-					</div>
-				</div>
-				<div class="asset-panel__body" style="padding:10px">
-					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the join key '{0}' of folder '{1}'!", _folder.JoinKey, _folder.Name)</FluentMessageBar>
-				</div>
-			</div>
-		}
-		else if (_skValue == Guid.Empty)
-		{
-			<div class="asset-panel">
-				<div class="asset-panel__header">
-					<div class="asset-panel__header__content">@LOC("Error")</div>
-					<div class="asset-panel__header__actions">
-						<FluentButton Appearance="@Appearance.Stealth"
-									  OnClick="_cancel"
-									  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
-					</div>
-				</div>
-				<div class="asset-panel__body" style="padding:10px">
-					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected join key '{0}' value is not yet generated for this row of the dataset!", _folder.JoinKey)</FluentMessageBar>
 				</div>
 			</div>
 		}
@@ -99,7 +68,7 @@
 					<div class="asset-panel__header__actions">
 						<FluentButton Appearance="@Appearance.Stealth"
 									  OnClick="_cancel"
-									  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+									  IconStart="@TfConstants.GetIcon("Dismiss")" />
 					</div>
 				</div>
 				<div class="asset-panel__subheader">
@@ -149,11 +118,11 @@
 												OpenChanged="@(x => _actionMenuIdOpened = x ? asset.Id : null)"
 												Anchor="@($"tf-{asset.Id}")">
 										<FluentMenuItem OnClick="@(_=> _deleteAsset(asset))">
-											<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(Color.Error)" Slot="start" />
+											<FluentIcon Value="@TfConstants.GetIcon("Delete").WithColor(Color.Error)" Slot="start" />
 											<FluentLabel>@LOC("Delete")</FluentLabel>
 										</FluentMenuItem>
 										<FluentMenuItem OnClick="@(_=> _editAsset(asset))">
-											<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
+											<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
 											<FluentLabel>@LOC("Update")</FluentLabel>
 										</FluentMenuItem>
 										<FluentMenuItem OnClick="@(_=> _getAsset(asset))">
@@ -179,4 +148,3 @@
 		}
 	</div>
 </FluentDialogBody>
- *@

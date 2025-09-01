@@ -19,8 +19,6 @@
 		}
 		<FluentButton OnClick="_addColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
 					  Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
-		<FluentButton OnClick="_addColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
-					  Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
 	</ToolbarTemplate>
 	<ChildContent>
 		@if (Items.Count == 0)

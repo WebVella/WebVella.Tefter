@@ -67,8 +67,8 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		if (_spaceData is not null)
 		{
 			if (_spaceData.Columns.Count > 0 || _spaceData.Identities.Count > 0)
-			{ 
-				if(_spaceData.Columns.Count > 0)
+			{
+				if (_spaceData.Columns.Count > 0)
 					_options.AddRange(_spaceData.Columns);
 
 				foreach (var identity in _spaceData.Identities)
@@ -79,7 +79,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 					}
 				}
 			}
-				
+
 			else
 			{
 				//This space dataset uses all the columns from the data provider
@@ -98,6 +98,12 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		_selectedColumnType = TfSpaceViewUIService.GetSpaceViewColumnTypeById(typeId);
 		if (_selectedColumnType is not null)
 			_selectedColumnTypeComponents = TfSpaceViewUIService.GetSpaceViewColumnTypeSupportedComponents(_selectedColumnType.Instance.AddonId);
+
+		if (_selectedColumnTypeComponents.Count > 0)
+		{
+			_selectedColumnComponent = _selectedColumnTypeComponents[0];
+			_form.ComponentId = _selectedColumnComponent.AddonId;
+		}
 	}
 
 	private async Task _save()
@@ -147,6 +153,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	{
 		_renderComponentTypeSelect = false;
 		_selectedColumnType = null;
+		_selectedColumnComponent = null;
 		_form.TypeId = Guid.Empty;
 		if (columnType is not null)
 		{
@@ -204,7 +211,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	{
 		var componentData = new Dictionary<string, object>();
 
-		var contextData = new Dictionary<string,object>();
+		var contextData = new Dictionary<string, object>();
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext(contextData)
 		{
 			Mode = TfComponentPresentationMode.Options,

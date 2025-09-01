@@ -1,11 +1,15 @@
-﻿@* @namespace WebVella.Tefter.Assets.Addons
+﻿@namespace WebVella.Tefter.Assets.Addons
 
 @inherits TucBaseViewColumn<TfFolderAssetsCountComponentOptions>
 @if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
 
 	<div>
-		@if (componentOptions.FolderId is not null)
+		@if (_selectedFolder is null )
+		{
+			<FluentIcon Value="TfConstants.ErrorIcon" Title="@LOC("channel is not configured")" />
+		}
+		else if(String.IsNullOrWhiteSpace(_value))
 		{
 			<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
 				<FluentIcon Value="@TfConstants.GetIcon("DocumentCopy")" />
@@ -13,7 +17,10 @@
 		}
 		else
 		{
-			<FluentIcon Value="TfConstants.ErrorIcon" Title="@LOC("channel is not configured")" />
+			<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
+				@_value 
+				<FluentIcon Slot="end" Value="@TfConstants.GetIcon("DocumentCopy")" />
+			</FluentButton>
 		}
 	</div>
 
@@ -25,6 +32,7 @@ else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 		<FluentGridItem xs="6">
 			<FluentSelect TOption="AssetsFolder"
 						  Items="_folders"
+						  OptionValue="(x=> x.Id.ToString())"
 						  OptionText="(x=> x.Name)"
 						  OptionSelected="(x => x.Id == _selectedFolder?.Id)"
 						  SelectedOption="_selectedFolder"
@@ -39,4 +47,3 @@ else
 }
 
 
- *@

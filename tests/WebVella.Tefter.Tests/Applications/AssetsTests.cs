@@ -107,7 +107,7 @@ public partial class AssetsTests : BaseTest
 				File.Copy(appSettingsFilePath, tmpFilePath, true);
 
 				//create file asset
-				CreateFileAssetModel fileAssetModel = new CreateFileAssetModel
+				CreateFileAssetWithDataIdentitiesModel fileAssetModel = new CreateFileAssetWithDataIdentitiesModel
 				{
 					FolderId = folder.Id,
 					CreatedBy = user.Id,

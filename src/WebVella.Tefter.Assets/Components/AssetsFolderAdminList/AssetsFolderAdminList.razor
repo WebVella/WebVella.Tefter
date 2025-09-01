@@ -1,16 +1,11 @@
-﻿@* @namespace WebVella.Tefter.Assets.Components
+﻿@namespace WebVella.Tefter.Assets.Components
 @inherits TfBaseComponent
-@{
-	var channels = new List<AssetsFolder>();
-	if (TfAuxDataState.Value.Data.ContainsKey(AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
-		channels = (List<AssetsFolder>)TfAuxDataState.Value.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
-}
 <FluentStack HorizontalAlignment="@HorizontalAlignment.Right" Style="margin-bottom:1rem;">
-	<FluentButton Appearance="@Appearance.Outline" OnClick="_createFolderHandler" IconStart="@TfConstants.AddIcon">
+	<FluentButton Appearance="@Appearance.Outline" OnClick="_createFolderHandler" IconStart="@TfConstants.GetIcon("Add")">
 		@LOC("Create folder")
 	</FluentButton>
 </FluentStack>
-@if (channels.Count == 0)
+@if (_folders.Count == 0)
 {
 	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No folders created yet")</FluentMessageBar>
 }
@@ -27,15 +22,16 @@ else
 			</tr>
 		</thead>
 		<tbody class="tf-grid-tbody">
-			@foreach (var context in channels)
+			@foreach (var context in _folders)
 			{
 				<tr @key=@context.Id class="tf-grid-tr">
 					<td class="tf-grid-td">
 						<div>
 							<FluentStack>
 								<FluentButton Title="@LOC("edit channel")" OnClick="@(_=> _editFolderHandler(context))"
-											  Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon" />
-								<FluentButton Title="@LOC("delete channel")" OnClick="@(_=> _deleteFolderHandler(context))" Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" />
+											  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")" />
+								<FluentButton Title="@LOC("delete channel")" OnClick="@(_=> _deleteFolderHandler(context))" Appearance="@Appearance.Outline"
+											  IconStart="@TfConstants.GetIcon("Delete").WithColor(Color.Error)" />
 							</FluentStack>
 						</div>
 					</td>
@@ -43,7 +39,7 @@ else
 						<div>@context.Name</div>
 					</td>
 					<td class="tf-grid-td">
-						<div>@context.JoinKey</div>
+						<div>@context.DataIdentity</div>
 					</td>
 					<td class="tf-grid-td">
 						<div>@context.CountSharedColumnName</div>
@@ -54,4 +50,3 @@ else
 	</table>
 }
 
- *@

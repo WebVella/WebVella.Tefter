@@ -30,13 +30,7 @@
 		<EmbeddedResource Update="Addons\RecipeSteps\CreateAssetFolderRecipeStep\FormComponent\TfCreateAssetFolderRecipeStepForm.bg.resx">
 		  <SubType>Designer</SubType>
 		</EmbeddedResource>
-		<EmbeddedResource Update="Components\AssetsFolderPanelFileModal\AssetsFolderPanelFileModal.bg.resx">
-			<SubType>Designer</SubType>
-		</EmbeddedResource>
 		<EmbeddedResource Update="Components\AssetsFolderPanelLinkModal\AssetsFolderPanelLinkModal.bg.resx">
-			<SubType>Designer</SubType>
-		</EmbeddedResource>
-		<EmbeddedResource Update="Components\AssetsFolderManageDialog\AssetsFolderManageDialog.bg.resx">
 			<SubType>Designer</SubType>
 		</EmbeddedResource>
 	</ItemGroup>

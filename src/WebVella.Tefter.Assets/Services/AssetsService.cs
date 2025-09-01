@@ -1,8 +1,12 @@
-﻿namespace WebVella.Tefter.Assets.Services;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+
+namespace WebVella.Tefter.Assets.Services;
 
 public partial interface IAssetsService
 {
-	Task<List<string>> GetAllJoinKeysAsync();
+	List<TfDataIdentity> GetAllDataIdentities();
+	List<TfSharedColumn> GetAllSharedColumns();
+	Task<TfUser?> GetCurrentUser(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider);
 }
 
 internal partial class AssetsService : IAssetsService
@@ -18,15 +22,11 @@ internal partial class AssetsService : IAssetsService
 		_tfService = tfService;
 	}
 
-	public Task<List<string>> GetAllJoinKeysAsync()
-	{
-		try
-		{
-			return Task.FromResult(_tfService.GetAllJoinKeyNames());
-		}
-		catch (Exception)
-		{
-			return Task.FromResult(new List<string>());
-		}
-	}
+	public List<TfDataIdentity> GetAllDataIdentities() => _tfService.GetDataIdentities();
+
+	public List<TfSharedColumn> GetAllSharedColumns() => _tfService.GetSharedColumns();
+
+	public async Task<TfUser?> GetCurrentUser(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider)
+		=> await _tfService.GetUserFromCookieAsync(jsRuntime, authStateProvider);
+
 }

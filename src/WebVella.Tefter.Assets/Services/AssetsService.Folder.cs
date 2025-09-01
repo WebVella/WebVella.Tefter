@@ -2,6 +2,9 @@
 
 public partial interface IAssetsService
 {
+	event EventHandler<AssetsFolder> FolderCreated;
+	event EventHandler<AssetsFolder> FolderUpdated;
+	event EventHandler<AssetsFolder> FolderDeleted;
 	AssetsFolder GetFolder(
 		Guid folderId);
 
@@ -19,6 +22,13 @@ public partial interface IAssetsService
 
 internal partial class AssetsService : IAssetsService
 {
+	#region << Events >>
+	public event EventHandler<AssetsFolder> FolderCreated = default!;
+	public event EventHandler<AssetsFolder> FolderUpdated = default!;
+	public event EventHandler<AssetsFolder> FolderDeleted = default!;
+	#endregion
+
+
 	public AssetsFolder GetFolder(
 		Guid folderId)
 	{
@@ -93,8 +103,9 @@ internal partial class AssetsService : IAssetsService
 
 		if (dbResult != 1)
 			throw new Exception("Failed to insert new row in database for folder object");
-
-		return GetFolder(folder.Id);
+		folder = GetFolder(folder.Id);
+		FolderCreated?.Invoke(this, folder);
+		return folder;
 	}
 
 	public AssetsFolder UpdateFolder(
@@ -144,7 +155,9 @@ internal partial class AssetsService : IAssetsService
 		if (dbResult != 1)
 			throw new Exception("Failed to update row in database for channel object");
 
-		return GetFolder(folder.Id);
+		folder = GetFolder(folder.Id);
+		FolderUpdated?.Invoke(this, folder);
+		return folder;
 	}
 
 	public void DeleteFolder(
@@ -168,6 +181,8 @@ internal partial class AssetsService : IAssetsService
 
 		if (dbResult != 1)
 			throw new Exception("Failed to delete row in database for folder object");
+
+		FolderDeleted?.Invoke(this, existingFolder);
 	}
 
 	private AssetsFolder ToFolder(DataRow dr)

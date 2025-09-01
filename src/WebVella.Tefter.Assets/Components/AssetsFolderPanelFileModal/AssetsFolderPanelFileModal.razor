@@ -1,22 +1,23 @@
 ﻿@namespace WebVella.Tefter.Assets.Components
+@using WebVella.Tefter.UI.Components
 @inherits TfFormBaseComponent
 @* Header *@
-@* <FluentDialogHeader ShowDismiss="true">
+<FluentDialogHeader ShowDismiss="true">
 	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
 </FluentDialogHeader>
- *@
+
 @* Footer *@
-@* <FluentDialogFooter>
+<FluentDialogFooter>
 	@if (String.IsNullOrWhiteSpace(_error))
 	{
 		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
 					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
 	}
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
-</FluentDialogFooter> *@
+</FluentDialogFooter>
 
 @* Body *@
-@* <FluentDialogBody>
+<FluentDialogBody>
 	@if (!string.IsNullOrWhiteSpace(_error))
 	{
 		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
@@ -37,13 +38,13 @@
 							@if (!String.IsNullOrWhiteSpace(_form.FileName))
 							{
 								<FluentTextField ReadOnly="true" Value="@_form.FileName" Style="width:100%" />
-								<FluentButton OnClick="_clearFile" IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" />
+								<FluentButton OnClick="_clearFile" IconStart="@TfConstants.GetIcon("Dismiss").WithColor(Color.Error)" />
 							}
 							else
 							{
 								<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0 && progressPercent < 100)"
 											  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUpload")">@LOC("Upload file")</FluentButton>
-								<TfProgress Value="progressPercent" Visible="@(progressPercent > 0 && progressPercent < 100)" />
+								<TucProgress Value="progressPercent" Visible="@(progressPercent > 0 && progressPercent < 100)" />
 								<FluentInputFile @ref="@fileUploader"
 												 DragDropZoneVisible="false"
 												 Mode="InputFileMode.SaveToTemporaryFolder"
@@ -68,14 +69,14 @@
 							@if (_upload is null && String.IsNullOrWhiteSpace(_form.LocalPath))
 							{
 								<FluentTextField ReadOnly="true" Value="@_form.FileName" Style="width:100%" />
-								<FluentButton OnClick="_clearFile" IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" />
+								<FluentButton OnClick="_clearFile" IconStart="@TfConstants.GetIcon("Dismiss").WithColor(Color.Error)" />
 							}
 							else
 							{
 								<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0 && progressPercent < 100)"
 											  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUpload")">@LOC("Upload file")</FluentButton>
 
-								<TfProgress Value="progressPercent" Visible="@(progressPercent > 0 && progressPercent < 100)" />
+								<TucProgress Value="progressPercent" Visible="@(progressPercent > 0 && progressPercent < 100)" />
 								@if (progressPercent == 0)
 								{
 									<div>@LOC("keep the current file content")</div>
@@ -114,4 +115,4 @@
 			</FluentGrid>
 		</FluentEditForm>
 	}
-</FluentDialogBody> *@
+</FluentDialogBody>

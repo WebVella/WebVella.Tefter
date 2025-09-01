@@ -12,7 +12,10 @@ public partial interface IAssetsService
 		string dataIdentityValue = null);
 
 	public Asset CreateFileAsset(
-		CreateFileAssetModel asset);
+		CreateFileAssetWithRowIdsModel asset);
+
+	public Asset CreateFileAsset(
+		CreateFileAssetWithDataIdentitiesModel asset);
 
 	public Asset CreateLinkAsset(
 		CreateLinkAssetModel asset);
@@ -40,24 +43,24 @@ internal partial class AssetsService : IAssetsService
 		Guid id)
 	{
 
-        string SQL = @"SELECT id, folder_id FROM assets_asset WHERE id = @id";
+		string SQL = @"SELECT id, folder_id FROM assets_asset WHERE id = @id";
 
-        var assetIdPar = CreateParameter(
-            "id",
-            id,
-            DbType.Guid);
+		var assetIdPar = CreateParameter(
+			"id",
+			id,
+			DbType.Guid);
 
-        var dt = _dbService.ExecuteSqlQueryCommand(SQL, assetIdPar);
-        if (dt.Rows.Count == 0)
-            return null;
+		var dt = _dbService.ExecuteSqlQueryCommand(SQL, assetIdPar);
+		if (dt.Rows.Count == 0)
+			return null;
 
-        Guid folderId = (Guid)dt.Rows[0]["folder_id"];
+		Guid folderId = (Guid)dt.Rows[0]["folder_id"];
 		var folder = GetFolder(folderId);
 
-        string folderDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
+		string folderDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
 		if (!string.IsNullOrWhiteSpace(folder.DataIdentity))
-            folderDataIdentity = folder.DataIdentity;
-        
+			folderDataIdentity = folder.DataIdentity;
+
 		SQL =
 $@"
 
@@ -105,7 +108,7 @@ WHERE aa.id = @id
 		Guid? folderId,
 		string dataIdentityValue = null)
 	{
-        string folderDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
+		string folderDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
 		if (folderId is not null)
 		{
 			var folder = GetFolder(folderId.Value);
@@ -115,7 +118,7 @@ WHERE aa.id = @id
 				folderDataIdentity = folder.DataIdentity;
 		}
 
-        string SQL = $@"
+		string SQL = $@"
 WITH sk_identity_info AS (
 	SELECT trs.id, JSON_AGG( dic.* ) AS json_result
 	FROM assets_asset trs
@@ -155,8 +158,8 @@ ORDER BY aa.created_on DESC;";
 			DbType.Guid);
 
 		var skIdPar = CreateParameter(
-            "data_identity_value",
-            dataIdentityValue,
+			"data_identity_value",
+			dataIdentityValue,
 			DbType.String);
 
 		var dt = _dbService.ExecuteSqlQueryCommand(SQL, folderIdPar, skIdPar);
@@ -165,7 +168,16 @@ ORDER BY aa.created_on DESC;";
 	}
 
 	public Asset CreateFileAsset(
-        CreateFileAssetModel asset)
+		CreateFileAssetWithRowIdsModel asset)
+	{
+		//TODO RUMEN: Implement this case here as it cannot be skipped.
+		//It needs to get the data identity values by its own, based on 
+		//provider, rowIds, folder id(data identity)
+		throw new NotImplementedException();
+	}
+
+	public Asset CreateFileAsset(
+		CreateFileAssetWithDataIdentitiesModel asset)
 	{
 		Guid id = Guid.NewGuid();
 
@@ -177,10 +189,10 @@ ORDER BY aa.created_on DESC;";
 		using (var scope = _dbService.CreateTransactionScope())
 		{
 			string filename = asset.FileName;
-			if(string.IsNullOrWhiteSpace(filename))
+			if (string.IsNullOrWhiteSpace(filename))
 				filename = Path.GetFileName(asset.LocalPath);
 
-            Guid blobId = _tfService.CreateBlob(asset.LocalPath);
+			Guid blobId = _tfService.CreateBlob(asset.LocalPath);
 
 			DateTime now = DateTime.Now;
 
@@ -231,33 +243,33 @@ ORDER BY aa.created_on DESC;";
 
 			if (asset.DataIdentityValues != null && asset.DataIdentityValues.Count > 0)
 			{
-                var assetIdentityRowId = id.ToSha1();
-                AssetsFolder folder = GetFolder(asset.FolderId);
+				var assetIdentityRowId = id.ToSha1();
+				AssetsFolder folder = GetFolder(asset.FolderId);
 
-                TfDataIdentity folderDataIdentity = null;
-                if (!string.IsNullOrWhiteSpace(folder.DataIdentity))
-                {
-                    folderDataIdentity = _tfService.GetDataIdentity(folder.DataIdentity);
-                    if (folderDataIdentity is null)
-                        throw new Exception($"Failed to find data identity '{folder.DataIdentity}' for folder");
-                }
+				TfDataIdentity folderDataIdentity = null;
+				if (!string.IsNullOrWhiteSpace(folder.DataIdentity))
+				{
+					folderDataIdentity = _tfService.GetDataIdentity(folder.DataIdentity);
+					if (folderDataIdentity is null)
+						throw new Exception($"Failed to find data identity '{folder.DataIdentity}' for folder");
+				}
 
-                if (folderDataIdentity is null)
-                    folderDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
+				if (folderDataIdentity is null)
+					folderDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
 
-                foreach (var dataIdentityValue in asset.DataIdentityValues)
-                {
-                    if (!dataIdentityValue.IsSha1())
-                        throw new Exception($"Data identity value '{dataIdentityValue}' is not a valid SHA1 value");
+				foreach (var dataIdentityValue in asset.DataIdentityValues)
+				{
+					if (!dataIdentityValue.IsSha1())
+						throw new Exception($"Data identity value '{dataIdentityValue}' is not a valid SHA1 value");
 
-                    _tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
-                    {
-                        DataIdentity1 = folderDataIdentity.DataIdentity,
-                        Value1 = dataIdentityValue,
-                        DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
-                        Value2 = assetIdentityRowId
-                    });
-                }
+					_tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
+					{
+						DataIdentity1 = folderDataIdentity.DataIdentity,
+						Value1 = dataIdentityValue,
+						DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+						Value2 = assetIdentityRowId
+					});
+				}
 			}
 
 			scope.Complete();
@@ -269,7 +281,7 @@ ORDER BY aa.created_on DESC;";
 	}
 
 	public Asset CreateLinkAsset(
-        CreateLinkAssetModel asset)
+		CreateLinkAssetModel asset)
 	{
 		Guid id = Guid.NewGuid();
 
@@ -328,38 +340,38 @@ ORDER BY aa.created_on DESC;";
 				throw new Exception("Failed to insert new row in database for thread object");
 			}
 
-            if (asset.DataIdentityValues != null && asset.DataIdentityValues.Count > 0)
-            {
-                var assetIdentityRowId = id.ToSha1();
-                AssetsFolder folder = GetFolder(asset.FolderId);
+			if (asset.DataIdentityValues != null && asset.DataIdentityValues.Count > 0)
+			{
+				var assetIdentityRowId = id.ToSha1();
+				AssetsFolder folder = GetFolder(asset.FolderId);
 
-                TfDataIdentity folderDataIdentity = null;
-                if (!string.IsNullOrWhiteSpace(folder.DataIdentity))
-                {
-                    folderDataIdentity = _tfService.GetDataIdentity(folder.DataIdentity);
-                    if (folderDataIdentity is null)
-                        throw new Exception($"Failed to find data identity '{folder.DataIdentity}' for folder");
-                }
+				TfDataIdentity folderDataIdentity = null;
+				if (!string.IsNullOrWhiteSpace(folder.DataIdentity))
+				{
+					folderDataIdentity = _tfService.GetDataIdentity(folder.DataIdentity);
+					if (folderDataIdentity is null)
+						throw new Exception($"Failed to find data identity '{folder.DataIdentity}' for folder");
+				}
 
-                if (folderDataIdentity is null)
-                    folderDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
+				if (folderDataIdentity is null)
+					folderDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
 
-                foreach (var dataIdentityValue in asset.DataIdentityValues)
-                {
-                    if (!dataIdentityValue.IsSha1())
-                        throw new Exception($"Data identity value '{dataIdentityValue}' is not a valid SHA1 value");
+				foreach (var dataIdentityValue in asset.DataIdentityValues)
+				{
+					if (!dataIdentityValue.IsSha1())
+						throw new Exception($"Data identity value '{dataIdentityValue}' is not a valid SHA1 value");
 
-                    _tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
-                    {
-                        DataIdentity1 = folderDataIdentity.DataIdentity,
-                        Value1 = dataIdentityValue,
-                        DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
-                        Value2 = assetIdentityRowId
-                    });
-                }
-            }
+					_tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
+					{
+						DataIdentity1 = folderDataIdentity.DataIdentity,
+						Value1 = dataIdentityValue,
+						DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+						Value2 = assetIdentityRowId
+					});
+				}
+			}
 
-            scope.Complete();
+			scope.Complete();
 
 			var resultAsset = GetAsset(id);
 
@@ -590,8 +602,8 @@ ORDER BY aa.created_on DESC;";
 			throw new Exception("DataTable is null");
 		}
 
-        var folders = GetFolders();
-        List<Asset> assetList = new List<Asset>();
+		var folders = GetFolders();
+		List<Asset> assetList = new List<Asset>();
 
 		foreach (DataRow dr in dt.Rows)
 		{
@@ -632,36 +644,36 @@ ORDER BY aa.created_on DESC;";
 			};
 
 
-            AssetsFolder folder = folders.SingleOrDefault(x => x.Id == asset.FolderId);
-            string folderDataIdentity = folder.DataIdentity;
+			AssetsFolder folder = folders.SingleOrDefault(x => x.Id == asset.FolderId);
+			string folderDataIdentity = folder.DataIdentity;
 
-            if (string.IsNullOrWhiteSpace(folderDataIdentity))
-                folderDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
+			if (string.IsNullOrWhiteSpace(folderDataIdentity))
+				folderDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
 
-            var dataIdentityConnectionsJson = dr.Field<string>("identity_connection_json");
-            if (!String.IsNullOrWhiteSpace(dataIdentityConnectionsJson) &&
-                dataIdentityConnectionsJson.StartsWith("[") &&
-                dataIdentityConnectionsJson != "[null]")
-            {
-                var dataIdentityConnections =
-                    JsonSerializer.Deserialize<List<TfDataIdentityConnection>>(dataIdentityConnectionsJson);
+			var dataIdentityConnectionsJson = dr.Field<string>("identity_connection_json");
+			if (!String.IsNullOrWhiteSpace(dataIdentityConnectionsJson) &&
+				dataIdentityConnectionsJson.StartsWith("[") &&
+				dataIdentityConnectionsJson != "[null]")
+			{
+				var dataIdentityConnections =
+					JsonSerializer.Deserialize<List<TfDataIdentityConnection>>(dataIdentityConnectionsJson);
 
-                foreach (var dic in dataIdentityConnections)
-                {
-                    if (dic.Value1 == asset.IdentityRowId)
-                    {
-                        if (!asset.ConnectedDataIdentityValues.Keys.Contains(dic.Value2))
-                            asset.ConnectedDataIdentityValues[dic.Value2] = folderDataIdentity;
-                    }
-                    if (dic.Value2 == asset.IdentityRowId)
-                    {
-                        if (!asset.ConnectedDataIdentityValues.Keys.Contains(dic.Value1))
-                            asset.ConnectedDataIdentityValues[dic.Value1] = folderDataIdentity;
-                    }
-                }
-            }
+				foreach (var dic in dataIdentityConnections)
+				{
+					if (dic.Value1 == asset.IdentityRowId)
+					{
+						if (!asset.ConnectedDataIdentityValues.Keys.Contains(dic.Value2))
+							asset.ConnectedDataIdentityValues[dic.Value2] = folderDataIdentity;
+					}
+					if (dic.Value2 == asset.IdentityRowId)
+					{
+						if (!asset.ConnectedDataIdentityValues.Keys.Contains(dic.Value1))
+							asset.ConnectedDataIdentityValues[dic.Value1] = folderDataIdentity;
+					}
+				}
+			}
 
-            assetList.Add(asset);
+			assetList.Add(asset);
 		}
 
 		return assetList;
@@ -680,7 +692,7 @@ ORDER BY aa.created_on DESC;";
 		}
 
 		public ValidationResult ValidateCreateFileAsset(
-			CreateFileAssetModel asset,
+			CreateFileAssetWithDataIdentitiesModel asset,
 			Guid id)
 		{
 			if (asset == null)

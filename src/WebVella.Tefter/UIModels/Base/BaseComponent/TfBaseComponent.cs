@@ -85,7 +85,6 @@ public class TfBaseComponent : ComponentBase
 	{
 		if (LC is not null && LC[key, arguments] != key) return LC[key, arguments];
 		if (GL is not null && GL[key, arguments] != key) return GL[key, arguments];
-		Console.WriteLine($"+++++++++ {key}");
 		return key;
 	}
 
