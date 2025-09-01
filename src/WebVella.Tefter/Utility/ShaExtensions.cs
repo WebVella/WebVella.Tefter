@@ -2,6 +2,21 @@
 
 public static class ShaExtensions
 {
+	static string ToSha1(this string? text)
+	{
+		using (SHA1 sha1 = SHA1.Create())
+		{
+			string input = text??string.Empty;
+			byte[] hashBytes = sha1.ComputeHash(Encoding.UTF8.GetBytes(input));
+			StringBuilder sb = new StringBuilder();
+			foreach (byte b in hashBytes)
+			{
+				sb.Append(b.ToString("x2")); 
+			}
+			return sb.ToString();
+		}
+	}
+
 	static string ToSha1(this Guid? guid)
 	{
 		using (SHA1 sha1 = SHA1.Create())
