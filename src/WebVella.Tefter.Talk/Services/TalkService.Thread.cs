@@ -303,7 +303,8 @@ ORDER BY tt.created_on DESC";
 			}
 
 			scope.Complete();
-
+			var createdThread = GetThread(id);
+			ThreadCreated?.Invoke(this,createdThread);
 			return id;
 		}
 	}
@@ -396,7 +397,8 @@ ORDER BY tt.created_on DESC";
 				throw new Exception("Failed to insert new row in database for sub thread object");
 
 			scope.Complete();
-
+			var createdThread = GetThread(id);
+			ThreadCreated?.Invoke(this,createdThread);
 			return id;
 		}
 	}
@@ -440,6 +442,9 @@ ORDER BY tt.created_on DESC";
 
 		if (dbResult != 1)
 			throw new Exception("Failed to update row in database for thread object");
+
+			var createdThread = GetThread(threadId);
+			ThreadUpdated?.Invoke(this,createdThread);
 	}
 
 	public void DeleteThread(
@@ -473,6 +478,8 @@ ORDER BY tt.created_on DESC";
 
 		if (dbResult != 1)
 			throw new Exception("Failed to update row in database for thread object");
+
+		ThreadDeleted?.Invoke(this,existingThread);
 	}
 
 	private List<TalkThread> ToThreadList(DataTable dt)
