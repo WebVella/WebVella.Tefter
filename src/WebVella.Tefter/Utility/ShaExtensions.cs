@@ -2,7 +2,7 @@
 
 public static class ShaExtensions
 {
-	static string ToSha1(this string? text)
+	public static string ToSha1(this string? text)
 	{
 		using (SHA1 sha1 = SHA1.Create())
 		{
