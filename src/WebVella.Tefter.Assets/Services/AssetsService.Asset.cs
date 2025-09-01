@@ -15,7 +15,8 @@ public partial interface IAssetsService
 
 	public List<Asset> GetAssets(
 		Guid? folderId = null,
-		string dataIdentityValue = null);
+		string dataIdentityValue = null,
+		string search = null);
 
 	public Asset CreateFileAsset(
 		CreateFileAssetWithRowIdModel asset);
