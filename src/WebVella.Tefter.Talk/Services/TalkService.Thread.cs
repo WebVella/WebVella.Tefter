@@ -12,10 +12,13 @@ public partial interface ITalkService
 		Guid channelId,
 		string dataIdentityValue = null);
 
-    public Guid CreateThread(
-		CreateTalkThread thread);
+    public TalkThread CreateThread(
+		CreateTalkThreadWithRowIdModel thread);
 
-	public Guid CreateSubThread(
+    public TalkThread CreateThread(
+		CreateTalkThreadWithDataIdentityModel thread);
+
+	public TalkThread CreateSubThread(
 		CreateTalkSubThread thread);
 
 	public void UpdateThread(
@@ -186,8 +189,22 @@ ORDER BY tt.created_on DESC";
 		return ToThreadList(dt);
 	}
 
-	public Guid CreateThread(
-		CreateTalkThread thread)
+	public TalkThread CreateThread(
+		CreateTalkThreadWithRowIdModel asset)
+	{
+		//TODO RUMEN: Implement this case here as it cannot be skipped.
+		//It needs to get the data identity values by its own, based on 
+		//provider, rowIds, folder id(data identity)
+		throw new NotImplementedException();
+
+		//Do not forget to add
+		//var createdThread = GetThread(id);
+		//ThreadCreated?.Invoke(this,createdThread);
+		//return createdThread;
+	}
+
+	public TalkThread CreateThread(
+		CreateTalkThreadWithDataIdentityModel thread)
 	{
 		if (thread == null)
 			throw new NullReferenceException("Thread object is null");
@@ -305,11 +322,11 @@ ORDER BY tt.created_on DESC";
 			scope.Complete();
 			var createdThread = GetThread(id);
 			ThreadCreated?.Invoke(this,createdThread);
-			return id;
+			return createdThread;
 		}
 	}
 
-	public Guid CreateSubThread(
+	public TalkThread CreateSubThread(
 		CreateTalkSubThread thread)
 	{
 		if (thread == null)
@@ -399,7 +416,7 @@ ORDER BY tt.created_on DESC";
 			scope.Complete();
 			var createdThread = GetThread(id);
 			ThreadCreated?.Invoke(this,createdThread);
-			return id;
+			return createdThread;
 		}
 	}
 
@@ -566,7 +583,7 @@ ORDER BY tt.created_on DESC";
 		}
 
 		public ValidationResult ValidateCreate(
-			CreateTalkThread thread,
+			CreateTalkThreadWithDataIdentityModel thread,
 			Guid id)
 		{
 			if (thread == null)
@@ -578,7 +595,7 @@ ORDER BY tt.created_on DESC";
 			if (string.IsNullOrWhiteSpace(thread.Content))
 			{
 				return new ValidationResult(new[] { new ValidationFailure(
-					nameof(CreateTalkThread.Content),
+					nameof(CreateTalkThreadWithDataIdentityModel.Content),
 					"The content is empty.") });
 			}
 
@@ -632,7 +649,7 @@ ORDER BY tt.created_on DESC";
 			if (string.IsNullOrWhiteSpace(thread.Content))
 			{
 				return new ValidationResult(new[] { new ValidationFailure(
-					nameof(CreateTalkThread.Content),
+					nameof(CreateTalkThreadWithDataIdentityModel.Content),
 					"The content is empty.") });
 			}
 
@@ -652,7 +669,7 @@ ORDER BY tt.created_on DESC";
 			if (string.IsNullOrWhiteSpace(content))
 			{
 				return new ValidationResult(new[] { new ValidationFailure(
-					nameof(CreateTalkThread.Content),
+					nameof(CreateTalkThreadWithDataIdentityModel.Content),
 					"The content is empty.") });
 			}
 

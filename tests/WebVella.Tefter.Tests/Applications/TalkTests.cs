@@ -78,7 +78,7 @@ public partial class TalkTests : BaseTest
 				};
 				var channelCreated = talkService.CreateChannel(channel);
 
-				CreateTalkThread thread = new CreateTalkThread
+				CreateTalkThreadWithDataIdentityModel thread = new CreateTalkThreadWithDataIdentityModel
 				{
 					ChannelId = channel.Id,
 					Content = "content",

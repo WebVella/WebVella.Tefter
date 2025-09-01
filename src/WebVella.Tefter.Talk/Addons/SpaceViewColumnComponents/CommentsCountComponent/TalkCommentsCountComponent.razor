@@ -1,11 +1,15 @@
-﻿@* @namespace WebVella.Tefter.Talk.Components
+﻿@namespace WebVella.Tefter.Talk.Components
 
 @inherits TucBaseViewColumn<TfTalkCommentsCountComponentOptions>
 @if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
 
 	<div>
-		@if (componentOptions.ChannelId is not null)
+		@if (_selectedChannel is null)
+		{
+			<div style="color:var(--error);" title="@LOC("channel is not configured")">error!</div>
+		}
+		else if (String.IsNullOrWhiteSpace(_value))
 		{
 			<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
 				<FluentIcon Value="@TfConstants.GetIcon("Comment")" />
@@ -13,7 +17,10 @@
 		}
 		else
 		{
-			<FluentIcon Value="TfConstants.ErrorIcon" Title="@LOC("channel is not configured")" />
+			<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
+				@_value
+				<FluentIcon Slot="end" Value="@TfConstants.GetIcon("Comment")" />
+			</FluentButton>
 		}
 	</div>
 
@@ -40,4 +47,3 @@ else
 }
 
 
- *@
