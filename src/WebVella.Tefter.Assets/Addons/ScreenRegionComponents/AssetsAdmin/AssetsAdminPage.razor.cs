@@ -18,35 +18,4 @@ public partial class AssetsAdminPage : TfBaseComponent, ITfScreenRegionComponent
 		};
 	[Parameter]
 	public TfAdminPageScreenRegionContext RegionContext { get; set; }
-
-
-	//public Task OnAppStateInit(IServiceProvider serviceProvider, TucUser currentUser,
-	//	TfAppState newAppState,
-	//	TfAppState oldAppState, TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
-	//{
-	//	var assetsService = serviceProvider.GetRequiredService<IAssetsService>();
-	//	var tfService = serviceProvider.GetRequiredService<ITfService>();
-
-	//	try
-	//	{
-	//		var folders = assetsService.GetFolders();
-	//		newAuxDataState.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = folders.OrderBy(x => x.Name).ToList();
-	//	}
-	//	catch
-	//	{
-	//		newAuxDataState.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = new List<AssetsFolder>();
-	//	}
-
-	//	try
-	//	{
-	//		var sharedColumns = tfService.GetSharedColumns();
-	//		newAuxDataState.Data[AssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY] = sharedColumns.OrderBy(x => x.DbName).ToList();
-	//	}
-	//	catch
-	//	{
-	//		newAuxDataState.Data[AssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY] = new List<TfSharedColumn>();
-	//	}
-
-	//	return Task.CompletedTask;
-	//}
 }

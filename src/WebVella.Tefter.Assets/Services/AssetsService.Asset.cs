@@ -4,6 +4,11 @@ namespace WebVella.Tefter.Assets.Services;
 
 public partial interface IAssetsService
 {
+
+	event EventHandler<Asset> AssetCreated;
+	event EventHandler<Asset> AssetUpdated;
+	event EventHandler<Asset> AssetDeleted;
+
 	public Asset GetAsset(
 		Guid id);
 
@@ -42,6 +47,13 @@ public partial interface IAssetsService
 
 internal partial class AssetsService : IAssetsService
 {
+
+	#region << Events >>
+	public event EventHandler<Asset> AssetCreated = default!;
+	public event EventHandler<Asset> AssetUpdated = default!;
+	public event EventHandler<Asset> AssetDeleted = default!;
+	#endregion
+
 	public Asset GetAsset(
 		Guid id)
 	{
@@ -177,6 +189,11 @@ ORDER BY aa.created_on DESC;";
 		//It needs to get the data identity values by its own, based on 
 		//provider, rowIds, folder id(data identity)
 		throw new NotImplementedException();
+
+		//Do not forget to add
+		//var resultAsset = GetAsset(id);
+		//AssetCreated?.Invoke(this, resultAsset);
+		//return resultAsset;
 	}
 
 	public Asset CreateFileAsset(
@@ -278,7 +295,7 @@ ORDER BY aa.created_on DESC;";
 			scope.Complete();
 
 			var resultAsset = GetAsset(id);
-
+			AssetCreated?.Invoke(this, resultAsset);
 			return resultAsset;
 		}
 	}
@@ -290,6 +307,11 @@ ORDER BY aa.created_on DESC;";
 		//It needs to get the data identity values by its own, based on 
 		//provider, rowIds, folder id(data identity)
 		throw new NotImplementedException();
+
+		//Do not forget to add
+		//var resultAsset = GetAsset(id);
+		//AssetCreated?.Invoke(this, resultAsset);
+		//return resultAsset;
 	}
 
 	public Asset CreateLinkAsset(
@@ -386,7 +408,7 @@ ORDER BY aa.created_on DESC;";
 			scope.Complete();
 
 			var resultAsset = GetAsset(id);
-
+			AssetCreated?.Invoke(this, resultAsset);
 			return resultAsset;
 		}
 	}
@@ -472,7 +494,7 @@ ORDER BY aa.created_on DESC;";
 			scope.Complete();
 
 			var resultAsset = GetAsset(id);
-
+			AssetUpdated?.Invoke(this, resultAsset);
 			return resultAsset;
 		}
 	}
@@ -557,7 +579,7 @@ ORDER BY aa.created_on DESC;";
 			scope.Complete();
 
 			var resultAsset = GetAsset(id);
-
+			AssetUpdated?.Invoke(this, resultAsset);
 			return resultAsset;
 		}
 	}
@@ -604,6 +626,8 @@ ORDER BY aa.created_on DESC;";
 			}
 
 			scope.Complete();
+
+			AssetDeleted?.Invoke(this, existingAsset);
 		}
 	}
 
