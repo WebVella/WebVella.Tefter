@@ -2,6 +2,10 @@
 
 public partial interface ITalkService
 {
+	event EventHandler<TalkChannel> ChannelCreated;
+	event EventHandler<TalkChannel> ChannelUpdated;
+	event EventHandler<TalkChannel> ChannelDeleted;
+
 	TalkChannel GetChannel(
 		Guid channelId);
 
@@ -19,6 +23,12 @@ public partial interface ITalkService
 
 internal partial class TalkService : ITalkService
 {
+	#region << Events >>
+	public event EventHandler<TalkChannel> ChannelCreated = default!;
+	public event EventHandler<TalkChannel> ChannelUpdated = default!;
+	public event EventHandler<TalkChannel> ChannelDeleted = default!;
+	#endregion
+
 	public TalkChannel GetChannel(
 		Guid channelId)
 	{

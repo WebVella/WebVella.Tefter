@@ -2,6 +2,9 @@
 
 public partial interface ITalkService
 {
+	event EventHandler<TalkThread> ThreadCreated;
+	event EventHandler<TalkThread> ThreadUpdated;
+	event EventHandler<TalkThread> ThreadDeleted;
 	public TalkThread GetThread(
 		Guid id);
 
@@ -25,6 +28,12 @@ public partial interface ITalkService
 
 internal partial class TalkService : ITalkService
 {
+	#region << Events >>
+	public event EventHandler<TalkThread> ThreadCreated = default!;
+	public event EventHandler<TalkThread> ThreadUpdated = default!;
+	public event EventHandler<TalkThread> ThreadDeleted = default!;
+	#endregion
+
 	public TalkThread GetThread(
 		Guid id)
 	{

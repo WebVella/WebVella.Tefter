@@ -6,7 +6,7 @@ public partial class AssetsAdminPage : TfBaseComponent, ITfScreenRegionComponent
 	public const string NAME = "Assets Folders";
 	public const string DESCRIPTION = "";
 	public const string FLUENT_ICON_NAME = "Folder";
-	public const int POSITION_RANK = 100;
+	public const int POSITION_RANK = 200;
 
 	public Guid AddonId { get; init; } = new Guid(ID);
 	public string AddonName { get; init; } = NAME;

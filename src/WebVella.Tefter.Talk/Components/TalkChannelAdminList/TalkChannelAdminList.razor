@@ -1,16 +1,11 @@
 ﻿@namespace WebVella.Tefter.Talk.Components
 @inherits TfBaseComponent
-@{
-	var channels = new List<TalkChannel>();
-	if (TfAuxDataState.Value.Data.ContainsKey(TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY))
-		channels = (List<TalkChannel>)TfAuxDataState.Value.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
-}
 <FluentStack HorizontalAlignment="@HorizontalAlignment.Right" Style="margin-bottom:1rem;">
-	<FluentButton Appearance="@Appearance.Outline" OnClick="_createChannelHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)">
+	<FluentButton Appearance="@Appearance.Outline" OnClick="_createChannelHandler" IconStart="@TfConstants.GetIcon("Add")">
 		@LOC("Create channel")
 	</FluentButton>
 </FluentStack>
-@if (channels.Count == 0)
+@if (_channels.Count == 0)
 {
 	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No channels created yet")</FluentMessageBar>
 }
@@ -27,15 +22,16 @@ else
 			</tr>
 		</thead>
 		<tbody class="tf-grid-tbody">
-			@foreach (var context in channels)
+			@foreach (var context in _channels)
 			{
 				<tr @key=@context.Id class="tf-grid-tr">
 					<td class="tf-grid-td">
 						<div>
 							<FluentStack>
 								<FluentButton Title="@LOC("edit channel")" OnClick="@(_=> _editChannelHandler(context))"
-											  Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon" />
-								<FluentButton Title="@LOC("delete channel")" OnClick="@(_=> _deleteChannelHandler(context))" Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" />
+											  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")" />
+								<FluentButton Title="@LOC("delete channel")" OnClick="@(_=> _deleteChannelHandler(context))" Appearance="@Appearance.Outline" 
+										IconStart="@TfConstants.GetIcon("Delete").WithColor(Color.Error)" />
 							</FluentStack>
 						</div>
 					</td>
