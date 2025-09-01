@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Talk.Services;
+﻿using System.Runtime.InteropServices;
+
+namespace WebVella.Tefter.Talk.Services;
 
 public partial interface ITalkService
 {
@@ -104,7 +106,9 @@ internal partial class TalkService : ITalkService
 		if (dbResult != 1)
 			throw new Exception("Failed to insert new row in database for channel object");
 
-		return GetChannel(channel.Id);
+		channel = GetChannel(channel.Id);
+		ChannelCreated?.Invoke(this,channel);
+		return channel;
 	}
 
 	public TalkChannel UpdateChannel(
@@ -154,7 +158,9 @@ internal partial class TalkService : ITalkService
 		if (dbResult != 1)
 			throw new Exception("Failed to update row in database for channel object");
 
-		return GetChannel(channel.Id);
+		channel = GetChannel(channel.Id);
+		ChannelUpdated?.Invoke(this,channel);
+		return channel;
 	}
 
 	public void DeleteChannel(
@@ -178,6 +184,8 @@ internal partial class TalkService : ITalkService
 
 		if (dbResult != 1)
 			throw new Exception("Failed to delete row in database for channel object");
+
+		ChannelDeleted?.Invoke(this,existingChannel);
 	}
 
 	private TalkChannel ToChannel(DataRow dr)

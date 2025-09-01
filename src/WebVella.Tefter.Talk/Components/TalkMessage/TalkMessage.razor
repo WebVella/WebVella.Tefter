@@ -1,4 +1,5 @@
-﻿@* @namespace WebVella.Tefter.Talk.Components
+﻿@namespace WebVella.Tefter.Talk.Components
+@using WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
 <div class="@_class">
@@ -7,16 +8,16 @@
 		<div class="talk-message__left">
 			@if (Item.DeletedOn is null)
 			{
-				<TfAvatar User="_user" Class="talk-avatar" />
+				<TucAvatar User="Item?.User" Class="talk-avatar" />
 				<div class="talk-timestamp text-muted">
 					@Item.CreatedOn.ToString("HH:mm")
 				</div>
 			}
 			else
 			{
-				<TfAvatar Class="talk-avatar talk-avatar-deleted">
+				<TucAvatar Class="talk-avatar talk-avatar-deleted">
 					<FluentIcon Value="@TfConstants.GetIcon("Delete")" Width="16" Style="fill: var(--neutral-layer-2) !important;" />
-				</TfAvatar>
+				</TucAvatar>
 			}
 		</div>
 		<div class="talk-message__right">
@@ -39,7 +40,7 @@
 							<FluentIcon Value="@TfConstants.GetIcon("Attach")" />
 						</span>
 					}
-					<span class="talk-sender">@_user.Names</span>
+					<span class="talk-sender">@Item?.User?.Names</span>
 					<span class="talk-timestamp" title="@Item.CreatedOn.ToString(TfConstants.DateTimeFormat)">@Item.CreatedOn.ToString(TfConstants.HourFormat)</span>
 					@if (Item.LastUpdatedOn is not null)
 					{
@@ -62,18 +63,18 @@
 			}
 			@if (!IsSubThread && Item.SubThread.Count > 0)
 			{
-				var distinctUsers = Item.SubThread.Select(x => new TucUser(x.User)).DistinctBy(x => x.Id).ToList();
+				var distinctUsers = Item.SubThread.Select(x => x.User).DistinctBy(x => x.Id).ToList();
 				var distinctUsersLimit = 5;
 				<div class="talk-message__right__subthreads">
 					<div class="talk-subthreads-button" @onclick="OnReply">
 						<div class="talk-subthreads-button__avatars">
 							@foreach (var user in distinctUsers.Take(distinctUsersLimit))
 							{
-								<TfAvatar User="user" IsSmall="true" />
+								<TucAvatar User="user" IsSmall="true" />
 							}
 							@if (distinctUsers.Count > distinctUsersLimit)
 							{
-								<TfAvatar IsSmall="true"><span style="font-size:14px;">...</span></TfAvatar>
+								<TucAvatar IsSmall="true"><span style="font-size:14px;">...</span></TucAvatar>
 							}
 						</div>
 
@@ -95,7 +96,7 @@
 	{
 		<div class="talk-message__right">
 			<div class="talk-message__right__top">
-				<span class="talk-sender">@_user.Names</span>
+				<span class="talk-sender">@Item?.User?.Names</span>
 				@if (Item.ConnectedDataIdentityValues.Keys.Count > 1)
 				{
 					<span class="talk-multicast">
@@ -105,7 +106,7 @@
 			</div>
 			<div class="tf_message_editor">
 				<div class="tf_message_editor_content">
-					<TfEditor @ref=_editor Placeholder="Type a message in #general" @bind-Value="Item.Content"
+					<TucEditor @ref=_editor Placeholder="Type a message in #general" @bind-Value="Item.Content"
 							  OnEnter="_onUpdate" />
 				</div>
 				<div class="tf_message_editor_actions">
@@ -131,7 +132,7 @@
 		<div class="talk-message__actions">
 			@if (!IsSubThread && OnSubThreadView.HasDelegate && Item.VisibleInChannel && Item.ThreadId is not null)
 			{
-				<FluentButton IconStart="@TfConstants.GetIcon("ArrowRight").WithColor(Color.Neutral)"
+				<FluentButton IconStart="@TfConstants.GetIcon("ArrowRight")"
 							  Appearance="@Appearance.Stealth" Title="@LOC("view thread")"
 							  OnClick="@OnSubThreadView" />
 			}
@@ -139,16 +140,16 @@
 			{
 				if (OnDelete.HasDelegate && Item.User.Id == CurrentUser.Id && Item.DeletedOn is null)
 				{
-					<FluentButton IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+					<FluentButton IconStart="@TfConstants.GetIcon("Delete").WithColor(Color.Error)"
 								  Appearance="@Appearance.Stealth" Title="@LOC("delete message")"
 								  OnClick="@OnDelete" />
-					<FluentButton IconStart="@TfConstants.EditIcon.WithColor(Color.Neutral)"
+					<FluentButton IconStart="@TfConstants.GetIcon("Edit")"
 								  Appearance="@Appearance.Stealth" Title="@LOC("edit message")"
 								  OnClick="@OnEdit" />
 				}
 				if (Item.ThreadId is null)
 				{
-					<FluentButton IconStart="@TfConstants.GetIcon("Comment").WithColor(Color.Neutral)"
+					<FluentButton IconStart="@TfConstants.GetIcon("Comment")"
 								  Appearance="@Appearance.Stealth" Title="@LOC("reply to message")"
 								  OnClick="@OnReply" />
 				}
@@ -157,4 +158,3 @@
 	}
 
 </div>
- *@

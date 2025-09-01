@@ -18,8 +18,17 @@ public class TalkThread
     public List<TalkThread> SubThread { get; set; }
 }
 
+public class CreateTalkThreadWithRowIdModel
+{
+	public Guid ChannelId { get; set; }
+	public TalkThreadType Type { get; set; }
+	public string Content { get; set; }
+	public Guid UserId { get; set; }
+	public List<Guid> RowIds { get; set; } = new();
+	public Guid DataProviderId { get; set; } = default!;
+}
 
-public class CreateTalkThread
+public class CreateTalkThreadWithDataIdentityModel
 {
 	public Guid ChannelId { get; set; }
 	public TalkThreadType Type { get; set; }

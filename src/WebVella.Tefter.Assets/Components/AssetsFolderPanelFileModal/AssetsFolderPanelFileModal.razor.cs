@@ -83,7 +83,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new Asset();
+			Asset result = null;
 			if (_isCreate && Content.RowIds is not null && Content.DataProviderId is not null)
 			{
 				var submit = new CreateFileAssetWithRowIdModel

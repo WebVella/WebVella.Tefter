@@ -7,7 +7,7 @@
 	<div>
 		@if (_selectedFolder is null )
 		{
-			<FluentIcon Value="TfConstants.ErrorIcon" Title="@LOC("channel is not configured")" />
+			<div style="color:var(--error);" title="@LOC("folder is not configured")">error!</div>
 		}
 		else if(String.IsNullOrWhiteSpace(_value))
 		{
