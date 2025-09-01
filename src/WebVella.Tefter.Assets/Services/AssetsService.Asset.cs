@@ -12,13 +12,16 @@ public partial interface IAssetsService
 		string dataIdentityValue = null);
 
 	public Asset CreateFileAsset(
-		CreateFileAssetWithRowIdsModel asset);
+		CreateFileAssetWithRowIdModel asset);
 
 	public Asset CreateFileAsset(
-		CreateFileAssetWithDataIdentitiesModel asset);
+		CreateFileAssetWithDataIdentityModel asset);
 
 	public Asset CreateLinkAsset(
-		CreateLinkAssetModel asset);
+		CreateLinkAssetWithRowIdModel asset);
+
+	public Asset CreateLinkAsset(
+		CreateLinkAssetWithDataIdentityModel asset);
 
 	public Asset UpdateFileAsset(
 		Guid id,
@@ -168,7 +171,7 @@ ORDER BY aa.created_on DESC;";
 	}
 
 	public Asset CreateFileAsset(
-		CreateFileAssetWithRowIdsModel asset)
+		CreateFileAssetWithRowIdModel asset)
 	{
 		//TODO RUMEN: Implement this case here as it cannot be skipped.
 		//It needs to get the data identity values by its own, based on 
@@ -177,7 +180,7 @@ ORDER BY aa.created_on DESC;";
 	}
 
 	public Asset CreateFileAsset(
-		CreateFileAssetWithDataIdentitiesModel asset)
+		CreateFileAssetWithDataIdentityModel asset)
 	{
 		Guid id = Guid.NewGuid();
 
@@ -281,7 +284,16 @@ ORDER BY aa.created_on DESC;";
 	}
 
 	public Asset CreateLinkAsset(
-		CreateLinkAssetModel asset)
+		CreateLinkAssetWithRowIdModel asset)
+	{
+		//TODO RUMEN: Implement this case here as it cannot be skipped.
+		//It needs to get the data identity values by its own, based on 
+		//provider, rowIds, folder id(data identity)
+		throw new NotImplementedException();
+	}
+
+	public Asset CreateLinkAsset(
+		CreateLinkAssetWithDataIdentityModel asset)
 	{
 		Guid id = Guid.NewGuid();
 
@@ -692,7 +704,7 @@ ORDER BY aa.created_on DESC;";
 		}
 
 		public ValidationResult ValidateCreateFileAsset(
-			CreateFileAssetWithDataIdentitiesModel asset,
+			CreateFileAssetWithDataIdentityModel asset,
 			Guid id)
 		{
 			if (asset == null)
@@ -723,7 +735,7 @@ ORDER BY aa.created_on DESC;";
 		}
 
 		public ValidationResult ValidateCreateLinkAsset(
-			CreateLinkAssetModel asset,
+			CreateLinkAssetWithDataIdentityModel asset,
 			Guid id)
 		{
 			if (asset == null)
@@ -741,7 +753,7 @@ ORDER BY aa.created_on DESC;";
 			if (string.IsNullOrWhiteSpace(asset.Url))
 			{
 				return new ValidationResult(new[] { new ValidationFailure(
-					nameof(CreateLinkAssetModel.Url),
+					nameof(CreateLinkAssetWithDataIdentityModel.Url),
 					"The url is empty.") });
 			}
 
@@ -752,7 +764,7 @@ ORDER BY aa.created_on DESC;";
 			catch
 			{
 				return new ValidationResult(new[] { new ValidationFailure(
-					nameof(CreateLinkAssetModel.Url),
+					nameof(CreateLinkAssetWithDataIdentityModel.Url),
 					"The url is not valid.") });
 			}
 
@@ -834,7 +846,7 @@ ORDER BY aa.created_on DESC;";
 			if (string.IsNullOrWhiteSpace(url))
 			{
 				return new ValidationResult(new[] { new ValidationFailure(
-					nameof(CreateLinkAssetModel.Url),
+					nameof(CreateLinkAssetWithDataIdentityModel.Url),
 					"The url is empty.") });
 			}
 
@@ -845,7 +857,7 @@ ORDER BY aa.created_on DESC;";
 			catch
 			{
 				return new ValidationResult(new[] { new ValidationFailure(
-					nameof(CreateLinkAssetModel.Url),
+					nameof(CreateLinkAssetWithDataIdentityModel.Url),
 					"The url is not valid.") });
 			}
 

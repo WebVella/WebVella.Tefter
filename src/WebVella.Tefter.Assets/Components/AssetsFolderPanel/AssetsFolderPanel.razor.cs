@@ -58,29 +58,28 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 
 	private async Task _addLink()
 	{
-		//var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelLinkModal>(
-		//new AssetsFolderPanelLinkModalContext()
-		//{
-		//	CreatedBy = TfAppState.Value.CurrentUser.Id,
-		//	DataProviderId = TfAppState.Value.SpaceViewData.QueryInfo.DataProviderId,
-		//	FolderId = Content.FolderId.Value,
-		//	RowIds = new List<Guid> { _rowId },
-		//	Id = Guid.Empty,
-		//	Label = null,
-		//	Url = null,
-		//},
-		//new DialogParameters()
-		//{
-		//	PreventDismissOnOverlayClick = true,
-		//	PreventScroll = true,
-		//	Width = TfConstants.DialogWidthLarge,
-		//	TrapFocus = false
-		//});
-		//var result = await dialog.Result;
-		//if (!result.Cancelled && result.Data != null)
-		//{
-		//	_items.Insert(0, (Asset)result.Data);
-		//}
+		var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelLinkModal>(
+		new AssetsFolderPanelLinkModalContext()
+		{
+			UserId = _currentUser.Id,
+			FolderId = Content.FolderId.Value,
+			Id = Guid.Empty,
+			Label = null,
+			Url = null,
+			DataIdentities = new List<string>{ _dataIdentityValue },
+		},
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			_items.Insert(0, (Asset)result.Data);
+		}
 	}
 
 	private async Task _addFile()
@@ -135,30 +134,29 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 					});
 			result = await dialog.Result;
 		}
-		//else if (asset.Type == AssetType.Link)
-		//{
-		//	var assetContent = (LinkAssetContent)asset.Content;
-		//	var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelLinkModal>(
-		//			new AssetsFolderPanelLinkModalContext()
-		//			{
-		//				CreatedBy = TfAppState.Value.CurrentUser.Id,
-		//				DataProviderId = TfAppState.Value.SpaceViewData.QueryInfo.DataProviderId,
-		//				FolderId = Content.FolderId.Value,
-		//				RowIds = new List<Guid> { _rowId },
-		//				Id = asset.Id,
-		//				Label = assetContent.Label,
-		//				Url = assetContent.Url,
-		//				IconUrl = assetContent.IconUrl
-		//			},
-		//			new DialogParameters()
-		//			{
-		//				PreventDismissOnOverlayClick = true,
-		//				PreventScroll = true,
-		//				Width = TfConstants.DialogWidthLarge,
-		//				TrapFocus = false
-		//			});
-		//	result = await dialog.Result;
-		//}
+		else if (asset.Type == AssetType.Link)
+		{
+			var assetContent = (LinkAssetContent)asset.Content;
+			var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelLinkModal>(
+					new AssetsFolderPanelLinkModalContext()
+					{
+						UserId = _currentUser.Id,
+						FolderId = Content.FolderId.Value,
+						Id = asset.Id,
+						Label = assetContent.Label,
+						Url = assetContent.Url,
+						IconUrl = assetContent.IconUrl,
+						DataIdentities = new List<string>{ _dataIdentityValue },
+					},
+					new DialogParameters()
+					{
+						PreventDismissOnOverlayClick = true,
+						PreventScroll = true,
+						Width = TfConstants.DialogWidthLarge,
+						TrapFocus = false
+					});
+			result = await dialog.Result;
+		}
 
 		if (result is not null && !result.Cancelled && result.Data != null)
 		{

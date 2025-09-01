@@ -86,7 +86,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 			var result = new Asset();
 			if (_isCreate && Content.RowIds is not null && Content.DataProviderId is not null)
 			{
-				var submit = new CreateFileAssetWithRowIdsModel
+				var submit = new CreateFileAssetWithRowIdModel
 				{
 					FolderId = Content.FolderId,
 					Label = _form.Label,
@@ -100,7 +100,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 			}
 			else if (_isCreate && Content.DataIdentities is not null)
 			{
-				var submit = new CreateFileAssetWithDataIdentitiesModel
+				var submit = new CreateFileAssetWithDataIdentityModel
 				{
 					FolderId = Content.FolderId,
 					Label = _form.Label,
@@ -169,7 +169,6 @@ public class AssetsFolderPanelFileModalContext
 	public string FileName { get; set; }
 	public Guid UserId { get; set; }
 	public List<string>? DataIdentities { get; set; } = null;
-
 	public List<Guid> RowIds { get; set; } = null;
 	public Guid? DataProviderId { get; set; } = null;
 }

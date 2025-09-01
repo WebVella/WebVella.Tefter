@@ -41,7 +41,7 @@ public class DocumentAssetContent : AssetContentBase
 	public string Content { get; set; }
 }
 
-public class CreateFileAssetWithRowIdsModel
+public class CreateFileAssetWithRowIdModel
 {
 	public Guid FolderId { get; set; }
 	public string Label { get; set; }
@@ -52,7 +52,7 @@ public class CreateFileAssetWithRowIdsModel
 	public Guid DataProviderId { get; set; } = default!;
 }
 
-public class CreateFileAssetWithDataIdentitiesModel
+public class CreateFileAssetWithDataIdentityModel
 {
 	public Guid FolderId { get; set; }
 	public string Label { get; set; }
@@ -62,7 +62,18 @@ public class CreateFileAssetWithDataIdentitiesModel
 	public List<string> DataIdentityValues { get; set; } = new();
 }
 
-public class CreateLinkAssetModel
+public class CreateLinkAssetWithRowIdModel
+{
+	public Guid FolderId { get; set; }
+	public string Label { get; set; }
+	public string Url { get; set; }
+	public string IconUrl { get; set; }
+	public Guid CreatedBy { get; set; }
+	public List<Guid> RowIds { get; set; } = new();
+	public Guid DataProviderId { get; set; } = default!;
+}
+
+public class CreateLinkAssetWithDataIdentityModel
 {
 	public Guid FolderId { get; set; }
 	public string Label { get; set; }

@@ -69,7 +69,7 @@ public partial class AssetsTests : BaseTest
 				};
 				folder = assetService.CreateFolder(folder);
 
-				CreateLinkAssetModel asset = new CreateLinkAssetModel
+				CreateLinkAssetWithDataIdentityModel asset = new CreateLinkAssetWithDataIdentityModel
 				{
 					FolderId = folder.Id,
 					Label = "Test link",
@@ -107,7 +107,7 @@ public partial class AssetsTests : BaseTest
 				File.Copy(appSettingsFilePath, tmpFilePath, true);
 
 				//create file asset
-				CreateFileAssetWithDataIdentitiesModel fileAssetModel = new CreateFileAssetWithDataIdentitiesModel
+				CreateFileAssetWithDataIdentityModel fileAssetModel = new CreateFileAssetWithDataIdentityModel
 				{
 					FolderId = folder.Id,
 					CreatedBy = user.Id,
@@ -128,7 +128,7 @@ public partial class AssetsTests : BaseTest
 				rowIdentityIds3.Add((string)dataTable.Rows[0]["tf_row_id"]);
 				rowIdentityIds3.Add((string)dataTable.Rows[5]["tf_row_id"]);
 
-				CreateLinkAssetModel dupIdentityValueAsset = new CreateLinkAssetModel
+				CreateLinkAssetWithDataIdentityModel dupIdentityValueAsset = new CreateLinkAssetWithDataIdentityModel
 				{
 					FolderId = folder.Id,
 					Label = "Test link",
