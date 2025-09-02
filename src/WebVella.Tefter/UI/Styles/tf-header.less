@@ -120,7 +120,7 @@
 				background: color-mix(in srgb, var(--tf-layout-color) 30%, var(--tf-fill-color-dark) 70%);
 			}
 
-			&:hover {
+			&:hover, &:active {
 				background: var(--tf-fill-color-dark-hover);
 			}
 
@@ -132,7 +132,7 @@
 				color: var(--tf-font-color-dark-link);
 			}
 
-			&::part(start) {
+/*			&::part(start) {
 				position: relative;
 				top: 1px !important;
 			}
@@ -140,7 +140,7 @@
 			&::part(end) {
 				position: relative;
 				top: 1px !important;
-			}
+			}*/
 		}
 	}
 }

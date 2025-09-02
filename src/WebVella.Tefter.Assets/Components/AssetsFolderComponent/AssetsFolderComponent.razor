@@ -20,7 +20,8 @@ else if (String.IsNullOrWhiteSpace(Folder.DataIdentity))
 }
 else
 {
-	<TucPageLayout ShowToolbar=@(_items.Count > 0) Title="@Folder.Name" Icon="@TfConstants.GetIcon("Table")" Color="@_space!.Color">
+	<TucPageLayout Title="@Context.SpacePage.Name" 
+		Icon="@TfConstants.GetIcon(Context.SpacePage.FluentIconName)" Color="@Context.Space.Color">
 		<Toolbar>
 			<div class="tf-content-toolbar">
 				<div class="tf-content-toolbar__left">

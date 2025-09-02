@@ -1,6 +1,9 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-@if (_spaceView is null)
+@if (_spaceView is null && _isDataLoading)
+{
+}
+else if (_spaceView is null)
 {
 	<div style="@("padding:var(--tf-layout-content-padding)")">
 		<FluentMessageBar Title="No space view found"
@@ -15,21 +18,20 @@ else
 {
 	var configCss = _generateColumnConfigurationCss(_spaceView, _spaceViewColumns);
 	var columnIndex = 1;
-	<TucPageLayout ShowToolbar=@(_spaceView.Presets.Count > 0) Title="@_spacePage.Name" Icon="@TfConstants.GetIcon("Table")" Color="@_space!.Color">
+	<TucPageLayout Title="@_spacePage.Name" Icon="@TfConstants.GetIcon(_spacePage.FluentIconName)"
+				   Color="@_space!.Color">
 		<Toolbar>
 			<TucSpaceViewPageContentNavigation SpaceView="_spaceView" />
 		</Toolbar>
 		<ChildContent>
 			@((MarkupString)_getEmbeddedStyles())
-			@* 			<TucPageHeader Title="@_spacePage!.Name" Icon="TfConstants.GetIcon(_spacePage.FluentIconName)"
-						   Area="@_space!.Name" IconColor="_space!.Color" SubTitle="@_preset?.Name" /> *@
-			<TucSpaceViewPageContentToolbar SpaceView="_spaceView" Data=_data
+			<TucSpaceViewPageContentToolbar Context=Context SpaceView="_spaceView" Data=_data
 											SpaceData="_spaceData" SpaceViewPreset=_preset
 											OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" OnClearFilter="_onClearFilter"
 											OnSelectAll="_onSelectAll" SelectAllLoading="_selectAllLoading" OnDeSelectAll="_onDeSelectAll"
 											SelectedRows="_selectedDataRows" OnClearPersonalization="_onClearPersonalization" />
 
-		<div class="tf-grid-wrapper">
+			<div class="tf-grid-wrapper">
 				<table class="tf-grid" id="@_tableId">
 					<colgroup>
 						@foreach (var index in configCss.Keys)

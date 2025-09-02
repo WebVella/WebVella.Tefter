@@ -1,8 +1,6 @@
 ﻿//global using FluentResults;
 global using FluentValidation;
 global using FluentValidation.Results;
-global using Fluxor;
-global using Fluxor.Blazor.Web.Components;
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.Components;
 global using Microsoft.AspNetCore.Components.Authorization;

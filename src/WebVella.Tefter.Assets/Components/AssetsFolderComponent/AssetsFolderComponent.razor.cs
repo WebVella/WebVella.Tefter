@@ -8,8 +8,8 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 	[Inject] public IAssetsService AssetsService { get; set; }
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Parameter] public AssetsFolder? Folder { get; set; } = null;
-	[Parameter] public TfUser CurrentUser { get; set; }
 	[Parameter] public string DataIdentityValue { get; set; } = "";
+	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 	[Parameter] public string Style { get; set; } = "";
 	[Parameter] public RenderFragment HeaderActions { get; set; }
 	[Inject] protected NavigationManager Navigator { get; set; } = default!;
@@ -18,7 +18,6 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 	private bool _isLoading = true;
 
 	private Guid _rowId = Guid.Empty;
-	private TfSpace _space = new();
 	private List<Asset> _items = new();
 	private Guid? _actionMenuIdOpened = null;
 	private string _search = null;
@@ -78,7 +77,8 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 			_search = Navigator.GetStringFromQuery(TfConstants.SearchQueryName, null);
 			_items = AssetsService.GetAssets(
 				folderId: Folder.Id,
-				dataIdentityValue: DataIdentityValue);
+				dataIdentityValue: DataIdentityValue,
+				search: _search);
 			_dataIdentityValue = DataIdentityValue;
 			_folderId = Folder.Id;
 		}
@@ -88,9 +88,6 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-
-
-
 	private async Task _searchValueChanged(string search)
 	{
 		_search = search?.Trim();
@@ -99,14 +96,12 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
-
-
 	private async Task _addLink()
 	{
 		var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelLinkModal>(
 			new AssetsFolderPanelLinkModalContext()
 			{
-				UserId = CurrentUser.Id,
+				UserId = Context.CurrentUser.Id,
 				FolderId = Folder.Id,
 				Id = Guid.Empty,
 				Label = null,
@@ -134,7 +129,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelFileModal>(
 			new AssetsFolderPanelFileModalContext()
 			{
-				UserId = CurrentUser.Id,
+				UserId = Context.CurrentUser.Id,
 				FolderId = Folder.Id,
 				Id = Guid.Empty,
 				Label = null,
@@ -167,7 +162,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 			var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelFileModal>(
 					new AssetsFolderPanelFileModalContext()
 					{
-						UserId = CurrentUser.Id,
+						UserId = Context.CurrentUser.Id,
 						FolderId = Folder.Id,
 						Id = asset.Id,
 						Label = assetContent.Label,
@@ -189,7 +184,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 			var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelLinkModal>(
 					new AssetsFolderPanelLinkModalContext()
 					{
-						UserId = CurrentUser.Id,
+						UserId = Context.CurrentUser.Id,
 						FolderId = Folder.Id,
 						RowIds = new List<Guid> { _rowId },
 						Id = asset.Id,

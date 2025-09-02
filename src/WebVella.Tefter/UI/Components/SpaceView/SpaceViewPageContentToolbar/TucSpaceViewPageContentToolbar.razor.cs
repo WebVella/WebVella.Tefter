@@ -8,24 +8,24 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	[Parameter] public EventCallback<string> OnSearch { get; set; }
+	[Parameter] public TfSpacePageAddonContext Context { get; set; } = default!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
 	[Parameter] public TfSpaceData SpaceData { get; set; } = default!;
 	[Parameter] public TfSpaceViewPreset? SpaceViewPreset { get; set; } = null;
 	[Parameter] public TfDataTable Data { get; set; } = default!;
 
 	private TfNavigationState _navState = default!;
-	private TfUser _currentUser = default!;
 	private bool _hasViewPersonalization = false;
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 		TfUserUIService.UserUpdated -= On_UserChanged;
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
-
+		_navState = Navigator.GetRouteState();
 		await _init();
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfUserUIService.UserUpdated += On_UserChanged;
@@ -42,21 +42,21 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 	}
 	private async Task _init()
 	{
-		_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
-		if (_navState is null) return;
+		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+		if (navState is null) return;
+		_navState = navState;
 		try
 		{
-			_currentUser = await TfUserUIService.GetCurrentUserAsync() ?? new();
-			var bookmarks = TfUserUIService.GetUserBookmarks(_currentUser.Id);
-			var saves = TfUserUIService.GetUserSaves(_currentUser.Id);
+			var bookmarks = TfUserUIService.GetUserBookmarks(Context.CurrentUser.Id);
+			var saves = TfUserUIService.GetUserSaves(Context.CurrentUser.Id);
 
 			_activeBookmark = bookmarks.FirstOrDefault(x => x.SpaceViewId == _navState.SpaceViewId);
 			_activeSavedUrl = saves.FirstOrDefault(x => x.Id == _navState.ActiveSaveId);
-			_hasViewPersonalization = _currentUser.Settings.ViewPresetColumnPersonalizations.Any(x =>
+			_hasViewPersonalization = Context.CurrentUser.Settings.ViewPresetColumnPersonalizations.Any(x =>
 				x.SpaceViewId == SpaceView.Id && x.PresetId == SpaceViewPreset?.Id);
 			if (!_hasViewPersonalization)
 			{
-				_hasViewPersonalization = _currentUser.Settings.ViewPresetSortPersonalizations.Any(x => x.SpaceViewId == SpaceView.Id
+				_hasViewPersonalization = Context.CurrentUser.Settings.ViewPresetSortPersonalizations.Any(x => x.SpaceViewId == SpaceView.Id
 				 && x.PresetId == SpaceViewPreset?.Id);
 			}
 		}

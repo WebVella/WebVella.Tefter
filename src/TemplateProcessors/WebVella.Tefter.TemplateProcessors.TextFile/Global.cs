@@ -5,7 +5,6 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.JSInterop;
-global using Fluxor;
 global using Microsoft.AspNetCore.Components;
 global using System.Text.Json;
 global using System.Text.Json.Serialization;

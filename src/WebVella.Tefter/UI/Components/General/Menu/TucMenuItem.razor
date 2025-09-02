@@ -21,11 +21,19 @@
 		}
 		else if (Item.Icon is not null)
 		{
-			<FluentIcon Value="@Item.Icon" />
+			@if (Item.Color is not null)
+			{
+				<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetAttribute().Value)" />
+			}
+
+			else
+			{
+				<FluentIcon Value="@Item.Icon" />
+			}
 		}
 		@if (!String.IsNullOrWhiteSpace(Item.Text))
 		{
-			<span class="tf-menu__item__text">
+			<span class="tf-menu__item__text" title="@Item.Text">
 				@TfConverters.StringOverflow(Item.Text, EllipsesLimit)
 			</span>
 		}

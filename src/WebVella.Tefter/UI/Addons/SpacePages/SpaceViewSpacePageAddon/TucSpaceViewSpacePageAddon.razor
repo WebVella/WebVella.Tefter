@@ -3,7 +3,7 @@
 
 @if (Context.Mode == TfComponentMode.Read)
 {
-	<TucSpaceViewPageContent />
+	<TucSpaceViewPageContent Context="Context"/>
 }
 else if (Context.Mode == TfComponentMode.Create)
 {

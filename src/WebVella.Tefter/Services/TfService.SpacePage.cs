@@ -164,6 +164,7 @@ public partial class TfService : ITfService
 			{
 
 				var allPages = GetSpacePages(spacePage.SpaceId);
+				var space = GetSpace(spacePage.SpaceId);
 
 				new TfSpacePageValidator(allPages)
 					.ValidateCreate(spacePage)
@@ -247,8 +248,8 @@ public partial class TfService : ITfService
 						{
 							var context = new TfSpacePageAddonContext
 							{
-								SpaceId = spacePage.SpaceId,
-								SpacePageId = spacePage.Id,
+								Space = space,
+								SpacePage = spacePage,
 								ComponentOptionsJson = spacePage.ComponentOptionsJson,
 								Icon = spacePage.FluentIconName,
 								Mode = TfComponentMode.Update
@@ -287,7 +288,7 @@ public partial class TfService : ITfService
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var allPages = GetSpacePages(spacePage.SpaceId);
-
+				var space = GetSpace(spacePage.SpaceId);
 				new TfSpacePageValidator(allPages)
 					.ValidateUpdate(spacePage)
 					.ToValidationException()
@@ -521,8 +522,8 @@ public partial class TfService : ITfService
 						{
 							var context = new TfSpacePageAddonContext
 							{
-								SpaceId = spacePage.SpaceId,
-								SpacePageId = spacePage.Id,
+								Space = space,
+								SpacePage = spacePage,
 								ComponentOptionsJson = spacePage.ComponentOptionsJson,
 								Icon = spacePage.FluentIconName,
 								Mode = TfComponentMode.Update
@@ -562,7 +563,7 @@ public partial class TfService : ITfService
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var allPages = GetSpacePages(spacePage.SpaceId);
-
+				var space = GetSpace(spacePage.SpaceId);
 				new TfSpacePageValidator(allPages)
 					.ValidateDelete(spacePage)
 					.ToValidationException()
@@ -631,8 +632,8 @@ public partial class TfService : ITfService
 							{
 								var context = new TfSpacePageAddonContext
 								{
-									SpaceId = pageToDelete.SpaceId,
-									SpacePageId = pageToDelete.Id,
+									SpacePage = pageToDelete,
+									Space = space,
 									ComponentOptionsJson = pageToDelete.ComponentOptionsJson,
 									Icon = pageToDelete.FluentIconName,
 									Mode = TfComponentMode.Update

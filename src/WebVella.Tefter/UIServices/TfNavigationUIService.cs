@@ -32,7 +32,6 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 	#region << Navigation >>
 	public async Task<TfNavigationState> GetNavigationStateAsync(NavigationManager navigator)
 	{
-
 		using (await _asyncLock.LockAsync())
 		{
 			if (_navState.Uri == navigator.Uri)
@@ -53,7 +52,8 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			_navState = navigator.GetRouteState();
 			var navMenu = new TfNavigationMenu();
 			navMenu.Uri = navigator.Uri;
-			if(_navState.RouteNodes is null || _navState.RouteNodes.Count == 0){ 
+			if (_navState.RouteNodes is null || _navState.RouteNodes.Count == 0)
+			{
 			}
 			else if (_navState.RouteNodes[0] == RouteDataNode.Admin)
 			{
@@ -363,115 +363,136 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			subNodeIconColor = TfColor.Gray400;
 			if (currentUser.IsAdmin)
 			{
-				rootMenu.Items.Add(new TfMenuItem()
 				{
-					Id = $"tf-space-link-{space.Id}",
-					IconCollapsed = TfConstants.GetIcon("Settings"),
-					IconExpanded = TfConstants.GetIcon("Settings"),
-					IconColor = subNodeIconColor,
-					Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.SpaceId == space.Id && routeState.RouteNodes.Count == 2,
-					Url = String.Format(TfConstants.SpaceManagePageUrl, space.Id),
-					Text = "Manage space",
-					Tooltip = "Manage space"
-				});
-				if (spaceData.Count > 0)
-				{
-					rootMenu.Items.Add(new TfMenuItem()
+					var parentNode = new TfMenuItem()
 					{
-						Id = $"tf-space-data-link-{space.Id}",
-						IconCollapsed = TfConstants.GetIcon("Database"),
-						IconExpanded = TfConstants.GetIcon("Database"),
+						Id = TfConverters.ConvertGuidToHtmlElementId(new Guid("f226fb6c-82cc-47cd-b2a3-e7e07b6f5c9d")),
+						Text = LOC["Space"],
+						Tooltip = LOC["the current space"],
+					};
+					parentNode.Items.Add(new TfMenuItem()
+					{
+						Id = $"tf-space-link-{space.Id}-manage",
+						IconCollapsed = TfConstants.GetIcon("Settings"),
+						IconExpanded = TfConstants.GetIcon("Settings"),
 						IconColor = subNodeIconColor,
-						Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.HasNode(RouteDataNode.SpaceData, 2) && routeState.SpaceId == space.Id,
-						Url = String.Format(TfConstants.SpaceDataPageUrl, space.Id, spaceData[0].Id),
-						Text = "Space data",
-						Tooltip = "Space data"
+						Url = String.Format(TfConstants.SpaceManagePageUrl, space.Id),
+						Text = LOC["Manage"],
+						Tooltip = LOC["Manage the current space settings"]
 					});
+					rootMenu.Items.Add(parentNode);
 				}
-				else
 				{
-					rootMenu.Items.Add(new TfMenuItem()
+					var parentNode = new TfMenuItem()
 					{
 						Id = $"tf-space-data-link-{space.Id}",
+						Text = LOC["Space Data"],
+						Tooltip = LOC["Datasets in this space"]
+					};
+					if (spaceData.Count > 0)
+					{
+						parentNode.Items.Add(new TfMenuItem()
+						{
+							Id = $"tf-space-data-link-{space.Id}-list",
+							IconCollapsed = TfConstants.GetIcon("List"),
+							IconExpanded = TfConstants.GetIcon("List"),
+							IconColor = subNodeIconColor,
+							Url = String.Format(TfConstants.SpaceDataPageUrl, space.Id, spaceData[0].Id),
+							Text = LOC["List data"],
+							Tooltip = LOC["browse all existing datasets"]
+						});
+					}
+					parentNode.Items.Add(new TfMenuItem()
+					{
+						Id = $"tf-space-data-link-{space.Id}-add",
 						IconCollapsed = TfConstants.GetIcon("Add"),
 						IconExpanded = TfConstants.GetIcon("Add"),
 						IconColor = subNodeIconColor,
 						Selected = false,
 						Url = String.Empty,
-						Text = LOC["space dataset"],
-						Tooltip = LOC["space dataset"],
+						Text = LOC["Create New"],
+						Tooltip = LOC["add new dataset to this space"],
 						Data = new TfMenuItemData
 						{
 							SpaceId = space.Id,
 							MenuType = TfMenuItemType.CreateSpaceData
 						}
 					});
+					rootMenu.Items.Add(parentNode);
 				}
-				if (spaceViews.Count > 0)
 				{
-					rootMenu.Items.Add(new TfMenuItem()
+					var parentNode = new TfMenuItem()
 					{
 						Id = $"tf-space-views-link-{space.Id}",
-						IconCollapsed = TfConstants.GetIcon("Table"),
-						IconExpanded = TfConstants.GetIcon("Table"),
-						IconColor = subNodeIconColor,
-						Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.HasNode(RouteDataNode.SpaceView, 2) && routeState.SpaceId == space.Id,
-						Url = String.Format(TfConstants.SpaceViewPageUrl, space.Id, spaceViews[0].Id),
-						Text = "Space views",
-						Tooltip = "Space views"
-					});
-				}
-				else
-				{
-					rootMenu.Items.Add(new TfMenuItem()
+						Text = LOC["Space Views"],
+						Tooltip = LOC["Views in this space"]
+					};
+					if (spaceViews.Count > 0)
 					{
-						Id = $"tf-space-views-link-{space.Id}",
+						parentNode.Items.Add(new TfMenuItem()
+						{
+							Id = $"tf-space-views-link-{space.Id}-list",
+							IconCollapsed = TfConstants.GetIcon("List"),
+							IconExpanded = TfConstants.GetIcon("List"),
+							IconColor = subNodeIconColor,
+							Url = String.Format(TfConstants.SpaceViewPageUrl, space.Id, spaceViews[0].Id),
+							Text = LOC["List views"],
+							Tooltip = LOC["browse all existing views"]
+						});
+					}
+					parentNode.Items.Add(new TfMenuItem()
+					{
+						Id = $"tf-space-views-link-{space.Id}-add",
 						IconCollapsed = TfConstants.GetIcon("Add"),
 						IconExpanded = TfConstants.GetIcon("Add"),
 						IconColor = subNodeIconColor,
-						Selected = false,
 						Url = String.Empty,
-						Text = LOC["space view"],
-						Tooltip = LOC["space view"],
+						Text = LOC["Create New"],
+						Tooltip = LOC["add new view to this space"],
 						Data = new TfMenuItemData
 						{
 							SpaceId = space.Id,
 							MenuType = TfMenuItemType.CreateSpaceView
 						}
 					});
+					rootMenu.Items.Add(parentNode);
 				}
-				if (spacePages.Count > 0)
 				{
-					rootMenu.Items.Add(new TfMenuItem()
+					var parentNode = new TfMenuItem()
 					{
 						Id = $"tf-space-pages-link-{space.Id}",
-						IconCollapsed = TfConstants.GetIcon("Document"),
-						IconExpanded = TfConstants.GetIcon("Document"),
-						IconColor = subNodeIconColor,
-						Selected = routeState.HasNode(RouteDataNode.Space, 0) && routeState.HasNode(RouteDataNode.Pages, 2) && routeState.SpaceId == space.Id,
-						Url = String.Format(TfConstants.SpaceManagePagesPageUrl, space.Id),
-						Text = "Space pages",
-						Tooltip = "Space pages"
-					});
-				}
-				else
-				{
-					rootMenu.Items.Add(new TfMenuItem()
+						Text = LOC["Space pages"],
+						Tooltip = LOC["Pages in this space"]
+					};
+					if (spacePages.Count > 0)
+					{
+						parentNode.Items.Add(new TfMenuItem()
+						{
+							Id = $"tf-space-pages-link-{space.Id}-list",
+							IconCollapsed = TfConstants.GetIcon("List"),
+							IconExpanded = TfConstants.GetIcon("List"),
+							IconColor = subNodeIconColor,
+							Url = String.Format(TfConstants.SpaceManagePagesPageUrl, space.Id),
+							Text = LOC["List pages"],
+							Tooltip = LOC["browse all existing pages"]
+						});
+					}
+					parentNode.Items.Add(new TfMenuItem()
 					{
 						Id = $"tf-space-{space.Id}-add-page",
 						IconCollapsed = TfConstants.GetIcon("Add"),
 						IconExpanded = TfConstants.GetIcon("Add"),
 						IconColor = subNodeIconColor,
-						Selected = false,
 						Url = String.Empty,
-						Text = LOC["space page"],
-						Tooltip = LOC["space page"],
+						Text = LOC["Create New"],
+						Tooltip = LOC["add new page to this space"],
 						Data = new TfMenuItemData
 						{
 							SpaceId = space.Id,
 							MenuType = TfMenuItemType.CreateSpacePage
 						}
 					});
+					rootMenu.Items.Add(parentNode);
 				}
 			}
 			menuItems.Add(rootMenu);

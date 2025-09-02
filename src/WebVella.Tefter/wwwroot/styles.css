@@ -462,19 +462,6 @@ fluent-button {
   background-color: var(--tf-white) !important;
   border-radius: var(--tf-border-radius-xl);
   color: var(--tf-font-color-base);
-  /*	&.outline {
-		svg {
-			--neutral-foreground-rest: var(--accent-fill-rest);
-			fill: var(--accent-fill-rest) !important;
-		}
-	}
-
-	&.accent {
-		svg {
-			--neutral-foreground-rest: var(--tf-white);
-			fill: var(--tf-white);
-		}
-	}*/
 }
 fluent-button::part(control):focus-visible {
   outline: none !important;
@@ -1106,6 +1093,9 @@ fluent-dialog .tf-divider,
 .tf-grid tbody tr.tf-grid-tr--selected .tf-grid-td-selection {
   display: block;
 }
+.tf-grid tbody tr.tf-grid-tr--selected .tf-grid-td-hover {
+  background: var(--tf-blue-300);
+}
 .tf-grid tbody tr:hover .tf-grid-td-hover {
   display: block;
 }
@@ -1385,10 +1375,22 @@ fluent-dialog .tf-divider,
   color: var(--tf-font-color-mute);
   border-radius: 0;
 }
+.tf-header fluent-menu fluent-menu-item {
+  /*			&::part(start) {
+				position: relative;
+				top: 1px !important;
+			}
+
+			&::part(end) {
+				position: relative;
+				top: 1px !important;
+			}*/
+}
 .tf-header fluent-menu fluent-menu-item.active {
   background: color-mix(in srgb, var(--tf-layout-color) 30%, var(--tf-fill-color-dark) 70%);
 }
-.tf-header fluent-menu fluent-menu-item:hover {
+.tf-header fluent-menu fluent-menu-item:hover,
+.tf-header fluent-menu fluent-menu-item:active {
   background: var(--tf-fill-color-dark-hover);
 }
 .tf-header fluent-menu fluent-menu-item::part(content) {
@@ -1396,14 +1398,6 @@ fluent-dialog .tf-divider,
 }
 .tf-header fluent-menu fluent-menu-item::part(expand-collapse-glyph-container) {
   color: var(--tf-font-color-dark-link);
-}
-.tf-header fluent-menu fluent-menu-item::part(start) {
-  position: relative;
-  top: 1px !important;
-}
-.tf-header fluent-menu fluent-menu-item::part(end) {
-  position: relative;
-  top: 1px !important;
 }
 .tf-hover-switch__unhover {
   display: block;

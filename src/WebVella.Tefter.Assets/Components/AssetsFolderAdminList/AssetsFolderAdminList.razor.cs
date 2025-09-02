@@ -52,8 +52,6 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 		}
 	}
 
-
-
 	private async Task _createFolderHandler()
 	{
 		var dialog = await DialogService.ShowDialogAsync<AssetsFolderManageDialog>(

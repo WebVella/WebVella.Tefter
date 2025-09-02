@@ -19,6 +19,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 	private ReadOnlyCollection<TfSpacePageAddonMeta> _pageComponents = default!;
 	private TfSpacePageAddonMeta? _selectedPageComponent = null;
 	private DynamicComponent typeSettingsComponent = default!;
+	private TfSpace _space = null;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -30,6 +31,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 		_pageComponents = TfMetaService.GetSpacePagesComponentsMeta();
+		_space = TfSpaceUIService.GetSpace(Content.SpaceId);
 		_parentNodeOptions = _getParents();
 		if (_isCreate)
 		{
@@ -176,7 +178,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 
 		var context = new TfSpacePageAddonContext();
 		context.Icon = _form.FluentIconName;
-		context.SpaceId = Content.SpaceId;
+		context.Space = _space;
 		context.ComponentOptionsJson = _form.ComponentOptionsJson;
 		context.Mode = _isCreate ? TfComponentMode.Create : TfComponentMode.Update;
 		dict["Context"] = context;

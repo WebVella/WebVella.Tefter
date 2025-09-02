@@ -24,10 +24,11 @@ public class TfSpacePageAddonMeta
 
 public class TfSpacePageAddonContext
 {
-	public Guid SpacePageId { get; set; }
-	public Guid SpaceId { get; set; }
-	public string Icon { get; set; }
-	public string ComponentOptionsJson { get; set; }
+	public TfSpacePage SpacePage { get; set; } = default!;
+	public TfSpace? Space { get; set; }
+	public TfUser CurrentUser { get; set; } = default!;
+	public string? Icon { get; set; }
+	public string? ComponentOptionsJson { get; set; }
 	public TfComponentMode Mode { get; set; }
 	public EventCallback EditNode { get; set; }
 	public EventCallback DeleteNode { get; set; }

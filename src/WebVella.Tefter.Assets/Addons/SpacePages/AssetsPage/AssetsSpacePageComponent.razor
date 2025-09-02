@@ -6,7 +6,7 @@
 {
 	@if (Context.Mode == TfComponentMode.Read)
 	{
-		<AssetsFolderComponent Folder="_folder" CurrentUser="@_currentUser"
+		<AssetsFolderComponent Folder="_folder" Context="@Context"
 							   DataIdentityValue="@_dataIdentityValue"
 							   Style="height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width)) !important" />
 	}

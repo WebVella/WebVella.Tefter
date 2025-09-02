@@ -1,7 +1,5 @@
 ﻿#region <--- USING DIRECTIVES --->
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using Fluxor;
-using Fluxor.Blazor.Web.ReduxDevTools;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.FluentUI.AspNetCore.Components;

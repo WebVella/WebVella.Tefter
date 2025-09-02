@@ -64,6 +64,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("TfSpaceViewPageComponent error: ComponentOptionsJson is null");
 		var jsonOptions = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(context.ComponentOptionsJson);
 		if (jsonOptions is null) throw new Exception("TfSpaceViewPageComponent error: options cannot be deserialized");
+		if(context.Space is null) throw new Exception("TfSpaceViewPageComponent error: Space not provided");
 		Guid? originalSpaceViewId = jsonOptions.SpaceViewId;
 		var tfService = serviceProvider.GetService<ITfService>();
 		if (jsonOptions.SetType == TfSpaceViewSetType.New)
@@ -84,7 +85,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 				Position = 1,
 				Presets = new List<TfSpaceViewPreset>(),
 				Settings = new TfSpaceViewSettings(),
-				SpaceId = context.SpaceId,
+				SpaceId = context.Space.Id,
 				Type = jsonOptions.Type,
 			};
 
@@ -119,8 +120,11 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 
 	protected override void OnInitialized()
 	{
-		_allSpaceView = TfSpaceViewUIService.GetSpaceViewsList(Context.SpaceId);
-		_allSpaceData = TfSpaceDataUIService.GetAllSpaceData(Context.SpaceId);
+		if (Context.Space is not null)
+		{
+			_allSpaceView = TfSpaceViewUIService.GetSpaceViewsList(Context.Space.Id);
+			_allSpaceData = TfSpaceDataUIService.GetAllSpaceData(Context.Space.Id);
+		}
 		_allDataProviders = TfDataProviderUIService.GetDataProviders();
 	}
 

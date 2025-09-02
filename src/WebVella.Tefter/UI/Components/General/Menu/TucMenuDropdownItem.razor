@@ -4,34 +4,12 @@
 @if (Item.Items.Count == 0)
 {
 	<FluentMenuItem Id="@Item.Id" OnClick="Item.OnClick" Class="@(Item.Selected ? "active" : "")"
-					AdditionalAttributes="@_attributes" Label="@TfConverters.StringOverflow(Item.Text, EllipsesLimit)">
-		@if (Item.Icon is not null)
+					AdditionalAttributes="@_attributes">
+		@if (!String.IsNullOrWhiteSpace(Item.Text))
 		{
-			<span slot="start">
-				@if (Item.Color is not null)
-				{
-					<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetAttribute().Value)" />
-				}
-
-				else
-				{
-					<FluentIcon Value="@Item.Icon" />
-				}
+			<span class="tf-menu__item__text" title="@Item.Text">
+				@TfConverters.StringOverflow(Item.Text, EllipsesLimit)
 			</span>
-		}
-@* 		@if (Item.Color is not null)
-		{
-			<span class="tf-menu__item__color" style="@($"background-color:{Item.Color.GetAttribute().Value}")"></span>
-		} *@
-	</FluentMenuItem>
-}
-else
-{
-	<FluentMenuItem Id="@Item.Id" Class="@(Item.Selected ? "active" : "")"
-					OnClick="Item.OnClick"
-					AdditionalAttributes="@_attributes"
-					Label="@TfConverters.StringOverflow(Item.Text, EllipsesLimit)">
-		<ChildContent>
 			@if (Item.Icon is not null)
 			{
 				<span slot="start">
@@ -46,10 +24,62 @@ else
 					}
 				</span>
 			}
-@* 			@if (Item.Color is not null)
+		}
+
+		else if (Item.Icon is not null)
+		{
+			@if (Item.Color is not null)
 			{
-				<span class="tf-menu__item__color" style="@($"background-color:{Item.Color.GetAttribute().Value}")"></span>
-			} *@
+				<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetAttribute().Value)" />
+			}
+
+			else
+			{
+				<FluentIcon Value="@Item.Icon" />
+			}
+		}
+
+	</FluentMenuItem>
+}
+else
+{
+	<FluentMenuItem Id="@Item.Id" Class="@(Item.Selected ? "active" : "")"
+					OnClick="Item.OnClick"
+					AdditionalAttributes="@_attributes">
+		<ChildContent>
+			@if (!String.IsNullOrWhiteSpace(Item.Text))
+			{
+				<span class="tf-menu__item__text" title="@Item.Text">
+					@TfConverters.StringOverflow(Item.Text, EllipsesLimit)
+				</span>
+				@if (Item.Icon is not null)
+				{
+					<span slot="start">
+						@if (Item.Color is not null)
+						{
+							<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetAttribute().Value)" />
+						}
+
+						else
+						{
+							<FluentIcon Value="@Item.Icon" />
+						}
+					</span>
+				}
+			}
+			else if (Item.Icon is not null)
+			{
+				@if (Item.Color is not null)
+				{
+					<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetAttribute().Value)" />
+				}
+
+				else
+				{
+					<FluentIcon Value="@Item.Icon" />
+				}
+			}
+
 		</ChildContent>
 		<MenuItems>
 			@foreach (var node in Item.Items)

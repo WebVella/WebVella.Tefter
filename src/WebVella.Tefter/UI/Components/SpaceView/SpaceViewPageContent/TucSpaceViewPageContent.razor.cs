@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewPageContent.TucSpaceViewPageContent", "WebVella.Tefter")]
 public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 {
 	// Dependency Injection
@@ -9,6 +8,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] private ITfMetaUIService TfMetaUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
+	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 
 	// State
 	private DotNetObjectReference<TucSpaceViewPageContent> _objectRef;
@@ -111,15 +111,20 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 			else
 				_navState = navState;
+
+			if (Context is null)
+				throw new Exception("Context cannot be null");
 			Guid? oldViewId = _spaceView is not null ? _spaceView.Id : null;
 			_spaceView = null;
 			if (_navState.SpaceId is null || _navState.SpacePageId is null)
 				return;
 
-			_spacePage = TfSpaceUIService.GetSpacePage(_navState.SpacePageId.Value);
+			_spacePage = Context!.SpacePage;
 			if (_spacePage is null || _spacePage.SpaceId != _navState.SpaceId.Value)
 				return;
-
+			_space = Context!.Space;
+			if (_space is null)
+				return;
 			if (_spacePage.Type != TfSpacePageType.Page && _spacePage.ComponentType.FullName != typeof(TucSpaceViewSpacePageAddon).FullName)
 				return;
 			var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(_spacePage.ComponentOptionsJson);
@@ -132,12 +137,10 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			if (oldViewId != options.SpaceViewId.Value)
 			{
 				_contextData = new();
-				_space = TfSpaceUIService.GetSpace(_spaceView.SpaceId);
 				_spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
 				_selectedDataRows = new();
 			}
-			_currentUser = await TfUserUIService.GetCurrentUserAsync()
-				?? throw new Exception("User cannot be null");
+			_currentUser = Context!.CurrentUser;
 			_page = _navState.Page ?? 1;
 			_pageSize = _navState.PageSize ?? TfConstants.PageSize;
 			_spaceViewColumns = TfSpaceViewUIService.GetViewColumns(_spaceView.Id);
@@ -557,7 +560,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	[JSInvokable("OnColumnSort")]
 	public async void OnColumnSort(int position, bool hasShift)
 	{
-		if(_isDataLoading == true) return;
+		if (_isDataLoading == true) return;
 		var column = _spaceViewColumns.SingleOrDefault(x => x.Position == position);
 		if (column is null) return;
 		var sorts = TfUserUIService.CalculateViewPresetSortPersonalization(
