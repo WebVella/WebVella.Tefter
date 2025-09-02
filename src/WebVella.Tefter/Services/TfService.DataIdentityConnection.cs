@@ -16,6 +16,10 @@ public partial interface ITfService
 
 	public void DeleteDataIdentityConnection(
 		TfDataIdentityConnection dataIdentityConnection);
+
+	public void DeleteDataIdentityConnection(
+		string dataIdentity,
+		string identityValue);
 }
 
 public partial class TfService : ITfService
@@ -170,6 +174,31 @@ public partial class TfService : ITfService
 		}
 	}
 
+	public void DeleteDataIdentityConnection(
+		string dataIdentity,
+		string identityValue )
+	{
+		try
+		{
+			new TfDataIdentityConnectionValidator(this)
+				.ValidateDelete(dataIdentity,identityValue)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
+
+			_dbService.ExecuteSqlNonQueryCommand("DELETE FROM tf_data_identity_connection " +
+					" WHERE" +
+					" ( data_identity_1 = @data_identity  AND value_1 = @value ) " +
+					" OR " +
+					" ( data_identity_2 = @data_identity  AND value_2 = @value ) ",
+					new NpgsqlParameter<string>("data_identity", dataIdentity),
+					new NpgsqlParameter<string>("value", identityValue));
+
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
 
 	#region <--- validation --->
 
@@ -253,16 +282,16 @@ public partial class TfService : ITfService
 
 			});
 
-			RuleSet("delete", () =>
-			{
-				RuleFor(dataIdentityConnection => dataIdentityConnection)
-				.Must((dataIdentityConnection) =>
-				{
-					return _tfService.DataIdentityConnectionExists(dataIdentityConnection);
-				})
-				.WithMessage("Data identity connection does not exist.");
+			//RuleSet("delete", () =>
+			//{
+			//	RuleFor(dataIdentityConnection => dataIdentityConnection)
+			//	.Must((dataIdentityConnection) =>
+			//	{
+			//		return _tfService.DataIdentityConnectionExists(dataIdentityConnection);
+			//	})
+			//	.WithMessage("Data identity connection does not exist.");
 
-			});
+			//});
 
 		}
 
@@ -290,6 +319,21 @@ public partial class TfService : ITfService
 			{
 				options.IncludeRuleSets("general", "delete");
 			});
+		}
+
+		public ValidationResult ValidateDelete(
+			string dataIdentity,
+			string identityValue )
+		{
+			if (string.IsNullOrWhiteSpace(dataIdentity))
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The data identity is not specified.") });
+
+			if (string.IsNullOrWhiteSpace(identityValue))
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The identity value is not specified.") });
+
+			return new ValidationResult();
 		}
 	}
 
