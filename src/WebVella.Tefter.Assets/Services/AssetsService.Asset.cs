@@ -168,7 +168,7 @@ FROM assets_asset aa
 	LEFT OUTER JOIN sk_identity_info sk ON aa.id = sk.id
     LEFT OUTER JOIN sk_identity_filter sf ON aa.id = sf.id
 WHERE ( @folder_id IS NULL OR aa.folder_id = @folder_id ) AND
-	  ( @x_search IS NULL OR aa.x_search ILIKE '%' + @x_search + '%' ) AND
+	  ( @x_search IS NULL OR aa.x_search ILIKE CONCAT ('%', @x_search, '%')  ) AND
 	  sf.id is not null AND sk.id is not null
 ORDER BY aa.created_on DESC;";
 
@@ -191,7 +191,7 @@ ORDER BY aa.created_on DESC;";
             x_search,
             DbType.String);
 
-        var dt = _dbService.ExecuteSqlQueryCommand(SQL, folderIdPar, skIdPar);
+        var dt = _dbService.ExecuteSqlQueryCommand(SQL, folderIdPar, skIdPar, skXSearch);
 
 		return ToAssetList(dt);
 	}
