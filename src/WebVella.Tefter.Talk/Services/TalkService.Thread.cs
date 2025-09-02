@@ -56,20 +56,21 @@ internal partial class TalkService : ITalkService
 		Guid channelId = (Guid)dt.Rows[0]["channel_id"];
 
 		var threads = GetThreads(channelId, dataIdentityValue: null);
+        return threads.SingleOrDefault(x => x.Id == id);
 
-		var threadsAsFlatList = new List<TalkThread>();
+        //var threadsAsFlatList = new List<TalkThread>();
 
-		foreach (var thread in threads)
-		{
-			threadsAsFlatList.Add(thread);
-			foreach (var subThread in thread.SubThread)
-				threadsAsFlatList.Add(subThread);
-		}
+        //foreach (var thread in threads)
+        //{
+        //	threadsAsFlatList.Add(thread);
+        //	foreach (var subThread in thread.SubThread)
+        //		threadsAsFlatList.Add(subThread);
+        //}
 
-		return threadsAsFlatList.SingleOrDefault(x => x.Id == id);
-	}
+        //return threadsAsFlatList.SingleOrDefault(x => x.Id == id);
+    }
 
-	public List<TalkThread> GetThreads(
+    public List<TalkThread> GetThreads(
 		Guid channelId,
 		string dataIdentityValue = null)
 	{
@@ -190,20 +191,6 @@ ORDER BY tt.created_on DESC";
 
 		return ToThreadList(dt);
 	}
-
-	//public TalkThread CreateThread(
-	//	CreateTalkThreadWithRowIdModel asset)
-	//{
-	//	//TODO RUMEN: Implement this case here as it cannot be skipped.
-	//	//It needs to get the data identity values by its own, based on 
-	//	//provider, rowIds, folder id(data identity)
-	//	throw new NotImplementedException();
-
-	//	//Do not forget to add
-	//	//var createdThread = GetThread(id);
-	//	//ThreadCreated?.Invoke(this,createdThread);
-	//	//return createdThread;
-	//}
 
     public TalkThread CreateThread(
         CreateTalkThreadWithRowIdModel thread)
