@@ -130,7 +130,7 @@
 								<div class="asset-item__action">
 									<FluentButton OnClick="@(_=> _actionMenuIdOpened = asset.Id)" StopPropagation="true"
 												  Id="@($"tf-{asset.Id}")" Style="@(_actionMenuIdOpened == asset.Id ? "visibility:visible;" : "")"
-												  Appearance="@Appearance.Stealth" IconStart="@TfConstants.GetIcon("MoreVertical").WithColor(Color.Neutral)" />
+												  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("MoreVertical")" />
 									<FluentMenu UseMenuService="true"
 												Open="(_actionMenuIdOpened == asset.Id)"
 												OpenChanged="@(x => _actionMenuIdOpened = x ? asset.Id : null)"

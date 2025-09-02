@@ -7,7 +7,9 @@
 </FluentStack>
 @if (_folders.Count == 0)
 {
-	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No folders created yet")</FluentMessageBar>
+	<div style="margin:var(--tf-layout-content-padding)">
+		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No folders created yet")</FluentMessageBar>
+	</div>
 }
 else
 {
@@ -28,9 +30,9 @@ else
 					<td class="tf-grid-td">
 						<div>
 							<FluentStack>
-								<FluentButton Title="@LOC("edit channel")" OnClick="@(_=> _editFolderHandler(context))"
+								<FluentButton Title="@LOC("edit channel")" OnClick="@(_ => _editFolderHandler(context))"
 											  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")" />
-								<FluentButton Title="@LOC("delete channel")" OnClick="@(_=> _deleteFolderHandler(context))" Appearance="@Appearance.Outline"
+								<FluentButton Title="@LOC("delete channel")" OnClick="@(_ => _deleteFolderHandler(context))" Appearance="@Appearance.Outline"
 											  IconStart="@TfConstants.GetIcon("Delete").WithColor(Color.Error)" />
 							</FluentStack>
 						</div>

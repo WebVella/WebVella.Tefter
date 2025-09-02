@@ -10,7 +10,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 	public void Dispose()
 	{
 		TfDataIdentityUIService.DataIdentityUpdated -= On_DataIdentityUpdated;
-	TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -18,7 +18,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 		await base.OnInitializedAsync();
 		await _init();
 		TfDataIdentityUIService.DataIdentityUpdated += On_DataIdentityUpdated;
-	TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_DataIdentityUpdated(object? caller, TfDataIdentity args)

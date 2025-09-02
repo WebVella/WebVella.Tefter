@@ -40,8 +40,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 			_navState = navState;
 		try
 		{
-			if (_navState.SpacePageId.HasValue &&
-			(_spacePage is null || _spacePage.Id == _navState.SpacePageId))
+			if (_navState.SpacePageId.HasValue && _spacePage?.Id != _navState.SpacePageId)
 			{
 				_spacePage = TfSpaceUIService.GetSpacePage(_navState.SpacePageId.Value);
 			}

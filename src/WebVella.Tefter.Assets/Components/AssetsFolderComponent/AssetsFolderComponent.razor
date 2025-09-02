@@ -1,124 +1,108 @@
-﻿@* @namespace WebVella.Tefter.Assets.Components
+﻿@namespace WebVella.Tefter.Assets.Components
+@using WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
 @if (_isLoading)
 {
-	<TfLayoutBodyMain>
-		<TfLoadingPane />
-	</TfLayoutBodyMain>
+	<TucLoadingPane />
 }
-else if (_folder is null)
+else if (Folder is null)
 {
-	<TfLayoutBodyMain>
-		<Header>
-			<TfPageHeader>@LOC("Error")</TfPageHeader>
-		</Header>
-		<ChildContent>
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No assets folder is selected for this view column!")</FluentMessageBar>
-		</ChildContent>
-	</TfLayoutBodyMain>
+	<div style="margin:var(--tf-layout-content-padding)">
+		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No assets folder is selected for this page!")</FluentMessageBar>
+	</div>
 }
-else if (String.IsNullOrWhiteSpace(_folder.JoinKey))
+else if (String.IsNullOrWhiteSpace(Folder.DataIdentity))
 {
-	<TfLayoutBodyMain>
-		<Header>
-			<TfPageHeader>@LOC("Error")</TfPageHeader>
-		</Header>
-		<ChildContent>
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The assets folder has no join key set!")</FluentMessageBar>
-		</ChildContent>
-	</TfLayoutBodyMain>
-}
-else if (String.IsNullOrWhiteSpace(JoinKeyValue))
-{
-	<TfLayoutBodyMain>
-		<Header>
-			<TfPageHeader>@LOC("Error")</TfPageHeader>
-		</Header>
-		<ChildContent>
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("Join key value is not provided!")</FluentMessageBar>
-		</ChildContent>
-	</TfLayoutBodyMain>
+	<div style="margin:var(--tf-layout-content-padding)">
+		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The assets folder has no data identity!")</FluentMessageBar>
+	</div>
 }
 else
 {
-	<TfLayoutBodyMain>
-		<Header>
-			<TfPageHeader>@_folder.Name</TfPageHeader>
-		</Header>
-		<HeaderAside>
-			<FluentButton Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Document")"
-						  OnClick="_addFile" Style="margin-right:10px;">@LOC("Add file")</FluentButton>
-			<FluentButton Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Link")"
-						  OnClick="_addLink">@LOC("Add link")</FluentButton>
-		</HeaderAside>
+	<TucPageLayout ShowToolbar=@(_items.Count > 0) Title="@Folder.Name" Icon="@TfConstants.GetIcon("Table")" Color="@_space!.Color">
 		<Toolbar>
-			<FluentSearch Placeholder="@LOC("search...")" AutoComplete="off" Value="@_search" ValueChanged="_searchValueChanged" />
+			<div class="tf-content-toolbar">
+				<div class="tf-content-toolbar__left">
+				</div>
+				<div class="tf-content-toolbar__right">
+					<FluentSearch Placeholder="@LOC("search...")" AutoComplete="off" Value="@_search" ValueChanged="_searchValueChanged" Style="margin-right:1rem" />
+					<FluentButton Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Document")"
+								  OnClick="_addFile" Style="margin-right:10px;">@LOC("Add file")</FluentButton>
+					<FluentButton Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Link")"
+								  OnClick="_addLink">@LOC("Add link")</FluentButton>
+				</div>
+			</div>
+			@* <FluentStack VerticalAlignment="@VerticalAlignment.Center" HorizontalAlignment="@HorizontalAlignment.Right" Style="height:100%">
+
+			</FluentStack> *@
 		</Toolbar>
 		<ChildContent>
-			@if (_items.Count == 0)
-			{
-				<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No assets in this folder yet")</FluentMessageBar>
-			}
-			<div class="items-wrapper">
-				@foreach (var asset in _items)
+			<div style="margin:var(--tf-layout-content-padding)">
+				@if (_items.Count == 0)
 				{
-					var assetMeta = _getAssetMeta(asset);
+					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No assets in this folder yet")</FluentMessageBar>
 
-					<div class="asset-item" @key=@asset.Id>
-						<div class="asset-item__icon">
-							@if (!String.IsNullOrWhiteSpace(assetMeta.FavIcon))
-							{
-								<div class="image-wrapper">
-									<img src="@assetMeta.FavIcon" alt="" />
-								</div>
-							}
-							else
-							{
-								<FluentIcon Value="@assetMeta.Icon" />
-							}
-						</div>
-						<a href="@assetMeta.Url" target="_blank" class="asset-item__meta">
-							<div class="asset-item__meta__title">@assetMeta.Title</div>
-							<div class="asset-item__meta__description">@((MarkupString)assetMeta.Description)</div>
-						</a>
-						<div class="asset-item__action">
-							<FluentButton OnClick="@(_=> _actionMenuIdOpened = asset.Id)" StopPropagation="true"
-										  Id="@($"tf-{asset.Id}")" Style="@(_actionMenuIdOpened == asset.Id ? "visibility:visible;" : "")"
-										  Appearance="@Appearance.Stealth" IconStart="@TfConstants.GetIcon("MoreVertical").WithColor(Color.Neutral)" />
-							<FluentMenu UseMenuService="true"
-										Open="(_actionMenuIdOpened == asset.Id)"
-										OpenChanged="@(x => _actionMenuIdOpened = x ? asset.Id : null)"
-										Anchor="@($"tf-{asset.Id}")">
-								<FluentMenuItem OnClick="@(_=> _deleteAsset(asset))">
-									<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(Color.Error)" Slot="start" />
-									<FluentLabel>@LOC("Delete")</FluentLabel>
-								</FluentMenuItem>
-								<FluentMenuItem OnClick="@(_=> _editAsset(asset))">
-									<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
-									<FluentLabel>@LOC("Update")</FluentLabel>
-								</FluentMenuItem>
-								<FluentMenuItem OnClick="@(_=> _getAsset(asset))">
-									@if (asset.Type == AssetType.File)
-									{
-										<FluentIcon Value="@TfConstants.GetIcon("ArrowDownload")" Slot="start" />
-										<FluentLabel>@LOC("Download")</FluentLabel>
-									}
-									else
-									{
-										<FluentIcon Value="@TfConstants.GetIcon("GlobeSearch")" Slot="start" />
-										<FluentLabel>@LOC("Browse URL")</FluentLabel>
-									}
-
-								</FluentMenuItem>
-							</FluentMenu>
-						</div>
-					</div>
 				}
+				<div class="items-wrapper">
+					@foreach (var asset in _items)
+					{
+						var assetMeta = _getAssetMeta(asset);
+
+						<div class="asset-item" @key=@asset.Id>
+							<div class="asset-item__icon">
+								@if (!String.IsNullOrWhiteSpace(assetMeta.FavIcon))
+								{
+									<div class="image-wrapper">
+										<img src="@assetMeta.FavIcon" alt="" />
+									</div>
+								}
+								else
+								{
+									<FluentIcon Value="@assetMeta.Icon" />
+								}
+							</div>
+							<a href="@assetMeta.Url" target="_blank" class="asset-item__meta">
+								<div class="asset-item__meta__title">@assetMeta.Title</div>
+								<div class="asset-item__meta__description">@((MarkupString)assetMeta.Description)</div>
+							</a>
+							<div class="asset-item__action">
+								<FluentButton OnClick="@(_ => _actionMenuIdOpened = asset.Id)" StopPropagation="true"
+											  Id="@($"tf-{asset.Id}")" Style="@(_actionMenuIdOpened == asset.Id ? "visibility:visible;" : "")"
+											  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("MoreVertical")" />
+								<FluentMenu UseMenuService="true"
+											Open="(_actionMenuIdOpened == asset.Id)"
+											OpenChanged="@(x => _actionMenuIdOpened = x ? asset.Id : null)"
+											Anchor="@($"tf-{asset.Id}")">
+									<FluentMenuItem OnClick="@(_ => _deleteAsset(asset))">
+										<FluentIcon Value="@TfConstants.GetIcon("Delete").WithColor(Color.Error)" Slot="start" />
+										<FluentLabel>@LOC("Delete")</FluentLabel>
+									</FluentMenuItem>
+									<FluentMenuItem OnClick="@(_ => _editAsset(asset))">
+										<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
+										<FluentLabel>@LOC("Update")</FluentLabel>
+									</FluentMenuItem>
+									<FluentMenuItem OnClick="@(_ => _getAsset(asset))">
+										@if (asset.Type == AssetType.File)
+										{
+											<FluentIcon Value="@TfConstants.GetIcon("ArrowDownload")" Slot="start" />
+											<FluentLabel>@LOC("Download")</FluentLabel>
+										}
+										else
+										{
+											<FluentIcon Value="@TfConstants.GetIcon("GlobeSearch")" Slot="start" />
+											<FluentLabel>@LOC("Browse URL")</FluentLabel>
+										}
+
+									</FluentMenuItem>
+								</FluentMenu>
+							</div>
+						</div>
+					}
+				</div>
 			</div>
 		</ChildContent>
-	</TfLayoutBodyMain>
+	</TucPageLayout>
 }
 
 
- *@

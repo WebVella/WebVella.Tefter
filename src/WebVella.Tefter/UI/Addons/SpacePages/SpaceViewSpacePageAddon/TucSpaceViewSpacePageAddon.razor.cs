@@ -1,6 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Addons;
 
-[LocalizationResource("WebVella.Tefter.Web.Addons.SpacePages.SpaceViewSpacePageAddon.TfSpaceViewSpacePageAddon", "WebVella.Tefter")]
 public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 {
 	#region << Render Injects >>

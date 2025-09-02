@@ -1,71 +1,69 @@
-﻿@* @namespace WebVella.Tefter.Assets.Addons
+﻿@namespace WebVella.Tefter.Assets.Addons
+@using WebVella.Tefter.UI.Components
 @inherits TucBaseSpacePageComponent
 
-@if (Context.Mode == TfComponentMode.Read)
+@if (_isLoaded)
 {
-	<AssetsFolderComponent FolderId="_options.FolderId" CurrentUser="@TfUserState.Value.CurrentUser"
-						   JoinKeyValue="@_getJoinKeyValue()" 
-						   Style="height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width)) !important" />
+	@if (Context.Mode == TfComponentMode.Read)
+	{
+		<AssetsFolderComponent Folder="_folder" CurrentUser="@_currentUser"
+							   DataIdentityValue="@_dataIdentityValue"
+							   Style="height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width)) !important" />
+	}
+	else if (Context.Mode == TfComponentMode.Create || Context.Mode == TfComponentMode.Update)
+	{
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentSelect OptionSelected="(x => x.Id == _optionsFolder?.Id)"
+							  SelectedOption="@_optionsFolder"
+							  SelectedOptionChanged="_optionsFolderChangeHandler"
+							  TOption="AssetsFolder"
+							  Items="@_folders" Style="width:100%"
+							  OptionValue="@((p)=> p.Id.ToString())"
+							  Placeholder="@LOC("select..")"
+							  OptionText="@(p => p.Name)" Label="@LOC("Select folder")"
+							  Class="@GetValidationCssClass(nameof(_options.FolderId))" />
+				<TucValidationMessage Field="@(nameof(_options.FolderId))" Errors="ValidationErrors" />
+			</FluentGridItem>
+			<FluentGridItem xs="6">
+				<FluentSelect OptionSelected="(x => x == _options.ViewType)"
+							  @bind-SelectedOption="@_options.ViewType"
+							  TOption="AssetsFolderViewType"
+							  Items="@(Enum.GetValues<AssetsFolderViewType>())" Style="width:100%"
+							  OptionValue="@((p)=> ((int)p).ToString())"
+							  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Folder presentation")"
+							  Class="@GetValidationCssClass(nameof(_options.ViewType))" />
+				<TucValidationMessage Field="@(nameof(_options.ViewType))" Errors="ValidationErrors" />
+			</FluentGridItem>
+		</FluentGrid>
+
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentSelect OptionSelected="(x => x == _options.DataIdentityValueType)"
+							  @bind-SelectedOption="@_options.DataIdentityValueType"
+							  TOption="AssetsFolderDataIdentityValueType"
+							  Items="@(Enum.GetValues<AssetsFolderDataIdentityValueType>())" Style="width:100%"
+							  OptionValue="@((p)=> ((int)p).ToString())"
+							  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Data Identity value")"
+							  Class="@GetValidationCssClass(nameof(_options.DataIdentityValueType))" />
+				<TucValidationMessage Field="@(nameof(_options.DataIdentityValueType))" Errors="ValidationErrors" />
+			</FluentGridItem>
+			<FluentGridItem xs="6">
+				@if (_options.DataIdentityValueType == AssetsFolderDataIdentityValueType.CustomString)
+				{
+					<FluentTextField TextFieldType="@TextFieldType.Text"
+									 Placeholder="@LOC("empty string")"
+									 @bind-Value=@_options.CustomDataIdentityValue AutoComplete="off"
+									 Label="@LOC("Custom data identity type")" Style="width:100%" />
+					<TucValidationMessage Field="@(nameof(_options.FolderId))" Errors="ValidationErrors" />
+				}
+			</FluentGridItem>
+		</FluentGrid>
+
+		//view
+		//selected asset -> latest null, or id
+		//joinkey - space, space node (default), custom string
+
+	}
 }
-else if (Context.Mode == TfComponentMode.Create)
-{
-	<FluentGrid>
-		<FluentGridItem xs="6">
-			<FluentSelect OptionSelected="(x => x.Id == _optionsFolder?.Id)"
-						  SelectedOption="@_optionsFolder"
-						  SelectedOptionChanged="_optionsFolderChangeHandler"
-						  TOption="AssetsFolder"
-						  Items="@_folders" Style="width:100%"
-						  OptionValue="@((p)=> p.Id.ToString())"
-						  Placeholder="@LOC("select..")"
-						  OptionText="@(p => p.Name)" Label="@LOC("Select folder")"
-						  Class="@GetValidationCssClass(nameof(_options.FolderId))" />
-			<TfValidationMessage Field="@(nameof(_options.FolderId))" Errors="ValidationErrors" />
-		</FluentGridItem>
-		<FluentGridItem xs="6">
-			<FluentSelect OptionSelected="(x => x == _options.ViewType)"
-						  @bind-SelectedOption="@_options.ViewType"
-						  TOption="AssetsFolderViewType"
-						  Items="@(Enum.GetValues<AssetsFolderViewType>())" Style="width:100%"
-						  OptionValue="@((p)=> ((int)p).ToString())"
-						  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Folder presentation")"
-						  Class="@GetValidationCssClass(nameof(_options.ViewType))" />
-			<TfValidationMessage Field="@(nameof(_options.ViewType))" Errors="ValidationErrors" />
-		</FluentGridItem>
-	</FluentGrid>
 
-	<FluentGrid>
-		<FluentGridItem xs="6">
-			<FluentSelect OptionSelected="(x => x == _options.JoinKeyType)"
-						  @bind-SelectedOption="@_options.JoinKeyType"
-						  TOption="AssetsFolderJoinKeyType"
-						  Items="@(Enum.GetValues<AssetsFolderJoinKeyType>())" Style="width:100%"
-						  OptionValue="@((p)=> ((int)p).ToString())"
-						  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Join key value")"
-						  Class="@GetValidationCssClass(nameof(_options.JoinKeyType))" />
-			<TfValidationMessage Field="@(nameof(_options.JoinKeyType))" Errors="ValidationErrors" />
-		</FluentGridItem>
-		<FluentGridItem xs="6">
-			@if (_options.JoinKeyType == AssetsFolderJoinKeyType.CustomString)
-			{
-				<FluentTextField TextFieldType="@TextFieldType.Text"
-								 Placeholder="@LOC("empty string")"
-								 @bind-Value=@_options.CustomJoinKeyValue AutoComplete="off"
-								 Label="@LOC("Custom join key valye")" Style="width:100%" />
-				<TfValidationMessage Field="@(nameof(_options.FolderId))" Errors="ValidationErrors" />
-			}
-		</FluentGridItem>
-	</FluentGrid>
-
-	//view
-	//selected asset -> latest null, or id
-	//joinkey - space, space node (default), custom string
-
-}
-else
-{
-
-}
-
-
- *@

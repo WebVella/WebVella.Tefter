@@ -1,11 +1,11 @@
-﻿
+
 ::deep .items-wrapper {
 	display: flex;
 	flex-flow: column;
 }
 
 ::deep  .asset-item {
-	background: var(--neutral-fill-layer-hover);
+	background: var(--tf-white);
 	border: none;
 	flex: 1 1 auto;
 	display: flex;
@@ -16,7 +16,7 @@
 }
 
 	::deep .asset-item:hover {
-		background: var(--neutral-fill-layer-active);
+		background: var(--tf-fill-color-hover);
 	}
 
 ::deep  .asset-item__icon {
@@ -66,6 +66,13 @@
 		font-size: 0.75em;
 	}
 
+	::deep  .asset-item__meta__description .type.file {
+		color:var(--tf-green-500)
+	}
+
+	::deep  .asset-item__meta__description .type.link {
+		color:var(--tf-blue-500)
+	}
 
 ::deep  .asset-item__action {
 	flex: 0 0 auto;
@@ -79,18 +86,8 @@
 	visibility: visible;
 }
 
-::deep  .asset-item__action svg {
-	fill: var(--neutral-base-color) !important;
-}
-
 ::deep  .asset-item + .asset-item {
 	margin-top: 3px;
 }
 
-::deep  .asset-item fluent-button::part(control) {
-	background: transparent;
-}
 
-::deep  .asset-item fluent-button:hover::part(control) {
-	background: var(--neutral-layer-1);
-}

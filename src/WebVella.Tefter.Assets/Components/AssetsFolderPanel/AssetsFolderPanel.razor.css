@@ -1,4 +1,4 @@
-﻿/*Layout*/
+/*Layout*/
 
 ::deep .asset-panel {
 	height: 100vh;
@@ -147,6 +147,14 @@
 		font-size: 0.75em;
 	}
 
+	::deep .asset-panel__body .asset-item__meta__description .type.file {
+		color:var(--tf-green-500)
+	}
+
+	::deep .asset-panel__body .asset-item__meta__description .type.link {
+		color:var(--tf-blue-500)
+	}
+
 
 ::deep .asset-panel__body .asset-item__action {
 	flex: 0 0 auto;
@@ -160,22 +168,10 @@
 	visibility: visible;
 }
 
-::deep .asset-panel__body .asset-item__action svg {
-	fill: var(--neutral-base-color) !important;
-}
-
 ::deep .asset-panel__body .asset-item:hover {
 	background: var(--neutral-layer-3);
 }
 
 ::deep .asset-panel__body .asset-item + .asset-item {
 	margin-top: 3px;
-}
-
-::deep .asset-panel__body .asset-item fluent-button::part(control) {
-	background: transparent;
-}
-
-::deep .asset-panel__body .asset-item fluent-button:hover::part(control) {
-	background: var(--neutral-layer-1);
 }

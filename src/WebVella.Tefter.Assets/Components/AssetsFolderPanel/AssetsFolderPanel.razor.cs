@@ -207,6 +207,14 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 	private AssetsFolderPanelAssetMeta _getAssetMeta(Asset asset)
 	{
 		var result = new AssetsFolderPanelAssetMeta();
+		if(asset.Type == AssetType.File){ 
+			result.Description += $"<span class='type file'>{LOC("file")}</span>";
+			result.Description += $"<span class='divider'> | </span>";		
+		}
+		else{ 
+			result.Description += $"<span class='type link'>{LOC("link")}</span>";
+			result.Description += $"<span class='divider'> | </span>";		
+		}
 		if (asset.CreatedOn < asset.ModifiedOn)
 		{
 			result.Description += $"<span class='updated' title='{asset.ModifiedOn.ToString(TfConstants.DateHourFormat)} by {asset.ModifiedBy.Names}'>updated</span>";
