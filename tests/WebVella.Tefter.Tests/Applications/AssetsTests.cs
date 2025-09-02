@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Tests;
+﻿namespace WebVella.Tefter.Tests.Applications;
 
 using WebVella.Tefter.Assets.Models;
 using WebVella.Tefter.Assets.Services;
