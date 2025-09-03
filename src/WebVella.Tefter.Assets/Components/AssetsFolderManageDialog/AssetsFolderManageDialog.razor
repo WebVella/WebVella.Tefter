@@ -51,7 +51,7 @@
 								  Items="_sharedColumnsOptions"
 								  Height="@TfConstants.ComboPanelHeight"
 								  @bind-Value=@_form.CountSharedColumnName
-								  Label="@LOC("Shared column for count")" Style="width:100%" />
+								  Label="@LOC("Shared column for count (number types only)")" Style="width:100%" />
 					<FluentValidationMessage For="@(() => _form.CountSharedColumnName)" />
 				</FluentGridItem>
 

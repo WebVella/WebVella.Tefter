@@ -47,7 +47,7 @@ internal partial class TalkService : ITalkService
 
 	public List<TalkChannel> GetChannels()
 	{
-		var SQL = "SELECT * FROM talk_channel";
+		var SQL = "SELECT * FROM talk_channel ORDER BY name";
 
 		var dt = _dbService.ExecuteSqlQueryCommand(SQL);
 

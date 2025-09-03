@@ -31,7 +31,14 @@ public partial class AssetsFolderManageDialog : TfFormBaseComponent, IDialogCont
 
 		foreach (var item in dataIdentities)
 		{
-			_dataIdentityColumns[item.DataIdentity] = sharedColumns.Where(x => x.DataIdentity == item.DataIdentity).Select(x => x.DbName).Order().ToList();
+			_dataIdentityColumns[item.DataIdentity] =
+				sharedColumns
+				.Where(x => x.DataIdentity == item.DataIdentity 
+					&& (x.DbType == TfDatabaseColumnType.Number 
+						|| x.DbType == TfDatabaseColumnType.ShortInteger
+						|| x.DbType == TfDatabaseColumnType.Integer
+						|| x.DbType == TfDatabaseColumnType.LongInteger))
+				.Select(x => x.DbName).Order().ToList();
 		}
 		if (_isCreate)
 		{
