@@ -12,6 +12,7 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 	private List<EmailMessage> _messages = new();
 	private Guid? _submitingEmail = null;
 	private TfNavigationState _navState = new();
+	private FluentSearch? _refSearch = null;
 	public void Dispose()
 	{
 		EmailService.EmailCreated -= On_EmailChanged;
@@ -25,6 +26,15 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 		EmailService.EmailUpdated += On_EmailChanged;
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		if (firstRender && _refSearch != null)
+		{
+			_refSearch.FocusAsync();
+		}
+	}
+
 	private async void On_EmailChanged(object? caller, EmailMessage args)
 	{
 		await _init();

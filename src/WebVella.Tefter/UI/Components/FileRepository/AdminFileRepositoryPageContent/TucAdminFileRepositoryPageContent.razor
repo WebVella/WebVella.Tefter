@@ -1,41 +1,34 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout>
-	<div style="padding:var(--tf-layout-content-padding)">
-		<TucPageHeader Icon="@TfConstants.GetIcon("DocumentDatabase")" Area="@LOC("File Repository")"
-					   Title="@LOC("Files")" IconColor="TfConstants.AdminColor" />
-
-		<TucGridToolbar>
-			<ToolbarSearch>
-				<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@_search" AutoComplete="off" />
-			</ToolbarSearch>
-			<ToolbarRight>
-				<FluentStack VerticalAlignment="@VerticalAlignment.Center">
-					@if (progressPercent < 100)
-					{
-						<TucProgress Value="progressPercent" Visible="@(progressPercent > 0)" />
-					}
-					else
-					{
-						<div style="display:flex;flex:0 0 auto;align-items:center">
-							<FluentIcon Value="@TfConstants.GetIcon("Checkmark", variant: IconVariant.Filled)" Color="@Color.Success" />
-							<div>@LOC("file uploaded")</div>
-						</div>
-					}
-					<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0)"
-								  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">@LOC("Upload file")</FluentButton>
-				</FluentStack>
-				<FluentInputFile @ref="@fileUploader"
-								 DragDropZoneVisible="false"
-								 Mode="InputFileMode.SaveToTemporaryFolder"
-								 Multiple="false"
-								 AnchorId="@_uploadId"
-								 MaximumFileSize="@(100 * 1024 * 1024)"
-								 Accept="*"
-								 OnProgressChange="@_onProgress"
-								 OnCompleted="@_onCompleted" />
-			</ToolbarRight>
-		</TucGridToolbar>
+<TucPageLayout Icon="@TfConstants.GetIcon("DocumentDatabase")" Area="@LOC("File Repository")"
+			   Title="@LOC("Files")" Color="TfConstants.AdminColor">
+	<ToolbarRight>
+		@if (progressPercent < 100)
+		{
+			<TucProgress Value="progressPercent" Visible="@(progressPercent > 0)" />
+		}
+		else
+		{
+			<div style="display:flex;flex:0 0 auto;align-items:center">
+				<FluentIcon Value="@TfConstants.GetIcon("Checkmark", variant: IconVariant.Filled)" Color="@Color.Success" />
+				<div>@LOC("file uploaded")</div>
+			</div>
+		}
+		<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0)"
+					  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">@LOC("Upload file")</FluentButton>
+		<FluentInputFile @ref="@fileUploader"
+						 DragDropZoneVisible="false"
+						 Mode="InputFileMode.SaveToTemporaryFolder"
+						 Multiple="false"
+						 AnchorId="@_uploadId"
+						 MaximumFileSize="@(100 * 1024 * 1024)"
+						 Accept="*"
+						 OnProgressChange="@_onProgress"
+						 OnCompleted="@_onCompleted" />
+		<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@_search"
+					  AutoComplete="off" Style="margin-left:1rem;" @ref=_refSearch />
+	</ToolbarRight>
+	<ChildContent>
 		@if (String.IsNullOrWhiteSpace(_search) && (_items is null || _items.Count == 0))
 		{
 			<FluentMessageBar Title="@LOC("No Files")" AllowDismiss="false"
@@ -48,61 +41,58 @@
 		}
 		else
 		{
-			<div class="tf-grid-wrapper">
-				<table class="tf-grid">
-					<thead class="tf-grid-thead">
-						<tr class="tf-grid-thead-bkg"></tr>
-						<tr class="tf-grid-tr">
-							<th class="tf-grid-th" style="width:1%;min-width:1%;"></th>
-							<th class="tf-grid-th">name</th>
-							<th class="tf-grid-th" style="width:140px;min-width:140px;">created</th>
-							<th class="tf-grid-th">tefter URI</th>
+			<table class="tf-grid">
+				<thead class="tf-grid-thead">
+					<tr class="tf-grid-thead-bkg"></tr>
+					<tr class="tf-grid-tr">
+						<th class="tf-grid-th" style="width:1%;min-width:1%;"></th>
+						<th class="tf-grid-th">name</th>
+						<th class="tf-grid-th" style="width:140px;min-width:140px;">created</th>
+						<th class="tf-grid-th">tefter URI</th>
+					</tr>
+				</thead>
+				<tbody class="tf-grid-tbody">
+					@foreach (var context in _items)
+					{
+						<tr @key=context.Id class="tf-grid-tr">
+							<td class="tf-grid-td">
+								<div>
+									<FluentStack Wrap="false">
+										<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
+													  Title="@LOC("Change file content")" OnClick="@(()=> _editFile(context))" />
+										<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete column")"
+													  OnClick="@(() => _deleteFile(context))" IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" />
+										<FluentAnchor Appearance="@Appearance.Outline" Target="_blank"
+													  Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload")" />
+									</FluentStack>
+								</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>
+									<div>@context.Filename</div>
+								</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>
+									<div>@context.CreatedOn.ToString(TfConstants.DateHourFormat)</div>
+									@if (!context.LastModifiedOn.Equals(context.CreatedOn))
+									{
+										<div class="td-description" title="@LOC("last updated")">@context.LastModifiedOn.ToString(TfConstants.DateHourFormat)</div>
+									}
+								</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>
+									<div style="display:flex;align-items:center">
+										@context.Uri.ToString()
+										<FluentIcon Value="@TfConstants.GetIcon("Clipboard")" OnClick="@(_ => _copyUri(context))" Title="copy value" />
+									</div>
+								</div>
+							</td>
 						</tr>
-					</thead>
-					<tbody class="tf-grid-tbody">
-						@foreach (var context in _items)
-						{
-							<tr @key=context.Id class="tf-grid-tr">
-								<td class="tf-grid-td">
-									<div>
-										<FluentStack Wrap="false">
-											<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
-														  Title="@LOC("Change file content")" OnClick="@(()=> _editFile(context))" />
-											<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete column")"
-														  OnClick="@(() => _deleteFile(context))" IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" />
-											<FluentAnchor Appearance="@Appearance.Outline" Target="_blank"
-														  Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload")" />
-										</FluentStack>
-									</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>
-										<div>@context.Filename</div>
-									</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>
-										<div>@context.CreatedOn.ToString(TfConstants.DateHourFormat)</div>
-										@if (!context.LastModifiedOn.Equals(context.CreatedOn))
-										{
-											<div class="td-description" title="@LOC("last updated")">@context.LastModifiedOn.ToString(TfConstants.DateHourFormat)</div>
-										}
-									</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>
-										<div style="display:flex;align-items:center">
-											@context.Uri.ToString()
-											<FluentIcon Value="@TfConstants.GetIcon("Clipboard")" OnClick="@(_ => _copyUri(context))" Title="copy value" />
-										</div>
-									</div>
-								</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-
+					}
+				</tbody>
+			</table>
 		}
-	</div>
+	</ChildContent>
 </TucPageLayout>

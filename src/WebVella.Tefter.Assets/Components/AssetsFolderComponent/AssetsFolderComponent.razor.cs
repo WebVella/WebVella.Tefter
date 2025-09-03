@@ -23,7 +23,8 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 	private string _search = null;
 	private string _dataIdentityValue = null;
 	private Guid? _folderId = null;
-
+	private Guid? _pageId = null;
+	private FluentSearch? _refSearch = null;
 	public void Dispose()
 	{
 		AssetsService.AssetCreated -= On_AssetChanged;
@@ -41,6 +42,18 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		AssetsService.AssetUpdated += On_AssetChanged;
 		AssetsService.AssetDeleted += On_AssetChanged;
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		if (firstRender && _refSearch != null)
+		{
+			if (Context.SpacePage?.Id != _pageId)
+			{
+				_refSearch.FocusAsync();
+				_pageId = Context.SpacePage.Id;
+			}
+		}
 	}
 
 	protected override async Task OnParametersSetAsync()
@@ -81,6 +94,11 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 				search: _search);
 			_dataIdentityValue = DataIdentityValue;
 			_folderId = Folder.Id;
+			if (_pageId is not null && Context.SpacePage?.Id != _pageId)
+			{
+				_refSearch?.FocusAsync();
+				_pageId = Context.SpacePage?.Id;
+			}
 		}
 		finally
 		{

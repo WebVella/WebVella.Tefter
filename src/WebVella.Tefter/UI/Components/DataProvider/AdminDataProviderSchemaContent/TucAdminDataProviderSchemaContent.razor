@@ -1,141 +1,145 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucErrorBoundry>
-	<div style="padding:var(--tf-layout-content-padding)">
-		@if (String.IsNullOrWhiteSpace(UriInitialized))
-		{
-			<TucSkeletonPageHeader />
-		}
-		else if (_provider is null)
-		{
-			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-		}
-		else
-		{
-			<TucPageHeader Icon="@TfConstants.GetIcon("CloudDatabase")" Area="@LOC("Data Providers")"
-						   Title="@_provider.Name" SubTitle="@LOC("Columns")" IconColor="TfConstants.AdminColor" />
-
-
-			<TucCard Title="@LOC("Provider Columns")">
-				<ToolbarTemplate>
-					<FluentButton Appearance="@Appearance.Outline" OnClick="_importFromSource">
-						@LOC("Import from source")
-						<FluentIcon Value="@TfConstants.GetIcon("ArrowDownload")" Color="@Color.Accent" Slot="start" />
-					</FluentButton>
-					<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
-						@LOC("Add Column")
-						<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start" />
-					</FluentButton>
-				</ToolbarTemplate>
-				<ChildContent>
-					@if (_provider.Columns is null
-									|| _provider.Columns.Count == 0)
-					{
-						<FluentMessageBar Title="@LOC("No columns")" AllowDismiss="false"
-										  Intent="@MessageIntent.Info">@LOC("No columns are created yet for this data source")</FluentMessageBar>
-					}
-					else
-					{
-						<table class="tf-grid">
-							<thead class="tf-grid-thead">
-								<tr class="tf-grid-thead-bkg"></tr>
-								<tr class="tf-grid-tr">
-									<th class="tf-grid-th" style="min-width:110px;width:110px;"></th>
-									<th class="tf-grid-th" style="min-width:60px;width:60px;">sync</th>
-									<th class="tf-grid-th">name</th>
-									<th class="tf-grid-th">type</th>
-									<th class="tf-grid-th" style="min-width:120px;width:120px;">created on</th>
-									<th class="tf-grid-th">details</th>
-								</tr>
-							</thead>
-							<tbody class="tf-grid-tbody">
-								@foreach (var context in _provider.Columns.OrderBy(x => x.DbName))
-								{
-									<tr @key=context.Id class="tf-grid-tr">
-										<td class="tf-grid-td">
-											<div>
-												<FluentStack Wrap="false">
-													<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
-																  Title="@LOC("Edit column")" OnClick="@(()=> _editColumn(context))" />
-													<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteColumn(context))" Title="@LOC("Delete column")"
-																  Loading="@(_deletedColumnId == context.Id)" Disabled="@(_deletedColumnId is not null)"
-																  IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" />
-												</FluentStack>
-											</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>
-												@if (!String.IsNullOrWhiteSpace(context.SourceName))
-												{
-													<span title="@LOC("synchronized")" style="display:inline-block;width:100%;">
-														<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetAttribute().Value" Color="white" Style="width:100%">ON</FluentBadge>
-													</span>
-												}
-												else
-												{
-													<span title="@LOC("NOT synchronized")" style="display:inline-block;width:100%;">
-														<FluentBadge Appearance="Appearance.Neutral" Style="width:100%">OFF</FluentBadge>
-													</span>
-												}
-											</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>
-												<div>@context.DbName</div>
-												<div class="td-description">
-													@context.SourceName
-												</div>
-											</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>
-												<div>@TfDataProviderUIService.GetDatabaseColumnTypeInfo(context.DbType)</div>
-												@if (!String.IsNullOrWhiteSpace(context.SourceName))
-												{
-													<div class="td-description">@context.SourceType</div>
-												}
-											</div>
-										</td>
-										<td class="tf-grid-td">
-											<div title="@context.CreatedOn.ToShortDateString() @context.CreatedOn.ToShortTimeString()">@context.CreatedOn.ToShortDateString()</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>
-												<FluentStack>
-													@if (context.IsNullable)
-													{
-														<FluentBadge Appearance="@Appearance.Neutral">nullable</FluentBadge>
-													}
-													@if (context.IsUnique)
-													{
-														<FluentBadge Appearance="@Appearance.Neutral">unique</FluentBadge>
-													}
-													@if (context.IsSearchable)
-													{
-														<FluentBadge Appearance="@Appearance.Neutral">searchable [@context.PreferredSearchType.ToString()]</FluentBadge>
-													}
-													@if (context.IncludeInTableSearch)
-													{
-														<FluentBadge Appearance="@Appearance.Neutral">global search</FluentBadge>
-													}
-													@if (context.IsSortable)
-													{
-														<FluentBadge Appearance="@Appearance.Neutral">sortable</FluentBadge>
-													}
-													@if (context.AutoDefaultValue)
-													{
-														<FluentBadge Appearance="@Appearance.Neutral">autogenerated</FluentBadge>
-													}
-												</FluentStack>
-											</div>
-										</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					}
-				</ChildContent>
-			</TucCard>
-		}
-	</div>
-</TucErrorBoundry>
+<TucPageLayout Icon="@TfConstants.GetIcon("CloudDatabase")" Area="@LOC("Data Providers")"
+			   Title="@_provider?.Name" SubTitle="@LOC("Columns")" Color="TfConstants.AdminColor">
+	<ToolbarLeft>
+		<TucAdminDataProviderDetailsContentToolbar />
+	</ToolbarLeft>
+	<ChildContent>
+		<TucErrorBoundry>
+			<div style="padding:var(--tf-layout-content-padding)">
+				@if (String.IsNullOrWhiteSpace(UriInitialized))
+				{
+					<TucSkeletonPageHeader />
+				}
+				else if (_provider is null)
+				{
+					<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+				}
+				else
+				{
+					<TucCard Title="@LOC("Provider Columns")">
+						<ToolbarTemplate>
+							<FluentButton Appearance="@Appearance.Outline" OnClick="_importFromSource">
+								@LOC("Import from source")
+								<FluentIcon Value="@TfConstants.GetIcon("ArrowDownload")" Color="@Color.Accent" Slot="start" />
+							</FluentButton>
+							<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
+								@LOC("Add Column")
+								<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start" />
+							</FluentButton>
+						</ToolbarTemplate>
+						<ChildContent>
+							@if (_provider.Columns is null
+													|| _provider.Columns.Count == 0)
+							{
+								<FluentMessageBar Title="@LOC("No columns")" AllowDismiss="false"
+												  Intent="@MessageIntent.Info">@LOC("No columns are created yet for this data source")</FluentMessageBar>
+							}
+							else
+							{
+								<table class="tf-grid">
+									<thead class="tf-grid-thead">
+										<tr class="tf-grid-thead-bkg"></tr>
+										<tr class="tf-grid-tr">
+											<th class="tf-grid-th" style="min-width:110px;width:110px;"></th>
+											<th class="tf-grid-th" style="min-width:60px;width:60px;">sync</th>
+											<th class="tf-grid-th">name</th>
+											<th class="tf-grid-th">type</th>
+											<th class="tf-grid-th" style="min-width:120px;width:120px;">created on</th>
+											<th class="tf-grid-th">details</th>
+										</tr>
+									</thead>
+									<tbody class="tf-grid-tbody">
+										@foreach (var context in _provider.Columns.OrderBy(x => x.DbName))
+										{
+											<tr @key=context.Id class="tf-grid-tr">
+												<td class="tf-grid-td">
+													<div>
+														<FluentStack Wrap="false">
+															<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
+																		  Title="@LOC("Edit column")" OnClick="@(()=> _editColumn(context))" />
+															<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteColumn(context))" Title="@LOC("Delete column")"
+																		  Loading="@(_deletedColumnId == context.Id)" Disabled="@(_deletedColumnId is not null)"
+																		  IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" />
+														</FluentStack>
+													</div>
+												</td>
+												<td class="tf-grid-td">
+													<div>
+														@if (!String.IsNullOrWhiteSpace(context.SourceName))
+														{
+															<span title="@LOC("synchronized")" style="display:inline-block;width:100%;">
+																<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetAttribute().Value" Color="white" Style="width:100%">ON</FluentBadge>
+															</span>
+														}
+														else
+														{
+															<span title="@LOC("NOT synchronized")" style="display:inline-block;width:100%;">
+																<FluentBadge Appearance="Appearance.Neutral" Style="width:100%">OFF</FluentBadge>
+															</span>
+														}
+													</div>
+												</td>
+												<td class="tf-grid-td">
+													<div>
+														<div>@context.DbName</div>
+														<div class="td-description">
+															@context.SourceName
+														</div>
+													</div>
+												</td>
+												<td class="tf-grid-td">
+													<div>
+														<div>@TfDataProviderUIService.GetDatabaseColumnTypeInfo(context.DbType)</div>
+														@if (!String.IsNullOrWhiteSpace(context.SourceName))
+														{
+															<div class="td-description">@context.SourceType</div>
+														}
+													</div>
+												</td>
+												<td class="tf-grid-td">
+													<div title="@context.CreatedOn.ToShortDateString() @context.CreatedOn.ToShortTimeString()">@context.CreatedOn.ToShortDateString()</div>
+												</td>
+												<td class="tf-grid-td">
+													<div>
+														<FluentStack>
+															@if (context.IsNullable)
+															{
+																<FluentBadge Appearance="@Appearance.Neutral">nullable</FluentBadge>
+															}
+															@if (context.IsUnique)
+															{
+																<FluentBadge Appearance="@Appearance.Neutral">unique</FluentBadge>
+															}
+															@if (context.IsSearchable)
+															{
+																<FluentBadge Appearance="@Appearance.Neutral">searchable [@context.PreferredSearchType.ToString()]</FluentBadge>
+															}
+															@if (context.IncludeInTableSearch)
+															{
+																<FluentBadge Appearance="@Appearance.Neutral">global search</FluentBadge>
+															}
+															@if (context.IsSortable)
+															{
+																<FluentBadge Appearance="@Appearance.Neutral">sortable</FluentBadge>
+															}
+															@if (context.AutoDefaultValue)
+															{
+																<FluentBadge Appearance="@Appearance.Neutral">autogenerated</FluentBadge>
+															}
+														</FluentStack>
+													</div>
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							}
+						</ChildContent>
+					</TucCard>
+				}
+			</div>
+		</TucErrorBoundry>
+	</ChildContent>
+</TucPageLayout>

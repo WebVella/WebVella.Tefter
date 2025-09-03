@@ -1,161 +1,160 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucErrorBoundry>
-	<div style="padding:var(--tf-layout-content-padding)">
-		@if (String.IsNullOrWhiteSpace(UriInitialized))
-		{
-			<TucSkeletonPageHeader />
-		}
-		else if (_role is null)
-		{
-			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-		}
-		else
-		{
-			<TucPageHeader Icon="@TfConstants.GetIcon("Key")" IconColor="@TfConstants.AdminColor" Class="page-title"
-						   Area="@LOC("Roles")" Title="@_role.Name" />
+<TucPageLayout Icon="@TfConstants.GetIcon("Key")" Color="@TfConstants.AdminColor" Area="@LOC("Roles")" Title="@_role?.Name">
+	<TucErrorBoundry>
+		<div style="padding:var(--tf-layout-content-padding)">
+			@if (String.IsNullOrWhiteSpace(UriInitialized))
+			{
+				<TucSkeletonPageHeader />
+			}
+			else if (_role is null)
+			{
+				<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+			}
+			else
+			{
+				<TucCard Title="@LOC("Details")">
+					<ToolbarTemplate>
+						@if (_role.IsSystem)
+						{
+							<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be managed")">
+								@LOC("Locked")
+								<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
+							</FluentButton>
+						}
+						else
+						{
+							<FluentButton Appearance="@Appearance.Outline" OnClick="_editRole">
+								@LOC("Edit")
+								<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
+							</FluentButton>
+						}
+					</ToolbarTemplate>
+					<ChildContent>
+						<FluentGrid>
+							<FluentGridItem xs="6">
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_role.Name"
+												 ReadOnly="true" Label="@LOC("Email")" Style="width:100%" />
+							</FluentGridItem>
+							<FluentGridItem xs="6">
+								<FluentInputLabel>@LOC("Type")</FluentInputLabel>
+								<TucPlainTextField>
+									<FluentStack VerticalAlignment="@VerticalAlignment.Center" Class="fluent-plaintext-field">
+										@if (_role.IsSystem)
+										{
+											<FluentIcon Value="@TfConstants.GetIcon("ShieldError")!.WithColor(TfColor.Red600.GetAttribute().Value)"></FluentIcon>
+											<span>@LOC("system role")</span>
+										}
+										else
+										{
+											<FluentIcon Value="@TfConstants.GetIcon("Person")!.WithColor(Color.Info)"></FluentIcon>
+											<span>@LOC("user created")</span>
+										}
+									</FluentStack>
+								</TucPlainTextField>
+							</FluentGridItem>
+						</FluentGrid>
+					</ChildContent>
+				</TucCard>
 
-			<TucCard Title="@LOC("Details")">
-				<ToolbarTemplate>
-					@if (_role.IsSystem)
-					{
-						<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be managed")">
-							@LOC("Locked")
-							<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
-						</FluentButton>
-					}
-					else
-					{
-						<FluentButton Appearance="@Appearance.Outline" OnClick="_editRole">
-							@LOC("Edit")
-							<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
-						</FluentButton>
-					}
-				</ToolbarTemplate>
-				<ChildContent>
-					<FluentGrid>
-						<FluentGridItem xs="6">
-							<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_role.Name"
-											 ReadOnly="true" Label="@LOC("Email")" Style="width:100%" />
-						</FluentGridItem>
-						<FluentGridItem xs="6">
-							<FluentInputLabel>@LOC("Type")</FluentInputLabel>
-							<TucPlainTextField>
-								<FluentStack VerticalAlignment="@VerticalAlignment.Center" Class="fluent-plaintext-field">
-									@if (_role.IsSystem)
-									{
-										<FluentIcon Value="@TfConstants.GetIcon("ShieldError")!.WithColor(TfColor.Red600.GetAttribute().Value)"></FluentIcon>
-										<span>@LOC("system role")</span>
-									}
-									else
-									{
-										<FluentIcon Value="@TfConstants.GetIcon("Person")!.WithColor(Color.Info)"></FluentIcon>
-										<span>@LOC("user created")</span>
-									}
-								</FluentStack>
-							</TucPlainTextField>
-						</FluentGridItem>
-					</FluentGrid>
-				</ChildContent>
-			</TucCard>
-
-			<TucCard Title="@LOC("Users with the role")">
-				<ToolbarTemplate>
-					@if (_userOptions.Count > 0)
-					{
-						<FluentSelect TOption="TfUser"
-									  Width="200px"
-									  Items="@_userOptions"
-									  Id="listbox"
-									  Placeholder="@LOC("select user")"
-									  OptionValue="@(p => p.Id.ToString())"
-									  OptionText="@(p => p.Names)"
-									  @bind-SelectedOption="@_selectedUser"
-									  Disabled="_submitting" />
-					}
-					else
-					{
-						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all users added") Style="width:200px" Disabled="true" />
-					}
-					<FluentButton OnClick="_addUser" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
-								  Disabled="@(_userOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
-				</ToolbarTemplate>
-				<ChildContent>
-					@if (_roleUsers.Count == 0)
-					{
-						<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false>@LOC("This role has no users assigned")</FluentMessageBar>
-					}
-					else
-					{
-						<table class="tf-grid">
-							<thead class="tf-grid-thead">
-								<tr class="tf-grid-thead-bkg"></tr>
-								<tr class="tf-grid-tr">
-									<th class="tf-grid-th">email</th>
-									<th class="tf-grid-th">name</th>
-									<th class="tf-grid-th"></th>
-								</tr>
-							</thead>
-							<tbody class="tf-grid-tbody">
-								@foreach (var context in _roleUsers)
-								{
-									<tr @key=@Guid.NewGuid() class="tf-grid-tr">
-										<td class="tf-grid-td">
-											<div>@context.Email</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>@context.Names</div>
-										</td>
-										<td class="tf-grid-td" style="width:1%;">
-											<div>
-												@if (_currentUser.Id == context.Id
-																					&& _role.Id == TfConstants.ADMIN_ROLE_ID)
-												{
-													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("the current user cannot unassign admin role to self")"
-																  Disabled="true">
-														<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
-														<span>@LOC("locked")</span>
-													</FluentButton>
-												}
-												else
-												{
-													<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _removeUser(context))" Title="@LOC("Remove the user")"
-																  Disabled="_submitting">
-														<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" Slot="start" />
-														<span>@LOC("remove")</span>
-													</FluentButton>
-												}
-											</div>
-										</td>
+				<TucCard Title="@LOC("Users with the role")">
+					<ToolbarTemplate>
+						@if (_userOptions.Count > 0)
+						{
+							<FluentSelect TOption="TfUser"
+										  Width="200px"
+										  Items="@_userOptions"
+										  Id="listbox"
+										  Placeholder="@LOC("select user")"
+										  OptionValue="@(p => p.Id.ToString())"
+										  OptionText="@(p => p.Names)"
+										  @bind-SelectedOption="@_selectedUser"
+										  Disabled="_submitting" />
+						}
+						else
+						{
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all users added") Style="width:200px" Disabled="true" />
+						}
+						<FluentButton OnClick="_addUser" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
+									  Disabled="@(_userOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+					</ToolbarTemplate>
+					<ChildContent>
+						@if (_roleUsers.Count == 0)
+						{
+							<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false>@LOC("This role has no users assigned")</FluentMessageBar>
+						}
+						else
+						{
+							<table class="tf-grid">
+								<thead class="tf-grid-thead">
+									<tr class="tf-grid-thead-bkg"></tr>
+									<tr class="tf-grid-tr">
+										<th class="tf-grid-th">email</th>
+										<th class="tf-grid-th">name</th>
+										<th class="tf-grid-th"></th>
 									</tr>
-								}
-							</tbody>
-						</table>
-					}
-				</ChildContent>
-			</TucCard>
+								</thead>
+								<tbody class="tf-grid-tbody">
+									@foreach (var context in _roleUsers)
+									{
+										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+											<td class="tf-grid-td">
+												<div>@context.Email</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@context.Names</div>
+											</td>
+											<td class="tf-grid-td" style="width:1%;">
+												<div>
+													@if (_currentUser.Id == context.Id
+																							&& _role.Id == TfConstants.ADMIN_ROLE_ID)
+													{
+														<FluentButton Appearance="@Appearance.Outline" Title="@LOC("the current user cannot unassign admin role to self")"
+																	  Disabled="true">
+															<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
+															<span>@LOC("locked")</span>
+														</FluentButton>
+													}
+													else
+													{
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _removeUser(context))" Title="@LOC("Remove the user")"
+																	  Disabled="_submitting">
+															<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" Slot="start" />
+															<span>@LOC("remove")</span>
+														</FluentButton>
+													}
+												</div>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						}
+					</ChildContent>
+				</TucCard>
 
-			<TucCard>
-				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
-					<div>@LOC("Before you can delete the role, you need to remove all assigned users first")</div>
-					<div>
-					@if (_role.IsSystem)
-					{
-						<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be deleted")">
-							@LOC("Locked")
-							<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
-						</FluentButton>
-					}
-					else
-					{
-						<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteRole">
-							@LOC("Delete Role")
-							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
-						</FluentButton>
-					}
-					</div>
-				</FluentStack>
-			</TucCard>
-		}
-	</div>
-</TucErrorBoundry>
+				<TucCard>
+					<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+						<div>@LOC("Before you can delete the role, you need to remove all assigned users first")</div>
+						<div>
+							@if (_role.IsSystem)
+							{
+								<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be deleted")">
+									@LOC("Locked")
+									<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
+								</FluentButton>
+							}
+							else
+							{
+								<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteRole">
+									@LOC("Delete Role")
+									<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
+								</FluentButton>
+							}
+						</div>
+					</FluentStack>
+				</TucCard>
+			}
+		</div>
+	</TucErrorBoundry>
+</TucPageLayout>

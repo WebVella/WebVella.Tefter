@@ -1,83 +1,89 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucErrorBoundry>
-	<div style="padding:var(--tf-layout-content-padding)">
-		@if (String.IsNullOrWhiteSpace(UriInitialized))
-		{
-			<TucSkeletonPageHeader />
-		}
-		else if (_provider is null)
-		{
-			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-		}
-		else
-		{
-			<TucPageHeader Icon="@TfConstants.GetIcon("CloudDatabase")" Area="@LOC("Data Providers")"
-						   Title="@_provider.Name" SubTitle="@LOC("Details")" IconColor="TfConstants.AdminColor" />
-			<TucCard Title="@LOC("Details")">
-				<ToolbarTemplate>
-					<FluentButton Appearance="@Appearance.Outline" OnClick="_editProvider">
-						@LOC("Edit")
-						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
-					</FluentButton>
-				</ToolbarTemplate>
-				<ChildContent>
-					<FluentGrid>
-						<FluentGridItem xs="2">
-							<FluentTextField Value="@(_provider.Code)"
-											 Label="@LOC("Code")" Style="width:100%" ReadOnly="true" Disabled="true" />
-						</FluentGridItem>
-						<FluentGridItem xs="5">
-							<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_provider.Name"
-											 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
-						</FluentGridItem>
-						<FluentGridItem xs="5">
-							<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_provider.Name"
-											 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" />
-						</FluentGridItem>
-					</FluentGrid>
-					<FluentGrid>
-						<FluentGridItem xs="12">
-							<FluentInputLabel>@LOC("Supported Source data types")</FluentInputLabel>
-							@{
-								var supportedDataTypes = _provider.SupportedSourceDataTypes;
-							}
-							@if (_provider.SupportedSourceDataTypes is null || _provider.SupportedSourceDataTypes.Count == 0)
-							{
-								<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning" Title="@LOC("Warning")">
-									<div>@LOC("The data provider does not support any  type of source data!")</div>
-								</FluentMessageBar>
-							}
-							else
-							{
-								<FluentStack Orientation="@Orientation.Horizontal">
-									@foreach (var item in supportedDataTypes.Order())
-									{
-										<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">@item</FluentBadge>
+<TucPageLayout Icon="@TfConstants.GetIcon("CloudDatabase")" Area="@LOC("Data Providers")"
+			   Title="@_provider?.Name" SubTitle="@LOC("Details")" Color="TfConstants.AdminColor">
+	<ToolbarLeft>
+		<TucAdminDataProviderDetailsContentToolbar />
+	</ToolbarLeft>
+	<ChildContent>
+		<TucErrorBoundry>
+			<div style="padding:var(--tf-layout-content-padding)">
+				@if (String.IsNullOrWhiteSpace(UriInitialized))
+				{
+					<TucSkeletonPageHeader />
+				}
+				else if (_provider is null)
+				{
+					<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+				}
+				else
+				{
+					<TucCard Title="@LOC("Details")">
+						<ToolbarTemplate>
+							<FluentButton Appearance="@Appearance.Outline" OnClick="_editProvider">
+								@LOC("Edit")
+								<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
+							</FluentButton>
+						</ToolbarTemplate>
+						<ChildContent>
+							<FluentGrid>
+								<FluentGridItem xs="2">
+									<FluentTextField Value="@(_provider.Code)"
+													 Label="@LOC("Code")" Style="width:100%" ReadOnly="true" Disabled="true" />
+								</FluentGridItem>
+								<FluentGridItem xs="5">
+									<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_provider.Name"
+													 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+								</FluentGridItem>
+								<FluentGridItem xs="5">
+									<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_provider.Name"
+													 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" />
+								</FluentGridItem>
+							</FluentGrid>
+							<FluentGrid>
+								<FluentGridItem xs="12">
+									<FluentInputLabel>@LOC("Supported Source data types")</FluentInputLabel>
+									@{
+										var supportedDataTypes = _provider.SupportedSourceDataTypes;
 									}
-								</FluentStack>
-							}
-						</FluentGridItem>
-					</FluentGrid>
-					<FluentDivider Style="margin:15px 0" />
-					<FluentGrid Style="margin-top:3px;">
-						<FluentGridItem xs="12">
-							<TucScreenRegionComponent RegionContext="_dynamicComponentContext" Scope="@_dynamicComponentScope" />
-						</FluentGridItem>
-					</FluentGrid>
-				</ChildContent>
-			</TucCard>
-			<TucCard>
-				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
-					<div>@LOC("When a data provider is deleted all data that it holds will be deleted too. Data related to this data provider, but stored in shared columns, applications or other data providers will not be deleted. Thus, if recreate matching data identities in the future these relations will hold")</div>
-					<div>
-						<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteProvider">
-							@LOC("Delete this Data Provider")
-							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
-						</FluentButton>
-					</div>
-				</FluentStack>
-			</TucCard>
-		}
-	</div>
-</TucErrorBoundry>
+									@if (_provider.SupportedSourceDataTypes is null || _provider.SupportedSourceDataTypes.Count == 0)
+									{
+										<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning" Title="@LOC("Warning")">
+											<div>@LOC("The data provider does not support any  type of source data!")</div>
+										</FluentMessageBar>
+									}
+									else
+									{
+										<FluentStack Orientation="@Orientation.Horizontal">
+											@foreach (var item in supportedDataTypes.Order())
+											{
+												<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">@item</FluentBadge>
+											}
+										</FluentStack>
+									}
+								</FluentGridItem>
+							</FluentGrid>
+							<FluentDivider Style="margin:15px 0" />
+							<FluentGrid Style="margin-top:3px;">
+								<FluentGridItem xs="12">
+									<TucScreenRegionComponent RegionContext="_dynamicComponentContext" Scope="@_dynamicComponentScope" />
+								</FluentGridItem>
+							</FluentGrid>
+						</ChildContent>
+					</TucCard>
+					<TucCard>
+						<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+							<div>@LOC("When a data provider is deleted all data that it holds will be deleted too. Data related to this data provider, but stored in shared columns, applications or other data providers will not be deleted. Thus, if recreate matching data identities in the future these relations will hold")</div>
+							<div>
+								<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteProvider">
+									@LOC("Delete this Data Provider")
+									<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
+								</FluentButton>
+							</div>
+						</FluentStack>
+					</TucCard>
+				}
+			</div>
+		</TucErrorBoundry>
+	</ChildContent>
+</TucPageLayout>

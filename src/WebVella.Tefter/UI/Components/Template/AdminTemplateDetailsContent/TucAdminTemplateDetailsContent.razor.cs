@@ -45,6 +45,8 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 			_navState = navState;
 		try
 		{
+			_template = null;
+			_processor = null;
 			if (template is not null && template.Id == _template?.Id)
 			{
 				_template = template;
@@ -57,7 +59,6 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 			}
 			if (_template is null) return;
 			_spaceDataSelection = TfTemplateUIService.GetSpaceDataOptionsForTemplate().Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
-			_processor = null;
 			if (_template.ContentProcessorType is not null && _template.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 			{
 				_processor = (ITfTemplateProcessorAddon?)Activator.CreateInstance(_template.ContentProcessorType);

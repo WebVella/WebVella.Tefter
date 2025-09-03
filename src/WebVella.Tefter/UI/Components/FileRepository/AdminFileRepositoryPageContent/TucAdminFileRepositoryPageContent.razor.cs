@@ -14,6 +14,8 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	private TfUser? _currentUser = null;
 	private string? _search = null;
 	private string _uploadId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
+
+	private FluentSearch? _refSearch = null;
 	public void Dispose()
 	{
 		TfFileRepositoryUIService.FileRepositoryCreated -= On_RepositoryFileChanged;
@@ -31,6 +33,14 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
+	protected override void OnAfterRender(bool firstRender)
+	{
+		if (firstRender && _refSearch != null)
+		{
+			_refSearch.FocusAsync();
+		}
+	}
+
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
@@ -45,15 +55,21 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 
 	private async Task _init(TfNavigationState? navState = null)
 	{
-		_currentUser = await TfUserUIService.GetCurrentUserAsync();
-		if (navState is not null)
-			_navState = navState;
-		else
-			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+		try
+		{
+			_currentUser = await TfUserUIService.GetCurrentUserAsync();
+			if (navState is not null)
+				_navState = navState;
+			else
+				_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 
-		_items = TfFileRepositoryUIService.GetRepositoryFiles(search: _search);
-
-		UriInitialized = _navState.Uri;
+			_items = TfFileRepositoryUIService.GetRepositoryFiles(search: _search);
+		}
+		finally
+		{
+			UriInitialized = _navState.Uri;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 
 	private void _onCompleted(IEnumerable<FluentInputFileEventArgs> files)
