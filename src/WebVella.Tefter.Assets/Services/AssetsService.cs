@@ -7,10 +7,8 @@ public partial interface IAssetsService
     List<TfDataIdentity> GetAllDataIdentities();
     List<TfSharedColumn> GetAllSharedColumns();
     Task<TfUser?> GetCurrentUser(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider);
-
     TfDataProvider GetDataProvider(Guid providerId);
     List<TfDataProviderIdentity> GetDataProviderIdentities(Guid providerId);
-}
 }
 
 internal partial class AssetsService : IAssetsService
