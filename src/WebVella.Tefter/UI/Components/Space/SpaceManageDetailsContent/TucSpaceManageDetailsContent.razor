@@ -1,66 +1,71 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucErrorBoundry>
-	<div style="padding:var(--tf-layout-content-padding)">
-		@if (String.IsNullOrWhiteSpace(UriInitialized))
-		{
-			<TucSkeletonPageHeader />
-		}
-		else if (_space is null)
-		{
-			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-		}
-		else
-		{
-			<TucPageHeader Icon="@(TfConstants.GetIcon(name: _space.FluentIconName, defaultIcon: "Folder"))" IconColor="@_space.Color" Class="page-title"
-						   Area="@LOC("Spaces")" Title="@_space.Name" SubTitle="@LOC("Details")" />
-
-			<TucCard Title="@LOC("Details")">
-				<ToolbarTemplate>
-					<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpace">
-						@LOC("Edit")
-						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
-					</FluentButton>
-				</ToolbarTemplate>
-				<ChildContent>
-					<FluentGrid>
-						<FluentGridItem xs="6">
-							<FluentInputLabel Label="@LOC("Name")" />
-							<FluentStack>
-								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_space.Name
-												 ReadOnly="true" Style="width:100%" />
-							</FluentStack>
-						</FluentGridItem>
-						<FluentGridItem xs="6">
-							@* 								<FluentInputLabel Label="@LOC("Access")" />
+<TucPageLayout Icon="@(TfConstants.GetIcon(name: _space.FluentIconName, defaultIcon: "Folder"))" Color="@_space.Color"
+			   Area="@LOC("Spaces")" Title="@_space.Name" SubTitle="@LOC("Details")">
+	<ToolbarLeft>
+		<TucSpaceManageDetailsContentToolbar />
+	</ToolbarLeft>
+	<ChildContent>
+		<TucErrorBoundry>
+			<div style="padding:var(--tf-layout-content-padding)">
+				@if (String.IsNullOrWhiteSpace(UriInitialized))
+				{
+					<TucSkeletonPageHeader />
+				}
+				else if (_space is null)
+				{
+					<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+				}
+				else
+				{
+					<TucCard Title="@LOC("Details")">
+						<ToolbarTemplate>
+							<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpace">
+								@LOC("Edit")
+								<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
+							</FluentButton>
+						</ToolbarTemplate>
+						<ChildContent>
+							<FluentGrid>
+								<FluentGridItem xs="6">
+									<FluentInputLabel Label="@LOC("Name")" />
+									<FluentStack>
+										<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_space.Name
+														 ReadOnly="true" Style="width:100%" />
+									</FluentStack>
+								</FluentGridItem>
+								<FluentGridItem xs="6">
+									@* 								<FluentInputLabel Label="@LOC("Access")" />
 								<FluentCheckbox Value=@TfAppState.Value.Space.IsPrivate Label="@LOC("restricted access")" Style="margin-top:5px;"
 												ReadOnly="true" /> *@
-						</FluentGridItem>
-					</FluentGrid>
-					<FluentGrid>
-						<FluentGridItem xs="6">
-							<FluentInputLabel Label="@LOC("Color")" />
-							<TucSelectColor Value="@_space.Color" />
-						</FluentGridItem>
-						<FluentGridItem xs="6">
-							<FluentInputLabel Label="@LOC("Icon")" />
-							<TucSelectIcon Value="@_space.FluentIconName" Required="true" />
-						</FluentGridItem>
-					</FluentGrid>
-				</ChildContent>
-			</TucCard>
+								</FluentGridItem>
+							</FluentGrid>
+							<FluentGrid>
+								<FluentGridItem xs="6">
+									<FluentInputLabel Label="@LOC("Color")" />
+									<TucSelectColor Value="@_space.Color" />
+								</FluentGridItem>
+								<FluentGridItem xs="6">
+									<FluentInputLabel Label="@LOC("Icon")" />
+									<TucSelectIcon Value="@_space.FluentIconName" Required="true" />
+								</FluentGridItem>
+							</FluentGrid>
+						</ChildContent>
+					</TucCard>
 
-			<TucCard>
-				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
-					<div>@LOC("Deleting the space will delete also any related space pages, space views and space data, but will not alter local content or data provider data")</div>
-					<div>
-					<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteSpace">
-						@LOC("Delete this Space")
-						<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
-					</FluentButton>
-					</div>
-				</FluentStack>
-			</TucCard>
-		}
-	</div>
-</TucErrorBoundry>
+					<TucCard>
+						<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+							<div>@LOC("Deleting the space will delete also any related space pages, space views and space data, but will not alter local content or data provider data")</div>
+							<div>
+								<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteSpace">
+									@LOC("Delete this Space")
+									<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
+								</FluentButton>
+							</div>
+						</FluentStack>
+					</TucCard>
+				}
+			</div>
+		</TucErrorBoundry>
+	</ChildContent>
+</TucPageLayout>

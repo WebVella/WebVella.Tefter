@@ -1,60 +1,65 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucErrorBoundry>
-	<div style="padding:var(--tf-layout-content-padding)">
-		@if (String.IsNullOrWhiteSpace(UriInitialized))
-		{
-			<TucSkeletonPageHeader />
-		}
-		else if (_spaceData is null)
-		{
-			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-		}
-		else
-		{
-			<TucPageHeader Icon="@TfConstants.GetIcon("Database")" IconColor="@(_space?.Color ?? TfConstants.DefaultThemeColor)" Class="page-title"
-						   Area="@($"{_space?.Name} : {LOC("Space Data")}")" Title="@_spaceData.Name" SubTitle="@LOC("Used in Views")" />
+<TucPageLayout Icon="@TfConstants.GetIcon("Database")" Color="@(_space?.Color ?? TfConstants.DefaultThemeColor)"
+			   Area="@($"{_space?.Name} : {LOC("Space Data")}")" Title="@_spaceData?.Name" SubTitle="@LOC("Used in Views")">
+	<ToolbarLeft>
+		<TucSpaceDataDetailsContentToolbar />
+	</ToolbarLeft>
+	<ChildContent>
+		<TucErrorBoundry>
+			<div style="padding:var(--tf-layout-content-padding)">
+				@if (String.IsNullOrWhiteSpace(UriInitialized))
+				{
+					<TucSkeletonPageHeader />
+				}
+				else if (_spaceData is null)
+				{
+					<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+				}
+				else
+				{
+					<TucCard Title="@LOC("Connected Data Provider (ReadOnly)")" SubTitle="@LOC("Data that is connected and can be added as readonly columns.")">
+						<ChildContent>
+							@if (_spaceViewList.Count == 0)
+							{
+								<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("This dataset does not provide data to views")</FluentMessageBar>
 
-			<TucCard Title="@LOC("Connected Data Provider (ReadOnly)")" SubTitle="@LOC("Data that is connected and can be added as readonly columns.")">
-				<ChildContent>
-					@if (_spaceViewList.Count == 0)
-					{
-						<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("This dataset does not provide data to views")</FluentMessageBar>
-
-					}
-					else
-					{
-						<table class="tf-grid">
-							<thead class="tf-grid-thead">
-								<tr class="tf-grid-thead-bkg"></tr>
-								<tr class="tf-grid-tr">
-									<th class="tf-grid-th" style="width:30px;"></th>
-									<th class="tf-grid-th">view name</th>
-								</tr>
-							</thead>
-							<tbody class="tf-grid-tbody">
-								@foreach (var context in _spaceViewList)
-								{
-									<tr @key=@Guid.NewGuid() class="tf-grid-tr">
-										<td class="tf-grid-td" style="width:30px;">
-											<div>
-												<FluentAnchor Appearance="@Appearance.Outline" title="@LOC("view details")" Href="@String.Format(TfConstants.SpaceViewPageUrl, context.SpaceId, context.Id)">
-													<FluentIcon Value="@TfConstants.GetIcon("Eye")" />
-												</FluentAnchor>
-											</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>
-												@context.Name
-											</div>
-										</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					}
-				</ChildContent>
-			</TucCard>
-		}
-	</div>
-</TucErrorBoundry>
+							}
+							else
+							{
+								<table class="tf-grid">
+									<thead class="tf-grid-thead">
+										<tr class="tf-grid-thead-bkg"></tr>
+										<tr class="tf-grid-tr">
+											<th class="tf-grid-th" style="width:30px;"></th>
+											<th class="tf-grid-th">view name</th>
+										</tr>
+									</thead>
+									<tbody class="tf-grid-tbody">
+										@foreach (var context in _spaceViewList)
+										{
+											<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+												<td class="tf-grid-td" style="width:30px;">
+													<div>
+														<FluentAnchor Appearance="@Appearance.Outline" title="@LOC("view details")" Href="@String.Format(TfConstants.SpaceViewPageUrl, context.SpaceId, context.Id)">
+															<FluentIcon Value="@TfConstants.GetIcon("Eye")" />
+														</FluentAnchor>
+													</div>
+												</td>
+												<td class="tf-grid-td">
+													<div>
+														@context.Name
+													</div>
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							}
+						</ChildContent>
+					</TucCard>
+				}
+			</div>
+		</TucErrorBoundry>
+	</ChildContent>
+</TucPageLayout>
