@@ -19,8 +19,8 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
-		_title = _isCreate ? LOC("Create link") : LOC("Manage link");
-		_btnText = _isCreate ? LOC("Create") : LOC("Save");
+		_title = _isCreate ? LOC("Attach link") : LOC("Manage link");
+		_btnText = _isCreate ? (Content.IsAddOnly ? LOC("Add") : LOC("Attach")) : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add") : TfConstants.GetIcon("Save");
 		_form.Label = Content.Label;
 		_form.Url = Content.Url;
@@ -48,7 +48,7 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 				_form.IconUrl = await new UrlUtility(ConfigurationService).GetFavIconForUrl(_form.Url);
 
 			var result = new Asset();
-			if (_isCreate && Content.RowIds is not null && Content.DataProviderId is not null)
+			if ((_isCreate || Content.IsAddOnly) && Content.RowIds is not null && Content.DataProviderId is not null)
 			{
 				var submit = new CreateLinkAssetWithRowIdModel
 				{
@@ -60,9 +60,13 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 					RowIds = Content.RowIds,
 					DataProviderId = Content.DataProviderId.Value
 				};
+				if(Content.IsAddOnly){ 
+					await Dialog.CloseAsync(submit);
+					return;
+				}
 				result = AssetsService.CreateLinkAsset(submit);
 			}
-			else if (_isCreate && Content.DataIdentities is not null)
+			else if ((_isCreate || Content.IsAddOnly) && Content.DataIdentities is not null)
 			{
 				var submit = new CreateLinkAssetWithDataIdentityModel
 				{
@@ -73,6 +77,10 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 					CreatedBy = Content.UserId,
 					DataIdentityValues = Content.DataIdentities
 				};
+				if(Content.IsAddOnly){ 
+					await Dialog.CloseAsync(submit);
+					return;
+				}
 				result = AssetsService.CreateLinkAsset(submit);
 			}
 			else
@@ -144,4 +152,5 @@ public class AssetsFolderPanelLinkModalContext
 	public List<string>? DataIdentities { get; set; } = null;
 	public List<Guid> RowIds { get; set; } = null;
 	public Guid? DataProviderId { get; set; } = null;
+	public bool IsAddOnly { get; set; } = false;
 }

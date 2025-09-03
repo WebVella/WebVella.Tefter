@@ -17,13 +17,13 @@ public partial class TucUseTemplateSelectorAction : TfBaseComponent, ITfScreenRe
 	{
 		if (RegionContext.SelectedDataRows.Count == 0
 		|| RegionContext.SpaceData is null
-		|| RegionContext.User is null) return;
+		|| RegionContext.CurrentUser is null) return;
 
 		var context = new TfUseTemplateContext
 		{
 			SelectedRowIds = RegionContext.SelectedDataRows,
 			SpaceData = RegionContext.SpaceData,
-			User = RegionContext.User
+			User = RegionContext.CurrentUser
 		};
 		var dialog = await DialogService.ShowDialogAsync<TucUseTemplateDialog>(
 				context,
