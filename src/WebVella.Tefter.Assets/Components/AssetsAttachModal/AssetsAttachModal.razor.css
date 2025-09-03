@@ -1,0 +1,20 @@
+﻿::deep.talk-modal-footer {
+	width:100%;
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+}
+
+::deep .talk-modal-footer__left {
+	flex:0 0 auto;
+}
+
+::deep .talk-modal-footer__right {
+	flex:0 0 auto;
+	display:flex;
+	align-items:center;
+}
+
+	::deep .talk-modal-footer__right fluent-button + fluent-button {
+		margin-left:10px;
+	}

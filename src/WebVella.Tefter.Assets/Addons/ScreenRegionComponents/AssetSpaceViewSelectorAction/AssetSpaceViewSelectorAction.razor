@@ -1,8 +1,8 @@
 ﻿@namespace WebVella.Tefter.Talk.Components
 @inherits TfBaseComponent
 <FluentMenuItem Disabled="@(RegionContext.SelectedDataRows.Count == 0)" OnClick="_onClick">
-	Comment Selected
-	<FluentIcon Value="@TfConstants.GetIcon("Comment")" Slot="start" Color="@Color.Accent" />
+	Attach Documents
+	<FluentIcon Value="@TfConstants.GetIcon("Document")" Slot="start" Color="@Color.Accent" />
 	@if (RegionContext.SelectedDataRows.Count > 0)
 	{
 		<span slot="end">

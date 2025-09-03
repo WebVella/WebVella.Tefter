@@ -27,8 +27,8 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
-		_title = _isCreate ? LOC("Upload file") : LOC("Update file");
-		_btnText = _isCreate ? LOC("Create") : LOC("Save");
+		_title = _isCreate ? LOC("Attach file") : LOC("Update file");
+		_btnText = _isCreate ? (Content.IsAddOnly ? LOC("Add") : LOC("Attach")) : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add") : TfConstants.GetIcon("Save");
 		_form.Label = Content.Label;
 		_form.FileName = Content.FileName;
@@ -84,7 +84,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 			await InvokeAsync(StateHasChanged);
 
 			Asset result = null;
-			if (_isCreate && Content.RowIds is not null && Content.DataProviderId is not null)
+			if ((_isCreate || Content.IsAddOnly) && Content.RowIds is not null && Content.DataProviderId is not null)
 			{
 				var submit = new CreateFileAssetWithRowIdModel
 				{
@@ -96,9 +96,13 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 					RowIds = Content.RowIds,
 					DataProviderId = Content.DataProviderId.Value
 				};
+				if(Content.IsAddOnly){ 
+					await Dialog.CloseAsync(submit);
+					return;
+				}
 				result = AssetsService.CreateFileAsset(submit);
 			}
-			else if (_isCreate && Content.DataIdentities is not null)
+			else if ((_isCreate || Content.IsAddOnly) && Content.DataIdentityValues is not null)
 			{
 				var submit = new CreateFileAssetWithDataIdentityModel
 				{
@@ -107,8 +111,12 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 					FileName = _form.FileName,
 					LocalPath = _form.LocalPath,
 					CreatedBy = Content.UserId,
-					DataIdentityValues = Content.DataIdentities
+					DataIdentityValues = Content.DataIdentityValues
 				};
+				if(Content.IsAddOnly){ 
+					await Dialog.CloseAsync(submit);
+					return;
+				}
 				result = AssetsService.CreateFileAsset(submit);
 			}
 			else
@@ -168,7 +176,8 @@ public class AssetsFolderPanelFileModalContext
 	public string Label { get; set; }
 	public string FileName { get; set; }
 	public Guid UserId { get; set; }
-	public List<string>? DataIdentities { get; set; } = null;
+	public List<string>? DataIdentityValues { get; set; } = null;
 	public List<Guid> RowIds { get; set; } = null;
 	public Guid? DataProviderId { get; set; } = null;
+	public bool IsAddOnly { get; set; } = false;
 }

@@ -18,33 +18,4 @@ public partial class TalkAdminPage : TfBaseComponent, ITfScreenRegionComponent<T
 		};
 	[Parameter]
 	public TfAdminPageScreenRegionContext RegionContext { get; set; }
-
-	//public Task OnAppStateInit(IServiceProvider serviceProvider, TucUser currentUser,
-	//	TfAppState newAppState,
-	//	TfAppState oldAppState, TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
-	//{
-	//	var talkService = serviceProvider.GetRequiredService<ITalkService>();
-	//	var tfService = serviceProvider.GetRequiredService<ITfService>();
-	//	try
-	//	{
-	//		var channels = talkService.GetChannels();
-	//		newAuxDataState.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = channels.OrderBy(x => x.Name).ToList();
-	//	}
-	//	catch
-	//	{
-	//		newAuxDataState.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = new List<TalkChannel>();
-	//	}
-
-	//	try
-	//	{
-	//		var sharedColumns = tfService.GetSharedColumns();
-	//		newAuxDataState.Data[TalkConstants.TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY] = sharedColumns.OrderBy(x => x.DbName).ToList();
-	//	}
-	//	catch
-	//	{
-	//		newAuxDataState.Data[TalkConstants.TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY] = new List<TfSharedColumn>();
-	//	}
-
-	//	return Task.CompletedTask;
-	//}
 }

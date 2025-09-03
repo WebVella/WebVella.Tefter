@@ -8,7 +8,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 	[Inject] public IAssetsService AssetsService { get; set; }
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Parameter] public AssetsFolder? Folder { get; set; } = null;
-	[Parameter] public string DataIdentityValue { get; set; } = "";
+	[Parameter] public string DataIdentityValue { get; set; } = null;
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 	[Parameter] public string Style { get; set; } = "";
 	[Parameter] public RenderFragment HeaderActions { get; set; }
@@ -23,7 +23,8 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 	private string _search = null;
 	private string _dataIdentityValue = null;
 	private Guid? _folderId = null;
-
+	private Guid? _pageId = null;
+	private FluentSearch? _refSearch = null;
 	public void Dispose()
 	{
 		AssetsService.AssetCreated -= On_AssetChanged;
@@ -41,6 +42,18 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		AssetsService.AssetUpdated += On_AssetChanged;
 		AssetsService.AssetDeleted += On_AssetChanged;
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		if (firstRender && _refSearch != null)
+		{
+			if (Context.SpacePage?.Id != _pageId)
+			{
+				_refSearch.FocusAsync();
+				_pageId = Context.SpacePage.Id;
+			}
+		}
 	}
 
 	protected override async Task OnParametersSetAsync()
@@ -68,12 +81,8 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
-			if (Folder is null)
-			{
-				_items = new();
-				return;
-			}
 			_items = new();
+			if (Folder is null) return;
 			_search = Navigator.GetStringFromQuery(TfConstants.SearchQueryName, null);
 			_items = AssetsService.GetAssets(
 				folderId: Folder.Id,
@@ -81,6 +90,11 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 				search: _search);
 			_dataIdentityValue = DataIdentityValue;
 			_folderId = Folder.Id;
+			if (_pageId is not null && Context.SpacePage?.Id != _pageId)
+			{
+				_refSearch?.FocusAsync();
+				_pageId = Context.SpacePage?.Id;
+			}
 		}
 		finally
 		{
@@ -134,7 +148,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 				Id = Guid.Empty,
 				Label = null,
 				FileName = null,
-				DataIdentities = new List<string> { _dataIdentityValue },
+				DataIdentityValues = new List<string> { _dataIdentityValue },
 			},
 			new DialogParameters()
 			{
@@ -167,7 +181,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 						Id = asset.Id,
 						Label = assetContent.Label,
 						FileName = assetContent.Filename,
-						DataIdentities = new List<string> { _dataIdentityValue },
+						DataIdentityValues = new List<string> { _dataIdentityValue },
 					},
 					new DialogParameters()
 					{

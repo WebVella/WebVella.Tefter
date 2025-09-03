@@ -45,7 +45,7 @@ internal partial class AssetsService : IAssetsService
 
 	public List<AssetsFolder> GetFolders()
 	{
-		var SQL = "SELECT * FROM assets_folder";
+		var SQL = "SELECT * FROM assets_folder ORDER BY name";
 
 		var dt = _dbService.ExecuteSqlQueryCommand(SQL);
 

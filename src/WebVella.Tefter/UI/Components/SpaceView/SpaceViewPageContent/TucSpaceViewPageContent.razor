@@ -20,9 +20,9 @@ else
 	var columnIndex = 1;
 	<TucPageLayout Title="@_spacePage.Name" Icon="@TfConstants.GetIcon(_spacePage.FluentIconName)"
 				   Color="@_space!.Color">
-		<Toolbar>
+		<ToolbarLeft>
 			<TucSpaceViewPageContentNavigation SpaceView="_spaceView" />
-		</Toolbar>
+		</ToolbarLeft>
 		<ChildContent>
 			@((MarkupString)_getEmbeddedStyles())
 			<TucSpaceViewPageContentToolbar Context=Context SpaceView="_spaceView" Data=_data

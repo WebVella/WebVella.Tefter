@@ -1,13 +1,49 @@
 ﻿@namespace WebVella.Tefter.UI.Components
-@inherits ComponentBase
+@inherits TfBaseComponent
 
 <div class="@_cssClass">
 	@if (_showToolbar)
 	{
 		<div class="tf-page-layout__toolbar">
-			@if (!String.IsNullOrWhiteSpace(Title))
-			{
-				<div class="tf-page-layout__toolbar__left">
+			<div class="tf-page-layout__toolbar__left">
+				@if (!String.IsNullOrWhiteSpace(_returnUrl))
+				{
+					<div class="tf-page-layout__toolbar__left__back-btn">
+						<FluentAnchor Appearance="@Appearance.Outline" Href="@_returnUrl" IconStart="@TfConstants.GetIcon("ChevronLeft")">@LOC("Back")</FluentAnchor>
+					</div>
+				}
+				@if (Icon is not null)
+				{
+					<div class="tf-page-layout__toolbar__left__icon-wrapper">
+						<div class="tf-page-layout__toolbar__left__icon" style="@_iconStyle">
+							<FluentIcon Value="@Icon.WithColor(Icon is null ? "var(--tf-font-color-base)" : "#fff")" />
+						</div>
+					</div>
+				}
+				<div class="tf-page-layout__toolbar__left__meta">
+					@if (!String.IsNullOrWhiteSpace(Area))
+					{
+						<div class="tf-page-layout__toolbar__left__meta__area">
+							@Area
+						</div>
+					}
+					<div class="tf-page-layout__toolbar__left__meta__title">
+						@if (!String.IsNullOrWhiteSpace(SubTitle))
+						{
+							<span>@Title</span>
+							<span class="tf-page-header__divider">:</span>
+							<span>@SubTitle</span>
+						}
+						else
+						{
+							@Title
+						}
+					</div>
+				</div>
+
+@* 				@if (!String.IsNullOrWhiteSpace(Title))
+				{
+
 					@if (Icon is not null)
 					{
 						<div class="tf-page-layout__toolbar__left__icon-wrapper">
@@ -17,11 +53,17 @@
 						</div>
 					}
 					<div class="tf-page-layout__toolbar__left__title" title="@Title">@TfConverters.StringOverflow(Title, 23)</div>
-				</div>
+				} *@
+			</div>
 
-			}
 			<div class="tf-page-layout__toolbar__right">
-				@Toolbar
+				@if (ToolbarLeft is not null || ToolbarRight is not null)
+				{
+					<div class="tf-page-layout__toolbar__right__inner">
+						<div class="tf-page-layout__toolbar__right__inner__left">@ToolbarLeft</div>
+						<div class="tf-page-layout__toolbar__right__inner__right">@ToolbarRight</div>
+					</div>
+				}
 			</div>
 		</div>
 	}

@@ -1,154 +1,154 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucErrorBoundry>
-	<div style="padding:var(--tf-layout-content-padding)">
-		@if (String.IsNullOrWhiteSpace(UriInitialized))
-		{
-			<TucSkeletonPageHeader />
-		}
-		else if (_user is null)
-		{
-			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-		}
-		else
-		{
-			<TucPageHeader Icon="@TfConstants.GetIcon("Person")" IconColor="@_user.Settings.ThemeColor" Class="page-title"
-						   Area="@LOC("Users")" Title="@_user.Names" />
-
-			<TucCard Title="@LOC("Details")">
-				<ToolbarTemplate>
-					<FluentButton Appearance="@Appearance.Outline" OnClick="_editUser">
-						@LOC("Edit")
-						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
-					</FluentButton>
-				</ToolbarTemplate>
-				<ChildContent>
-					<FluentGrid>
-						<FluentGridItem xs="1">
-							<FluentInputLabel>@LOC("Status")</FluentInputLabel>
-							@if (_user.Enabled)
-							{
-								<FluentBadge Appearance="Appearance.Neutral" Class="input-badge" Style="width:100%">ON</FluentBadge>
-							}
-							else
-							{
-								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetAttribute().Value" Color="white" Class="input-badge" Style="width:100%">OFF</FluentBadge>
-							}
-						</FluentGridItem>
-						<FluentGridItem xs="5">
-							<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_user.Email"
-											 ReadOnly="true" Label="@LOC("Email")" Style="width:100%" />
-						</FluentGridItem>
-						<FluentGridItem xs="3">
-							<FluentDatePicker Value="@_user.CreatedOn"
-											  ReadOnly="true" Label="@LOC("Created On")" Style="width:100%" />
-						</FluentGridItem>
-						<FluentGridItem xs="3">
-							<FluentTimePicker Value="@_user.CreatedOn"
-											  ReadOnly="true" Label="&nbsp;" Style="width:100%" />
-						</FluentGridItem>
-					</FluentGrid>
-					<FluentGrid>
-						<FluentGridItem xs="6">
-							<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_user.FirstName"
-											 ReadOnly="true" Label="@LOC("First Name")" Style="width:100%" />
-						</FluentGridItem>
-						<FluentGridItem xs="6">
-							<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_user.LastName"
-											 ReadOnly="true" Label="@LOC("Last Name")" Style="width:100%" />
-						</FluentGridItem>
-					</FluentGrid>
-					<FluentGrid>
-						<FluentGridItem xs="6">
-							<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_user.Settings?.ThemeMode.ToString()"
-											 ReadOnly="true" Label="@LOC("Theme Mode")" Style="width:100%" />
-						</FluentGridItem>
-						<FluentGridItem xs="6">
-							<FluentInputLabel Label="@LOC("Theme Color")" />
-							<TucSelectColor Value="@(_user.Settings?.ThemeColor ?? TfColor.Emerald500)" />
-						</FluentGridItem>
-					</FluentGrid>
-					<FluentGrid>
-						<FluentGridItem xs="6">
-							<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_user.Settings.CultureName"
-											 ReadOnly="true" Label="@LOC("Localization")" Style="width:100%" />
-						</FluentGridItem>
-						<FluentGridItem xs="6">
-						</FluentGridItem>
-					</FluentGrid>
-				</ChildContent>
-			</TucCard>
-
-			<TucCard Title="@LOC("Roles")">
-				<ToolbarTemplate>
-					@if (_roleOptions.Count > 0)
-					{
-						<FluentSelect TOption="TfRole"
-									  Width="200px"
-									  Items="@_roleOptions"
-									  Id="listbox"
-									  Placeholder="@LOC("select role")"
-									  OptionValue="@(p => p.Id.ToString())"
-									  OptionText="@(p => p.Name)"
-									  @bind-SelectedOption="@_selectedRole"
-									  Disabled="_submitting" />
-					}
-					else
-					{
-						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all roles added") Style="width:200px" Disabled="true" />
-					}
-					<FluentButton OnClick="_addRole" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline" Disabled="@(_roleOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
-				</ToolbarTemplate>
-				<ChildContent>
-					@if (_user.Roles is null || _user.Roles.Count == 0)
-					{
-						<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false>@LOC("This user has no roles assigned")</FluentMessageBar>
-					}
-					else
-					{
-						<table class="tf-grid">
-							<thead class="tf-grid-thead">
-								<tr class="tf-grid-thead-bkg"></tr>
-								<tr class="tf-grid-tr">
-									<th class="tf-grid-th">name</th>
-									<th class="tf-grid-th"></th>
-								</tr>
-							</thead>
-							<tbody class="tf-grid-tbody">
-								@foreach (var context in _user.Roles)
+<TucPageLayout Icon="@TfConstants.GetIcon("Person")" Color="@_user?.Settings.ThemeColor"
+			   Area="@LOC("Users")" Title="@_user?.Names">
+	<TucErrorBoundry>
+		<div style="padding:var(--tf-layout-content-padding)">
+			@if (String.IsNullOrWhiteSpace(UriInitialized))
+			{
+				<TucSkeletonPageHeader />
+			}
+			else if (_user is null)
+			{
+				<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+			}
+			else
+			{
+				<TucCard Title="@LOC("Details")">
+					<ToolbarTemplate>
+						<FluentButton Appearance="@Appearance.Outline" OnClick="_editUser">
+							@LOC("Edit")
+							<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
+						</FluentButton>
+					</ToolbarTemplate>
+					<ChildContent>
+						<FluentGrid>
+							<FluentGridItem xs="1">
+								<FluentInputLabel>@LOC("Status")</FluentInputLabel>
+								@if (_user.Enabled)
 								{
-									<tr @key=@Guid.NewGuid() class="tf-grid-tr">
-										<td class="tf-grid-td">
-											<div>@context.Name</div>
-										</td>
-										<td class="tf-grid-td" style="width:1%;">
-											<div>
-												@if (_currentUser.Id == _user.Id
-																					&& context.Id == TfConstants.ADMIN_ROLE_ID)
-												{
-													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("the current user cannot unassign admin role to self")"
-																  Disabled="true">
-														<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
-														<span>@LOC("locked")</span>
-													</FluentButton>
-												}
-												else
-												{
-													<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _removeRole(context))" Title="@LOC("Remove the role")"
-																  Disabled="_submitting">
-														<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" Slot="start" />
-														<span>@LOC("remove")</span>
-													</FluentButton>
-												}
-											</div>
-										</td>
-									</tr>
+									<FluentBadge Appearance="Appearance.Neutral" Class="input-badge" Style="width:100%">ON</FluentBadge>
 								}
-							</tbody>
-						</table>
-					}
-				</ChildContent>
-			</TucCard>
-		}
-	</div>
-</TucErrorBoundry>
+								else
+								{
+									<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetAttribute().Value" Color="white" Class="input-badge" Style="width:100%">OFF</FluentBadge>
+								}
+							</FluentGridItem>
+							<FluentGridItem xs="5">
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_user.Email"
+												 ReadOnly="true" Label="@LOC("Email")" Style="width:100%" />
+							</FluentGridItem>
+							<FluentGridItem xs="3">
+								<FluentDatePicker Value="@_user.CreatedOn"
+												  ReadOnly="true" Label="@LOC("Created On")" Style="width:100%" />
+							</FluentGridItem>
+							<FluentGridItem xs="3">
+								<FluentTimePicker Value="@_user.CreatedOn"
+												  ReadOnly="true" Label="&nbsp;" Style="width:100%" />
+							</FluentGridItem>
+						</FluentGrid>
+						<FluentGrid>
+							<FluentGridItem xs="6">
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_user.FirstName"
+												 ReadOnly="true" Label="@LOC("First Name")" Style="width:100%" />
+							</FluentGridItem>
+							<FluentGridItem xs="6">
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_user.LastName"
+												 ReadOnly="true" Label="@LOC("Last Name")" Style="width:100%" />
+							</FluentGridItem>
+						</FluentGrid>
+						<FluentGrid>
+							<FluentGridItem xs="6">
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_user.Settings?.ThemeMode.ToString()"
+												 ReadOnly="true" Label="@LOC("Theme Mode")" Style="width:100%" />
+							</FluentGridItem>
+							<FluentGridItem xs="6">
+								<FluentInputLabel Label="@LOC("Theme Color")" />
+								<TucSelectColor Value="@(_user.Settings?.ThemeColor ?? TfColor.Emerald500)" />
+							</FluentGridItem>
+						</FluentGrid>
+						<FluentGrid>
+							<FluentGridItem xs="6">
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_user.Settings.CultureName"
+												 ReadOnly="true" Label="@LOC("Localization")" Style="width:100%" />
+							</FluentGridItem>
+							<FluentGridItem xs="6">
+							</FluentGridItem>
+						</FluentGrid>
+					</ChildContent>
+				</TucCard>
+
+				<TucCard Title="@LOC("Roles")">
+					<ToolbarTemplate>
+						@if (_roleOptions.Count > 0)
+						{
+							<FluentSelect TOption="TfRole"
+										  Width="200px"
+										  Items="@_roleOptions"
+										  Id="listbox"
+										  Placeholder="@LOC("select role")"
+										  OptionValue="@(p => p.Id.ToString())"
+										  OptionText="@(p => p.Name)"
+										  @bind-SelectedOption="@_selectedRole"
+										  Disabled="_submitting" />
+						}
+						else
+						{
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all roles added") Style="width:200px" Disabled="true" />
+						}
+						<FluentButton OnClick="_addRole" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline" Disabled="@(_roleOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+					</ToolbarTemplate>
+					<ChildContent>
+						@if (_user.Roles is null || _user.Roles.Count == 0)
+						{
+							<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false>@LOC("This user has no roles assigned")</FluentMessageBar>
+						}
+						else
+						{
+							<table class="tf-grid">
+								<thead class="tf-grid-thead">
+									<tr class="tf-grid-thead-bkg"></tr>
+									<tr class="tf-grid-tr">
+										<th class="tf-grid-th">name</th>
+										<th class="tf-grid-th"></th>
+									</tr>
+								</thead>
+								<tbody class="tf-grid-tbody">
+									@foreach (var context in _user.Roles)
+									{
+										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+											<td class="tf-grid-td">
+												<div>@context.Name</div>
+											</td>
+											<td class="tf-grid-td" style="width:1%;">
+												<div>
+													@if (_currentUser.Id == _user.Id
+																							&& context.Id == TfConstants.ADMIN_ROLE_ID)
+													{
+														<FluentButton Appearance="@Appearance.Outline" Title="@LOC("the current user cannot unassign admin role to self")"
+																	  Disabled="true">
+															<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
+															<span>@LOC("locked")</span>
+														</FluentButton>
+													}
+													else
+													{
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _removeRole(context))" Title="@LOC("Remove the role")"
+																	  Disabled="_submitting">
+															<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" Slot="start" />
+															<span>@LOC("remove")</span>
+														</FluentButton>
+													}
+												</div>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						}
+					</ChildContent>
+				</TucCard>
+			}
+		</div>
+	</TucErrorBoundry>
+</TucPageLayout>

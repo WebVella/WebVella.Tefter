@@ -1,13 +1,13 @@
 ﻿namespace WebVella.Tefter.Talk.Components;
 
-public partial class TalkSpaceViewSelectorAction : TfBaseComponent,
+public partial class AssetSpaceViewSelectorAction : TfBaseComponent,
 	ITfScreenRegionComponent<TfSpaceViewSelectorActionScreenRegionContext>
 {
-	public const string ID = "942d6fb0-4662-4c5c-ae52-123dd40375ac";
-	public const string NAME = "Add Talk Discussion to Selection";
+	public const string ID = "c899bbe1-eade-4a00-a16e-6af87348ac71";
+	public const string NAME = "Add Assets to Selection";
 	public const string DESCRIPTION = "";
-	public const string FLUENT_ICON_NAME = "CommentMultiple";
-	public const int POSITION_RANK = 100;
+	public const string FLUENT_ICON_NAME = "DocumentDataLink";
+	public const int POSITION_RANK = 200;
 	public Guid AddonId { get; init; } = new Guid(ID);
 	public string AddonName { get; init; } = NAME;
 	public string AddonDescription { get; init; } = DESCRIPTION;
@@ -20,13 +20,13 @@ public partial class TalkSpaceViewSelectorAction : TfBaseComponent,
 	private IDialogReference _dialog;
 	private async Task _onClick()
 	{
-		var context = new TalkThreadModalContext
+		var context = new AssetsAttachModalContext
 		{
 			DataProviderId = RegionContext.SpaceData.DataProviderId,
 			SelectedRowIds = RegionContext.SelectedDataRows,
 			CurrentUser = RegionContext.CurrentUser
 		};
-		_dialog = await DialogService.ShowDialogAsync<TalkThreadModal>(
+		_dialog = await DialogService.ShowDialogAsync<AssetsAttachModal>(
 				context,
 				new DialogParameters()
 				{

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebVella.Tefter.Assets.Models;
+namespace WebVella.Tefter.Talk.Models;
 
-public enum AssetsFolderDataIdentityValueType
+public enum TalkChannelDataIdentityValueType
 {
 	[Description("connect to page")]
 	SpacePageId = 0,

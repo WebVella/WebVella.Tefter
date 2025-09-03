@@ -1,51 +1,56 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucErrorBoundry>
-	<div style="padding:var(--tf-layout-content-padding)">
-		@if (String.IsNullOrWhiteSpace(UriInitialized))
-		{
-			<TucSkeletonPageHeader />
-		}
-		else if (_space is null)
-		{
-			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-		}
-		else
-		{
-			<TucPageHeader Icon="@(TfConstants.GetIcon(name: _space.FluentIconName, defaultIcon: "Folder"))" IconColor="@_space.Color" Class="page-title"
-						   Area="@LOC("Spaces")" Title="@_space.Name" SubTitle="@LOC("Pages")" />
+<TucPageLayout Icon="@(TfConstants.GetIcon(name: _space.FluentIconName, defaultIcon: "Folder"))" Color="@_space.Color"
+			   Area="@LOC("Spaces")" Title="@_space.Name" SubTitle="@LOC("Pages")">
+	<ToolbarLeft>
+		<TucSpaceManageDetailsContentToolbar />
+	</ToolbarLeft>
+	<ChildContent>
+		<TucErrorBoundry>
+			<div style="padding:var(--tf-layout-content-padding)">
+				@if (String.IsNullOrWhiteSpace(UriInitialized)) 
+				{
+					<TucSkeletonPageHeader />
+				}
+				else if (_space is null)
+				{
+					<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+				}
+				else
+				{
+					<TucCard Title="@LOC("Pages")">
+						<ToolbarTemplate>
+							<FluentButton OnClick="_addPage" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
+										  Disabled="@_submitting">@LOC("Add page")</FluentButton>
+						</ToolbarTemplate>
+						<ChildContent>
+							@if (_spacePages.Count == 0)
+							{
+								@LOC("No pages or folders created yet.")
+							}
+							else
+							{
+								<table class="tf-grid">
+									<colgroup style="width:1%"></colgroup>
+									<colgroup></colgroup>
+									<colgroup style="width:120px;"></colgroup>
+									<colgroup style="width:120px;"></colgroup>
+									<tbody class="tf-grid-tbody">
+										@foreach (var context in _spacePages)
+										{
+											var contextIndex = _spacePages.FindIndex(x => x.Id == context.Id);
+											<TucSpaceManageNodeItem Item="context" Level="0" OnRemove="_removePage" OnMove="_movePage"
+																	IsFirst="(contextIndex == 0)" IsLast="(contextIndex == _spacePages.Count -1)"
+																	OnEdit="_editPage" OnCopy="_copyPage" />
+										}
+									</tbody>
+								</table>
+							}
+						</ChildContent>
+					</TucCard>
 
-			<TucCard Title="@LOC("Pages")">
-				<ToolbarTemplate>
-					<FluentButton OnClick="_addPage" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
-								  Disabled="@_submitting">@LOC("Add page")</FluentButton>
-				</ToolbarTemplate>
-				<ChildContent>
-					@if (_spacePages.Count == 0)
-					{
-						@LOC("No pages or folders created yet.")
-					}
-					else
-					{
-						<table class="tf-grid">
-							<colgroup style="width:1%"></colgroup>
-							<colgroup></colgroup>
-							<colgroup style="width:120px;"></colgroup>
-							<colgroup style="width:120px;"></colgroup>
-							<tbody class="tf-grid-tbody">
-								@foreach (var context in _spacePages)
-								{
-									var contextIndex = _spacePages.FindIndex(x => x.Id == context.Id);
-									<TucSpaceManageNodeItem Item="context" Level="0" OnRemove="_removePage" OnMove="_movePage"
-															IsFirst="(contextIndex == 0)" IsLast="(contextIndex == _spacePages.Count -1)"
-															OnEdit="_editPage" OnCopy="_copyPage" />
-								}
-							</tbody>
-						</table>
-					}
-				</ChildContent>
-			</TucCard>
-
-		}
-	</div>
-</TucErrorBoundry>
+				}
+			</div>
+		</TucErrorBoundry>
+	</ChildContent>
+</TucPageLayout>

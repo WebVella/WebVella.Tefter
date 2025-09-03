@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Utility;
 public static partial class NavigatorExt
 {
-	internal static bool UrlHasState(this NavigationManager navigator)
+	public static bool UrlHasState(this NavigationManager navigator)
 	{
 		Uri uri = new Uri(navigator.Uri);
 		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
@@ -13,7 +13,7 @@ public static partial class NavigatorExt
 		return false;
 	}
 
-	internal static TfNavigationState GetRouteState(this NavigationManager navigator, string? url = null)
+	public static TfNavigationState GetRouteState(this NavigationManager navigator, string? url = null)
 	{
 		Uri? uri = null;
 		if (String.IsNullOrWhiteSpace(url))

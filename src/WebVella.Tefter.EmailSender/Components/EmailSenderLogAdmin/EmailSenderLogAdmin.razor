@@ -1,24 +1,16 @@
 ﻿@namespace WebVella.Tefter.EmailSender.Components
 @inherits TfBaseComponent
 
-
-<TucGridToolbar>
-	<ToolbarSearch>
-		<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@_search" AutoComplete="off" />
-	</ToolbarSearch>
+<TucPageLayout Title="@LOC("Email Queue")"
+			   Icon="@TfConstants.GetIcon("Mail")" Color="@TfConstants.AdminColor">
 	<ToolbarRight>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_createTestHandler" IconStart="@TfConstants.GetIcon("Add")">
 			@LOC("Sent test email")
 		</FluentButton>
+		<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@_search"
+					  AutoComplete="off" Style="margin-left:1rem;" @ref=_refSearch />
 	</ToolbarRight>
-</TucGridToolbar>
-@if (_messages.Count == 0)
-{
-	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No emails")</FluentMessageBar>
-}
-else
-{
-	<div class="tf-grid-wrapper">
+	<ChildContent>
 		<table class="tf-grid">
 			<thead class="tf-grid-thead">
 				<tr class="tf-grid-thead-bkg"></tr>
@@ -87,12 +79,18 @@ else
 						</td>
 					</tr>
 				}
+				@if (_messages.Count == 0)
+				{
+					<tr class="tf-grid-tr">
+						<td class="tf-grid-td" colspan="5">@LOC("No items")</td>
+					</tr>
+				}
 			</tbody>
 		</table>
-	</div>
-}
 
 
-<TucPager Page="@(_navState?.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
-		  GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
-		  PageSize="@(_navState?.PageSize ?? TfConstants.PageSize)" Style="margin-top:1rem;"/>
+		<TucPager Page="@(_navState?.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
+				  GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
+				  PageSize="@(_navState?.PageSize ?? TfConstants.PageSize)" Style="margin-top:1rem;" />
+	</ChildContent>
+</TucPageLayout>

@@ -1,5 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
+<TucPageLayout Icon="@TfConstants.GetIcon("CalendarTemplate")" Color="@TfConstants.AdminColor"
+			   Area="@LOC(String.Format(TfConstants.AdminTemplateMenuTitle,_template?.ResultType.ToDescriptionString()))" Title="@_template?.Name">
 <TucErrorBoundry>
 	<div style="padding:var(--tf-layout-content-padding)">
 		@if (String.IsNullOrWhiteSpace(UriInitialized))
@@ -16,9 +18,6 @@
 		}
 		else
 		{
-			<TucPageHeader Icon="@TfConstants.GetIcon("CalendarTemplate")" IconColor="@TfConstants.AdminColor" Class="page-title"
-						   Area="@LOC(String.Format(TfConstants.AdminTemplateMenuTitle,_template!.ResultType.ToDescriptionString()))" Title="@_template!.Name" />
-
 			<TucCard Title="@LOC("General")">
 				<ToolbarTemplate>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_editTemplate">
@@ -144,3 +143,4 @@
 		}
 	</div>
 </TucErrorBoundry>
+</TucPageLayout>

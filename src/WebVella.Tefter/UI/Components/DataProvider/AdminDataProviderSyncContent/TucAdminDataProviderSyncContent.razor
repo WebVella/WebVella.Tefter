@@ -1,133 +1,139 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucErrorBoundry>
-	<div style="padding:var(--tf-layout-content-padding)">
-		@if (String.IsNullOrWhiteSpace(UriInitialized))
-		{
-			<TucSkeletonPageHeader />
-		}
-		else if (_provider is null)
-		{
-			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-		}
-		else
-		{
-			<TucPageHeader Icon="@TfConstants.GetIcon("CloudDatabase")" Area="@LOC("Data Providers")"
-						   Title="@_provider.Name" SubTitle="@LOC("Synchronization")" IconColor="TfConstants.AdminColor" />
-			<FluentGrid>
-				<FluentGridItem xs="12" md="6">
-					<TucColumnCard Title="@LOC("Row Identity key")" DataProvider="_provider"
-								   Items="_provider.SynchPrimaryKeyColumns.ToList()" ItemsChanged="_onColumnsChanged"
-								   NoItemsMessage="@LOC("Data row position in the list will be used for comparison.")">
-						<NoItemsTemplate>
-							<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("Row position")" AllowDismiss="false" Style="margin:3px 0">
-								@LOC("When no columns are submitted to be used as identity key the row position in the list will be used to identify the row.")
-							</FluentMessageBar>
-						</NoItemsTemplate>
-					</TucColumnCard>
-				</FluentGridItem>
-				<FluentGridItem xs="12" md="6">
-					<TucCard Title="@LOC("Synchronization schedule")">
+<TucPageLayout Icon="@TfConstants.GetIcon("CloudDatabase")" Area="@LOC("Data Providers")"
+			   Title="@_provider?.Name" SubTitle="@LOC("Synchronization")" Color="TfConstants.AdminColor">
+	<ToolbarLeft>
+		<TucAdminDataProviderDetailsContentToolbar />
+	</ToolbarLeft>
+	<ChildContent>
+		<TucErrorBoundry>
+			<div style="padding:var(--tf-layout-content-padding)">
+				@if (String.IsNullOrWhiteSpace(UriInitialized))
+				{
+					<TucSkeletonPageHeader />
+				}
+				else if (_provider is null)
+				{
+					<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+				}
+				else
+				{
+					<FluentGrid>
+						<FluentGridItem xs="12" md="6">
+							<TucColumnCard Title="@LOC("Row Identity key")" DataProvider="_provider"
+										   Items="_provider.SynchPrimaryKeyColumns.ToList()" ItemsChanged="_onColumnsChanged"
+										   NoItemsMessage="@LOC("Data row position in the list will be used for comparison.")">
+								<NoItemsTemplate>
+									<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("Row position")" AllowDismiss="false" Style="margin:3px 0">
+										@LOC("When no columns are submitted to be used as identity key the row position in the list will be used to identify the row.")
+									</FluentMessageBar>
+								</NoItemsTemplate>
+							</TucColumnCard>
+						</FluentGridItem>
+						<FluentGridItem xs="12" md="6">
+							<TucCard Title="@LOC("Synchronization schedule")">
+								<ToolbarTemplate>
+									<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
+												  OnClick="_editSchedule">@LOC("Manage")</FluentButton>
+								</ToolbarTemplate>
+								<ChildContent>
+									<FluentGrid>
+										<FluentGridItem xs="2">
+											<FluentInputLabel Label="@LOC("Status")" />
+											<div>
+												@if (_provider.SynchScheduleEnabled)
+												{
+													<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetAttribute().Value" Color="white" Class="input-badge" Style="width:100%">ON</FluentBadge>
+												}
+												else
+												{
+													<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetAttribute().Value" Color="white" Class="input-badge" Style="width:100%">OFF</FluentBadge>
+												}
+											</div>
+										</FluentGridItem>
+										<FluentGridItem xs="5">
+											<FluentNumberField TValue="short?" Value="@_provider.SynchScheduleMinutes"
+															   Label="@LOC("Interval")" Style="width:100%" ReadOnly="true">
+												<span slot="end">minutes</span>
+											</FluentNumberField>
+										</FluentGridItem>
+										<FluentGridItem xs="5">
+											<FluentTextField Value="@_nextSyncronization" Label="@LOC("Scheduled on")" Style="width:100%" ReadOnly="true" />
+										</FluentGridItem>
+									</FluentGrid>
+								</ChildContent>
+							</TucCard>
+						</FluentGridItem>
+					</FluentGrid>
+
+
+
+
+					<TucCard Style="margin-top:1rem;" Title="@LOC("Synchronization tasks")">
 						<ToolbarTemplate>
-							<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
-										  OnClick="_editSchedule">@LOC("Manage")</FluentButton>
+							<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowSync")"
+										  OnClick="_synchronizeNow">@LOC("Synchronize now")</FluentButton>
 						</ToolbarTemplate>
 						<ChildContent>
-							<FluentGrid>
-								<FluentGridItem xs="2">
-									<FluentInputLabel Label="@LOC("Status")" />
-									<div>
-										@if (_provider.SynchScheduleEnabled)
-										{
-											<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetAttribute().Value" Color="white" Class="input-badge" Style="width:100%">ON</FluentBadge>
-										}
-										else
-										{
-											<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetAttribute().Value" Color="white" Class="input-badge" Style="width:100%">OFF</FluentBadge>
-										}
-									</div>
-								</FluentGridItem>
-								<FluentGridItem xs="5">
-									<FluentNumberField TValue="short?" Value="@_provider.SynchScheduleMinutes"
-													   Label="@LOC("Interval")" Style="width:100%" ReadOnly="true">
-										<span slot="end">minutes</span>
-									</FluentNumberField>
-								</FluentGridItem>
-								<FluentGridItem xs="5">
-									<FluentTextField Value="@_nextSyncronization" Label="@LOC("Scheduled on")" Style="width:100%" ReadOnly="true" />
-								</FluentGridItem>
-							</FluentGrid>
+
+							<table class="tf-grid">
+								<thead class="tf-grid-thead">
+									<tr class="tf-grid-thead-bkg"></tr>
+									<tr class="tf-grid-tr">
+										<th class="tf-grid-th" style="width:160px;">created on</th>
+										<th class="tf-grid-th">status</th>
+										<th class="tf-grid-th" style="width:160px;">started on</th>
+										<th class="tf-grid-th" style="width:160px;">completed on</th>
+										<th class="tf-grid-th" style="width:1%;">log</th>
+									</tr>
+								</thead>
+								<tbody class="tf-grid-tbody">
+									@foreach (var context in _syncTasks)
+									{
+										<tr @key=context.Id class="tf-grid-tr">
+											<td class="tf-grid-td">
+												<div>@context.CreatedOn.ToString(TfConstants.DateTimeFormat)</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@context.Status.ToDescriptionString()</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@context.StartedOn?.ToString(TfConstants.DateTimeFormat)</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@context.CompletedOn?.ToString(TfConstants.DateTimeFormat)</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>
+													<FluentButton OnClick="@(() => _onViewLogClick(context))" Appearance="@Appearance.Outline">
+														@LOC("view")
+													</FluentButton>
+												</div>
+											</td>
+										</tr>
+									}
+									@if (_syncTasks.Count == 0)
+									{
+										<tr>
+											<td colspan="5">
+												<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">
+													@LOC("No synchronization tasks")
+												</FluentMessageBar>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+							<TucPager Page="@(_navState.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
+									  GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
+									  PageSize="@(_navState.PageSize ?? TfConstants.PageSize)" Style="margin-top:1rem;" />
+
+
+
 						</ChildContent>
 					</TucCard>
-				</FluentGridItem>
-			</FluentGrid>
-
-
-
-
-			<TucCard Style="margin-top:1rem;" Title="@LOC("Synchronization tasks")">
-				<ToolbarTemplate>
-					<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowSync")"
-								  OnClick="_synchronizeNow">@LOC("Synchronize now")</FluentButton>
-				</ToolbarTemplate>
-				<ChildContent>
-
-						<table class="tf-grid">
-							<thead class="tf-grid-thead">
-								<tr class="tf-grid-thead-bkg"></tr>
-								<tr class="tf-grid-tr">
-									<th class="tf-grid-th" style="width:160px;">created on</th>
-									<th class="tf-grid-th">status</th>
-									<th class="tf-grid-th" style="width:160px;">started on</th>
-									<th class="tf-grid-th" style="width:160px;">completed on</th>
-									<th class="tf-grid-th" style="width:1%;">log</th>
-								</tr>
-							</thead>
-							<tbody class="tf-grid-tbody">
-								@foreach (var context in _syncTasks)
-								{
-									<tr @key=context.Id class="tf-grid-tr">
-										<td class="tf-grid-td">
-											<div>@context.CreatedOn.ToString(TfConstants.DateTimeFormat)</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>@context.Status.ToDescriptionString()</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>@context.StartedOn?.ToString(TfConstants.DateTimeFormat)</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>@context.CompletedOn?.ToString(TfConstants.DateTimeFormat)</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>
-												<FluentButton OnClick="@(() => _onViewLogClick(context))" Appearance="@Appearance.Outline">
-													@LOC("view")
-												</FluentButton>
-											</div>
-										</td>
-									</tr>
-								}
-								@if (_syncTasks.Count == 0)
-								{
-								<tr>
-									<td colspan="5">
-										<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">
-											@LOC("No synchronization tasks")
-										</FluentMessageBar>
-									</td>
-								</tr>	
-								}
-							</tbody>
-						</table>
-						<TucPager Page="@(_navState.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
-								  GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
-						PageSize="@(_navState.PageSize ?? TfConstants.PageSize)" Style="margin-top:1rem;"/>
-
-
-
-				</ChildContent>
-			</TucCard>
-		}
-	</div>
-</TucErrorBoundry>
+				}
+			</div>
+		</TucErrorBoundry>
+	</ChildContent>
+</TucPageLayout>

@@ -1,142 +1,153 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucErrorBoundry>
-	<div style="padding:var(--tf-layout-content-padding)">
-		@if (String.IsNullOrWhiteSpace(UriInitialized))
-		{
-			<TucSkeletonPageHeader />
-		}
-		else if (_provider is null)
-		{
-			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-		}
-		else
-		{
-			var columnCount = 0;
-			<TucPageHeader Icon="@TfConstants.GetIcon("CloudDatabase")" Area="@LOC("Data Providers")"
-						   Title="@_provider.Name" SubTitle="@LOC("Data")" IconColor="TfConstants.AdminColor" />
-
-			<TucGridToolbar>
-				<ToolbarSearch>
-					<FluentSearch Value="@_navState.Search" ValueChanged="_onSearch" AutoComplete="off" Placeholder="@LOC("search...")" />
-				</ToolbarSearch>
-				<ToolbarLeft>
-					<FluentButton Id="view-filter-selector" Title="toggle system columns" OnClick="_toggleSystemColumns"
-								  Appearance="@(_showSystemColumns ? Appearance.Accent : Appearance.Outline)">
-						<span>system</span>
-						<span slot="end">
-							<FluentBadge>@_provider.SystemColumns.Count</FluentBadge>
-						</span>
-					</FluentButton>
-					<FluentButton Id="view-filter-selector" Title="toggle join key columns" OnClick="_toggleJoinKeyColumns"
-								  Appearance="@(_showJoinKeyColumns ? Appearance.Accent : Appearance.Outline)">
-						<span>join key</span>
-						<span slot="end">
-							<FluentBadge>@_provider.SharedColumns.Count</FluentBadge>
-						</span>
-					</FluentButton>
-					<FluentButton Id="view-filter-selector" Title="toggle custom columns" OnClick="_toggleCustomColumns"
-								  Appearance="@(_showCustomColumns ? Appearance.Accent : Appearance.Outline)">
-						<span>custom</span>
-						<span slot="end">
-							<FluentBadge>@_provider.Columns.Count</FluentBadge>
-						</span>
-					</FluentButton>
-				</ToolbarLeft>
-				<ToolbarRight>
-					<FluentStack VerticalAlignment="@VerticalAlignment.Center">
-						<div style="margin-right:10px;color:var(--neutral-foreground-hint)">@LOC("{0} total rows", _totalRows)</div>
-						<FluentButton OnClick="_deleteAllData" Appearance="@Appearance.Outline">
-							<FluentIcon Value="@TfConstants.GetIcon("Delete")" Slot="start" Color="@Color.Error" />
-							@LOC("delete all data")
-						</FluentButton>
-					</FluentStack>
-				</ToolbarRight>
-			</TucGridToolbar>
-			@if (_data is not null)
+<TucPageLayout Icon="@TfConstants.GetIcon("CloudDatabase")" Area="@LOC("Data Providers")"
+			   Title="@_provider?.Name" SubTitle="@LOC("Data")" Color="TfConstants.AdminColor">
+	<ToolbarLeft>
+		<TucAdminDataProviderDetailsContentToolbar />
+	</ToolbarLeft>
+	<ChildContent>
+		<TucErrorBoundry>
+			@if (String.IsNullOrWhiteSpace(UriInitialized))
 			{
-				if (_hasVisibleColumns())
-				{
-					<div class="tf-grid-wrapper">
-						<table class="tf-grid">
-							<thead class="tf-grid-thead">
-								<tr class="tf-grid-thead-bkg"></tr>
-								<tr class="tf-grid-tr">
-									@foreach (var column in _data.Columns)
-									{
-										if (!_columnIsVisible(column)) { continue; }
-										<th class="tf-grid-th">@column.Name</th>
-										columnCount++;
-									}
-								</tr>
-							</thead>
-							<tbody class="tf-grid-tbody">
-								@if (_isDataLoading)
-								{
-									<tr class="tf-grid-tr">
-										<td class="tf-grid-td" colspan="@columnCount"><div>Loading...</div></td>
-									</tr>
-								}
-								else if (_data.Columns.Count == 0)
-								{
-									<tr class="tf-grid-tr">
-										<td class="tf-grid-td" colspan="@columnCount"><div>@LOC("No columns are created for this data provider yet")</div></td>
-									</tr>
-
-								}
-								else if (_data.Rows.Count == 0)
-								{
-									<tr class="tf-grid-tr">
-										<td class="tf-grid-td" colspan="@columnCount"><div>@LOC("No records")</div></td>
-									</tr>
-								}
-								else
-								{
-									foreach (TfDataRow row in _data.Rows)
-									{
-										<tr @key=@row["tf_id"] class="tf-grid-tr">
-											@foreach (var column in _data.Columns)
-											{
-												if (!_columnIsVisible(column)) { continue; }
-												<td class="tf-grid-td">
-													<div class="tf-grid-td-hover"></div>
-													@if (column.IsJoinColumn)
-													{
-														<div>@(String.Join(", ", (List<string>)row[column.Name]))</div>
-													}
-													else
-													{
-														<div>@row[column.Name]</div>
-													}
-												</td>
-											}
-										</tr>
-									}
-									@if (_data.Rows.Count == 0)
-									{
-										<tr class="tf-grid-tr">
-											<td class="tf-grid-td" colspan="@columnCount">No records found</td>
-										</tr>
-									}
-								}
-							</tbody>
-						</table>
-					</div>
-					<div class="tf-grid__pager">
-						<TucPager Page="@(_data?.QueryInfo.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
-								  GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
-								  PageSize="@(_data?.QueryInfo.PageSize ?? TfConstants.PageSize)" ChangePageSize="_pageSizeChange" />
-					</div>
-				}
-				else
-				{
-					<FluentMessageBar Style="margin-top:2rem" AllowDismiss=false Intent="@MessageIntent.Info">@LOC("There are no visible columns selected.")</FluentMessageBar>
-				}
+				<div style="padding:var(--tf-layout-content-padding)">
+					<TucSkeletonPageHeader />
+				</div>
+			}
+			else if (_provider is null)
+			{
+				<div style="padding:var(--tf-layout-content-padding)">
+					<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+				</div>
 			}
 			else
 			{
-				<TucLoadingPane />
+				var columnCount = 0;
+				<div style="padding:0 var(--tf-layout-content-padding)">
+					<TucGridToolbar>
+						<ToolbarSearch>
+							<FluentSearch Value="@_navState.Search" ValueChanged="_onSearch" AutoComplete="off" Placeholder="@LOC("search...")" />
+						</ToolbarSearch>
+						<ToolbarLeft>
+							<FluentButton Id="view-filter-selector" Title="toggle system columns" OnClick="_toggleSystemColumns"
+										  Appearance="@(_showSystemColumns ? Appearance.Accent : Appearance.Outline)">
+								<span>system</span>
+								<span slot="end">
+									<FluentBadge>@_provider.SystemColumns.Count</FluentBadge>
+								</span>
+							</FluentButton>
+							<FluentButton Id="view-filter-selector" Title="toggle join key columns" OnClick="_toggleJoinKeyColumns"
+										  Appearance="@(_showJoinKeyColumns ? Appearance.Accent : Appearance.Outline)">
+								<span>join key</span>
+								<span slot="end">
+									<FluentBadge>@_provider.SharedColumns.Count</FluentBadge>
+								</span>
+							</FluentButton>
+							<FluentButton Id="view-filter-selector" Title="toggle custom columns" OnClick="_toggleCustomColumns"
+										  Appearance="@(_showCustomColumns ? Appearance.Accent : Appearance.Outline)">
+								<span>custom</span>
+								<span slot="end">
+									<FluentBadge>@_provider.Columns.Count</FluentBadge>
+								</span>
+							</FluentButton>
+						</ToolbarLeft>
+						<ToolbarRight>
+							<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+								<div style="margin-right:10px;color:var(--neutral-foreground-hint)">@LOC("{0} total rows", _totalRows)</div>
+								<FluentButton OnClick="_deleteAllData" Appearance="@Appearance.Outline">
+									<FluentIcon Value="@TfConstants.GetIcon("Delete")" Slot="start" Color="@Color.Error" />
+									@LOC("delete all data")
+								</FluentButton>
+							</FluentStack>
+						</ToolbarRight>
+					</TucGridToolbar>
+				</div>
+				@if (_data is not null)
+				{
+					if (_hasVisibleColumns())
+					{
+						<div class="tf-grid-wrapper">
+							<table class="tf-grid">
+								<thead class="tf-grid-thead">
+									<tr class="tf-grid-thead-bkg"></tr>
+									<tr class="tf-grid-tr">
+										@foreach (var column in _data.Columns)
+										{
+											if (!_columnIsVisible(column)) { continue; }
+											<th class="tf-grid-th">@column.Name</th>
+											columnCount++;
+										}
+									</tr>
+								</thead>
+								<tbody class="tf-grid-tbody">
+									@if (_isDataLoading)
+									{
+										<tr class="tf-grid-tr">
+											<td class="tf-grid-td" colspan="@columnCount"><div>Loading...</div></td>
+										</tr>
+									}
+									else if (_data.Columns.Count == 0)
+									{
+										<tr class="tf-grid-tr">
+											<td class="tf-grid-td" colspan="@columnCount"><div>@LOC("No columns are created for this data provider yet")</div></td>
+										</tr>
+
+									}
+									else if (_data.Rows.Count == 0)
+									{
+										<tr class="tf-grid-tr">
+											<td class="tf-grid-td" colspan="@columnCount"><div>@LOC("No records")</div></td>
+										</tr>
+									}
+									else
+									{
+										foreach (TfDataRow row in _data.Rows)
+										{
+											<tr @key=@row["tf_id"] class="tf-grid-tr">
+												@foreach (var column in _data.Columns)
+												{
+													if (!_columnIsVisible(column)) { continue; }
+													<td class="tf-grid-td">
+														<div class="tf-grid-td-hover"></div>
+														@if (column.IsJoinColumn)
+														{
+															<div>@(String.Join(", ", (List<string>)row[column.Name]))</div>
+														}
+														else
+														{
+															<div>@row[column.Name]</div>
+														}
+													</td>
+												}
+											</tr>
+										}
+										@if (_data.Rows.Count == 0)
+										{
+											<tr class="tf-grid-tr">
+												<td class="tf-grid-td" colspan="@columnCount">No records found</td>
+											</tr>
+										}
+									}
+								</tbody>
+							</table>
+						</div>
+						<div class="tf-grid__pager">
+							<TucPager Page="@(_data?.QueryInfo.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
+									  GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
+									  PageSize="@(_data?.QueryInfo.PageSize ?? TfConstants.PageSize)" ChangePageSize="_pageSizeChange" />
+						</div>
+					}
+					else
+					{
+						<FluentMessageBar Style="margin-top:2rem" AllowDismiss=false Intent="@MessageIntent.Info">@LOC("There are no visible columns selected.")</FluentMessageBar>
+					}
+				}
+				else
+				{
+					<div style="padding:var(--tf-layout-content-padding)">
+						<TucLoadingPane />
+					</div>
+				}
 			}
-		}
-	</div>
-</TucErrorBoundry>
+		</TucErrorBoundry>
+	</ChildContent>
+</TucPageLayout>

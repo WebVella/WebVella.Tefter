@@ -64,10 +64,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 			TrapFocus = false
 		});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			ToastService.ShowSuccess(LOC("Folder successfully created!"));
-		}
+		if (!result.Cancelled && result.Data != null){}
 	}
 
 	private async Task _editFolderHandler(AssetsFolder folder)
@@ -82,10 +79,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 			TrapFocus = false
 		});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			ToastService.ShowSuccess(LOC("Folder successfully updated!"));
-		}
+		if (!result.Cancelled && result.Data != null){}
 	}
 	private async Task _deleteFolderHandler(AssetsFolder folder)
 	{
