@@ -1,7 +1,10 @@
-﻿using DocumentFormat.OpenXml.Office2013.PowerPoint.Roaming;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Office2013.PowerPoint.Roaming;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Newtonsoft.Json.Linq;
 using NpgsqlTypes;
+using System.Data;
+using WebVella.BlazorTrace;
 
 namespace WebVella.Tefter.Services;
 
@@ -90,6 +93,11 @@ public partial interface ITfService
 		TfDataProvider provider,
 		TfDataIdentity dataIdentity,
 		List<Guid> rowIds);
+
+	public void SaveSharedColumnValues(
+		Guid sharedColumnId,
+		Dictionary<string, object> valuesDict,
+		int batchSize = 100);
 }
 
 public partial class TfService : ITfService
@@ -746,6 +754,64 @@ public partial class TfService : ITfService
 				sharedColumnId,
 				identityValue,
 				dbType);
+		}
+	}
+
+	public void SaveSharedColumnValues(
+		Guid sharedColumnId,
+		Dictionary<string, object> valuesDict,
+		int batchSize = 100 )
+	{
+		if(batchSize <= 0)
+			throw new ArgumentOutOfRangeException(nameof(batchSize), "Batch size must be greater than zero");
+
+		if(valuesDict is null)
+			throw new ArgumentNullException(nameof(valuesDict));
+
+		var sharedColumn = GetSharedColumn(sharedColumnId);
+
+		if (sharedColumn is null)
+			throw new Exception("Shared column not found");
+
+		var tableName = GetSharedColumnValueTableNameByType(sharedColumn.DbType);
+
+		using (var scope = _dbService.CreateTransactionScope())
+		{
+			foreach (IEnumerable<string> keysBatch in valuesDict.Keys.Batch(batchSize))
+			{
+				int paramCounter = 1;
+
+				List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
+
+				StringBuilder sqlSb = new StringBuilder();
+
+				foreach (var identityValue in keysBatch )
+				{
+					var value = valuesDict[identityValue];
+
+					sqlSb.AppendLine($"DELETE FROM {tableName} WHERE data_identity_value = @data_identity_value_{paramCounter}" +
+						$" AND shared_column_id = @shared_column_id_{paramCounter};");
+
+					sqlSb.AppendLine($"INSERT INTO {tableName}(data_identity_value, shared_column_id, value) " +
+						$"VALUES( @data_identity_value_{paramCounter}, @shared_column_id_{paramCounter}, @value_{paramCounter} );");
+
+					var valueParameter = new NpgsqlParameter($"@value_{paramCounter}", GetDbTypeForDatabaseColumnType(sharedColumn.DbType));
+					if (value is null)
+						valueParameter.Value = DBNull.Value;
+					else
+						valueParameter.Value = value;
+
+					parameters.Add(valueParameter);
+					parameters.Add(new NpgsqlParameter($"@shared_column_id_{paramCounter}", sharedColumnId));
+					parameters.Add(new NpgsqlParameter($"@data_identity_value_{paramCounter}", identityValue));
+
+					paramCounter++;
+				}
+
+				_dbService.ExecuteSqlNonQueryCommand(sqlSb.ToString(), parameters);
+			}
+
+			scope.Complete();
 		}
 	}
 
@@ -1635,18 +1701,18 @@ public partial class TfService : ITfService
 
 	}
 
-	public Dictionary<Guid,string> GetDataIdentityValuesForRowIds(
+	public Dictionary<Guid, string> GetDataIdentityValuesForRowIds(
 		TfDataProvider provider,
 		TfDataIdentity dataIdentity,
-		List<Guid> rowIds )
+		List<Guid> rowIds)
 	{
-		if(provider is null)
+		if (provider is null)
 			throw new Exception("Provider object is null");
 
-		if(dataIdentity is null)
+		if (dataIdentity is null)
 			throw new Exception("Data identity object is null");
 
-		if( !provider.Identities.Any(x => x.DataIdentity == dataIdentity.DataIdentity) )
+		if (!provider.Identities.Any(x => x.DataIdentity == dataIdentity.DataIdentity))
 			throw new Exception("Data identity not found in provider.");
 
 		var result = new Dictionary<Guid, string>();
@@ -1654,7 +1720,10 @@ public partial class TfService : ITfService
 		if (rowIds is null || rowIds.Count == 0)
 			return result;
 
-		var sql = $"SELECT tf_id, tf_ide_{dataIdentity.DataIdentity} FROM dp{provider.Index} WHERE tf_id = ANY(@ids)";
+		var identityColumnName = dataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY ?
+			TfConstants.TF_ROW_ID_DATA_IDENTITY : $"tf_ide_{dataIdentity.DataIdentity}";
+
+		var sql = $"SELECT tf_id, {identityColumnName} FROM dp{provider.Index} WHERE tf_id = ANY(@ids)";
 
 		var idsParameter = new NpgsqlParameter("@ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
 		idsParameter.Value = rowIds.ToArray();
@@ -1664,7 +1733,7 @@ public partial class TfService : ITfService
 		foreach (DataRow row in dataTable.Rows)
 		{
 			Guid id = (Guid)row["tf_id"];
-			string value = (string)row[$"tf_ide_{dataIdentity.DataIdentity}"];
+			string value = (string)row[identityColumnName];
 			result.Add(id, value);
 		}
 

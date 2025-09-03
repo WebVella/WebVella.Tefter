@@ -23,6 +23,7 @@ public class AssetsApp : ITfApplicationAddon
 	public void OnRegisterDependencyInjections(IServiceCollection services)
 	{
 		services.AddSingleton<IAssetsService, AssetsService>();
-	}
+		services.AddHostedService<AssetBackgroundJob>();
+    }
 
 }
