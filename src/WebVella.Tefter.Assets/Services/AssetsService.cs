@@ -4,7 +4,6 @@ namespace WebVella.Tefter.Assets.Services;
 
 public partial interface IAssetsService
 {
-    Queue<Asset> SharedColumnAssetsProcessQueue { get; }
     List<TfDataIdentity> GetAllDataIdentities();
     List<TfSharedColumn> GetAllSharedColumns();
     Task<TfUser?> GetCurrentUser(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider);
@@ -12,10 +11,8 @@ public partial interface IAssetsService
 
 internal partial class AssetsService : IAssetsService
 {
-    private readonly Queue<Asset> _sharedColumnAssetsProcessQueue;
     public readonly ITfDatabaseService _dbService;
     public readonly ITfService _tfService;
-    public Queue<Asset> SharedColumnAssetsProcessQueue => _sharedColumnAssetsProcessQueue;
 
     public AssetsService(
         ITfDatabaseService dbService,
@@ -23,8 +20,6 @@ internal partial class AssetsService : IAssetsService
     {
         _dbService = dbService;
         _tfService = tfService;
-        _sharedColumnAssetsProcessQueue = new Queue<Asset>();
-
     }
 
     public List<TfDataIdentity> GetAllDataIdentities() => _tfService.GetDataIdentities();

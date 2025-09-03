@@ -265,7 +265,7 @@ public partial class TfService : ITfService
 									.SingleOrDefault(x => x.DbName == columnName);
 
 								//if column is already processed, ignore duplicate
-								if (_sharedColumnsData.Any(x => x.DbName == x.DbName))
+								if (_sharedColumnsData.Any(x => x.DbName == columnName))
 								{
 									continue;
 								}

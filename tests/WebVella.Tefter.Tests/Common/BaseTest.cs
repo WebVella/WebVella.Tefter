@@ -164,6 +164,16 @@ public class BaseTest
 		};
 		tfService.CreateSharedColumn(sharedColumn2);
 
+		TfSharedColumn sharedColumn3 = new TfSharedColumn
+		{
+			Id = Guid.NewGuid(),
+			DbName = "sc_int_row_id",
+			DbType = TfDatabaseColumnType.Integer,
+			IncludeInTableSearch = false,
+			DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY
+		};
+		tfService.CreateSharedColumn(sharedColumn3);
+
 		//get provider with new shared columns
 		provider = tfService.GetDataProvider(provider.Id);
 
@@ -218,8 +228,7 @@ public class BaseTest
 		tfService.CreateSpace(space);
 
 		var spaceColumns = columns.Select(x => x.Item1).ToList();
-		spaceColumns.Add(sharedColumn1.DbName);
-		spaceColumns.Add(sharedColumn2.DbName); //this one will be used for sort to check sort join
+		
 
 		var spaceData = new TfCreateSpaceData
 		{
@@ -237,6 +246,32 @@ public class BaseTest
 		var result = tfService.CreateSpaceData(spaceData);
 		provider = tfService.GetDataProvider(provider.Id);
 		var createdSpaceData = tfService.GetSpaceData(spaceData.Id);
+
+		tfService.CreateSpaceDataIdentity(new TfSpaceDataIdentity
+		{
+			Id = Guid.NewGuid(),
+			SpaceDataId = spaceData.Id,
+			Columns = new List<string> { sharedColumn1.DbName },
+			DataIdentity = sharedColumn1!.DataIdentity,
+		});
+
+		tfService.CreateSpaceDataIdentity(new TfSpaceDataIdentity
+		{
+			Id = Guid.NewGuid(),
+			SpaceDataId = spaceData.Id,
+			Columns = new List<string> { sharedColumn2.DbName },
+			DataIdentity = sharedColumn2!.DataIdentity,
+		});
+
+		tfService.CreateSpaceDataIdentity(new TfSpaceDataIdentity
+		{
+			Id = Guid.NewGuid(),
+			SpaceDataId = spaceData.Id,
+			Columns = new List<string> { sharedColumn3.DbName },
+			DataIdentity = sharedColumn3!.DataIdentity,
+		});
+
+		createdSpaceData = tfService.GetSpaceData(spaceData.Id);
 
 		return (provider, createdSpaceData);
 	}

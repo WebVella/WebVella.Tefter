@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Assets.Services;
+﻿using System.Text;
+
+namespace WebVella.Tefter.Assets.Services;
 
 public partial interface IAssetsService
 {
@@ -43,13 +45,14 @@ public partial interface IAssetsService
     public void DeleteAsset(
         Guid assetId);
 
-    public void UpdateFoldersSharedColumnCount();
+    //public void UpdateFoldersSharedColumnCount();
 
-    public void UpdateFolderSharedColumnCount(
-      AssetsFolder folder);
+    //public void UpdateFolderSharedColumnCount(
+    //  AssetsFolder folder);
 
-    public void UpdateAssetSharedColumnCount(
-     Asset asset);
+    public void ModifyAssetSharedColumnCount(
+       Asset asset,
+       bool isIncrement);
 }
 
 internal partial class AssetsService : IAssetsService
@@ -315,7 +318,7 @@ ORDER BY aa.created_on DESC;";
 
             var resultAsset = GetAsset(id);
 
-            SharedColumnAssetsProcessQueue.Enqueue(resultAsset);
+            ModifyAssetSharedColumnCount(resultAsset, isIncrement: true);
 
             AssetCreated?.Invoke(this, resultAsset);
 
@@ -425,7 +428,7 @@ ORDER BY aa.created_on DESC;";
 
             var resultAsset = GetAsset(id);
 
-            SharedColumnAssetsProcessQueue.Enqueue(resultAsset);
+            ModifyAssetSharedColumnCount(resultAsset, isIncrement: true);
 
             AssetCreated?.Invoke(this, resultAsset);
             return resultAsset;
@@ -528,7 +531,7 @@ ORDER BY aa.created_on DESC;";
 
             var resultAsset = GetAsset(id);
 
-            SharedColumnAssetsProcessQueue.Enqueue(resultAsset);
+            ModifyAssetSharedColumnCount(resultAsset, isIncrement: true);
 
             AssetCreated?.Invoke(this, resultAsset);
 
@@ -644,7 +647,7 @@ ORDER BY aa.created_on DESC;";
 
             var resultAsset = GetAsset(id);
 
-            SharedColumnAssetsProcessQueue.Enqueue(resultAsset);
+            ModifyAssetSharedColumnCount(resultAsset, isIncrement: true);
 
             AssetCreated?.Invoke(this, resultAsset);
 
@@ -853,6 +856,9 @@ ORDER BY aa.created_on DESC;";
                 FileAssetContent content = (FileAssetContent)existingAsset.Content;
                 _tfService.DeleteBlob(content.BlobId);
             }
+
+            //update shared column count if needed
+            ModifyAssetSharedColumnCount(existingAsset, isIncrement: false);
 
             //delete all identity connection to this asset
             _tfService.DeleteDataIdentityConnection(
@@ -1310,6 +1316,9 @@ ORDER BY aa.created_on DESC;";
             return;
         }
 
+        if(sharedColumn.DataIdentity != folder.DataIdentity)
+            return;
+
         string folderDataIdentityName = folder.DataIdentity;
 
         if (string.IsNullOrEmpty(folderDataIdentityName))
@@ -1356,10 +1365,14 @@ ORDER BY aa.created_on DESC;";
 
     }
 
-    public void UpdateAssetSharedColumnCount(
-        Asset asset)
+    public void ModifyAssetSharedColumnCount(
+        Asset asset,
+        bool isIncrement )
     {
         if (asset == null)
+            return;
+
+        if(asset.ConnectedDataIdentityValues == null ||asset.ConnectedDataIdentityValues.Count == 0)
             return;
 
         var folder = GetFolder(asset.FolderId);
@@ -1375,6 +1388,9 @@ ORDER BY aa.created_on DESC;";
         if (sharedColumn is null)
             return;
 
+        if (sharedColumn.DataIdentity != folder.DataIdentity)
+            return;
+
         //only number type columns are supported
         if (!(  sharedColumn.DbType == TfDatabaseColumnType.Number ||
                 sharedColumn.DbType == TfDatabaseColumnType.ShortInteger ||
@@ -1385,46 +1401,72 @@ ORDER BY aa.created_on DESC;";
             return;
         }
 
-        string folderDataIdentityName = folder.DataIdentity;
+        var identityValues = asset.ConnectedDataIdentityValues.Keys.ToList();  
 
-        if (string.IsNullOrEmpty(folderDataIdentityName))
-            folderDataIdentityName = TfConstants.TF_ROW_ID_DATA_IDENTITY;
+        ModifySharedColumnValues(sharedColumn, identityValues, isIncrement?1:-1, 1000);
+    }
 
-        var folderIdentity = _tfService.GetDataIdentity(folderDataIdentityName);
+    private void ModifySharedColumnValues(
+        TfSharedColumn sharedColumn,
+        List<string> identityValues,
+        int valueChange,
+        int batchSize )
+    {
+        if (batchSize <= 0)
+            throw new ArgumentOutOfRangeException(nameof(batchSize), "Batch size must be greater than zero");
 
-        if (folderIdentity is null)
-            return;
+        if (identityValues is null)
+            throw new ArgumentNullException(nameof(identityValues));
 
-        var assetIdentityConnections = _tfService.GetDataIdentityConnections(
-            dataIndentity1: TfConstants.TF_ROW_ID_DATA_IDENTITY,
-            value1: asset.IdentityRowId,
-            dataIdentity2: folderDataIdentityName);
+        if (sharedColumn is null)
+            throw new Exception("Shared column not found");
 
-        var connectedObjectIdentityValuesDict = new Dictionary<string, object>();
-
-        foreach (var idCon in assetIdentityConnections)
+        string tableName;
+        switch (sharedColumn.DbType)
         {
-            if (idCon.DataIdentity1 == TfConstants.TF_ROW_ID_DATA_IDENTITY &&
-                idCon.Value1 == asset.IdentityRowId)
-            {
-                if (!connectedObjectIdentityValuesDict.ContainsKey(idCon.Value2))
-                    connectedObjectIdentityValuesDict[idCon.Value2] = 0;
-
-                connectedObjectIdentityValuesDict[idCon.Value2] = ((int)connectedObjectIdentityValuesDict[idCon.Value2]) + 1;
-
-            }
-
-            if (idCon.DataIdentity2 == TfConstants.TF_ROW_ID_DATA_IDENTITY &&
-               idCon.Value2 == asset.IdentityRowId)
-            {
-                if (!connectedObjectIdentityValuesDict.ContainsKey(idCon.Value1))
-                    connectedObjectIdentityValuesDict[idCon.Value1] = 0;
-
-                connectedObjectIdentityValuesDict[idCon.Value1] = ((int)connectedObjectIdentityValuesDict[idCon.Value1]) + 1;
-            }
+            case TfDatabaseColumnType.ShortInteger:
+                tableName = "tf_shared_column_short_integer_value";
+                break;
+            case TfDatabaseColumnType.Integer:
+                tableName = "tf_shared_column_integer_value";
+                break;
+            case TfDatabaseColumnType.LongInteger:
+                tableName = "tf_shared_column_long_integer_value";
+                break;
+            case TfDatabaseColumnType.Number:
+                tableName = "tf_shared_column_number_value";
+                break;
+            default:
+                throw new Exception("Shared column db type is not supported column type for modification.");
         }
 
-        _tfService.SaveSharedColumnValues(sharedColumn.Id, connectedObjectIdentityValuesDict, batchSize: 1000);
+        using (var scope = _dbService.CreateTransactionScope())
+        {
+            foreach (IEnumerable<string> keysBatch in identityValues.Batch(batchSize))
+            {
+                int paramCounter = 1;
 
+                List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
+                parameters.Add(new NpgsqlParameter($"@shared_column_id", sharedColumn.Id));
+
+                StringBuilder sqlSb = new StringBuilder();
+
+                foreach (var identityValue in keysBatch)
+                {
+                    sqlSb.AppendLine( $@"INSERT INTO {tableName} (shared_column_id,data_identity_value, value)
+                            VALUES (@shared_column_id,@data_identity_value_{paramCounter},{(valueChange>=0?valueChange:0)} )
+                            ON CONFLICT (data_identity_value,shared_column_id)
+                            DO UPDATE SET  value = GREATEST( 0, {tableName}.value + ( {valueChange} ) );");
+
+                    parameters.Add(new NpgsqlParameter($"@data_identity_value_{paramCounter}", identityValue));
+
+                    paramCounter++;
+                }
+
+                _dbService.ExecuteSqlNonQueryCommand(sqlSb.ToString(), parameters);
+            }
+
+            scope.Complete();
+        }
     }
 }

@@ -66,7 +66,7 @@ internal partial class AssetsService : IAssetsService
 		if (folder.Id == Guid.Empty)
 			folder.Id = Guid.NewGuid();
 
-		new AssetFolderValidator(this)
+		new AssetFolderValidator(this, _tfService)
 			.ValidateCreate(folder)
 			.ToValidationException()
 			.ThrowIfContainsErrors();
@@ -114,7 +114,7 @@ internal partial class AssetsService : IAssetsService
 		if (folder == null)
 			throw new NullReferenceException("Folder object is null");
 
-		new AssetFolderValidator(this)
+		new AssetFolderValidator(this, _tfService)
 			.ValidateUpdate(folder)
 			.ToValidationException()
 			.ThrowIfContainsErrors();
@@ -165,7 +165,7 @@ internal partial class AssetsService : IAssetsService
 	{
 		var existingFolder = GetFolder(folderId);
 
-		new AssetFolderValidator(this)
+		new AssetFolderValidator(this, _tfService)
 			.ValidateDelete(existingFolder)
 			.ToValidationException()
 			.ThrowIfContainsErrors();
@@ -204,10 +204,17 @@ internal partial class AssetsService : IAssetsService
 	internal class AssetFolderValidator
 		: AbstractValidator<AssetsFolder>
 	{
-		public AssetFolderValidator(IAssetsService service)
+		private readonly IAssetsService _assetService;
+		private readonly ITfService _tfService;
+        public AssetFolderValidator(
+			IAssetsService assetService,
+			ITfService tfService )
 		{
 
-			RuleSet("general", () =>
+			_assetService = assetService;
+			_tfService = tfService;
+
+            RuleSet("general", () =>
 			{
 				RuleFor(folder => folder.Id)
 					.NotEmpty()
@@ -217,12 +224,16 @@ internal partial class AssetsService : IAssetsService
 					.NotEmpty()
 					.WithMessage("The folder name is required.");
 
-			});
+                RuleFor(folder => folder.CountSharedColumnName)
+                    .NotEmpty()
+                    .WithMessage("The folder shared column count is required.");
+
+            });
 
 			RuleSet("create", () =>
 			{
 				RuleFor(folder => folder.Id)
-						.Must((folder, id) => { return service.GetFolder(id) == null; })
+						.Must((folder, id) => { return _assetService.GetFolder(id) == null; })
 						.WithMessage("There is already existing folder with specified identifier.");
 
 				RuleFor(folder => folder.Name)
@@ -231,18 +242,43 @@ internal partial class AssetsService : IAssetsService
 							if (string.IsNullOrEmpty(name))
 								return true;
 
-							var folders = service.GetFolders();
+							var folders = _assetService.GetFolders();
 							return !folders.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
 						})
 						.WithMessage("There is already existing folder with same name.");
-			});
+
+                RuleFor(folder => folder.CountSharedColumnName )
+                        .Must((folder, sharedColumnName) =>
+                        {
+                            if (string.IsNullOrEmpty(sharedColumnName))
+                                return true;
+
+							var sharedColumn = _tfService.GetSharedColumn(sharedColumnName);
+							return sharedColumn != null;
+                        })
+                        .WithMessage("There is shared column for count with specified name.");
+
+                RuleFor(folder => folder.CountSharedColumnName)
+                       .Must((folder, sharedColumnName) =>
+                       {
+                           if (string.IsNullOrEmpty(sharedColumnName))
+                               return true;
+
+                           var sharedColumn = _tfService.GetSharedColumn(sharedColumnName);
+						   if (sharedColumn is null)
+							   return true;
+
+						   return sharedColumn.DataIdentity == folder.DataIdentity;
+                       })
+                       .WithMessage("The selected folder data identity is different to shared column for count data identity.");
+            });
 
 			RuleSet("update", () =>
 			{
 				RuleFor(folder => folder.Id)
 						.Must((folder, id) =>
 						{
-							return service.GetFolder(id) != null;
+							return _assetService.GetFolder(id) != null;
 						})
 						.WithMessage("There is not existing folder with specified identifier.");
 
@@ -252,7 +288,7 @@ internal partial class AssetsService : IAssetsService
 							if (string.IsNullOrEmpty(name))
 								return true;
 
-							var folders = service.GetFolders();
+							var folders = _assetService.GetFolders();
 							return !folders.Any(x =>
 								x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim() &&
 								x.Id != folder.Id
@@ -260,17 +296,49 @@ internal partial class AssetsService : IAssetsService
 						})
 						.WithMessage("There is already existing another folder with same name.");
 
-			});
+                RuleFor(folder => folder.CountSharedColumnName)
+                       .Must((folder, sharedColumnName) =>
+                       {
+                           if (string.IsNullOrEmpty(sharedColumnName))
+                               return true;
+
+                           var sharedColumn = _tfService.GetSharedColumn(sharedColumnName);
+                           return sharedColumn != null;
+                       })
+                       .WithMessage("There is shared column for count with specified name.");
+
+                RuleFor(folder => folder.CountSharedColumnName)
+                       .Must((folder, sharedColumnName) =>
+                       {
+                           if (string.IsNullOrEmpty(sharedColumnName))
+                               return true;
+
+                           var sharedColumn = _tfService.GetSharedColumn(sharedColumnName);
+                           if (sharedColumn is null)
+                               return true;
+
+                           return sharedColumn.DataIdentity == folder.DataIdentity;
+                       })
+                       .WithMessage("The selected folder data identity is different to shared column for count data identity.");
+
+            });
 
 			RuleSet("delete", () =>
 			{
 				RuleFor(folder => folder.Id)
 					.Must((folder, id) =>
 					{
-						return service.GetFolder(id) != null;
+						return _assetService.GetFolder(id) != null;
 					})
 					.WithMessage("There is not existing folder with specified identifier.");
-			});
+
+                RuleFor(folder => folder.Id)
+                    .Must((folder, id) =>
+                    {
+                        return _assetService.GetAssets(id).Count == 0;
+                    })
+                    .WithMessage("There are existing assets in the folder.");
+            });
 
 		}
 
@@ -307,7 +375,7 @@ internal partial class AssetsService : IAssetsService
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"A folder with specified identifier is not found.") });
 
-			return this.Validate(folder, options =>
+            return this.Validate(folder, options =>
 			{
 				options.IncludeRuleSets("delete");
 			});

@@ -1026,7 +1026,11 @@ public partial class TfService : ITfService
 
 			Guid sharedColumnId = sharedColumn.Id;
 
-			string identityValue = (string)updatedRow[$"tf_ide_{identity.DataIdentity}"];
+			var identityColumnName = $"tf_ide_{identity.DataIdentity}";
+			if(identity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
+				identityColumnName = "tf_row_id";
+
+			string identityValue = (string)updatedRow[identityColumnName];
 
 			UpsertSharedColumnValue(
 				value,

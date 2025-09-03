@@ -17,6 +17,9 @@ public partial class AssetsTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
+
+				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
+
 				var user = tfService.GetUser("rumen@webvella.com");
 
 				AssetsFolder folder = new AssetsFolder
@@ -24,12 +27,12 @@ public partial class AssetsTests : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Test Folder",
 					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
-					CountSharedColumnName = ""
+					CountSharedColumnName = "sc_int_row_id"
 				};
 
 				var folderResult = assetService.CreateFolder(folder);
 				folderResult.Should().NotBeNull();
-								
+
 				folder.Name = "Test folder 1";
 				folderResult = assetService.UpdateFolder(folder);
 				folder.Name.Should().Be("Test folder 1");
@@ -65,7 +68,7 @@ public partial class AssetsTests : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Test Folder",
 					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
-					CountSharedColumnName = "sc_int"
+					CountSharedColumnName = "sc_int_row_id"
 				};
 
 				folder = assetService.CreateFolder(folder);
@@ -148,8 +151,11 @@ public partial class AssetsTests : BaseTest
 				assets = assetService.GetAssets(folder.Id, rowIdentityIds3[1]);
 				assets.Count.Should().Be(2);
 
-				//test update shared column count
-				assetService.UpdateFoldersSharedColumnCount();
+
+				dataTable = tfService.QuerySpaceData(spaceData.Id);
+				dataTable.Rows[5]["tf_row_id.sc_int_row_id"].Should().Be(2);
+				for (int i = 6; i < 10; i++)
+					dataTable.Rows[i]["tf_row_id.sc_int_row_id"].Should().Be(1);
 
 				//test data identity connection removal on asset delete
 				var dataIdentityConnections = tfService.GetDataIdentityConnections(TfConstants.TF_ROW_ID_DATA_IDENTITY, fileAsset.IdentityRowId);
@@ -159,6 +165,11 @@ public partial class AssetsTests : BaseTest
 
 				dataIdentityConnections = tfService.GetDataIdentityConnections(TfConstants.TF_ROW_ID_DATA_IDENTITY, fileAsset.IdentityRowId);
 				dataIdentityConnections.Count.Should().Be(0);
+
+				dataTable = tfService.QuerySpaceData(spaceData.Id);
+				dataTable.Rows[5]["tf_row_id.sc_int_row_id"].Should().Be(1);
+				for (int i = 6; i < 10; i++)
+					dataTable.Rows[i]["tf_row_id.sc_int_row_id"].Should().Be(0);
 			}
 		}
 	}
@@ -189,7 +200,7 @@ public partial class AssetsTests : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Test Folder",
 					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
-					CountSharedColumnName = "sc_int"
+					CountSharedColumnName = "sc_int_row_id"
 				};
 
 				folder = assetService.CreateFolder(folder);
@@ -241,7 +252,7 @@ public partial class AssetsTests : BaseTest
 
 				dataIdentityConnections = tfService.GetDataIdentityConnections(TfConstants.TF_ROW_ID_DATA_IDENTITY, createdLinkAsset.IdentityRowId);
 				dataIdentityConnections.Count.Should().Be(0);
-				
+
 
 				//test data identity connection removal on asset delete
 				dataIdentityConnections = tfService.GetDataIdentityConnections(TfConstants.TF_ROW_ID_DATA_IDENTITY, createdFileAsset.IdentityRowId);
@@ -251,6 +262,81 @@ public partial class AssetsTests : BaseTest
 
 				dataIdentityConnections = tfService.GetDataIdentityConnections(TfConstants.TF_ROW_ID_DATA_IDENTITY, createdFileAsset.IdentityRowId);
 				dataIdentityConnections.Count.Should().Be(0);
+			}
+		}
+	}
+
+
+	[Fact]
+	public async Task Assets_Asset_SharedColumnCountValue()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			IAssetsService assetService = ServiceProvider.GetRequiredService<IAssetsService>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
+				var dataTable = tfService.QueryDataProvider(provider);
+
+				List<Guid> rowIds = new List<Guid>();
+				for (int i = 0; i < 1; i++)
+					rowIds.Add((Guid)dataTable.Rows[i]["tf_id"]);
+
+				var user = tfService.GetDefaultSystemUser();
+				if (user == null) throw new Exception("No default system user found");
+
+				AssetsFolder folder = new AssetsFolder
+				{
+					Id = Guid.NewGuid(),
+					Name = "Test Folder",
+					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					CountSharedColumnName = "sc_int_row_id"
+				};
+
+				folder = assetService.CreateFolder(folder);
+
+				CreateLinkAssetWithRowIdModel linkAssetModel = new CreateLinkAssetWithRowIdModel
+				{
+					FolderId = folder.Id,
+					Label = "Test link",
+					Url = "http://google.com",
+					CreatedBy = user.Id,
+					RowIds = rowIds,
+					DataProviderId = provider.Id,
+				};
+
+				var createdLinkAsset = assetService.CreateLinkAsset(linkAssetModel);
+				createdLinkAsset.Should().NotBeNull();
+				createdLinkAsset.ConnectedDataIdentityValues.Count.Should().Be(1);
+
+				var result = tfService.QuerySpaceData(spaceData.Id);
+				result.Rows[0]["tf_row_id.sc_int_row_id"].Should().Be(1);
+
+				//using tmp file because local file is moved
+				var appSettingsFilePath = ToApplicationPath("appsettings.json");
+				var tmpFilePath = Path.GetTempPath() + "appsettings.json";
+				File.Copy(appSettingsFilePath, tmpFilePath, true);
+
+				//create file asset
+				CreateFileAssetWithRowIdModel fileAssetModel = new CreateFileAssetWithRowIdModel
+				{
+					FolderId = folder.Id,
+					CreatedBy = user.Id,
+					Label = "Test file",
+					RowIds = rowIds,
+					DataProviderId = provider.Id,
+					LocalPath = tmpFilePath
+				};
+
+				var createdFileAsset = assetService.CreateFileAsset(fileAssetModel);
+				createdFileAsset.ConnectedDataIdentityValues.Count.Should().Be(1);
+
+				result = tfService.QuerySpaceData(spaceData.Id);
+				result.Rows[0]["tf_row_id.sc_int_row_id"].Should().Be(2);
+
 			}
 		}
 	}

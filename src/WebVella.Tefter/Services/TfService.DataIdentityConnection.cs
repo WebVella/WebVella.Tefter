@@ -282,16 +282,16 @@ public partial class TfService : ITfService
 
 			});
 
-			//RuleSet("delete", () =>
-			//{
-			//	RuleFor(dataIdentityConnection => dataIdentityConnection)
-			//	.Must((dataIdentityConnection) =>
-			//	{
-			//		return _tfService.DataIdentityConnectionExists(dataIdentityConnection);
-			//	})
-			//	.WithMessage("Data identity connection does not exist.");
+			RuleSet("delete", () =>
+			{
+				RuleFor(dataIdentityConnection => dataIdentityConnection)
+				.Must((dataIdentityConnection) =>
+				{
+					return _tfService.DataIdentityConnectionExists(dataIdentityConnection);
+				})
+				.WithMessage("Data identity connection does not exist.");
 
-			//});
+			});
 
 		}
 
