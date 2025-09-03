@@ -1,12 +1,13 @@
 ﻿ @namespace WebVella.Tefter.Talk.Components
+@using WebVella.Tefter.UI.Components
 @inherits TfFormBaseComponent
 @* Header *@
-@* <FluentDialogHeader ShowDismiss="true">
+<FluentDialogHeader ShowDismiss="true">
 	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
 </FluentDialogHeader>
- *@
+
 @* Footer *@
-@* <FluentDialogFooter>
+<FluentDialogFooter>
 	@if (_selectedChannel is not null)
 	{
 		<div class="talk-modal-footer">
@@ -14,7 +15,7 @@
 				<span class="text-muted">Shift + Enter for new line. Enter to send.</span>
 			</div>
 			<div class="talk-modal-footer__right">
-				<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Send").WithColor(Color.Neutral)"
+				<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Send")"
 							  Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Send")</FluentButton>
 				<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 			</div>
@@ -28,7 +29,7 @@
 <FluentDialogBody>
 	@if (_isLoading)
 	{
-		<TfLoadingPane />
+		<TucLoadingPane />
 	}
 	else if (Content.DataProviderId == Guid.Empty)
 	{
@@ -70,8 +71,8 @@
 	else
 	{
 		<div>
-			<TfEditor @ref=_editor Placeholder="Type a message in #general" OnEnter="_save" @bind-Value="_content" />
+			<TucEditor @ref=_editor Placeholder="Type a message in #general" OnEnter="_save" @bind-Value="_content" />
 		</div>
 	}
-</FluentDialogBody> *@
+</FluentDialogBody>
  

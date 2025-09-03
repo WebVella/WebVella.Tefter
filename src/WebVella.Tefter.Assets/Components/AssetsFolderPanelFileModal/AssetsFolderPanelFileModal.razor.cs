@@ -102,7 +102,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 				}
 				result = AssetsService.CreateFileAsset(submit);
 			}
-			else if ((_isCreate || Content.IsAddOnly) && Content.DataIdentities is not null)
+			else if ((_isCreate || Content.IsAddOnly) && Content.DataIdentityValues is not null)
 			{
 				var submit = new CreateFileAssetWithDataIdentityModel
 				{
@@ -111,7 +111,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 					FileName = _form.FileName,
 					LocalPath = _form.LocalPath,
 					CreatedBy = Content.UserId,
-					DataIdentityValues = Content.DataIdentities
+					DataIdentityValues = Content.DataIdentityValues
 				};
 				if(Content.IsAddOnly){ 
 					await Dialog.CloseAsync(submit);
@@ -176,7 +176,7 @@ public class AssetsFolderPanelFileModalContext
 	public string Label { get; set; }
 	public string FileName { get; set; }
 	public Guid UserId { get; set; }
-	public List<string>? DataIdentities { get; set; } = null;
+	public List<string>? DataIdentityValues { get; set; } = null;
 	public List<Guid> RowIds { get; set; } = null;
 	public Guid? DataProviderId { get; set; } = null;
 	public bool IsAddOnly { get; set; } = false;

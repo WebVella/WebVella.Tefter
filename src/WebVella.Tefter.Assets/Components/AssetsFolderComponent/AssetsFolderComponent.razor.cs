@@ -8,7 +8,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 	[Inject] public IAssetsService AssetsService { get; set; }
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Parameter] public AssetsFolder? Folder { get; set; } = null;
-	[Parameter] public string DataIdentityValue { get; set; } = "";
+	[Parameter] public string DataIdentityValue { get; set; } = null;
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 	[Parameter] public string Style { get; set; } = "";
 	[Parameter] public RenderFragment HeaderActions { get; set; }
@@ -81,12 +81,8 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
-			if (Folder is null)
-			{
-				_items = new();
-				return;
-			}
 			_items = new();
+			if (Folder is null) return;
 			_search = Navigator.GetStringFromQuery(TfConstants.SearchQueryName, null);
 			_items = AssetsService.GetAssets(
 				folderId: Folder.Id,
@@ -152,7 +148,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 				Id = Guid.Empty,
 				Label = null,
 				FileName = null,
-				DataIdentities = new List<string> { _dataIdentityValue },
+				DataIdentityValues = new List<string> { _dataIdentityValue },
 			},
 			new DialogParameters()
 			{
@@ -185,7 +181,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 						Id = asset.Id,
 						Label = assetContent.Label,
 						FileName = assetContent.Filename,
-						DataIdentities = new List<string> { _dataIdentityValue },
+						DataIdentityValues = new List<string> { _dataIdentityValue },
 					},
 					new DialogParameters()
 					{

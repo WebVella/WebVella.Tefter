@@ -65,10 +65,7 @@ public partial class TalkChannelAdminList : TfBaseComponent
 			TrapFocus = false
 		});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			ToastService.ShowSuccess(LOC("Channel successfully created!"));
-		}
+		if (!result.Cancelled && result.Data != null){}
 	}
 
 	private async Task _editChannelHandler(TalkChannel channel)
@@ -83,10 +80,7 @@ public partial class TalkChannelAdminList : TfBaseComponent
 			TrapFocus = false
 		});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			ToastService.ShowSuccess(LOC("Channel successfully updated!"));
-		}
+		if (!result.Cancelled && result.Data != null){ }
 	}
 	private async Task _deleteChannelHandler(TalkChannel channel)
 	{

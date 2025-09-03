@@ -7,6 +7,7 @@ public partial interface ITalkService
 	List<TfDataIdentity> GetAllDataIdentities();
 	List<TfSharedColumn> GetAllSharedColumns();
 	Task<TfUser?> GetCurrentUser(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider);
+	List<TfDataProviderIdentity> GetDataProviderIdentities(Guid providerId);
 }
 
 internal partial class TalkService : ITalkService
@@ -28,4 +29,6 @@ internal partial class TalkService : ITalkService
 
 	public async Task<TfUser?> GetCurrentUser(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider)
 		=> await _tfService.GetUserFromCookieAsync(jsRuntime, authStateProvider);
+	public List<TfDataProviderIdentity> GetDataProviderIdentities(Guid providerId)
+		=> _tfService.GetDataProviderIdentities(providerId);
 }

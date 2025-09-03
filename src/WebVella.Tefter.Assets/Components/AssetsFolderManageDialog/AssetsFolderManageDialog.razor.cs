@@ -89,10 +89,12 @@ public partial class AssetsFolderManageDialog : TfFormBaseComponent, IDialogCont
 			if (_isCreate)
 			{
 				result = AssetsService.CreateFolder(_form);
+				ToastService.ShowSuccess(LOC("Folder successfully created!"));
 			}
 			else
 			{
 				result = AssetsService.UpdateFolder(_form);
+				ToastService.ShowSuccess(LOC("Folder successfully updated!"));
 			}
 			await Dialog.CloseAsync(result);
 		}

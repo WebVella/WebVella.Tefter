@@ -151,7 +151,7 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		switch (_options.DataIdentityValueType)
 		{
-			case AssetsFolderDataIdentityValueType.SpaceNodeId:
+			case AssetsFolderDataIdentityValueType.SpacePageId:
 				return (navState.SpacePageId ?? Guid.Empty).ToSha1();
 			case AssetsFolderDataIdentityValueType.SpaceId:
 				return (navState.SpaceId ?? Guid.Empty).ToSha1();
@@ -184,7 +184,7 @@ public class AssetsSpacePageComponentOptions
 	public Guid? AssetId { get; set; } = null;
 
 	[JsonPropertyName("DataIdentityValueType")]
-	public AssetsFolderDataIdentityValueType DataIdentityValueType { get; set; } = AssetsFolderDataIdentityValueType.SpaceNodeId;
+	public AssetsFolderDataIdentityValueType DataIdentityValueType { get; set; } = AssetsFolderDataIdentityValueType.SpacePageId;
 
 	[JsonPropertyName("CustomDataIdentityValue")]
 	public string CustomDataIdentityValue { get; set; } = "";

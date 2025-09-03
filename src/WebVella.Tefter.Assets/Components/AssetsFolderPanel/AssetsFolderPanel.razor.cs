@@ -92,7 +92,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			Id = Guid.Empty,
 			Label = null,
 			FileName = null,
-			DataIdentities = new List<string>{ _dataIdentityValue },
+			DataIdentityValues = new List<string>{ _dataIdentityValue },
 		},
 		new DialogParameters()
 		{
@@ -123,7 +123,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 						Id = asset.Id,
 						Label = assetContent.Label,
 						FileName = assetContent.Filename,
-						DataIdentities = new List<string>{ _dataIdentityValue },
+						DataIdentityValues = new List<string>{ _dataIdentityValue },
 					},
 					new DialogParameters()
 					{
