@@ -5,6 +5,10 @@ public class TfRecipeStepResult
 	public Guid StepId { get; set; }
 	public bool IsStepCompleted { get; set; }
 	public bool IsStepSuccessful { get; set; }
+
+	/// <summary>
+	/// used to store the ids of created blobs so the step can clean them if needed
+	/// </summary>
 	public List<Guid> StepCreatedBlobs { get; set; } = new List<Guid>();
 	public List<TfRecipeStepResultError> StepErrors { get; set; } = new();
 	public List<TfRecipeStepResult> SubSteps { get; set; } = new();
@@ -21,20 +25,6 @@ public class TfRecipeStepResult
 			return list;
 		}
 	}
-	public List<Guid> AllCreatedBlobs
-	{
-		get
-		{
-			var list = new List<Guid>();
-			list.AddRange(StepCreatedBlobs);
-			if (SubSteps is not null)
-			{
-				SubSteps.ForEach(x => list.AddRange(x.AllCreatedBlobs));
-			}
-			return list;
-		}
-	}
-
 	public bool IsAllCompleted
 	{
 		get

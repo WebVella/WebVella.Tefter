@@ -7,18 +7,6 @@ public class TfRecipeResult
 	public DateTime StartedOn { get; set; }
 	public DateTime? CompletedOn { get; set; }
 	public List<TfRecipeStepResult> Steps { get; set; } = new();
-	public List<Guid> AllCreatedBlogs
-	{
-		get
-		{
-			var list = new List<Guid>();
-			if (Steps is not null)
-			{
-				Steps.ForEach(x => list.AddRange(x.AllCreatedBlobs));
-			}
-			return list;
-		}
-	}
 	public bool IsCompleted => Steps.All(s => s.IsAllCompleted);
 	public bool IsSuccessful => Steps.All(s => s.IsAllCompleted && s.IsAllSuccessful);
 

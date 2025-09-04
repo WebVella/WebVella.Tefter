@@ -5,9 +5,13 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using WebVella.Tefter.Addons;
+using WebVella.Tefter.Assets.Addons;
 using WebVella.Tefter.DataProviders.Csv;
 using WebVella.Tefter.DataProviders.Csv.Addons;
 using WebVella.Tefter.Models;
+using WebVella.Tefter.Talk;
+using WebVella.Tefter.Talk.Addons;
+using WebVella.Tefter.Talk.Components;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Addons.RecipeSteps;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
@@ -40,12 +44,13 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 		var template1BlobId = new Guid("18716b34-b123-4366-be4d-c0bc967da59b");
 		var template1FileName = "worldcities-template1.xlsx";
 		var csvFileName = "worldcities.csv";
-		var joinKey = "city_id";
-		var dataIdentity = "recipe_record_id";
+		var dataIdentity = "recipe_city_id";
 		var talkCountSharedColumnId = new Guid("2bb01d12-76bd-4247-8478-9ed5eb8a1707");
 		var talkCountSharedColumnName = "sc_talk_count";
 		var assetsCountSharedColumnId = new Guid("801b1b8d-d7d1-44c6-9530-978a43fd2884");
 		var assetsCountSharedColumnName = "sc_asset_count";
+		var talkChannelId = new Guid("d45f7ba7-c9dc-41ce-9dff-1979c03a0e60");
+		var assetFolderId = new Guid("ae7d547f-4284-4487-8564-50718840e873");
 
 		var step11 = new TfInfoRecipeStep
 		{
@@ -405,7 +410,6 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 			}
 		});
 
-
 		Steps.Add(new TfGroupRecipeStep
 		{
 			Instance = new TfRecipeStepInstance
@@ -429,9 +433,9 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					{
 						SharedColumnId = talkCountSharedColumnId,
 						DbName = talkCountSharedColumnName,
-						ColumnType = Database.TfDatabaseColumnType.LongInteger,
+						ColumnType = Database.TfDatabaseColumnType.Integer,
 						IncludeInTableSearch = false,
-						JoinKey = joinKey,
+						DataIdentity = dataIdentity,
 					}
 				},
 				new TfCreateSharedColumnRecipeStep
@@ -446,9 +450,9 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					{
 						SharedColumnId = assetsCountSharedColumnId,
 						DbName = assetsCountSharedColumnName,
-						ColumnType = Database.TfDatabaseColumnType.LongInteger,
+						ColumnType = Database.TfDatabaseColumnType.Integer,
 						IncludeInTableSearch = false,
-						JoinKey = joinKey,
+						DataIdentity = dataIdentity,
 					}
 				},
 			}
@@ -490,7 +494,15 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				SpaceId = spaceId,
 				Name = "World Cities",
 				Position = 100,
-				Columns = new(),
+				Columns = new() { 
+					$"{dataProviderPrefix}city",
+					$"{dataProviderPrefix}country",
+					$"{dataProviderPrefix}population",
+					$"{dataProviderPrefix}id",
+					$"{dataIdentity}.{talkCountSharedColumnName}",
+					$"{dataIdentity}.{assetsCountSharedColumnName}",
+
+				},
 				Filters = new(),
 				SortOrders = new List<TfSort> { new TfSort { ColumnName = $"{dataProviderPrefix}city", Direction = TfSortDirection.ASC } }
 			}
@@ -560,8 +572,18 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 			},
 				Columns = new(){
 				new TfSpaceViewColumn{
-					Id = new Guid("7b9bed20-529c-4b53-b886-5d92cf317304"),
+					Id = new Guid("6a0eee60-6d6e-4fd8-9fed-e2462f1922ea"),
 					Position = 1,
+					QueryName = "id",
+					Title = "id",
+					DataMapping = new Dictionary<string, string> { {"Value",$"{dataProviderPrefix}id"}},
+					SpaceViewId = spaceViewId,
+					TypeId = new Guid(TfLongIntegerViewColumnType.ID),
+					ComponentId = new Guid(TucLongIntegerDisplayColumnComponent.ID),
+				},
+				new TfSpaceViewColumn{
+					Id = new Guid("7b9bed20-529c-4b53-b886-5d92cf317304"),
+					Position = 2,
 					QueryName = "city",
 					Title = "city",
 					DataMapping = new Dictionary<string, string> { {"Value",$"{dataProviderPrefix}city"}},
@@ -571,7 +593,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				},
 				new TfSpaceViewColumn{
 					Id = new Guid("80aa74a1-2453-4001-9af6-b4a537695d70"),
-					Position = 2,
+					Position = 3,
 					QueryName = "country",
 					Title = "country",
 					DataMapping = new Dictionary<string, string> { {"Value",$"{dataProviderPrefix}country"}},
@@ -581,7 +603,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				},
 				new TfSpaceViewColumn{
 					Id = new Guid("c3f77a8c-9336-4bee-8412-7e193ee64882"),
-					Position = 3,
+					Position = 4,
 					QueryName = "population",
 					Title = "population",
 					DataMapping = new Dictionary<string, string> { {"Value",$"{dataProviderPrefix}population"}},
@@ -590,15 +612,37 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					ComponentId = new Guid(TucLongIntegerDisplayColumnComponent.ID),
 				},
 				new TfSpaceViewColumn{
-					Id = new Guid("6a0eee60-6d6e-4fd8-9fed-e2462f1922ea"),
-					Position = 4,
-					QueryName = "id",
-					Title = "id",
-					DataMapping = new Dictionary<string, string> { {"Value",$"{dataProviderPrefix}id"}},
+					Id = new Guid("50dddc94-678c-4199-99f4-6b5f7fb3eba0"),
+					Position = 5,
+					QueryName = "talk",
+					Title = "comments",
+					DataMapping = new Dictionary<string, string> { {"Value",$"{dataIdentity}.{talkCountSharedColumnName}"}},
 					SpaceViewId = spaceViewId,
-					TypeId = new Guid(TfLongIntegerViewColumnType.ID),
-					ComponentId = new Guid(TucLongIntegerDisplayColumnComponent.ID),
-				}
+					TypeId = new Guid(TfTalkCommentsCountViewColumnType.ID),
+					ComponentId = new Guid(TalkCommentsCountComponent.ID),
+					ComponentOptionsJson = JsonSerializer.Serialize(new TfTalkCommentsCountComponentOptions{
+						ChannelId = talkChannelId
+					}),
+					Settings = new TfSpaceViewColumnSettings{
+						Width = 100
+					}
+				},
+				new TfSpaceViewColumn{
+					Id = new Guid("ccdf96e3-298a-4604-b860-db559d5eb4e7"),
+					Position = 6,
+					QueryName = "assets",
+					Title = "assets",
+					DataMapping = new Dictionary<string, string> { {"Value",$"{dataIdentity}.{assetsCountSharedColumnName}"}},
+					SpaceViewId = spaceViewId,
+					TypeId = new Guid(TfFolderAssetsCountViewColumnType.ID),
+					ComponentId = new Guid(TucFolderAssetsCountComponent.ID),
+					ComponentOptionsJson = JsonSerializer.Serialize(new TfFolderAssetsCountComponentOptions{
+						FolderId = assetFolderId
+					}),
+					Settings = new TfSpaceViewColumnSettings{
+						Width = 100
+					}
+				},
 			}
 			}
 		});
@@ -680,6 +724,38 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					GroupBy = new(),
 					TemplateFileBlobId = template1BlobId,
 				})
+			}
+		});
+
+		Steps.Add(new TfCreateTalkChannelRecipeStep
+		{
+			Instance = new TfRecipeStepInstance
+			{
+				Visible = false,
+				StepId = new Guid("f966db54-54e1-43f0-ae91-5a3f682f05d9"),
+				StepMenuTitle = "Create Talk Channel",
+			},
+			Data = new TfCreateTalkChannelRecipeStepData()
+			{
+				ChannelId = talkChannelId,
+				CountSharedColumnName = talkCountSharedColumnName,
+				Name = "GeneralTalk"
+			}
+		});
+
+		Steps.Add(new TfCreateAssetFolderRecipeStep
+		{
+			Instance = new TfRecipeStepInstance
+			{
+				Visible = false,
+				StepId = new Guid("0ec13a3d-9980-48b8-aacf-2b2d61ef02ed"),
+				StepMenuTitle = "Create Asset Folder",
+			},
+			Data = new TfCreateAssetFolderRecipeStepData()
+			{
+				FolderId = assetFolderId,
+				CountSharedColumnName = talkCountSharedColumnName,
+				Name = "general"
 			}
 		});
 	}

@@ -39,7 +39,10 @@ public class TfCreateExcelFileTemplateRecipeStep : ITfRecipeStepAddon
 
 		return Task.CompletedTask;
 	}
-
+	public Task ReverseStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult? stepResult)
+	{
+		return Task.CompletedTask;
+	}
 }
 
 public class TfCreateExcelFileTemplateRecipeStepData : ITfRecipeStepAddonData

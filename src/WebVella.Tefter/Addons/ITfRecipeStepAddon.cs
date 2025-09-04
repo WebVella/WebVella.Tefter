@@ -26,6 +26,15 @@ public interface ITfRecipeStepAddon : ITfAddon
 	/// <param name="stepResult">result object that needs to be filled in</param>
 	/// <returns></returns>
 	public Task ApplyStep(IServiceProvider serviceProvider, ITfRecipeStepAddon stepBase, TfRecipeStepResult stepResult);
+
+	/// <summary>
+	/// Triggered by the service on exception. It is in database transaction but some steps may need to manually remove stuff
+	/// </summary>
+	/// <param name="serviceProvider">provides all injected services</param>
+	/// <param name="stepBase">will provide the step model as provided by the form component</param>
+	/// <param name="stepResult">result object that needs to be filled in</param>
+	/// <returns></returns>
+	public Task ReverseStep(IServiceProvider serviceProvider, ITfRecipeStepAddon stepBase, TfRecipeStepResult? stepResult);
 }
 
 public class TfRecipeStepInstance

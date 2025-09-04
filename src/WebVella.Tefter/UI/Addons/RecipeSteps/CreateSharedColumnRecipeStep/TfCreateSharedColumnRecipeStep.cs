@@ -26,11 +26,15 @@ public class TfCreateSharedColumnRecipeStep : ITfRecipeStepAddon
 			DbName = step.DbName,
 			DbType = step.ColumnType,
 			IncludeInTableSearch = step.IncludeInTableSearch,
-			DataIdentity = step.JoinKey
+			DataIdentity = step.DataIdentity
 		};
 		column.FixPrefix();
 		tfService.CreateSharedColumn(column);
 
+		return Task.CompletedTask;
+	}
+	public Task ReverseStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult? stepResult)
+	{
 		return Task.CompletedTask;
 	}
 }
@@ -41,5 +45,5 @@ public class TfCreateSharedColumnRecipeStepData : ITfRecipeStepAddonData
 	public string DbName { get; set; }
 	public bool IncludeInTableSearch { get; set; } = false;
 	public TfDatabaseColumnType ColumnType { get; set; } = TfDatabaseColumnType.Text;
-	public string JoinKey { get; set; }
+	public string DataIdentity { get; set; }
 }

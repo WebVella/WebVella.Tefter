@@ -90,6 +90,10 @@ public class TfCreateDataProviderRecipeStep : ITfRecipeStepAddon
 
 		return Task.CompletedTask;
 	}
+	public Task ReverseStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult? stepResult)
+	{
+		return Task.CompletedTask;
+	}
 }
 
 public class TfCreateDataProviderRecipeStepData : ITfRecipeStepAddonData

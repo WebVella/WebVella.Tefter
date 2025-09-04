@@ -26,12 +26,30 @@ public class TfCreateRepositoryFileRecipeStep : ITfRecipeStepAddon
 			localPath: fileLocalPath,
 			createdBy: null
 		);
+
+		//TODO = REVERSE BLOB
 		stepResult.StepCreatedBlobs.Add(repFile.Id);
+		return Task.CompletedTask;
+	}
+	public Task ReverseStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult? stepResult)
+	{
+		if(stepResult is null || stepResult.StepCreatedBlobs is null) return Task.CompletedTask;
+
+		ITfService tfService = serviceProvider.GetService<ITfService>();
+		try
+		{
+			foreach (var blobId in stepResult.StepCreatedBlobs)
+			{
+				tfService.DeleteBlob(blobId);
+			}
+		}
+		catch { }
 		return Task.CompletedTask;
 	}
 }
 
-public class TfCreateRepositoryFileRecipeStepData : ITfRecipeStepAddonData{ 
+public class TfCreateRepositoryFileRecipeStepData : ITfRecipeStepAddonData
+{
 	public string FileName { get; set; }
 	public Assembly Assembly { get; set; }
 	public string EmbeddedResourceName { get; set; }

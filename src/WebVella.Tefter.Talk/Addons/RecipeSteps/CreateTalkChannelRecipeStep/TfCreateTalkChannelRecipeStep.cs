@@ -37,12 +37,15 @@ public class TfCreateTalkChannelRecipeStep : ITfRecipeStepAddon
 		talkService.CreateChannel(channel);
 		return Task.CompletedTask;
 	}
+	public Task ReverseStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult? stepResult)
+	{
+		return Task.CompletedTask;
+	}
 }
 
 public class TfCreateTalkChannelRecipeStepData : ITfRecipeStepAddonData
 { 
 	public Guid ChannelId { get; set; }
-	public string JoinKey { get; set; }
 	public string CountSharedColumnName { get; set; }
 	public string Name { get; set; }
 }

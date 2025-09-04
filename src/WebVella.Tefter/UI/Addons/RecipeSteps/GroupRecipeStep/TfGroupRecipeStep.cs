@@ -27,6 +27,25 @@ public class TfGroupRecipeStep : ITfRecipeStepAddon
 			stepResult.SubSteps.Add(subStepResult);
 		}
 	}
+	public async Task ReverseStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult? stepResult)
+	{
+		var step = (TfGroupRecipeStepData)addon.Data;
+		ITfMetaService metaService = serviceProvider.GetService<ITfMetaService>();
+		foreach (var substep in step.Steps)
+		{
+			try
+			{
+				var subStepResult = stepResult?.SubSteps.FirstOrDefault(x => x.StepId == substep.Instance.StepId);
+				var stepAddon = metaService.GetRecipeStep(substep.AddonId);
+				if (stepAddon is null) return;
+				await stepAddon.ReverseStep(
+					serviceProvider: serviceProvider,
+					stepBase: substep,
+					stepResult: subStepResult);
+			}
+			catch { }
+		}
+	}
 }
 
 public class TfGroupRecipeStepData : ITfRecipeStepAddonData

@@ -27,6 +27,10 @@ public class TfCreateRoleRecipeStep : ITfRecipeStepAddon
 			Name = step.Name
 		});
 	}
+	public Task ReverseStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult? stepResult)
+	{
+		return Task.CompletedTask;
+	}
 }
 
 public class TfCreateRoleRecipeStepData : ITfRecipeStepAddonData

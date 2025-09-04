@@ -6,7 +6,7 @@ public class TfCreateBlobRecipeStep : ITfRecipeStepAddon
 	public string AddonName { get; init; } = "CreateBlobRecipeStep";
 	public string AddonDescription { get; init; } = "creates blob recipe step";
 	public string AddonFluentIconName { get; init; } = "PuzzlePiece";
-	public Type FormComponent { get; set; } = typeof(TfCreateBlobRecipeStepForm);	
+	public Type FormComponent { get; set; } = typeof(TfCreateBlobRecipeStepForm);
 	public TfRecipeStepInstance Instance { get; set; }
 	public ITfRecipeStepAddonData Data { get; set; }
 	public Task ApplyStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult stepResult)
@@ -27,14 +27,30 @@ public class TfCreateBlobRecipeStep : ITfRecipeStepAddon
 			localPath: fileLocalPath,
 			temporary: step.IsTemporary
 		);
+
+		//TODO = REVERSE BLOB
 		stepResult.StepCreatedBlobs.Add(blobId);
 
+		return Task.CompletedTask;
+	}
+	public Task ReverseStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult? stepResult)
+	{
+		if(stepResult is null || stepResult.StepCreatedBlobs is null) return Task.CompletedTask;
+		ITfService tfService = serviceProvider.GetService<ITfService>();
+		try
+		{
+			foreach (var blobId in stepResult.StepCreatedBlobs)
+			{
+				tfService.DeleteBlob(blobId);
+			}
+		}
+		catch { }
 		return Task.CompletedTask;
 	}
 }
 
 public class TfCreateBlobRecipeStepData : ITfRecipeStepAddonData
-{ 
+{
 	public Guid BlobId { get; set; }
 	public Assembly Assembly { get; set; }
 	public string EmbeddedResourceName { get; set; }
