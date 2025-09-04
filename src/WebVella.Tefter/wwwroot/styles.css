@@ -1819,16 +1819,15 @@ fluent-dialog .tf-divider,
   align-items: center;
   background: var(--tf-fill-color-base);
 }
-.tf-page-layout__toolbar__left__meta {
-  line-height: 1em;
-}
 .tf-page-layout__toolbar__left__meta__area {
   color: var(--tf-font-color-mute);
   font-size: var(--tf-font-size-sm);
+  line-height: 1.25em;
 }
 .tf-page-layout__toolbar__left__meta__title {
   font-weight: var(--tf-font-weight-lg);
   font-size: var(--tf-font-size-lg);
+  line-height: 1.15em;
 }
 .tf-page-layout__toolbar__right {
   flex: 1 1 auto;

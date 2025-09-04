@@ -413,6 +413,21 @@ public static partial class TfConverters
 
 		return null;
 	}
+
+	public static List<TfSort> ConvertQuerySortToList(this List<TfSortQuery>? items, List<TfSpaceViewColumn> columns)
+	{
+		var result = new List<TfSort>();
+		if(items is null || columns is null || items.Count == 0 || columns.Count == 0) return result;
+
+		foreach (var item in items)
+		{
+			var sort = item.ToSort(columns);
+			if(sort is null) continue;
+			result.Add(sort);
+		}
+
+		return result;
+	}
 	#endregion
 
 	#region << Color >>

@@ -96,6 +96,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	}
 	private async void On_UserChanged(object? caller, TfUser args)
 	{
+		if(Context is not null)
+			Context.CurrentUser = args;
 		await _init(null);
 	}
 
@@ -163,14 +165,14 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				}
 			}
 
-			if (_navState.Sorts is not null && _navState.Sorts.Count > 0)
+			if (_navState.Sorts is not null)
 			{
 				foreach (var column in _spaceViewColumns)
 				{
-					var columnSort = _navState.Sorts.FirstOrDefault(x => x.ColumnName == column.QueryName);
+					var columnSort = _navState.Sorts.FirstOrDefault(x => x.Name == column.QueryName);
 					if (columnSort != null)
 					{
-						column.PersonalizedSort = columnSort.Direction;
+						column.PersonalizedSort = (TfSortDirection)columnSort.Direction;
 					}
 				}
 			}
@@ -180,7 +182,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 							presetFilters: _preset is not null ? _preset.Filters : null,
 							presetSorts: _preset is not null ? _preset.SortOrders : null,
 							userFilters: _navState!.Filters,
-							userSorts: _navState.Sorts,
+							userSorts: _navState.Sorts.ConvertQuerySortToList(_spaceViewColumns),
 							search: _navState.Search,
 							page: _page,
 							pageSize: _pageSize
@@ -275,9 +277,11 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			queryDict[TfConstants.FiltersQueryName] = null;
 		else
 			queryDict[TfConstants.FiltersQueryName] = NavigatorExt.SerializeFiltersForUrl(filters, false);
+
+		queryDict[TfConstants.PageQueryName] = 1;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
-	private async Task _onSort(List<TfSort> sorts)
+	private async Task _onSort(List<TfSortQuery> sorts)
 	{
 		if (_isDataLoading) return;
 		var queryDict = new Dictionary<string, object>();
@@ -285,6 +289,9 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			queryDict[TfConstants.SortsQueryName] = null;
 		else
 			queryDict[TfConstants.SortsQueryName] = NavigatorExt.SerializeSortsForUrl(sorts, false);
+
+		queryDict[TfConstants.PageQueryName] = 1;
+
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _onClearFilter()
@@ -329,7 +336,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 							presetFilters: preset is not null ? preset.Filters : null,
 							presetSorts: preset is not null ? preset.SortOrders : null,
 							userFilters: _navState!.Filters,
-							userSorts: _navState.Sorts,
+							userSorts: _navState.Sorts.ConvertQuerySortToList(_spaceViewColumns),
 							search: _navState.Search
 					);
 		}
@@ -564,12 +571,12 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		var column = _spaceViewColumns.SingleOrDefault(x => x.Position == position);
 		if (column is null) return;
 		var sorts = TfUserUIService.CalculateViewPresetSortPersonalization(
-		 currentSorts: _navState.Sorts,
+		 currentSorts: _navState.Sorts ?? new(),
 		 spaceViewId: _spaceView.Id,
 		 spaceViewColumnId: column.Id,
 		 hasShiftKey: hasShift);
 
-		await _onSort(sorts is null ? new List<TfSort>() : sorts);
+		await _onSort(sorts is null ? new List<TfSortQuery>() : sorts);
 	}
 
 	[JSInvokable("OnColumnResized")]

@@ -23,7 +23,7 @@ public partial record TfNavigationState
 	public string? Search { get; init; } = null;
 	public string? SearchAside { get; init; } = null;
 	public List<TfFilterBase>? Filters { get; init; } = null;
-	public List<TfSort>? Sorts { get; init; } = null;
+	public List<TfSortQuery>? Sorts { get; init; } = null;
 	public Guid? ActiveSaveId { get; init; } = null;
 	public bool SearchInBookmarks { get; init; } = true;
 	public bool SearchInSaves { get; init; } = true;

@@ -615,7 +615,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					Id = new Guid("50dddc94-678c-4199-99f4-6b5f7fb3eba0"),
 					Position = 5,
 					QueryName = "talk",
-					Title = "comments",
+					Title = "talk",
 					DataMapping = new Dictionary<string, string> { {"Value",$"{dataIdentity}.{talkCountSharedColumnName}"}},
 					SpaceViewId = spaceViewId,
 					TypeId = new Guid(TfTalkCommentsCountViewColumnType.ID),

@@ -194,7 +194,7 @@ public partial interface ITfService
 
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
 	Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? presetId, Guid spaceViewColumnId, int width);
-	List<TfSort> CalculateViewPresetSortPersonalization(List<TfSort> currentSorts, Guid spaceViewId, Guid spaceViewColumnId, bool hasShiftKey);
+	List<TfSortQuery> CalculateViewPresetSortPersonalization(List<TfSortQuery> currentSorts, Guid spaceViewId, Guid spaceViewColumnId, bool hasShiftKey);
 	Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId);
 }
 
@@ -1245,7 +1245,7 @@ public partial class TfService : ITfService
 		return GetUser(userId);
 	}
 
-	public virtual List<TfSort> CalculateViewPresetSortPersonalization(List<TfSort> currentSorts,
+	public virtual List<TfSortQuery> CalculateViewPresetSortPersonalization(List<TfSortQuery> currentSorts,
 		Guid spaceViewId, Guid spaceViewColumnId, bool hasShiftKey)
 	{
 		if (currentSorts is null) currentSorts = new();
@@ -1256,28 +1256,28 @@ public partial class TfService : ITfService
 		var column = columns.FirstOrDefault(x => x.Id == spaceViewColumnId);
 		if (column is null) throw new Exception("Space view column not found");
 
-		var columnIndex = currentSorts.FindIndex(x => x.ColumnName == column.QueryName);
+		var columnIndex = currentSorts.FindIndex(x => x.Name == column.QueryName);
 		if (!hasShiftKey)
 		{
 			//if column found toggle its state between asc, desc, null
 			if (columnIndex > -1)
 			{
-				currentSorts = new List<TfSort> { currentSorts[columnIndex] };
-				if (currentSorts[0].Direction == TfSortDirection.ASC)
+				currentSorts = new List<TfSortQuery> { currentSorts[columnIndex] };
+				if (currentSorts[0].Direction == (int)TfSortDirection.ASC)
 				{
-					currentSorts[0].Direction = TfSortDirection.DESC;
+					currentSorts[0].Direction = (int)TfSortDirection.DESC;
 				}
-				else if (currentSorts[0].Direction == TfSortDirection.DESC)
+				else if (currentSorts[0].Direction == (int)TfSortDirection.DESC)
 				{
 					currentSorts.RemoveAt(columnIndex);
 				}
 			}
 			else
 			{
-				currentSorts = new List<TfSort>{new TfSort
+				currentSorts = new List<TfSortQuery>{new TfSortQuery
 				{
-					ColumnName = column.QueryName,
-					Direction = TfSortDirection.ASC
+					Name = column.QueryName,
+					Direction = (int)TfSortDirection.ASC
 				}};
 			}
 		}
@@ -1285,21 +1285,21 @@ public partial class TfService : ITfService
 		{
 			if (columnIndex > -1)
 			{
-				if (currentSorts[columnIndex].Direction == TfSortDirection.ASC)
+				if (currentSorts[columnIndex].Direction == (int)TfSortDirection.ASC)
 				{
-					currentSorts[columnIndex].Direction = TfSortDirection.DESC;
+					currentSorts[columnIndex].Direction = (int)TfSortDirection.DESC;
 				}
-				else if (currentSorts[columnIndex].Direction == TfSortDirection.DESC)
+				else if (currentSorts[columnIndex].Direction == (int)TfSortDirection.DESC)
 				{
 					currentSorts.RemoveAt(columnIndex);
 				}
 			}
 			else
 			{
-				var columnSort = new TfSort
+				var columnSort = new TfSortQuery
 				{
-					ColumnName = column.QueryName,
-					Direction = TfSortDirection.ASC
+					Name = column.QueryName,
+					Direction = (int)TfSortDirection.ASC
 				};
 				currentSorts.Add(columnSort);
 			}

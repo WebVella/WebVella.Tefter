@@ -1,0 +1,82 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+<TucCard Title="@Title" Class="tf-card--filter">
+	<ToolbarTemplate>
+		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+			@if (_options.Count > 0)
+			{
+				<FluentSelect OptionSelected="(x => x.Name == _selectedOption?.Name)"
+							  @bind-SelectedOption="@_selectedOption"
+							  TOption="TfSortQuery" Required="false"
+							  Items="@_options" Style="width:200px"
+							  Placeholder="@LOC("select provider column")"
+							  OptionValue="@((p)=> p.Name)"
+							  OptionText="@((p)=> _columnDict.ContainsKey(p.Name) ? _columnDict[p.Name] : p.Name)" />
+				<FluentSelect OptionSelected="(x => (int)x == _selectedOption?.Direction)"
+							  Items="@(Enum.GetValues<TfSortDirection>())"
+							  OptionValue="@((p)=> ((int)p).ToString())"
+							  OptionText="@((p)=> p.ToDescriptionString())"
+							  TOption="TfSortDirection"
+							  SelectedOptionChanged="@(x=> _selectedOption.Direction = (int)x)"
+							  Style="width:100px" />
+			}
+			else
+			{
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
+			}
+			<FluentButton OnClick="_addSortColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
+						  Disabled="@(_options.Count == 0)">@LOC("Add new")</FluentButton>
+		</FluentStack>
+	</ToolbarTemplate>
+	<ChildContent>
+		@if (Items.Count == 0)
+		{
+			@LOC("No data sort order defined yet")
+		}
+		else
+		{
+			<table class="tf-grid">
+				<tbody class="tf-grid-tbody">
+					@foreach (var context in Items)
+					{
+						<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+							<td class="tf-grid-td" style="width:1%;vertical-align:middle">
+								<div>
+									@if (_columnDict.ContainsKey(context.Name))
+									{
+										<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in data")"></FluentIcon>
+									}
+									else
+									{
+										<FluentIcon Value="@TfConstants.GetIcon("ErrorCircle")" Color="@Color.Error" Title="@LOC("not found in data")"></FluentIcon>
+									}
+								</div>
+							</td>
+							<td class="tf-grid-td" style="width:300px;">
+								@if (_columnDict.ContainsKey(context.Name))
+								{
+									<div>@(_columnDict[context.Name])</div>
+								}
+								else
+								{
+									<div>@context.Name</div>	
+								}
+							</td>
+							<td class="tf-grid-td">
+								<div>@(((TfSortDirection)context.Direction).ToDescriptionString())</div>
+							</td>
+							<td class="tf-grid-td" style="width:1%;">
+								<div>
+									<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteSortColumn(context))" Title="@LOC("Delete sort order")">
+										<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
+									</FluentButton>
+								</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</ChildContent>
+</TucCard>

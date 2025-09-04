@@ -32,7 +32,7 @@ public partial interface ITfUserUIService
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
 	Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, int width);
-	List<TfSort> CalculateViewPresetSortPersonalization(List<TfSort> currentSorts,Guid spaceViewId, Guid spaceViewColumnId, bool hasShiftKey);
+	List<TfSortQuery> CalculateViewPresetSortPersonalization(List<TfSortQuery> currentSorts,Guid spaceViewId, Guid spaceViewColumnId, bool hasShiftKey);
 	Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId);
 
 
@@ -201,7 +201,7 @@ public partial class TfUserUIService : ITfUserUIService
 		return user;
 	}
 
-	public List<TfSort> CalculateViewPresetSortPersonalization(List<TfSort> currentSorts, Guid spaceViewId, Guid spaceViewColumnId,
+	public List<TfSortQuery> CalculateViewPresetSortPersonalization(List<TfSortQuery> currentSorts, Guid spaceViewId, Guid spaceViewColumnId,
 		bool hasShiftKey)
 	{
 		return _tfService.CalculateViewPresetSortPersonalization(currentSorts, spaceViewId, spaceViewColumnId, hasShiftKey);

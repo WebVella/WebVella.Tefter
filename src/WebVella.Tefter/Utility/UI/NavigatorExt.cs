@@ -134,9 +134,9 @@ public static partial class NavigatorExt
 				if (value is not null)
 					newQueryDictionary[key] = SerializeFiltersForUrl(value);
 			}
-			else if (queryValue is List<TfSort>)
+			else if (queryValue is List<TfSortQuery>)
 			{
-				var value = (List<TfSort>)queryValue;
+				var value = (List<TfSortQuery>)queryValue;
 				if (value is not null)
 					newQueryDictionary[key] = SerializeSortsForUrl(value);
 			}
@@ -431,30 +431,19 @@ public static partial class NavigatorExt
 		return result;
 	}
 
-	public static string? SerializeSortsForUrl(List<TfSort>? sorts, bool shouldProcess = true)
+	public static string? SerializeSortsForUrl(List<TfSortQuery>? sorts, bool shouldProcess = true)
 	{
-		var queryObject = new List<TfSortQuery>();
-		if(sorts is null) sorts = new();
-		foreach (var item in sorts)
-		{
-			queryObject.Add(item.ToQuery());
-		}
 		if (shouldProcess)
-			return ProcessQueryValueForUrl(JsonSerializer.Serialize(queryObject));
+			return ProcessQueryValueForUrl(JsonSerializer.Serialize(sorts));
 
-		return JsonSerializer.Serialize(queryObject);
+		return JsonSerializer.Serialize(sorts);
 	}
 
-	public static List<TfSort> DeserializeSortsFromUrl(string queryValue, bool isProcessed = false)
+	public static List<TfSortQuery> DeserializeSortsFromUrl(string queryValue, bool isProcessed = false)
 	{
 		var items = JsonSerializer.Deserialize<List<TfSortQuery>>(isProcessed ? queryValue : (ProcessQueryValueFromUrl(queryValue) ?? String.Empty));
-		var result = new List<TfSort>();
-		if (items == null) return result;
-		foreach (var item in items)
-		{
-			result.Add(new TfSort(item));
-		}
-		return result;
+		if (items == null) return new List<TfSortQuery>();
+		return items;
 	}
 
 	public static string GetLocalUrl(this NavigationManager navigator)

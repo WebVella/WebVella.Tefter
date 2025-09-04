@@ -5,39 +5,43 @@ public partial class TucSpaceViewSortsDialog : TfFormBaseComponent, IDialogConte
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
 	[Inject] public ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Parameter] public Guid Content { get; set; } = default!;
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
-	private TfDataProvider? _dataProvider = null;
-	private TfSpaceData? _spaceData = null;
-	private List<TfSort> _items = new List<TfSort>();
-	private List<string> _columnOptions = new List<string>();
+	private TfSpaceData _spaceData = null;
+	private List<TfSpaceViewColumn> _viewColumns = new();
+	private Dictionary<string, TfSpaceViewColumn> _queryColumnDict = new();
+	private List<TfSortQuery> _allOptions = new();
+	private List<TfSortQuery> _items = new();
 
-	private TfSort _selectedSort = new();
 	private string _activeTab = "current";
-	private TfNavigationState _navState = default!;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
-		if (_navState is null || Content == Guid.Empty)
+
+		if (Content == Guid.Empty)
 			throw new Exception("SpaceViewId not found");
-		if (_navState.Sorts is not null)
-			_items = JsonSerializer.Deserialize<List<TfSort>>(JsonSerializer.Serialize(_navState.Sorts)) ?? new();
-		var spaceView = TfSpaceViewUIService.GetSpaceView(Content);
-		if (spaceView is null)
-			throw new Exception("spaceView not found");
+		var view = TfSpaceViewUIService.GetSpaceView(Content);
+		if (view is null)
+			throw new Exception("SpaceView not found");
 
-		_spaceData = TfSpaceDataUIService.GetSpaceData(spaceView.SpaceDataId);
-
-		if (_spaceData is not null)
-		{
-			_dataProvider = TfDataProviderUIService.GetDataProvider(_spaceData.DataProviderId);
-		}
-		_generateColumnOptions();
+		_viewColumns = TfSpaceViewUIService.GetViewColumns(Content);
+		_spaceData = TfSpaceDataUIService.GetSpaceData(view.SpaceDataId);
+		await _init();
 	}
 
+	private async Task _init()
+	{
+		_allOptions = new();
+		foreach (var column in _viewColumns)
+		{
+			_allOptions.Add(new TfSortQuery { Name = column.QueryName });
+			_queryColumnDict[column.QueryName] = column;
+		}
+		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+		_items = navState.Sorts ?? new();
+
+	}
 
 	private async Task _submit()
 	{
@@ -46,22 +50,6 @@ public partial class TucSpaceViewSortsDialog : TfFormBaseComponent, IDialogConte
 	private async Task _cancel()
 	{
 		await Dialog.CancelAsync();
-	}
-
-	private void _generateColumnOptions()
-	{
-		_columnOptions = _spaceData.Columns.Where(x => !_items.Any(y => y.ColumnName == x)).ToList();
-	}
-
-	private void _addSortColumn()
-	{
-		_items.Add(_selectedSort with { ColumnName = _selectedSort.ColumnName });
-		_selectedSort = new();
-	}
-
-	private void _deleteSortColumn(TfSort tucSort)
-	{
-		_items = _items.Where(x => x.ColumnName != tucSort.ColumnName).ToList();
 	}
 
 }

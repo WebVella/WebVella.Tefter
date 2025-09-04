@@ -38,10 +38,13 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 	}
 	private async void On_UserChanged(object? caller, TfUser args)
 	{
+		if(Context is not null)
+			Context.CurrentUser = args;
 		await _init();
 	}
 	private async Task _init()
 	{
+		WvBlazorTraceService.OnSignal(this, signalName: "toolbar init call", customData: $"{_hasViewPersonalization}");
 		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		if (navState is null) return;
 		_navState = navState;
@@ -59,10 +62,12 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 				_hasViewPersonalization = Context.CurrentUser.Settings.ViewPresetSortPersonalizations.Any(x => x.SpaceViewId == SpaceView.Id
 				 && x.PresetId == SpaceViewPreset?.Id);
 			}
+			WvBlazorTraceService.OnSignal(this, signalName: "toolbar init result", customData: $"{_hasViewPersonalization}");
 		}
 		finally
 		{
 			UriInitialized = _navState.Uri;
+			WvBlazorTraceService.OnSignal(this, signalName: "toolbar init final", customData: $"{_hasViewPersonalization}");
 			await InvokeAsync(StateHasChanged);
 		}
 	}

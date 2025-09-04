@@ -29,7 +29,7 @@ public static partial class NavigatorExt
 		List<TfFilterBase> filters = null;
 		var filtersString = GetStringFromQuery(uri, TfConstants.FiltersQueryName, null);
 		if (!String.IsNullOrWhiteSpace(filtersString)) filters = DeserializeFiltersFromUrl(filtersString, true);
-		List<TfSort> sorts = null;
+		List<TfSortQuery> sorts = null;
 		var sortString = GetStringFromQuery(uri, TfConstants.SortsQueryName, null);
 		if (!String.IsNullOrWhiteSpace(sortString)) sorts = DeserializeSortsFromUrl(sortString, true);
 
