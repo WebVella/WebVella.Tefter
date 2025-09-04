@@ -26,11 +26,9 @@ public partial class TucRecipeDetails : TfBaseComponent
 		var position = 1;
 		foreach (var step in _recipe.Steps)
 		{
-			if (!step.Instance.Visible) continue;
-			step.Instance.Position = position;
-			step.Instance.IsFirst = position == 1;
-			position++;
-			_visibleSteps.Add(step);
+			if (step.Instance.Visible)
+				_visibleSteps.Add(step);
+			position = SetPosition(step, position);
 		}
 		_visibleSteps.Last().Instance.IsLast = true;
 
@@ -56,7 +54,25 @@ public partial class TucRecipeDetails : TfBaseComponent
 			_activeStep = _visibleSteps[0];
 	}
 
+	private int SetPosition(ITfRecipeStepAddon step, int position)
+	{
+		if (!step.Instance.Visible) return position;
+		step.Instance.Position = position;
+		step.Instance.IsFirst = position == 1;
 
+		if (step is TfGroupRecipeStep)
+		{
+			var group = (TfGroupRecipeStep)step;
+			var data = (TfGroupRecipeStepData)group.Data;
+			var subPosition = 1;
+			foreach (var substep in data.Steps)
+			{
+				subPosition = SetPosition(substep, subPosition);
+			}
+		}
+
+		return position + 1;
+	}
 	private void _toList()
 	{
 		Navigator.NavigateTo(TfConstants.InstallPage);
