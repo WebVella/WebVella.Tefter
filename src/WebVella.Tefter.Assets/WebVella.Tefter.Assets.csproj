@@ -26,10 +26,4 @@
 		</Content>
 	</ItemGroup>
 
-	<ItemGroup>
-		<EmbeddedResource Update="Addons\RecipeSteps\CreateAssetFolderRecipeStep\FormComponent\TfCreateAssetFolderRecipeStepForm.bg.resx">
-		  <SubType>Designer</SubType>
-		</EmbeddedResource>
-	</ItemGroup>
-
 </Project>

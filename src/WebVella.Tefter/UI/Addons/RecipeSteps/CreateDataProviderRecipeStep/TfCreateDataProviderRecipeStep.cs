@@ -68,27 +68,24 @@ public class TfCreateDataProviderRecipeStep : ITfRecipeStepAddon
 			}
 		}
 
-		foreach (var joinKey in step.JoinKeys)
+		foreach (var item in step.DataIdentities)
 		{
-			joinKey.FixPrefix(dpPrefix);
-			var keyColumns = new List<TfDataProviderColumn>();
-			foreach (var columnName in joinKey.Columns)
+			item.FixPrefix(dpPrefix);
+			var keyColumns = new List<string>();
+			foreach (var columnName in item.Columns)
 			{
 				var dpColumn = dataProvider.Columns.FirstOrDefault(x => x.DbName == columnName);
 				if (dpColumn is null) continue;
-				keyColumns.Add(dpColumn);
+				keyColumns.Add(columnName);
 			}
-			var keySM = new TfDataProviderJoinKey
+			var dpIdentity = new TfDataProviderIdentity
 			{
-				Id = joinKey.Id,
+				Id = item.Id,
 				DataProviderId = dataProvider.Id,
-				DbName = joinKey.DbName,
-				Description = joinKey.Description,
-				LastModifiedOn = joinKey.LastModifiedOn,
-				Version = joinKey.Version,
+				DataIdentity = item.DataIdentity,
 				Columns = keyColumns
 			};
-			var result = tfService.CreateDataProviderJoinKey(keySM);
+			var result = tfService.CreateDataProviderIdentity(dpIdentity);
 		}
 
 		return Task.CompletedTask;
@@ -107,5 +104,5 @@ public class TfCreateDataProviderRecipeStepData : ITfRecipeStepAddonData
 	public bool SynchScheduleEnabled { get; set; } = false;
 	public short SynchScheduleMinutes { get; set; } = 60;
 	public bool TriggerDataSynchronization { get; set; } = false;
-	public List<TfRecipeStepDataProviderJoinKey> JoinKeys { get; set; } = new();
+	public List<TfRecipeStepDataProviderDataIdentity> DataIdentities { get; set; } = new();
 }

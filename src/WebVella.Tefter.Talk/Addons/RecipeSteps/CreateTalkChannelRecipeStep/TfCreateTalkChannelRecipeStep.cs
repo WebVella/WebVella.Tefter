@@ -20,10 +20,18 @@ public class TfCreateTalkChannelRecipeStep : ITfRecipeStepAddon
 			throw new Exception("Wrong data model type provided for application");
 
 		var step = (TfCreateTalkChannelRecipeStepData)addon.Data;
+
+		var allSharedColumns = talkService.GetAllSharedColumns();
+		var columnName = step.CountSharedColumnName?.Trim();
+		var column = allSharedColumns.FirstOrDefault(x=> x.DbName == columnName);
+		if(column is null)
+			allSharedColumns.FirstOrDefault(x=> x.DbName.ToLowerInvariant() == columnName.ToLowerInvariant());
+		if(column is null) throw new Exception($"Shared column not found with the name: '{step.CountSharedColumnName}'");
+
 		var channel = new TalkChannel{ 
 			Id = step.ChannelId != Guid.Empty ? step.ChannelId : Guid.NewGuid(),
-			DataIdentity = step.JoinKey,
-			CountSharedColumnName = step.CountSharedColumnName,
+			DataIdentity = column.DataIdentity,
+			CountSharedColumnName = column.DbName,
 			Name = step.Name,
 		};
 		talkService.CreateChannel(channel);

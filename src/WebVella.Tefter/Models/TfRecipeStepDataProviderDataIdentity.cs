@@ -1,19 +1,11 @@
 ﻿namespace WebVella.Tefter;
 
-public class TfRecipeStepDataProviderJoinKey
+public class TfRecipeStepDataProviderDataIdentity
 {
 	public Guid Id { get; set; }
 
-	public string DbName { get; set; }
-
-	public string Description { get; set; }
-
+	public string DataIdentity { get; set; }
 	public List<string> Columns { get; set; } = new();
-
-	public short Version { get; set; } = 1;
-
-	public DateTime LastModifiedOn { get; set; }
-
 	public void FixPrefix(string prefix)
 	{
 		if (Columns is not null)
@@ -32,18 +24,15 @@ public class TfRecipeStepDataProviderJoinKey
 		}
 	}
 
-	public TfRecipeStepDataProviderJoinKey()
+	public TfRecipeStepDataProviderDataIdentity()
 	{
 		
 	}
 
-	public TfRecipeStepDataProviderJoinKey(Guid id, string dbName, List<string> columns)
+	public TfRecipeStepDataProviderDataIdentity(Guid id, string dataIdentity, List<string> columns)
 	{
 		Id = id;
-		DbName = dbName;
-		Description = string.Empty;
+		DataIdentity = dataIdentity;
 		Columns = columns;
-		Version = 1;
-		LastModifiedOn = DateTime.Now;
 	}
 }
