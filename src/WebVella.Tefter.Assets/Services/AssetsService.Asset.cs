@@ -968,12 +968,12 @@ ORDER BY aa.created_on DESC;";
                     if (dic.Value1 == asset.IdentityRowId)
                     {
                         if (!asset.ConnectedDataIdentityValues.Keys.Contains(dic.Value2))
-                            asset.ConnectedDataIdentityValues[dic.Value2] = folderDataIdentity;
+                            asset.ConnectedDataIdentityValues[dic.Value2] = dic.DataIdentity2;
                     }
                     if (dic.Value2 == asset.IdentityRowId)
                     {
                         if (!asset.ConnectedDataIdentityValues.Keys.Contains(dic.Value1))
-                            asset.ConnectedDataIdentityValues[dic.Value1] = folderDataIdentity;
+                            asset.ConnectedDataIdentityValues[dic.Value1] = dic.DataIdentity1;
                     }
                 }
             }
