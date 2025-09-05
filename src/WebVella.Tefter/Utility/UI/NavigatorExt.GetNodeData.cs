@@ -26,12 +26,12 @@ public static partial class NavigatorExt
 		var searchAside = GetStringFromQuery(uri, TfConstants.AsideSearchQueryName, null);
 		var returnUrl = GetStringFromQuery(uri, TfConstants.ReturnUrlQueryName, null);
 		
-		List<TfFilterBase> filters = null;
+		List<TfFilterQuery> filters = null;
 		var filtersString = GetStringFromQuery(uri, TfConstants.FiltersQueryName, null);
-		if (!String.IsNullOrWhiteSpace(filtersString)) filters = DeserializeFiltersFromUrl(filtersString, true);
+		if (!String.IsNullOrWhiteSpace(filtersString)) filters = filtersString.DeserializeFiltersFromUrl(true);
 		List<TfSortQuery> sorts = null;
 		var sortString = GetStringFromQuery(uri, TfConstants.SortsQueryName, null);
-		if (!String.IsNullOrWhiteSpace(sortString)) sorts = DeserializeSortsFromUrl(sortString, true);
+		if (!String.IsNullOrWhiteSpace(sortString)) sorts = sortString.DeserializeSortsFromUrl(true);
 
 		Guid? activeSaveId = GetGuidFromQuery(uri, TfConstants.ActiveSaveQueryName, null);
 		bool searchInBookmarks = GetBooleanFromQuery(uri, TfConstants.SearchInBookmarksQueryName, true).Value;

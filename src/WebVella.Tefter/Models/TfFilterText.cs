@@ -28,18 +28,20 @@ public record TfFilterText : TfFilterBase
 	{
 		ComparisonMethod = comparisonMethod;
 	}
-	public TfFilterText(TfFilterQuery model) : base(string.Empty,null)
+	public TfFilterText(TfFilterQuery model, string columnName) : base(string.Empty,null)
 	{
+		if (model is null) throw new ArgumentException("model is required",nameof(model));
+		if (String.IsNullOrWhiteSpace(columnName)) throw new ArgumentException("columnName is required",nameof(columnName));
+
 		Id = Guid.NewGuid();
-		ColumnName = model.Name;
 		Value = model.Value;
-		ComparisonMethod = (TfFilterTextComparisonMethod)model.Method;
+		ColumnName = columnName;
+		ComparisonMethod = Utility.EnumExtensions.ConvertIntToEnum<TfFilterTextComparisonMethod>(model.Method,TfFilterTextComparisonMethod.Equal);
 	}
 	public TfFilterQuery ToQuery()
 	{
 		return new TfFilterQuery
 		{
-			Type = GetFilterType(),
 			Name = GetColumnName(),
 			Value = Value,
 			Method = (int)ComparisonMethod,

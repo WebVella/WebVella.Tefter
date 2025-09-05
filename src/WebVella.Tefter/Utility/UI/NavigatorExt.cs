@@ -132,13 +132,13 @@ public static partial class NavigatorExt
 			{
 				var value = (List<TfFilterBase>)queryValue;
 				if (value is not null)
-					newQueryDictionary[key] = SerializeFiltersForUrl(value);
+					newQueryDictionary[key] = value.SerializeFiltersForUrl();
 			}
 			else if (queryValue is List<TfSortQuery>)
 			{
 				var value = (List<TfSortQuery>)queryValue;
 				if (value is not null)
-					newQueryDictionary[key] = SerializeSortsForUrl(value);
+					newQueryDictionary[key] = value.SerializeSortsForUrl();
 			}
 			else
 				throw new Exception("Query type not supported by utility method");
@@ -184,11 +184,11 @@ public static partial class NavigatorExt
 	public static Dictionary<string, string?> ParseQueryString(string queryString)
 	{
 		var nvc = HttpUtility.ParseQueryString(queryString);
-		var result = new Dictionary<string,string?>();
-		if(nvc is null) return result;
+		var result = new Dictionary<string, string?>();
+		if (nvc is null) return result;
 		foreach (var key in nvc.AllKeys)
 		{
-			if(String.IsNullOrWhiteSpace(key)) continue;
+			if (String.IsNullOrWhiteSpace(key)) continue;
 			result[key] = nvc[key];
 		}
 		return result;
@@ -405,13 +405,13 @@ public static partial class NavigatorExt
 		return inputValue.Replace("§", "/");
 	}
 
-	public static string? SerializeFiltersForUrl(List<TfFilterBase>? filters, bool shouldProcess = true)
+	public static string? SerializeFiltersForUrl(this List<TfFilterBase>? filters, bool shouldProcess = true)
 	{
 		var queryObject = new List<TfFilterQuery>();
-		if(filters is null) filters = new();
+		if (filters is null) filters = new();
 		foreach (var item in filters)
 		{
-			queryObject.Add(TfFilterBase.ToQuery(item));
+			queryObject.Add(new TfFilterBase().ToQuery(item));
 		}
 		if (shouldProcess)
 			return ProcessQueryValueForUrl(JsonSerializer.Serialize(queryObject));
@@ -419,19 +419,52 @@ public static partial class NavigatorExt
 		return JsonSerializer.Serialize(queryObject);
 	}
 
-	public static List<TfFilterBase> DeserializeFiltersFromUrl(string queryValue, bool isProcessed = false)
+	public static List<TfFilterQuery> DeserializeFiltersFromUrl(this string queryValue, bool isProcessed = false)
 	{
 		var items = JsonSerializer.Deserialize<List<TfFilterQuery>>(isProcessed ? queryValue : (ProcessQueryValueFromUrl(queryValue) ?? String.Empty));
-		var result = new List<TfFilterBase>();
-		if (items == null) return result;
+		if (items == null) return new List<TfFilterQuery>();
+		//Assign parents
 		foreach (var item in items)
 		{
-			result.Add(TfFilterBase.FromQuery(item));
+			item.AssignParent(null);
 		}
-		return result;
+		return items;
 	}
 
-	public static string? SerializeSortsForUrl(List<TfSortQuery>? sorts, bool shouldProcess = true)
+	public static void AssignParent(this TfFilterQuery node, TfFilterQuery? parent)
+	{
+		node.Parent = parent;
+		foreach (var item in node.Items ?? new List<TfFilterQuery>())
+		{
+			item.AssignParent(node);
+		}
+	}
+
+	public static TfFilterQuery? GetNodeByPath(this List<TfFilterQuery> items, List<string> path)
+	{
+		if (items == null || items.Count == 0 || path is null || path.Count == 0) return null;
+
+		foreach (var item in items ?? new List<TfFilterQuery>())
+		{
+			var match = CheckNodeForPathMatch(item, path);
+			if (match is not null) return match;
+		}
+		return null;
+	}
+
+	public static TfFilterQuery? CheckNodeForPathMatch(TfFilterQuery node, List<string> path)
+	{
+		if (node.Path.MatchesList(path)) return node;
+		foreach (var item in node.Items ?? new List<TfFilterQuery>())
+		{
+			var match = CheckNodeForPathMatch(item, path);
+			if (match is not null) return match;
+		}
+
+		return null;
+	}
+
+	public static string? SerializeSortsForUrl(this List<TfSortQuery>? sorts, bool shouldProcess = true)
 	{
 		if (shouldProcess)
 			return ProcessQueryValueForUrl(JsonSerializer.Serialize(sorts));
@@ -439,7 +472,7 @@ public static partial class NavigatorExt
 		return JsonSerializer.Serialize(sorts);
 	}
 
-	public static List<TfSortQuery> DeserializeSortsFromUrl(string queryValue, bool isProcessed = false)
+	public static List<TfSortQuery> DeserializeSortsFromUrl(this string queryValue, bool isProcessed = false)
 	{
 		var items = JsonSerializer.Deserialize<List<TfSortQuery>>(isProcessed ? queryValue : (ProcessQueryValueFromUrl(queryValue) ?? String.Empty));
 		if (items == null) return new List<TfSortQuery>();
@@ -496,15 +529,15 @@ public static partial class NavigatorExt
 
 		foreach (string? key in savedQueryDict.AllKeys)
 		{
-			if(String.IsNullOrWhiteSpace(key)) continue;
-			if(key == TfConstants.TabQueryName) continue;
+			if (String.IsNullOrWhiteSpace(key)) continue;
+			if (key == TfConstants.TabQueryName) continue;
 			if (key == TfConstants.ActiveSaveQueryName) continue;
 			savedSortedDict[key] = savedQueryDict[key];
 		}
 		foreach (string? key in currentQueryDict.AllKeys)
 		{
-			if(String.IsNullOrWhiteSpace(key)) continue;
-			if(key == TfConstants.TabQueryName) continue;
+			if (String.IsNullOrWhiteSpace(key)) continue;
+			if (key == TfConstants.TabQueryName) continue;
 			if (key == TfConstants.ActiveSaveQueryName) continue;
 			currentSortedDict[key] = currentQueryDict[key];
 		}

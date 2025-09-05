@@ -45,7 +45,7 @@ public record TfFilterBoolean : TfFilterBase
 			Value = null;
 	}
 
-	public TfFilterBoolean() : base(String.Empty,String.Empty) { }
+	public TfFilterBoolean() : base(String.Empty, String.Empty) { }
 
 	public TfFilterBoolean(
 		string columnName,
@@ -56,20 +56,22 @@ public record TfFilterBoolean : TfFilterBase
 		ComparisonMethod = comparisonMethod;
 	}
 
-	public TfFilterBoolean(TfFilterQuery model)
+	public TfFilterBoolean(TfFilterQuery model, string columnName)
 		: base(String.Empty, String.Empty)
 	{
+		if (model is null) throw new ArgumentException("model is required", nameof(model));
+		if (String.IsNullOrWhiteSpace(columnName)) throw new ArgumentException("columnName is required", nameof(columnName));
+
 		Id = Guid.NewGuid();
-		ColumnName = model.Name;
 		Value = null;
+		ColumnName = columnName;
 		if (!String.IsNullOrWhiteSpace(model.Value) && Boolean.TryParse(model.Value, out bool outVal)) Value = model.Value;
-		ComparisonMethod = (TfFilterBooleanComparisonMethod)model.Method;
+		ComparisonMethod = Utility.EnumExtensions.ConvertIntToEnum<TfFilterBooleanComparisonMethod>(model.Method,TfFilterBooleanComparisonMethod.IsTrue);
 	}
 	public TfFilterQuery ToQuery()
 	{
 		return new TfFilterQuery
 		{
-			Type = GetFilterType(),
 			Name = GetColumnName(),
 			Value = Value?.ToString(),
 			Method = (int)ComparisonMethod,

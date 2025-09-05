@@ -2,9 +2,6 @@
 
 public record TfFilterQuery
 {
-	[JsonPropertyName("t")]
-	public string Type { get; set; } = default!;
-
 	[JsonPropertyName("n")]
 	public string Name { get; set; } = string.Empty;
 
@@ -17,5 +14,19 @@ public record TfFilterQuery
 	[JsonPropertyName("i")]
 	public List<TfFilterQuery> Items { get; set; } = new();
 
+	[JsonIgnore]
+	public TfFilterQuery? Parent { get; set; } = null;
+
+	[JsonIgnore]
+	public List<string> Path
+	{
+		get
+		{
+			if (Parent is null) return new List<string>() { Name };
+			var parentPath = Parent.Path.ToList();
+			parentPath.Add(Name);
+			return parentPath;
+		}
+	}
 }
 

@@ -227,12 +227,10 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 
 
 		var viewColumns = _tfService.GetSpaceViewColumnsList(view.Id);
-
-		List<TfFilterBase> filters = null;
+		var spaceData = _tfService.GetSpaceData(view.SpaceDataId);
+		var dataProvider = _tfService.GetDataProvider(spaceData.DataProviderId);
+		List<TfFilterBase> filters = data.RouteState.Filters.ConvertQueryFilterToList(viewColumns,dataProvider.Columns.ToList());
 		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns);;
-
-		if (data.RouteState.Filters is not null && data.RouteState.Filters.Count > 0)
-			filters = data.RouteState.Filters.ToList();
 
 		var viewData = _tfService.QuerySpaceData(
 			spaceDataId: view.SpaceDataId,

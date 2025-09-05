@@ -17,6 +17,7 @@ public record TfFilterBase
 	public string ColumnName { get; set; }
 	[JsonPropertyName("v")]
 	public string? Value { get; set; }
+	public TfFilterBase() { }
 	public TfFilterBase(
 		string columnName,
 		string? value)
@@ -51,7 +52,7 @@ public record TfFilterBase
 		}
 	}
 
-public static string GetColumnName(TfFilterBase model)
+	public string GetColumnName(TfFilterBase model)
 	{
 		if (model is TfFilterAnd)
 		{
@@ -90,7 +91,7 @@ public static string GetColumnName(TfFilterBase model)
 		}
 		else throw new Exception("Unsupported TfFilterBase in GetColumnName");
 	}
-	public static string GetFieldType(TfFilterBase model)
+	public string GetFieldType(TfFilterBase model)
 	{
 		if (model is TfFilterAnd)
 		{
@@ -123,7 +124,7 @@ public static string GetColumnName(TfFilterBase model)
 		}
 		else throw new Exception("Unsupported TfFilterBase in GetColumnName");
 	}
-	public static ReadOnlyCollection<TfFilterBase> GetChildFilters(TfFilterBase model)
+	public ReadOnlyCollection<TfFilterBase> GetChildFilters(TfFilterBase model)
 	{
 		if (model is TfFilterAnd)
 		{
@@ -141,45 +142,53 @@ public static string GetColumnName(TfFilterBase model)
 		}
 	}
 
-public static TfFilterBase FromQuery(TfFilterQuery model)
+	public TfFilterBase? FromQuery(TfFilterQuery model, List<TfSpaceViewColumn> viewColumns, List<TfDataProviderColumn> providerColumns)
 	{
+		if (model is null) throw new ArgumentException("required", nameof(model));
+		if (viewColumns is null) throw new ArgumentException("required", nameof(viewColumns));
+		if (providerColumns is null) throw new ArgumentException("required", nameof(providerColumns));
+
 		//rules
-		if (model.Type == (new TfFilterAnd()).GetFilterType())
+		if (model.Name == (new TfFilterAnd()).GetColumnName())
 		{
-			if (model.Name == (new TfFilterAnd()).GetColumnName())
+			return new TfFilterAnd(model, viewColumns, providerColumns);
+		}
+		else if (model.Name == (new TfFilterOr()).GetColumnName())
+		{
+			return new TfFilterOr(model, viewColumns, providerColumns);
+		}
+		else
+		{
+			var viewColumn = viewColumns.FirstOrDefault(x => x.QueryName.ToLowerInvariant() == model.Name.ToLowerInvariant());
+			if (viewColumn is null) return null;
+			var columnName = viewColumn.GetColumnNameFromDataMapping();
+			if (String.IsNullOrWhiteSpace(columnName)) return null;
+			var providerColumn = providerColumns.FirstOrDefault(x => x.DbName == columnName);
+			if (providerColumn is null) return null;
+			switch (providerColumn.DbType)
 			{
-				return new TfFilterAnd(model);
+				case TfDatabaseColumnType.ShortInteger:
+				case TfDatabaseColumnType.Integer:
+				case TfDatabaseColumnType.LongInteger:
+				case TfDatabaseColumnType.Number:
+					return new TfFilterNumeric(model, columnName);
+				case TfDatabaseColumnType.Boolean:
+					return new TfFilterBoolean(model, columnName);
+				case TfDatabaseColumnType.DateTime:
+				case TfDatabaseColumnType.DateOnly:
+					return new TfFilterDateTime(model, columnName);
+				case TfDatabaseColumnType.ShortText:
+				case TfDatabaseColumnType.Text:
+					return new TfFilterText(model, columnName);
+				case TfDatabaseColumnType.Guid:
+					return new TfFilterGuid(model, columnName);
+				default:
+					throw new Exception("Unsupported TfFilterQuery type for conversion to TfFilterBase");
 			}
-			else if (model.Name == (new TfFilterOr()).GetColumnName())
-			{
-				return new TfFilterOr(model);
-			}
-			throw new Exception("Unsupported RULE TfFilterQuery type for conversion to TfFilterBase");
 		}
-		else if (model.Type == TfFilterBoolean.GetFilterType())
-		{
-			return new TfFilterBoolean(model);
-		}
-		else if (model.Type == TfFilterDateTime.GetFilterType())
-		{
-			return new TfFilterDateTime(model);
-		}
-		else if (model.Type == TfFilterGuid.GetFilterType())
-		{
-			return new TfFilterGuid(model);
-		}
-		else if (model.Type == TfFilterNumeric.GetFilterType())
-		{
-			return new TfFilterNumeric(model);
-		}
-		else if (model.Type == TfFilterText.GetFilterType())
-		{
-			return new TfFilterText(model);
-		}
-		else throw new Exception("Unsupported TfFilterQuery type for conversion to TfFilterBase");
 	}
 
-	public static TfFilterQuery ToQuery(TfFilterBase model)
+	public TfFilterQuery ToQuery(TfFilterBase model)
 	{
 		if (model is TfFilterAnd)
 		{

@@ -21,18 +21,21 @@ public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogCon
 		_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		if(_navState is null || Content == Guid.Empty)
 			throw new Exception("SpaceViewId not found");
-		if (_navState.Filters is not null)
-			_items = JsonSerializer.Deserialize<List<TfFilterBase>>(JsonSerializer.Serialize(_navState.Filters)) ?? new();
 		var spaceView = TfSpaceViewUIService.GetSpaceView(Content);
 		if(spaceView is null)
 			throw new Exception("spaceView not found");
-
+		var spaceViewColumns = TfSpaceViewUIService.GetViewColumns(Content);
 		_spaceData =TfSpaceDataUIService.GetSpaceData(spaceView.SpaceDataId);
 
 		if (_spaceData is not null)
 		{
 			_dataProvider = TfDataProviderUIService.GetDataProvider(_spaceData.DataProviderId);
 		}
+
+		if (_navState.Filters is not null)
+			_items = _navState.Filters.ConvertQueryFilterToList(spaceViewColumns, _dataProvider!.Columns.ToList());
+
+
 	}
 
 	private Task _onFiltersChangeHandler(List<TfFilterBase> filters)

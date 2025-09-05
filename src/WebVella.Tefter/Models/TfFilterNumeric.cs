@@ -42,19 +42,21 @@ public record TfFilterNumeric : TfFilterBase
 	{
 		ComparisonMethod = comparisonMethod;
 	}
-	public TfFilterNumeric(TfFilterQuery model) : base(String.Empty,null)
+	public TfFilterNumeric(TfFilterQuery model, string columnName) : base(String.Empty,null)
 	{
+		if (model is null) throw new ArgumentException("model is required",nameof(model));
+		if (String.IsNullOrWhiteSpace(columnName)) throw new ArgumentException("columnName is required",nameof(columnName));
+
 		Id = Guid.NewGuid();
-		ColumnName = model.Name;
 		Value = null;
+		ColumnName = columnName;
 		if (!String.IsNullOrWhiteSpace(model.Value) && decimal.TryParse(model.Value, out decimal outVal)) Value = model.Value;
-		ComparisonMethod = (TfFilterNumericComparisonMethod)model.Method;
+		ComparisonMethod = Utility.EnumExtensions.ConvertIntToEnum<TfFilterNumericComparisonMethod>(model.Method,TfFilterNumericComparisonMethod.Equal);
 	}
 	public TfFilterQuery ToQuery()
 	{
 		return new TfFilterQuery
 		{
-			Type = GetFilterType(),
 			Name = GetColumnName(),
 			Value = Value?.ToString(),
 			Method = (int)ComparisonMethod,

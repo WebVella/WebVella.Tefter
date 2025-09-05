@@ -43,10 +43,15 @@ public record TfFilterDateTime : TfFilterBase
 		ComparisonMethod = comparisonMethod;
 	}
 
-	public TfFilterDateTime(TfFilterQuery model) : base(String.Empty, null)
+	public TfFilterDateTime(TfFilterQuery model, string columnName) : base(String.Empty, null)
 	{
+		if (model is null) throw new ArgumentException("model is required",nameof(model));
+		if (String.IsNullOrWhiteSpace(columnName)) throw new ArgumentException("columnName is required",nameof(columnName));
+
 		Id = Guid.NewGuid();
-		ColumnName = model.Name;
+		Value = null;
+		ColumnName = columnName;
+
 		if (String.IsNullOrWhiteSpace(model.Value)) Value = null;
 		else if (FormulaUtility.GetDateFromFormulaString(model.Value) != null)
 		{
@@ -56,13 +61,12 @@ public record TfFilterDateTime : TfFilterBase
 			Value = model.Value;
 		else
 			Value = null;
-		ComparisonMethod = (TfFilterDateTimeComparisonMethod)model.Method;
+		ComparisonMethod = Utility.EnumExtensions.ConvertIntToEnum<TfFilterDateTimeComparisonMethod>(model.Method,TfFilterDateTimeComparisonMethod.Greater);
 	}
 	public TfFilterQuery ToQuery()
 	{
 		return new TfFilterQuery
 		{
-			Type = GetFilterType(),
 			Name = GetColumnName(),
 			Value = Value,
 			Method = (int)ComparisonMethod,

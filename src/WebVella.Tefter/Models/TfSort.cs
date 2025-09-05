@@ -12,7 +12,7 @@ public record TfSort
 			ColumnName = prefix + ColumnName;
 		}
 	}
-	public TfSort(){}
+	public TfSort() { }
 
 	public TfSort(
 		string columnName,
@@ -33,6 +33,22 @@ public record TfSort
 			Name = ColumnName,
 			Direction = (int)Direction
 		};
+	}
+	public TfSort FromQuery(TfSortQuery model, List<TfSpaceViewColumn> viewColumns)
+	{
+		if (model is null) throw new ArgumentException("model is required",nameof(model));
+		if (viewColumns is null) throw new ArgumentException("viewColumns is required",nameof(model));
+		var column = viewColumns.FirstOrDefault(x => x.QueryName.ToLowerInvariant() == model.Name.ToLowerInvariant());
+		var columnName = model.Name;
+		if (column is not null)
+			columnName = column.GetColumnNameFromDataMapping() ?? model.Name;
+
+		var sort = new TfSort()
+		{
+			ColumnName = columnName,
+			Direction = model.Direction.ConvertIntToEnum<TfSortDirection>(TfSortDirection.ASC)
+		};
+		return sort;
 	}
 }
 
