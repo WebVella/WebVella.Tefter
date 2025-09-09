@@ -510,23 +510,6 @@ public partial class TfServiceTest : BaseTest
 
 				provider = tfService.GetDataProvider(providerModel.Id);
 
-				TfDataProviderJoinKey joinKey =
-					new TfDataProviderJoinKey
-					{
-						Id = Guid.NewGuid(),
-						Description = "testing1",
-						DataProviderId = provider.Id,
-						DbName = "testing1",
-						Columns = new() { provider.Columns[0] }
-
-					};
-
-				tfService.CreateDataProviderJoinKey(joinKey);
-
-				provider = tfService.GetDataProvider(providerModel.Id);
-				provider.JoinKeys.Count().Should().Be(1);
-
-
 				var space = new TfSpace
 				{
 					Id = Guid.NewGuid(),
@@ -538,7 +521,7 @@ public partial class TfServiceTest : BaseTest
 				};
 				tfService.CreateSpace(space);
 
-				var spaceData = new TfSpaceData
+				var createSpaceDataModel = new TfCreateSpaceData
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
@@ -546,29 +529,7 @@ public partial class TfServiceTest : BaseTest
 					SpaceId = space.Id,
 				};
 
-				//TODO rumen to fix after change
-
-				//var result = tfService.CreateSpaceData(spaceData);
-				//result.IsSuccess.Should().BeTrue();
-				//result.Value.Should().NotBeNull();
-				//result.Value.Columns.Count().Should().Be(2);
-
-				//result.Value.Columns[0].Selected = true;
-				//result.Value.Columns[1].Selected = true;
-				//tfService.UpdateSpaceData(spaceData);
-
-				//spaceData = tfService.GetSpaceData(spaceData.Id).Value;
-				//result.Value.Columns.Count().Should().Be(2);
-				//result.Value.Columns[0].Selected.Should().BeTrue();
-				//result.Value.Columns[1].Selected.Should().BeTrue();
-
-				//result.Value.Columns[1].Selected = false;
-				//tfService.UpdateSpaceData(spaceData);
-
-				//spaceData = tfService.GetSpaceData(spaceData.Id).Value;
-				//result.Value.Columns.Count().Should().Be(2);
-				//result.Value.Columns[0].Selected.Should().BeTrue();
-				//result.Value.Columns[1].Selected.Should().BeFalse();
+				//TODO rumen implement tests
 			}
 		}
 	}

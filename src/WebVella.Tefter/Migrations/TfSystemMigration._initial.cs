@@ -168,60 +168,6 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			});
 		#endregion
 
-		#region  TABLE: DATA_PROVIDER_JOIN_KEY
-		dbBuilder
-			.NewTableBuilder(Guid.NewGuid(), "tf_data_provider_join_key")
-			.WithColumns(columns =>
-			{
-				columns
-					.AddGuidColumn("id", c => { c.NotNullable().WithAutoDefaultValue(); })
-					.AddGuidColumn("data_provider_id", c => { c.NotNullable().WithoutAutoDefaultValue(); })
-					.AddShortTextColumn("db_name", c => { c.NotNullable(); })
-					.AddShortTextColumn("description", c => { c.NotNullable().WithDefaultValue(string.Empty); })
-					.AddTextColumn("column_ids_json", c => { c.NotNullable().WithDefaultValue("[]"); })
-					.AddShortIntegerColumn("version", c => { c.NotNullable().WithDefaultValue(1); })
-					.AddDateTimeColumn("last_modified_on", c => { c.NotNullable().WithAutoDefaultValue(); });
-			})
-			.WithConstraints(constraints =>
-			{
-				constraints
-					.AddPrimaryKeyConstraint("pk_data_provider_join_key", c => { c.WithColumns("id"); })
-					.AddForeignKeyConstraint("fk_data_provider_join_key_data_provider", c =>
-					{
-						c.WithColumns("data_provider_id")
-						.WithForeignTable("tf_data_provider")
-						.WithForeignColumns("id");
-					});
-			});
-
-		#endregion
-
-		#region  TABLE: ID_DICT
-
-		dbBuilder
-			.NewTableBuilder(Guid.NewGuid(), "tf_id_dict")
-			.WithColumns(columns =>
-			{
-				columns
-					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
-					.AddTextColumn("text_id", c => { c.NotNullable().WithDefaultValue(""); });
-
-			})
-			.WithConstraints(constraints =>
-			{
-				constraints
-					.AddPrimaryKeyConstraint("pk_id_dict", c => { c.WithColumns("id"); })
-					.AddUniqueKeyConstraint("ux_id_dict_text_id_ux", c => { c.WithColumns("text_id"); });
-			})
-			.WithIndexes(indexes =>
-			{
-				indexes
-					.AddBTreeIndex("ix_id_dict_id", i => { i.WithColumns("id"); })
-					.AddHashIndex("ux_id_dict_text_id", c => { c.WithColumn("text_id"); });
-			});
-
-		#endregion
-
 		#region  TABLE: DATA_PROVIDER_SYNCHRONIZE_TASK
 
 		dbBuilder
@@ -1160,13 +1106,6 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 	public override async Task MigrateDataAsync(IServiceProvider serviceProvider)
 	{
 		ITfDatabaseService dbService = serviceProvider.GetService<ITfDatabaseService>();
-
-		//creates default empty id in id_dict
-		//this entry is required because data provider join keys default
-		//values are Guid.Empty and they have foreign key to id_dict
-
-		dbService.ExecuteSqlNonQueryCommand("INSERT INTO tf_id_dict(id,text_id) VALUES(@id,@text_id)",
-			new NpgsqlParameter("id", Guid.Empty), new NpgsqlParameter("text_id", Guid.Empty.ToString()));
 
 		dbService.ExecuteSqlNonQueryCommand("INSERT INTO tf_setting(name,value) VALUES(@name,@value)",
 			new NpgsqlParameter("name", TfConstants.TEFTER_INSTANCE_SETTING_KEY),

@@ -112,15 +112,12 @@ public partial class TfService : ITfService
 			if (providerType == null)
 				throw new TfException("Unable to find provider type for specified provider instance.");
 
-			var joinKeys = GetDataProviderJoinKeys(id);
-
 			var identities = GetDataProviderIdentities(id);
 
 			var provider = DataProviderFromDbo(
 					providerDbo,
 					GetDataProviderSystemColumns(identities),
 					GetDataProviderColumns(id),
-					joinKeys,
 					identities,
 					providerType);
 
@@ -156,15 +153,12 @@ public partial class TfService : ITfService
 			if (providerType == null)
 				throw new TfException("Unable to find provider type for specified provider instance.");
 
-			var joinKeys = GetDataProviderJoinKeys(providerDbo.Id);
-			
 			var identities = GetDataProviderIdentities(providerDbo.Id);
 
 			var provider = DataProviderFromDbo(
 					providerDbo,
 					GetDataProviderSystemColumns(identities),
 					GetDataProviderColumns(providerDbo.Id),
-					joinKeys,
 					identities,
 					providerType);
 
@@ -201,15 +195,12 @@ public partial class TfService : ITfService
 			if (providerType == null)
 				throw new TfException("Failed to get data provider");
 
-			var joinKeys = GetDataProviderJoinKeys(providerDbo.Id);
-			
 			var identities = GetDataProviderIdentities(providerDbo.Id);
 
 			var provider = DataProviderFromDbo(
 					providerDbo,
 					GetDataProviderSystemColumns(identities),
 					GetDataProviderColumns(providerDbo.Id),
-					joinKeys,
 					identities,
 					providerType);
 
@@ -247,15 +238,12 @@ public partial class TfService : ITfService
 					throw new TfException($"Failed to get data providers, because " +
 						$"provider type with id = '{dbo.TypeId}' is not found.");
 
-				var joinKeys = GetDataProviderJoinKeys(dbo.Id);
-
 				var identities = GetDataProviderIdentities(dbo.Id);
 
 				var provider = DataProviderFromDbo(
 						dbo,
 						GetDataProviderSystemColumns(identities),
 						GetDataProviderColumns(dbo.Id),
-						joinKeys,
 						identities,
 						providerType);
 
@@ -484,14 +472,6 @@ public partial class TfService : ITfService
 						throw new TfDboServiceException("Delete<TfDataProviderColumn> failed.");
 				}
 
-				foreach (var joinKey in provider.JoinKeys)
-				{
-					success = _dboManager.Delete<TfDataProviderJoinKeyDbo>(joinKey.Id);
-
-					if (!success)
-						throw new TfDboServiceException("Delete<TfDataProviderJoinKeyDbo> failed.");
-				}
-
 				foreach (var identity in provider.Identities)
 				{
 					success = _dboManager.Delete<TfDataProviderIdentityDbo>(identity.Id);
@@ -684,7 +664,6 @@ public partial class TfService : ITfService
 		TfDataProviderDbo dbo,
 		List<TfDataProviderSystemColumn> systemColumns,
 		List<TfDataProviderColumn> columns,
-		List<TfDataProviderJoinKey> joinKeys,
 		List<TfDataProviderIdentity> identities,
 		ITfDataProviderAddon providerType)
 	{
@@ -693,9 +672,6 @@ public partial class TfService : ITfService
 
 		if (columns == null)
 			throw new ArgumentException(nameof(columns));
-
-		if (joinKeys == null)
-			throw new ArgumentException(nameof(joinKeys));
 
 		if (identities == null)
 			throw new ArgumentException(nameof(identities));
@@ -714,7 +690,6 @@ public partial class TfService : ITfService
 			ProviderType = providerType,
 			SystemColumns = systemColumns.AsReadOnly(),
 			Columns = columns.AsReadOnly(),
-			JoinKeys = joinKeys.AsReadOnly(),
 			Identities = identities.AsReadOnly(),
 			SynchPrimaryKeyColumns = JsonSerializer.Deserialize<List<string>>(dbo.SynchPrimaryKeyColumnsJson ?? "[]").AsReadOnly()
 		};

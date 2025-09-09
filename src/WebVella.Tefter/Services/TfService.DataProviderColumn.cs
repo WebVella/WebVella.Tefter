@@ -1447,14 +1447,6 @@ public partial class TfService : ITfService
 
 			RuleSet("delete", () =>
 			{
-				RuleFor(column => column.Id)
-						.Must((column, id) =>
-						{
-							var joinKeys = tfService.GetDataProviderJoinKeys(column.DataProviderId);
-							var found = joinKeys.Any(x => x.Columns.Any(c => c.Id == id));
-							return !found;
-						})
-						.WithMessage("There data provider column cannot be deleted, because it is part of join key.");
 			});
 
 		}

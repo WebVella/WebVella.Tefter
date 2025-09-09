@@ -156,15 +156,6 @@ public partial class TfService : ITfService
 				});
 			}
 
-			foreach (var joinKey in provider.JoinKeys)
-			{
-				columns.Add(new TfAvailableSpaceDataColumn
-				{
-					DbName = joinKey.DbName,
-					DbType = TfDatabaseColumnType.Guid,
-				});
-			}
-
 			foreach (var identity in provider.Identities)
 			{
 				columns.Add(new TfAvailableSpaceDataColumn

@@ -39,38 +39,6 @@ $$ LANGUAGE plpgsql;
 ");
 		sb.AppendLine();
 
-		sb.AppendLine(@"
-CREATE OR REPLACE FUNCTION _tefter_id_dict_insert_select(text,uuid)
-RETURNS uuid AS $$
-DECLARE 
-	result_id uuid;
-BEGIN
-	result_id := (SELECT tf_id_dict.id FROM tf_id_dict WHERE tf_id_dict.text_id = $1 LIMIT 1);
-	IF result_id IS NULL THEN
-		BEGIN
-			PERFORM pg_advisory_lock(1975);	
-			result_id := (SELECT tf_id_dict.id FROM tf_id_dict WHERE tf_id_dict.text_id = $1 LIMIT 1);
-			IF result_id IS NULL THEN
-				IF $2 IS NOT NULL THEN
-					result_id := $2;
-				ELSE
-					result_id = uuid_generate_v1();
-				END IF;
-				INSERT INTO tf_id_dict(id,text_id) VALUES(result_id,$1);
-			END IF;
-		EXCEPTION WHEN OTHERS THEN
-			PERFORM pg_advisory_unlock(1975);	
-			RAISE EXCEPTION '%', SQLERRM;
-		END;
-		PERFORM pg_advisory_unlock(1975);
-	END IF;
-
-	RETURN result_id;	
-END;
-$$ LANGUAGE plpgsql;
-");
-		sb.AppendLine();
-
 		return sb.ToString(); ;
     }
 

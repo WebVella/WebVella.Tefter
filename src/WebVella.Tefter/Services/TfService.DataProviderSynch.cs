@@ -261,14 +261,6 @@ public partial class TfService : ITfService
 			columnsToSelect.Add(column.DbName);
 		}
 
-		foreach (var joinKey in provider.JoinKeys)
-		{
-			string joinKeyIdColumnDbName = $"tf_jk_{joinKey.DbName}_id";
-			string joinKeyVersionColumnDbName = $"tf_jk_{joinKey.DbName}_version";
-			columnsToSelect.Add(joinKeyIdColumnDbName);
-			columnsToSelect.Add(joinKeyVersionColumnDbName);
-		}
-
 		if (provider.SynchPrimaryKeyColumns != null &&
 			provider.SynchPrimaryKeyColumns.Count > 0)
 		{

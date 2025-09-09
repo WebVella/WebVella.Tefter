@@ -674,7 +674,7 @@ public partial class TfService : ITfService
 		TfDataProvider provider,
 		TfDataRow row)
 	{
-		row["tf_id"] = GetId(Guid.NewGuid());
+		row["tf_id"] = Guid.NewGuid();
 
 		row["tf_created_on"] = DateTime.Now;
 
@@ -1275,7 +1275,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			row["tf_id"] = GetId(Guid.NewGuid());
+			row["tf_id"] = Guid.NewGuid();
 			row["tf_created_on"] = DateTime.Now;
 			row["tf_updated_on"] = DateTime.Now;
 
@@ -1295,16 +1295,6 @@ public partial class TfService : ITfService
 				}
 			}
 			row["tf_search"] = searchSb.ToString();
-
-			foreach (var joinKey in provider.JoinKeys)
-			{
-				List<string> keys = new List<string>();
-				foreach (var column in joinKey.Columns)
-					keys.Add(row[column.DbName]?.ToString());
-
-				row[$"tf_jk_{joinKey.DbName}_id"] = GetId(keys.ToArray());
-				row[$"tf_jk_{joinKey.DbName}_version"] = joinKey.Version;
-			}
 
 			List<NpgsqlParameter> parameters;
 			var sql = BuildInsertNewRowSql(provider, row, out parameters);
@@ -1346,16 +1336,6 @@ public partial class TfService : ITfService
 			}
 			row["tf_search"] = searchSb.ToString();
 
-			foreach (var joinKey in provider.JoinKeys)
-			{
-				List<string> keys = new List<string>();
-				foreach (var column in joinKey.Columns)
-					keys.Add(row[column.DbName].ToString());
-
-				row[$"tf_jk_{joinKey.DbName}_id"] = GetId(keys.ToArray());
-				row[$"tf_jk_{joinKey.DbName}_version"] = joinKey.Version;
-			}
-
 			List<NpgsqlParameter> parameters;
 			var sql = BuildUpdateRowSql(provider, row, out parameters);
 
@@ -1370,28 +1350,6 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 	}
-
-	//private void UpdateProviderRowJoinKeysOnly(
-	//	TfDataProvider provider,
-	//	Guid tfId,
-	//	Dictionary<string, object> values)
-	//{
-	//	try
-	//	{
-	//		List<NpgsqlParameter> parameters;
-	//		var sql = BuildUpdateRowJoinKeysOnlySql(provider, tfId, values, out parameters);
-
-	//		var count = _dbService.ExecuteSqlNonQueryCommand(sql, parameters);
-	//		if (count != 1)
-	//		{
-	//			throw new Exception("Failed to update row");
-	//		}
-	//	}
-	//	catch (Exception ex)
-	//	{
-	//		throw ProcessException(ex);
-	//	}
-	//}
 
 	public void DeleteProviderRowsAfterIndex(
 		TfDataProvider provider,
@@ -1491,14 +1449,6 @@ public partial class TfService : ITfService
 		parameters.Add(new NpgsqlParameter("@tf_row_index", row["tf_row_index"]));
 		sql.AppendLine("@tf_row_index");
 		sql.AppendLine(",");
-
-		foreach (var joinKey in provider.JoinKeys)
-		{
-			var joinKeyName = $"tf_jk_{joinKey.DbName}_id";
-			parameters.Add(new NpgsqlParameter($"@{joinKeyName}", row[joinKeyName]));
-			sql.AppendLine("@" + joinKeyName);
-			sql.AppendLine(",");
-		}
 
 		foreach (var column in provider.Columns)
 		{
