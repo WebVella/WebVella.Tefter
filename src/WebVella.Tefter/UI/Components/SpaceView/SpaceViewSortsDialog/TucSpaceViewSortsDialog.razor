@@ -16,7 +16,7 @@
 
 	<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
 		<FluentTab Label="@LOC("Current")" Id="current" Style="padding-top:1rem">
-			<TucQuerySortCard @bind-Items="_items" ViewColumns="_viewColumns"/>
+			<TucSortQueryCard @bind-Items="_items" ViewColumns="_viewColumns" />
 		</FluentTab>
 		<FluentTab Label="@LOC("Default")" Id="default" Style="padding-top:1rem">
 			<TucCard>

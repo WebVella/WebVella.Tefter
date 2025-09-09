@@ -3,7 +3,7 @@
 public record TfFilterText : TfFilterBase
 {
 	[JsonPropertyName("m")]
-	public TfFilterTextComparisonMethod ComparisonMethod { get; set; }
+	public TfFilterTextComparisonMethod ComparisonMethod { get; set; } = TfFilterTextComparisonMethod.Equal;
 	public string GetColumnName() => ColumnName;
 	public static string GetFilterType() => "text";
 	public bool RequiresValue
@@ -15,7 +15,7 @@ public record TfFilterText : TfFilterBase
 			return true;
 		}
 	}
-	public void ValueChanged(string value)
+	public void ValueChanged(string? value)
 	{
 		Value = value;
 	}

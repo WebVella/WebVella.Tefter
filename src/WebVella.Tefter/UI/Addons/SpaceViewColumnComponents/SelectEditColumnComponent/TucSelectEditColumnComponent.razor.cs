@@ -54,7 +54,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	/// by default it is 'Value'. The alias<>column name mapping is set by the user
 	/// upon space view column configuration
 	/// </summary>
-	private object _value = null;
+	private object? _value = null;
 	private string _valueInputId = "input-" + Guid.NewGuid();
 	private List<TfSelectOption> _selectOptionsList = new();
 	private TfSelectOption _selectedOption = null;
@@ -93,7 +93,9 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	/// <returns></returns>
 	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
-		excelCell.SetValue(XLCellValue.FromObject(GetDataStringByAlias(VALUE_ALIAS)));
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null) return;
+		excelCell.SetValue(XLCellValue.FromObject(GetDataStringByAlias(column)));
 	}
 
 	#endregion
@@ -149,7 +151,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	}
 	private async Task _initValues()
 	{
-		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		TfDataColumn? column = GetColumnByAlias(VALUE_ALIAS);
 		if (column is null)
 			throw new Exception("Column not found");
 		if (column.IsJoinColumn)
@@ -172,7 +174,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 			return;
 		}
 
-		_value = GetColumnDataByAlias(VALUE_ALIAS);
+		_value = GetColumnData(column);
 		_selectedOption = null;
 		var valueJson = JsonSerializer.Serialize(_value);
 		var optionIndex = _selectOptionsList.FindIndex(x => JsonSerializer.Serialize(x.Value) == valueJson);
@@ -190,7 +192,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	{
 
 		_storageKey = this.GetType().Name + "_" + RegionContext.SpaceViewColumnId;
-		TfDataColumn currentColumn = GetColumnByAlias(VALUE_ALIAS);
+		TfDataColumn? currentColumn = GetColumnByAlias(VALUE_ALIAS);
 		if (currentColumn is null)
 			throw new Exception("Column not found");
 		if (currentColumn.IsJoinColumn)
@@ -314,15 +316,17 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 		var rows = componentOptions.OptionsString.Split("\n", StringSplitOptions.RemoveEmptyEntries);
 		foreach (var row in rows)
 		{
-			object value = null;
-			string label = null;
-			string iconName = null;
-			string color = null;
-			string backgroundColor = null;
+			object? value = null;
+			string? label = null;
+			string? iconName = null;
+			string? color = null;
+			string? backgroundColor = null;
 			bool hideLabel = false;
 			var items = row.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
 			if (items.Count == 0) continue;
-			var valueObj = ConvertStringToColumnObjectByAlias(VALUE_ALIAS, items[0]);
+			var column = GetColumnByAlias(VALUE_ALIAS);
+			if (column == null) continue;
+			var valueObj = ConvertStringToColumnObject(column, items[0]);
 
 			if (items.Count >= 1)
 			{

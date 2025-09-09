@@ -754,7 +754,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 			Data = new TfCreateAssetFolderRecipeStepData()
 			{
 				FolderId = assetFolderId,
-				CountSharedColumnName = talkCountSharedColumnName,
+				CountSharedColumnName = assetsCountSharedColumnName,
 				Name = "general"
 			}
 		});

@@ -83,7 +83,9 @@ public partial class TucShortIntegerEditColumnComponent : TucBaseViewColumn<TucS
 	/// <returns></returns>
 	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if (column == null) return;
+		object? columnData = GetColumnData(column);
 		if (columnData is not null && columnData is not short)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports short.");
 		excelCell.SetValue(XLCellValue.FromObject((short?)columnData));
@@ -150,13 +152,13 @@ public partial class TucShortIntegerEditColumnComponent : TucBaseViewColumn<TucS
 	private void _initValues()
 	{
 		if(RegionContext.Mode != TfComponentPresentationMode.Display) return;
-		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		TfDataColumn? column = GetColumnByAlias(VALUE_ALIAS);
 		if (column is null)
 			throw new Exception("Column not found");
 		if (column.IsJoinColumn)
 			throw new Exception("Joined data cannot be edited");
 
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
+		object? columnData = GetColumnData(column);
 		if (columnData is not null && columnData is not short)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports short.");
 		_value = (short?)columnData;

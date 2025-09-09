@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucQueryFilterCard : TfBaseComponent
+public partial class TucFilterQueryCard : TfBaseComponent
 {
 
 	[Parameter]
@@ -39,7 +39,7 @@ public partial class TucQueryFilterCard : TfBaseComponent
 
 	private async Task _addColumnFilterHandler()
 	{
-		if (String.IsNullOrWhiteSpace(_selectedOption.Name)) return;
+		if (String.IsNullOrWhiteSpace(_selectedOption?.Name)) return;
 		await AddFilter(_selectedOption.Name, null);
 	}
 
@@ -54,21 +54,21 @@ public partial class TucQueryFilterCard : TfBaseComponent
 				case TfDatabaseColumnType.Integer:
 				case TfDatabaseColumnType.LongInteger:
 				case TfDatabaseColumnType.Number:
-					filter.Method = (int)TfFilterNumericComparisonMethod.Equal;
+					filter.Method = (int)(new TfFilterNumeric().ComparisonMethod);
 					break;
 				case TfDatabaseColumnType.Boolean:
-					filter.Method = (int)TfFilterBooleanComparisonMethod.IsTrue;
+					filter.Method = (int)(new TfFilterBoolean().ComparisonMethod);
 					break;
 				case TfDatabaseColumnType.DateOnly:
 				case TfDatabaseColumnType.DateTime:
-					filter.Method = (int)TfFilterDateTimeComparisonMethod.Greater;
+					filter.Method = (int)(new TfFilterDateTime().ComparisonMethod);
 					break;
 				case TfDatabaseColumnType.ShortText:
 				case TfDatabaseColumnType.Text:
-					filter.Method = (int)TfFilterTextComparisonMethod.Equal;
+					filter.Method = (int)(new TfFilterText().ComparisonMethod);
 					break;
 				case TfDatabaseColumnType.Guid:
-					filter.Method = (int)TfFilterGuidComparisonMethod.Equal;
+					filter.Method = (int)(new TfFilterGuid().ComparisonMethod);
 					break;
 				default:
 					break;
@@ -90,7 +90,7 @@ public partial class TucQueryFilterCard : TfBaseComponent
 					filter.Parent.Items.Add(filter);
 			}
 		}
-
+		_selectedOption = new();
 		await ItemsChanged.InvokeAsync(items);
 	}
 
@@ -116,7 +116,8 @@ public partial class TucQueryFilterCard : TfBaseComponent
 		var filter = items.GetNodeByPath(input.Path);
 		if (filter is null) return;
 
-		filter = input;
+		filter.Value = input.Value;
+		filter.Method = input.Method;
 		await ItemsChanged.InvokeAsync(items);
 	}
 }

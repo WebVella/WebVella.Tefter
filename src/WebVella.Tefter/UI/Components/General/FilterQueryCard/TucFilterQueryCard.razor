@@ -13,7 +13,9 @@
 							  @bind-SelectedOption="@_selectedOption"
 							  TOption="TfFilterQuery" Required="false"
 							  Items="@_allOptions" Style="width:140px"
-							  Placeholder="@LOC("select...")" />
+							  Placeholder="@LOC("select...")" 
+							  OptionValue="(x=> x.Name)"
+							  OptionText="(x=> _columnDict.ContainsKey(x.Name) ? _columnDict[x.Name] : x.Name)" />
 				<FluentButton OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
 				<FluentButton OnClick="@(() => AddFilter(new TfFilterAnd().GetColumnName(), null))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
 				<FluentButton OnClick="@(() => AddFilter(new TfFilterOr().GetColumnName(), null))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>

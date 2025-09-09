@@ -54,7 +54,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 	/// by default it is 'Value'. The alias<>column name mapping is set by the user
 	/// upon space view column configuration
 	/// </summary>
-	private object _value = null;
+	private object? _value = null;
 	private List<TfSelectOption> _selectOptionsList = new();
 	private TfSelectOption? _selectedOption = null;
 	/// <summary>
@@ -91,7 +91,9 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 	/// <returns></returns>
 	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
-		excelCell.SetValue(XLCellValue.FromObject(GetDataStringByAlias(VALUE_ALIAS)));
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if(column is null) return;
+		excelCell.SetValue(XLCellValue.FromObject(GetDataStringByAlias(column)));
 	}
 	#endregion
 
@@ -114,13 +116,13 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 			}
 			return;
 		}
-		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		TfDataColumn? column = GetColumnByAlias(VALUE_ALIAS);
 		if (column is null)
 			throw new Exception("Column not found");
 		if (column.IsJoinColumn)
 			throw new Exception("Joined data cannot be edited");
 
-		_value = GetColumnDataByAlias(VALUE_ALIAS);
+		_value = GetColumnData(column);
 
 		_selectedOption = null;
 		var valueJson = JsonSerializer.Serialize(_value);
@@ -140,7 +142,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 	private void _initContextData()
 	{
 		_storageKey = this.GetType().Name + "_" + RegionContext.SpaceViewColumnId;
-		TfDataColumn currentColumn = GetColumnByAlias(VALUE_ALIAS);
+		TfDataColumn? currentColumn = GetColumnByAlias(VALUE_ALIAS);
 		if (currentColumn is null)
 			throw new Exception("Column not found");
 		if (currentColumn.IsJoinColumn)
@@ -272,7 +274,8 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 			bool hideLabel = false;
 			var items = row.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
 			if (items.Count == 0) continue;
-			var valueObj = ConvertStringToColumnObjectByAlias(VALUE_ALIAS, items[0]);
+			var column = GetColumnByAlias(VALUE_ALIAS);
+			var valueObj = ConvertStringToColumnObject(column, items[0]);
 
 			if (items.Count >= 1)
 			{

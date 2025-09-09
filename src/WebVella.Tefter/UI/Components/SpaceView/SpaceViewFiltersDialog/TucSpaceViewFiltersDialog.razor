@@ -17,7 +17,8 @@
 	{
 		<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
 			<FluentTab Label="@LOC("Current")" Id="current">
-				<TucFilterCard DataProvider="_dataProvider" Items="@_items" ItemsChanged="_onFiltersChangeHandler" />
+				<TucFilterQueryCard Items="@_items" ItemsChanged="_onFiltersChangeHandler" 
+						ViewColumns="@_viewColumns" ProviderColumns="(_dataProvider?.Columns.ToList() ?? new())"/>
 			</FluentTab>
 			<FluentTab Label="@LOC("Always applied")" Id="default">
 				@if (_spaceData.Filters.Count == 0)

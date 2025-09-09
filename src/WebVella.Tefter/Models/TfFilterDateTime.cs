@@ -3,7 +3,7 @@
 public record TfFilterDateTime : TfFilterBase
 {
 	[JsonPropertyName("m")]
-	public TfFilterDateTimeComparisonMethod ComparisonMethod { get; set; }
+	public TfFilterDateTimeComparisonMethod ComparisonMethod { get; set; } = TfFilterDateTimeComparisonMethod.Greater;
 	public string GetColumnName() => ColumnName;
 	public static string GetFilterType() => "datetime";
 
@@ -21,7 +21,7 @@ public record TfFilterDateTime : TfFilterBase
 		get => Value?.ToString();
 	}
 
-	public void ValueStringChanged(string value)
+	public void ValueStringChanged(string? value)
 	{
 		if (String.IsNullOrWhiteSpace(value)) Value = null;
 		else if (FormulaUtility.GetDateFromFormulaString(value) != null)

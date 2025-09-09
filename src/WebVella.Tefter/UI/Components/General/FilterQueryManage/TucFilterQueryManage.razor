@@ -17,7 +17,9 @@
 										  @bind-SelectedOption="@_selectedOption"
 										  TOption="TfFilterQuery" Required="false"
 										  Items="@AllOptions" Style="width:140px"
-										  Placeholder="@LOC("select...")" />
+										  Placeholder="@LOC("select...")"
+										  OptionValue="(x=> x.Name)"
+										  OptionText="(x=> ColumnDict.ContainsKey(x.Name) ? ColumnDict[x.Name] : x.Name)" />
 							<FluentButton Disabled="@Disabled" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
 							<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((new TfFilterAnd().GetColumnName(), null)))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
 							<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((new TfFilterOr().GetColumnName(), null)))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
@@ -35,12 +37,12 @@
 				@foreach (var item in Item.Items)
 				{
 					<TucFilterQueryManage Item="item" Disabled="@Disabled" ReadOnly="ReadOnly"
-									 AddFilter="@((x) => AddFilter.InvokeAsync((x.Item1,x.Item2)))"
-									 RemoveFilter="@((x) => RemoveFilter.InvokeAsync(x))"
-									 UpdateFilter="@((x) => UpdateFilter.InvokeAsync(x))"
-									 AllOptions=AllOptions
-									 ColumnDict="ColumnDict"
-									 TypeDict="TypeDict" />
+										  AddFilter="@((x) => AddFilter.InvokeAsync((x.Item1,x.Item2)))"
+										  RemoveFilter="@((x) => RemoveFilter.InvokeAsync(x))"
+										  UpdateFilter="@((x) => UpdateFilter.InvokeAsync(x))"
+										  AllOptions=AllOptions
+										  ColumnDict="ColumnDict"
+										  TypeDict="TypeDict" />
 				}
 			</ChildContent>
 		</TucCard>
@@ -69,13 +71,13 @@
 						<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" Wrap="false"
 									 Style="flex:1 1 auto"
 									 VerticalAlignment="@VerticalAlignment.Center">
-
-							@* @if (Item is TfFilterBoolean)
+							@if (!TypeDict.ContainsKey(Item.Name)) { }
+							else if (TypeDict[Item.Name] == TfDatabaseColumnType.Boolean)
 							{
-								var context = (TfFilterBoolean)Item;
-								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
-											  SelectedOption="@context.ComparisonMethod"
-											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
+								var context = new TfFilterBoolean();
+								<FluentSelect OptionSelected="(x => (int)x == Item.Method)"
+											  SelectedOption="@((TfFilterBooleanComparisonMethod)Item.Method)"
+											  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(Item.Method),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TfFilterBooleanComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TfFilterBooleanComparisonMethod>())" Style="width:140px"
@@ -83,9 +85,9 @@
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 								@if (context.RequiresValue)
 								{
-									<FluentSelect OptionSelected="(x => x.Value == context.ValueOption.Value)"
-												  SelectedOption="@context.ValueOption"
-												  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+									<FluentSelect OptionSelected="(x => x.Value == Item.Value)"
+												  @bind-Value="@Item.Value"
+												  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.Value),value))"
 												  Disabled="@(Disabled || ReadOnly)"
 												  TOption="Option<string>" Required="false"
 												  OptionText="@((p)=> p.Text)"
@@ -93,12 +95,13 @@
 												  Items="@context.ValueOptions" Style="width:300px" />
 								}
 							}
-							else if (Item is TfFilterDateTime)
+							else if (TypeDict[Item.Name] == TfDatabaseColumnType.DateOnly
+							|| TypeDict[Item.Name] == TfDatabaseColumnType.DateTime)
 							{
-								var context = (TfFilterDateTime)Item;
-								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
-											  SelectedOption="@context.ComparisonMethod"
-											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
+								var context = new TfFilterDateTime();
+								<FluentSelect OptionSelected="(x => (int)x == Item.Method)"
+											  SelectedOption="@((TfFilterDateTimeComparisonMethod)Item.Method)"
+											  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TfFilterDateTimeComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TfFilterDateTimeComparisonMethod>())" Style="width:140px"
@@ -107,8 +110,8 @@
 								@if (context.RequiresValue)
 								{
 									<FluentStack HorizontalGap="2">
-										<FluentTextField Value="@context.Value"
-														 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+										<FluentTextField Value="@Item.Value"
+														 ValueChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.Value),value))"
 														 Disabled="@Disabled" ReadOnly="ReadOnly"
 														 AutoComplete="off"
 														 Placeholder="@($"{TfConstants.DateTimeFormatInput}, now()... ")" Style="width:300px" />
@@ -119,12 +122,12 @@
 									</FluentStack>
 								}
 							}
-							else if (Item is TfFilterGuid)
+							else if (TypeDict[Item.Name] == TfDatabaseColumnType.Guid)
 							{
-								var context = (TfFilterGuid)Item;
-								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
-											  SelectedOption="@context.ComparisonMethod"
-											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
+								var context = new TfFilterGuid();
+								<FluentSelect OptionSelected="(x => (int)x == Item.Method)"
+											  SelectedOption="@((TfFilterGuidComparisonMethod)Item.Method)"
+											  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TfFilterGuidComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TfFilterGuidComparisonMethod>())" Style="width:140px"
@@ -132,19 +135,21 @@
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 								@if (context.RequiresValue)
 								{
-									<FluentTextField Value="@context.ValueProcessed"
-													 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+									<FluentTextField Value="@Item.Value"
+													 ValueChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.Value),value))"
 													 Disabled="@Disabled" ReadOnly="ReadOnly"
 													 AutoComplete="off"
 													 Placeholder="@LOC("enter valid GUID")" Style="width:300px" />
 								}
 							}
-							else if (Item is TfFilterNumeric)
+							else if (TypeDict[Item.Name] == TfDatabaseColumnType.ShortInteger
+							|| TypeDict[Item.Name] == TfDatabaseColumnType.Integer
+							|| TypeDict[Item.Name] == TfDatabaseColumnType.LongInteger)
 							{
-								var context = (TfFilterNumeric)Item;
-								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
-											  SelectedOption="@context.ComparisonMethod"
-											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
+								var context = new TfFilterNumeric();
+								<FluentSelect OptionSelected="(x => (int)x == Item.Method)"
+											  SelectedOption="@((TfFilterNumericComparisonMethod)Item.Method)"
+											  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TfFilterNumericComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TfFilterNumericComparisonMethod>())" Style="width:140px"
@@ -152,18 +157,38 @@
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 								@if (context.RequiresValue)
 								{
-									<FluentNumberField TValue="decimal?" Value="@context.ValueAsDecimal"
-													   ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+									<FluentTextField Value="@Item.Value"
+													   ValueChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.Value),value))"
+													   Disabled="@Disabled" ReadOnly="ReadOnly"
+													   Placeholder="@LOC("enter valid integer")" Style="width:300px" />
+								}
+							}
+							else if (TypeDict[Item.Name] == TfDatabaseColumnType.Number)
+							{
+								var context = new TfFilterNumeric();
+								<FluentSelect OptionSelected="(x => (int)x == Item.Method)"
+											  SelectedOption="@((TfFilterNumericComparisonMethod)Item.Method)"
+											  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
+											  Disabled="@(Disabled || ReadOnly)"
+											  TOption="TfFilterNumericComparisonMethod" Required="true"
+											  Items="@(Enum.GetValues<TfFilterNumericComparisonMethod>())" Style="width:140px"
+											  OptionValue="@((p)=> ((int)p).ToString())"
+											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
+								@if (context.RequiresValue)
+								{
+									<FluentTextField Value="@Item.Value"
+													   ValueChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.Value),value))"
 													   Disabled="@Disabled" ReadOnly="ReadOnly"
 													   Placeholder="@LOC("enter valid decimal")" Style="width:300px" />
 								}
 							}
-							else if (Item is TfFilterText)
+							else if (TypeDict[Item.Name] == TfDatabaseColumnType.ShortText
+							|| TypeDict[Item.Name] == TfDatabaseColumnType.Text)
 							{
-								var context = (TfFilterText)Item;
-								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
-											  SelectedOption="@context.ComparisonMethod"
-											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
+								var context = new TfFilterText();
+								<FluentSelect OptionSelected="(x => (int)x == Item.Method)"
+											  SelectedOption="@((TfFilterTextComparisonMethod)Item.Method)"
+											  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TfFilterTextComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TfFilterTextComparisonMethod>())" Style="width:140px"
@@ -172,12 +197,12 @@
 								@if (context.RequiresValue)
 								{
 									<FluentTextField AutoComplete="off"
-													 Value="@context.Value"
+													 Value="@Item.Value"
 													 Disabled="@Disabled" ReadOnly="ReadOnly"
-													 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+													 ValueChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.Value),value))"
 													 Style="width:300px" Placeholder="@LOC("no value")" />
 								}
-							} *@
+							}
 						</FluentStack>
 					</FluentStack>
 					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
