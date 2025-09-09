@@ -1,37 +1,26 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <div class="tf-filter-manage">
-	@if (Item is TfFilterAnd || Item is TfFilterOr)
+	@if (Item?.Name == new TfFilterAnd().GetColumnName() || Item?.Name == new TfFilterOr().GetColumnName())
 	{
 		<TucCard Class="card-logical">
 			<ToolbarTemplate>
 				<FluentStack VerticalAlignment="@VerticalAlignment.Center">
 					<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
-						<FluentLabel Typo="@Typography.Body">@(new TfFilterBase().GetColumnName(Item))</FluentLabel>
-						<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">@(new TfFilterBase().GetFieldType(Item))</FluentLabel>
+						<FluentLabel Typo="@Typography.Body">@_columnViewTitle</FluentLabel>
+						<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">@_columnViewType</FluentLabel>
 					</FluentStack>
 					@if (!ReadOnly)
 					{
 						<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
-							@if (SelectedProvider is null)
-							{
-								<FluentBadge Appearance="Appearance.Accent">@LOC("no data provider")</FluentBadge>
-							}
-							else if (SelectedProvider.Columns.Count == 0)
-							{
-								<FluentBadge Appearance="Appearance.Accent">@LOC("no columns")</FluentBadge>
-							}
-							else
-							{
-								<FluentSelect OptionSelected="(x => x == _selectedFilterColumn)"
-											  @bind-SelectedOption="@_selectedFilterColumn"
-											  TOption="string" Required="false"
-											  Items="@AllColumnOptions" Style="width:140px"
-											  Placeholder="@LOC("select...")" />
-								<FluentButton Disabled="@Disabled" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
-							}
-							<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((typeof(TfFilterAnd), null, Item.Id)))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
-							<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((typeof(TfFilterOr), null, Item.Id)))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+							<FluentSelect OptionSelected="(x => x.Name == _selectedOption?.Name)"
+										  @bind-SelectedOption="@_selectedOption"
+										  TOption="TfFilterQuery" Required="false"
+										  Items="@AllOptions" Style="width:140px"
+										  Placeholder="@LOC("select...")" />
+							<FluentButton Disabled="@Disabled" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
+							<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((new TfFilterAnd().GetColumnName(), null)))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+							<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((new TfFilterOr().GetColumnName(), null)))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
 							<FluentButton Disabled="@Disabled" OnClick="_deleteFilterHandler" IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)"
 										  Appearance="@Appearance.Outline" Title="@LOC("delete filter")" />
 						</FluentStack>
@@ -39,18 +28,19 @@
 				</FluentStack>
 			</ToolbarTemplate>
 			<ChildContent>
-				@if (new TfFilterBase().GetChildFilters(Item).Count == 0)
+				@if (Item.Items.Count == 0)
 				{
 					<div>@LOC("No filters added yet")</div>
 				}
-				@foreach (var item in new TfFilterBase().GetChildFilters(Item))
+				@foreach (var item in Item.Items)
 				{
-					<TucFilterManage Item="item" Disabled="@Disabled"
-									SelectedProvider="SelectedProvider"
-									AddFilter="@((x) => AddFilter.InvokeAsync((x.Item1,x.Item2,x.Item3)))"
-									AddColumnFilter="@((x) => AddColumnFilter.InvokeAsync((x.Item1,x.Item2)))"
-									RemoveColumnFilter="@((x) => RemoveColumnFilter.InvokeAsync(x))"
-									UpdateColumnFilter="@((x) => UpdateColumnFilter.InvokeAsync(x))" ReadOnly="ReadOnly" />
+					<TucFilterQueryManage Item="item" Disabled="@Disabled" ReadOnly="ReadOnly"
+									 AddFilter="@((x) => AddFilter.InvokeAsync((x.Item1,x.Item2)))"
+									 RemoveFilter="@((x) => RemoveFilter.InvokeAsync(x))"
+									 UpdateFilter="@((x) => UpdateFilter.InvokeAsync(x))"
+									 AllOptions=AllOptions
+									 ColumnDict="ColumnDict"
+									 TypeDict="TypeDict" />
 				}
 			</ChildContent>
 		</TucCard>
@@ -62,7 +52,7 @@
 				<FluentStack VerticalAlignment="@VerticalAlignment.Center">
 					<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" VerticalAlignment="@VerticalAlignment.Center">
 						<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" Style="flex:0 0 20px">
-							@if (AllColumnOptions is not null && AllColumnOptions.Contains(Item.ColumnName))
+							@if (ColumnDict.ContainsKey(Item?.Name))
 							{
 								<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
 							}
@@ -73,14 +63,14 @@
 						</FluentStack>
 						<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" Wrap="false" Style="flex:0 0 300px"
 									 VerticalAlignment="@VerticalAlignment.Center">
-							<FluentLabel Typo="@Typography.Body">@(new TfFilterBase().GetColumnName(Item))</FluentLabel>
-							<FluentLabel Typo="@Typography.Body" Style="color:var(--neutral-foreground-rest);opacity:0.5">@(new TfFilterBase().GetFieldType(Item))</FluentLabel>
+							<FluentLabel Typo="@Typography.Body">@_columnViewTitle</FluentLabel>
+							<FluentLabel Typo="@Typography.Body" Style="color:var(--neutral-foreground-rest);opacity:0.5">@_columnViewType</FluentLabel>
 						</FluentStack>
 						<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" Wrap="false"
 									 Style="flex:1 1 auto"
 									 VerticalAlignment="@VerticalAlignment.Center">
 
-							@if (Item is TfFilterBoolean)
+							@* @if (Item is TfFilterBoolean)
 							{
 								var context = (TfFilterBoolean)Item;
 								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
@@ -187,7 +177,7 @@
 													 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 													 Style="width:300px" Placeholder="@LOC("no value")" />
 								}
-							}
+							} *@
 						</FluentStack>
 					</FluentStack>
 					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">

@@ -414,6 +414,22 @@ public static partial class TfConverters
 		return null;
 	}
 
+	public static List<TfFilterBase> ConvertQueryFilterToList(this List<TfFilterQuery>? items, 
+		List<TfSpaceViewColumn> viewColumns, List<TfDataProviderColumn> providerColumns)
+	{
+		var result = new List<TfFilterBase>();
+		if(items is null || viewColumns is null || items.Count == 0 || viewColumns.Count == 0) return result;
+
+		foreach (var item in items)
+		{
+			var filter = new TfFilterBase().FromQuery(item,viewColumns,providerColumns);
+			if(filter is null) continue;
+			result.Add(filter);
+		}
+
+		return result;
+	}
+
 	public static List<TfSort> ConvertQuerySortToList(this List<TfSortQuery>? items, List<TfSpaceViewColumn> columns)
 	{
 		var result = new List<TfSort>();
@@ -421,8 +437,7 @@ public static partial class TfConverters
 
 		foreach (var item in items)
 		{
-			var sort = item.ToSort(columns);
-			if(sort is null) continue;
+			var sort = new TfSort().FromQuery(item,columns);
 			result.Add(sort);
 		}
 

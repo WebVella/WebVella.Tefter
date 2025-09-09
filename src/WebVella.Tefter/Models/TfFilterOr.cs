@@ -27,27 +27,28 @@ public record TfFilterOr : TfFilterBase
 		_filters.AddRange(filters);
 	}
 
-	public TfFilterOr(TfFilterQuery model)
+	public TfFilterOr(TfFilterQuery model, List<TfSpaceViewColumn> viewColumns, List<TfDataProviderColumn> providerColumns)
 	: base(string.Empty, null)
 	{
+		if (model is null) throw new ArgumentException("model is required",nameof(model));
 		Id = Guid.NewGuid();
-		ColumnName = model.Name;
 		_filters = new();
 		foreach (var item in model.Items)
 		{
-			_filters.Add(TfFilterBase.FromQuery(item));
+			var filter = new TfFilterBase().FromQuery(item,viewColumns, providerColumns);
+			if(filter is not null)
+				_filters.Add(filter);
 		}
 	}
 	public TfFilterQuery ToQuery()
 	{
 		var query = new TfFilterQuery
 		{
-			Type = GetFilterType(),
 			Name = GetColumnName()
 		};
 		foreach (var item in Filters)
 		{
-			query.Items.Add(TfFilterBase.ToQuery(item));
+			query.Items.Add(new TfFilterBase().ToQuery(item));
 		}
 		return query;
 	}

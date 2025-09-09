@@ -5,6 +5,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	[Inject] private ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Inject] private ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
 	[Inject] private ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
+	[Inject] private ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] private ITfMetaUIService TfMetaUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
@@ -23,6 +24,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private TfSpacePage? _spacePage = null;
 	private TfSpaceView? _spaceView = null;
 	private TfSpaceData? _spaceData = null;
+	private TfDataProvider? _dataProvider = null;
 	private TfSpaceViewPreset? _preset = null;
 	private TfDataTable? _data = null;
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
@@ -140,6 +142,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			{
 				_contextData = new();
 				_spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
+				_dataProvider = TfDataProviderUIService.GetDataProvider(_spaceData.DataProviderId);
 				_selectedDataRows = new();
 			}
 			_currentUser = Context!.CurrentUser;
@@ -181,7 +184,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 							spaceDataId: _spaceView!.SpaceDataId,
 							presetFilters: _preset is not null ? _preset.Filters : null,
 							presetSorts: _preset is not null ? _preset.SortOrders : null,
-							userFilters: _navState!.Filters,
+							userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns,_dataProvider!.Columns.ToList()),
 							userSorts: _navState.Sorts.ConvertQuerySortToList(_spaceViewColumns),
 							search: _navState.Search,
 							page: _page,
@@ -272,11 +275,11 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private async Task _onFilter(List<TfFilterBase> filters)
 	{
 		if (_isDataLoading) return;
-		var queryDict = new Dictionary<string, object>();
+		var queryDict = new Dictionary<string, object?>();
 		if (filters is null || filters.Count == 0)
 			queryDict[TfConstants.FiltersQueryName] = null;
 		else
-			queryDict[TfConstants.FiltersQueryName] = NavigatorExt.SerializeFiltersForUrl(filters, false);
+			queryDict[TfConstants.FiltersQueryName] = filters.SerializeFiltersForUrl(false);
 
 		queryDict[TfConstants.PageQueryName] = 1;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
@@ -284,11 +287,11 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private async Task _onSort(List<TfSortQuery> sorts)
 	{
 		if (_isDataLoading) return;
-		var queryDict = new Dictionary<string, object>();
+		var queryDict = new Dictionary<string, object?>();
 		if (sorts is null || sorts.Count == 0)
 			queryDict[TfConstants.SortsQueryName] = null;
 		else
-			queryDict[TfConstants.SortsQueryName] = NavigatorExt.SerializeSortsForUrl(sorts, false);
+			queryDict[TfConstants.SortsQueryName] = sorts.SerializeSortsForUrl(false);
 
 		queryDict[TfConstants.PageQueryName] = 1;
 
@@ -335,7 +338,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 							spaceDataId: _spaceView!.SpaceDataId,
 							presetFilters: preset is not null ? preset.Filters : null,
 							presetSorts: preset is not null ? preset.SortOrders : null,
-							userFilters: _navState!.Filters,
+							userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _dataProvider!.Columns.ToList()),
 							userSorts: _navState.Sorts.ConvertQuerySortToList(_spaceViewColumns),
 							search: _navState.Search
 					);

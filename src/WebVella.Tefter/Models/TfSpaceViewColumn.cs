@@ -14,21 +14,6 @@ public record TfSpaceViewColumn
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string ComponentOptionsJson { get; set; } = "{}";
 	public TfSpaceViewColumnSettings Settings { get; set; } = new();
-	public void FixPrefix(string prefix)
-	{
-		if (DataMapping is null) return;
-
-		foreach (var alias in DataMapping.Keys)
-		{
-			var dbName = DataMapping[alias];
-			if (!dbName.StartsWith(prefix))
-			{
-				dbName = prefix + dbName;
-			}
-			DataMapping[alias] = dbName;
-		}
-	}
-
 	public string HeaderStyle
 	{
 		get
@@ -82,6 +67,25 @@ public record TfSpaceViewColumn
 
 	//Render only helpers
 	public TfSortDirection? PersonalizedSort { get; set; } = null;
+
+	public void FixPrefix(string prefix)
+	{
+		if (DataMapping is null) return;
+
+		foreach (var alias in DataMapping.Keys)
+		{
+			var dbName = DataMapping[alias];
+			if (!dbName.StartsWith(prefix))
+			{
+				dbName = prefix + dbName;
+			}
+			DataMapping[alias] = dbName;
+		}
+	}
+	public string? GetColumnNameFromDataMapping(){ 
+		if(DataMapping is null || DataMapping.Keys.Count == 0) return null;
+		return DataMapping[DataMapping.Keys.First()];
+	}
 }
 
 [DboCacheModel]

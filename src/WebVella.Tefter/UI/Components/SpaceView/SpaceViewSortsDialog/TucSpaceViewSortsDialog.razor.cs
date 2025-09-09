@@ -10,8 +10,6 @@ public partial class TucSpaceViewSortsDialog : TfFormBaseComponent, IDialogConte
 
 	private TfSpaceData _spaceData = null;
 	private List<TfSpaceViewColumn> _viewColumns = new();
-	private Dictionary<string, TfSpaceViewColumn> _queryColumnDict = new();
-	private List<TfSortQuery> _allOptions = new();
 	private List<TfSortQuery> _items = new();
 
 	private string _activeTab = "current";
@@ -32,15 +30,8 @@ public partial class TucSpaceViewSortsDialog : TfFormBaseComponent, IDialogConte
 
 	private async Task _init()
 	{
-		_allOptions = new();
-		foreach (var column in _viewColumns)
-		{
-			_allOptions.Add(new TfSortQuery { Name = column.QueryName });
-			_queryColumnDict[column.QueryName] = column;
-		}
 		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		_items = navState.Sorts ?? new();
-
 	}
 
 	private async Task _submit()

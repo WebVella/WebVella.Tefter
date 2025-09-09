@@ -40,19 +40,21 @@ public record TfFilterGuid : TfFilterBase
 		Value = value;
 	}
 
-	public TfFilterGuid(TfFilterQuery model) : base(String.Empty,null)
+	public TfFilterGuid(TfFilterQuery model, string columnName) : base(String.Empty,null)
 	{
+		if (model is null) throw new ArgumentException("model is required",nameof(model));
+		if (String.IsNullOrWhiteSpace(columnName)) throw new ArgumentException("columnName is required",nameof(columnName));
+
 		Id = Guid.NewGuid();
-		ColumnName = model.Name;
 		Value = null;
+		ColumnName = columnName;
 		if (!String.IsNullOrWhiteSpace(model.Value) && Guid.TryParse(model.Value, out Guid outVal)) Value = model.Value;
-		ComparisonMethod = (TfFilterGuidComparisonMethod)model.Method;
+		ComparisonMethod = Utility.EnumExtensions.ConvertIntToEnum<TfFilterGuidComparisonMethod>(model.Method,TfFilterGuidComparisonMethod.Equal);
 	}
 	public TfFilterQuery ToQuery()
 	{
 		return new TfFilterQuery
 		{
-			Type = GetFilterType(),
 			Name = GetColumnName(),
 			Value = Value?.ToString(),
 			Method = (int)ComparisonMethod,
