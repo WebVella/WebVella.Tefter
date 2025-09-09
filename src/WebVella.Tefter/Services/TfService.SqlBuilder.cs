@@ -243,13 +243,33 @@ public partial class TfService : ITfService
 					}
 
 					//add shared columns data
-					foreach (var sharedColumn in _dataProvider.SharedColumns)
+					foreach (var identity in _spaceData.Identities )
 					{
-							//if column is already processed, ignore duplicate
-							if (_sharedColumnsData.Any(x => x.DbName == sharedColumn.DbName))
+						foreach (var columnName in identity.Columns.Distinct())
+						{
+							//if not shared column
+							if (!columnName.StartsWith(TfConstants.TF_SHARED_COLUMN_PREFIX))
 							{
 								continue;
 							}
+							
+							//if column is already processed, ignore duplicate
+							if (_sharedColumnsData.Any(x => x.DbName == identity.DataIdentity))
+							{
+								continue;
+							}
+
+							//if identity is not found in primary data provider, ignore it
+							if (!_dataProvider.Identities.Any(x => x.DataIdentity == identity.DataIdentity))
+							{
+								continue;
+							}
+
+							var sharedColumn = _dataProvider.SharedColumns
+									.SingleOrDefault(x => x.DbName == columnName);
+
+							if (sharedColumn is null)
+								continue;
 
 							var sqlBuilderColumn = _availableColumns.SingleOrDefault(x => x.DbName == sharedColumn.DbName);
 							if (sqlBuilderColumn == null)
@@ -262,12 +282,13 @@ public partial class TfService : ITfService
 								DbName = sharedColumn.DbName,
 								DbType = sharedColumn.DbType,
 								BuilderColumnInfo = sqlBuilderColumn,
-								DataIdentity = sharedColumn.DataIdentity,
+								DataIdentity = identity.DataIdentity,
 								TableAlias = sqlBuilderColumn.TableAlias,
 								TableName = GetSharedColumnValueTableNameByType(sharedColumn.DbType)
 							};
 
 							_sharedColumnsData.Add(sharedColumnData);
+						}
 					}
 
 					//add joined columns from other providers based on space data identities
