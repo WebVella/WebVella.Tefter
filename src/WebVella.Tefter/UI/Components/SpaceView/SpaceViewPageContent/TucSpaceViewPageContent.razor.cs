@@ -272,7 +272,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
-	private async Task _onFilter(List<TfFilterBase> filters)
+	private async Task _onFilter(List<TfFilterQuery> filters)
 	{
 		if (_isDataLoading) return;
 		var queryDict = new Dictionary<string, object?>();

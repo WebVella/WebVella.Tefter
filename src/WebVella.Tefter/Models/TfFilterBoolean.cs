@@ -3,7 +3,7 @@
 public record TfFilterBoolean : TfFilterBase
 {
 	[JsonPropertyName("m")]
-	public TfFilterBooleanComparisonMethod ComparisonMethod { get; set; }
+	public TfFilterBooleanComparisonMethod ComparisonMethod { get; set; } = TfFilterBooleanComparisonMethod.IsTrue;
 	public string GetColumnName() => ColumnName;
 	public static string GetFilterType() => "boolean";
 
@@ -36,9 +36,9 @@ public record TfFilterBoolean : TfFilterBase
 		get => (Value is null ? ValueOptions.Single(x => x.Value == "null") : ValueOptions.Single(x => x.Value == Value));
 	}
 
-	public void ValueOptionChanged(Option<string> option)
+	public void ValueOptionChanged(Option<string>? option)
 	{
-		if (option.Value == "null") Value = null;
+		if (option is null || option.Value == "null") Value = null;
 		else if (Boolean.TryParse(option.Value, out bool outVal))
 			Value = option.Value;
 		else

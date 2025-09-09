@@ -3,7 +3,7 @@
 public record TfFilterGuid : TfFilterBase
 {
 	[JsonPropertyName("m")]
-	public TfFilterGuidComparisonMethod ComparisonMethod { get; set; }
+	public TfFilterGuidComparisonMethod ComparisonMethod { get; set; } = TfFilterGuidComparisonMethod.Equal;
 	public string GetColumnName() => ColumnName;
 	public static string GetFilterType() => "guid";
 	public bool RequiresValue
@@ -21,7 +21,7 @@ public record TfFilterGuid : TfFilterBase
 	{
 		get => Value?.ToString();
 	}
-	public void ValueStringChanged(string value)
+	public void ValueStringChanged(string? value)
 	{
 		if (String.IsNullOrWhiteSpace(value)) Value = null;
 		else if (Guid.TryParse(value, out Guid outVal))

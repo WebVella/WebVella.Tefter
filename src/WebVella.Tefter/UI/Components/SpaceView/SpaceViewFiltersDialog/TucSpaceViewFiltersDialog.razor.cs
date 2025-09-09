@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewFiltersDialog.TucSpaceViewFiltersDialog", "WebVella.Tefter")]
 public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogContentComponent<Guid>
 {
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
@@ -10,7 +9,9 @@ public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogCon
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 	private TfDataProvider? _dataProvider = null;
 	private TfSpaceData? _spaceData = null;
-	private List<TfFilterBase> _items = new List<TfFilterBase>();
+	private TfSpaceView? _spaceview = null;
+	private List<TfSpaceViewColumn> _viewColumns = new();
+	private List<TfFilterQuery> _items = new List<TfFilterQuery>();
 	private string _activeTab = "current";
 	internal string? _selectedFilterColumn = null;
 	public bool _submitting = false;
@@ -21,24 +22,20 @@ public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogCon
 		_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		if(_navState is null || Content == Guid.Empty)
 			throw new Exception("SpaceViewId not found");
-		var spaceView = TfSpaceViewUIService.GetSpaceView(Content);
-		if(spaceView is null)
+		_spaceview = TfSpaceViewUIService.GetSpaceView(Content);
+		if(_spaceview is null)
 			throw new Exception("spaceView not found");
-		var spaceViewColumns = TfSpaceViewUIService.GetViewColumns(Content);
-		_spaceData =TfSpaceDataUIService.GetSpaceData(spaceView.SpaceDataId);
+		_viewColumns = TfSpaceViewUIService.GetViewColumns(Content);
+		_spaceData =TfSpaceDataUIService.GetSpaceData(_spaceview.SpaceDataId);
 
 		if (_spaceData is not null)
 		{
 			_dataProvider = TfDataProviderUIService.GetDataProvider(_spaceData.DataProviderId);
 		}
-
-		if (_navState.Filters is not null)
-			_items = _navState.Filters.ConvertQueryFilterToList(spaceViewColumns, _dataProvider!.Columns.ToList());
-
-
+		_items = _navState?.Filters ?? new();
 	}
 
-	private Task _onFiltersChangeHandler(List<TfFilterBase> filters)
+	private Task _onFiltersChangeHandler(List<TfFilterQuery> filters)
 	{
 		_items = filters;
 		return Task.CompletedTask;

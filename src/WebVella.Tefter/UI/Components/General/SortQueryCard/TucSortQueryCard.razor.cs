@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucQuerySortCard : TfBaseComponent
+public partial class TucSortQueryCard : TfBaseComponent
 {
 	[Parameter]
 	public string? Title { get; set; } = null;

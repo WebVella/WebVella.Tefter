@@ -128,9 +128,9 @@ public static partial class NavigatorExt
 				if (value is not null)
 					newQueryDictionary[key] = value.Value.ToString();
 			}
-			else if (queryValue is List<TfFilterBase>)
+			else if (queryValue is List<TfFilterQuery>)
 			{
-				var value = (List<TfFilterBase>)queryValue;
+				var value = (List<TfFilterQuery>)queryValue;
 				if (value is not null)
 					newQueryDictionary[key] = value.SerializeFiltersForUrl();
 			}
@@ -405,18 +405,12 @@ public static partial class NavigatorExt
 		return inputValue.Replace("§", "/");
 	}
 
-	public static string? SerializeFiltersForUrl(this List<TfFilterBase>? filters, bool shouldProcess = true)
+	public static string? SerializeFiltersForUrl(this List<TfFilterQuery>? filters, bool shouldProcess = true)
 	{
-		var queryObject = new List<TfFilterQuery>();
-		if (filters is null) filters = new();
-		foreach (var item in filters)
-		{
-			queryObject.Add(new TfFilterBase().ToQuery(item));
-		}
 		if (shouldProcess)
-			return ProcessQueryValueForUrl(JsonSerializer.Serialize(queryObject));
+			return ProcessQueryValueForUrl(JsonSerializer.Serialize(filters));
 
-		return JsonSerializer.Serialize(queryObject);
+		return JsonSerializer.Serialize(filters);
 	}
 
 	public static List<TfFilterQuery> DeserializeFiltersFromUrl(this string queryValue, bool isProcessed = false)

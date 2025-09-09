@@ -3,7 +3,7 @@
 public record TfFilterNumeric : TfFilterBase
 {
 	[JsonPropertyName("m")]
-	public TfFilterNumericComparisonMethod ComparisonMethod { get; set; }
+	public TfFilterNumericComparisonMethod ComparisonMethod { get; set; } = TfFilterNumericComparisonMethod.Equal;
 	public string GetColumnName() => ColumnName;
 	public static string GetFilterType() => "numeric";
 	public bool RequiresValue

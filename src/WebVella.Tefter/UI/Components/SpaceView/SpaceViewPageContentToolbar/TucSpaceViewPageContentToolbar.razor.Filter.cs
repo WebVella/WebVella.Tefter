@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 {
-	[Parameter] public EventCallback<List<TfFilterBase>> OnFilter { get; set; }
+	[Parameter] public EventCallback<List<TfFilterQuery>> OnFilter { get; set; }
 	[Parameter] public EventCallback OnClearFilter { get; set; }
 
 	private bool _showClearFilter
@@ -28,7 +28,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			await OnFilter.InvokeAsync((List<TfFilterBase>)result.Data);
+			await OnFilter.InvokeAsync((List<TfFilterQuery>)result.Data);
 		}
 	}
 

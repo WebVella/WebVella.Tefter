@@ -30,14 +30,14 @@ public partial class TucFilterQueryManage : TfBaseComponent
 	public bool ReadOnly { get; set; } = false;
 
 	private TfFilterQuery _selectedOption = new();
-
 	private string _columnViewTitle
 	{
 		get
 		{
-			if (Item is not null && ColumnDict.ContainsKey(Item.Name))
+			if (Item is null) return "undefined";
+			if (ColumnDict.ContainsKey(Item.Name))
 				return ColumnDict[Item.Name];
-			return "undefined";
+			return Item.Name;
 		}
 	}
 
@@ -45,128 +45,166 @@ public partial class TucFilterQueryManage : TfBaseComponent
 	{
 		get
 		{
-			if (Item is not null && TypeDict.ContainsKey(Item.Name))
+			if (Item is null) return "undefined";
+			if (TypeDict.ContainsKey(Item.Name))
 				return TypeDict[Item.Name].ToDescriptionString();
+			if (Item.Name.ToLowerInvariant() == "and"
+			|| Item.Name.ToLowerInvariant() == "or")
+				return "rule";
 			return "undefined";
 		}
 	}
 
 	private async Task _addColumnFilterHandler()
 	{
-		//if (String.IsNullOrWhiteSpace(_selectedFilterColumn)) return;
-		//if (Item is null) return;
-		//await AddColumnFilter.InvokeAsync((_selectedFilterColumn, Item.Id));
-		//await TfSpaceDataManage.AddColumnFilter(_selectedFilterColumn, Item.Id);
-
-		//_selectedFilterColumn = null; //do not clear for convenience
+		if (_selectedOption is null || String.IsNullOrWhiteSpace(_selectedOption.Value)) return;
+		if (Item is null) return;
+		await AddFilter.InvokeAsync((_selectedOption.Value, Item.Path));
+		_selectedOption = new(); //do not clear for convenience
 	}
 
 	private async Task _deleteFilterHandler()
 	{
-		//await RemoveColumnFilter.InvokeAsync(Item.Id);
-		//await TfSpaceDataManage.RemoveColumnFilter(Item.Id);
+		await RemoveFilter.InvokeAsync(Item);
 	}
 
-	private async Task _valueChanged(TfFilterBase model, string propName, object valueObj)
+	private async Task _valueChanged(TfDatabaseColumnType type, string propName, object? valueObj)
 	{
-		if (model is TfFilterAnd || model is TfFilterOr) return;
-		TfFilterBase updateObj = null;
-		if (model is TfFilterBoolean)
+		Console.WriteLine("item changed");
+
+		if (Item is null) return;
+		if (Item.Name == new TfFilterAnd().GetColumnName()
+			|| Item.Name == new TfFilterOr().GetColumnName()) return;
+
+		TfFilterQuery updateObj = Item with { Name = Item.Name };
+
+		if (type == TfDatabaseColumnType.Boolean)
 		{
-			var item = (TfFilterBoolean)model;
+			var item = new TfFilterBoolean();
 			if (propName == nameof(item.ComparisonMethod))
 			{
-				var value = (TfFilterBooleanComparisonMethod)valueObj;
-				item.ComparisonMethod = value;
-				updateObj = item;
+				var value = (int)item.ComparisonMethod;
+				if (valueObj is not null)
+					value = (int)valueObj;
+
+				if (updateObj.Method == value) return;
+
+				updateObj.Method = value;
 			}
 			else if (propName == nameof(item.Value))
 			{
-				var value = (Option<string>)valueObj;
+				var value = (Option<string>?)valueObj;
 				item.ValueOptionChanged(value);
-				updateObj = item;
+
+				if (updateObj.Value == item.Value) return;
+
+				updateObj.Value = item.Value;
 			}
 			else throw new Exception("propName not supported");
 		}
-		else if (model is TfFilterDateTime)
+		else if (type == TfDatabaseColumnType.DateOnly
+			|| type == TfDatabaseColumnType.DateTime)
 		{
-			var item = (TfFilterDateTime)model;
+			var item = new TfFilterDateTime();
 			if (propName == nameof(item.ComparisonMethod))
 			{
-				var value = (TfFilterDateTimeComparisonMethod)valueObj;
-				item.ComparisonMethod = value;
-				updateObj = item;
+				var value = (int)item.ComparisonMethod;
+				if (valueObj is not null)
+					value = (int)valueObj;
+
+				if (updateObj.Method == value) return;
+
+				updateObj.Method = value;
 			}
 			else if (propName == nameof(item.Value))
 			{
-				var value = (string)valueObj;
-				item.ValueStringChanged(value);
-				updateObj = item;
+				item.ValueStringChanged((string?)valueObj);
+
+				if (updateObj.Value == item.Value) return;
+
+				updateObj.Value = item.Value;
 			}
 			else throw new Exception("propName not supported");
 		}
-		else if (model is TfFilterGuid)
+		else if (type == TfDatabaseColumnType.Guid)
 		{
-			var item = (TfFilterGuid)model;
+			var item = new TfFilterGuid();
 			if (propName == nameof(item.ComparisonMethod))
 			{
-				var value = (TfFilterGuidComparisonMethod)valueObj;
-				item.ComparisonMethod = value;
-				updateObj = item;
+				var value = (int)item.ComparisonMethod;
+				if (valueObj is not null)
+					value = (int)valueObj;
+
+				if (updateObj.Method == value) return;
+
+				updateObj.Method = value;
 			}
 			else if (propName == nameof(item.Value))
 			{
-				var value = (string)valueObj;
+				var value = (string?)valueObj;
 				if (!String.IsNullOrWhiteSpace(value) && !Guid.TryParse(value, out Guid outGuid))
 					ToastService.ShowError(LOC("Invalid GUID value"));
 
 				item.ValueStringChanged(value);
-				updateObj = item;
-				////70efbe52-033f-43b8-a8b9-65f62ca0080f
+
+				if (updateObj.Value == item.Value) return;
+
+				updateObj.Value = item.Value;
 			}
 			else throw new Exception("propName not supported");
 		}
-		else if (model is TfFilterNumeric)
+		else if (type == TfDatabaseColumnType.ShortInteger
+			|| type == TfDatabaseColumnType.Integer
+			|| type == TfDatabaseColumnType.LongInteger
+			|| type == TfDatabaseColumnType.Number)
 		{
-			var item = (TfFilterNumeric)model;
+			var item = new TfFilterNumeric();
 			if (propName == nameof(item.ComparisonMethod))
 			{
-				var value = (TfFilterNumericComparisonMethod)valueObj;
-				updateObj = item with { ComparisonMethod = value };
-				item.ComparisonMethod = value;
-				updateObj = item;
+				var value = (int)item.ComparisonMethod;
+				if (valueObj is not null)
+					value = (int)valueObj;
+
+				if (updateObj.Method == value) return;
+
+				updateObj.Method = value;
 			}
 			else if (propName == nameof(item.Value))
 			{
-				var value = (decimal?)valueObj;
-				item.ValueChanged(value);
-				updateObj = item;
+				item.ValueChanged((decimal?)valueObj);
+
+				if (updateObj.Value == item.Value) return;
+
+				updateObj.Value = item.Value;
 			}
 			else throw new Exception("propName not supported");
 		}
-		else if (model is TfFilterText)
+		else if (type == TfDatabaseColumnType.ShortText
+		|| type == TfDatabaseColumnType.Text)
 		{
-			var item = (TfFilterText)model;
+			var item = new TfFilterText();
 			if (propName == nameof(item.ComparisonMethod))
 			{
-				var value = (TfFilterTextComparisonMethod)valueObj;
-				item.ComparisonMethod = value;
-				updateObj = item;
+				var value = (int)item.ComparisonMethod;
+				if (valueObj is not null)
+					value = (int)valueObj;
+
+				if (updateObj.Method == value) return;
+
+				updateObj.Method = value;
 			}
 			else if (propName == nameof(item.Value))
 			{
-				var value = (string)valueObj;
-				item.ValueChanged(value);
-				updateObj = item;
+				item.ValueChanged((string?)valueObj);
+
+				if (updateObj.Value == item.Value) return;
+
+				updateObj.Value = item.Value;
 			}
 			else throw new Exception("propName not supported");
 		}
 		else throw new Exception("Unsupported TucFilterBase in _valueChanged");
 
-		//await UpdateColumnFilter.InvokeAsync(updateObj);
-		//await TfSpaceDataManage.UpdateColumnFilter(updateObj);
-		await InvokeAsync(StateHasChanged);
+		await UpdateFilter.InvokeAsync(updateObj);
 	}
-
-
 }
