@@ -8,7 +8,7 @@ public class TfDataColumnCollection : IEnumerable
 
 	public int Count => _columns.Count;
 
-	public TfDataColumn this[string columnName]
+	public TfDataColumn? this[string columnName]
 	{
 		get
 		{

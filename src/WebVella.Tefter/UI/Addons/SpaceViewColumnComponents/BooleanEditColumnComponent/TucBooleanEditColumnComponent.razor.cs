@@ -81,7 +81,9 @@ public partial class TucBooleanEditColumnComponent : TucBaseViewColumn<TucBoolea
 	/// <returns></returns>
 	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if (column == null) return;
+		object? columnData = GetColumnData(column);
 		if (columnData is not null && columnData is not bool) throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Boolean.");
 		bool? value = (bool?)columnData;
 		if (value is null) return;
@@ -136,14 +138,14 @@ public partial class TucBooleanEditColumnComponent : TucBaseViewColumn<TucBoolea
 	private void _initValues()
 	{
 		if(RegionContext.Mode != TfComponentPresentationMode.Display) return;
-		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		TfDataColumn? column = GetColumnByAlias(VALUE_ALIAS);
 		if (column is null)
 			throw new Exception("Column not found");
 		if (column.IsJoinColumn)
 			throw new Exception("Joined data cannot be edited");
 
 		_isThreeState = column.IsNullable;
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
+		object? columnData = GetColumnData(column);
 		if (columnData is not null && columnData is not bool) throw new Exception($"Not supported data type of '{columnData.GetType()}'");
 		var value = (bool?)columnData;
 		_value = value is null ? false : value.Value;

@@ -2,7 +2,6 @@
 @inherits TucBaseViewColumn<TucBooleanEditColumnComponentOptions>
 @if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
-	var value = GetDataStructByAlias<bool>(VALUE_ALIAS, null);
 	<div>
 		@if (_isThreeState)
 		{

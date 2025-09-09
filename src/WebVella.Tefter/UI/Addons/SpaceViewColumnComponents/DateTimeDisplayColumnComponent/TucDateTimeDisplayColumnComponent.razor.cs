@@ -115,10 +115,10 @@ public partial class TucDateTimeDisplayColumnComponent : TucBaseViewColumn<TucDa
 	{
 		if(RegionContext.Mode != TfComponentPresentationMode.Display) return;
 		_value = new();
-		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		TfDataColumn? column = GetColumnByAlias(VALUE_ALIAS);
 		if (column is null)
 			throw new Exception("Column not found");
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
+		object? columnData = GetColumnData(column);
 		if (columnData is null)
 		{
 			_value.Add(null);

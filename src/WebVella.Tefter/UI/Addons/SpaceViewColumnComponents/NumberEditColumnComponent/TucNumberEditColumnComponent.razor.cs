@@ -82,7 +82,9 @@ public partial class TucNumberEditColumnComponent : TucBaseViewColumn<TucNumberE
 	/// <returns></returns>
 	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if (column == null) return;
+		object? columnData = GetColumnData(column);
 		if (columnData is not null && columnData is not decimal)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports decimal.");
 		excelCell.SetValue(XLCellValue.FromObject((decimal?)columnData));
@@ -149,12 +151,12 @@ public partial class TucNumberEditColumnComponent : TucBaseViewColumn<TucNumberE
 	private void _initValues()
 	{
 		if(RegionContext.Mode != TfComponentPresentationMode.Display) return;
-		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		TfDataColumn? column = GetColumnByAlias(VALUE_ALIAS);
 		if (column is null)
 			throw new Exception("Column not found");
 		if (column.IsJoinColumn)
 			throw new Exception("Joined data cannot be edited");
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
+		object? columnData = GetColumnData(column);
 		if (columnData is not null && columnData is not decimal)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports decimal.");
 		_value = (decimal?)columnData;

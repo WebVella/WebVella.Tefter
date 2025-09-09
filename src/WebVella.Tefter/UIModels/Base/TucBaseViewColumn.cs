@@ -104,60 +104,49 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// </summary>
 	/// <param name="alias"></param>
 	/// <returns></returns>
-	protected virtual TfDataColumn GetColumnByAlias(string alias)
+	protected virtual TfDataColumn? GetColumnByAlias(string alias)
 	{
 		if (RegionContext.DataTable is null) return null;
 		var colName = GetColumnNameFromAlias(alias);
-		if (colName == null) return null;
+		if (String.IsNullOrWhiteSpace(colName)) return null;
 
-		TfDataColumn column = null;
-		try
-		{
-			column = RegionContext.DataTable.Columns[colName];
-		}
-		catch { }
-		return column;
+		return RegionContext.DataTable.Columns[colName];
 	}
 
-	protected virtual object GetColumnDataByAlias(string alias)
+	protected virtual object? GetColumnData(TfDataColumn? column)
 	{
-		var colName = GetColumnNameFromAlias(alias);
-		var column = GetColumnByAlias(alias);
-		if (colName is null || column is null) return null;
+		if (column is null) return null;
 
 		switch (column.DbType)
 		{
 			case TfDatabaseColumnType.ShortInteger:
-				return GetDataStructByAlias<short>(alias);
+				return GetDataStructByAlias<short>(column);
 			case TfDatabaseColumnType.AutoIncrement:
 			case TfDatabaseColumnType.Integer:
-				return GetDataStructByAlias<int>(alias);
+				return GetDataStructByAlias<int>(column);
 			case TfDatabaseColumnType.LongInteger:
-				return GetDataStructByAlias<long>(alias);
+				return GetDataStructByAlias<long>(column);
 			case TfDatabaseColumnType.Number:
-				return GetDataStructByAlias<decimal>(alias);
+				return GetDataStructByAlias<decimal>(column);
 			case TfDatabaseColumnType.Boolean:
-				return GetDataStructByAlias<bool>(alias);
+				return GetDataStructByAlias<bool>(column);
 			case TfDatabaseColumnType.DateOnly:
-				return GetDataStructByAlias<DateOnly>(alias);
+				return GetDataStructByAlias<DateOnly>(column);
 			case TfDatabaseColumnType.DateTime:
-				return GetDataStructByAlias<DateTime>(alias);
+				return GetDataStructByAlias<DateTime>(column);
 			case TfDatabaseColumnType.ShortText:
 			case TfDatabaseColumnType.Text:
-				return GetDataStringByAlias(alias);
+				return GetDataStringByAlias(column);
 			case TfDatabaseColumnType.Guid:
-				return GetDataStructByAlias<Guid>(alias);
+				return GetDataStructByAlias<Guid>(column);
 			default:
 				throw new Exception("colDbType not supported");
 		}
 	}
 
-	protected virtual Type GetColumnObjectTypeByAlias(string alias)
+	protected virtual Type? GetColumnObjectType(TfDataColumn? column)
 	{
-		var colName = GetColumnNameFromAlias(alias);
-		var column = GetColumnByAlias(alias);
-		if (colName is null || column is null) return null;
-
+		if (column is null) return null;
 		switch (column.DbType)
 		{
 			case TfDatabaseColumnType.ShortInteger:
@@ -185,11 +174,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		}
 	}
 
-	protected virtual object ConvertStringToColumnObjectByAlias(string alias, string stringValue)
+	protected virtual object? ConvertStringToColumnObject(TfDataColumn? column, string stringValue)
 	{
-		var colName = GetColumnNameFromAlias(alias);
-		var column = GetColumnByAlias(alias);
-		if (colName is null || column is null) return null;
+		if (column is null) return null;
 
 		switch (column.DbType)
 		{
@@ -281,10 +268,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// <param name="alias">the expected data alias as defined by the implementing component</param>
 	/// <param name="defaultValue">what value to return if value is not found in the provided datatable</param>
 	/// <returns></returns>
-	protected virtual object GetDataStringByAlias(string alias, string defaultValue = null)
+	protected virtual object GetDataStringByAlias(TfDataColumn column, string defaultValue = null)
 	{
-		string dbName = GetColumnNameFromAlias(alias);
-		return GetDataString(dbName,defaultValue);
+		return GetDataString(column.Name, defaultValue);
 	}
 
 	/// <summary>
@@ -296,10 +282,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// <param name="alias">the expected data alias as defined by the implementing component</param>
 	/// <param name="defaultValue">what value to return if value is not found in the provided datatable</param>
 	/// <returns></returns>
-	protected virtual object GetDataStructByAlias<T>(string alias, Nullable<T> defaultValue = null) where T : struct
+	protected virtual object GetDataStructByAlias<T>(TfDataColumn column, Nullable<T> defaultValue = null) where T : struct
 	{
-		string dbName = GetColumnNameFromAlias(alias);
-		return GetDataStruct<T>(dbName,defaultValue);
+		return GetDataStruct<T>(column.Name, defaultValue);
 	}
 
 	/// <summary>
@@ -310,18 +295,13 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// <param name="defaultValue"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	protected virtual T GetDataObjectFromJsonByAlias<T>(string alias, T defaultValue = null) where T : class
+	protected virtual T? GetDataObjectFromJsonByAlias<T>(TfDataColumn column, T defaultValue = null) where T : class
 	{
-		string dbName = GetColumnNameFromAlias(alias);
-		if (String.IsNullOrWhiteSpace(dbName))
-		{
-			return null;
-		}
 		if (RegionContext.DataTable is null || RegionContext.DataTable.Rows.Count == 0) return defaultValue;
 
 		if (RegionContext.DataTable.Rows.Count < RegionContext.RowIndex + 1) return null;
-		if (RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName] is null) return null;
-		object value = RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName];
+		if (RegionContext.DataTable.Rows[RegionContext.RowIndex][column.Name] is null) return null;
+		object value = RegionContext.DataTable.Rows[RegionContext.RowIndex][column.Name];
 		if (value is null) return null;
 		if (value is string && String.IsNullOrWhiteSpace((string)value)) return null;
 		if (value is T) return (T)value;
@@ -358,7 +338,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 
 		PropertyInfo propertyInfo = typeof(TItem).GetProperty(propName);
 		if (propertyInfo is null) return;
-		if(value is null)
+		if (value is null)
 			propertyInfo.SetValue(componentOptions, null, null);
 		else if (value is IConvertible)
 			propertyInfo.SetValue(componentOptions, Convert.ChangeType(value, propertyInfo.PropertyType), null);

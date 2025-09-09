@@ -36,9 +36,9 @@ public partial class TucDateTimeEditColumnComponent : TucBaseViewColumn<TucDateT
 
 	#region << Properties >>
 	public override Guid AddonId { get; init; } = new Guid(ID);
-	public override string AddonName { get; init;} = NAME;
-	public override string AddonDescription { get; init;} = DESCRIPTION;
-	public override string AddonFluentIconName { get; init;} = FLUENT_ICON_NAME;
+	public override string AddonName { get; init; } = NAME;
+	public override string AddonDescription { get; init; } = DESCRIPTION;
+	public override string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
 		new Guid(TfDateTimeViewColumnType.ID),
 	};
@@ -81,9 +81,11 @@ public partial class TucDateTimeEditColumnComponent : TucBaseViewColumn<TucDateT
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if (column == null) return;
+		object? columnData = GetColumnData(column);
 		if (columnData is not null && columnData is not DateTime)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateTime.");
 		excelCell.SetValue(XLCellValue.FromObject((DateTime?)columnData));
@@ -126,7 +128,8 @@ public partial class TucDateTimeEditColumnComponent : TucBaseViewColumn<TucDateT
 				_initValues();
 				await InvokeAsync(StateHasChanged);
 				return;
-			};
+			}
+			;
 		}
 
 		try
@@ -147,14 +150,14 @@ public partial class TucDateTimeEditColumnComponent : TucBaseViewColumn<TucDateT
 
 	private void _initValues()
 	{
-		if(RegionContext.Mode != TfComponentPresentationMode.Display) return;
-		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (RegionContext.Mode != TfComponentPresentationMode.Display) return;
+		TfDataColumn? column = GetColumnByAlias(VALUE_ALIAS);
 		if (column is null)
 			throw new Exception("Column not found");
 		if (column.IsJoinColumn)
 			throw new Exception("Joined data cannot be edited");
 
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
+		object? columnData = GetColumnData(column);
 		if (columnData is not null && columnData is not DateTime)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateTime.");
 		_value = (DateTime?)columnData;
