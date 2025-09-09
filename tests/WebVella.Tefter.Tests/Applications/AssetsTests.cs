@@ -33,11 +33,33 @@ public partial class AssetsTests : BaseTest
 				var folderResult = assetService.CreateFolder(folder);
 				folderResult.Should().NotBeNull();
 
+				//try to create folder with same name 
+				//should fail with validation exception
+				Exception exception = null;
+				try { assetService.CreateFolder(folder with { Id = Guid.NewGuid() }); } catch (Exception ex) { exception = ex; }
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+
 				folder.Name = "Test folder 1";
 				folderResult = assetService.UpdateFolder(folder);
 				folder.Name.Should().Be("Test folder 1");
 
 				assetService.DeleteFolder(folder.Id);
+
+				AssetsFolder invalidIndentityFolder = new AssetsFolder
+				{
+					Id = Guid.NewGuid(),
+					Name = "Test Folder",
+					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					CountSharedColumnName = "sc_int"
+				};
+
+				//try to create folder with diff between folder data identity and shared column data identity
+				//should fail with validation excepion
+				exception = null;
+				try { folderResult = assetService.CreateFolder(invalidIndentityFolder); } catch (Exception ex) { exception = ex; }
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
 			}
 		}
 	}
@@ -91,7 +113,8 @@ public partial class AssetsTests : BaseTest
 				var assets = assetService.GetAssets(folder.Id, null);
 				assets.Count.Should().Be(1);
 
-				var dataIdentityValueToSearchOn = assets[0].ConnectedDataIdentityValues.Keys.First();
+				var dataIdentityValueToSearchOn = assetService.GetAssetRelatedIdentityValues(assets[0]).First();
+
 
 				assets = assetService.GetAssets(folder.Id, dataIdentityValueToSearchOn);
 				assets.Count.Should().Be(1);
@@ -123,7 +146,7 @@ public partial class AssetsTests : BaseTest
 				var fileAsset = assetService.CreateFileAsset(fileAssetModel);
 				fileAsset.Should().NotBeNull();
 
-				dataIdentityValueToSearchOn = fileAsset.ConnectedDataIdentityValues.Keys.First();
+				dataIdentityValueToSearchOn = assetService.GetAssetRelatedIdentityValues(fileAsset).First();
 
 				assets = assetService.GetAssets(folder.Id, dataIdentityValueToSearchOn);
 				assets.Count.Should().Be(1);
@@ -143,7 +166,7 @@ public partial class AssetsTests : BaseTest
 
 				createdAsset = assetService.CreateLinkAsset(dupIdentityValueAsset);
 				createdAsset.Should().NotBeNull();
-				createdAsset.ConnectedDataIdentityValues.Count.Should().Be(2);
+				assetService.GetAssetRelatedIdentityValues(createdAsset).Count.Should().Be(2);
 
 				assets = assetService.GetAssets(folder.Id, rowIdentityIds3[0]);
 				assets.Count.Should().Be(2);
@@ -217,7 +240,7 @@ public partial class AssetsTests : BaseTest
 
 				var createdLinkAsset = assetService.CreateLinkAsset(linkAssetModel);
 				createdLinkAsset.Should().NotBeNull();
-				createdLinkAsset.ConnectedDataIdentityValues.Count.Should().Be(5);
+				assetService.GetAssetRelatedIdentityValues(createdLinkAsset).Count.Should().Be(5);
 
 				//using tmp file because local file is moved
 				var appSettingsFilePath = ToApplicationPath("appsettings.json");
@@ -236,7 +259,7 @@ public partial class AssetsTests : BaseTest
 				};
 
 				var createdFileAsset = assetService.CreateFileAsset(fileAssetModel);
-				createdFileAsset.ConnectedDataIdentityValues.Count.Should().Be(5);
+				assetService.GetAssetRelatedIdentityValues(createdFileAsset).Count.Should().Be(5);
 
 				var assets = assetService.GetAssets(folder.Id);
 				assets.Count.Should().Be(2);
@@ -310,7 +333,7 @@ public partial class AssetsTests : BaseTest
 
 				var createdLinkAsset = assetService.CreateLinkAsset(linkAssetModel);
 				createdLinkAsset.Should().NotBeNull();
-				createdLinkAsset.ConnectedDataIdentityValues.Count.Should().Be(1);
+				assetService.GetAssetRelatedIdentityValues(createdLinkAsset).Count.Should().Be(1);
 
 				var result = tfService.QuerySpaceData(spaceData.Id);
 				result.Rows[0]["tf_row_id.sc_int_row_id"].Should().Be(1);
@@ -332,7 +355,7 @@ public partial class AssetsTests : BaseTest
 				};
 
 				var createdFileAsset = assetService.CreateFileAsset(fileAssetModel);
-				createdFileAsset.ConnectedDataIdentityValues.Count.Should().Be(1);
+				assetService.GetAssetRelatedIdentityValues(createdFileAsset).Count.Should().Be(1);
 
 				result = tfService.QuerySpaceData(spaceData.Id);
 				result.Rows[0]["tf_row_id.sc_int_row_id"].Should().Be(2);

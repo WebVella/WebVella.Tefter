@@ -1,6 +1,8 @@
 ﻿namespace WebVella.Tefter.Tests.Applications;
 
+using AngleSharp.Dom;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using WebVella.Tefter.Assets.Services;
 using WebVella.Tefter.Talk.Models;
 using WebVella.Tefter.Talk.Services;
 
@@ -18,6 +20,9 @@ public partial class TalkTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
+				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
+				var dataTable = tfService.QueryDataProvider(provider);
+
 				var user = tfService.GetUser("rumen@webvella.com");
 
 				TalkChannel channel = new TalkChannel
@@ -25,7 +30,7 @@ public partial class TalkTests : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Test Channel",
 					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
-					CountSharedColumnName = ""
+					CountSharedColumnName = "sc_int_row_id"
 				};
 
 				channel = talkService.CreateChannel(channel);
@@ -34,7 +39,20 @@ public partial class TalkTests : BaseTest
 				channel.Name = "Test channel 1";
 				channel = talkService.UpdateChannel(channel);
 				channel.Name.Should().Be("Test channel 1");
+
+
+				//try to create channel with same name 
+				//should fail with validation exception
+				Exception exception = null;
+				try { talkService.CreateChannel( channel with { Id = Guid.NewGuid() }); } catch (Exception ex) { exception = ex; }
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+
+		
+
 				talkService.DeleteChannel(channel.Id);
+
+
 			}
 		}
 	}
@@ -74,7 +92,7 @@ public partial class TalkTests : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Test Channel",
 					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
-					CountSharedColumnName = ""
+					CountSharedColumnName = "sc_int_row_id"
 				};
 				var channelCreated = talkService.CreateChannel(channel);
 

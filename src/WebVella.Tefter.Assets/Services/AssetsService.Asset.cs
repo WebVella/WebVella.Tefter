@@ -47,14 +47,12 @@ public partial interface IAssetsService
     public void DeleteAsset(
         Guid assetId);
 
-    //public void UpdateFoldersSharedColumnCount();
-
-    //public void UpdateFolderSharedColumnCount(
-    //  AssetsFolder folder);
-
     public void ModifyAssetSharedColumnCount(
        Asset asset,
        bool isIncrement);
+
+    public List<string> GetAssetRelatedIdentityValues(
+        Asset asset);
 }
 
 internal partial class AssetsService : IAssetsService
@@ -900,7 +898,8 @@ ORDER BY aa.created_on DESC;";
         }
     }
 
-    private List<Asset> ToAssetList(DataTable dt)
+    private List<Asset> ToAssetList(
+        DataTable dt)
     {
         if (dt == null)
         {
@@ -944,39 +943,8 @@ ORDER BY aa.created_on DESC;";
                 CreatedBy = createdBy,
                 CreatedOn = dr.Field<DateTime>("created_on"),
                 ModifiedBy = modifiedBy,
-                ModifiedOn = dr.Field<DateTime>("modified_on"),
-                ConnectedDataIdentityValues = new Dictionary<string, string>()
+                ModifiedOn = dr.Field<DateTime>("modified_on")
             };
-
-
-            AssetsFolder folder = folders.SingleOrDefault(x => x.Id == asset.FolderId);
-            string folderDataIdentity = folder.DataIdentity;
-
-            if (string.IsNullOrWhiteSpace(folderDataIdentity))
-                folderDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
-
-            var dataIdentityConnectionsJson = dr.Field<string>("identity_connection_json");
-            if (!String.IsNullOrWhiteSpace(dataIdentityConnectionsJson) &&
-                dataIdentityConnectionsJson.StartsWith("[") &&
-                dataIdentityConnectionsJson != "[null]")
-            {
-                var dataIdentityConnections =
-                    JsonSerializer.Deserialize<List<TfDataIdentityConnection>>(dataIdentityConnectionsJson);
-
-                foreach (var dic in dataIdentityConnections)
-                {
-                    if (dic.Value1 == asset.IdentityRowId)
-                    {
-                        if (!asset.ConnectedDataIdentityValues.Keys.Contains(dic.Value2))
-                            asset.ConnectedDataIdentityValues[dic.Value2] = dic.DataIdentity2;
-                    }
-                    if (dic.Value2 == asset.IdentityRowId)
-                    {
-                        if (!asset.ConnectedDataIdentityValues.Keys.Contains(dic.Value1))
-                            asset.ConnectedDataIdentityValues[dic.Value1] = dic.DataIdentity1;
-                    }
-                }
-            }
 
             assetList.Add(asset);
         }
@@ -1401,9 +1369,6 @@ ORDER BY aa.created_on DESC;";
         if (asset == null)
             return;
 
-        if(asset.ConnectedDataIdentityValues == null ||asset.ConnectedDataIdentityValues.Count == 0)
-            return;
-
         var folder = GetFolder(asset.FolderId);
 
         if (folder == null)
@@ -1430,7 +1395,7 @@ ORDER BY aa.created_on DESC;";
             return;
         }
 
-        var identityValues = asset.ConnectedDataIdentityValues.Keys.ToList();  
+        var identityValues = GetAssetRelatedIdentityValues(asset);
 
         ModifySharedColumnValues(sharedColumn, identityValues, isIncrement?1:-1, 1000);
     }
@@ -1497,5 +1462,46 @@ ORDER BY aa.created_on DESC;";
 
             scope.Complete();
         }
+    }
+
+    public List<string> GetAssetRelatedIdentityValues(
+        Asset asset)
+    {
+        if (asset == null)
+            throw new ArgumentNullException(nameof(asset));
+
+        var folder = GetFolder(asset.FolderId);
+        
+        if (folder == null)
+            throw new Exception("Failed to find asset folder");
+
+        List<string> identityValues = new List<string>();
+
+        const string sql = @"SELECT * FROM tf_data_identity_connection WHERE ( value_1 = @value OR value_2 = @value)";
+
+        var valuePar = CreateParameter("@value", asset.IdentityRowId, DbType.String);
+
+        var dt = _dbService.ExecuteSqlQueryCommand(sql, valuePar);
+
+        foreach (DataRow dr in dt.Rows)
+        {
+            var dataIdentity1 = dr.Field<string>("data_identity_1");
+            var value1 = dr.Field<string>("value_1");
+            var dataIdentity2 = dr.Field<string>("data_identity_2");
+            var value2 = dr.Field<string>("value_2");
+
+            if (value1 == asset.IdentityRowId && dataIdentity1 == TfConstants.TF_ROW_ID_DATA_IDENTITY && dataIdentity2 == folder.DataIdentity)
+            {
+                if (!identityValues.Contains(value2))
+                    identityValues.Add(value2);
+            }
+            else if (value2 == asset.IdentityRowId && dataIdentity2 == TfConstants.TF_ROW_ID_DATA_IDENTITY && dataIdentity1 == folder.DataIdentity)
+            {
+                if (!identityValues.Contains(value1))
+                    identityValues.Add(value1);
+            }
+        }
+
+        return identityValues;
     }
 }

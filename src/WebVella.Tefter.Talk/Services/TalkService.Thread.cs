@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.Models;
+﻿using System.Text;
+using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Talk.Services;
 
@@ -29,6 +30,9 @@ public partial interface ITalkService
 
 	public void DeleteThread(
 		Guid threadId);
+
+	public List<string> GetThreadRelatedIdentityValues(
+		TalkThread thread);
 }
 
 internal partial class TalkService : ITalkService
@@ -83,15 +87,7 @@ internal partial class TalkService : ITalkService
             channelDataIdentity = channel?.DataIdentity;
 
         string SQL_WITHOUT_DATA_IDENTITY =
-$@"WITH sk_identity_info AS (
-	SELECT trs.id, JSON_AGG( dic.* ) AS json_result
-	FROM talk_thread trs
-		LEFT OUTER JOIN tf_data_identity_connection dic ON 
-			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_1 = '{channelDataIdentity}' ) OR
-			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_2 = '{channelDataIdentity}' ) 
-	GROUP BY trs.id
-), 
-root_threads AS (
+$@"WITH root_threads AS (
 	SELECT id 
 	FROM talk_thread
 	WHERE channel_id = @channel_id AND thread_id IS NULL 
@@ -106,25 +102,15 @@ SELECT
 	tt.created_on,
 	tt.last_updated_on,
 	tt.visible_in_channel,
-	tt.deleted_on,
-	sk_identity_info.json_result AS identity_connection_json
+	tt.deleted_on
 FROM talk_thread tt
-	LEFT OUTER JOIN sk_identity_info  ON tt.id = sk_identity_info.id
 	LEFT OUTER JOIN root_threads  rt ON rt.id = tt.id OR tt.thread_id = rt.id
 WHERE rt.id IS NOT NULL
 ORDER BY tt.created_on DESC
 ";
 
 		string SQL_WITH_DATA_IDENTITY =
-$@"WITH sk_identity_info AS (
-	SELECT trs.id, JSON_AGG( dic.* ) AS json_result
-	FROM talk_thread trs
-			LEFT OUTER JOIN tf_data_identity_connection dic ON 
-			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_1 = '{channelDataIdentity}' ) OR
-			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_2 = '{channelDataIdentity}' ) 
-	GROUP BY trs.id
-), 
-root_threads AS (
+$@"WITH root_threads AS (
 	SELECT id 
 	FROM talk_thread tt
 		LEFT OUTER JOIN tf_data_identity_connection dic ON 
@@ -145,10 +131,8 @@ SELECT
 	tt.created_on,
 	tt.last_updated_on,
 	tt.visible_in_channel,
-	tt.deleted_on,
-	sk_identity_info.json_result AS identity_connection_json
+	tt.deleted_on
 FROM talk_thread tt
-	LEFT OUTER JOIN sk_identity_info  ON tt.id = sk_identity_info.id
 	LEFT OUTER JOIN root_threads  rt ON rt.id = tt.id OR tt.thread_id = rt.id
 WHERE rt.id IS NOT NULL
 ORDER BY tt.created_on DESC";
@@ -322,8 +306,13 @@ ORDER BY tt.created_on DESC";
             }
 
             scope.Complete();
-            var createdThread = GetThread(id);
+            
+			var createdThread = GetThread(id);
+
+            ModifyThreadSharedColumnCount(createdThread, isIncrement: true);
+
             ThreadCreated?.Invoke(this, createdThread);
+
             return createdThread;
         }
     }
@@ -445,8 +434,13 @@ ORDER BY tt.created_on DESC";
 			}
 
 			scope.Complete();
+
 			var createdThread = GetThread(id);
-			ThreadCreated?.Invoke(this,createdThread);
+
+            ModifyThreadSharedColumnCount(createdThread, isIncrement: true);
+
+            ThreadCreated?.Invoke(this,createdThread);
+
 			return createdThread;
 		}
 	}
@@ -592,39 +586,47 @@ ORDER BY tt.created_on DESC";
 	public void DeleteThread(
 		Guid threadId)
 	{
-		var existingThread = GetThread(threadId);
+		using (var scope = _dbService.CreateTransactionScope())
+		{
+			var existingThread = GetThread(threadId);
 
-		new TalkThreadValidator(this,_tfService)
-			.ValidateDelete(existingThread)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
+			new TalkThreadValidator(this, _tfService)
+				.ValidateDelete(existingThread)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-		var SQL = "UPDATE talk_thread SET " +
-			"deleted_on = @deleted_on " +
-			"WHERE id = @id";
+			var SQL = "UPDATE talk_thread SET " +
+				"deleted_on = @deleted_on " +
+				"WHERE id = @id";
 
-		var idPar = TalkUtility.CreateParameter(
-			"id",
-			threadId,
-			DbType.Guid);
+			var idPar = TalkUtility.CreateParameter(
+				"id",
+				threadId,
+				DbType.Guid);
 
-		var deletedOnPar = TalkUtility.CreateParameter(
-			"@deleted_on",
-			DateTime.Now,
-			DbType.DateTime2);
+			var deletedOnPar = TalkUtility.CreateParameter(
+				"@deleted_on",
+				DateTime.Now,
+				DbType.DateTime2);
 
-		var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-			SQL,
-			idPar,
-			deletedOnPar);
+			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+				SQL,
+				idPar,
+				deletedOnPar);
 
-		if (dbResult != 1)
-			throw new Exception("Failed to update row in database for thread object");
+			if (dbResult != 1)
+				throw new Exception("Failed to update row in database for thread object");
 
-		ThreadDeleted?.Invoke(this,existingThread);
+			ModifyThreadSharedColumnCount(existingThread, isIncrement: false);
+
+			scope.Complete();	
+
+            ThreadDeleted?.Invoke(this, existingThread);
+		}
 	}
 
-	private List<TalkThread> ToThreadList(DataTable dt)
+	private List<TalkThread> ToThreadList(
+		DataTable dt)
 	{
 		if (dt == null)
 			throw new Exception("DataTable is null");
@@ -648,38 +650,8 @@ ORDER BY tt.created_on DESC";
 				CreatedOn = dr.Field<DateTime>("created_on"),
 				LastUpdatedOn = dr.Field<DateTime?>("last_updated_on"),
 				DeletedOn = dr.Field<DateTime?>("deleted_on"),
-				SubThread = new List<TalkThread>(),
-                ConnectedDataIdentityValues = new Dictionary<string,string>()
+				SubThread = new List<TalkThread>()
             };
-
-			TalkChannel channel = channels.SingleOrDefault(x => x.Id == thread.ChannelId);
-			string channelDataIdentity = channel.DataIdentity;
-
-			if( string.IsNullOrWhiteSpace(channelDataIdentity))
-                channelDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
-
-            var dataIdentityConnectionsJson = dr.Field<string>("identity_connection_json");
-            if (!String.IsNullOrWhiteSpace(dataIdentityConnectionsJson) &&
-                dataIdentityConnectionsJson.StartsWith("[") &&
-                dataIdentityConnectionsJson != "[null]")
-            {
-                var dataIdentityConnections = 
-					JsonSerializer.Deserialize<List<TfDataIdentityConnection>>(dataIdentityConnectionsJson);
-
-				foreach(var dic in dataIdentityConnections)
-				{
-					if(dic.Value1 == thread.IdentityRowId)
-					{
-						if(!thread.ConnectedDataIdentityValues.Keys.Contains(dic.Value2))
-                            thread.ConnectedDataIdentityValues[dic.Value2] = channelDataIdentity;
-                    }
-                    if (dic.Value2 == thread.IdentityRowId)
-                    {
-                        if (!thread.ConnectedDataIdentityValues.Keys.Contains(dic.Value1))
-                            thread.ConnectedDataIdentityValues[dic.Value1] = channelDataIdentity;
-                    }
-                }
-            }
 
 			threadList.Add(thread);
         }
@@ -869,5 +841,152 @@ ORDER BY tt.created_on DESC";
 		}
 	}
 
-	#endregion
+    #endregion
+
+    public void ModifyThreadSharedColumnCount(
+      TalkThread thread,
+      bool isIncrement)
+    {
+        if (thread == null)
+            return;
+
+        //only root threads are counted
+        if (thread.ParentThread != null)
+			return; 
+
+        var channel = GetChannel(thread.ChannelId);
+
+        if (channel == null)
+            return;
+
+        if (string.IsNullOrWhiteSpace(channel.CountSharedColumnName))
+            return;
+
+        var sharedColumn = _tfService.GetSharedColumn(channel.CountSharedColumnName);
+
+        if (sharedColumn is null)
+            return;
+
+        if (sharedColumn.DataIdentity != channel.DataIdentity)
+            return;
+
+        //only number type columns are supported
+        if (!(sharedColumn.DbType == TfDatabaseColumnType.Number ||
+                sharedColumn.DbType == TfDatabaseColumnType.ShortInteger ||
+                sharedColumn.DbType == TfDatabaseColumnType.Integer ||
+                sharedColumn.DbType == TfDatabaseColumnType.LongInteger
+            ))
+        {
+            return;
+        }
+
+        var identityValues = GetThreadRelatedIdentityValues( thread );
+
+        ModifySharedColumnValues(sharedColumn, identityValues, isIncrement ? 1 : -1, 1000);
+    }
+
+    private void ModifySharedColumnValues(
+        TfSharedColumn sharedColumn,
+        List<string> identityValues,
+        int valueChange,
+        int batchSize)
+    {
+        if (batchSize <= 0)
+            throw new ArgumentOutOfRangeException(nameof(batchSize), "Batch size must be greater than zero");
+
+        if (identityValues is null)
+            throw new ArgumentNullException(nameof(identityValues));
+
+        if (sharedColumn is null)
+            throw new Exception("Shared column not found");
+
+        string tableName;
+        switch (sharedColumn.DbType)
+        {
+            case TfDatabaseColumnType.ShortInteger:
+                tableName = "tf_shared_column_short_integer_value";
+                break;
+            case TfDatabaseColumnType.Integer:
+                tableName = "tf_shared_column_integer_value";
+                break;
+            case TfDatabaseColumnType.LongInteger:
+                tableName = "tf_shared_column_long_integer_value";
+                break;
+            case TfDatabaseColumnType.Number:
+                tableName = "tf_shared_column_number_value";
+                break;
+            default:
+                throw new Exception("Shared column db type is not supported column type for modification.");
+        }
+
+        using (var scope = _dbService.CreateTransactionScope())
+        {
+            foreach (IEnumerable<string> keysBatch in identityValues.Batch(batchSize))
+            {
+                int paramCounter = 1;
+
+                List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
+                parameters.Add(new NpgsqlParameter($"@shared_column_id", sharedColumn.Id));
+
+                StringBuilder sqlSb = new StringBuilder();
+
+                foreach (var identityValue in keysBatch)
+                {
+                    sqlSb.AppendLine($@"INSERT INTO {tableName} (shared_column_id,data_identity_value, value)
+                            VALUES (@shared_column_id,@data_identity_value_{paramCounter},{(valueChange >= 0 ? valueChange : 0)} )
+                            ON CONFLICT (data_identity_value,shared_column_id)
+                            DO UPDATE SET  value = GREATEST( 0, {tableName}.value + ( {valueChange} ) );");
+
+                    parameters.Add(new NpgsqlParameter($"@data_identity_value_{paramCounter}", identityValue));
+
+                    paramCounter++;
+                }
+
+                _dbService.ExecuteSqlNonQueryCommand(sqlSb.ToString(), parameters);
+            }
+
+            scope.Complete();
+        }
+    }
+
+	public List<string> GetThreadRelatedIdentityValues(
+		TalkThread thread)
+	{
+		if (thread == null)
+			throw new ArgumentNullException(nameof(thread));
+
+		var channel = GetChannel(thread.ChannelId);
+
+		if(channel == null)
+			throw new Exception($"Failed to find channel with id '{thread.ChannelId}'");
+
+        List<string> identityValues = new List<string>();	
+
+		const string sql = @"SELECT * FROM tf_data_identity_connection WHERE ( value_1 = @value OR value_2 = @value)";
+		
+		var valuePar = TalkUtility.CreateParameter("@value", thread.IdentityRowId, DbType.String);
+		
+		var dt = _dbService.ExecuteSqlQueryCommand(sql, valuePar);
+
+		foreach (DataRow dr in dt.Rows)
+		{
+			var dataIdentity1 = dr.Field<string>("data_identity_1");
+			var value1 = dr.Field<string>("value_1");
+			var dataIdentity2 = dr.Field<string>("data_identity_2");
+			var value2 = dr.Field<string>("value_2");
+
+			if (value1 == thread.IdentityRowId && dataIdentity1 == TfConstants.TF_ROW_ID_DATA_IDENTITY && dataIdentity2 == channel.DataIdentity)
+			{
+				if (!identityValues.Contains(value2))
+					identityValues.Add(value2);
+			}
+			else if (value2 == thread.IdentityRowId && dataIdentity2 == TfConstants.TF_ROW_ID_DATA_IDENTITY && dataIdentity1 == channel.DataIdentity)
+			{
+				if (!identityValues.Contains(value1))
+					identityValues.Add(value1);
+			}
+		}
+		
+		return identityValues;
+    }
 }
