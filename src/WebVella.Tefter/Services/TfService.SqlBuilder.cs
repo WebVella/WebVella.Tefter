@@ -242,52 +242,49 @@ public partial class TfService : ITfService
 						//ignore missing columns
 					}
 
+					//add shared columns data
+					foreach (var sharedColumn in _dataProvider.SharedColumns)
+					{
+							//if column is already processed, ignore duplicate
+							if (_sharedColumnsData.Any(x => x.DbName == sharedColumn.DbName))
+							{
+								continue;
+							}
+
+							var sqlBuilderColumn = _availableColumns.SingleOrDefault(x => x.DbName == sharedColumn.DbName);
+							if (sqlBuilderColumn == null)
+							{
+								continue;
+							}
+
+							var sharedColumnData = new SqlBuilderSharedColumnData
+							{
+								DbName = sharedColumn.DbName,
+								DbType = sharedColumn.DbType,
+								BuilderColumnInfo = sqlBuilderColumn,
+								DataIdentity = sharedColumn.DataIdentity,
+								TableAlias = sqlBuilderColumn.TableAlias,
+								TableName = GetSharedColumnValueTableNameByType(sharedColumn.DbType)
+							};
+
+							_sharedColumnsData.Add(sharedColumnData);
+					}
+
+					//add joined columns from other providers based on space data identities
 					foreach (var spaceDataIdentity in _spaceData.Identities)
 					{
 						//if identity is not found in primary data provider, ignore it
-						if ( !_dataProvider.Identities.Any(x => x.DataIdentity == spaceDataIdentity.DataIdentity))
+						if (!_dataProvider.Identities.Any(x => x.DataIdentity == spaceDataIdentity.DataIdentity))
 						{
 							continue;
 						}
 
 						foreach (var columnName in spaceDataIdentity.Columns.Distinct())
 						{
-							//ignore columns from same provider
-							if (columnName.StartsWith($"{_tableName}_"))
+							//ignore columns from same provider or column is shared
+							if (columnName.StartsWith($"{_tableName}_") ||
+								columnName.StartsWith(TfConstants.TF_SHARED_COLUMN_PREFIX))
 							{
-								continue;
-							}
-
-							//if column is shared column
-							if (columnName.StartsWith(TfConstants.TF_SHARED_COLUMN_PREFIX))
-							{
-								var sharedColumn = _dataProvider.SharedColumns
-									.SingleOrDefault(x => x.DbName == columnName);
-
-								//if column is already processed, ignore duplicate
-								if (_sharedColumnsData.Any(x => x.DbName == columnName))
-								{
-									continue;
-								}
-
-								var sqlBuilderColumn = _availableColumns.SingleOrDefault(x => x.DbName == columnName);
-								if(sqlBuilderColumn == null)
-								{
-									continue;
-								}	
-
-								var sharedColumnData = new SqlBuilderSharedColumnData
-								{
-									DbName = columnName,
-									DbType = sharedColumn.DbType,
-									BuilderColumnInfo = sqlBuilderColumn,
-									DataIdentity = spaceDataIdentity.DataIdentity,
-									TableAlias = sqlBuilderColumn.TableAlias,
-									TableName = GetSharedColumnValueTableNameByType(sharedColumn.DbType)
-								};
-
-								_sharedColumnsData.Add(sharedColumnData);
-
 								continue;
 							}
 
@@ -314,9 +311,9 @@ public partial class TfService : ITfService
 							if (identity is null)
 								continue;
 
-							SqlBuilderJoinData joinData =
-								_joinData.FirstOrDefault(x => x.Provider.Id == extProvider.Id && 
-								x.DataIdentity == spaceDataIdentity.DataIdentity );
+							SqlBuilderJoinData? joinData =
+								_joinData.FirstOrDefault(x => x.Provider.Id == extProvider.Id &&
+								x.DataIdentity == spaceDataIdentity.DataIdentity);
 
 
 							if (joinData is null)
@@ -541,8 +538,8 @@ public partial class TfService : ITfService
 			//joins are created for select columns, filter columns and sort columns
 			var columnsToJoin = _selectColumns
 					.Where(x => x.DataIdentity != null)
-					.Union( _availableColumns
-						.Where( x=> _sharedColumnsData.Any( s=>s.DbName == x.DbName))
+					.Union(_availableColumns
+						.Where(x => _sharedColumnsData.Any(s => s.DbName == x.DbName))
 					)
 					.Union(_filterColumns
 						.Where(x => x.DataIdentity != null)
@@ -553,7 +550,7 @@ public partial class TfService : ITfService
 					.Distinct().ToList();
 
 			string joins = string.Join(Environment.NewLine, columnsToJoin
-					.Select(x => GenerateJoinSqlForColumn(x) ).ToList());
+					.Select(x => GenerateJoinSqlForColumn(x)).ToList());
 
 			if (!string.IsNullOrEmpty(joins.Trim()))
 				sb.Append($"{Environment.NewLine}{joins}");
@@ -575,7 +572,7 @@ public partial class TfService : ITfService
 			return (sb.ToString(), parameters, _page, _pageSize);
 		}
 
-		private string GenerateJoinSqlForColumn( SqlBuilderColumn column )
+		private string GenerateJoinSqlForColumn(SqlBuilderColumn column)
 		{
 			if (column.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY)
 			{
