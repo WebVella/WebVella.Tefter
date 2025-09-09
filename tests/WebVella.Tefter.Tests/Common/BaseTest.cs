@@ -247,31 +247,32 @@ public class BaseTest
 		provider = tfService.GetDataProvider(provider.Id);
 		var createdSpaceData = tfService.GetSpaceData(spaceData.Id);
 
-		tfService.CreateSpaceDataIdentity(new TfSpaceDataIdentity
-		{
-			Id = Guid.NewGuid(),
-			SpaceDataId = spaceData.Id,
-			Columns = new List<string> { sharedColumn1.DbName },
-			DataIdentity = sharedColumn1!.DataIdentity,
-		});
+		//because identities are created in same provider we dont need to have then in space data
+		//tfService.CreateSpaceDataIdentity(new TfSpaceDataIdentity
+		//{
+		//	Id = Guid.NewGuid(),
+		//	SpaceDataId = spaceData.Id,
+		//	Columns = new List<string> { sharedColumn1.DbName },
+		//	DataIdentity = sharedColumn1!.DataIdentity,
+		//});
 
-		tfService.CreateSpaceDataIdentity(new TfSpaceDataIdentity
-		{
-			Id = Guid.NewGuid(),
-			SpaceDataId = spaceData.Id,
-			Columns = new List<string> { sharedColumn2.DbName },
-			DataIdentity = sharedColumn2!.DataIdentity,
-		});
+		//tfService.CreateSpaceDataIdentity(new TfSpaceDataIdentity
+		//{
+		//	Id = Guid.NewGuid(),
+		//	SpaceDataId = spaceData.Id,
+		//	Columns = new List<string> { sharedColumn2.DbName },
+		//	DataIdentity = sharedColumn2!.DataIdentity,
+		//});
 
-		tfService.CreateSpaceDataIdentity(new TfSpaceDataIdentity
-		{
-			Id = Guid.NewGuid(),
-			SpaceDataId = spaceData.Id,
-			Columns = new List<string> { sharedColumn3.DbName },
-			DataIdentity = sharedColumn3!.DataIdentity,
-		});
+		//tfService.CreateSpaceDataIdentity(new TfSpaceDataIdentity
+		//{
+		//	Id = Guid.NewGuid(),
+		//	SpaceDataId = spaceData.Id,
+		//	Columns = new List<string> { sharedColumn3.DbName },
+		//	DataIdentity = sharedColumn3!.DataIdentity,
+		//});
 
-		createdSpaceData = tfService.GetSpaceData(spaceData.Id);
+		//createdSpaceData = tfService.GetSpaceData(spaceData.Id);
 
 		return (provider, createdSpaceData);
 	}
