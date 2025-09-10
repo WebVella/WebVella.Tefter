@@ -34,6 +34,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 	private bool _threadBroadcastVisible = false;
 	private string _dataIdentityValue = null;
 	private TfUser? _currentUser = null;
+
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
@@ -91,6 +92,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 			ToastService.ShowSuccess(LOC("Message is sent"));
 			_channelEditorContent = null;
 			_threads.Insert(0, thread);
+			Content.CountChange++;
 		}
 		catch (Exception ex)
 		{
@@ -229,6 +231,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 			var now = DateTime.Now;
 			if (threadsIndex > -1) _threads[threadsIndex].DeletedOn = now;
 			if (subthreadsIndex > -1) _activeThread.SubThread[subthreadsIndex].DeletedOn = now;
+			Content.CountChange--;
 		}
 		catch (Exception ex)
 		{
@@ -289,4 +292,5 @@ public record TalkThreadPanelContext
 	public Guid? ChannelId { get; set; }
 	public TfDataTable DataTable { get; set; } = null;
 	public int RowIndex { get; set; } = -1;
+	public long CountChange { get; set; } = 0;
 }

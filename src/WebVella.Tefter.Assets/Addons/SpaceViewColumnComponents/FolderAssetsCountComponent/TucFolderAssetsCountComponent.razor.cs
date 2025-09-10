@@ -50,7 +50,7 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 	private IDialogReference _dialog;
 	private List<AssetsFolder> _folders = new();
 	private AssetsFolder _selectedFolder = null;
-	private string _value = null;
+	private long? _value = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -110,12 +110,15 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 			PrimaryAction = null,
 			SecondaryAction = null,
 			Width = "25vw",
-			TrapFocus = false
+			TrapFocus = false,
+			OnDialogClosing = EventCallback.Factory.Create<DialogInstance>(this, async (instance) =>
+			{
+				var change = ((AssetsFolderPanelContext)instance.Content).CountChange;
+				_value = (_value ?? 0) + change;
+				if (_value <= 0) _value = null;
+				await InvokeAsync(StateHasChanged);
+			})
 		});
-		var result = await _dialog.Result;
-		if (!result.Cancelled && result.Data != null) { 
-			var item = (long)result.Data;
-		}
 	}
 
 	private async Task _initValues()
@@ -170,9 +173,7 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 				&& !String.IsNullOrWhiteSpace(_selectedFolder.CountSharedColumnName))
 			{
 				var columnName = $"{_selectedFolder.DataIdentity}.{_selectedFolder.CountSharedColumnName}";
-				var value = GetDataString(columnName,null);
-				if(value is not null) 
-					_value = value.ToString();
+				_value = (long?)GetDataStruct<long>(columnName, null);
 			}
 
 		}

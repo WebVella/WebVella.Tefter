@@ -9,7 +9,7 @@
 		{
 			<div style="color:var(--error);" title="@LOC("folder is not configured")">error!</div>
 		}
-		else if(String.IsNullOrWhiteSpace(_value))
+		else if(_value is null)
 		{
 			<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
 				<FluentIcon Value="@TfConstants.GetIcon("DocumentCopy")" />

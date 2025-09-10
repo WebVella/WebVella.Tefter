@@ -11,9 +11,9 @@
 		<SatelliteResourceLanguages>en,bg</SatelliteResourceLanguages>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="System.Formats.Asn1" Version="9.0.8" />
-		<PackageReference Include="System.IO.Packaging" Version="9.0.8" />
-		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.8" />
+		<PackageReference Include="System.Formats.Asn1" Version="9.0.9" />
+		<PackageReference Include="System.IO.Packaging" Version="9.0.9" />
+		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.9" />
 		<ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.DocumentFile\WebVella.Tefter.TemplateProcessors.DocumentFile.csproj" />
 		<ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.Email\WebVella.Tefter.TemplateProcessors.Email.csproj" />
 		<ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.ExcelFile\WebVella.Tefter.TemplateProcessors.ExcelFile.csproj" />

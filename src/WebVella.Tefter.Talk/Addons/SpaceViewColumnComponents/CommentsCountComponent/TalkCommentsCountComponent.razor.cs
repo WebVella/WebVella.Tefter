@@ -50,7 +50,7 @@ public partial class TalkCommentsCountComponent : TucBaseViewColumn<TfTalkCommen
 	private IDialogReference _dialog;
 	private List<TalkChannel> _channels = new();
 	private TalkChannel _selectedChannel = null;
-	private string _value = null;
+	private long? _value = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -109,7 +109,14 @@ public partial class TalkCommentsCountComponent : TucBaseViewColumn<TfTalkCommen
 			PrimaryAction = null,
 			SecondaryAction = null,
 			Width = "35vw",
-			TrapFocus = false
+			TrapFocus = false,
+			OnDialogClosing = EventCallback.Factory.Create<DialogInstance>(this, async (instance) =>
+			{
+				var change = ((TalkThreadPanelContext)instance.Content).CountChange;
+				_value = (_value ?? 0) + change;
+				if (_value <= 0) _value = null;
+				await InvokeAsync(StateHasChanged);
+			})
 		});
 	}
 
@@ -165,9 +172,7 @@ public partial class TalkCommentsCountComponent : TucBaseViewColumn<TfTalkCommen
 				&& !String.IsNullOrWhiteSpace(_selectedChannel.CountSharedColumnName))
 			{
 				var columnName = $"{_selectedChannel.DataIdentity}.{_selectedChannel.CountSharedColumnName}";
-				var value = GetDataString(columnName,null);
-				if(value is not null) 
-					_value = value.ToString();
+				_value = (long?)GetDataStruct<long>(columnName,null);
 			}
 
 		}

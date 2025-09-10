@@ -10,10 +10,10 @@
 		<ProjectReference Include="..\WebVella.Tefter\WebVella.Tefter.csproj" />
 		<PackageReference Include="MailKit" Version="4.13.0" />
 		<PackageReference Include="MimeKit" Version="4.13.0" />
-		<PackageReference Include="System.Formats.Asn1" Version="9.0.8" />
-		<PackageReference Include="System.IO.Packaging" Version="9.0.8" />
-		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.8" />
-		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.8" />
+		<PackageReference Include="System.Formats.Asn1" Version="9.0.9" />
+		<PackageReference Include="System.IO.Packaging" Version="9.0.9" />
+		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.9" />
+		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.9" />
 	</ItemGroup>
 
 

@@ -34,8 +34,8 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 					if (_dataIdentityValue is not null)
 						_items = AssetsService.GetAssets(_folder.Id, _dataIdentityValue);
 				}
-				_currentUser = await AssetsService.GetCurrentUser(JSRuntime,AuthenticationStateProvider);
-				if(_currentUser is null) 
+				_currentUser = await AssetsService.GetCurrentUser(JSRuntime, AuthenticationStateProvider);
+				if (_currentUser is null)
 					throw new Exception("User not found");
 				_isLoading = false;
 				await InvokeAsync(StateHasChanged);
@@ -66,7 +66,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			Id = Guid.Empty,
 			Label = null,
 			Url = null,
-			DataIdentities = new List<string>{ _dataIdentityValue },
+			DataIdentities = new List<string> { _dataIdentityValue },
 		},
 		new DialogParameters()
 		{
@@ -79,6 +79,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 		if (!result.Cancelled && result.Data != null)
 		{
 			_items.Insert(0, (Asset)result.Data);
+			Content.CountChange++;
 		}
 	}
 
@@ -92,7 +93,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			Id = Guid.Empty,
 			Label = null,
 			FileName = null,
-			DataIdentityValues = new List<string>{ _dataIdentityValue },
+			DataIdentityValues = new List<string> { _dataIdentityValue },
 		},
 		new DialogParameters()
 		{
@@ -105,6 +106,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 		if (!result.Cancelled && result.Data != null)
 		{
 			_items.Insert(0, (Asset)result.Data);
+			Content.CountChange++;
 		}
 	}
 
@@ -123,7 +125,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 						Id = asset.Id,
 						Label = assetContent.Label,
 						FileName = assetContent.Filename,
-						DataIdentityValues = new List<string>{ _dataIdentityValue },
+						DataIdentityValues = new List<string> { _dataIdentityValue },
 					},
 					new DialogParameters()
 					{
@@ -146,7 +148,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 						Label = assetContent.Label,
 						Url = assetContent.Url,
 						IconUrl = assetContent.IconUrl,
-						DataIdentities = new List<string>{ _dataIdentityValue },
+						DataIdentities = new List<string> { _dataIdentityValue },
 					},
 					new DialogParameters()
 					{
@@ -178,6 +180,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			ToastService.ShowSuccess(LOC("File deleted"));
 			int index = _items.FindIndex(x => x.Id == asset.Id);
 			if (index > -1) _items.RemoveAt(index);
+			Content.CountChange--;
 		}
 		catch (Exception ex)
 		{
@@ -207,13 +210,15 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 	private AssetsFolderPanelAssetMeta _getAssetMeta(Asset asset)
 	{
 		var result = new AssetsFolderPanelAssetMeta();
-		if(asset.Type == AssetType.File){ 
+		if (asset.Type == AssetType.File)
+		{
 			result.Description += $"<span class='type file'>{LOC("file")}</span>";
-			result.Description += $"<span class='divider'> | </span>";		
+			result.Description += $"<span class='divider'> | </span>";
 		}
-		else{ 
+		else
+		{
 			result.Description += $"<span class='type link'>{LOC("link")}</span>";
-			result.Description += $"<span class='divider'> | </span>";		
+			result.Description += $"<span class='divider'> | </span>";
 		}
 		if (asset.CreatedOn < asset.ModifiedOn)
 		{
@@ -252,6 +257,7 @@ public record AssetsFolderPanelContext
 	public Guid? FolderId { get; set; }
 	public TfDataTable DataTable { get; set; } = null;
 	public int RowIndex { get; set; } = -1;
+	public long CountChange { get; set; } = 0;
 }
 
 public record AssetsFolderPanelAssetMeta
