@@ -302,9 +302,11 @@ ORDER BY aa.created_on DESC;";
                     }
                 }
 
-				foreach (var dataIdentityValue in dataIdentityValues)
+                List< TfDataIdentityConnection> connectionsToCreate = new List<TfDataIdentityConnection>();
+
+                foreach (var dataIdentityValue in dataIdentityValues)
 				{
-					_tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
+                    connectionsToCreate.Add(new TfDataIdentityConnection
 					{
 						DataIdentity1 = folderDataIdentity.DataIdentity,
 						Value1 = dataIdentityValue,
@@ -312,7 +314,12 @@ ORDER BY aa.created_on DESC;";
 						Value2 = assetIdentityRowId
 					});
 				}
-			}
+
+                if(connectionsToCreate.Count > 0)
+                {
+                    _tfService.CreateBatchDataIdentityConnections(connectionsToCreate);
+                }
+            }
 
 			scope.Complete();
 
@@ -409,18 +416,26 @@ ORDER BY aa.created_on DESC;";
                 if (folderDataIdentity is null)
                     folderDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
 
+
+                List<TfDataIdentityConnection> connectionsToCreate = new List<TfDataIdentityConnection>();
+
                 foreach (var dataIdentityValue in asset.DataIdentityValues)
                 {
                     if (!dataIdentityValue.IsSha1())
                         throw new Exception($"Data identity value '{dataIdentityValue}' is not a valid SHA1 value");
 
-                    _tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
+                    connectionsToCreate.Add(new TfDataIdentityConnection
                     {
                         DataIdentity1 = folderDataIdentity.DataIdentity,
                         Value1 = dataIdentityValue,
                         DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
                         Value2 = assetIdentityRowId
                     });
+                }
+
+                if (connectionsToCreate.Count > 0)
+                {
+                    _tfService.CreateBatchDataIdentityConnections(connectionsToCreate);
                 }
             }
 
@@ -512,18 +527,25 @@ ORDER BY aa.created_on DESC;";
                 if (folderDataIdentity is null)
                     folderDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
 
+                List<TfDataIdentityConnection> connectionsToCreate = new List<TfDataIdentityConnection>();
+
                 foreach (var dataIdentityValue in asset.DataIdentityValues)
                 {
                     if (!dataIdentityValue.IsSha1())
                         throw new Exception($"Data identity value '{dataIdentityValue}' is not a valid SHA1 value");
 
-                    _tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
+                    connectionsToCreate.Add(new TfDataIdentityConnection
                     {
                         DataIdentity1 = folderDataIdentity.DataIdentity,
                         Value1 = dataIdentityValue,
                         DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
                         Value2 = assetIdentityRowId
                     });
+                }
+
+                if (connectionsToCreate.Count > 0)
+                {
+                    _tfService.CreateBatchDataIdentityConnections(connectionsToCreate);
                 }
             }
 
@@ -631,9 +653,11 @@ ORDER BY aa.created_on DESC;";
 					}
 				}
 
-				foreach (var dataIdentityValue in dataIdentityValues)
+                List<TfDataIdentityConnection> connectionsToCreate = new List<TfDataIdentityConnection>();
+
+                foreach (var dataIdentityValue in dataIdentityValues)
 				{
-					_tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
+                    connectionsToCreate.Add(new TfDataIdentityConnection
 					{
 						DataIdentity1 = folderDataIdentity.DataIdentity,
 						Value1 = dataIdentityValue,
@@ -641,7 +665,12 @@ ORDER BY aa.created_on DESC;";
 						Value2 = assetIdentityRowId
 					});
 				}
-			}
+
+                if (connectionsToCreate.Count > 0)
+                {
+                    _tfService.CreateBatchDataIdentityConnections(connectionsToCreate);
+                }
+            }
 
 			scope.Complete();
 

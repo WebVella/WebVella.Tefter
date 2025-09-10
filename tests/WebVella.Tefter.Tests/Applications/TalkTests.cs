@@ -66,15 +66,6 @@ public partial class TalkTests : BaseTest
 			ITalkService talkService = ServiceProvider.GetRequiredService<ITalkService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-			//Guid channelId = new Guid("d1749bb8-d41f-4934-a329-09afb981bce8");
-
-			//var thhh = talkService.GetThread(new Guid("447cc5f7-d87f-45ea-859e-f8b8dcb89d5e"));
-
-			//var threads123 = talkService.GetThreads(channelId, dataIdentityValue: "8994cca3dbbdf1fc65a99aa60a8efee258677fe6");
-
-			//return;
-			
-
 			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
@@ -109,6 +100,9 @@ public partial class TalkTests : BaseTest
 
 				var th = talkService.GetThread(createdThread1.Id);
 				th.Should().NotBeNull();
+
+				var connectedIdentityValues = talkService.GetThreadRelatedIdentityValues(th);
+				connectedIdentityValues.Count.Should().Be(rowIdentityIds.Count);
 
 				var threads = talkService.GetThreads(channel.Id, dataIdentityValue: null);
 				threads.Count.Should().Be(1);

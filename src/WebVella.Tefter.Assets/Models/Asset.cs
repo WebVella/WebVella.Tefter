@@ -11,10 +11,7 @@ public class Asset
 	public DateTime CreatedOn { get; set; }
 	public TfUser ModifiedBy { get; set; }
 	public DateTime ModifiedOn { get; set; }
-    
-	[Obsolete("Not initialized and should be removed")]
-    public Dictionary<string, string> ConnectedDataIdentityValues { get; set; } = new();
-}
+ }
 
 [JsonDerivedType(typeof(FileAssetContent), typeDiscriminator: "file")]
 [JsonDerivedType(typeof(LinkAssetContent), typeDiscriminator: "link")]

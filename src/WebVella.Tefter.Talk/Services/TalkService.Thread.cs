@@ -293,15 +293,22 @@ ORDER BY tt.created_on DESC";
                     }
                 }
 
+                List<TfDataIdentityConnection> connectionsToCreate = new List<TfDataIdentityConnection>();
+
                 foreach (var dataIdentityValue in dataIdentityValues)
                 {
-                    _tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
+                    connectionsToCreate.Add(new TfDataIdentityConnection
                     {
                         DataIdentity1 = channelDataIdentity.DataIdentity,
                         Value1 = dataIdentityValue,
                         DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
                         Value2 = threadIdentityRowId
                     });
+                }
+                
+				if (connectionsToCreate.Count > 0)
+                {
+                    _tfService.CreateBatchDataIdentityConnections(connectionsToCreate);
                 }
             }
 
@@ -418,12 +425,15 @@ ORDER BY tt.created_on DESC";
 				if(channelDataIdentity is null)
 					channelDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
 
-				foreach(var dataIdentityValue in thread.DataIdentityValues )
+
+                List<TfDataIdentityConnection> connectionsToCreate = new List<TfDataIdentityConnection>();
+
+                foreach (var dataIdentityValue in thread.DataIdentityValues )
 				{
 					if (!dataIdentityValue.IsSha1())
 						throw new Exception($"Data identity value '{dataIdentityValue}' is not a valid SHA1 value");
 
-                    _tfService.CreateDataIdentityConnection(new TfDataIdentityConnection
+                    connectionsToCreate.Add(new TfDataIdentityConnection
 					{
 						DataIdentity1 = channelDataIdentity.DataIdentity,
 						Value1 = dataIdentityValue,
@@ -431,7 +441,12 @@ ORDER BY tt.created_on DESC";
 						Value2 = threadIdentityRowId
                     });
 				}
-			}
+
+                if (connectionsToCreate.Count > 0)
+                {
+                    _tfService.CreateBatchDataIdentityConnections(connectionsToCreate);
+                }
+            }
 
 			scope.Complete();
 

@@ -20,6 +20,14 @@ public partial interface ITfService
 	public void DeleteDataIdentityConnection(
 		string dataIdentity,
 		string identityValue);
+
+	public void CreateBatchDataIdentityConnections(
+		List<TfDataIdentityConnection> dataIdentityConnections,
+		int batchSize = 1000);
+
+	public void DeleteBatchDataIdentityConnections(
+		List<TfDataIdentityConnection> dataIdentityConnections,
+		int batchSize = 1000);
 }
 
 public partial class TfService : ITfService
@@ -176,12 +184,12 @@ public partial class TfService : ITfService
 
 	public void DeleteDataIdentityConnection(
 		string dataIdentity,
-		string identityValue )
+		string identityValue)
 	{
 		try
 		{
 			new TfDataIdentityConnectionValidator(this)
-				.ValidateDelete(dataIdentity,identityValue)
+				.ValidateDelete(dataIdentity, identityValue)
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
@@ -193,6 +201,182 @@ public partial class TfService : ITfService
 					new NpgsqlParameter<string>("data_identity", dataIdentity),
 					new NpgsqlParameter<string>("value", identityValue));
 
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+
+	public void CreateBatchDataIdentityConnections(
+		List<TfDataIdentityConnection> dataIdentityConnections,
+		int batchSize = 1000)
+	{
+		if (dataIdentityConnections == null || dataIdentityConnections.Count == 0)
+			return;
+
+		try
+		{
+			using (var scope = _dbService.CreateTransactionScope())
+			{
+				foreach (var batch in dataIdentityConnections.Batch(batchSize))
+				{
+					int paramCounter = 1;
+					StringBuilder sqlSb = new StringBuilder();
+					List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
+
+					foreach (var dataIdentityConnection in batch)
+					{
+						if (dataIdentityConnection == null)
+							continue;
+
+						if (string.IsNullOrWhiteSpace(dataIdentityConnection.DataIdentity1)
+							|| string.IsNullOrWhiteSpace(dataIdentityConnection.Value1)
+							|| string.IsNullOrWhiteSpace(dataIdentityConnection.DataIdentity2)
+							|| string.IsNullOrWhiteSpace(dataIdentityConnection.Value2))
+							continue;
+
+						TfDataIdentityConnection dicToBeInserted = new TfDataIdentityConnection();
+
+						// Ensure that DataIdentity1 is always less than DataIdentity2
+						if (dataIdentityConnection.DataIdentity1.IsLessThan(dataIdentityConnection.DataIdentity2))
+						{
+							dicToBeInserted.DataIdentity1 = dataIdentityConnection.DataIdentity1;
+							dicToBeInserted.Value1 = dataIdentityConnection.Value1;
+							dicToBeInserted.DataIdentity2 = dataIdentityConnection.DataIdentity2;
+							dicToBeInserted.Value2 = dataIdentityConnection.Value2;
+						}
+						else if (dataIdentityConnection.DataIdentity1.IsGreaterThan(dataIdentityConnection.DataIdentity2))
+						{
+							dicToBeInserted.DataIdentity1 = dataIdentityConnection.DataIdentity2;
+							dicToBeInserted.Value1 = dataIdentityConnection.Value2;
+							dicToBeInserted.DataIdentity2 = dataIdentityConnection.DataIdentity1;
+							dicToBeInserted.Value2 = dataIdentityConnection.Value1;
+						}
+						else //when identity is same, compare values and ensure that Value1 is always less than Value2
+						{
+							dicToBeInserted.DataIdentity1 = dataIdentityConnection.DataIdentity1;
+							dicToBeInserted.DataIdentity2 = dataIdentityConnection.DataIdentity2;
+
+							if (dataIdentityConnection.Value1.IsLessThan(dataIdentityConnection.Value2))
+							{
+								dicToBeInserted.Value1 = dataIdentityConnection.Value1;
+								dicToBeInserted.Value2 = dataIdentityConnection.Value2;
+							}
+							else
+							{
+								dicToBeInserted.Value1 = dataIdentityConnection.Value2;
+								dicToBeInserted.Value2 = dataIdentityConnection.Value1;
+							}
+						}
+
+						sqlSb.AppendLine($@"INSERT INTO tf_data_identity_connection (data_identity_1,value_1,data_identity_2,value_2)
+                            VALUES (@data_identity_1_{paramCounter}, @value_1_{paramCounter}, @data_identity_2_{paramCounter}, @value_2_{paramCounter})
+                            ON CONFLICT DO NOTHING;");
+
+						parameters.Add(new NpgsqlParameter($"@data_identity_1_{paramCounter}", dicToBeInserted.DataIdentity1));
+						parameters.Add(new NpgsqlParameter($"@value_1_{paramCounter}", dicToBeInserted.Value1));
+						parameters.Add(new NpgsqlParameter($"@data_identity_2_{paramCounter}", dicToBeInserted.DataIdentity2));
+						parameters.Add(new NpgsqlParameter($"@value_2_{paramCounter}", dicToBeInserted.Value2));
+
+						paramCounter++;
+					}
+
+					_dbService.ExecuteSqlNonQueryCommand(sqlSb.ToString(), parameters);
+				}
+
+				scope.Complete();
+			}
+
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+
+	}
+
+	public void DeleteBatchDataIdentityConnections(
+		List<TfDataIdentityConnection> dataIdentityConnections,
+		int batchSize = 1000)
+	{
+		if (dataIdentityConnections == null || dataIdentityConnections.Count == 0)
+			return;
+
+		try
+		{
+			using (var scope = _dbService.CreateTransactionScope())
+			{
+				foreach (var batch in dataIdentityConnections.Batch(batchSize))
+				{
+					int paramCounter = 1;
+					StringBuilder sqlSb = new StringBuilder();
+					List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
+
+					foreach (var dataIdentityConnection in batch)
+					{
+
+						if (dataIdentityConnection == null)
+							continue;
+
+						if (string.IsNullOrWhiteSpace(dataIdentityConnection.DataIdentity1)
+						|| string.IsNullOrWhiteSpace(dataIdentityConnection.Value1)
+						|| string.IsNullOrWhiteSpace(dataIdentityConnection.DataIdentity2)
+						|| string.IsNullOrWhiteSpace(dataIdentityConnection.Value2))
+							continue;
+
+						TfDataIdentityConnection dicToDeleted = new TfDataIdentityConnection();
+
+						// Ensure that DataIdentity1 is always less than DataIdentity2
+						if (dataIdentityConnection.DataIdentity1.IsLessThan(dataIdentityConnection.DataIdentity2))
+						{
+							dicToDeleted.DataIdentity1 = dataIdentityConnection.DataIdentity1;
+							dicToDeleted.Value1 = dataIdentityConnection.Value1;
+							dicToDeleted.DataIdentity2 = dataIdentityConnection.DataIdentity2;
+							dicToDeleted.Value2 = dataIdentityConnection.Value2;
+						}
+						else if (dataIdentityConnection.DataIdentity1.IsGreaterThan(dataIdentityConnection.DataIdentity2))
+						{
+							dicToDeleted.DataIdentity1 = dataIdentityConnection.DataIdentity2;
+							dicToDeleted.Value1 = dataIdentityConnection.Value2;
+							dicToDeleted.DataIdentity2 = dataIdentityConnection.DataIdentity1;
+							dicToDeleted.Value2 = dataIdentityConnection.Value1;
+						}
+						else //when identity is same, compare values and ensure that Value1 is always less than Value2
+						{
+							dicToDeleted.DataIdentity1 = dataIdentityConnection.DataIdentity1;
+							dicToDeleted.DataIdentity2 = dataIdentityConnection.DataIdentity2;
+
+							if (dataIdentityConnection.Value1.IsLessThan(dataIdentityConnection.Value2))
+							{
+								dicToDeleted.Value1 = dataIdentityConnection.Value1;
+								dicToDeleted.Value2 = dataIdentityConnection.Value2;
+							}
+							else
+							{
+								dicToDeleted.Value1 = dataIdentityConnection.Value2;
+								dicToDeleted.Value2 = dataIdentityConnection.Value1;
+							}
+						}
+
+						sqlSb.AppendLine($@"DELETE FROM tf_data_identity_connection 
+							WHERE data_identity_1 = @data_identity_1_{paramCounter} AND value_1 = @value_1_{paramCounter}
+								AND data_identity_2 = @data_identity_2_{paramCounter} AND value_2 = @value_2_{paramCounter};");
+
+						parameters.Add(new NpgsqlParameter($"@data_identity_1_{paramCounter}", dicToDeleted.DataIdentity1));
+						parameters.Add(new NpgsqlParameter($"@value_1_{paramCounter}", dicToDeleted.Value1));
+						parameters.Add(new NpgsqlParameter($"@data_identity_2_{paramCounter}", dicToDeleted.DataIdentity2));
+						parameters.Add(new NpgsqlParameter($"@value_2_{paramCounter}", dicToDeleted.Value2));
+
+						paramCounter++;
+					}
+
+					_dbService.ExecuteSqlNonQueryCommand(sqlSb.ToString(), parameters);
+				}
+
+				scope.Complete();
+			}
 		}
 		catch (Exception ex)
 		{
@@ -323,7 +507,7 @@ public partial class TfService : ITfService
 
 		public ValidationResult ValidateDelete(
 			string dataIdentity,
-			string identityValue )
+			string identityValue)
 		{
 			if (string.IsNullOrWhiteSpace(dataIdentity))
 				return new ValidationResult(new[] { new ValidationFailure("",

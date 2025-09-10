@@ -2,6 +2,7 @@
 using System;
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Tests.Applications;
+using WebVella.Tefter.Utility;
 
 namespace WebVella.Tefter.Tests.Services;
 
@@ -456,6 +457,74 @@ public partial class TfServiceTest : BaseTest
 				exception.Should().BeNull();
 				connections.Should().NotBeNull();
 				connections.Count.Should().Be(2);
+			}
+		}
+	}
+
+	[Fact]
+	public async Task DataIdentityConnection_TestBatchOperations()
+	{
+		const int BATCH_SIZE = 1000;
+
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				TfDataIdentity dataIdentityModel1 = new TfDataIdentity
+				{
+					DataIdentity = "test_data_identity_1",
+					Label = "Test Data Identity 1",
+				};
+				TfDataIdentity dataIdentity1 = tfService.CreateDataIdentity(dataIdentityModel1);
+				dataIdentity1.Should().NotBeNull();
+
+				TfDataIdentity dataIdentityModel2 = new TfDataIdentity
+				{
+					DataIdentity = "test_data_identity_2",
+					Label = "Test Data Identity 2",
+				};
+				TfDataIdentity dataIdentity2 = tfService.CreateDataIdentity(dataIdentityModel2);
+				dataIdentity2.Should().NotBeNull();
+
+				List<TfDataIdentityConnection> connections = new();
+
+				for(int i= 0; i < BATCH_SIZE*20; i++)
+				{
+					connections.Add(new TfDataIdentityConnection
+					{
+						DataIdentity1 = dataIdentity1.DataIdentity,
+						Value1 = (dataIdentity1.DataIdentity + i.ToString()).ToSha1(),
+						DataIdentity2 = dataIdentity2.DataIdentity,
+						Value2 = (dataIdentity2.DataIdentity + i.ToString()).ToSha1()
+					});
+				}
+
+				var task = Task.Run(() => { tfService.CreateBatchDataIdentityConnections(connections); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+
+				var existingInDatabaseIndentityConnections = tfService.GetDataIdentityConnections();
+				existingInDatabaseIndentityConnections.Count.Should().Be(connections.Count);
+				
+				//foreach(var conn in connections)
+				//{
+				//	existingInDatabaseIndentityConnections.Any(x =>
+				//		x.DataIdentity1 == conn.DataIdentity1 && x.Value1 == conn.Value1
+				//		&& x.DataIdentity2 == conn.DataIdentity2 && x.Value2 == conn.Value2
+				//	).Should().BeTrue();
+				//}
+
+
+				task = Task.Run(() => { tfService.DeleteBatchDataIdentityConnections(connections); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+
+				existingInDatabaseIndentityConnections = tfService.GetDataIdentityConnections();
+				existingInDatabaseIndentityConnections.Count.Should().Be(0);
+
 			}
 		}
 	}

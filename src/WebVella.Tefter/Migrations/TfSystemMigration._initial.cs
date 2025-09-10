@@ -1064,6 +1064,8 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithIndexes(indexes =>
 			{
 				indexes
+					.AddBTreeIndex("ix_data_identity_connection_all_columns", i => { 
+						i.WithColumns("data_identity_1","value_1","data_identity_2","value_2"); })
 					.AddBTreeIndex("ix_data_identity_connection_data_identity_1", i => { i.WithColumns("data_identity_1"); })
 					.AddBTreeIndex("ix_data_identity_connection_value_1", i => { i.WithColumns("value_1"); })
 					.AddBTreeIndex("ix_data_identity_connection_data_identity_2", i => { i.WithColumns("data_identity_2"); })
