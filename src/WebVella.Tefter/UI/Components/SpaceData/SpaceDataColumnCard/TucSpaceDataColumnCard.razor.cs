@@ -28,7 +28,7 @@ public partial class TucSpaceDataColumnCard : TfBaseComponent
 		get
 		{
 			if (Items.Count == 0) return Options;
-			return Options.Where(x => !Items.Contains(x)).ToList();
+			return Options.Where(x => !Items.Any(y=> y.ColumnName == x.ColumnName)).ToList();
 		}
 	}
 

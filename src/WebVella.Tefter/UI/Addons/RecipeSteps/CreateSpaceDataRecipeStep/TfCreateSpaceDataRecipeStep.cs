@@ -20,24 +20,51 @@ public class TfCreateSpaceDataRecipeStep : ITfRecipeStepAddon
 			throw new Exception("Wrong data model type provided for application");
 
 		var step = (TfCreateSpaceDataRecipeStepData)addon.Data;
+		var dataProvider = tfService.GetDataProvider(step.DataProviderId);
+		var dpPrefix = $"dp{dataProvider.Index}_";
 		if (step.Filters.Count > 0 || step.SortOrders.Count > 0)
 		{
-			var dataProvider = tfService.GetDataProvider(step.DataProviderId);
-			var dpPrefix = $"dp{dataProvider.Index}_";
 			step.Filters.ForEach(x => x.FixPrefix(dpPrefix));
 			step.SortOrders.ForEach(x => x.FixPrefix(dpPrefix));
 
 		}
-		var result = tfService.CreateSpaceData(new TfCreateSpaceData
+		List<string> providerColumns = dataProvider.Columns.Where(x => !String.IsNullOrWhiteSpace(x.DbName)
+			&& step.Columns.Contains(x.DbName)).Select(x => x.DbName!).ToList();
+
+		var spData = new TfCreateSpaceData
 		{
 			Id = step.SpaceDataId == Guid.Empty ? Guid.NewGuid() : step.SpaceDataId,
 			SpaceId = step.SpaceId,
 			DataProviderId = step.DataProviderId,
 			Name = step.Name,
-			Columns = step.Columns,
+			Columns = providerColumns,
 			Filters = step.Filters,
 			SortOrders = step.SortOrders,
-		});
+		};
+		foreach (var col in step.Columns)
+		{
+			var colArray = col.Split(".");
+			if (colArray.Length != 2) continue;
+			if (!dataProvider.Identities.Any(x => x.DataIdentity == colArray[0])) continue;
+
+			var spaceDataIdentity = spData.Identities.FirstOrDefault(x => x.DataIdentity == colArray[0]);
+			if (spaceDataIdentity == null)
+			{
+				spaceDataIdentity = new TfSpaceDataIdentity
+				{
+					Id = Guid.NewGuid(),
+					Columns = new List<string>(),
+					DataIdentity = colArray[0],
+					SpaceDataId = spData.Id,
+				};
+				spData.Identities.Add(spaceDataIdentity);
+			}
+			spaceDataIdentity.Columns.Add(colArray[1]);
+		}
+
+
+		var result = tfService.CreateSpaceData(spData);
+
 		return Task.CompletedTask;
 	}
 	public Task ReverseStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult? stepResult)

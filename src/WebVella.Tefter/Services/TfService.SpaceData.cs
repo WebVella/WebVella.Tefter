@@ -185,26 +185,22 @@ public partial class TfService : ITfService
 	public TfSpaceData CreateSpaceData(
 		TfCreateSpaceData createSpaceData)
 	{
+		if (createSpaceData is null) throw new ArgumentException("required", nameof(createSpaceData));
 		try
 		{
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				TfSpaceData spaceData = null;
+				var spaceData = new TfSpaceData();
+				spaceData.Id = createSpaceData.Id;
+				spaceData.DataProviderId = createSpaceData.DataProviderId;
+				spaceData.Name = createSpaceData.Name;
+				spaceData.SpaceId = createSpaceData.SpaceId;
+				spaceData.Filters = createSpaceData.Filters ?? new List<TfFilterBase>();
+				spaceData.Columns = createSpaceData.Columns ?? new List<string>();
+				spaceData.SortOrders = createSpaceData.SortOrders ?? new List<TfSort>();
 
-				if (createSpaceData is not null)
-				{
-					spaceData = new TfSpaceData();
-					spaceData.Id = createSpaceData.Id;
-					spaceData.DataProviderId = createSpaceData.DataProviderId;
-					spaceData.Name = createSpaceData.Name;
-					spaceData.SpaceId = createSpaceData.SpaceId;
-					spaceData.Filters = createSpaceData.Filters ?? new List<TfFilterBase>();
-					spaceData.Columns = createSpaceData.Columns ?? new List<string>();
-					spaceData.SortOrders = createSpaceData.SortOrders ?? new List<TfSort>();
-
-					if (spaceData.Id == Guid.Empty)
-						spaceData.Id = Guid.NewGuid();
-				}
+				if (spaceData.Id == Guid.Empty)
+					spaceData.Id = Guid.NewGuid();
 
 				new TfSpaceDataValidator(this)
 					.ValidateCreate(spaceData)
@@ -220,6 +216,54 @@ public partial class TfService : ITfService
 
 				if (!success)
 					throw new TfDboServiceException("Insert<TfSpaceDataDbo> failed.");
+
+				if (createSpaceData.Identities.Count > 0)
+				{
+					var allProviders = GetDataProviders();
+					var sharedColumns = GetSharedColumns();
+
+					foreach (var sdIdentity in createSpaceData.Identities)
+					{
+						foreach (var column in sdIdentity.Columns)
+						{
+							var columnProvider = allProviders.FirstOrDefault(x => x.Columns.Any(y => y.DbName == column));
+							var sharedColumn = sharedColumns.FirstOrDefault(x => x.DbName == column);
+							if (columnProvider is null && sharedColumn is null) continue;
+
+							var colSubmit = new TfSpaceDataColumn
+							{
+								DataIdentity = sdIdentity.DataIdentity,
+								ColumnName = $"{sdIdentity}.{column}",
+								SourceName = null,
+								SourceCode = null,
+								SourceColumnName = null,
+								SourceType = TfAuxDataSourceType.NotFound,
+								DbType = TfDatabaseColumnType.Text
+
+
+							};
+							if (columnProvider is not null)
+							{
+								var providerColumn = columnProvider!.Columns.Single(x => x.DbName == column);
+								colSubmit.SourceName = columnProvider.Name;
+								colSubmit.SourceCode = columnProvider.ColumnPrefix;
+								colSubmit.SourceColumnName = column;
+								colSubmit.SourceType = TfAuxDataSourceType.AuxDataProvider;
+								colSubmit.DbType = providerColumn.DbType;
+							}
+							else
+							{
+								colSubmit.SourceName = sharedColumn!.DbName;
+								colSubmit.SourceCode = null;
+								colSubmit.SourceColumnName = sharedColumn!.DbName;
+								colSubmit.SourceType = TfAuxDataSourceType.SharedColumn;
+								colSubmit.DbType = sharedColumn!.DbType;
+							}
+
+							AddSpaceDataColumn(spaceData.Id, colSubmit);
+						}
+					}
+				}
 
 				scope.Complete();
 
@@ -546,7 +590,7 @@ public partial class TfService : ITfService
 			{
 				var item = new TfSpaceDataColumn
 				{
-					DataIdentity = schemaColumn.DataIdentity,
+					DataIdentity = schemaColumn.DataIdentity?.DataIdentity,
 					ColumnName = schemaColumn.DbName,
 				};
 				if (schemaColumn.SharedColumn is not null)
@@ -607,13 +651,13 @@ public partial class TfService : ITfService
 		else if (column.SourceType == TfAuxDataSourceType.AuxDataProvider
 		|| column.SourceType == TfAuxDataSourceType.SharedColumn)
 		{
-			if (column.DataIdentity is null)
+			if (String.IsNullOrWhiteSpace(column.DataIdentity))
 				throw new Exception("column Data Identity is required");
 
 			if (column.SourceColumnName is null)
 				throw new Exception("column SourceColumnName is required");
 
-			var dataIdentity = spaceData!.Identities.FirstOrDefault(x => x.DataIdentity == column!.DataIdentity!.DataIdentity);
+			var dataIdentity = spaceData!.Identities.FirstOrDefault(x => x.DataIdentity == column!.DataIdentity);
 			if (dataIdentity is null)
 			{
 				CreateSpaceDataIdentity(new TfSpaceDataIdentity
@@ -621,7 +665,7 @@ public partial class TfService : ITfService
 					Id = Guid.NewGuid(),
 					SpaceDataId = spaceDataId,
 					Columns = new List<string> { column!.SourceColumnName },
-					DataIdentity = column!.DataIdentity.DataIdentity,
+					DataIdentity = column!.DataIdentity,
 				});
 			}
 			else
@@ -674,15 +718,15 @@ public partial class TfService : ITfService
 			}
 		}
 		else if (column.SourceType == TfAuxDataSourceType.AuxDataProvider
-		|| column.SourceType == TfAuxDataSourceType.SharedColumn)
+			|| column.SourceType == TfAuxDataSourceType.SharedColumn)
 		{
-			if (column.DataIdentity is null)
+			if (String.IsNullOrWhiteSpace(column.DataIdentity))
 				throw new Exception("column Data Identity is required");
 
 			if (column.SourceColumnName is null)
 				throw new Exception("column SourceColumnName is required");
 
-			var dataIdentity = spaceData!.Identities.FirstOrDefault(x => x.DataIdentity == column!.DataIdentity!.DataIdentity);
+			var dataIdentity = spaceData!.Identities.FirstOrDefault(x => x.DataIdentity == column!.DataIdentity);
 			if (dataIdentity is not null)
 			{
 				if (dataIdentity.Columns is null)

@@ -112,6 +112,10 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 			Width = "25vw",
 			TrapFocus = false
 		});
+		var result = await _dialog.Result;
+		if (!result.Cancelled && result.Data != null) { 
+			var item = (long)result.Data;
+		}
 	}
 
 	private async Task _initValues()
