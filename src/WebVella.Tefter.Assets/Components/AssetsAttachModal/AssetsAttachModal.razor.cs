@@ -49,10 +49,7 @@ public partial class AssetsAttachModal : TfFormBaseComponent, IDialogContentComp
 			_isLoading = false;
 			await InvokeAsync(StateHasChanged);
 		}
-
 	}
-
-
 	private async Task _addLink()
 	{
 		if (_selectedFolder is null) return;
@@ -73,7 +70,7 @@ public partial class AssetsAttachModal : TfFormBaseComponent, IDialogContentComp
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
 			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
+			TrapFocus = false,
 		});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)

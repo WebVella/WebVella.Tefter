@@ -8,12 +8,14 @@
 
 @* Footer *@
 <FluentDialogFooter>
-	@if (String.IsNullOrWhiteSpace(_error))
-	{
-		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
-					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
-	}
-	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+	<FluentStack HorizontalAlignment="@(Content.IsAddOnly? HorizontalAlignment.Center: HorizontalAlignment.Right)">
+		@if (String.IsNullOrWhiteSpace(_error))
+		{
+			<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
+						  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
+		}
+		<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+	</FluentStack>
 </FluentDialogFooter>
 
 @* Body *@
