@@ -147,7 +147,8 @@ public partial class TfServiceTest : BaseTest
 				{
 						new TfFilterOr(new[]
 							{
-								(TfFilterBase)new TfFilterNumeric("sc_int", TfFilterNumericComparisonMethod.Equal, "5" )
+								(TfFilterBase)new TfFilterNumeric($"dp{provider.Index}_int_column", TfFilterNumericComparisonMethod.Equal, "5" ),
+								(TfFilterBase)new TfFilterNumeric("test_data_identity_2.sc_int", TfFilterNumericComparisonMethod.Equal, "5" )
 							})
 				},
 				userSorts: new List<TfSort> {
@@ -158,7 +159,7 @@ public partial class TfServiceTest : BaseTest
 							ColumnName =$"dp{provider.Index}_guid_column",
 							Direction=TfSortDirection.DESC} ,
 						new TfSort {
-							ColumnName ="sc_int",
+							ColumnName ="test_data_identity_2.sc_int",
 							Direction=TfSortDirection.ASC}
 				});
 

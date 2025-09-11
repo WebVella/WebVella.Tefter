@@ -388,7 +388,7 @@ public partial class TfService : ITfService
 					_sorts = _userSorts.ToList();
 					foreach (var sortOrder in _userSorts)
 					{
-						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.ColumnName);
+						var column = GetColumnObject(_availableColumns, sortOrder.ColumnName);
 						if (column is not null)
 							_sortColumns.Add(column);
 					}
@@ -398,7 +398,7 @@ public partial class TfService : ITfService
 					_sorts = _presetSorts.ToList();
 					foreach (var sortOrder in _presetSorts)
 					{
-						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.ColumnName);
+						var column = GetColumnObject(_availableColumns, sortOrder.ColumnName);
 						if (column is not null)
 							_sortColumns.Add(column);
 					}
@@ -408,7 +408,7 @@ public partial class TfService : ITfService
 					_sorts = _spaceData.SortOrders.ToList();
 					foreach (var sortOrder in _spaceData.SortOrders)
 					{
-						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.ColumnName);
+						var column = GetColumnObject(_availableColumns, sortOrder.ColumnName);
 						if (column is not null)
 							_sortColumns.Add(column);
 					}
@@ -495,7 +495,7 @@ public partial class TfService : ITfService
 			var filterColumn = _filterColumns.FirstOrDefault(x => x.DbName == filter.ColumnName);
 			if (filterColumn is null)
 			{
-				var availableColumn = _availableColumns.FirstOrDefault(x => x.DbName == filter.ColumnName);
+				SqlBuilderColumn? availableColumn = GetColumnObject(_availableColumns, filter.ColumnName);
 				if (availableColumn is not null)
 					_filterColumns.Add(availableColumn);
 			}
@@ -623,7 +623,8 @@ public partial class TfService : ITfService
 				bool first = true;
 				foreach (var sort in _sorts)
 				{
-					var column = _availableColumns.SingleOrDefault(x => x.DbName == sort.ColumnName);
+					//var column = _availableColumns.SingleOrDefault(x => x.DbName == sort.ColumnName);
+					var column = GetColumnObject(_availableColumns, sort.ColumnName);
 
 					//ignore columns not found in data provider
 					if (column is null)
@@ -729,7 +730,8 @@ public partial class TfService : ITfService
 				return string.Empty;
 			}
 
-			var column = _filterColumns.SingleOrDefault(x => x.DbName == filter.ColumnName);
+
+			SqlBuilderColumn? column = GetColumnObject(_filterColumns,filter.ColumnName);
 			if (column is null)
 				return string.Empty;
 
@@ -954,5 +956,24 @@ public partial class TfService : ITfService
 			return value;
 		}
 
+		private SqlBuilderColumn? GetColumnObject(List<SqlBuilderColumn> columns, string columnName)
+		{
+			if (columnName.Contains('.'))
+			{
+				string[] parts = columnName.Split('.');
+				if (parts.Length == 2)
+				{
+					return columns.FirstOrDefault(x => x.DbName == parts[1] && x.DataIdentity == parts[0]);
+				}
+				return null;
+			}
+			else
+			{
+				return columns.FirstOrDefault(x => x.DbName == columnName && string.IsNullOrWhiteSpace(x.DataIdentity) );
+			}
+
+
+				
+		}
 	}
 }

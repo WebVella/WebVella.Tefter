@@ -344,7 +344,7 @@ public partial class TfService : ITfService
 			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
 
 			//do not make sql request if no rows are required
-			DataTable dataTable = null;
+			DataTable? dataTable = null;
 			if (noRows)
 				dataTable = new DataTable();
 			else
@@ -1528,38 +1528,6 @@ public partial class TfService : ITfService
 		sql.AppendLine();
 		return sql.ToString();
 	}
-
-	//private string BuildUpdateRowJoinKeysOnlySql(
-	//	TfDataProvider provider,
-	//	Guid tfId,
-	//	Dictionary<string, object> values,
-	//	out List<NpgsqlParameter> parameters)
-	//{
-	//	parameters = new List<NpgsqlParameter>();
-	//	StringBuilder sql = new StringBuilder();
-
-	//	sql.AppendLine($"UPDATE dp{provider.Index} SET ");
-
-	//	foreach (var joinKey in provider.JoinKeys)
-	//	{
-	//		var joinKeyName = $"tf_jk_{joinKey.DbName}_id";
-	//		parameters.Add(new NpgsqlParameter($"@{joinKeyName}", (Guid)values[joinKeyName]));
-	//		sql.Append($"{joinKeyName} = @{joinKeyName}");
-	//		sql.AppendLine(",");
-
-	//		var joinKeyVersion = $"tf_jk_{joinKey.DbName}_version";
-	//		parameters.Add(new NpgsqlParameter($"@{joinKeyVersion}", (short)values[joinKeyVersion]));
-	//		sql.Append($"{joinKeyVersion} = @{joinKeyVersion}");
-	//		sql.AppendLine(",");
-	//	}
-
-	//	sql.AppendLine("tf_id = @tf_id");
-	//	parameters.Add(new NpgsqlParameter("@tf_id", tfId));
-	//	sql.AppendLine("WHERE tf_id = @tf_id ");
-
-	//	sql.AppendLine();
-	//	return sql.ToString();
-	//}
 
 	public void UpdateValue(
 		TfDataProvider provider,
