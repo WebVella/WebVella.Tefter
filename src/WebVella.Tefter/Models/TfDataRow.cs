@@ -21,7 +21,6 @@ public class TfDataRow : IEnumerable
 			int index = DataTable.Columns.IndexOf(x => x.Name == columnName);
 			if (index == -1)
 				return null;
-			//throw new Exception($"A column with name {columnName} is not found in DataTable object.");
 
 			return _values[index];
 		}
@@ -52,6 +51,7 @@ public class TfDataRow : IEnumerable
 
 			if (column.IsJoinColumn)
 			{
+				//this is internal case where we set list of values
 				switch (column.DbType)
 				{
 					case TfDatabaseColumnType.Guid:
@@ -182,10 +182,6 @@ public class TfDataRow : IEnumerable
 		Long,
 		Decimal
 	}
-
-	//private static List<object?> ConvertToNumericType(List<object?> values, TfDatabaseColumnType targetType)
-	//{
-	//}
 
 	private static object? ConvertToNumericType(object value, TfDatabaseColumnType targetType)
 	{
