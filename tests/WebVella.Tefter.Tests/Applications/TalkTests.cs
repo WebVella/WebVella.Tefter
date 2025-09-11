@@ -36,8 +36,7 @@ public partial class TalkTests : BaseTest
 				channel = talkService.CreateChannel(channel);
 				channel.Should().NotBeNull();
 
-				channel.Name = "Test channel 1";
-				channel = talkService.UpdateChannel(channel);
+				channel = talkService.UpdateChannel( new UpdateTalkChannelModel(channel.Id, "Test channel 1"));
 				channel.Name.Should().Be("Test channel 1");
 
 
@@ -58,7 +57,7 @@ public partial class TalkTests : BaseTest
 	}
 
 	[Fact]
-	public async Task Talk_Thread_CRUD()
+	public async Task Talk_Thread_ByIdentityValues()
 	{
 		using (await locker.LockAsync())
 		{
@@ -109,6 +108,91 @@ public partial class TalkTests : BaseTest
 				threads.Count.Should().Be(1);
 
 				var firstDataIdentityValue = rowIdentityIds.First();
+
+				threads = talkService.GetThreads(channel.Id, dataIdentityValue: firstDataIdentityValue);
+				threads.Count.Should().Be(1);
+
+				CreateTalkSubThread thread2 = new CreateTalkSubThread
+				{
+					ThreadId = createdThread1.Id,
+					Content = "sub thread content2",
+					UserId = user.Id,
+				};
+
+				var createdThread2 = talkService.CreateSubThread(thread2);
+				threads = talkService.GetThreads(channel.Id, firstDataIdentityValue);
+				threads.Count.Should().Be(1);
+				threads[0].SubThread.Count.Should().Be(1);
+
+				CreateTalkSubThread thread3 = new CreateTalkSubThread
+				{
+					ThreadId = createdThread1.Id,
+					Content = "sub thread content3",
+					UserId = user.Id,
+					VisibleInChannel = true
+				};
+
+				var createdThread3 = talkService.CreateSubThread(thread3);
+				threads = talkService.GetThreads(channel.Id, firstDataIdentityValue);
+				threads.Count.Should().Be(2);
+			}
+		}
+	}
+
+	[Fact]
+	public async Task Talk_Thread_ByRowIds()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITalkService talkService = ServiceProvider.GetRequiredService<ITalkService>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
+				var dataTable = tfService.QueryDataProvider(provider);
+
+				List<Guid> rowIds = new List<Guid>();
+				for (int i = 0; i < 5; i++)
+					rowIds.Add((Guid)dataTable.Rows[i]["tf_id"]);
+
+				var user = tfService.GetDefaultSystemUser();
+				if (user == null) throw new Exception("No default system user found");
+
+				TalkChannel channel = new TalkChannel
+				{
+					Id = Guid.NewGuid(),
+					Name = "Test Channel",
+					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					CountSharedColumnName = "sc_int_row_id"
+				};
+				var channelCreated = talkService.CreateChannel(channel);
+
+				CreateTalkThreadWithRowIdModel thread = new CreateTalkThreadWithRowIdModel
+				{
+					ChannelId = channel.Id,
+					Content = "content",
+					Type = TalkThreadType.Comment,
+					UserId = user.Id,
+					RowIds = rowIds,
+					DataProviderId = provider.Id
+				};
+
+				var createdThread1 = talkService.CreateThread(thread);
+
+				var th = talkService.GetThread(createdThread1.Id);
+				th.Should().NotBeNull();
+				th.ConnectedDataIdentityValuesCount.Should().Be(rowIds.Count);
+
+				var connectedIdentityValues = talkService.GetThreadRelatedIdentityValues(th);
+				connectedIdentityValues.Count.Should().Be(rowIds.Count);
+
+				var threads = talkService.GetThreads(channel.Id, dataIdentityValue: null);
+				threads.Count.Should().Be(1);
+
+
+				var firstDataIdentityValue = talkService.GetThreadRelatedIdentityValues(th).First();
 
 				threads = talkService.GetThreads(channel.Id, dataIdentityValue: firstDataIdentityValue);
 				threads.Count.Should().Be(1);

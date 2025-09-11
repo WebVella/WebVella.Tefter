@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Talk.Services;
+﻿using FluentValidation;
+
+namespace WebVella.Tefter.Talk.Services;
 
 public partial interface ITalkService
 {
@@ -15,7 +17,7 @@ public partial interface ITalkService
         TalkChannel channel);
 
     TalkChannel UpdateChannel(
-        TalkChannel channel);
+        UpdateTalkChannelModel channel);
 
     void DeleteChannel(
         Guid channelId);
@@ -110,20 +112,18 @@ internal partial class TalkService : ITalkService
     }
 
     public TalkChannel UpdateChannel(
-        TalkChannel channel)
+        UpdateTalkChannelModel channel)
     {
         if (channel == null)
             throw new NullReferenceException("Channel object is null");
 
-        new TalkChannelValidator(this, _tfService)
+        new TalkUpdateChannelValidator(this, _tfService)
             .ValidateUpdate(channel)
             .ToValidationException()
             .ThrowIfContainsErrors();
 
         var SQL = "UPDATE talk_channel SET " +
-            "name=@name, " +
-            "data_identity=@data_identity, " +
-            "count_shared_column_name=@count_shared_column_name " +
+            "name=@name " + 
             "WHERE id = @id";
 
         var idPar = TalkUtility.CreateParameter(
@@ -136,29 +136,17 @@ internal partial class TalkService : ITalkService
             channel.Name,
             DbType.StringFixedLength);
 
-        var dataIdentityPar = TalkUtility.CreateParameter(
-            "data_identity",
-            channel.DataIdentity,
-            DbType.StringFixedLength);
-
-        var countSharedColumnNamePar = TalkUtility.CreateParameter(
-            "count_shared_column_name",
-            channel.CountSharedColumnName,
-            DbType.StringFixedLength);
-
         var dbResult = _dbService.ExecuteSqlNonQueryCommand(
             SQL,
             idPar,
-            namePar,
-            dataIdentityPar,
-            countSharedColumnNamePar);
+            namePar);
 
         if (dbResult != 1)
             throw new Exception("Failed to update row in database for channel object");
 
-        channel = GetChannel(channel.Id);
-        ChannelUpdated?.Invoke(this, channel);
-        return channel;
+        var updatedChannel = GetChannel(channel.Id);
+        ChannelUpdated?.Invoke(this, updatedChannel);
+        return updatedChannel;
     }
 
     public void DeleteChannel(
@@ -378,19 +366,6 @@ internal partial class TalkService : ITalkService
             });
         }
 
-        public ValidationResult ValidateUpdate(
-            TalkChannel channel)
-        {
-            if (channel == null)
-                return new ValidationResult(new[] { new ValidationFailure("",
-                    "The channel object is null.") });
-
-            return this.Validate(channel, options =>
-            {
-                options.IncludeRuleSets("general", "update");
-            });
-        }
-
         public ValidationResult ValidateDelete(
             TalkChannel channel)
         {
@@ -403,6 +378,48 @@ internal partial class TalkService : ITalkService
                 options.IncludeRuleSets("delete");
             });
         }
+    }
+
+    internal class TalkUpdateChannelValidator
+       : AbstractValidator<UpdateTalkChannelModel>
+    {
+        private readonly ITfService _tfService;
+        private readonly ITalkService _talkService;
+
+        public TalkUpdateChannelValidator(
+            ITalkService talkService,
+            ITfService tfService)
+        {
+
+            _talkService = talkService;
+            _tfService = tfService;
+
+            RuleSet("general", () =>
+            {
+                RuleFor(channel => channel.Id)
+                    .NotEmpty()
+                    .WithMessage("The channel id is required.");
+
+                RuleFor(channel => channel.Name)
+                    .NotEmpty()
+                    .WithMessage("The channel name is required.");
+            });
+
+        }
+
+        public ValidationResult ValidateUpdate(
+            UpdateTalkChannelModel channel)
+        {
+            if (channel == null)
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "The channel object is null.") });
+
+            return this.Validate(channel, options =>
+            {
+                options.IncludeRuleSets("general");
+            });
+        }
+
     }
 
     #endregion

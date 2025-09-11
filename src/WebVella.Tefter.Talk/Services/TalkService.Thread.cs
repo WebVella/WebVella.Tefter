@@ -92,8 +92,8 @@ WITH sk_identity_info AS (
 	SELECT trs.id, count( dic.* ) AS count
 	FROM talk_thread trs
 		LEFT OUTER JOIN tf_data_identity_connection dic ON 
-			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = 'tf_row_id' AND dic.data_identity_1 = 'tf_row_id' ) OR
-			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = 'tf_row_id' AND dic.data_identity_2 = 'tf_row_id' ) 
+			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_1 = '{channelDataIdentity}' ) OR
+			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_2 = '{channelDataIdentity}' ) 
 	GROUP BY trs.id
 ),
 root_threads AS (
@@ -126,8 +126,8 @@ WITH sk_identity_info AS (
 	SELECT trs.id, count( dic.* ) AS count
 	FROM talk_thread trs
 		LEFT OUTER JOIN tf_data_identity_connection dic ON 
-			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = 'tf_row_id' AND dic.data_identity_1 = 'tf_row_id' ) OR
-			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = 'tf_row_id' AND dic.data_identity_2 = 'tf_row_id' ) 
+			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_1 = '{channelDataIdentity}' ) OR
+			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_2 = '{channelDataIdentity}' ) 
 	GROUP BY trs.id
 ),
 root_threads AS (

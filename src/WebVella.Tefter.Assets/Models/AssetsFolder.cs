@@ -28,3 +28,24 @@ public record AssetsFolder
 		CountSharedColumnName = countSharedColumnName;
 	}
 }
+
+public record UpdateAssetsFolderModel
+{
+    [Required]
+    public Guid Id { get; set; }
+    [Required]
+    public string Name { get; set; }
+
+    public UpdateAssetsFolderModel() :
+        this(Guid.Empty, string.Empty)
+    {
+    }
+
+    public UpdateAssetsFolderModel(
+        Guid id,
+        string name )
+    {
+        Id = id;
+        Name = name;
+    }
+}

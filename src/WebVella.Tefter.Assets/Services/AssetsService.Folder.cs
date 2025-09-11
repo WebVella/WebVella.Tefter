@@ -14,7 +14,7 @@ public partial interface IAssetsService
         AssetsFolder folder);
 
     AssetsFolder UpdateFolder(
-        AssetsFolder folder);
+        UpdateAssetsFolderModel folder);
 
     void DeleteFolder(
         Guid folderId);
@@ -109,20 +109,18 @@ internal partial class AssetsService : IAssetsService
     }
 
     public AssetsFolder UpdateFolder(
-        AssetsFolder folder)
+        UpdateAssetsFolderModel folder)
     {
         if (folder == null)
             throw new NullReferenceException("Folder object is null");
 
-        new AssetFolderValidator(this, _tfService)
+        new UpdateAssetFolderValidator(this, _tfService)
             .ValidateUpdate(folder)
             .ToValidationException()
             .ThrowIfContainsErrors();
 
         var SQL = "UPDATE assets_folder SET " +
-            "name=@name, " +
-            "data_identity=@data_identity, " +
-            "count_shared_column_name=@count_shared_column_name " +
+            "name=@name " +
             "WHERE id = @id";
 
         var idPar = CreateParameter(
@@ -135,29 +133,17 @@ internal partial class AssetsService : IAssetsService
             folder.Name,
             DbType.StringFixedLength);
 
-        var dataIdentityPar = CreateParameter(
-            "data_identity",
-            folder.DataIdentity,
-            DbType.StringFixedLength);
-
-        var countSharedColumnNamePar = CreateParameter(
-            "count_shared_column_name",
-            folder.CountSharedColumnName,
-            DbType.StringFixedLength);
-
         var dbResult = _dbService.ExecuteSqlNonQueryCommand(
             SQL,
             idPar,
-            namePar,
-            dataIdentityPar,
-            countSharedColumnNamePar);
+            namePar);
 
         if (dbResult != 1)
             throw new Exception("Failed to update row in database for channel object");
 
-        folder = GetFolder(folder.Id);
-        FolderUpdated?.Invoke(this, folder);
-        return folder;
+        var updatedFolder = GetFolder(folder.Id);
+        FolderUpdated?.Invoke(this, updatedFolder);
+        return updatedFolder;
     }
 
     public void DeleteFolder(
@@ -409,5 +395,43 @@ internal partial class AssetsService : IAssetsService
         }
     }
 
+    internal class UpdateAssetFolderValidator
+       : AbstractValidator<UpdateAssetsFolderModel>
+    {
+        private readonly IAssetsService _assetService;
+        private readonly ITfService _tfService;
+        public UpdateAssetFolderValidator(
+            IAssetsService assetService,
+            ITfService tfService)
+        {
+
+            _assetService = assetService;
+            _tfService = tfService;
+
+            RuleSet("general", () =>
+            {
+                RuleFor(folder => folder.Id)
+                    .NotEmpty()
+                    .WithMessage("The folder id is required.");
+
+                RuleFor(folder => folder.Name)
+                    .NotEmpty()
+                    .WithMessage("The folder name is required.");
+            });
+        }
+
+        public ValidationResult ValidateUpdate(
+            UpdateAssetsFolderModel folder)
+        {
+            if (folder == null)
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "The folder object is null.") });
+
+            return this.Validate(folder, options =>
+            {
+                options.IncludeRuleSets("general");
+            });
+        }
+    }
     #endregion
 }

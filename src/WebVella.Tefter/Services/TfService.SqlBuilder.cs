@@ -631,7 +631,7 @@ public partial class TfService : ITfService
 						continue;
 
 					string comma = first ? " " : ", ";
-					string direction = sort.Direction == TfSortDirection.ASC ? "ASC" : "DESC";
+					string direction = sort.Direction == TfSortDirection.ASC ? " ASC NULLS FIRST " : " DESC NULLS LAST ";
 					if (string.IsNullOrWhiteSpace(column.DataIdentity))
 						sortSb.Append($"{comma}{column.TableAlias}.{column.DbName} {direction}");
 					else

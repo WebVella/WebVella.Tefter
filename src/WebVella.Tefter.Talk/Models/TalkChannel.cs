@@ -28,3 +28,27 @@ public record TalkChannel
 		CountSharedColumnName = countSharedColumnName;
 	}
 }
+
+
+public record UpdateTalkChannelModel
+{
+    [Required]
+    public Guid Id { get; set; }
+    [Required]
+    public string Name { get; set; }
+    public string DataIdentity { get; set; } = null;
+    public string CountSharedColumnName { get; set; } = null;
+
+    public UpdateTalkChannelModel() :
+        this(Guid.Empty, string.Empty)
+    {
+    }
+
+    public UpdateTalkChannelModel(
+        Guid id,
+        string name)
+    {
+        Id = id;
+        Name = name;
+    }
+}

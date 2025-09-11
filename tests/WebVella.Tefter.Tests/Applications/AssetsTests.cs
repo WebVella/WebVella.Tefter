@@ -40,8 +40,7 @@ public partial class AssetsTests : BaseTest
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
 
-				folder.Name = "Test folder 1";
-				folderResult = assetService.UpdateFolder(folder);
+				folderResult = assetService.UpdateFolder(new UpdateAssetsFolderModel(folder.Id, "Test folder 1"));
 				folder.Name.Should().Be("Test folder 1");
 
 				assetService.DeleteFolder(folder.Id);
