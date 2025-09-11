@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Talk.Components;
+﻿using WebVella.Tefter.UI.Components;
+
+namespace WebVella.Tefter.Talk.Components;
 
 public partial class AssetSpaceViewSelectorAction : TfBaseComponent,
 	ITfScreenRegionComponent<TfSpaceViewSelectorActionScreenRegionContext>
@@ -17,6 +19,9 @@ public partial class AssetSpaceViewSelectorAction : TfBaseComponent,
 	[Parameter]
 	public TfSpaceViewSelectorActionScreenRegionContext RegionContext { get; set; }
 
+	[CascadingParameter(Name = "TucSpaceViewPageContent")]
+	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
+
 	private IDialogReference _dialog;
 	private async Task _onClick()
 	{
@@ -33,7 +38,42 @@ public partial class AssetSpaceViewSelectorAction : TfBaseComponent,
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
 					Width = TfConstants.DialogWidthLarge,
-					TrapFocus = false
+					TrapFocus = false,
+					OnDialogClosing = EventCallback.Factory.Create<DialogInstance>(this, async (instance) =>
+					{
+						var dataChange = _applyCountChange(
+							data: TucSpaceViewPageContent.GetCurrentData(),
+							countChange: ((AssetsAttachModalContext)instance.Content).CountChange);
+						if (dataChange is null) return;
+						TucSpaceViewPageContent.OnDataChange(dataChange);
+					})
 				});
+	}
+
+	private Dictionary<Guid, Dictionary<string, object>>? _applyCountChange(TfDataTable? data, Dictionary<Guid, Dictionary<string, long>>? countChange)
+	{
+		if (data is null || countChange is null || countChange.Keys.Count == 0) return null;
+		var dataChange = new Dictionary<Guid, Dictionary<string, object>>();
+		foreach (var rowId in countChange.Keys)
+		{
+			var row = data.Rows[rowId];
+			if (row is null) continue;
+			foreach (var columnName in countChange[rowId].Keys)
+			{
+				var column = data.Columns[columnName];
+				if (column is null) continue;
+				if (column.DbType != TfDatabaseColumnType.ShortInteger
+				&& column.DbType != TfDatabaseColumnType.Integer
+				&& column.DbType != TfDatabaseColumnType.LongInteger
+				&& column.DbType != TfDatabaseColumnType.Number) continue;
+
+                if (!dataChange.ContainsKey(rowId))
+					dataChange[rowId] = new();
+				dataChange[rowId][columnName] = (row[columnName].ToLong() ?? 0) + countChange[rowId][columnName];
+			}
+		}
+
+		return dataChange;
+
 	}
 }

@@ -132,6 +132,14 @@
 	cursor: pointer;
 }
 
+::deep .asset-panel__body .asset-item__meta__title .broadcast {
+	display:inline-flex;
+	justify-content:center;
+	align-items:center;
+	margin-left:5px;
+	vertical-align:text-bottom;
+}
+
 ::deep .asset-panel__body .asset-item__meta__description {
 	color: var(--neutral-base-color);
 	font-size: 0.85rem;

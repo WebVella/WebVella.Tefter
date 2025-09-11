@@ -78,6 +78,17 @@ public partial class TalkThreadModal : TfFormBaseComponent, IDialogContentCompon
 			TalkService.CreateThread(submit);
 			ToastService.ShowSuccess(LOC("Message is sent"));
 			_content = null;
+			if (!String.IsNullOrWhiteSpace(_selectedChannel.DataIdentity)
+				&& !String.IsNullOrWhiteSpace(_selectedChannel.CountSharedColumnName))
+			{
+				var columnName = $"{_selectedChannel.DataIdentity}.{_selectedChannel.CountSharedColumnName}";
+				foreach (var rowId in Content.SelectedRowIds)
+				{
+					Content.CountChange[rowId] = new();
+					Content.CountChange[rowId][columnName] = 1;
+				}
+			}
+
 			await _cancel();
 		}
 		catch (Exception ex)
@@ -106,5 +117,6 @@ public record TalkThreadModalContext
 	public TfUser CurrentUser { get; set; }
 	public Guid DataProviderId { get; set; }
 	public List<Guid> SelectedRowIds { get; set; } = new();
+	public Dictionary<Guid, Dictionary<string, long>> CountChange { get; set; } = new();
 
 }

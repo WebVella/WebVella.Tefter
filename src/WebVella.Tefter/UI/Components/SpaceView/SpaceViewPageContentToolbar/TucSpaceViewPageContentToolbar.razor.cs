@@ -7,7 +7,8 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
-	[Parameter] public EventCallback<string> OnSearch { get; set; }
+	[CascadingParameter(Name = "TucSpaceViewPageContent")] 
+	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
 	[Parameter] public TfSpacePageAddonContext Context { get; set; } = default!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
 	[Parameter] public TfSpaceData SpaceData { get; set; } = default!;
@@ -72,7 +73,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 		}
 	}
 
-	private async Task _searchChanged(string value) => await OnSearch.InvokeAsync(value);
+	private async Task _searchChanged(string value) => await TucSpaceViewPageContent.OnSearch(value);
 
 	private Task _onAddRowClick()
 	{

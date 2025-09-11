@@ -171,8 +171,16 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 
 	private async Task _deleteAsset(Asset asset)
 	{
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this file deleted?")))
-			return;
+		if (asset.ConnectedDataIdentityValuesCount > 1)
+		{
+			if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("IMPORTANT: This asset is connected to multiple data rows.\r\nAre you sure that you need it deleted?")))
+				return;
+		}
+		else
+		{
+			if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this asset deleted?")))
+				return;
+		}
 
 		try
 		{

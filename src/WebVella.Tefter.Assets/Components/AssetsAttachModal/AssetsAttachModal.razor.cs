@@ -13,7 +13,7 @@ public partial class AssetsAttachModal : TfFormBaseComponent, IDialogContentComp
 	private AssetsFolder _selectedFolder = null;
 	private string _content = null;
 	private List<object> _submits = new();
-
+	private long _countChange = 0;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -77,6 +77,7 @@ public partial class AssetsAttachModal : TfFormBaseComponent, IDialogContentComp
 		{
 			var submit = (CreateLinkAssetWithRowIdModel)result.Data;
 			_submits.Add(submit);
+			_countChange++;
 		}
 	}
 
@@ -106,11 +107,13 @@ public partial class AssetsAttachModal : TfFormBaseComponent, IDialogContentComp
 		{
 			var submit = (CreateFileAssetWithRowIdModel)result.Data;
 			_submits.Add(submit);
+			_countChange++;
 		}
 	}
 	private void _removeSubmit(object submit)
 	{
 		_submits.Remove(submit);
+		_countChange--;
 	}
 	private async Task _cancel()
 	{
@@ -129,6 +132,18 @@ public partial class AssetsAttachModal : TfFormBaseComponent, IDialogContentComp
 			ToastService.ShowSuccess(LOC("Assets were attached successfully"));
 			_content = null;
 			_submits = new();
+
+			if (_countChange > 0 
+				&& !String.IsNullOrWhiteSpace(_selectedFolder.DataIdentity)
+				&& !String.IsNullOrWhiteSpace(_selectedFolder.CountSharedColumnName))
+			{
+				var columnName = $"{_selectedFolder.DataIdentity}.{_selectedFolder.CountSharedColumnName}";
+				foreach (var rowId in Content.SelectedRowIds)
+				{
+					Content.CountChange[rowId] = new();
+					Content.CountChange[rowId][columnName] = _countChange;
+				}
+			}
 			await _cancel();
 		}
 		catch (Exception ex)
@@ -154,5 +169,6 @@ public record AssetsAttachModalContext
 	public TfUser CurrentUser { get; set; }
 	public Guid DataProviderId { get; set; }
 	public List<Guid> SelectedRowIds { get; set; } = new();
+	public Dictionary<Guid, Dictionary<string, long>> CountChange { get; set; } = new();
 
 }

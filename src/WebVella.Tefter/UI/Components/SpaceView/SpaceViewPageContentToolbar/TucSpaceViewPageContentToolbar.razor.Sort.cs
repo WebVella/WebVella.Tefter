@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 {
-	[Parameter] public EventCallback<List<TfSortQuery>> OnSort { get; set; }
 	private async Task OnSortClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewSortsDialog>(
@@ -16,7 +15,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			await OnSort.InvokeAsync((List<TfSortQuery>)result.Data);
+			await TucSpaceViewPageContent.OnSort((List<TfSortQuery>)result.Data);
 		}
 	}
 }

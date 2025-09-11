@@ -3,27 +3,26 @@
 
 <div class="content-toolbar">
 	<div class="content-toolbar__left">
-		@if (OnSelectAll.HasDelegate)
-		{
-			<FluentButton Id="select-all-menu-toggler"
-						  OnClick="@(() => _selectAllMenuVisible = !_selectAllMenuVisible)" Title="@LOC("select all")" Appearance="@Appearance.Outline"
-						  Loading="SelectAllLoading">
 
-				@if (SelectedRows.Count > 0)
-				{
-					<FluentBadge Appearance="Appearance.Accent">@SelectedRows.Count</FluentBadge>
-					<FluentIcon Value="@TfConstants.GetIcon("CheckmarkStarburst")" Slot="start" Color="@Color.Accent" />
-				}
-				else
-				{
-					<FluentIcon Value="@TfConstants.GetIcon("CheckmarkStarburst")" Color="@Color.Accent" />
-				}
-			</FluentButton>
-			<FluentMenu Width="200" @bind-Open="_selectAllMenuVisible" Anchor="select-all-menu-toggler" UseMenuService="false">
-				<FluentMenuItem OnClick="@OnSelectAllClick">select all</FluentMenuItem>
-				<FluentMenuItem OnClick="@OnDeSelectAllClick">deselect all</FluentMenuItem>
-			</FluentMenu>
-		}
+		<FluentButton Id="select-all-menu-toggler"
+					  OnClick="@(() => _selectAllMenuVisible = !_selectAllMenuVisible)" Title="@LOC("select all")" Appearance="@Appearance.Outline"
+					  Loading="SelectAllLoading">
+
+			@if (SelectedRows.Count > 0)
+			{
+				<FluentBadge Appearance="Appearance.Accent">@SelectedRows.Count</FluentBadge>
+				<FluentIcon Value="@TfConstants.GetIcon("CheckmarkStarburst")" Slot="start" Color="@Color.Accent" />
+			}
+			else
+			{
+				<FluentIcon Value="@TfConstants.GetIcon("CheckmarkStarburst")" Color="@Color.Accent" />
+			}
+		</FluentButton>
+		<FluentMenu Width="200" @bind-Open="_selectAllMenuVisible" Anchor="select-all-menu-toggler" UseMenuService="false">
+			<FluentMenuItem OnClick="@OnSelectAllClick">select all</FluentMenuItem>
+			<FluentMenuItem OnClick="@OnDeSelectAllClick">deselect all</FluentMenuItem>
+		</FluentMenu>
+
 		<FluentSearch Value="@_navState.Search" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")" />
 		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
 			@if ((_navState.Filters?.Count ?? 0) > 0)

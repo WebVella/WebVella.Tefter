@@ -9,7 +9,7 @@
 		{
 			<div style="color:var(--error);" title="@LOC("channel is not configured")">error!</div>
 		}
-		else if (_value is null)
+		else if (_value is null || _value == 0)
 		{
 			<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
 				<FluentIcon Value="@TfConstants.GetIcon("Comment")" />

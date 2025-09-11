@@ -298,7 +298,7 @@
 
 		& > div {
 			display: flex;
-			justify-content: center;
+			justify-content: start;
 			align-items: start;
 			flex-flow: column;
 		}
@@ -316,11 +316,12 @@
 				.check-content {
 					padding: 0;
 					display: flex;
-					flex-flow: row;
-					justify-content: center;
+/*					flex-flow: row;
+					justify-content: center;*/
 					position: relative;
 
 					fluent-button {
+						flex: 1 1 auto;
 						display: block;
 						height: 100%;
 						width: 100%;

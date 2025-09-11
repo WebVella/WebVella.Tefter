@@ -31,7 +31,6 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 	private Guid? _subthreadEditedId = null;
 	private Guid? _threadIdUpdateSaving = null;
 	private bool _threadVisibleInChannel = false;
-	private bool _threadBroadcastVisible = false;
 	private string _dataIdentityValue = null;
 	private TfUser? _currentUser = null;
 
@@ -163,7 +162,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 				&& prevMain.User.Id == message.User.Id
 				&& !message.DeletedOn.HasValue
 				&& !(message.VisibleInChannel && message.ThreadId.HasValue)
-				&& (message.ConnectedDataIdentityValues is null || message.ConnectedDataIdentityValues.Count <= 1)
+				&& (message.ConnectedDataIdentityValuesCount <= 1)
 				&& (message.CreatedOn - prevMain.CreatedOn).TotalMinutes <= 5)
 			{
 				cssList.Add("talk-followup");
@@ -219,8 +218,16 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 	private async Task _deleteThread(TalkThread thread)
 	{
 
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this thread deleted?")))
-			return;
+		if (thread.ConnectedDataIdentityValuesCount > 1)
+		{
+			if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("IMPORTANT: This thread is connected to multiple data rows.\r\nAre you sure that you need it deleted?")))
+				return;
+		}
+		else
+		{
+			if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this thread deleted?")))
+				return;
+		}
 
 		try
 		{
@@ -277,12 +284,6 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 	{
 
 		_threadEditedId = null;
-		return Task.CompletedTask;
-	}
-
-	private Task _showThreadBradcastDetails()
-	{
-		_threadBroadcastVisible = !_threadBroadcastVisible;
 		return Task.CompletedTask;
 	}
 }
