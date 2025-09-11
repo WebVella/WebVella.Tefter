@@ -20,7 +20,7 @@ public partial class AssetsTests : BaseTest
 
 				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
 
-				var user = tfService.GetUser("rumen@webvella.com");
+				var user = tfService.GetDefaultSystemUser();
 
 				AssetsFolder folder = new AssetsFolder
 				{
@@ -240,6 +240,7 @@ public partial class AssetsTests : BaseTest
 
 				var createdLinkAsset = assetService.CreateLinkAsset(linkAssetModel);
 				createdLinkAsset.Should().NotBeNull();
+				createdLinkAsset.ConnectedDataIdentityValuesCount.Should().Be(5);
 				assetService.GetAssetRelatedIdentityValues(createdLinkAsset).Count.Should().Be(5);
 
 				//using tmp file because local file is moved

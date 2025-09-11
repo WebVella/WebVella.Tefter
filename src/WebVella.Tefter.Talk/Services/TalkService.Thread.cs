@@ -87,7 +87,16 @@ internal partial class TalkService : ITalkService
             channelDataIdentity = channel?.DataIdentity;
 
         string SQL_WITHOUT_DATA_IDENTITY =
-$@"WITH root_threads AS (
+$@"
+WITH sk_identity_info AS (
+	SELECT trs.id, count( dic.* ) AS count
+	FROM talk_thread trs
+		LEFT OUTER JOIN tf_data_identity_connection dic ON 
+			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = 'tf_row_id' AND dic.data_identity_1 = 'tf_row_id' ) OR
+			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = 'tf_row_id' AND dic.data_identity_2 = 'tf_row_id' ) 
+	GROUP BY trs.id
+),
+root_threads AS (
 	SELECT id 
 	FROM talk_thread
 	WHERE channel_id = @channel_id AND thread_id IS NULL 
@@ -102,15 +111,26 @@ SELECT
 	tt.created_on,
 	tt.last_updated_on,
 	tt.visible_in_channel,
-	tt.deleted_on
+	tt.deleted_on,
+	sk.count AS data_identity_values_count
 FROM talk_thread tt
 	LEFT OUTER JOIN root_threads  rt ON rt.id = tt.id OR tt.thread_id = rt.id
+	LEFT OUTER JOIN sk_identity_info sk ON tt.id = sk.id
 WHERE rt.id IS NOT NULL
 ORDER BY tt.created_on DESC
 ";
 
 		string SQL_WITH_DATA_IDENTITY =
-$@"WITH root_threads AS (
+$@"
+WITH sk_identity_info AS (
+	SELECT trs.id, count( dic.* ) AS count
+	FROM talk_thread trs
+		LEFT OUTER JOIN tf_data_identity_connection dic ON 
+			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = 'tf_row_id' AND dic.data_identity_1 = 'tf_row_id' ) OR
+			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = 'tf_row_id' AND dic.data_identity_2 = 'tf_row_id' ) 
+	GROUP BY trs.id
+),
+root_threads AS (
 	SELECT id 
 	FROM talk_thread tt
 		LEFT OUTER JOIN tf_data_identity_connection dic ON 
@@ -131,9 +151,11 @@ SELECT
 	tt.created_on,
 	tt.last_updated_on,
 	tt.visible_in_channel,
-	tt.deleted_on
+	tt.deleted_on,
+	sk.count AS data_identity_values_count
 FROM talk_thread tt
 	LEFT OUTER JOIN root_threads  rt ON rt.id = tt.id OR tt.thread_id = rt.id
+	LEFT OUTER JOIN sk_identity_info sk ON tt.id = sk.id
 WHERE rt.id IS NOT NULL
 ORDER BY tt.created_on DESC";
 
@@ -665,7 +687,8 @@ ORDER BY tt.created_on DESC";
 				CreatedOn = dr.Field<DateTime>("created_on"),
 				LastUpdatedOn = dr.Field<DateTime?>("last_updated_on"),
 				DeletedOn = dr.Field<DateTime?>("deleted_on"),
-				SubThread = new List<TalkThread>()
+				ConnectedDataIdentityValuesCount = dr.Field<long>("data_identity_values_count"),
+                SubThread = new List<TalkThread>()
             };
 
 			threadList.Add(thread);

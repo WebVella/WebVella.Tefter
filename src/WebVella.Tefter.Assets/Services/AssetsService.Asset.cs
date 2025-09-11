@@ -88,9 +88,8 @@ internal partial class AssetsService : IAssetsService
 
         SQL =
 $@"
-
 WITH sk_identity_info AS (
-	SELECT trs.id, JSON_AGG( dic.* ) AS json_result
+	SELECT trs.id, count( dic.* ) AS count
 	FROM assets_asset trs
 		LEFT OUTER JOIN tf_data_identity_connection dic ON 
 			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_1 = '{folderDataIdentity}' ) OR
@@ -106,9 +105,9 @@ SELECT
 	aa.created_on,
 	aa.modified_by,
 	aa.modified_on,
-	sk_identity_info.json_result AS identity_connection_json
+	sk.count AS data_identity_values_count
 FROM assets_asset aa
-	LEFT OUTER JOIN sk_identity_info ON aa.id = sk_identity_info.id
+	LEFT OUTER JOIN sk_identity_info sk ON aa.id = sk.id
 WHERE aa.id = @id
 ";
 
@@ -146,7 +145,7 @@ WHERE aa.id = @id
 
         string SQL = $@"
 WITH sk_identity_info AS (
-	SELECT trs.id, JSON_AGG( dic.* ) AS json_result
+	SELECT trs.id, count( dic.* ) AS count
 	FROM assets_asset trs
 		LEFT OUTER JOIN tf_data_identity_connection dic ON 
 			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_1 = '{folderDataIdentity}' ) OR
@@ -171,7 +170,7 @@ SELECT
 	aa.created_on,
 	aa.modified_by,
 	aa.modified_on,
-	sk.json_result AS identity_connection_json
+	sk.count AS data_identity_values_count
 FROM assets_asset aa
 	LEFT OUTER JOIN sk_identity_info sk ON aa.id = sk.id
     LEFT OUTER JOIN sk_identity_filter sf ON aa.id = sf.id
@@ -972,7 +971,8 @@ ORDER BY aa.created_on DESC;";
                 CreatedBy = createdBy,
                 CreatedOn = dr.Field<DateTime>("created_on"),
                 ModifiedBy = modifiedBy,
-                ModifiedOn = dr.Field<DateTime>("modified_on")
+                ModifiedOn = dr.Field<DateTime>("modified_on"),
+                ConnectedDataIdentityValuesCount = dr.Field<long>("data_identity_values_count"),
             };
 
             assetList.Add(asset);

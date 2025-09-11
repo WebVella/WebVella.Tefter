@@ -11,7 +11,8 @@ public class Asset
 	public DateTime CreatedOn { get; set; }
 	public TfUser ModifiedBy { get; set; }
 	public DateTime ModifiedOn { get; set; }
- }
+    public long ConnectedDataIdentityValuesCount { get; set; } = 0;
+}
 
 [JsonDerivedType(typeof(FileAssetContent), typeDiscriminator: "file")]
 [JsonDerivedType(typeof(LinkAssetContent), typeDiscriminator: "link")]

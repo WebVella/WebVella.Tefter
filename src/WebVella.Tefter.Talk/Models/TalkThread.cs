@@ -16,6 +16,7 @@ public class TalkThread
 	public DateTime? DeletedOn { get; set; } = null;
 	[Obsolete("Not initialized and should be removed")]
     public Dictionary<string,string> ConnectedDataIdentityValues { get; set; } = new();
+	public long ConnectedDataIdentityValuesCount { get; set; } = 0;
     public List<TalkThread> SubThread { get; set; }
 }
 

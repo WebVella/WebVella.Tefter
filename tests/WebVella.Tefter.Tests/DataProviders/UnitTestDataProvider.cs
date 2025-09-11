@@ -7,6 +7,9 @@ namespace WebVella.Tefter.Tests.DataProviders;
 
 public class UnitTestDataProvider : ITfDataProviderAddon
 {
+	const int NUMBER_OF_ROWS = 100;
+
+
 	public Guid AddonId { get; init; } = new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d");
 
 	public string AddonName { get; init; } = "UnitTest Data Provider";
@@ -79,7 +82,7 @@ public class UnitTestDataProvider : ITfDataProviderAddon
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>($"dp{provider.Index}_number_column", TfDatabaseColumnType.Number, "NUMBER"));
 
 		var rows = new List<TfDataProviderDataRow>();
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < NUMBER_OF_ROWS; i++)
 		{
 			TfDataProviderDataRow tfDataProviderDataRow = new TfDataProviderDataRow();
 			foreach (var column in columns)

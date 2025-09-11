@@ -23,7 +23,7 @@ public partial class TalkTests : BaseTest
 				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
 				var dataTable = tfService.QueryDataProvider(provider);
 
-				var user = tfService.GetUser("rumen@webvella.com");
+				var user = tfService.GetDefaultSystemUser();
 
 				TalkChannel channel = new TalkChannel
 				{
@@ -100,6 +100,7 @@ public partial class TalkTests : BaseTest
 
 				var th = talkService.GetThread(createdThread1.Id);
 				th.Should().NotBeNull();
+				th.ConnectedDataIdentityValuesCount.Should().Be(rowIdentityIds.Count);
 
 				var connectedIdentityValues = talkService.GetThreadRelatedIdentityValues(th);
 				connectedIdentityValues.Count.Should().Be(rowIdentityIds.Count);
@@ -136,6 +137,69 @@ public partial class TalkTests : BaseTest
 				threads = talkService.GetThreads(channel.Id, firstDataIdentityValue);
 				threads.Count.Should().Be(2);
 			}
+		}
+	}
+
+	[Fact]
+	public async Task Talk_Performance_Test()
+	{
+		using (await locker.LockAsync())
+		{
+			//ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			//ITalkService talkService = ServiceProvider.GetRequiredService<ITalkService>();
+			//ITfService tfService = ServiceProvider.GetService<ITfService>();
+
+
+			//using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			//{
+			//	var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
+			//	var dataTable = tfService.QueryDataProvider(provider);
+
+			//	var user = tfService.GetDefaultSystemUser();
+
+			//	TalkChannel channel = new TalkChannel
+			//	{
+			//		Id = Guid.NewGuid(),
+			//		Name = "Test Channel",
+			//		DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+			//		CountSharedColumnName = "sc_int_row_id"
+			//	};
+
+			//	channel = talkService.CreateChannel(channel);
+			//	channel.Should().NotBeNull();
+
+			//	channel.Name = "Test channel 1";
+			//	channel = talkService.UpdateChannel(channel);
+			//	channel.Name.Should().Be("Test channel 1");
+
+
+			//	//try to create channel with same name 
+			//	//should fail with validation exception
+			//	Exception exception = null;
+			//	try { talkService.CreateChannel(channel with { Id = Guid.NewGuid() }); } catch (Exception ex) { exception = ex; }
+			//	exception.Should().NotBeNull();
+			//	exception.Should().BeOfType(typeof(TfValidationException));
+
+			//	List<Guid> rowIdentityIds = new List<Guid>();
+			//	for (int i = 0; i < 10000; i++)
+			//		rowIdentityIds.Add((Guid)dataTable.Rows[i]["tf_id"]);
+
+			//	for (int i = 0; i<1000; i++)
+			//	{
+			//		CreateTalkThreadWithRowIdModel thread = new CreateTalkThreadWithRowIdModel
+			//		{
+			//			ChannelId = channel.Id,
+			//			Content = "content" + i,
+			//			Type = TalkThreadType.Comment,
+			//			UserId = user.Id,
+			//			RowIds = rowIdentityIds,
+			//			DataProviderId = provider.Id
+			//		};
+			//		var createdThread1 = talkService.CreateThread(thread);
+			//	}
+
+			//	scope.Complete();
+			//}
 		}
 	}
 }

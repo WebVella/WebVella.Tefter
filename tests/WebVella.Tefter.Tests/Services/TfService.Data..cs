@@ -163,7 +163,7 @@ public partial class TfServiceTest : BaseTest
 							Direction=TfSortDirection.ASC}
 				});
 
-			result.Rows.Count.Should().Be(1);
+			result.Rows.Count.Should().Be(2);
 
 			result = tfService.QuerySpaceData(spaceData.Id,
 				//noRows: true,
