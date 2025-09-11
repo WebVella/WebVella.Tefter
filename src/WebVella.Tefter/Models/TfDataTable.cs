@@ -254,6 +254,30 @@ public sealed class TfDataTable
 		return columns;
 	}
 
+	public object this[Guid rowId, string columnName]
+	{
+		get
+		{
+			var row = this.Rows[rowId];
+			var column = this.Columns[columnName];
+			if (row is null)
+				throw new Exception($"Row with tf_id '{rowId}' is not found.");
+			if (column is null)
+				throw new Exception($"Column with name '{columnName}' is not found.");
+			return row[columnName];
+		}
+		set
+		{
+			var row = this.Rows[rowId];
+			var column = this.Columns[columnName];
+			if (row is null)
+				throw new Exception($"Row with tf_id '{rowId}' is not found.");
+			if (column is null)
+				throw new Exception($"Column with name '{columnName}' is not found.");
+			row[columnName] = value;
+		}
+	}
+
 	public TfDataTable NewTable(
 		params int[] rows)
 	{
