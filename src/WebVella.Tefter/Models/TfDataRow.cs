@@ -1,6 +1,4 @@
-﻿using Microsoft.FluentUI.AspNetCore.Components;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public class TfDataRow : IEnumerable
 {
@@ -29,21 +27,26 @@ public class TfDataRow : IEnumerable
 		}
 		set
 		{
+			object? newValue = value;
+
 			if (string.IsNullOrWhiteSpace(columnName))
 				throw new ArgumentException(nameof(columnName));
 
 			int index = DataTable.Columns.IndexOf(x => x.Name == columnName);
 			if (index == -1)
-				throw new Exception($"A column with name {columnName} is not found in DataTable object.");
+				throw new TfValidationException($"A column with name {columnName} is not found in DataTable object.");
 
 			var column = DataTable.Columns[columnName];
 
+			if (column is null)
+				throw new TfValidationException($"A column with name {columnName} is not found in DataTable object.");
+
 			if (!column.IsNullable && value is null)
-				throw new Exception($"Trying to set null as value to non nullable column.");
+				throw new TfValidationException($"Trying to set null as value to non nullable column.");
 
 			if (column.IsNullable && value is null)
 			{
-				_values[index] = value;
+				_values[index] = newValue;
 				return;
 			}
 
@@ -115,20 +118,23 @@ public class TfDataRow : IEnumerable
 							throw new Exception($"Trying to set non DateTime value as value to DateTime column.");
 						break;
 					case TfDatabaseColumnType.ShortInteger:
-						if (value is not short)
-							throw new Exception($"Trying to set non short value as value to ShortInteger column.");
-						break;
 					case TfDatabaseColumnType.Integer:
-						if (value is not int)
-							throw new Exception($"Trying to set non integer value as value to Integer column.");
-						break;
 					case TfDatabaseColumnType.LongInteger:
-						if (value is not long)
-							throw new Exception($"Trying to set non long integer value as value to LongInteger column.");
-						break;
 					case TfDatabaseColumnType.Number:
-						if (value is not decimal)
-							throw new Exception($"Trying to set non number value as value to Number column.");
+						{
+							try
+							{
+								newValue = ConvertToNumericType(value, column.DbType);
+							}
+							catch(TfValidationException)
+							{
+								throw;
+							}
+							catch (Exception)
+							{
+								throw new TfValidationException($"Trying to set invalid value to numeric column.");
+							}
+						}
 						break;
 					case TfDatabaseColumnType.ShortText:
 					case TfDatabaseColumnType.Text:
@@ -142,7 +148,7 @@ public class TfDataRow : IEnumerable
 				}
 			}
 
-			_values[index] = value;
+			_values[index] = newValue;
 		}
 	}
 
@@ -169,27 +175,66 @@ public class TfDataRow : IEnumerable
 		return values;
 	}
 
-	public Guid? GetJoinKeyValue(string joinKeyName)
+	private enum NumericType
 	{
-		if (string.IsNullOrEmpty(joinKeyName))
-			return null;
-
-		string skColumnName = $"tf_jk_{joinKeyName}_id";
-
-		int index = DataTable.Columns.IndexOf(x => x.Name == skColumnName);
-		if (index == -1)
-			return null;
-
-		return (Guid)_values[index];
+		Short,
+		Int,
+		Long,
+		Decimal
 	}
 
-	public string GetDataIdentityValue(string dataIdentity )
+	private static object? ConvertToNumericType(object value, TfDatabaseColumnType targetType)
+	{
+		if (value == null)
+			return value;
+
+
+		object convertedValue;
+		object convertedObject;
+
+		switch (targetType)
+		{
+			case TfDatabaseColumnType.ShortInteger:
+				convertedValue = Convert.ToInt16(value);
+				convertedObject = Convert.ChangeType(convertedValue, value.GetType());
+				break;
+
+			case TfDatabaseColumnType.Integer:
+				convertedValue = Convert.ToInt32(value);
+				convertedObject = Convert.ChangeType(convertedValue, value.GetType());
+				break;
+
+			case TfDatabaseColumnType.LongInteger:
+				convertedValue = Convert.ToInt64(value);
+				convertedObject = Convert.ChangeType(convertedValue, value.GetType());
+				break;
+
+			case TfDatabaseColumnType.Number:
+				convertedValue = Convert.ToDecimal(value);
+				convertedObject = Convert.ChangeType(convertedValue, value.GetType());
+				break;
+
+			default:
+				throw new TfValidationException(nameof(targetType), "Unsupported numeric type.");
+		}
+
+		//if it is string no need to check for data loss
+		if (value is string)
+			return convertedValue;
+
+		if ( !value.Equals(convertedObject))
+			throw new TfValidationException("Provided value cannot be set to specified column because data loss occur.");
+
+		return convertedValue;
+	}
+
+	public string GetDataIdentityValue(string dataIdentity)
 	{
 		if (string.IsNullOrEmpty(dataIdentity))
 			return null;
 
 		var dataIdentityColumn = $"tf_ide_{dataIdentity}";
-		if(dataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
+		if (dataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
 			dataIdentityColumn = "tf_row_id";
 
 		int index = DataTable.Columns.IndexOf(x => x.Name == dataIdentityColumn);
