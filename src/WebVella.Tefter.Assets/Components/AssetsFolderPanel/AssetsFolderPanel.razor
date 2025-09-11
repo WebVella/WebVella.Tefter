@@ -124,7 +124,15 @@
 									}
 								</div>
 								<a href="@assetMeta.Url" target="_blank" class="asset-item__meta">
-									<div class="asset-item__meta__title">@assetMeta.Title</div>
+									<div class="asset-item__meta__title">
+										<span>@assetMeta.Title</span>
+										@if (asset.ConnectedDataIdentityValuesCount > 1)
+										{
+											<span class="broadcast" title="@LOC("connected to multiple rows")">
+												<FluentIcon Value="@TfConstants.GetIcon("LinkMultiple", IconSize.Size16)" />
+											</span>
+										}
+									</div>
 									<div class="asset-item__meta__description">@((MarkupString)assetMeta.Description)</div>
 								</a>
 								<div class="asset-item__action">

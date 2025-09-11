@@ -18,153 +18,154 @@ else
 {
 	var configCss = _generateColumnConfigurationCss(_spaceView, _spaceViewColumns);
 	var columnIndex = 1;
-	<TucPageLayout Title="@_spacePage.Name" Icon="@TfConstants.GetIcon(_spacePage.FluentIconName)"
-				   Color="@_space!.Color">
-		<ToolbarLeft>
-			<TucSpaceViewPageContentNavigation SpaceView="_spaceView" />
-		</ToolbarLeft>
-		<ChildContent>
-			@((MarkupString)_getEmbeddedStyles())
-			<TucSpaceViewPageContentToolbar Context=Context SpaceView="_spaceView" Data=_data
-											SpaceData="_spaceData" SpaceViewPreset=_preset
-											OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" OnClearFilter="_onClearFilter"
-											OnSelectAll="_onSelectAll" SelectAllLoading="_selectAllLoading" OnDeSelectAll="_onDeSelectAll"
-											SelectedRows="_selectedDataRows" OnClearPersonalization="_onClearPersonalization" />
+	<CascadingValue IsFixed="true" TValue="TucSpaceViewPageContent" Value="this" Name="TucSpaceViewPageContent">
+		<TucPageLayout Title="@_spacePage.Name" Icon="@TfConstants.GetIcon(_spacePage.FluentIconName)"
+					   Color="@_space!.Color">
+			<ToolbarLeft>
+				<TucSpaceViewPageContentNavigation SpaceView="_spaceView" />
+			</ToolbarLeft>
+			<ChildContent>
+				@((MarkupString)_getEmbeddedStyles())
+				<TucSpaceViewPageContentToolbar Context=Context SpaceView="_spaceView" Data=_data
+												SpaceData="_spaceData" SpaceViewPreset=_preset
+												SelectAllLoading="_selectAllLoading"
+												SelectedRows="_selectedDataRows" />
 
-			<div class="tf-grid-wrapper">
-				<table class="tf-grid" id="@_tableId">
-					<colgroup>
-						@foreach (var index in configCss.Keys)
-						{
-							<col span="1" style="@(configCss[index].Item1 is null ? "" : $"width: {configCss[index].Item1!.Value}px;min-width:{configCss[index].Item1!.Value}px")">
-						}
-					</colgroup>
-					<thead class="tf-grid-thead">
-						<tr class="tf-grid-thead-bkg"></tr>
-						@if (_isDataLoading)
-						{
-							<tr class="tf-grid-thead-loading"></tr>
-						}
-						<tr class="tf-grid-tr">
-							<th class="tf-grid-th tf-grid-th--check @configCss[0].Item2" style="@($"{configCss[0].Item3}")">
-								<div class="check-content">
-									@if (_allDataRowsSelected())
-									{
-										<FluentButton OnClick="@(() => _toggleSelectAll(false))" BackgroundColor="transparent" Color="transparent">
-											<FluentIcon Value="@TfConstants.GetIcon("CheckboxChecked", variant: IconVariant.Filled)" Color="@Color.Accent" />
-										</FluentButton>
-									}
-									else
-									{
-										<FluentButton OnClick="@(() => _toggleSelectAll(true))" BackgroundColor="transparent" Color="transparent">
-											<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")" Color="@Color.Custom" CustomColor="var(--neutral-stroke-input-active)" />
-										</FluentButton>
-									}
-								</div>
-							</th>
-							@foreach (var column in _spaceViewColumns.OrderBy(x => x.Position))
+				<div class="tf-grid-wrapper">
+					<table class="tf-grid" id="@_tableId">
+						<colgroup>
+							@foreach (var index in configCss.Keys)
 							{
-								<th data-query-name="@column.QueryName" class="tf-grid-th @configCss[columnIndex].Item2" style="@($"{column.HeaderStyle}{configCss[columnIndex].Item3}")">
-									<div>
-										@if (String.IsNullOrWhiteSpace(column.Icon))
+								<col span="1" style="@(configCss[index].Item1 is null ? "" : $"width: {configCss[index].Item1!.Value}px;min-width:{configCss[index].Item1!.Value}px")">
+							}
+						</colgroup>
+						<thead class="tf-grid-thead">
+							<tr class="tf-grid-thead-bkg"></tr>
+							@if (_isDataLoading)
+							{
+								<tr class="tf-grid-thead-loading"></tr>
+							}
+							<tr class="tf-grid-tr">
+								<th class="tf-grid-th tf-grid-th--check @configCss[0].Item2" style="@($"{configCss[0].Item3}")">
+									<div class="check-content">
+										@if (_allDataRowsSelected())
 										{
-											<div>@column.Title</div>
-
-										}
-										else if (column.OnlyIcon)
-										{
-											<div style="display:flex;">
-												<FluentIcon Value="@TfConstants.GetIcon(column.Icon)" />
-											</div>
+											<FluentButton OnClick="@(() => _toggleSelectAll(false))" BackgroundColor="transparent" Color="transparent">
+												<FluentIcon Value="@TfConstants.GetIcon("CheckboxChecked", variant: IconVariant.Filled)" Color="@Color.Accent" />
+											</FluentButton>
 										}
 										else
 										{
-											<div style="display:flex">
-												<FluentIcon Value="@TfConstants.GetIcon(column.Icon)" />
-												<div style="padding-left:5px;">@column.Title</div>
-											</div>
+											<FluentButton OnClick="@(() => _toggleSelectAll(true))" BackgroundColor="transparent" Color="transparent">
+												<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")" Color="@Color.Custom" CustomColor="var(--neutral-stroke-input-active)" />
+											</FluentButton>
 										}
 									</div>
-									<div class="resize-handle" data-column="@column.Position"></div>
-									<div class="@_getSortColumnClass(column)" data-column="@column.Position">
-										<div class="tf-column-sort__caret-down">@_caretDown</div>
-										<div class="tf-column-sort__caret-up">@_caretUp</div>
-										<div class="tf-column-sort__caret">@_caretDownInactive</div>
-									</div>
 								</th>
-								columnIndex++;
-							}
-						</tr>
-					</thead>
-					<tbody class="tf-grid-tbody">
-						@if (_data is null)
-						{
-							<tr class="tf-grid-tr">
-								<td class="tf-grid-td" colspan="@(_spaceViewColumns.Count + 1)"><div>@LOC("Dataset or DataProvider not found")</div></td>
-							</tr>
-						}
-						else if (_data.Rows.Count == 0)
-						{
-							<tr class="tf-grid-tr">
-								<td class="tf-grid-td" colspan="@(_spaceViewColumns.Count + 1)"><div>@LOC("No data")</div></td>
-							</tr>
-						}
-						else
-						{
-							for (int i = 0; i < _data.Rows.Count; i++)
-							{
-								var index = i;
-								columnIndex = 1;
-								var selected = _getItemSelection(index);
-								<tr @key=@index class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
-									<td class="tf-grid-td tf-grid-td--check @configCss[0].Item2" style="@($"{configCss[0].Item3}")">
-										<div class="tf-grid-td-selection"></div>
-										<div class="tf-grid-td-hover"></div>
-										<div class="check-content">
-											@if (_data.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME] is not null)
+								@foreach (var column in _spaceViewColumns.OrderBy(x => x.Position))
+								{
+									<th data-query-name="@column.QueryName" class="tf-grid-th @configCss[columnIndex].Item2" style="@($"{column.HeaderStyle}{configCss[columnIndex].Item3}")">
+										<div>
+											@if (String.IsNullOrWhiteSpace(column.Icon))
 											{
-												@if (selected)
-												{
-													<FluentButton OnClick="@(() => _toggleItemSelection(index, false))" BackgroundColor="transparent" Color="transparent">
-														<FluentIcon Value="@TfConstants.GetIcon("CheckboxChecked", variant: IconVariant.Filled)" Color="@Color.Accent" />
-													</FluentButton>
-												}
-												else
-												{
-													<FluentButton OnClick="@(() => _toggleItemSelection(index, true))" BackgroundColor="transparent" Color="transparent">
-														<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")" Color="@Color.Custom" CustomColor="var(--neutral-stroke-input-active)" />
-													</FluentButton>
-												}
+												<div>@column.Title</div>
+
+											}
+											else if (column.OnlyIcon)
+											{
+												<div style="display:flex;">
+													<FluentIcon Value="@TfConstants.GetIcon(column.Icon)" />
+												</div>
+											}
+											else
+											{
+												<div style="display:flex">
+													<FluentIcon Value="@TfConstants.GetIcon(column.Icon)" />
+													<div style="padding-left:5px;">@column.Title</div>
+												</div>
 											}
 										</div>
-
-									</td>
-									@foreach (var column in _spaceViewColumns)
-									{
-										<td @key=@(Guid.NewGuid()) class="tf-grid-td @configCss[columnIndex].Item2" style="@($"{column.CellColorStyle}{configCss[columnIndex].Item3}")">
-											<div class="tf-grid-td-color" style="@column.CellFillColorStyle"></div>
-											<div class="tf-grid-td-selection"></div>
-											<div class="tf-grid-td-hover"></div>
-											@if (_componentMetaDict.ContainsKey(column.ComponentId))
-											{
-												<TucErrorBoundry>
-													<DynamicComponent Type="_componentMetaDict[column.ComponentId].InstanceType" Parameters="@_getColumnComponentContext(column, _data, index)" />
-												</TucErrorBoundry>
-											}
-										</td>
-										columnIndex++;
-									}
+										<div class="resize-handle" data-column="@column.Position"></div>
+										<div class="@_getSortColumnClass(column)" data-column="@column.Position">
+											<div class="tf-column-sort__caret-down">@_caretDown</div>
+											<div class="tf-column-sort__caret-up">@_caretUp</div>
+											<div class="tf-column-sort__caret">@_caretDownInactive</div>
+										</div>
+									</th>
+									columnIndex++;
+								}
+							</tr>
+						</thead>
+						<tbody class="tf-grid-tbody">
+							@if (_data is null)
+							{
+								<tr class="tf-grid-tr">
+									<td class="tf-grid-td" colspan="@(_spaceViewColumns.Count + 1)"><div>@LOC("Dataset or DataProvider not found")</div></td>
 								</tr>
 							}
-						}
-					</tbody>
-				</table>
-			</div>
-			<div class="tf-grid__pager" style="padding:0 var(--tf-layout-content-padding)">
-				<TucPager Page="@_page" PageSize="@_pageSize"
-						  GoLast="@_goLastPage" GoNext="@_goNextPage"
-						  GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" ChangePageSize="_pageSizeChange" />
-			</div>
-		</ChildContent>
-	</TucPageLayout>
+							else if (_data.Rows.Count == 0)
+							{
+								<tr class="tf-grid-tr">
+									<td class="tf-grid-td" colspan="@(_spaceViewColumns.Count + 1)"><div>@LOC("No data")</div></td>
+								</tr>
+							}
+							else
+							{
+								for (int i = 0; i < _data.Rows.Count; i++)
+								{
+									var index = i;
+									columnIndex = 1;
+									var selected = _getItemSelection(index);
+									<tr @key=@index class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
+										<td class="tf-grid-td tf-grid-td--check @configCss[0].Item2" style="@($"{configCss[0].Item3}")">
+											<div class="tf-grid-td-selection"></div>
+											<div class="tf-grid-td-hover"></div>
+											<div class="check-content">
+												@if (_data.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME] is not null)
+												{
+													@if (selected)
+													{
+														<FluentButton OnClick="@(() => _toggleItemSelection(index, false))" BackgroundColor="transparent" Color="transparent">
+															<FluentIcon Value="@TfConstants.GetIcon("CheckboxChecked", variant: IconVariant.Filled)" Color="@Color.Accent" />
+														</FluentButton>
+													}
+													else
+													{
+														<FluentButton OnClick="@(() => _toggleItemSelection(index, true))" BackgroundColor="transparent" Color="transparent">
+															<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")" Color="@Color.Custom" CustomColor="var(--neutral-stroke-input-active)" />
+														</FluentButton>
+													}
+												}
+											</div>
+
+										</td>
+										@foreach (var column in _spaceViewColumns)
+										{
+											<td @key=@(Guid.NewGuid()) class="tf-grid-td @configCss[columnIndex].Item2" style="@($"{column.CellColorStyle}{configCss[columnIndex].Item3}")">
+												<div class="tf-grid-td-color" style="@column.CellFillColorStyle"></div>
+												<div class="tf-grid-td-selection"></div>
+												<div class="tf-grid-td-hover"></div>
+												@if (_componentMetaDict.ContainsKey(column.ComponentId))
+												{
+													<TucErrorBoundry>
+														<DynamicComponent Type="_componentMetaDict[column.ComponentId].InstanceType" Parameters="@_getColumnComponentContext(column, _data, index)" />
+													</TucErrorBoundry>
+												}
+											</td>
+											columnIndex++;
+										}
+									</tr>
+								}
+							}
+						</tbody>
+					</table>
+				</div>
+				<div class="tf-grid__pager" style="padding:0 var(--tf-layout-content-padding)">
+					<TucPager Page="@_page" PageSize="@_pageSize"
+							  GoLast="@_goLastPage" GoNext="@_goNextPage"
+							  GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" ChangePageSize="_pageSizeChange" />
+				</div>
+			</ChildContent>
+		</TucPageLayout>
+	</CascadingValue>
 }

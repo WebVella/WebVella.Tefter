@@ -36,7 +36,6 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 	private Guid? _subthreadEditedId = null;
 	private Guid? _threadIdUpdateSaving = null;
 	private bool _threadVisibleInChannel = false;
-	private bool _threadBroadcastVisible = false;
 
 	private string _dataIdentityValue = null;
 	private Guid? _channelId = null;
@@ -213,7 +212,7 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 				&& prevMain.User.Id == message.User.Id
 				&& !message.DeletedOn.HasValue
 				&& !(message.VisibleInChannel && message.ThreadId.HasValue)
-				&& (message.ConnectedDataIdentityValues is null || message.ConnectedDataIdentityValues.Count <= 1)
+				&& (message.ConnectedDataIdentityValuesCount <= 1)
 				&& (message.CreatedOn - prevMain.CreatedOn).TotalMinutes <= 5)
 			{
 				cssList.Add("talk-followup");
@@ -326,12 +325,6 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 	{
 
 		_threadEditedId = null;
-		return Task.CompletedTask;
-	}
-
-	private Task _showThreadBradcastDetails()
-	{
-		_threadBroadcastVisible = !_threadBroadcastVisible;
 		return Task.CompletedTask;
 	}
 }

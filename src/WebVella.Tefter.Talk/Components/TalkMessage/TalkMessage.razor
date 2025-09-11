@@ -28,10 +28,10 @@
 				}
 				else
 				{
-					@if (Item.ConnectedDataIdentityValues.Keys.Count > 1)
+					@if (Item.ConnectedDataIdentityValuesCount > 1)
 					{
 						<span class="talk-broadcast" title="@LOC("connected to multiple rows")">
-							<FluentIcon Value="@TfConstants.GetIcon("Communication")" />
+							<FluentIcon Value="@TfConstants.GetIcon("LinkMultiple")" />
 						</span>
 					}
 					@if (Item.VisibleInChannel && Item.ThreadId is not null)
@@ -97,7 +97,7 @@
 		<div class="talk-message__right">
 			<div class="talk-message__right__top">
 				<span class="talk-sender">@Item?.User?.Names</span>
-				@if (Item.ConnectedDataIdentityValues.Keys.Count > 1)
+				@if (Item.ConnectedDataIdentityValuesCount > 1)
 				{
 					<span class="talk-multicast">
 						<FluentIcon Style="margin-left:5px" Value="@TfConstants.GetIcon("Communication")" Title="@LOC("connected to multiple rows")" />

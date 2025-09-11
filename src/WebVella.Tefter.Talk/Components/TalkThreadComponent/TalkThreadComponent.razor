@@ -76,7 +76,7 @@ else
 		<div class="talk-panel__right" style="@(_activeThread is null ? "display:none" : "")">
 			@if (_activeThread is not null)
 			{
-				@if (_activeThread.ConnectedDataIdentityValues.Keys.Count > 1)
+				@if (_activeThread.ConnectedDataIdentityValuesCount > 1)
 				{
 					<div class="talk-panel__right__header broadcast">
 						<div class="talk-panel__right__header-icon">
@@ -84,30 +84,12 @@ else
 						</div>
 						<div class="talk-panel__right__header-label">@LOC("Broadcast")</div>
 						<div class="talk-panel__right__header-actions">
-							<FluentButton Appearance="@Appearance.Stealth" Title=@LOC("view broadcast details")
-										  OnClick="_showThreadBradcastDetails"
-										  IconStart="@(_threadBroadcastVisible ? TfConstants.GetIcon("ChevronDown") : TfConstants.GetIcon("ChevronLeft"))" />
 							<FluentButton Appearance="@Appearance.Stealth"
 										  Title=@LOC("close thread")
 										  OnClick="_closeActiveThread"
 										  IconStart="@TfConstants.GetIcon("Dismiss")" />
 						</div>
 					</div>
-					@if (_threadBroadcastVisible)
-					{
-						<div class="talk-panel__right__subheader">
-							<table class="tf-grid">
-								<tbody class="tf-grid-tbody">
-									@foreach (var key in _activeThread.ConnectedDataIdentityValues.Keys)
-									{
-										<tr @key=@key class="tf-grid-tr">
-											<td class="tf-grid-td"><div>@_activeThread.ConnectedDataIdentityValues[key]</div></td>
-										</tr>
-									}
-								</tbody>
-							</table>
-						</div>
-					}
 				}
 				else
 				{
