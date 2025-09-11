@@ -126,7 +126,7 @@ public class TfDataRow : IEnumerable
 							{
 								newValue = ConvertToNumericType(value, column.DbType);
 							}
-							catch(TfValidationException)
+							catch (TfValidationException)
 							{
 								throw;
 							}
@@ -183,30 +183,72 @@ public class TfDataRow : IEnumerable
 		Decimal
 	}
 
+	//private static List<object?> ConvertToNumericType(List<object?> values, TfDatabaseColumnType targetType)
+	//{
+	//}
+
 	private static object? ConvertToNumericType(object value, TfDatabaseColumnType targetType)
 	{
 		if (value == null)
 			return value;
 
+		if (value is not IConvertible)
+			throw new TfValidationException("Invalid value.");
 
-		object convertedValue;
-		object convertedObject;
+		object? convertedValue = null;
+		object? convertedObject = null;
 
 		switch (targetType)
 		{
 			case TfDatabaseColumnType.ShortInteger:
-				convertedValue = Convert.ToInt16(value);
-				convertedObject = Convert.ChangeType(convertedValue, value.GetType());
+
+				if (value is IConvertible)
+				{
+					decimal dec = Convert.ToDecimal(value);
+					if (dec >= short.MinValue && dec <= short.MaxValue)
+					{
+						convertedValue = Convert.ToInt16(value);
+						convertedObject = Convert.ChangeType(convertedValue, value.GetType());
+					}
+					else
+					{
+						throw new TfValidationException($"Provided value should be within range {short.MinValue} and {short.MaxValue}.");
+					}
+				}
 				break;
 
 			case TfDatabaseColumnType.Integer:
-				convertedValue = Convert.ToInt32(value);
-				convertedObject = Convert.ChangeType(convertedValue, value.GetType());
+
+				if (value is IConvertible)
+				{
+					decimal dec = Convert.ToDecimal(value);
+					if (dec >= int.MinValue && dec <= int.MaxValue)
+					{
+						convertedValue = Convert.ToInt32(value);
+						convertedObject = Convert.ChangeType(convertedValue, value.GetType());
+					}
+					else
+					{
+						throw new TfValidationException($"Provided value should be within range {int.MinValue} and {int.MaxValue}.");
+					}
+				}
 				break;
 
 			case TfDatabaseColumnType.LongInteger:
-				convertedValue = Convert.ToInt64(value);
-				convertedObject = Convert.ChangeType(convertedValue, value.GetType());
+
+				if (value is IConvertible)
+				{
+					decimal dec = Convert.ToDecimal(value);
+					if (dec >= long.MinValue && dec <= long.MaxValue)
+					{
+						convertedValue = Convert.ToInt64(value);
+						convertedObject = Convert.ChangeType(convertedValue, value.GetType());
+					}
+					else
+					{
+						throw new TfValidationException($"Provided value should be within range {long.MinValue} and {long.MaxValue}.");
+					}
+				}
 				break;
 
 			case TfDatabaseColumnType.Number:
@@ -222,7 +264,7 @@ public class TfDataRow : IEnumerable
 		if (value is string)
 			return convertedValue;
 
-		if ( !value.Equals(convertedObject))
+		if (!value.Equals(convertedObject))
 			throw new TfValidationException("Provided value cannot be set to specified column because data loss occur.");
 
 		return convertedValue;
