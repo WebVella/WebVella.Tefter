@@ -19,6 +19,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	public virtual string AddonFluentIconName { get; init; } = String.Empty;
 	public virtual List<Guid> SupportedColumnTypes { get; init; } = new();
 	[Parameter] public TfSpaceViewColumnScreenRegionContext RegionContext { get; set; }
+	[Parameter] public EventCallback<Tuple<string,string>> DataMappingChanged { get; set; }
 	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
 	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
 
@@ -366,6 +367,18 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// and will be called by various export services as Excel export in example
 	/// </summary>
 	public virtual void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell) { }
+
+	/// <summary>
+	/// Base method for dealing with options value changes in the implementing component
+	/// </summary>
+	/// <param name="propName"></param>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	protected virtual async Task OnDataMappingChanged(string propName, string value)
+	{
+
+		await DataMappingChanged.InvokeAsync(new Tuple<string, string>(propName,value));
+	}
 
 	/// <summary>
 	/// This method expects a datatable with a single row (in most cases) 

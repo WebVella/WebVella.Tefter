@@ -90,7 +90,7 @@ public partial class TalkChannelManageDialog : TfFormBaseComponent, IDialogConte
 			}
 			else
 			{
-				result = TalkService.UpdateChannel(_form);
+				result = TalkService.UpdateChannel(new UpdateTalkChannelModel(_form.Id,_form.Name));
 				ToastService.ShowSuccess(LOC("Channel successfully updated!"));
 			}
 			await Dialog.CloseAsync(result);

@@ -147,9 +147,17 @@ public partial class TalkCommentsCountComponent : TucBaseViewColumn<TfTalkCommen
 			{
 				if (_channels.Count > 0)
 				{
-					await OnOptionsChanged(nameof(TfTalkCommentsCountComponentOptions.ChannelId), _channels[0].Id);
 					_selectedChannel = _channels[0];
 				}
+			}
+			if (_selectedChannel is not null)
+			{
+				await OnOptionsChanged(nameof(TfTalkCommentsCountComponentOptions.ChannelId), _selectedChannel?.Id);
+				await OnDataMappingChanged("Value", $"{_selectedChannel.DataIdentity}.{_selectedChannel.CountSharedColumnName}");
+			}
+			else{ 
+				await OnOptionsChanged(nameof(TfTalkCommentsCountComponentOptions.ChannelId), (Guid?)null);
+				await OnDataMappingChanged("Value", null);			
 			}
 		}
 		else if (RegionContext.Mode == TfComponentPresentationMode.Display)
@@ -172,7 +180,7 @@ public partial class TalkCommentsCountComponent : TucBaseViewColumn<TfTalkCommen
 				&& !String.IsNullOrWhiteSpace(_selectedChannel.CountSharedColumnName))
 			{
 				var columnName = $"{_selectedChannel.DataIdentity}.{_selectedChannel.CountSharedColumnName}";
-				_value = (long?)GetDataStruct<long>(columnName,null);
+				_value = (long?)GetDataStruct<long>(columnName, null);
 			}
 
 		}
@@ -187,6 +195,7 @@ public partial class TalkCommentsCountComponent : TucBaseViewColumn<TfTalkCommen
 	{
 		_selectedChannel = channel;
 		await OnOptionsChanged(nameof(TfTalkCommentsCountComponentOptions.ChannelId), channel?.Id);
+		await OnDataMappingChanged("Value", $"{channel.DataIdentity}.{channel.CountSharedColumnName}");
 	}
 	#endregion
 

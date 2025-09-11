@@ -76,7 +76,8 @@ public partial class AssetsFolderManageDialog : TfFormBaseComponent, IDialogCont
 					_form.DataIdentity = sharedColumn.DataIdentity;
 				}
 			}
-			if(String.IsNullOrWhiteSpace(_form.DataIdentity)){ 
+			if (String.IsNullOrWhiteSpace(_form.DataIdentity))
+			{
 				MessageStore.Add(EditContext.Field(nameof(_form.CountSharedColumnName)), LOC("no data identity defined for this column"));
 			}
 
@@ -93,7 +94,7 @@ public partial class AssetsFolderManageDialog : TfFormBaseComponent, IDialogCont
 			}
 			else
 			{
-				result = AssetsService.UpdateFolder(_form);
+				result = AssetsService.UpdateFolder(new UpdateAssetsFolderModel(_form.Id,_form.Name));
 				ToastService.ShowSuccess(LOC("Folder successfully updated!"));
 			}
 			await Dialog.CloseAsync(result);

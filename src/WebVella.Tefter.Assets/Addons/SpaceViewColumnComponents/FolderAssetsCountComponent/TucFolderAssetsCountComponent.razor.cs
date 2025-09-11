@@ -148,9 +148,17 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 			{
 				if (_folders.Count > 0)
 				{
-					await OnOptionsChanged(nameof(TfFolderAssetsCountComponentOptions.FolderId), _folders[0].Id);
 					_selectedFolder = _folders[0];
 				}
+			}
+			if (_selectedFolder is not null)
+			{
+				await OnOptionsChanged(nameof(TfFolderAssetsCountComponentOptions.FolderId), _selectedFolder?.Id);
+				await OnDataMappingChanged("Value", $"{_selectedFolder.DataIdentity}.{_selectedFolder.CountSharedColumnName}");
+			}
+			else{ 
+				await OnOptionsChanged(nameof(TfFolderAssetsCountComponentOptions.FolderId), (Guid?)null);
+				await OnDataMappingChanged("Value", null);			
 			}
 		}
 		else if (RegionContext.Mode == TfComponentPresentationMode.Display)
@@ -188,6 +196,8 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 	{
 		_selectedFolder = folder;
 		await OnOptionsChanged(nameof(TfFolderAssetsCountComponentOptions.FolderId), folder?.Id);
+
+		await OnDataMappingChanged("Value",$"{folder.DataIdentity}.{folder.CountSharedColumnName}");
 	}
 	#endregion
 

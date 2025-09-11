@@ -115,7 +115,7 @@
 														Items="_options"
 														Height="@TfConstants.ComboPanelHeight"
 														Value=@_getDataMappingValue(item.Alias)
-														Immediate ImmediateDelay="500" ValueChanged="@((x) => _dataMappingValueChanged(x,item.Alias))"
+														Immediate ImmediateDelay="500" ValueChanged="@((x) => _dataMappingValueChanged(new Tuple<string,string>(item.Alias,x)))"
 														Label="@LOC("Data column name")" Style="width:100%" />
 									</FluentGridItem>
 								</FluentGrid>

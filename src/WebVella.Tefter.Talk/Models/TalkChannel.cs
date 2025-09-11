@@ -36,8 +36,6 @@ public record UpdateTalkChannelModel
     public Guid Id { get; set; }
     [Required]
     public string Name { get; set; }
-    public string DataIdentity { get; set; } = null;
-    public string CountSharedColumnName { get; set; } = null;
 
     public UpdateTalkChannelModel() :
         this(Guid.Empty, string.Empty)

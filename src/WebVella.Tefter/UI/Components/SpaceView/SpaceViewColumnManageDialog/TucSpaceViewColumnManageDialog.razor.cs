@@ -101,8 +101,20 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 
 		if (_selectedColumnTypeComponents.Count > 0)
 		{
-			_selectedColumnComponent = _selectedColumnTypeComponents[0];
-			_form.ComponentId = _selectedColumnComponent.AddonId;
+			if (_form.ComponentId != Guid.Empty)
+			{
+				_selectedColumnComponent = _selectedColumnTypeComponents.FirstOrDefault(x => x.AddonId == _form.ComponentId);
+			}
+			if (_selectedColumnComponent is null)
+			{
+				_selectedColumnComponent = _selectedColumnTypeComponents[0];
+				_form.ComponentId = _selectedColumnComponent.AddonId;
+			}
+		}
+		else
+		{
+			_selectedColumnComponent = null;
+			_form.ComponentId = Guid.Empty;
 		}
 	}
 
@@ -191,6 +203,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 				_selectedColumnComponent = TfSpaceViewUIService.GetSpaceViewColumnComponentById(defaultCompId);
 				_form.ComponentId = _selectedColumnComponent.AddonId;
 			}
+
 		}
 	}
 
@@ -202,9 +215,10 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		return null;
 	}
 
-	private void _dataMappingValueChanged(string value, string alias)
+	private void _dataMappingValueChanged(Tuple<string, string> valueAlias)
 	{
-		_form.DataMapping[alias] = value;
+		if (valueAlias is null) return;
+		_form.DataMapping[valueAlias.Item1] = valueAlias.Item2;
 	}
 
 	private Dictionary<string, object> _getColumnComponentContext()
@@ -226,6 +240,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			ValidationMessageStore = MessageStore
 		};
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_OPTIONS_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<string>(this, _customOptionsChangedHandler);
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_DATA_MAPPING_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<Tuple<string, string>>(this, _dataMappingValueChanged);
 		return componentData;
 	}
 
