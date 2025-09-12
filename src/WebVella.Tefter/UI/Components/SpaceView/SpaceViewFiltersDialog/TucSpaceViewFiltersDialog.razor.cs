@@ -5,8 +5,11 @@ public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogCon
 	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
 	[Inject] public ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
+	[Inject] public ITfSharedColumnUIService TfSharedColumnUIService { get; set; } = default!;
 	[Parameter] public Guid Content { get; set; } = default!;
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	private List<TfDataProvider> _dataProviders = new();
+	private List<TfSharedColumn> _sharedColumns = new();
 	private TfDataProvider? _dataProvider = null;
 	private TfSpaceData? _spaceData = null;
 	private TfSpaceView? _spaceview = null;
@@ -27,10 +30,11 @@ public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogCon
 			throw new Exception("spaceView not found");
 		_viewColumns = TfSpaceViewUIService.GetViewColumns(Content);
 		_spaceData =TfSpaceDataUIService.GetSpaceData(_spaceview.SpaceDataId);
-
+		_dataProviders = TfDataProviderUIService.GetDataProviders().ToList();
+		_sharedColumns = TfSharedColumnUIService.GetSharedColumns();
 		if (_spaceData is not null)
 		{
-			_dataProvider = TfDataProviderUIService.GetDataProvider(_spaceData.DataProviderId);
+			_dataProvider = _dataProviders.FirstOrDefault(x=> x.Id == _spaceData.DataProviderId);
 		}
 		_items = _navState?.Filters ?? new();
 	}

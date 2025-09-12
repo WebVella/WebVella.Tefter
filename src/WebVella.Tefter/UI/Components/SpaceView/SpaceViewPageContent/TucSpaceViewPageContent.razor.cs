@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 {
 	#region << Init >>
@@ -7,6 +8,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	[Inject] private ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
 	[Inject] private ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
 	[Inject] private ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
+	[Inject] private ITfSharedColumnUIService TfSharedColumnUIService { get; set; } = default!;
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] private ITfMetaUIService TfMetaUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
@@ -29,6 +31,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private TfSpaceViewPreset? _preset = null;
 	private TfDataTable? _data = null;
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
+	private List<TfDataProvider>? _allDataProviders = null;
+	private List<TfSharedColumn>? _allSharedColumns = null;
 	private List<Guid> _selectedDataRows = new();
 	private Dictionary<string, object> _contextData = new();
 	private string _tableId = "space-view-table";
@@ -139,11 +143,16 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			if (_spaceView is null)
 				return;
 
+			if (_allDataProviders is null)
+				_allDataProviders = TfDataProviderUIService.GetDataProviders().ToList();
+			if(_allSharedColumns is null)
+				_allSharedColumns = TfSharedColumnUIService.GetSharedColumns();
+
 			if (oldViewId != options.SpaceViewId.Value)
 			{
 				_contextData = new();
 				_spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
-				_dataProvider = TfDataProviderUIService.GetDataProvider(_spaceData.DataProviderId);
+				_dataProvider = _allDataProviders.FirstOrDefault(x=> x.Id == _spaceData.DataProviderId);
 				_selectedDataRows = new();
 			}
 			_currentUser = Context!.CurrentUser;
@@ -185,7 +194,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 							spaceDataId: _spaceView!.SpaceDataId,
 							presetFilters: _preset is not null ? _preset.Filters : null,
 							presetSorts: _preset is not null ? _preset.SortOrders : null,
-							userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _dataProvider!.Columns.ToList()),
+							userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _allDataProviders, _allSharedColumns),
 							userSorts: _navState.Sorts.ConvertQuerySortToList(_spaceViewColumns),
 							search: _navState.Search,
 							page: _page,
@@ -284,7 +293,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 							spaceDataId: _spaceView!.SpaceDataId,
 							presetFilters: preset is not null ? preset.Filters : null,
 							presetSorts: preset is not null ? preset.SortOrders : null,
-							userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _dataProvider!.Columns.ToList()),
+							userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _allDataProviders, _allSharedColumns),
 							userSorts: _navState.Sorts.ConvertQuerySortToList(_spaceViewColumns),
 							search: _navState.Search
 					);
@@ -324,7 +333,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			{
 				var column = _data.Columns[columnName];
 				if (column is null) continue;
-				_data[rowId,columnName] = change[rowId][columnName];
+				_data[rowId, columnName] = change[rowId][columnName];
 			}
 		}
 		StateHasChanged();

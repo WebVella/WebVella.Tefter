@@ -8,8 +8,8 @@ public static partial class TfConverters
 	#region << String >>
 	public static string StringOverflow(string? input, int? charCount)
 	{
-		if (charCount is null 
-		|| String.IsNullOrWhiteSpace(input) 
+		if (charCount is null
+		|| String.IsNullOrWhiteSpace(input)
 		|| input.Length <= charCount) return input ?? String.Empty;
 		return input.Substring(0, charCount.Value) + "...";
 	}
@@ -414,16 +414,18 @@ public static partial class TfConverters
 		return null;
 	}
 
-	public static List<TfFilterBase> ConvertQueryFilterToList(this List<TfFilterQuery>? items, 
-		List<TfSpaceViewColumn> viewColumns, List<TfDataProviderColumn> providerColumns)
+	public static List<TfFilterBase> ConvertQueryFilterToList(this List<TfFilterQuery>? items,
+		List<TfSpaceViewColumn> viewColumns, List<TfDataProvider> providers, List<TfSharedColumn> sharedColumns)
 	{
 		var result = new List<TfFilterBase>();
-		if(items is null || viewColumns is null || items.Count == 0 || viewColumns.Count == 0) return result;
+		if (items is null || viewColumns is null || items.Count == 0 || viewColumns.Count == 0) return result;
+
+		var typeDict = viewColumns.ToQueryNameTypeDictionary(dataProviders: providers, sharedColumns: sharedColumns);
 
 		foreach (var item in items)
 		{
-			var filter = new TfFilterBase().FromQuery(item,viewColumns,providerColumns);
-			if(filter is null) continue;
+			var filter = new TfFilterBase().FromQuery(item, viewColumns, typeDict);
+			if (filter is null) continue;
 			result.Add(filter);
 		}
 
@@ -433,16 +435,60 @@ public static partial class TfConverters
 	public static List<TfSort> ConvertQuerySortToList(this List<TfSortQuery>? items, List<TfSpaceViewColumn> columns)
 	{
 		var result = new List<TfSort>();
-		if(items is null || columns is null || items.Count == 0 || columns.Count == 0) return result;
+		if (items is null || columns is null || items.Count == 0 || columns.Count == 0) return result;
 
 		foreach (var item in items)
 		{
-			var sort = new TfSort().FromQuery(item,columns);
+			var sort = new TfSort().FromQuery(item, columns);
 			result.Add(sort);
 		}
 
 		return result;
 	}
+
+	public static Dictionary<string, TfDatabaseColumnType> ToQueryNameTypeDictionary(this List<TfSpaceViewColumn> viewColumns,
+			List<TfDataProvider> dataProviders, List<TfSharedColumn> sharedColumns)
+	{
+		Dictionary<string, TfDatabaseColumnType> typeDict = new();
+
+		Dictionary<string, TfDatabaseColumnType> columnNameTypeDict = new();
+		foreach (var dp in dataProviders)
+		{
+			foreach (var col in dp.Columns)
+			{
+				if (String.IsNullOrWhiteSpace(col.DbName)) continue;
+				columnNameTypeDict[col.DbName] = col.DbType;
+			}
+		}
+
+		foreach (var col in sharedColumns)
+		{
+			if (String.IsNullOrWhiteSpace(col.DbName)) continue;
+			columnNameTypeDict[col.DbName] = col.DbType;
+		}
+
+		foreach (var column in viewColumns)
+		{
+			var columnName = column.GetColumnNameFromDataMapping();
+			if (String.IsNullOrWhiteSpace(columnName)) continue;
+			var nameArray = columnName.Split(".");
+			if (nameArray.Length == 1)
+			{
+				//it is a local provider column
+				if (!columnNameTypeDict.ContainsKey(columnName)) continue;
+				typeDict[column.QueryName] = columnNameTypeDict[columnName];
+			}
+			else
+			{
+				if (!columnNameTypeDict.ContainsKey(nameArray[1])) continue;
+				typeDict[column.QueryName] = columnNameTypeDict[nameArray[1]];
+			}
+		}
+
+
+		return typeDict;
+	}
+
 	#endregion
 
 	#region << Color >>
@@ -738,7 +784,7 @@ public static partial class TfConverters
 	public static List<string> GetDataAsErrorList(Exception ex)
 	{
 		List<string> result = new List<string>();
-		if(ex is null || ex.Data is null)
+		if (ex is null || ex.Data is null)
 			return result;
 		foreach (var key in ex.Data.Keys)
 		{
@@ -748,7 +794,7 @@ public static partial class TfConverters
 			{
 				foreach (var valEx in (List<ValidationError>)ex.Data[key]!)
 				{
-					if(String.IsNullOrWhiteSpace(valEx.Message)) continue;
+					if (String.IsNullOrWhiteSpace(valEx.Message)) continue;
 					result.Add(valEx.Message);
 				}
 			}

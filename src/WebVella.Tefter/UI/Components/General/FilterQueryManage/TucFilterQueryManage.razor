@@ -157,9 +157,11 @@
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 								@if (context.RequiresValue)
 								{
-									<FluentTextField Value="@Item.Value"
+									<FluentNumberField Value="@Item.Value.ToNullableLong()"
+													   TValue="long?"
 													   ValueChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.Value),value))"
 													   Disabled="@Disabled" ReadOnly="ReadOnly"
+													   AutoComplete="off"
 													   Placeholder="@LOC("enter valid integer")" Style="width:300px" />
 								}
 							}
@@ -176,9 +178,11 @@
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 								@if (context.RequiresValue)
 								{
-									<FluentTextField Value="@Item.Value"
+									<FluentNumberField Value="@Item.Value.ToNullableDecimal()"
+													   TValue="decimal?"
 													   ValueChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.Value),value))"
 													   Disabled="@Disabled" ReadOnly="ReadOnly"
+													   AutoComplete="off"
 													   Placeholder="@LOC("enter valid decimal")" Style="width:300px" />
 								}
 							}
