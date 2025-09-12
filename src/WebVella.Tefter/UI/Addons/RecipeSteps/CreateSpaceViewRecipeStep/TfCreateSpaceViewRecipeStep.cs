@@ -45,8 +45,7 @@ public class TfCreateSpaceViewRecipeStep : ITfRecipeStepAddon
 		;
 		foreach (var column in step.Columns)
 		{
-			column.FixPrefix(dpPrefix);
-			var columnResult = tfService.CreateSpaceViewColumn(column);
+			_ = tfService.CreateSpaceViewColumn(column);
 		}
 
 		return Task.CompletedTask;
