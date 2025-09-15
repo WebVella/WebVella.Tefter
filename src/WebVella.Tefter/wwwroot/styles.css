@@ -599,6 +599,9 @@ a:hover {
 .tf-card--clickable:hover {
   background: var(--neutral-fill-secondary-rest);
 }
+.tf-card__content fluent-anchor.stealth {
+  --neutral-fill-stealth-rest: var(--tf-fill-color-base);
+}
 .tf-card__footer {
   padding-top: 1rem;
 }
@@ -1411,6 +1414,45 @@ fluent-dialog .tf-divider,
 }
 .tf-hover-switch:hover .tf-hover-switch__hover {
   display: block;
+}
+.tf-howto-card__items {
+  margin-top: 1rem;
+}
+.tf-howto-card__items__item {
+  display: flex;
+  margin-bottom: 1.5rem;
+}
+.tf-howto-card__items__item:last-child {
+  margin-bottom: 0;
+}
+.tf-howto-card__items__item__thumb {
+  flex: 0 0 54px;
+  display: flex;
+}
+.tf-howto-card__items__item__thumb__count {
+  flex: 0 0 30px;
+  height: 30px;
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: var(--tf-font-weight-lg);
+}
+.tf-howto-card__items__item__thumb__icon {
+  flex: 0 0 30px;
+  height: 30px;
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.tf-howto-card__items__item__meta {
+  flex: 0 0 auto;
+}
+.tf-howto-card__items__item__meta__title {
+  font-size: var(--tf-font-size-lg);
+  font-weight: var(--tf-font-weight-lg);
 }
 .tf-layout-centered-content {
   height: 100vh;
