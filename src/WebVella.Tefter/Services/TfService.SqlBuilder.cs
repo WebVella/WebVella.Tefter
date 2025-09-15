@@ -388,7 +388,7 @@ public partial class TfService : ITfService
 					_sorts = _userSorts.ToList();
 					foreach (var sortOrder in _userSorts)
 					{
-						var column = GetColumnObject(_availableColumns, sortOrder.ColumnName);
+						var column = GetColumnObject(_availableColumns, sortOrder.ColumnName,checkJoinData:true);
 						if (column is not null)
 							_sortColumns.Add(column);
 					}
@@ -398,7 +398,7 @@ public partial class TfService : ITfService
 					_sorts = _presetSorts.ToList();
 					foreach (var sortOrder in _presetSorts)
 					{
-						var column = GetColumnObject(_availableColumns, sortOrder.ColumnName);
+						var column = GetColumnObject(_availableColumns, sortOrder.ColumnName, checkJoinData: true);
 						if (column is not null)
 							_sortColumns.Add(column);
 					}
@@ -408,7 +408,7 @@ public partial class TfService : ITfService
 					_sorts = _spaceData.SortOrders.ToList();
 					foreach (var sortOrder in _spaceData.SortOrders)
 					{
-						var column = GetColumnObject(_availableColumns, sortOrder.ColumnName);
+						var column = GetColumnObject(_availableColumns, sortOrder.ColumnName, checkJoinData: true);
 						if (column is not null)
 							_sortColumns.Add(column);
 					}
@@ -495,7 +495,7 @@ public partial class TfService : ITfService
 			var filterColumn = _filterColumns.FirstOrDefault(x => x.DbName == filter.ColumnName);
 			if (filterColumn is null)
 			{
-				SqlBuilderColumn? availableColumn = GetColumnObject(_availableColumns, filter.ColumnName);
+				SqlBuilderColumn? availableColumn = GetColumnObject(_availableColumns, filter.ColumnName, checkJoinData: true);
 				if (availableColumn is not null)
 					_filterColumns.Add(availableColumn);
 			}
@@ -956,14 +956,30 @@ public partial class TfService : ITfService
 			return value;
 		}
 
-		private SqlBuilderColumn? GetColumnObject(List<SqlBuilderColumn> columns, string columnName)
+		private SqlBuilderColumn? GetColumnObject(List<SqlBuilderColumn> columns, string columnName, bool checkJoinData = false )
 		{
 			if (columnName.Contains('.'))
 			{
 				string[] parts = columnName.Split('.');
 				if (parts.Length == 2)
 				{
-					return columns.FirstOrDefault(x => x.DbName == parts[1] && x.DataIdentity == parts[0]);
+					var found = columns.FirstOrDefault(x => x.DbName == parts[1] && x.DataIdentity == parts[0]);
+					
+					if(found != null)
+						return found;
+					
+					if (checkJoinData)
+					{
+						foreach (var join in _joinData)
+						{
+							if (join.DataIdentity == parts[0])
+							{
+								var col = join.Columns.FirstOrDefault(x => x.DbName == parts[1]);
+								if (col != null)
+									return col;
+							}
+						}
+					}
 				}
 				return null;
 			}
