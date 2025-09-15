@@ -1269,7 +1269,7 @@ public partial class TfService : ITfService
 				}
 				else if (currentSorts[0].Direction == (int)TfSortDirection.DESC)
 				{
-					currentSorts.RemoveAt(columnIndex);
+					currentSorts = new();
 				}
 			}
 			else

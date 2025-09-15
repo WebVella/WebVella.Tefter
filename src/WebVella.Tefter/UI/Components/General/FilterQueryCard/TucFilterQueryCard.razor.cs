@@ -1,4 +1,7 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using WebVella.Tefter.Utility;
+
+namespace WebVella.Tefter.UI.Components;
+
 public partial class TucFilterQueryCard : TfBaseComponent
 {
 
@@ -13,7 +16,13 @@ public partial class TucFilterQueryCard : TfBaseComponent
 	public List<TfSpaceViewColumn> ViewColumns { get; set; } = new();
 
 	[Parameter]
-	public List<TfDataProviderColumn> ProviderColumns { get; set; } = new();
+	public TfDataProvider Provider { get; set; } = new();
+
+	[Parameter]
+	public List<TfDataProvider> AllProviders { get; set; } = new();
+
+	[Parameter]
+	public List<TfSharedColumn> AllSharedColumns { get; set; } = new();
 
 	private TfFilterQuery _selectedOption = new();
 	private List<TfFilterQuery> _allOptions = new();
@@ -23,18 +32,15 @@ public partial class TucFilterQueryCard : TfBaseComponent
 	protected override void OnInitialized()
 	{
 		if (ViewColumns is null) throw new Exception("ViewColumns is required");
+		if (Provider is null) throw new Exception("Provider is required");
 		_allOptions = new();
 		foreach (var column in ViewColumns)
 		{
 			_allOptions.Add(new TfFilterQuery { Name = column.QueryName });
 			_columnDict[column.QueryName] = column.Title;
-			var columnName = column.GetColumnNameFromDataMapping();
-			var providerColumn = ProviderColumns.FirstOrDefault(x => x.DbName == columnName);
-			if (providerColumn is not null)
-			{
-				_typeDict[column.QueryName] = providerColumn.DbType;
-			}
 		}
+
+		_typeDict = ViewColumns.ToQueryNameTypeDictionary(dataProviders:AllProviders,sharedColumns:AllSharedColumns);
 	}
 
 	private async Task _addColumnFilterHandler()

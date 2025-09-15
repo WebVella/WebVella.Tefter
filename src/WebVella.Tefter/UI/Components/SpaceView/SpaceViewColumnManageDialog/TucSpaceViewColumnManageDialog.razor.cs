@@ -217,8 +217,19 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 
 	private void _dataMappingValueChanged(Tuple<string, string> valueAlias)
 	{
-		if (valueAlias is null) return;
-		_form.DataMapping[valueAlias.Item1] = valueAlias.Item2;
+		if (valueAlias is null || _selectedColumnType is null) return;
+
+		//fix datamapping object based on the latest requirements
+		var dataMapping = new Dictionary<string, string>();
+		dataMapping[valueAlias.Item1] = valueAlias.Item2;
+		foreach (var item in _selectedColumnType.Instance.DataMapping)
+		{
+			if(item.Alias == valueAlias.Item1) continue; //already added above
+			dataMapping[item.Alias] = null;
+			if(_form.DataMapping.ContainsKey(item.Alias))
+				dataMapping[item.Alias] = _form.DataMapping[item.Alias];
+		}
+		_form.DataMapping = dataMapping;
 	}
 
 	private Dictionary<string, object> _getColumnComponentContext()

@@ -142,20 +142,20 @@ public record TfFilterBase
 		}
 	}
 
-	public TfFilterBase? FromQuery(TfFilterQuery model, List<TfSpaceViewColumn> viewColumns, List<TfDataProviderColumn> providerColumns)
+	public TfFilterBase? FromQuery(TfFilterQuery model, List<TfSpaceViewColumn> viewColumns, Dictionary<string, TfDatabaseColumnType> queryNameTypeDict)
 	{
 		if (model is null) throw new ArgumentException("required", nameof(model));
 		if (viewColumns is null) throw new ArgumentException("required", nameof(viewColumns));
-		if (providerColumns is null) throw new ArgumentException("required", nameof(providerColumns));
+		if (queryNameTypeDict is null) throw new ArgumentException("required", nameof(queryNameTypeDict));
 
 		//rules
 		if (model.Name == (new TfFilterAnd()).GetColumnName())
 		{
-			return new TfFilterAnd(model, viewColumns, providerColumns);
+			return new TfFilterAnd(model, viewColumns, queryNameTypeDict);
 		}
 		else if (model.Name == (new TfFilterOr()).GetColumnName())
 		{
-			return new TfFilterOr(model, viewColumns, providerColumns);
+			return new TfFilterOr(model, viewColumns, queryNameTypeDict);
 		}
 		else
 		{
@@ -163,9 +163,8 @@ public record TfFilterBase
 			if (viewColumn is null) return null;
 			var columnName = viewColumn.GetColumnNameFromDataMapping();
 			if (String.IsNullOrWhiteSpace(columnName)) return null;
-			var providerColumn = providerColumns.FirstOrDefault(x => x.DbName == columnName);
-			if (providerColumn is null) return null;
-			switch (providerColumn.DbType)
+			if(!queryNameTypeDict.ContainsKey(model.Name)) return null;
+			switch (queryNameTypeDict[model.Name])
 			{
 				case TfDatabaseColumnType.ShortInteger:
 				case TfDatabaseColumnType.Integer:

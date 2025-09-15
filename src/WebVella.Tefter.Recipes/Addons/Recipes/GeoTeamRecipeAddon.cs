@@ -624,7 +624,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 						ChannelId = talkChannelId
 					}),
 					Settings = new TfSpaceViewColumnSettings{
-						Width = 100
+						Width = 65
 					}
 				},
 				new TfSpaceViewColumn{
@@ -640,7 +640,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 						FolderId = assetFolderId
 					}),
 					Settings = new TfSpaceViewColumnSettings{
-						Width = 100
+						Width = 65
 					}
 				},
 			}

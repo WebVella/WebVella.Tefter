@@ -37,6 +37,9 @@ public partial class TfService : ITfService
 		try
 		{
 			var result = new TfHomeDashboardData();
+			var providers = GetDataProviders();
+			var spaces = GetSpacesList();
+			var spacePages = GetAllSpacePages();
 			var (bookmarks, saves) = GetUserBookmarksAsync(userId);
 			List<TfTag> homeTags = GetHomeTagsAsync(bookmarks, saves);
 			List<TfBookmark> homeBookmarks = GetHomeBookmarksAsync(bookmarks);
@@ -57,6 +60,11 @@ public partial class TfService : ITfService
 			result.HomeSaves = homeSaves;
 			result.HomeViews = homeViews;
 			result.HomeSearchResults = homeSearchResults;
+			result.ProvidersCount = providers.Count;
+			result.SpacesCount = spaces.Count;
+			result.SpacePagesCount = spacePages.Count;
+
+
 			return result;
 		}
 		catch (Exception ex)

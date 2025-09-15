@@ -70,7 +70,6 @@ public partial class TucFilterQueryManage : TfBaseComponent
 
 	private async Task _valueChanged(TfDatabaseColumnType type, string propName, object? valueObj)
 	{
-		Console.WriteLine("item changed");
 
 		if (Item is null) return;
 		if (Item.Name == new TfFilterAnd().GetColumnName()
@@ -155,8 +154,30 @@ public partial class TucFilterQueryManage : TfBaseComponent
 		}
 		else if (type == TfDatabaseColumnType.ShortInteger
 			|| type == TfDatabaseColumnType.Integer
-			|| type == TfDatabaseColumnType.LongInteger
-			|| type == TfDatabaseColumnType.Number)
+			|| type == TfDatabaseColumnType.LongInteger)
+		{
+			var item = new TfFilterNumeric();
+			if (propName == nameof(item.ComparisonMethod))
+			{
+				var value = (int)item.ComparisonMethod;
+				if (valueObj is not null)
+					value = (int)valueObj;
+
+				if (updateObj.Method == value) return;
+
+				updateObj.Method = value;
+			}
+			else if (propName == nameof(item.Value))
+			{
+				item.ValueChanged((decimal?)(long?)valueObj);
+
+				if (updateObj.Value == item.Value) return;
+
+				updateObj.Value = item.Value;
+			}
+			else throw new Exception("propName not supported");
+		}
+		else if (type == TfDatabaseColumnType.Number)
 		{
 			var item = new TfFilterNumeric();
 			if (propName == nameof(item.ComparisonMethod))

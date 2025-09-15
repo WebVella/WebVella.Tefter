@@ -1,0 +1,58 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+<TucCard Title="@Title" SubTitle="@SubTitle" Style="@Style" Class="tf-howto-card">
+	@if (ChildContent is not null)
+	{
+		<div class="tf-howto-card__content">@ChildContent</div>
+	}
+	@if (Items.Count > 0)
+	{
+		<div class="tf-howto-card__items">
+			@foreach (var item in Items)
+			{
+				<div class="tf-howto-card__items__item">
+					@if (item.Count is not null || !String.IsNullOrWhiteSpace(item.FluentIconName))
+					{
+						<div class="tf-howto-card__items__item__thumb">
+							@if (item.Count is not null)
+							{
+								<div class="tf-howto-card__items__item__thumb__count" style="@item.IconStyle">@item.Count</div>
+							}
+							else
+							{
+								<div class="tf-howto-card__items__item__thumb__icon" style="@item.IconStyle">
+									<FluentIcon Value="@TfConstants.GetIcon(item.FluentIconName)" />
+								</div>
+
+							}
+						</div>
+					}
+					<div class="tf-howto-card__items__item__meta">
+						@if (!String.IsNullOrWhiteSpace(item.Title))
+						{
+							<div class="tf-howto-card__items__item__meta__title">
+								@((MarkupString)item.Title)
+							</div>
+						}
+						@if (!String.IsNullOrWhiteSpace(item.Description))
+						{ 
+							<div class="tf-howto-card__items__item__meta__description">
+								@((MarkupString)item.Description)
+							</div>
+						}
+						@if (!String.IsNullOrWhiteSpace(item.MoreInfoUrl))
+						{
+							<div class="tf-howto-card__items__item__meta__action">
+								<FluentAnchor Href="@item.MoreInfoUrl" Target="_blank" Appearance="@Appearance.Hypertext">@LOC("read more")</FluentAnchor>
+							</div>
+						}
+					</div>
+				</div>
+			}
+		</div>
+	}
+</TucCard>
+
+
+

@@ -40,6 +40,7 @@ public partial interface ITfService
 	List<TfSpaceDataColumn> GetSpaceDataColumnOptions(Guid spaceDataId);
 
 	void AddSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
+	void AddAvailableColumnsToSpaceData(Guid spaceDataId);
 	void RemoveSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
 
 	//Filters
@@ -584,9 +585,10 @@ public partial class TfService : ITfService
 			result.Add(item);
 		}
 
-		foreach (var dataIdentity in auxDataSchema.DataIdentities)
+		foreach (var implementedIdentity in auxDataSchema.DataIdentities)
 		{
-			foreach (var schemaColumn in dataIdentity.Columns)
+			if (implementedIdentity.DataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY) continue;
+			foreach (var schemaColumn in implementedIdentity.Columns)
 			{
 				var item = new TfSpaceDataColumn
 				{
@@ -595,8 +597,8 @@ public partial class TfService : ITfService
 				};
 				if (schemaColumn.SharedColumn is not null)
 				{
-					item.ColumnName = $"{dataIdentity.DataIdentity.DataIdentity}.{schemaColumn.SharedColumn.DbName}";
-					item.SourceName = dataIdentity.DataIdentity.DataIdentity;
+					item.ColumnName = $"{implementedIdentity.DataIdentity.DataIdentity}.{schemaColumn.SharedColumn.DbName}";
+					item.SourceName = implementedIdentity.DataIdentity.DataIdentity;
 					item.SourceColumnName = schemaColumn.SharedColumn.DbName;
 					item.SourceCode = null;
 					item.SourceType = TfAuxDataSourceType.SharedColumn;
@@ -688,6 +690,26 @@ public partial class TfService : ITfService
 		}
 
 	}
+	public void AddAvailableColumnsToSpaceData(Guid spaceDataId)
+	{
+		var columnOptions = GetSpaceDataColumnOptions(spaceDataId);
+		try
+		{
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				foreach (var column in columnOptions)
+				{
+					AddSpaceDataColumn(spaceDataId, column);
+				}
+				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
 	public void RemoveSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column)
 	{
 		if (column is null)

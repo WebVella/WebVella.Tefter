@@ -27,7 +27,7 @@ public record TfFilterOr : TfFilterBase
 		_filters.AddRange(filters);
 	}
 
-	public TfFilterOr(TfFilterQuery model, List<TfSpaceViewColumn> viewColumns, List<TfDataProviderColumn> providerColumns)
+	public TfFilterOr(TfFilterQuery model, List<TfSpaceViewColumn> viewColumns, Dictionary<string, TfDatabaseColumnType> queryNameTypeDict)
 	: base(string.Empty, null)
 	{
 		if (model is null) throw new ArgumentException("model is required",nameof(model));
@@ -35,7 +35,7 @@ public record TfFilterOr : TfFilterBase
 		_filters = new();
 		foreach (var item in model.Items)
 		{
-			var filter = new TfFilterBase().FromQuery(item,viewColumns, providerColumns);
+			var filter = new TfFilterBase().FromQuery(item,viewColumns, queryNameTypeDict);
 			if(filter is not null)
 				_filters.Add(filter);
 		}
