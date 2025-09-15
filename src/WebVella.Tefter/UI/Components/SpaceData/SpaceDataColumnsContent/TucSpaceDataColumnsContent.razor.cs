@@ -70,6 +70,23 @@ public partial class TucSpaceDataColumnsContent : TfBaseComponent, IDisposable
 		}
 	}
 
+	private async Task _onAddAllColumns()
+	{
+		try
+		{
+			TfSpaceDataUIService.AddAvailableColumnsToSpaceData(_spaceData.Id);
+			ToastService.ShowSuccess("Dataset column added!");
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
 	private async Task _onAddColumn(TfSpaceDataColumn column)
 	{
 		try

@@ -62,19 +62,19 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		_caretDownInactive = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
-			builder.AddAttribute(1, "Value", TfConstants.GetIcon("CaretUp")!.WithColor("var(--tf-caret-color)"));
+			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowCircleUp")!.WithColor("var(--tf-caret-color)"));
 			builder.CloseComponent();
 		};
 		_caretDown = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
-			builder.AddAttribute(1, "Value", TfConstants.GetIcon("CaretDown", IconSize.Size20, IconVariant.Filled)!.WithColor("var(--tf-caret-color)"));
+			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowCircleDown", IconSize.Size20, IconVariant.Filled)!.WithColor("var(--tf-caret-color)"));
 			builder.CloseComponent();
 		};
 		_caretUp = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
-			builder.AddAttribute(1, "Value", TfConstants.GetIcon("CaretUp", IconSize.Size20, IconVariant.Filled)!.WithColor("var(--tf-caret-color)"));
+			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowCircleUp", IconSize.Size20, IconVariant.Filled)!.WithColor("var(--tf-caret-color)"));
 			builder.CloseComponent();
 		};
 		_isDataLoading = false;

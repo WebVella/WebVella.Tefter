@@ -60,7 +60,7 @@ public partial class TfService : ITfService
 			result.HomeSaves = homeSaves;
 			result.HomeViews = homeViews;
 			result.HomeSearchResults = homeSearchResults;
-			result.ProvidersCount = providers.Count + 1;
+			result.ProvidersCount = providers.Count;
 			result.SpacesCount = spaces.Count;
 			result.SpacePagesCount = spacePages.Count;
 

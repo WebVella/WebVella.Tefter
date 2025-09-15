@@ -21,6 +21,7 @@ public partial interface ITfSpaceDataUIService
 	List<TfSpaceDataColumn> GetSpaceDataColumnOptions(Guid spaceDataId);
 	List<TfSpaceDataColumn> GetSpaceDataColumns(Guid spaceDataId);
 	void AddSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
+	void AddAvailableColumnsToSpaceData(Guid spaceDataId);
 	void RemoveSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
 
 	//Filters
@@ -143,6 +144,13 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 	public void AddSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column)
 	{
 		_tfService.AddSpaceDataColumn(spaceDataId, column);
+		var spaceData = _tfService.GetSpaceData(spaceDataId);
+		SpaceDataUpdated?.Invoke(this, spaceData);
+	}
+
+	public void AddAvailableColumnsToSpaceData(Guid spaceDataId)
+	{
+		_tfService.AddAvailableColumnsToSpaceData(spaceDataId);
 		var spaceData = _tfService.GetSpaceData(spaceDataId);
 		SpaceDataUpdated?.Invoke(this, spaceData);
 	}
