@@ -21,9 +21,9 @@ public partial class TfServiceTest : BaseTest
 
 				//Data_GetDataIdentityValue(provider);
 
-				//Data_InsertUpdateTableTest(provider.Id,spaceData.Id);
+				Data_InsertUpdateTableTest(provider.Id,spaceData.Id);
 
-				Data_SimpleQueryTest(provider.Id, spaceData.Id);
+				//Data_SimpleQueryTest(provider.Id, spaceData.Id);
 
 				//Data_QueryOnlyTfIds(provider.Id, spaceData.Id);
 			}
@@ -126,6 +126,32 @@ public partial class TfServiceTest : BaseTest
 			result = tfService.SaveDataTable(tableToUpdate);
 
 			result = tfService.QueryDataProvider(provider);
+
+
+			var newSpaceDataModel = new TfCreateSpaceData
+			{
+				Id = Guid.NewGuid(),
+				DataProviderId = provider.Id,
+				Name = "NewTestSpaceData",
+				SpaceId = spaceData.SpaceId,
+				Columns = new List<string> { spaceData.Columns[0] }
+			};
+
+			var newSpaceData = tfService.CreateSpaceData(newSpaceDataModel);
+			var newSpaceDataTable = tfService.QuerySpaceData(newSpaceData.Id);
+
+			newTable = newSpaceDataTable.NewTable();
+			
+			for (var i = 0; i < 10; i++)
+			{
+				var row = newTable.NewRow();
+
+				row[$"dp{provider.Index}_guid_column"] = Guid.NewGuid();
+				
+				newTable.Rows.Add(row);
+			}
+			result = tfService.SaveDataTable(newTable);
+
 		}
 	}
 

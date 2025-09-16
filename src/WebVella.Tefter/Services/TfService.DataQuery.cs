@@ -861,6 +861,8 @@ public partial class TfService : ITfService
 
 		List<string> columnNames = new List<string>();
 
+		HashSet<string> processedColumns = new HashSet<string>();
+
 		for (int i = 0; i < row.DataTable.Columns.Count; i++)
 		{
 			var tableColumn = row.DataTable.Columns[i];
@@ -869,6 +871,7 @@ public partial class TfService : ITfService
 			if (tableColumn.IsShared || tableColumn.IsJoinColumn || tableColumn.IsIdentityColumn)
 				continue;
 
+			processedColumns.Add(tableColumn.Name);
 			columnNames.Add(tableColumn.Name);
 
 			var parameterType = GetDbTypeForDatabaseColumnType(tableColumn.DbType);
@@ -881,7 +884,21 @@ public partial class TfService : ITfService
 				parameter.Value = row[tableColumn.Name];
 
 			parameters.Add(parameter);
+		}
 
+		foreach(var providerColumn in provider.Columns)
+		{
+			if( processedColumns.Contains(providerColumn.DbName))
+				continue;
+
+			columnNames.Add(providerColumn.DbName);
+
+			var parameterType = GetDbTypeForDatabaseColumnType(providerColumn.DbType);
+			NpgsqlParameter parameter = new NpgsqlParameter($"@{providerColumn.DbName}", parameterType);
+			parameter.Value = GetProviderColumnDefaultValue(providerColumn);
+			if(parameter.Value is null)
+				parameter.Value = DBNull.Value;
+			parameters.Add(parameter);
 		}
 
 		StringBuilder sql = new StringBuilder();
@@ -1182,6 +1199,59 @@ public partial class TfService : ITfService
 		}
 		return resultType;
 	}
+
+	private static object GetProviderColumnDefaultValue(TfDataProviderColumn column)
+	{
+		if (!column.IsNullable && column.DefaultValue is null)
+			throw new Exception("Column is not nullable, but default value is null.");
+
+		if (column.DefaultValue is null)
+			return null;
+
+		switch (column.DbType)
+		{
+			case TfDatabaseColumnType.Boolean:
+				return Convert.ToBoolean(column.DefaultValue);
+			case TfDatabaseColumnType.Text:
+			case TfDatabaseColumnType.ShortText:
+				return column.DefaultValue;
+			case TfDatabaseColumnType.Guid:
+				{
+					if (column.AutoDefaultValue)
+					{
+						return Guid.NewGuid();
+					}
+					return Guid.Parse(column.DefaultValue);
+				}
+			case TfDatabaseColumnType.DateOnly:
+				{
+					if (column.AutoDefaultValue == true)
+					{
+						return DateOnly.FromDateTime(DateTime.Now).ToDateTime();
+					}
+					return DateOnly.Parse(column.DefaultValue, CultureInfo.InvariantCulture).ToDateTime();
+				}
+			case TfDatabaseColumnType.DateTime:
+				{
+					if (column.AutoDefaultValue == true)
+					{
+						return DateTime.Now;
+					}
+					return DateOnly.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+				}
+			case TfDatabaseColumnType.Number:
+				return Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
+			case TfDatabaseColumnType.ShortInteger:
+				return Convert.ToInt16(column.DefaultValue);
+			case TfDatabaseColumnType.Integer:
+				return Convert.ToInt32(column.DefaultValue);
+			case TfDatabaseColumnType.LongInteger:
+				return Convert.ToInt64(column.DefaultValue);
+			default:
+				throw new Exception("Not supported database column type while validate default value.");
+		}
+	}
+
 
 	public TfDataProviderDataRow GetProviderRow(
 		TfDataProvider provider,
