@@ -7,12 +7,14 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 {
 	[Inject] public IEmailService EmailService { get; set; }
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
+    [Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
 
-	private string? _search = null;
+    private string? _search = null;
 	private List<EmailMessage> _messages = new();
 	private Guid? _submitingEmail = null;
 	private TfNavigationState _navState = new();
 	private FluentSearch? _refSearch = null;
+	private TfUser? _currentUser = null;
 	public void Dispose()
 	{
 		EmailService.EmailCreated -= On_EmailChanged;
@@ -21,7 +23,8 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
+        _currentUser = await TfUserUIService.GetCurrentUserAsync();
+        await _init();
 		EmailService.EmailCreated += On_EmailChanged;
 		EmailService.EmailUpdated += On_EmailChanged;
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
@@ -150,35 +153,6 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private async Task _goFirstPage()
-	{
-		if (_navState.Page == 1) return;
-		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName,1}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
-	private async Task _goPreviousPage()
-	{
-		var page = _navState.Page - 1;
-		if (page < 1) page = 1;
-		if (_navState.Page == page) return;
-		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
-	private async Task _goNextPage()
-	{
-		var page = _navState.Page + 1;
-		if (page < 1) page = 1;
-		if (_navState.Page == page) return;
-
-		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName,page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
 	private async Task _goLastPage()
 	{
 		if (_navState.Page == -1) return;

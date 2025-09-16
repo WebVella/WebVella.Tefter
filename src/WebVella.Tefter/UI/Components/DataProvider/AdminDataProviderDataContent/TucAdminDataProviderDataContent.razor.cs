@@ -111,47 +111,6 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
-	private async Task _goFirstPage()
-	{
-		if (_isDataLoading) return;
-		if (_navState.Page == 1) return;
-		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object?>{
-			{ TfConstants.PageQueryName, 1}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this, "_goFirstPage");
-	}
-	private async Task _goPreviousPage()
-	{
-		if (_isDataLoading) return;
-		var page = _navState.Page - 1;
-		if (page < 1) page = 1;
-		if (_navState.Page == page) return;
-		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object?>{
-			{ TfConstants.PageQueryName, page}
-		};
-		queryDict[TfConstants.PageQueryName] = page;
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this, "_goPreviousPage");
-	}
-	private async Task _goNextPage()
-	{
-		if (_isDataLoading) return;
-		if (_totalRows == 0)
-			return;
-
-		var page = _navState.Page + 1;
-		if (page < 1) page = 1;
-		if (_navState.Page == page) return;
-		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object?>{
-			{ TfConstants.PageQueryName, page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this, "_goNextPage");
-	}
 	private async Task _goLastPage()
 	{
 		if (_isDataLoading) return;

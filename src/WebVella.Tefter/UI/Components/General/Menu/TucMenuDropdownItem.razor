@@ -12,7 +12,7 @@
 			</span>
 			@if (Item.Icon is not null)
 			{
-				<span slot="start">
+				<span slot="start" class="tf-menu__item__icon">
 					@if (Item.Color is not null)
 					{
 						<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetAttribute().Value)" />
@@ -54,7 +54,7 @@ else
 				</span>
 				@if (Item.Icon is not null)
 				{
-					<span slot="start">
+					<span slot="start" class="tf-menu__item__icon">
 						@if (Item.Color is not null)
 						{
 							<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetAttribute().Value)" />

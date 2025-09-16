@@ -1,14 +1,17 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
+	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
 
 	private TfDataProvider? _provider = null;
 	private TfNavigationState _navState = new();
 
 	private string _nextSyncronization = default!;
 	private List<TfDataProviderSynchronizeTask> _syncTasks = new();
+	private TfUser? _currentUser = null;
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
@@ -16,6 +19,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	}
 	protected override async Task OnInitializedAsync()
 	{
+		_currentUser = await TfUserUIService.GetCurrentUserAsync();
 		await _init();
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
@@ -76,7 +80,8 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	}
 	private void _synchronizeNow()
 	{
-		if(_provider.Columns.Count == 0){ 
+		if (_provider.Columns.Count == 0)
+		{
 			ToastService.ShowWarning(LOC("No provider columns created yet!"));
 			return;
 		}
@@ -98,38 +103,6 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 		if (!result.Cancelled && result.Data != null) { }
 	}
 
-	private async Task _goFirstPage()
-	{
-		if (_navState.Page == 1) return;
-		var queryDict = new Dictionary<string, object?>{
-			{ TfConstants.PageQueryName, 1}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
-	private async Task _goPreviousPage()
-	{
-		var page = _navState.Page - 1;
-		if (page < 1) page = 1;
-		if (_navState.Page == page) return;
-		var queryDict = new Dictionary<string, object?>{
-			{ TfConstants.PageQueryName, page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
-	private async Task _goNextPage()
-	{
-		if (_syncTasks is null
-			|| _syncTasks.Count == 0)
-			return;
-
-		var page = _navState.Page + 1;
-		if (page < 1) page = 1;
-		if (_navState.Page == page) return;
-		var queryDict = new Dictionary<string, object?>{
-			{ TfConstants.PageQueryName, page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
 	private async Task _goLastPage()
 	{
 		if (_navState.Page == -1) return;

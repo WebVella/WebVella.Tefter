@@ -62,19 +62,19 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		_caretDownInactive = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
-			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowSortUp")!.WithColor("var(--tf-caret-color)"));
+			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowSortUpLines")!.WithColor("var(--tf-caret-color)"));
 			builder.CloseComponent();
 		};
 		_caretDown = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
-			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowSortDown", IconSize.Size20, IconVariant.Filled)!.WithColor("var(--tf-caret-color)"));
+			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowSortDownLines")!.WithColor("var(--tf-caret-color)"));
 			builder.CloseComponent();
 		};
 		_caretUp = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
-			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowSortUp", IconSize.Size20, IconVariant.Filled)!.WithColor("var(--tf-caret-color)"));
+			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowSortUpLines")!.WithColor("var(--tf-caret-color)"));
 			builder.CloseComponent();
 		};
 		_isDataLoading = false;
@@ -157,7 +157,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			}
 			_currentUser = Context!.CurrentUser;
 			_page = _navState.Page ?? 1;
-			_pageSize = _navState.PageSize ?? TfConstants.PageSize;
+			_pageSize = _navState.PageSize ?? (_currentUser.Settings.PageSize ?? TfConstants.PageSize);
 			_spaceViewColumns = TfSpaceViewUIService.GetViewColumns(_spaceView.Id);
 			_preset = null;
 			if (_navState.SpaceViewPresetId is not null)
@@ -342,34 +342,9 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	public TfDataTable? GetCurrentData() => _data;
 	#endregion
 
-
 	#region <<Utility Methods >>
 	// Navigation Methods
-	private async Task _goFirstPage()
-	{
-		if (_isDataLoading) return;
-		if (_page == 1) return;
-		await Navigator.ApplyChangeToUrlQuery(TfConstants.PageQueryName, null);
-	}
-	private async Task _goPreviousPage()
-	{
-		if (_isDataLoading) return;
-		var page = (_navState?.Page ?? 1) - 1;
-		if (page < 1) page = 1;
-		if (_page == page) return;
-		await Navigator.ApplyChangeToUrlQuery(TfConstants.PageQueryName, page == 1 ? null : page);
-	}
-	private async Task _goNextPage()
-	{
-		if (_isDataLoading) return;
-		if (_data is null
-		|| _data.Rows.Count == 0)
-			return;
-		var page = (_navState?.Page ?? 1) + 1;
-		if (page < 1) page = 1;
-		if (_page == page) return;
-		await Navigator.ApplyChangeToUrlQuery(TfConstants.PageQueryName, page == 1 ? null : page);
-	}
+
 	private async Task _goLastPage()
 	{
 		if (_isDataLoading) return;

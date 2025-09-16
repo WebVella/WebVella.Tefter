@@ -131,9 +131,8 @@
 							</table>
 						</div>
 						<div class="tf-grid__pager">
-							<TucPager Page="@(_data?.QueryInfo.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
-									  GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
-									  PageSize="@(_data?.QueryInfo.PageSize ?? TfConstants.PageSize)" ChangePageSize="_pageSizeChange" />
+							<TucPager UserPageSize="@_currentUser?.Settings?.PageSize" GoLast="@_goLastPage" GoOnPage="@_goOnPage"
+									  ChangePageSize="_pageSizeChange" />
 						</div>
 					}
 					else

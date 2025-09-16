@@ -1,19 +1,21 @@
-﻿using Microsoft.FluentUI.AspNetCore.Components.Utilities;
+﻿using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Microsoft.FluentUI.AspNetCore.Components.Utilities;
+using System.Drawing.Printing;
 
 namespace WebVella.Tefter.UI.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.General.Pager.TfPager", "WebVella.Tefter")]
 public partial class TucPager : TfBaseComponent, IDisposable
 {
 	[Inject] private IKeyCodeService KeyCodeService { get; set; } = default!;
-	[Parameter] public int Page { get; set; }
-	[Parameter] public int PageSize { get; set; }
+	[Inject] private ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
+
+	[Parameter] public int? UserPageSize { get; set; } = null;
+
 	[Parameter] public string? Style { get; set; }
 	[Parameter] public bool EnableShortcuts { get; set; } = true;
 
 	[Parameter] public EventCallback GoLast { get; set; }
-	[Parameter] public EventCallback GoNext { get; set; }
-	[Parameter] public EventCallback GoFirst { get; set; }
-	[Parameter] public EventCallback GoPrevious { get; set; }
 	[Parameter] public EventCallback<int> GoOnPage { get; set; }
 	[Parameter] public EventCallback<int> ChangePageSize { get; set; }
 
@@ -26,49 +28,69 @@ public partial class TucPager : TfBaseComponent, IDisposable
 	private string _prevTooltip = "Go to previous page [Page Down]";
 	private string _nextTooltip = "Go to next page [Page Up]";
 	private string _lastTooltip = "Go to last page [End]";
+	private string _uriInitialized = string.Empty;
+
 
 	public void Dispose()
 	{
 		KeyCodeService.UnregisterListener(HandleKeyDownAsync);
+		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
-	protected override void OnAfterRender(bool firstRender)
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnAfterRender(firstRender);
-		if (firstRender)
+		await _init(null);
+		KeyCodeService.RegisterListener(HandleKeyDownAsync);
+		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+	}
+		
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	{
+		if (_uriInitialized != args.Uri)
+			await _init(navState: args);
+	}
+
+	private async Task _init(TfNavigationState? navState = null)
+	{
+		if (navState is null)
+			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+		try
 		{
-			KeyCodeService.RegisterListener(HandleKeyDownAsync);
+			if (!EnableShortcuts)
+			{
+				_firstTooltip = "Go to first page";
+				_prevTooltip = "Go to previous page";
+				_nextTooltip = "Go to next page";
+				_lastTooltip = "Go to last page";
+			}
+			else
+			{
+				_firstTooltip = "Go to first page [Home]";
+				_prevTooltip = "Go to previous page [Page Down]";
+				_nextTooltip = "Go to next page [Page Up]";
+				_lastTooltip = "Go to last page [End]";
+			}
+			if(navState.Page is null || navState.Page.Value > 0)
+				_page = navState.Page ?? 1;
+
+			_pageSize = navState.PageSize ?? (UserPageSize ?? TfConstants.PageSize);
 		}
-	}
-
-	protected override async Task OnParametersSetAsync()
-	{
-		await base.OnParametersSetAsync();
-		_page = Page;
-		_pageSize = PageSize;
-
-		if (!EnableShortcuts)
+		finally
 		{
-			_firstTooltip = "Go to first page";
-			_prevTooltip = "Go to previous page";
-			_nextTooltip = "Go to next page";
-			_lastTooltip = "Go to last page";
-		}
-		else{ 
-			_firstTooltip = "Go to first page [Home]";
-			_prevTooltip = "Go to previous page [Page Down]";
-			_nextTooltip = "Go to next page [Page Up]";
-			_lastTooltip = "Go to last page [End]";		
+			_uriInitialized = navState.Uri;
+			await InvokeAsync(StateHasChanged);
 		}
 	}
 
-	public async Task HandleKeyDownAsync(FluentKeyCodeEventArgs args)
+	public Task HandleKeyDownAsync(FluentKeyCodeEventArgs args)
 	{
-		if (!EnableShortcuts) return;
-		if (args.Key == KeyCode.PageUp) await GoPrevious.InvokeAsync();
-		else if (args.Key == KeyCode.PageDown) await GoNext.InvokeAsync();
-		else if (args.Key == KeyCode.Home) await GoFirst.InvokeAsync();
-		else if (args.Key == KeyCode.End) await GoLast.InvokeAsync(); ;
+		if (!EnableShortcuts) return Task.CompletedTask;
+		if (args.Key == KeyCode.PageUp) _goPrevious();
+		else if (args.Key == KeyCode.PageDown) _goNext();
+		else if (args.Key == KeyCode.Home) _goFirst();
+		else if (args.Key == KeyCode.End) _goLast();
+
+		return Task.CompletedTask;
 	}
 
 	private void _goLast()
@@ -81,31 +103,39 @@ public partial class TucPager : TfBaseComponent, IDisposable
 
 	private void _goNext()
 	{
+		_page ++;
 		_currentSelectedChangedDebounce.Run(_throttleMS, () => InvokeAsync(async () =>
 		{
-			await GoNext.InvokeAsync();
+			await GoOnPage.InvokeAsync(_page);
 		}));
 	}
 
 	private void _goFirst()
 	{
+		if(_page == 1) return;
+		_page = 1;
 		_currentSelectedChangedDebounce.Run(_throttleMS, () => InvokeAsync(async () =>
 		{
-			await GoFirst.InvokeAsync();
+			await GoOnPage.InvokeAsync(_page);
 		}));
 	}
 
 	private void _goPrevious()
 	{
+		_page--;
+		if(_page <= 0)
+			_page = 1;
 		_currentSelectedChangedDebounce.Run(_throttleMS, () => InvokeAsync(async () =>
 		{
-			await GoPrevious.InvokeAsync();
+			await GoOnPage.InvokeAsync(_page);
 		}));
 	}
 
 	private void _pageChanged(int page)
 	{
+		if(page <= 0) return;
 		if (page == _page) return;
+		_page = page;
 		_currentSelectedChangedDebounce.Run(_throttleMS, () => InvokeAsync(async () =>
 		{
 			await GoOnPage.InvokeAsync(page);
@@ -115,6 +145,7 @@ public partial class TucPager : TfBaseComponent, IDisposable
 	private void _pageSizeChanged(int pageSize)
 	{
 		if (pageSize == _pageSize) return;
+		_pageSize = pageSize;
 		_currentSelectedChangedDebounce.Run(_throttleMS, () => InvokeAsync(async () =>
 		{
 			await ChangePageSize.InvokeAsync(pageSize);
