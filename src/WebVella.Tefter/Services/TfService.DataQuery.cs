@@ -874,12 +874,22 @@ public partial class TfService : ITfService
 			processedColumns.Add(tableColumn.Name);
 			columnNames.Add(tableColumn.Name);
 
+			object defaultColumnValue = null;
+			var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == tableColumn.Name);
+			if( providerColumn is not null && providerColumn.DbType != TfDatabaseColumnType.AutoIncrement )
+				defaultColumnValue = GetProviderColumnDefaultValue(providerColumn);
+
 			var parameterType = GetDbTypeForDatabaseColumnType(tableColumn.DbType);
 
 			NpgsqlParameter parameter = new NpgsqlParameter($"@{tableColumn.Name}", parameterType);
 
 			if (row[tableColumn.Name] is null)
-				parameter.Value = DBNull.Value;
+			{
+				if(defaultColumnValue is not null)
+					parameter.Value = defaultColumnValue;
+				else
+					parameter.Value = DBNull.Value;
+			}
 			else
 				parameter.Value = row[tableColumn.Name];
 
