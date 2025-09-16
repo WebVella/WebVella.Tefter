@@ -653,7 +653,7 @@ public partial class TfService : ITfService
 				foreach (var sort in _sorts)
 				{
 					//var column = _availableColumns.SingleOrDefault(x => x.DbName == sort.ColumnName);
-					var column = GetColumnObject(_availableColumns, sort.ColumnName);
+					var column = GetColumnObject(_availableColumns, sort.ColumnName, true);
 
 					//ignore columns not found in data provider
 					if (column is null)

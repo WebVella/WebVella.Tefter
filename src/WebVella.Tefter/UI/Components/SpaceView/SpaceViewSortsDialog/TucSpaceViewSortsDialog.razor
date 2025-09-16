@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfFormBaseComponent
 @* Header *@
-<FluentDialogHeader ShowDismiss="true">
+<FluentDialogHeader ShowDismiss="true" Style="display:none">
 	<FluentLabel Typo="Typography.PaneHeader">@LOC("Sort order")</FluentLabel>
 </FluentDialogHeader>
 
@@ -13,8 +13,8 @@
 
 @* Body *@
 <FluentDialogBody>
-
-	<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
+	<TucSortQueryCard @bind-Items="_items" ViewColumns="_viewColumns" />
+@* 	<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
 		<FluentTab Label="@LOC("Current")" Id="current" Style="padding-top:1rem">
 			<TucSortQueryCard @bind-Items="_items" ViewColumns="_viewColumns" />
 		</FluentTab>
@@ -49,5 +49,5 @@
 				}
 			</TucCard>
 		</FluentTab>
-	</FluentTabs>
+	</FluentTabs> *@
 </FluentDialogBody>

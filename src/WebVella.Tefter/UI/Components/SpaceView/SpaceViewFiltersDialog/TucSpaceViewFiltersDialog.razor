@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfFormBaseComponent
 @* Header *@
-<FluentDialogHeader ShowDismiss="true">
+<FluentDialogHeader ShowDismiss="true" Style="display:none">
 	<FluentLabel Typo="Typography.PaneHeader">@LOC("Filters")</FluentLabel>
 </FluentDialogHeader>
 
@@ -15,10 +15,12 @@
 <FluentDialogBody>
 	@if (_spaceData is not null)
 	{
-		<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
+		<TucFilterQueryCard Items="@_items" ItemsChanged="_onFiltersChangeHandler"
+							ViewColumns="@_viewColumns" Provider="@_dataProvider" AllProviders="_dataProviders" AllSharedColumns="_sharedColumns" />
+@* 		<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
 			<FluentTab Label="@LOC("Current")" Id="current">
-				<TucFilterQueryCard Items="@_items" ItemsChanged="_onFiltersChangeHandler" 
-						ViewColumns="@_viewColumns" Provider="@_dataProvider" AllProviders="_dataProviders" AllSharedColumns="_sharedColumns"/>
+				<TucFilterQueryCard Items="@_items" ItemsChanged="_onFiltersChangeHandler"
+									ViewColumns="@_viewColumns" Provider="@_dataProvider" AllProviders="_dataProviders" AllSharedColumns="_sharedColumns" />
 			</FluentTab>
 			<FluentTab Label="@LOC("Always applied")" Id="default">
 				@if (_spaceData.Filters.Count == 0)
@@ -45,7 +47,7 @@
 					</TucCard>
 				}
 			</FluentTab>
-		</FluentTabs>
+		</FluentTabs> *@
 	}
 	else
 	{

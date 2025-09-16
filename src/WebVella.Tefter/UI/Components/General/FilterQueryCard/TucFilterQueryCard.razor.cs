@@ -43,9 +43,10 @@ public partial class TucFilterQueryCard : TfBaseComponent
 		_typeDict = ViewColumns.ToQueryNameTypeDictionary(dataProviders:AllProviders,sharedColumns:AllSharedColumns);
 	}
 
-	private async Task _addColumnFilterHandler()
+	private async Task _addColumnFilterHandler(TfFilterQuery? filter)
 	{
-		if (String.IsNullOrWhiteSpace(_selectedOption?.Name)) return;
+		if (filter is null || String.IsNullOrWhiteSpace(filter.Name)) return;
+		_selectedOption = filter;
 		await AddFilter(_selectedOption.Name, null);
 	}
 

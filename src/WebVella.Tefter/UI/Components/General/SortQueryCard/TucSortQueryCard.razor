@@ -2,37 +2,31 @@
 @inherits TfBaseComponent
 
 <TucCard Title="@Title" Class="tf-card--filter">
+	<TitleTemplate>@LOC("Sort order")</TitleTemplate>
 	<ToolbarTemplate>
-		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+		<FluentStack VerticalAlignment="@VerticalAlignment.Center" HorizontalAlignment="@HorizontalAlignment.End">
 			@if (_options.Count > 0)
 			{
-				<FluentSelect OptionSelected="(x => x.Name == _selectedOption?.Name)"
-							  @bind-SelectedOption="@_selectedOption"
+				<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">@LOC("columns:")</FluentLabel>
+				<FluentSelect SelectedOptionChanged="(x=> _addSortColumn(x))"
 							  TOption="TfSortQuery" Required="false"
 							  Items="@_options" Style="width:200px"
-							  Placeholder="@LOC("select provider column")"
+							  Placeholder="@LOC("select to add")"
 							  OptionValue="@((p)=> p.Name)"
 							  OptionText="@((p)=> _columnDict.ContainsKey(p.Name) ? _columnDict[p.Name] : p.Name)" />
-				<FluentSelect OptionSelected="(x => (int)x == _selectedOption?.Direction)"
-							  Items="@(Enum.GetValues<TfSortDirection>())"
-							  OptionValue="@((p)=> ((int)p).ToString())"
-							  OptionText="@((p)=> p.ToDescriptionString())"
-							  TOption="TfSortDirection"
-							  SelectedOptionChanged="@(x=> _selectedOption.Direction = (int)x)"
-							  Style="width:100px" />
 			}
 			else
 			{
 				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
 			}
-			<FluentButton OnClick="_addSortColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
-						  Disabled="@(_options.Count == 0)">@LOC("Add new")</FluentButton>
+			@* 			<FluentButton OnClick="_addSortColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
+						  Disabled="@(_options.Count == 0)">@LOC("Add new")</FluentButton> *@
 		</FluentStack>
 	</ToolbarTemplate>
 	<ChildContent>
 		@if (Items.Count == 0)
 		{
-			@LOC("No data sort order defined yet")
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No data sort order added yet")</FluentMessageBar>
 		}
 		else
 		{
@@ -60,11 +54,19 @@
 								}
 								else
 								{
-									<div>@context.Name</div>	
+									<div>@context.Name</div>
 								}
 							</td>
 							<td class="tf-grid-td">
-								<div>@(((TfSortDirection)context.Direction).ToDescriptionString())</div>
+								<div>
+									<FluentSelect SelectedOption="@((TfSortDirection)context.Direction)"
+												  Items="@(Enum.GetValues<TfSortDirection>())"
+												  OptionValue="@((p)=> ((int)p).ToString())"
+												  OptionText="@((p)=> p.ToDescriptionString())"
+												  TOption="TfSortDirection"
+												  SelectedOptionChanged="@(x=> _directionChanged(context,x))"
+												  Style="width:100px" />
+								</div>
 							</td>
 							<td class="tf-grid-td" style="width:1%;">
 								<div>

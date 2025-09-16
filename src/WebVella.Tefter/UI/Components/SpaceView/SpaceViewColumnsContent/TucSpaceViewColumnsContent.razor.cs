@@ -117,8 +117,8 @@ public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 	private async Task _deleteColumn(TfSpaceViewColumn column)
 	{
 		if (_submitting) return;
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?")))
-			return;
+		//if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?")))
+		//	return;
 
 		try
 		{

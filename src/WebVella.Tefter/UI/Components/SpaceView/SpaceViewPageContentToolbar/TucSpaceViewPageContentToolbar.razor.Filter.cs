@@ -18,7 +18,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 						new DialogParameters()
 						{
 							PreventDismissOnOverlayClick = true,
-							PreventScroll = true,
+							PreventScroll = true, 
 							Width = TfConstants.DialogWidthExtraLarge,
 							TrapFocus = false
 						});

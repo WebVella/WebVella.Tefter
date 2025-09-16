@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace WebVella.Tefter.UI.Components;
 public partial class TucSortQueryCard : TfBaseComponent
 {
 	[Parameter]
@@ -13,7 +15,6 @@ public partial class TucSortQueryCard : TfBaseComponent
 	[Parameter]
 	public List<TfSpaceViewColumn> ViewColumns { get; set; } = new();
 
-	private TfSortQuery _selectedOption = new();
 	private List<TfSortQuery> _allOptions = new();
 	private List<TfSortQuery> _options = new();
 	private Dictionary<string, string> _columnDict = new();
@@ -46,30 +47,30 @@ public partial class TucSortQueryCard : TfBaseComponent
 		}
 	}
 
-	private async Task _addSortColumn()
+	private async Task _addSortColumn(TfSortQuery? sort)
 	{
-		if (String.IsNullOrWhiteSpace(_selectedOption.Name)) return;
-		if (Items.Any(x => x.Name == _selectedOption.Name))
-		{
-			_selectedOption = new();
-			return;
-		}
+		if (sort is null || String.IsNullOrWhiteSpace(sort.Name)) return;
+		if (Items.Any(x => x.Name == sort.Name)) return;
 
 		var items = Items.ToList();
-		items.Add(new TfSortQuery { Name = _selectedOption.Name, Direction = _selectedOption.Direction });
+		items.Add(new TfSortQuery { Name = sort.Name, Direction = sort.Direction });
 		await ItemsChanged.InvokeAsync(items);
 	}
 
 
 	private async Task _deleteSortColumn(TfSortQuery sort)
 	{
-		if (!Items.Any(x => x.Name == _selectedOption.Name))
-		{
-			_selectedOption = new();
-			return;
-		}
-
 		var items = Items.Where(x => x.Name != sort.Name).ToList();
+		await ItemsChanged.InvokeAsync(items);
+	}
+
+	private async Task _directionChanged(TfSortQuery? sort, TfSortDirection newDirection)
+	{
+		if (sort is null || sort.Direction == (int)newDirection) return;
+		var items = Items.ToList();
+		var sortIndex = items.IndexOf(sort);
+		if (sortIndex < 0) return;
+		items[sortIndex].Direction = (int)newDirection;
 		await ItemsChanged.InvokeAsync(items);
 	}
 

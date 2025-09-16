@@ -7,7 +7,7 @@
 }
 @if (notes.Count == 0)
 {
-	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">No notes created yet</FluentMessageBar>
+	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No notes created yet")</FluentMessageBar>
 }
 else
 {
