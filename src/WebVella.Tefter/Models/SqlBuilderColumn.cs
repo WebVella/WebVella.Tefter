@@ -8,6 +8,7 @@ internal record SqlBuilderColumn
 	public string TableName { get; set; }
 	public string TableAlias { get; set; }
 	public bool IsSystem { get; set; } = false;
+	public SqlBuilderColumnType Type { get; set; } = SqlBuilderColumnType.Default;
 
 	public string GetSelectString()
 	{
@@ -16,4 +17,11 @@ internal record SqlBuilderColumn
 		else
 			return $"{TableAlias}.value AS {DbName}";
 	}
+}
+
+internal enum SqlBuilderColumnType
+{
+	Default,
+	Shared,
+	Joined
 }

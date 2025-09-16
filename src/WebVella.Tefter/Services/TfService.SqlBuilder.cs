@@ -367,7 +367,8 @@ public partial class TfService : ITfService
 								DbType = extColumn.DbType,
 								DataIdentity = joinData.DataIdentity,
 								TableAlias = joinData.TableAlias,
-								TableName = joinData.TableName
+								TableName = joinData.TableName,
+								Type = SqlBuilderColumnType.Joined
 							});
 						}
 					}
@@ -440,7 +441,8 @@ public partial class TfService : ITfService
 					DbName = dbName,
 					DbType = dbType,
 					DataIdentity = dataIdentity,
-					IsSystem = isSystem
+					IsSystem = isSystem,
+					Type =  SqlBuilderColumnType.Default
 				});
 			}
 			else
@@ -455,7 +457,8 @@ public partial class TfService : ITfService
 					DbName = dbName,
 					DbType = dbType,
 					DataIdentity = dataIdentity,
-					IsSystem = isSystem
+					IsSystem = isSystem,
+					Type = SqlBuilderColumnType.Shared
 				});
 			}
 		}
@@ -595,19 +598,45 @@ public partial class TfService : ITfService
 
 		private string GenerateJoinSqlForColumn(SqlBuilderColumn column)
 		{
-			if (column.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY)
+			if (column.Type == SqlBuilderColumnType.Shared)
 			{
-				return
-					$"LEFT OUTER JOIN {column.TableName} {column.TableAlias} ON " +
-					$"{column.TableAlias}.data_identity_value = {_tableAlias}.tf_ide_{column.DataIdentity} AND " +
-					$"{column.TableAlias}.shared_column_id = '{column.Id}'";
+				if (column.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY)
+				{
+					return
+						$"LEFT OUTER JOIN {column.TableName} {column.TableAlias} ON " +
+						$"{column.TableAlias}.data_identity_value = {_tableAlias}.tf_ide_{column.DataIdentity} AND " +
+						$"{column.TableAlias}.shared_column_id = '{column.Id}'";
+				}
+				else
+				{
+					return
+						$"LEFT OUTER JOIN {column.TableName} {column.TableAlias} ON " +
+						$"{column.TableAlias}.data_identity_value = {_tableAlias}.tf_row_id AND " +
+						$"{column.TableAlias}.shared_column_id = '{column.Id}'";
+				}
+			}
+			else if (column.Type == SqlBuilderColumnType.Joined)
+			{
+				var joinData = _joinData.SingleOrDefault(x => x.TableAlias == column.TableAlias);
+				if (joinData is null)
+					throw new Exception("Join data not found for joined column");
+
+				if (column.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY)
+				{
+					return
+						$"LEFT OUTER JOIN {joinData.TableName} {joinData.TableAlias} ON " +
+						$"{joinData.TableAlias}.tf_ide_{joinData.DataIdentity} = {_tableAlias}.tf_ide_{joinData.DataIdentity} ";
+				}
+				else
+				{
+					return
+						$"LEFT OUTER JOIN {joinData.TableName} {joinData.TableAlias} ON " +
+						$"{joinData.TableAlias}.tf_row_id = {_tableAlias}.tf_row_id ";
+				}
 			}
 			else
 			{
-				return
-					$"LEFT OUTER JOIN {column.TableName} {column.TableAlias} ON " +
-					$"{column.TableAlias}.data_identity_value = {_tableAlias}.tf_row_id AND " +
-					$"{column.TableAlias}.shared_column_id = '{column.Id}'";
+				return string.Empty;
 			}
 		}
 
@@ -632,10 +661,14 @@ public partial class TfService : ITfService
 
 					string comma = first ? " " : ", ";
 					string direction = sort.Direction == TfSortDirection.ASC ? " ASC NULLS FIRST " : " DESC NULLS LAST ";
-					if (string.IsNullOrWhiteSpace(column.DataIdentity))
+
+					if (column.Type == SqlBuilderColumnType.Shared)
+						sortSb.Append($"{comma}{column.TableAlias}.value {direction}");
+					else if (column.Type == SqlBuilderColumnType.Joined)
 						sortSb.Append($"{comma}{column.TableAlias}.{column.DbName} {direction}");
 					else
-						sortSb.Append($"{comma}{column.TableAlias}.value {direction}");
+						sortSb.Append($"{comma}{column.TableAlias}.{column.DbName} {direction}");
+						
 					first = false;
 				}
 				sb.Append(sortSb.ToString());
@@ -735,9 +768,19 @@ public partial class TfService : ITfService
 			if (column is null)
 				return string.Empty;
 
-			var columnName = $"{column.TableAlias}.{filter.ColumnName}";
-			if (!string.IsNullOrWhiteSpace(column.DataIdentity))
+			string columnName = string.Empty;
+			if (column.Type == SqlBuilderColumnType.Shared)
+			{
 				columnName = $"{column.TableAlias}.value";
+			}
+			else if (column.Type == SqlBuilderColumnType.Joined)
+			{
+				columnName = $"{column.TableAlias}.{column.DbName}";
+			}
+			else
+				columnName = $"{column.TableAlias}.{column.DbName}";
+
+
 
 			var parameterName = "filter_par_" + Guid.NewGuid().ToString().Replace("-", string.Empty);
 
