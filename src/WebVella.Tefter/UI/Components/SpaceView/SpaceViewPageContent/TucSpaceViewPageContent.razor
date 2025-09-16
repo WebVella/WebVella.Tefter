@@ -161,9 +161,8 @@ else
 					</table>
 				</div>
 				<div class="tf-grid__pager" style="padding:0 var(--tf-layout-content-padding)">
-					<TucPager Page="@_page" PageSize="@_pageSize"
-							  GoLast="@_goLastPage" GoNext="@_goNextPage"
-							  GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" ChangePageSize="_pageSizeChange" />
+					<TucPager UserPageSize="@_currentUser?.Settings?.PageSize"
+							  GoLast="@_goLastPage" GoOnPage="@_goOnPage" ChangePageSize="_pageSizeChange" />
 				</div>
 			</ChildContent>
 		</TucPageLayout>

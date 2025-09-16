@@ -5,6 +5,7 @@ public partial class TucSpaceDataDataContent : TfBaseComponent, IDisposable
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
+	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
 
 	private TfSpaceData _spaceData = new();
 	private TfSpace _space = new();
@@ -14,6 +15,7 @@ public partial class TucSpaceDataDataContent : TfBaseComponent, IDisposable
 	private TfDataTable? _data = null;
 	private int _page = 1;
 	private int _pageSize = TfConstants.PageSize;
+	private TfUser? _currentUser = null;
 	public void Dispose()
 	{
 		TfSpaceDataUIService.SpaceDataUpdated -= On_SpaceDataUpdated;
@@ -22,6 +24,7 @@ public partial class TucSpaceDataDataContent : TfBaseComponent, IDisposable
 
 	protected override async Task OnInitializedAsync()
 	{
+		_currentUser = await TfUserUIService.GetCurrentUserAsync();
 		await _init();
 		TfSpaceDataUIService.SpaceDataUpdated += On_SpaceDataUpdated;
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
@@ -82,39 +85,6 @@ public partial class TucSpaceDataDataContent : TfBaseComponent, IDisposable
 		}
 	}
 
-	private async Task _goFirstPage()
-	{
-		if (_page == 1) return;
-		var queryDict = new Dictionary<string, object>{
-			{ TfConstants.PageQueryName,1}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
-	private async Task _goPreviousPage()
-	{
-		var page = _page - 1;
-		if (page < 1) page = 1;
-		if (_page == page) return;
-		var queryDict = new Dictionary<string, object?>{
-			{ TfConstants.PageQueryName, page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
-	private async Task _goNextPage()
-	{
-		if (_data is null
-		|| _data.Rows.Count == 0)
-			return;
-
-		var page = _page + 1;
-		if (page < 1) page = 1;
-		if (_page == page) return;
-
-		var queryDict = new Dictionary<string, object>{
-			{ TfConstants.PageQueryName, page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
 	private async Task _goLastPage()
 	{
 		if (_page == -1) return;
