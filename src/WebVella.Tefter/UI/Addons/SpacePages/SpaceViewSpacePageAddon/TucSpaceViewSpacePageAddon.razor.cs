@@ -64,7 +64,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("TfSpaceViewPageComponent error: ComponentOptionsJson is null");
 		var jsonOptions = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(context.ComponentOptionsJson);
 		if (jsonOptions is null) throw new Exception("TfSpaceViewPageComponent error: options cannot be deserialized");
-		if(context.Space is null) throw new Exception("TfSpaceViewPageComponent error: Space not provided");
+		if (context.Space is null) throw new Exception("TfSpaceViewPageComponent error: Space not provided");
 		Guid? originalSpaceViewId = jsonOptions.SpaceViewId;
 		var tfService = serviceProvider.GetService<ITfService>();
 		if (jsonOptions.SetType == TfSpaceViewSetType.New)
@@ -242,13 +242,16 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		if (_optionsDataProvider is not null)
 		{
 			if (_options.AddProviderColumns)
-				_generatedColumns.AddRange(_optionsDataProvider.Columns.Select(x => x.DbName));
+				_generatedColumns.AddRange(_optionsDataProvider.Columns
+						.Where(x => !String.IsNullOrWhiteSpace(x.DbName))
+						.Select(x => x.DbName!));
 			if (_options.AddSystemColumns)
 				_generatedColumns.AddRange(_optionsDataProvider.SystemColumns.Select(x => x.DbName));
 			if (_options.AddConnectedColumns)
 			{
 				foreach (var identity in _optionsDataProvider.Identities)
 				{
+					if(identity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY) continue;
 					foreach (var column in identity.Columns)
 					{
 						_generatedColumns.Add($"{identity.DataIdentity}.{column}");
@@ -265,10 +268,30 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 				{
 					_generatedColumns.AddRange(_optionsDataset.Columns.Select(x => x));
 				}
-				else if (_allDataProviders.Any(x => x.Id == _optionsDataset.DataProviderId))
+			}
+			if (_options.AddProviderColumns)
+			{
+				var dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _optionsDataset.DataProviderId);
+				if (dataProvider is not null)
 				{
-					var dataProvider = _allDataProviders.Single(x => x.Id == _optionsDataset.DataProviderId);
-					_generatedColumns.AddRange(dataProvider.Columns.Select(x => x.DbName));
+					foreach (var column in dataProvider.Columns)
+					{
+						if (String.IsNullOrWhiteSpace(column.DbName) || _generatedColumns.Contains(column.DbName)) continue;
+						_generatedColumns.Add(column.DbName);
+					}
+				}
+			}
+			if (_options.AddConnectedColumns)
+			{
+				if (_optionsDataset.Identities is not null)
+				{
+					foreach (var identity in _optionsDataset.Identities)
+					{
+						foreach (var dbName in identity.Columns)
+						{
+							_generatedColumns.Add($"{identity.DataIdentity}.{dbName}");
+						}
+					}
 				}
 			}
 		}

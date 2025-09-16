@@ -110,6 +110,12 @@ else if (Context.Mode == TfComponentMode.Create)
 							<FluentCheckbox Value="@_options.AddDataSetColumns"
 											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddDataSetColumns)))"
 											Label="@LOC("add dateset columns")" />
+							<FluentCheckbox Value="@_options.AddProviderColumns"
+											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddProviderColumns)))"
+											Label="@LOC("data provided columns")" />
+							<FluentCheckbox Value="@_options.AddConnectedColumns"
+											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddConnectedColumns)))"
+											Label="@LOC("connected columns")" />
 						}
 					</FluentStack>
 				</FluentGridItem>
