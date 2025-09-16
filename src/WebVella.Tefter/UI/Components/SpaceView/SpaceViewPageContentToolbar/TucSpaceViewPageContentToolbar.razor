@@ -27,23 +27,23 @@
 		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
 			@if ((_navState.Filters?.Count ?? 0) > 0)
 			{
-				<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" Color="@Color.Accent" />
+				<FluentIcon Value="@TfConstants.GetIcon("DataFunnel")" Slot="start" Color="@Color.Accent" />
 				<FluentBadge Appearance="Appearance.Accent">@(_navState.Filters?.Count ?? 0)</FluentBadge>
 			}
 			else
 			{
-				<FluentIcon Value="@TfConstants.GetIcon("Filter")" Color="@Color.Accent" />
+				<FluentIcon Value="@TfConstants.GetIcon("DataFunnel")" Color="@Color.Accent" />
 			}
 		</FluentButton>
 		<FluentButton Id="view-sort-selector" OnClick="OnSortClick" Title="data sort" Appearance="@Appearance.Outline">
 			@if ((_navState.Sorts?.Count ?? 0) > 0)
 			{
-				<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" Color="@Color.Accent" />
+				<FluentIcon Value="@TfConstants.GetIcon("ArrowSortDownLines")" Slot="start" Color="@Color.Accent" />
 				<FluentBadge Appearance="Appearance.Accent">@(_navState.Sorts?.Count ?? 0)</FluentBadge>
 			}
 			else
 			{
-				<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Color="@Color.Accent" />
+				<FluentIcon Value="@TfConstants.GetIcon("ArrowSortDownLines")" Color="@Color.Accent" />
 			}
 		</FluentButton>
 		@if (_showClearFilter)
