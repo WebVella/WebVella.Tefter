@@ -695,12 +695,13 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
-					.AddGuidColumn("space_view_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+					.AddGuidColumn("space_view_id", c => { c.NotNullable(); })
 					.AddShortTextColumn("query_name", c => { c.NotNullable(); })
 					.AddShortTextColumn("title", c => { c.NotNullable(); })
 					.AddShortIntegerColumn("position", c => { c.NotNullable(); })
-					.AddGuidColumn("type_id", c => { c.WithAutoDefaultValue().NotNullable(); })
-					.AddGuidColumn("component_id", c => { c.WithAutoDefaultValue().NotNullable(); })
+					.AddGuidColumn("type_id", c => { c.NotNullable(); })
+					.AddGuidColumn("component_id", c => { c.NotNullable(); })
+					.AddGuidColumn("edit_component_id", c => { c.NotNullable(); })
 					.AddTextColumn("data_mapping_json", c => { c.NotNullable(); })
 					.AddTextColumn("custom_options_json", c => { c.NotNullable(); })
 					.AddTextColumn("settings_json", c => { c.NotNullable().WithDefaultValue("{}"); })

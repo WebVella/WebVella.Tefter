@@ -822,6 +822,7 @@ public partial class TfServiceTest : BaseTest
 											.Replace(")", ""),
 						Title = availableColumnType.AddonName,
 						ComponentId = new Guid(TucTextDisplayColumnComponent.ID),
+						EditComponentId = new Guid(TucTextDisplayColumnComponent.ID),
 						SpaceViewId = view.Id,
 						ComponentOptionsJson = "{}",
 						DataMapping = new Dictionary<string, string> { { "Value", "test" } }

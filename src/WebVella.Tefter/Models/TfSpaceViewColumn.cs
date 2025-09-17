@@ -11,6 +11,7 @@ public record TfSpaceViewColumn
 	public short? Position { get; set; }
 	public Guid TypeId { get; set; }
 	public Guid ComponentId { get; set; }
+	public Guid EditComponentId { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string ComponentOptionsJson { get; set; } = "{}";
 	public TfSpaceViewColumnSettings Settings { get; set; } = new();
@@ -104,6 +105,8 @@ internal class TfSpaceViewColumnDbo
 
 	[TfDboModelProperty("component_id")]
 	public Guid ComponentId { get; set; }
+	[TfDboModelProperty("edit_component_id")]
+	public Guid EditComponentId { get; set; }
 
 	[TfDboModelProperty("data_mapping_json")]
 	public string DataMappingJson { get; set; } = "{}";
