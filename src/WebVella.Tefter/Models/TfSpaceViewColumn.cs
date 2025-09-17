@@ -38,7 +38,7 @@ public record TfSpaceViewColumn
 			var sb = new StringBuilder();
 			if (Settings is not null)
 			{
-				if (Settings.Color != TfColor.Black)
+				if (Settings.Color.HasValue)
 				{
 					sb.Append($"color: var(--tf-td-color-{Settings.Color.GetAttribute().Name});");
 				}
@@ -54,7 +54,7 @@ public record TfSpaceViewColumn
 			var sb = new StringBuilder();
 			if (Settings is not null)
 			{
-				if (Settings.BackgroundColor != TfColor.Black)
+				if (Settings.BackgroundColor.HasValue)
 				{
 					sb.Append($"background: var(--tf-td-fill-{Settings.BackgroundColor.GetAttribute().Name});");
 				}

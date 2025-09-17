@@ -86,6 +86,12 @@ else
 											}
 										</div>
 										<div class="resize-handle" data-column="@column.Position"></div>
+										@if (_currentUser.IsAdmin)
+										{
+											<div class="tf-column-action tf-column-manage" @onclick="@(() => _manageColumn(column))">
+												@_manageIcon
+											</div>
+										}
 										<div class="@_getSortColumnClass(column)" data-column="@column.Position" title="@LOC("Click to sort. SHIFT+click for multiple sort")">
 											<div class="tf-column-sort__caret-down">@_caretDown</div>
 											<div class="tf-column-sort__caret-up">@_caretUp</div>

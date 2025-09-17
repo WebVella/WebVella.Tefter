@@ -14,6 +14,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 	[Parameter] public TfSpaceData SpaceData { get; set; } = default!;
 	[Parameter] public TfSpaceViewPreset? SpaceViewPreset { get; set; } = null;
 	[Parameter] public TfDataTable Data { get; set; } = default!;
+	[Parameter] public EventCallback<TfDataTable> DataChanged { get; set; }
 
 	private TfNavigationState _navState = default!;
 	private bool _hasViewPersonalization = false;
@@ -80,12 +81,8 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 		if (Data is null) return Task.CompletedTask;
 		try
 		{
-			var newDt = Data.NewTable();
-			newDt.Rows.Add(newDt.NewRow());
-
-			var result = TfSpaceDataUIService.SaveDataDataTable(newDt);
-			var clone = Data.Clone();
-			clone.Rows.Insert(0, result.Rows[0]);
+			var result = TfSpaceDataUIService.InsertRowInDataTable(Data);
+			TucSpaceViewPageContent.OnNewRow(result);
 			ToastService.ShowSuccess(LOC("Row added"));
 		}
 		catch (Exception ex)

@@ -54,7 +54,8 @@ public partial interface ITfSpaceDataUIService
 		string? search = null
 		);
 
-	TfDataTable SaveDataDataTable(TfDataTable dt);
+	TfDataTable SaveDataTable(TfDataTable dt);
+	TfDataTable InsertRowInDataTable(TfDataTable dt);
 
 }
 public partial class TfSpaceDataUIService : ITfSpaceDataUIService
@@ -234,9 +235,16 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 		}
 		return result;
 	}
-	public TfDataTable SaveDataDataTable(TfDataTable dt)
+	public TfDataTable SaveDataTable(TfDataTable dt)
 	{
 		return _tfService.SaveDataTable(dt);
+	}
+
+	public TfDataTable InsertRowInDataTable(TfDataTable dt)
+	{
+		var newDt = dt.NewTable();
+		newDt.Rows.Add(newDt.NewRow());
+		return SaveDataTable(newDt);
 	}
 	#endregion
 }

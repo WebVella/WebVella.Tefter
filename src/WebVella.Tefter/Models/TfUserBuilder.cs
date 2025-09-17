@@ -11,10 +11,10 @@ public class TfUserBuilder
 	private DateTime _createdOn;
 
 	private DesignThemeModes _themeMode;
-	private TfColor _themeColor;
+	private TfColor? _themeColor;
 	private bool _sidebarOpen;
 	private string _cultureCode;
-	private string _startUpUrl;
+	private string? _startUpUrl;
 	private int? _pageSize;
 	private List<TfViewPresetColumnPersonalization> _columnPersonalization = new();
 	private List<TfViewPresetSortPersonalization> _sortPersonalization = new();
@@ -114,7 +114,7 @@ public class TfUserBuilder
 	}
 
 	public TfUserBuilder WithThemeColor(
-		TfColor tfColor)
+		TfColor? tfColor)
 	{
 		_themeColor = tfColor;
 		return this;
@@ -135,7 +135,7 @@ public class TfUserBuilder
 	}
 
 	public TfUserBuilder WithStartUpUrl(
-		string url)
+		string? url)
 	{
 		_startUpUrl = url;
 		return this;
