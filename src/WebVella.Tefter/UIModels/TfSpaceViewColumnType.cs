@@ -9,8 +9,9 @@ public record TfSpaceViewColumnType
 	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; set; } = new();
 	public List<string> FilterAliases { get; set; } = new();
 	public List<string> SortAliases { get; set; } = new();
-	public Guid? DefaultComponentId { get; set; } = null;
-	public List<Guid> SupportedComponents { get; set; } = new();
+	public Guid? DefaultDisplayComponentId { get; set; } = null;
+	public List<Guid> SupportedDisplayComponents { get; set; } = new();
+	public Guid? DefaultEditComponentId { get; init; }
 	public Type Type { get; set; } = default!;
 
 	public TfSpaceViewColumnType() { }
@@ -21,8 +22,8 @@ public record TfSpaceViewColumnType
 		Description = model.AddonDescription;
 		FluentIcon = TfConstants.GetIcon(model.AddonFluentIconName) ?? TfConstants.GetIcon("Document") ?? TfConstants.ErrorIcon;
 		DataMapping = model.DataMapping;
-		DefaultComponentId = model.DefaultComponentId;
-		SupportedComponents = model.SupportedComponents;
+		DefaultDisplayComponentId = model.DefaultDisplayComponentId;
+		SupportedDisplayComponents = model.SupportedComponents;
 		FilterAliases = model.FilterAliases;
 		SortAliases = model.SortAliases;
 		Type = model.GetType();

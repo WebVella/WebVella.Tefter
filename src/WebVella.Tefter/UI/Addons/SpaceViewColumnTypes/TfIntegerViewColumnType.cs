@@ -15,8 +15,9 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; }
 	public List<string> FilterAliases { get; init; }
 	public List<string> SortAliases { get; init; }
-	public Guid? DefaultComponentId { get; init; }
+	public Guid? DefaultDisplayComponentId { get; init; }
 	public List<Guid> SupportedComponents { get; set; } = new();
+	public Guid? DefaultEditComponentId { get; init; }
 
 	public TfIntegerViewColumnType()
 	{
@@ -37,7 +38,7 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 
 		SortAliases = new List<string> { VALUE_ALIAS };
 
-		DefaultComponentId = new Guid(TucIntegerDisplayColumnComponent.ID);
+		DefaultEditComponentId = new Guid(TucIntegerEditColumnComponent.ID);
 	}
 }
 

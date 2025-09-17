@@ -12,9 +12,10 @@ public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnTypeAddon
 	public string AddonDescription { get; init; } = DESCRIPTION;
 	public string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; } = new();
-	public Guid? DefaultComponentId { get; init; } = new Guid(TucFolderAssetsCountComponent.ID);
+	public Guid? DefaultDisplayComponentId { get; init; } = new Guid(TucFolderAssetsCountComponent.ID);
 	public List<string> FilterAliases { get; init; } = new();
 	public List<string> SortAliases { get; init; } = new();
 	public List<Guid> SupportedComponents { get; set; } = new();
+    public Guid? DefaultEditComponentId { get; init; } = new Guid(TucFolderAssetsCountComponent.ID);
 }
 

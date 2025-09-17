@@ -220,7 +220,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 						Password = "1",
 						FirstName = "System",
 						LastName = "Administrator",
-						Roles = new List<Guid> { TfConstants.ADMIN_ROLE_ID }
+						Roles = new List<Guid> { TfConstants.ADMIN_ROLE_ID },
 					}
 				},
 				new TfCreateRoleRecipeStep
@@ -580,7 +580,8 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					SpaceViewId = spaceViewId,
 					TypeId = new Guid(TfLongIntegerViewColumnType.ID),
 					ComponentId = new Guid(TucLongIntegerDisplayColumnComponent.ID),
-				},
+                    EditComponentId = new Guid(TucLongIntegerEditColumnComponent.ID),
+                },
 				new TfSpaceViewColumn{
 					Id = new Guid("7b9bed20-529c-4b53-b886-5d92cf317304"),
 					Position = 2,
@@ -590,6 +591,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					SpaceViewId = spaceViewId,
 					TypeId = new Guid(TfTextViewColumnType.ID),
 					ComponentId = new Guid(TucTextDisplayColumnComponent.ID),
+                    EditComponentId = new Guid(TucTextEditColumnComponent.ID),
 				},
 				new TfSpaceViewColumn{
 					Id = new Guid("80aa74a1-2453-4001-9af6-b4a537695d70"),
@@ -600,6 +602,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					SpaceViewId = spaceViewId,
 					TypeId = new Guid(TfTextViewColumnType.ID),
 					ComponentId = new Guid(TucTextDisplayColumnComponent.ID),
+                    EditComponentId = new Guid(TucTextEditColumnComponent.ID),
 				},
 				new TfSpaceViewColumn{
 					Id = new Guid("c3f77a8c-9336-4bee-8412-7e193ee64882"),
@@ -610,6 +613,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					SpaceViewId = spaceViewId,
 					TypeId = new Guid(TfLongIntegerViewColumnType.ID),
 					ComponentId = new Guid(TucLongIntegerDisplayColumnComponent.ID),
+                    EditComponentId = new Guid(TucLongIntegerEditColumnComponent.ID),
 				},
 				new TfSpaceViewColumn{
 					Id = new Guid("50dddc94-678c-4199-99f4-6b5f7fb3eba0"),
@@ -620,6 +624,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					SpaceViewId = spaceViewId,
 					TypeId = new Guid(TfTalkCommentsCountViewColumnType.ID),
 					ComponentId = new Guid(TalkCommentsCountComponent.ID),
+                    EditComponentId = new Guid(TalkCommentsCountComponent.ID),
 					ComponentOptionsJson = JsonSerializer.Serialize(new TfTalkCommentsCountComponentOptions{
 						ChannelId = talkChannelId
 					}),
@@ -636,6 +641,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					SpaceViewId = spaceViewId,
 					TypeId = new Guid(TfFolderAssetsCountViewColumnType.ID),
 					ComponentId = new Guid(TucFolderAssetsCountComponent.ID),
+                    EditComponentId = new Guid(TucFolderAssetsCountComponent.ID),
 					ComponentOptionsJson = JsonSerializer.Serialize(new TfFolderAssetsCountComponentOptions{
 						FolderId = assetFolderId
 					}),

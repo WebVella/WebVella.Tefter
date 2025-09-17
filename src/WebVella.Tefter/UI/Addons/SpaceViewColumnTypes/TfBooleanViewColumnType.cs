@@ -15,8 +15,9 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; }
 	public List<string> FilterAliases { get; init; }
 	public List<string> SortAliases { get; init; }
-	public Guid? DefaultComponentId { get; init; }
+	public Guid? DefaultDisplayComponentId { get; init; }
 	public List<Guid> SupportedComponents { get; set; } = new();
+	public Guid? DefaultEditComponentId { get; init; }
 
 	public TfBooleanViewColumnType()
 	{
@@ -34,7 +35,8 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 
 		SortAliases = new List<string> { VALUE_ALIAS };
 
-		DefaultComponentId = new Guid(TucBooleanDisplayColumnComponent.ID);
+		DefaultDisplayComponentId = new Guid(TucBooleanDisplayColumnComponent.ID);
+		DefaultEditComponentId = new Guid(TucBooleanEditColumnComponent.ID);
 	}
 }
 

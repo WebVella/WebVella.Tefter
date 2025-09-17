@@ -75,23 +75,38 @@
 					</FluentStack>
 					<FluentValidationMessage For="@(() => _form.TypeId)" />
 				</FluentGridItem>
-				<FluentGridItem xs="6">
-					@if (_renderComponentTypeSelect)
-					{
-						<FluentSelect Label="@LOC("Presentation component")"
-									  Style="width:100%" Required=true
-									  OptionSelected="(x => x.AddonId == _form.ComponentId)"
-									  SelectedOption="@_selectedColumnComponent"
-									  SelectedOptionChanged="_columnComponentChangeHandler"
-									  TOption="ITfSpaceViewColumnComponentAddon"
-									  OptionText="((x)=> x.AddonName)"
-									  OptionValue="((x)=> x.AddonId.ToString())"
-									  Items="_selectedColumnTypeComponents" />
+			</FluentGrid>
+			@if (_renderComponentTypeSelect)
+			{
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentSelect Label="@LOC("Display component")"
+						Style="width:100%" Required=true
+						OptionSelected="(x => x.AddonId == _form.ComponentId)"
+						SelectedOption="@_selectedColumnComponent"
+						SelectedOptionChanged="_columnComponentChangeHandler"
+						TOption="ITfSpaceViewColumnComponentAddon"
+						OptionText="((x)=> x.AddonName)"
+						OptionValue="((x)=> x.AddonId.ToString())"
+						Items="_selectedColumnTypeComponents" />
 
 						<FluentValidationMessage For="@(() => _form.ComponentId)" />
-					}
-				</FluentGridItem>
-			</FluentGrid>
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						<FluentSelect Label="@LOC("Edit component")"
+						Style="width:100%" Required=true
+						OptionSelected="(x => x.AddonId == _form.EditComponentId)"
+						SelectedOption="@_selectedEditColumnComponent"
+						SelectedOptionChanged="_columnEditComponentChangeHandler"
+						TOption="ITfSpaceViewColumnComponentAddon"
+						OptionText="((x)=> x.AddonName)"
+						OptionValue="((x)=> x.AddonId.ToString())"
+						Items="_selectedColumnTypeComponents" />
+
+						<FluentValidationMessage For="@(() => _form.EditComponentId)" />
+					</FluentGridItem>
+				</FluentGrid>
+			}
 			<FluentValidationMessage For="@(() => _form.DataMapping)" />
 			<FluentValidationMessage For="@(() => _form.Settings.Width)" />
 			<FluentValidationMessage For="@(() => _form.Settings.Color)" />

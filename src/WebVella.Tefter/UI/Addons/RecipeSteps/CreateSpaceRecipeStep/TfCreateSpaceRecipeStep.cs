@@ -26,7 +26,7 @@ public class TfCreateSpaceRecipeStep : ITfRecipeStepAddon
 		{
 			Id = step.SpaceId == Guid.Empty ? Guid.NewGuid() : step.SpaceId,
 			Name = step.Name,
-			Color = step.Color is null ? TfColor.Emerald500 : step.Color.Value,
+			Color = step.Color is null ? TfConstants.DefaultThemeColor : step.Color.Value,
 			FluentIconName = !String.IsNullOrWhiteSpace(step.FluentIconName) ? step.FluentIconName : "Apps",
 			IsPrivate = step.IsPrivate,
 			Position = step.Position,

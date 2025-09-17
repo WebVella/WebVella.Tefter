@@ -15,9 +15,9 @@ public class TfDateOnlyViewColumnType : ITfSpaceViewColumnTypeAddon
 	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; }
 	public List<string> FilterAliases { get; init; }
 	public List<string> SortAliases { get; init; }
-	public Guid? DefaultComponentId { get; init; }
+	public Guid? DefaultDisplayComponentId { get; init; }
 	public List<Guid> SupportedComponents { get; set; } = new();
-
+	public Guid? DefaultEditComponentId { get; init; }
 	public TfDateOnlyViewColumnType()
 	{
 		DataMapping = new List<TfSpaceViewColumnAddonDataMapping>
@@ -36,7 +36,8 @@ public class TfDateOnlyViewColumnType : ITfSpaceViewColumnTypeAddon
 		FilterAliases = new List<string>() { VALUE_ALIAS };
 
 		SortAliases = new List<string> { VALUE_ALIAS };
-		DefaultComponentId = new Guid(TucDateOnlyDisplayColumnComponent.ID);
+		DefaultDisplayComponentId = new Guid(TucDateOnlyDisplayColumnComponent.ID);
+		DefaultEditComponentId = new Guid(TucDateOnlyEditColumnComponent.ID);
 	}
 }
 

@@ -16,9 +16,9 @@ public class TfDateTimeViewColumnType : ITfSpaceViewColumnTypeAddon
 
 	public List<string> FilterAliases { get; init; }
 	public List<string> SortAliases { get; init; }
-	public Guid? DefaultComponentId { get; init; }
+	public Guid? DefaultDisplayComponentId { get; init; }
 	public List<Guid> SupportedComponents { get; set; } = new();
-
+	public Guid? DefaultEditComponentId { get; init; }
 	public TfDateTimeViewColumnType()
 	{
 		DataMapping = new List<TfSpaceViewColumnAddonDataMapping>
@@ -38,7 +38,8 @@ public class TfDateTimeViewColumnType : ITfSpaceViewColumnTypeAddon
 
 		SortAliases = new List<string> { VALUE_ALIAS };
 
-		DefaultComponentId = new Guid(TucDateTimeDisplayColumnComponent.ID);
+		DefaultDisplayComponentId = new Guid(TucDateTimeDisplayColumnComponent.ID);
+		DefaultEditComponentId = new Guid(TucDateTimeEditColumnComponent.ID);
 
 	}
 }

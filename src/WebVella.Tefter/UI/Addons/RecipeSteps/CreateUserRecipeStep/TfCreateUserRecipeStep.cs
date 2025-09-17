@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Addons.RecipeSteps;
+
 public class TfCreateUserRecipeStep : ITfRecipeStepAddon
 {
 	//addon
@@ -49,6 +50,10 @@ public class TfCreateUserRecipeStep : ITfRecipeStepAddon
 			FirstName = step.FirstName,
 			LastName = step.LastName,
 			Settings = new TfUserSettings()
+			{
+				ThemeColor = step.Color ?? TfConstants.DefaultThemeColor,
+				CultureName = step.CultureName ?? TfConstants.DefaultCulture.Name,
+			}
 		});
 	}
 	public Task ReverseStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult? stepResult)
@@ -65,4 +70,6 @@ public class TfCreateUserRecipeStepData : ITfRecipeStepAddonData
 	public string FirstName { get; set; }
 	public string LastName { get; set; }
 	public List<Guid> Roles { get; set; } = new();
+	public TfColor? Color { get; set; } = null;
+	public string? CultureName { get; set; } = null;
 }

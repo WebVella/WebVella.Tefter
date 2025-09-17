@@ -5,8 +5,9 @@ public interface ITfSpaceViewColumnTypeAddon : ITfAddon
 	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; }
 	public List<string> FilterAliases { get; init; }
 	public List<string> SortAliases { get; init; }
-	public Guid? DefaultComponentId { get; init; }
+	public Guid? DefaultDisplayComponentId { get; init; }
 	public List<Guid> SupportedComponents { get; set; }
+	public Guid? DefaultEditComponentId { get; init; }
 }
 
 public record TfSpaceViewColumnAddonDataMapping

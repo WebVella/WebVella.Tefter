@@ -276,7 +276,7 @@ public partial class TfService : ITfService
 								if (columnType is not null)
 								{
 									tfColumn.TypeId = columnType.AddonId;
-									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
+									tfColumn.ComponentId = columnType.DefaultDisplayComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
 										tfColumn.DataMapping[mapper.Alias] = column.DbName;
@@ -307,7 +307,7 @@ public partial class TfService : ITfService
 								if (columnType is not null)
 								{
 									tfColumn.TypeId = columnType.AddonId;
-									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
+									tfColumn.ComponentId = columnType.DefaultDisplayComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
 										tfColumn.DataMapping[mapper.Alias] = column.DbName;
@@ -338,7 +338,7 @@ public partial class TfService : ITfService
 								if (columnType is not null)
 								{
 									tfColumn.TypeId = columnType.AddonId;
-									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
+									tfColumn.ComponentId = columnType.DefaultDisplayComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
 										tfColumn.DataMapping[mapper.Alias] = column.DbName;
@@ -391,7 +391,7 @@ public partial class TfService : ITfService
 								if (columnType is not null)
 								{
 									tfColumn.TypeId = columnType.AddonId;
-									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
+									tfColumn.ComponentId = columnType.DefaultDisplayComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
 										tfColumn.DataMapping[mapper.Alias] = dbName;
