@@ -419,7 +419,7 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 				if (component is not null)
 				{
 					var componentNewInstance = (ITfSpaceViewColumnComponentAddon)Activator.CreateInstance(component.GetType(), compContext);
-					value = componentNewInstance.GetValue(_serviceProvider);
+					value = componentNewInstance.GetValueAsString(_serviceProvider);
 				}
 				csv.WriteField(value);
 			}

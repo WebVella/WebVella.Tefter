@@ -372,7 +372,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// This method needs to be overriden in the implementing component,
 	/// and will be called by various export services as CSV export in example
 	/// </summary>
-	public virtual string? GetValue(IServiceProvider serviceProvider) => null;
+	public virtual string? GetValueAsString(IServiceProvider serviceProvider) => null;
 
 
 	/// <summary>

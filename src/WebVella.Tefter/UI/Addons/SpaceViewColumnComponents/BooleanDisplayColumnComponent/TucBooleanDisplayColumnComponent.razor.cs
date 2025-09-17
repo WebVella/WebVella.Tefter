@@ -121,7 +121,7 @@ public partial class TucBooleanDisplayColumnComponent : TucBaseViewColumn<TucBoo
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override string? GetValue(IServiceProvider serviceProvider)
+	public override string? GetValueAsString(IServiceProvider serviceProvider)
 	{
 		_initValues();
 		var options = GetOptions();

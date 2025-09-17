@@ -87,7 +87,21 @@ public partial class TucLongIntegerEditColumnComponent : TucBaseViewColumn<TucLo
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports long.");
 		excelCell.SetValue(XLCellValue.FromObject((long?)columnData));
 	}
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override string? GetValueAsString(IServiceProvider serviceProvider)
+	{
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if (column == null) return null;
+		object? columnData = GetColumnData(column);
+		if (columnData is not null && columnData is not long)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports long.");
 
+		if(columnData is null) return null;
+		return ((long)columnData!).ToString();
+	}
 	#endregion
 
 	#region << Private logic >>

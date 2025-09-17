@@ -68,7 +68,7 @@ public partial class SampleEditViewColumnComponent : ComponentBase,ITfSpaceViewC
 		var columnStringValue = string.Empty; //Get and set the column value here
 		excelCell.SetValue(XLCellValue.FromObject(columnStringValue));
 	}
-    public string? GetValue(IServiceProvider serviceProvider)
+    public string? GetValueAsString(IServiceProvider serviceProvider)
     {
         return null; //Get and set the column value here
     }

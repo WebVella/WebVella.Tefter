@@ -88,6 +88,24 @@ public partial class TucDateOnlyEditColumnComponent : TucBaseViewColumn<TucDateO
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateOnly.");
 		excelCell.SetValue(XLCellValue.FromObject(((DateOnly?)columnData)?.ToDateTime()));
 	}
+
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override string? GetValueAsString(IServiceProvider serviceProvider)
+	{
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if (column == null) return null;
+		object? columnData = GetColumnData(column);
+		if (columnData is not null && columnData is not DateOnly)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateOnly.");
+
+		if(columnData is null) return null;
+		var format = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern;
+		return ((DateOnly)columnData!).ToString(format);
+	}
+
 	#endregion
 
 	#region << Private logic >>

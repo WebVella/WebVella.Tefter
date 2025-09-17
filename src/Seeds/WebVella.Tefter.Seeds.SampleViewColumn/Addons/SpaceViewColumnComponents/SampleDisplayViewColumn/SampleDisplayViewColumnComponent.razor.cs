@@ -66,7 +66,7 @@ public partial class SampleDisplayViewColumnComponent : ComponentBase, ITfSpaceV
 		excelCell.SetValue(XLCellValue.FromObject(columnStringValue));
 	}
 
-    public string? GetValue(IServiceProvider serviceProvider)
+    public string? GetValueAsString(IServiceProvider serviceProvider)
     {
         return null; //Get and set the column value here
     }

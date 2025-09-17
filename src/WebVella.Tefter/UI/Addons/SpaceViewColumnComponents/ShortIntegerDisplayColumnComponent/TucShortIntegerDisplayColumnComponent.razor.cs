@@ -104,6 +104,38 @@ public partial class TucShortIntegerDisplayColumnComponent : TucBaseViewColumn<T
 			excelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
 		}
 	}
+
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override string? GetValueAsString(IServiceProvider serviceProvider)
+	{
+		_initValues();
+		if (_value.Count == 0)
+		{
+			return null;
+		}
+		else if (_value.Count == 1)
+		{
+			if (_value[0] is null) return null;
+			return ((short)_value[0]!).ToString();
+		}
+		else
+		{
+			var valuesList = new List<string>();
+			foreach (var item in _value)
+			{
+				if (item is null)
+				{
+					valuesList.Add(TfConstants.ExcelNullWord);
+					continue;
+				}
+				valuesList.Add(item.Value.ToString());
+			}
+			return String.Join(", ", valuesList);
+		}
+	}
 	#endregion
 
 	#region << Private logic >>

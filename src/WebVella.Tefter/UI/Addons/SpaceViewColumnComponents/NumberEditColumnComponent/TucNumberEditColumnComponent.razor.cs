@@ -89,6 +89,24 @@ public partial class TucNumberEditColumnComponent : TucBaseViewColumn<TucNumberE
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports decimal.");
 		excelCell.SetValue(XLCellValue.FromObject((decimal?)columnData));
 	}
+
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override string? GetValueAsString(IServiceProvider serviceProvider)
+	{
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if (column == null) return null;
+		object? columnData = GetColumnData(column);
+		if (columnData is not null && columnData is not decimal)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports decimal.");
+
+		if(columnData is null) return null;
+		
+		return ((decimal)columnData!).ToString(CultureInfo.InvariantCulture);
+	}
+
 	#endregion
 
 	#region << Private logic >>
