@@ -19,13 +19,13 @@ public partial class TfServiceTest : BaseTest
 			{
 				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
 
-				//Data_GetDataIdentityValue(provider);
+				Data_GetDataIdentityValue(provider);
 
 				Data_InsertUpdateTableTest(provider.Id,spaceData.Id);
 
-				//Data_SimpleQueryTest(provider.Id, spaceData.Id);
+				Data_SimpleQueryTest(provider.Id, spaceData.Id);
 
-				//Data_QueryOnlyTfIds(provider.Id, spaceData.Id);
+				Data_QueryOnlyTfIds(provider.Id, spaceData.Id);
 			}
 		}
 	}

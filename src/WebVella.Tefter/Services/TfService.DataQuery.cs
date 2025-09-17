@@ -698,11 +698,25 @@ public partial class TfService : ITfService
 				}
 
 				if (!columnFoundInDataTable)
-					continue;
+				{
+					var defaultValue = GetProviderColumnDefaultValue(column);
+					if (defaultValue is not null)
+						searchSb.Append($" {defaultValue}");
 
-				object value = row[column.DbName];
-				if (value is not null)
-					searchSb.Append($" {value}");
+					continue;
+				}
+				else
+				{
+					object value = row[column.DbName];
+					if (value is not null)
+						searchSb.Append($" {value}");
+					else
+					{
+						var defaultValue = GetProviderColumnDefaultValue(column);
+						if (defaultValue is not null)
+							searchSb.Append($" {defaultValue}");
+					}
+				}
 			}
 		}
 
@@ -928,6 +942,9 @@ public partial class TfService : ITfService
 
 		string providerTableName = $"dp{provider.Index}";
 
+		//we need it to build search correct
+		var providerRow = GetProviderRow(id: (Guid)row["tf_id"], provider: provider);
+
 		//generate search
 		var searchSb = new StringBuilder();
 
@@ -944,11 +961,17 @@ public partial class TfService : ITfService
 				}
 
 				if (!columnFoundInDataTable)
-					continue;
-
-				object value = row[column.DbName];
-				if (value is not null)
-					searchSb.Append($" {value}");
+				{
+					object existingValue = providerRow[column.DbName];
+					if (existingValue is not null)
+						searchSb.Append($" {existingValue}");
+				}
+				else
+				{
+					object value = row[column.DbName];
+					if (value is not null)
+						searchSb.Append($" {value}");
+				}
 			}
 		}
 

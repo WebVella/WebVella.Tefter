@@ -98,7 +98,9 @@ public class BaseTest
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>($"dp{provider.Index}_number_column", TfDatabaseColumnType.Number, "NUMBER"));
 
 		foreach (var column in columns)
+		{
 			CreateProviderColumn(tfService, provider, column.Item1, column.Item2, column.Item3);
+		}
 
 		//get provider with new columns
 		provider = tfService.GetDataProvider(provider.Id);
