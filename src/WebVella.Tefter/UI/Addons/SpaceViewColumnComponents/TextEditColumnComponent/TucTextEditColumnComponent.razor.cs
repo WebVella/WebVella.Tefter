@@ -87,6 +87,21 @@ public partial class TucTextEditColumnComponent : TucBaseViewColumn<TucTextEditC
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");
 		excelCell.SetValue(XLCellValue.FromObject((string)columnData));
 	}
+
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override string? GetValue(IServiceProvider serviceProvider)
+	{
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if (column == null) return null;
+		object? columnData = GetColumnData(column);
+		if (columnData is not null && columnData is not string)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");
+		
+		return (string?)columnData;
+	}
 	#endregion
 
 	#region << Private logic >>

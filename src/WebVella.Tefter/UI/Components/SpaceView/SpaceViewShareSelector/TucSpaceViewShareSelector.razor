@@ -24,29 +24,62 @@
 				</FluentMenuItem>
 			}
 			<FluentDivider />
-			<FluentMenuItem Disabled="@(SelectedRows.Count == 0)" OnClick="_exportSelection">
-				@LOC("Export Selection")
-				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Accent" />
-				@if (SelectedRows.Count > 0)
-				{
-					<span slot="end">
-						<FluentBadge Appearance="@Appearance.Accent" Style="margin-left:3px;">@SelectedRows.Count</FluentBadge>
-					</span>
-				}
-			</FluentMenuItem>
-			<FluentMenuItem OnClick="_exportAll">
-				@LOC("Export All")
-				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Accent" />
+			<FluentMenuItem>
+				<ChildContent>
+					@LOC("Export")
+					<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Accent" />
+				</ChildContent>
+				<MenuItems>
+					<FluentLabel Typo="@Typography.Header">CSV</FluentLabel>
+					<FluentMenuItem Disabled="@(SelectedRows.Count == 0)" OnClick="_exportCSVSelection">
+						@LOC("CSV Selected")
+						<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Accent" />
+						@if (SelectedRows.Count > 0)
+						{
+							<span slot="end">
+								<FluentBadge Appearance="@Appearance.Accent" Style="margin-left:3px;">@SelectedRows.Count</FluentBadge>
+							</span>
+						}
+					</FluentMenuItem>
+					<FluentMenuItem OnClick="_exportCSVAll">
+						@LOC("CSV All")
+						<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Accent" />
+					</FluentMenuItem>
+					<FluentDivider />
+					<FluentLabel Typo="@Typography.Header">Excel</FluentLabel>
+					<FluentMenuItem Disabled="@(SelectedRows.Count == 0)" OnClick="_exportExcelSelection">
+						@LOC("Excel Selected")
+						<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Accent" />
+						@if (SelectedRows.Count > 0)
+						{
+							<span slot="end">
+								<FluentBadge Appearance="@Appearance.Accent" Style="margin-left:3px;">@SelectedRows.Count</FluentBadge>
+							</span>
+						}
+					</FluentMenuItem>
+					<FluentMenuItem OnClick="_exportExcelAll">
+						@LOC("Excel All")
+						<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Accent" />
+					</FluentMenuItem>
+				</MenuItems>
 			</FluentMenuItem>
 		</FluentMenu>
 		<div style="display:none">
-			<form method="post" name="ExportSelection" action="@_exportExcelUrl" class="ant-form ant-form-vertical">
+			<form method="post" name="ExportCSVSelection" action="@_exportCSVUrl" class="ant-form ant-form-vertical">
 				<input type="hidden" name="data" value="@_getExportSelectionData()" />
-				<button type="submit" id="@_exportSelectionBtnId"></button>
+				<button type="submit" id="@_exportCSVSelectionBtnId"></button>
 			</form>
-			<form method="post" name="ExportAll" action="@_exportExcelUrl" class="ant-form ant-form-vertical">
+			<form method="post" name="ExportCSVAll" action="@_exportCSVUrl" class="ant-form ant-form-vertical">
 				<input type="hidden" name="data" value="@_getExportAllData()" />
-				<button type="submit" id="@_exportAllBtnId"></button>
+				<button type="submit" id="@_exportCSVAllBtnId"></button>
+			</form>
+			<form method="post" name="ExportExcelSelection" action="@_exportExcelUrl" class="ant-form ant-form-vertical">
+				<input type="hidden" name="data" value="@_getExportSelectionData()" />
+				<button type="submit" id="@_exportExcelSelectionBtnId"></button>
+			</form>
+			<form method="post" name="ExportExcelAll" action="@_exportExcelUrl" class="ant-form ant-form-vertical">
+				<input type="hidden" name="data" value="@_getExportAllData()" />
+				<button type="submit" id="@_exportExcelAllBtnId"></button>
 			</form>
 		</div>
 	</div>

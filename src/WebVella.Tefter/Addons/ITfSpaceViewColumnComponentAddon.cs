@@ -7,6 +7,7 @@ public interface ITfSpaceViewColumnComponentAddon : ITfAddon
 	public EventCallback<string> OptionsChanged { get; set; }
 	public EventCallback<TfDataTable> RowChanged { get; set; }
 	void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell);
+	string? GetValue(IServiceProvider serviceProvider);
 }
 
 

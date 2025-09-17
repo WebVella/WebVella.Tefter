@@ -11,15 +11,12 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 	[Parameter] public TfBookmark? ActiveSavedUrl { get; set; } = null;
 
 	private bool _open = false;
-	private string _exportExcelUrl = "/api/export/export-view";
-	private string _exportSelectionBtnId = "tfExportSelectionBtn";
-	private string _exportAllBtnId = "tfExportAllBtn";
-
-
-	protected override Task OnInitializedAsync()
-	{
-		return base.OnInitializedAsync();
-	}
+	private string _exportCSVUrl = "/api/export/export-view-to-csv";
+	private string _exportExcelUrl = "/api/export/export-view-to-excel";
+	private string _exportCSVSelectionBtnId = "tfExportCSVSelectionBtn";
+	private string _exportCSVAllBtnId = "tfExportCSVAllBtn";
+	private string _exportExcelSelectionBtnId = "tfExportExcelSelectionBtn";
+	private string _exportExcelAllBtnId = "tfExportExcelAllBtn";
 
 	public async Task ToggleSelector()
 	{
@@ -53,14 +50,24 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 	}
 
 
-	private async Task _exportSelection()
+	private async Task _exportCSVSelection()
 	{
-		await JSRuntime.InvokeAsync<object>("Tefter.clickElementById", _exportSelectionBtnId);
+		await JSRuntime.InvokeAsync<object>("Tefter.clickElementById", _exportCSVSelectionBtnId);
 	}
-	private async Task _exportAll()
+	private async Task _exportCSVAll()
 	{
-		await JSRuntime.InvokeAsync<object>("Tefter.clickElementById", _exportAllBtnId);
+		await JSRuntime.InvokeAsync<object>("Tefter.clickElementById", _exportCSVAllBtnId);
 	}
+
+	private async Task _exportExcelSelection()
+	{
+		await JSRuntime.InvokeAsync<object>("Tefter.clickElementById", _exportExcelSelectionBtnId);
+	}
+	private async Task _exportExcelAll()
+	{
+		await JSRuntime.InvokeAsync<object>("Tefter.clickElementById", _exportExcelAllBtnId);
+	}
+
 
 	private async Task _bookmarkView()
 	{

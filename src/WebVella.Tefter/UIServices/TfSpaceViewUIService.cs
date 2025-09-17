@@ -1,4 +1,8 @@
-﻿namespace WebVella.Tefter.UIServices;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using System.Text.RegularExpressions;
+
+namespace WebVella.Tefter.UIServices;
 
 public partial interface ITfSpaceViewUIService
 {
@@ -39,6 +43,7 @@ public partial interface ITfSpaceViewUIService
 
 	//Export
 	ValueTask<byte[]> ExportViewToExcel(TfExportViewData data);
+	ValueTask<byte[]> ExportViewToCSV(TfExportViewData data);
 }
 public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 {
@@ -230,9 +235,9 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 		var spaceData = _tfService.GetSpaceData(view.SpaceDataId);
 		var allDataProviders = _tfService.GetDataProviders().ToList();
 		var allSharedColumns = _tfService.GetSharedColumns();
-		var dataProvider = allDataProviders.FirstOrDefault(x=> x.Id == spaceData.DataProviderId);
+		var dataProvider = allDataProviders.FirstOrDefault(x => x.Id == spaceData.DataProviderId);
 		List<TfFilterBase> filters = data.RouteState.Filters.ConvertQueryFilterToList(viewColumns, allDataProviders, allSharedColumns);
-		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns);;
+		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns); ;
 
 		var viewData = _tfService.QuerySpaceData(
 			spaceDataId: view.SpaceDataId,
@@ -308,6 +313,121 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 			workbook.SaveAs(ms);
 			return ValueTask.FromResult(ms.ToArray());
 		}
+	}
+	public virtual ValueTask<byte[]> ExportViewToCSV(TfExportViewData data)
+	{
+		Guid? spaceViewId = null;
+		CultureInfo culture = TfConstants.DefaultCulture;
+
+		if (data.RouteState.SpaceViewId is not null)
+		{
+			spaceViewId = data.RouteState.SpaceViewId.Value;
+		}
+		else if (data.RouteState.SpacePageId is not null)
+		{
+			var resultNode = _tfService.GetSpacePage(data.RouteState.SpacePageId.Value);
+			if (resultNode is null)
+				throw new TfException("GetSpaceNode method failed");
+
+			var spacePagesMeta = _metaService.GetSpacePagesComponentsMeta();
+			var spacePageMeta = spacePagesMeta.SingleOrDefault(x => x.ComponentId == resultNode.ComponentId);
+			if (resultNode.Type == TfSpacePageType.Page && spacePageMeta != null && spacePageMeta.Instance.GetType() == typeof(TucSpaceViewSpacePageAddon))
+			{
+				try
+				{
+					var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(resultNode.ComponentOptionsJson);
+					spaceViewId = options.SpaceViewId;
+				}
+				catch (Exception ex)
+				{
+					throw new Exception($"TfSpaceViewPageComponent options could not deserialize. {ex.Message}");
+				}
+			}
+		}
+
+		if (spaceViewId is null)
+			throw new TfException("SpaceViewId not provided");
+
+		var view = _tfService.GetSpaceView(spaceViewId.Value);
+		if (view is null)
+			throw new TfException("View not found.");
+
+
+		var viewColumns = _tfService.GetSpaceViewColumnsList(view.Id);
+		var spaceData = _tfService.GetSpaceData(view.SpaceDataId);
+		var allDataProviders = _tfService.GetDataProviders().ToList();
+		var allSharedColumns = _tfService.GetSharedColumns();
+		var dataProvider = allDataProviders.FirstOrDefault(x => x.Id == spaceData.DataProviderId);
+		List<TfFilterBase> filters = data.RouteState.Filters.ConvertQueryFilterToList(viewColumns, allDataProviders, allSharedColumns);
+		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns); ;
+
+		var viewData = _tfService.QuerySpaceData(
+			spaceDataId: view.SpaceDataId,
+			userFilters: filters,
+			userSorts: sorts,
+			search: data.RouteState.Search,
+			page: null,
+			pageSize: null
+		);
+
+		using var writer = new StringWriter(new StringBuilder());
+		var config = new CsvConfiguration(culture)
+		{
+			HasHeaderRecord = true,
+			ShouldQuote = _ => true
+		};
+
+		using var csv = new CsvWriter(writer, config);
+
+		foreach (var col in viewColumns)
+		{
+			csv.WriteField(col.Title);
+		}
+		csv.NextRecord();
+
+		var typeDict = new Dictionary<string, object>();
+		var contextData = new Dictionary<string, object>();
+		var compContext = new TfSpaceViewColumnScreenRegionContext(contextData)
+		{
+			DataTable = viewData,
+			Mode = TfComponentPresentationMode.Display, //ignored here
+			SpaceViewId = view.Id,
+			EditContext = null, //ignored here
+			ValidationMessageStore = null, //ignored here
+			RowIndex = 0,//set in row loop
+			ComponentOptionsJson = null, //set in column loop
+			DataMapping = null,//set in column loop
+			QueryName = null,//set in column loop
+			SpaceViewColumnId = Guid.Empty
+		};
+
+		for (int rowIndex = 0; rowIndex < viewData.Rows.Count; rowIndex++)
+		{
+			var row = viewData.Rows[rowIndex];
+			var rowId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+			if (data.SelectedRows is not null && data.SelectedRows.Count > 0
+				&& !data.SelectedRows.Contains(rowId)) continue;
+			compContext.RowIndex = rowIndex;
+			foreach (var column in viewColumns)
+			{
+				compContext.SpaceViewColumnId = column.Id;
+				compContext.ComponentOptionsJson = column.ComponentOptionsJson;
+				compContext.DataMapping = column.DataMapping;
+				compContext.QueryName = column.QueryName;
+				var component = _metaService.GetSpaceViewColumnComponent(column.ComponentId);
+				string? value = null;
+				if (component is not null)
+				{
+					var componentNewInstance = (ITfSpaceViewColumnComponentAddon)Activator.CreateInstance(component.GetType(), compContext);
+					value = componentNewInstance.GetValue(_serviceProvider);
+				}
+				csv.WriteField(value);
+			}
+			csv.NextRecord();
+		}
+
+		var content = writer.ToString();
+		return ValueTask.FromResult(Encoding.UTF8.GetBytes(content));
 	}
 	#endregion
 }
