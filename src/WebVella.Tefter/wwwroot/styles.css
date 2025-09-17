@@ -489,6 +489,19 @@ fluent-anchor {
 fluent-skeleton + fluent-skeleton {
   margin-top: 5px;
 }
+fluent-menu h5.fluent-typography {
+  font-size: var(--tf-font-size-sm) !important;
+  margin: 0 calc(var(--design-unit) * 1px);
+  padding: 0 calc(var(--design-unit) * 2px);
+  background: var(--tf-fill-color-base);
+  border-radius: var(--tf-border-radius-base);
+  color: var(--tf-font-color-base);
+}
+fluent-menu fluent-badge::part(control) {
+  padding: 0 3px 2px 3px;
+  font-size: var(--tf-font-size-sm);
+  line-height: 1em;
+}
 body {
   color: var(--tf-font-color-base);
   background: var(--tf-fill-color-base);
@@ -896,6 +909,7 @@ fluent-dialog .tf-divider,
   font-weight: var(--tf-font-weight-lg);
   min-width: 60px;
   position: relative;
+  --tf-cell-padding: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
 }
 .tf-grid thead tr > th .resize-handle,
 .tf-grid thead tr > td .resize-handle {
@@ -921,14 +935,13 @@ fluent-dialog .tf-divider,
 .tf-grid thead tr > td .resize-handle:hover {
   background: var(--accent-fill-rest);
 }
-.tf-grid thead tr > th .tf-column-sort,
-.tf-grid thead tr > td .tf-column-sort {
+.tf-grid thead tr > th .tf-column-action,
+.tf-grid thead tr > td .tf-column-action {
   display: none;
   position: absolute;
-  right: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
+  right: 0;
   top: 50%;
   margin-top: -10px;
-  bottom: 0;
   width: 20px;
   height: 20px;
   overflow: hidden;
@@ -940,14 +953,23 @@ fluent-dialog .tf-divider,
   justify-content: center;
   align-items: center;
 }
+.tf-grid thead tr > th .tf-column-action:hover,
+.tf-grid thead tr > td .tf-column-action:hover {
+  background: var(--accent-fill-rest) !important;
+  --tf-caret-color: var(--tf-white);
+}
+.tf-grid thead tr > th:hover .tf-column-action,
+.tf-grid thead tr > td:hover .tf-column-action {
+  display: flex;
+  background: var(--tf-stroke-invert-base);
+}
+.tf-grid thead tr > th .tf-column-sort,
+.tf-grid thead tr > td .tf-column-sort {
+  right: var(--tf-cell-padding);
+}
 .tf-grid thead tr > th .tf-column-sort svg,
 .tf-grid thead tr > td .tf-column-sort svg {
   display: block;
-}
-.tf-grid thead tr > th .tf-column-sort:hover,
-.tf-grid thead tr > td .tf-column-sort:hover {
-  background: var(--accent-fill-rest) !important;
-  --tf-caret-color: var(--tf-white);
 }
 .tf-grid thead tr > th .tf-column-sort--descending,
 .tf-grid thead tr > td .tf-column-sort--descending,
@@ -975,10 +997,9 @@ fluent-dialog .tf-divider,
 .tf-grid thead tr > td .tf-column-sort--descending .tf-column-sort__caret-down {
   display: block;
 }
-.tf-grid thead tr > th:hover .tf-column-sort,
-.tf-grid thead tr > td:hover .tf-column-sort {
-  display: flex;
-  background: var(--tf-stroke-invert-base);
+.tf-grid thead tr > th .tf-column-manage,
+.tf-grid thead tr > td .tf-column-manage {
+  right: calc(var(--tf-cell-padding) + 25px);
 }
 .tf-grid thead tr > th,
 .tf-grid thead tr > td {
@@ -1269,6 +1290,10 @@ fluent-dialog .tf-divider,
   --tf-td-fill-rose: var(--tf-rose-100);
   --tf-td-color-slate: var(--tf-slate-600);
   --tf-td-fill-slate: var(--tf-slate-100);
+  --tf-td-color-black: var(--tf-font-color-base);
+  --tf-td-fill-black: var(--tf-font-color-base);
+  --tf-td-color-white: var(--tf-white);
+  --tf-td-fill-white: var(--tf-white);
 }
 .tf-grid-toolbar {
   display: flex;
@@ -1833,7 +1858,7 @@ fluent-dialog .tf-divider,
 }
 .tf-page-layout__toolbar__left {
   display: flex;
-  flex: 0 0 300px;
+  flex: 0 0 340px;
   align-items: center;
   padding-left: var(--tf-layout-content-padding);
 }

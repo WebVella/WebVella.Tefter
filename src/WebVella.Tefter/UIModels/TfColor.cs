@@ -490,9 +490,9 @@ Stone950 = 22950,
 #endregion << Generated >>
 
 
-	[TfColor(name: "black", value: "#000", variable: "--tf-black",number:0, selectable: false)]
+	[TfColor(name: "black", value: "#000", variable: "--tf-black",number:0, selectable: true)]
 	Black = 0,
-	[TfColor(name: "white", value: "#fff", variable: "--tf-white",number:0, selectable: false)]
+	[TfColor(name: "white", value: "#fff", variable: "--tf-white",number:0, selectable: true)]
 	White = 1,
 
 }

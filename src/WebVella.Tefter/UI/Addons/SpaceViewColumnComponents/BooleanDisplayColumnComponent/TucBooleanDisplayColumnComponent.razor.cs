@@ -116,6 +116,49 @@ public partial class TucBooleanDisplayColumnComponent : TucBaseViewColumn<TucBoo
 			excelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
 		}
 	}
+
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override string? GetValueAsString(IServiceProvider serviceProvider)
+	{
+		_initValues();
+		var options = GetOptions();
+		if (_value.Count == 0)
+		{
+			return null;
+		}
+		else if (_value.Count == 1)
+		{
+			if (_value[0] is null) return null;
+			if (!String.IsNullOrWhiteSpace(options.TrueLabel))
+				return options.TrueLabel;
+			else if (!String.IsNullOrWhiteSpace(options.FalseLabel))
+				return options.FalseLabel;
+			else
+				return ((bool)_value[0]!).ToString().ToLowerInvariant();
+		}
+		else
+		{
+			var valuesList = new List<string>();
+			foreach (var item in _value)
+			{
+				if (item is null)
+				{
+					valuesList.Add(TfConstants.ExcelNullWord);
+					continue;
+				}
+				if (!String.IsNullOrWhiteSpace(options.TrueLabel))
+					valuesList.Add(options.TrueLabel);
+				else if (!String.IsNullOrWhiteSpace(options.FalseLabel))
+					valuesList.Add(options.FalseLabel);
+				else
+					valuesList.Add(item.Value.ToString());
+			}
+			return String.Join(", ", valuesList);
+		}
+	}
 	#endregion
 
 	#region << Private logic >>

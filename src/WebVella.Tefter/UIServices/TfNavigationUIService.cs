@@ -359,8 +359,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				Tooltip = space.Name,
 				Text = space.Name
 			};
-			var subNodeIconColor = space.Color;
-			subNodeIconColor = TfColor.Gray400;
+			var subNodeIconColor = TfColor.Gray400;
 			if (currentUser.IsAdmin)
 			{
 				{

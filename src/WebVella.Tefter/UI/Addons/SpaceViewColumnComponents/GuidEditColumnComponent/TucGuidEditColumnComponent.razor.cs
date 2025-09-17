@@ -91,6 +91,22 @@ public partial class TucGuidEditColumnComponent : TucBaseViewColumn<TucGuidEditC
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Guid.");
 		excelCell.SetValue(XLCellValue.FromObject((Guid?)columnData));
 	}
+
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override string? GetValueAsString(IServiceProvider serviceProvider)
+	{
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if (column == null) return null;
+		object? columnData = GetColumnData(column);
+		if (columnData is not null && columnData is not Guid)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Guid.");
+
+		if(columnData is null) return null;
+		return ((Guid)columnData).ToString();
+	}
 	#endregion
 
 	#region << Private logic >>

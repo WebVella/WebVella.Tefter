@@ -101,7 +101,7 @@ public record TfSpaceViewPreset
 	public bool IsGroup { get; set; } = false;
 
 	[JsonPropertyName("color")]
-	public TfColor Color { get; set; } = TfColor.Emerald500;
+	public TfColor? Color { get; set; } = TfColor.Emerald500;
 
 	[JsonPropertyName("icon")]
 	public string Icon { get; set; }

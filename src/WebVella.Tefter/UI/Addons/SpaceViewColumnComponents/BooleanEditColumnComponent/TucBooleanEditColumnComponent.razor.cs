@@ -96,6 +96,28 @@ public partial class TucBooleanEditColumnComponent : TucBaseViewColumn<TucBoolea
 
 		excelCell.SetValue(XLCellValue.FromObject(value));
 	}
+
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override string? GetValueAsString(IServiceProvider serviceProvider)
+	{
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if (column == null) return null;
+		object? columnData = GetColumnData(column);
+		if (columnData is not null && columnData is not bool) throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Boolean.");
+		bool? value = (bool?)columnData;
+		if (value is null) return null;
+
+		//options are not inited yet as the component is not rendered
+		var options = GetOptions();
+
+		if (value.Value && !String.IsNullOrWhiteSpace(options.TrueLabel)) return options.TrueLabel;
+		else if (!value.Value && !String.IsNullOrWhiteSpace(options.FalseLabel)) return options.FalseLabel;
+
+		return ((bool?)value)!.ToString();
+	}
 	#endregion
 
 	#region << Private logic >>

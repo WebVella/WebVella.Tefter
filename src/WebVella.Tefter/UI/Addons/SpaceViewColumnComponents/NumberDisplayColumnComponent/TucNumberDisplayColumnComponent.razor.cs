@@ -105,6 +105,38 @@ public partial class TucNumberDisplayColumnComponent : TucBaseViewColumn<TucNumb
 			}
 			excelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
 		}
+
+	}
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override string? GetValueAsString(IServiceProvider serviceProvider)
+	{
+		_initValues();
+		if (_value.Count == 0)
+		{
+			return null;
+		}
+		else if (_value.Count == 1)
+		{
+			if (_value[0] is null) return null;
+			return ((decimal)_value[0]!).ToString(CultureInfo.InvariantCulture);
+		}
+		else
+		{
+			var valuesList = new List<string>();
+			foreach (var item in _value)
+			{
+				if (item is null)
+				{
+					valuesList.Add(TfConstants.ExcelNullWord);
+					continue;
+				}
+				valuesList.Add(item.Value.ToString(CultureInfo.InvariantCulture));
+			}
+			return String.Join(", ", valuesList);
+		}
 	}
 	#endregion
 

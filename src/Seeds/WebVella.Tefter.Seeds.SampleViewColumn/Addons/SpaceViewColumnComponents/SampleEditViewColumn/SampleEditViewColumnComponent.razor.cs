@@ -68,16 +68,20 @@ public partial class SampleEditViewColumnComponent : ComponentBase,ITfSpaceViewC
 		var columnStringValue = string.Empty; //Get and set the column value here
 		excelCell.SetValue(XLCellValue.FromObject(columnStringValue));
 	}
-	#endregion
+    public string? GetValueAsString(IServiceProvider serviceProvider)
+    {
+        return null; //Get and set the column value here
+    }
+    #endregion
 
-	#region << Private logic >>
-/// <summary>
-	/// process the value change event from the components view
-	/// by design if any kind of error occurs the old value should be set back
-	/// so the user is notified that the change is aborted
-	/// </summary>
-	/// <returns></returns>
-	private Task _valueChanged()
+    #region << Private logic >>
+    /// <summary>
+    /// process the value change event from the components view
+    /// by design if any kind of error occurs the old value should be set back
+    /// so the user is notified that the change is aborted
+    /// </summary>
+    /// <returns></returns>
+    private Task _valueChanged()
 	{
 		//Do something on value changed
 		return Task.CompletedTask;

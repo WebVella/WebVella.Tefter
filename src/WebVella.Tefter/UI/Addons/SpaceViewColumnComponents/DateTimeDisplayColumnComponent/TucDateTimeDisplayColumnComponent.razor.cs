@@ -108,6 +108,40 @@ public partial class TucDateTimeDisplayColumnComponent : TucBaseViewColumn<TucDa
 			excelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
 		}
 	}
+
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override string? GetValueAsString(IServiceProvider serviceProvider)
+	{
+		var format = !String.IsNullOrWhiteSpace(componentOptions.Format) ? componentOptions.Format : _defaultFormat;
+		_initValues();
+		if (_value.Count == 0)
+		{
+			return null;
+		}
+		else if (_value.Count == 1)
+		{
+			if (_value[0] is null) return null;
+			return ((DateTime)_value[0]!).ToString(format);
+		}
+		else
+		{
+			var valuesList = new List<string>();
+			foreach (var item in _value)
+			{
+				if (item is null)
+				{
+					valuesList.Add(TfConstants.ExcelNullWord);
+					continue;
+				}
+				valuesList.Add(item.Value.ToString(format));
+			}
+			return String.Join(", ", valuesList);
+		}
+	}
+
 	#endregion
 
 	#region << Private logic >>

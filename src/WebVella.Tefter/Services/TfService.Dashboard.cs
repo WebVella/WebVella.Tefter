@@ -103,7 +103,7 @@ public partial class TfService : ITfService
 					SpaceId = record.SpaceId,
 					SpaceViewName = record.Name,
 					SpaceName = space.Name,
-					SpaceColor = space.Color,
+					SpaceColor = space.Color ?? TfConstants.DefaultThemeColor,
 					SpaceIcon = space.FluentIconName,
 					Url = string.Format(TfConstants.SpaceViewPageUrl, record.SpaceId, record.Id)
 				});
@@ -166,7 +166,7 @@ public partial class TfService : ITfService
 					CreatedOn = item.CreatedOn,
 					Description = item.Description,
 					Id = item.Id,
-					SpaceColor = space.Color,
+					SpaceColor = space.Color ?? TfConstants.DefaultThemeColor,
 					SpaceIcon = space.FluentIconName,
 					SpaceId = space.Id,
 					SpaceName = space.Name,

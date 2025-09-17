@@ -54,6 +54,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="ClosedXML" Version="0.105.0" />
+		<PackageReference Include="CsvHelper" Version="33.1.0" />
 		<PackageReference Include="FluentValidation" Version="12.0.0" />
 		<!--<PackageReference Include="FluentResults" Version="3.16.0" />
 		<PackageReference Include="FluentResults.Extensions.AspNetCore" Version="0.1.0" />-->

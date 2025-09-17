@@ -369,6 +369,13 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	public virtual void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell) { }
 
 	/// <summary>
+	/// This method needs to be overriden in the implementing component,
+	/// and will be called by various export services as CSV export in example
+	/// </summary>
+	public virtual string? GetValueAsString(IServiceProvider serviceProvider) => null;
+
+
+	/// <summary>
 	/// Base method for dealing with options value changes in the implementing component
 	/// </summary>
 	/// <param name="propName"></param>

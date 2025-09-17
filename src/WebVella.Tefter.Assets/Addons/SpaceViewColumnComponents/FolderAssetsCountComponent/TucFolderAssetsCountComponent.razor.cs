@@ -88,9 +88,18 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 		return;
 	}
 
-	#endregion
-	#region << Private logic >>
-	private async Task _onClick()
+    /// <summary>
+    /// Overrides the default export method in order to apply its own options
+    /// </summary>
+    /// <returns></returns>
+    public override string? GetValueAsString(IServiceProvider serviceProvider)
+    {
+		return null;
+    }
+
+    #endregion
+    #region << Private logic >>
+    private async Task _onClick()
 	{
 		var panelContext = new AssetsFolderPanelContext
 		{

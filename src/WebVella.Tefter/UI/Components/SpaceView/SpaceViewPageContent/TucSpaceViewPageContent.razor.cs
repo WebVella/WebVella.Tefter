@@ -39,12 +39,14 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private RenderFragment _caretDownInactive = default!;
 	private RenderFragment _caretDown = default!;
 	private RenderFragment _caretUp = default!;
+	private RenderFragment _manageIcon = default!;
 	private StringBuilder _columnSortClass = new();
 
 	public async ValueTask DisposeAsync()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 		TfUserUIService.UserUpdated -= On_UserChanged;
+		TfSpaceViewUIService.SpaceViewColumnsChanged -= On_SpaceViewUpdated;
 		_objectRef?.Dispose();
 		try
 		{
@@ -62,19 +64,25 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		_caretDownInactive = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
-			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowSortUpLines")!.WithColor("var(--tf-caret-color)"));
+			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowSortUpLines", IconSize.Size16)!.WithColor("var(--tf-caret-color)"));
 			builder.CloseComponent();
 		};
 		_caretDown = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
-			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowSortDownLines")!.WithColor("var(--tf-caret-color)"));
+			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowSortDownLines", IconSize.Size16)!.WithColor("var(--tf-caret-color)"));
 			builder.CloseComponent();
 		};
 		_caretUp = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
-			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowSortUpLines")!.WithColor("var(--tf-caret-color)"));
+			builder.AddAttribute(1, "Value", TfConstants.GetIcon("ArrowSortUpLines", IconSize.Size16)!.WithColor("var(--tf-caret-color)"));
+			builder.CloseComponent();
+		};
+		_manageIcon = builder =>
+		{
+			builder.OpenComponent<FluentIcon<Icon>>(0);
+			builder.AddAttribute(1, "Value", TfConstants.GetIcon("Settings", IconSize.Size16)!.WithColor("var(--tf-caret-color)"));
 			builder.CloseComponent();
 		};
 		_isDataLoading = false;
@@ -87,6 +95,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		{
 			TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 			TfUserUIService.UserUpdated += On_UserChanged;
+			TfSpaceViewUIService.SpaceViewColumnsChanged += On_SpaceViewUpdated;
 			await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable", _tableId);
 			await JSRuntime.InvokeAsync<bool>("Tefter.addColumnResizeListener",
 								 _objectRef, ComponentId, "OnColumnResized");
@@ -106,6 +115,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		if (Context is not null)
 			Context.CurrentUser = args;
 		await _init(null);
+	}
+
+	private async void On_SpaceViewUpdated(object? caller, List<TfSpaceViewColumn> args)
+	{
+		_spaceViewColumns = args;
+		_setColumnPersonalizations(_spaceViewColumns);
+		await InvokeAsync(StateHasChanged);
 	}
 
 	private async Task _init(TfNavigationState? navState = null)
@@ -145,50 +161,25 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 			if (_allDataProviders is null)
 				_allDataProviders = TfDataProviderUIService.GetDataProviders().ToList();
-			if(_allSharedColumns is null)
+			if (_allSharedColumns is null)
 				_allSharedColumns = TfSharedColumnUIService.GetSharedColumns();
 
 			if (oldViewId != options.SpaceViewId.Value)
 			{
 				_contextData = new();
 				_spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
-				_dataProvider = _allDataProviders.FirstOrDefault(x=> x.Id == _spaceData.DataProviderId);
+				_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _spaceData.DataProviderId);
 				_selectedDataRows = new();
 			}
 			_currentUser = Context!.CurrentUser;
 			_page = _navState.Page ?? 1;
 			_pageSize = _navState.PageSize ?? (_currentUser.Settings.PageSize ?? TfConstants.PageSize);
-			_spaceViewColumns = TfSpaceViewUIService.GetViewColumns(_spaceView.Id);
 			_preset = null;
 			if (_navState.SpaceViewPresetId is not null)
 				_preset = _spaceView!.Presets.GetPresetById(_navState.SpaceViewPresetId.Value);
 
-			//set personalization
-			var widthPersonalizationList = _currentUser.Settings.ViewPresetColumnPersonalizations.Where(x =>
-				x.SpaceViewId == _spaceView.Id && x.PresetId == _preset?.Id).ToList();
-			if (widthPersonalizationList.Any())
-			{
-				foreach (var column in _spaceViewColumns)
-				{
-					var columnPersonalization = widthPersonalizationList.FirstOrDefault(x => x.SpaceViewColumnId == column.Id);
-					if (columnPersonalization != null)
-					{
-						column.Settings.Width = (short)columnPersonalization.Width;
-					}
-				}
-			}
-
-			if (_navState.Sorts is not null)
-			{
-				foreach (var column in _spaceViewColumns)
-				{
-					var columnSort = _navState.Sorts.FirstOrDefault(x => x.Name == column.QueryName);
-					if (columnSort != null)
-					{
-						column.PersonalizedSort = (TfSortDirection)columnSort.Direction;
-					}
-				}
-			}
+			_spaceViewColumns = TfSpaceViewUIService.GetViewColumns(_spaceView.Id);
+			_setColumnPersonalizations(_spaceViewColumns);
 
 			_data = TfSpaceDataUIService.QuerySpaceData(
 							spaceDataId: _spaceView!.SpaceDataId,
@@ -339,10 +330,48 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		StateHasChanged();
 	}
 
+	public void OnNewRow(TfDataTable dataTable)
+	{
+		if (_data is null) return;
+		_data.Rows.Insert(0, dataTable.Rows[0]);
+		StateHasChanged();
+	}
+
 	public TfDataTable? GetCurrentData() => _data;
 	#endregion
 
 	#region <<Utility Methods >>
+
+	private void _setColumnPersonalizations(List<TfSpaceViewColumn> columns)
+	{
+		//set personalization
+		var widthPersonalizationList = _currentUser.Settings.ViewPresetColumnPersonalizations.Where(x =>
+			x.SpaceViewId == _spaceView.Id && x.PresetId == _preset?.Id).ToList();
+		if (widthPersonalizationList.Any())
+		{
+			foreach (var column in columns)
+			{
+				var columnPersonalization = widthPersonalizationList.FirstOrDefault(x => x.SpaceViewColumnId == column.Id);
+				if (columnPersonalization != null)
+				{
+					column.Settings.Width = (short)columnPersonalization.Width;
+				}
+			}
+		}
+
+		if (_navState.Sorts is not null)
+		{
+			foreach (var column in columns)
+			{
+				var columnSort = _navState.Sorts.FirstOrDefault(x => x.Name == column.QueryName);
+				if (columnSort != null)
+				{
+					column.PersonalizedSort = (TfSortDirection)columnSort.Direction;
+				}
+			}
+		}
+	}
+
 	// Navigation Methods
 
 	private async Task _goLastPage()
@@ -396,7 +425,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		return result.ToString();
 
 	}
-
 	private string _getEmbeddedStyles()
 	{
 		var sb = new StringBuilder();
@@ -416,7 +444,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		try
 		{
-			var dataTable = TfSpaceDataUIService.SaveDataDataTable(value);
+			var dataTable = TfSpaceDataUIService.SaveDataTable(value);
 
 			//Apply changed to the datatable
 			if (_data is null || _data.Rows.Count == 0 || _data.Rows.Count == 0) return;
@@ -606,7 +634,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private string _getSortColumnClass(TfSpaceViewColumn column)
 	{
 		_columnSortClass.Clear();
-		_columnSortClass.Append("tf-column-sort");
+		_columnSortClass.Append("tf-column-action tf-column-sort");
 		if (column.PersonalizedSort == TfSortDirection.ASC)
 		{
 			_columnSortClass.Append(" tf-column-sort--ascending");
@@ -620,6 +648,24 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			_columnSortClass.Append(" tf-column-sort--none");
 		}
 		return _columnSortClass.ToString();
+	}
+
+	private async Task _manageColumn(TfSpaceViewColumn column)
+	{
+
+		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewColumnManageDialog>(
+				column,
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge,
+					TrapFocus = false
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+		}
 	}
 	#endregion
 }

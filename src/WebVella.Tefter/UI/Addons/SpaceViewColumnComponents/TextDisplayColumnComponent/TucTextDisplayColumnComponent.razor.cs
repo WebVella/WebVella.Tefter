@@ -86,6 +86,16 @@ public partial class TucTextDisplayColumnComponent : TucBaseViewColumn<TucTextDi
 		_initValues();
 		excelCell.SetValue(XLCellValue.FromObject(String.Join(", ", _value)));
 	}
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override string? GetValueAsString(IServiceProvider serviceProvider)
+	{
+		_initValues();
+		return String.Join(", ", _value);
+	}
+
 	#endregion
 
 	#region << Private logic >>

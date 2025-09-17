@@ -23,7 +23,7 @@ public partial class TucSpaceManageDialog : TfFormBaseComponent, IDialogContentC
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 		if (_isCreate)
 		{
-			_form = _form with { Id = Guid.NewGuid(), Color = TfColor.Emerald500, IsPrivate = false };
+			_form = _form with { Id = Guid.NewGuid(), Color =  TfConstants.DefaultThemeColor, IsPrivate = false };
 		}
 		else
 		{

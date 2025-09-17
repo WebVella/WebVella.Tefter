@@ -49,7 +49,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		}
 		else
 		{
-
+			Content = TfSpaceViewUIService.GetViewColumn(Content.Id);
 			_form = Content with { Id = Content.Id };
 		}
 		if (_form.ComponentId == Guid.Empty)

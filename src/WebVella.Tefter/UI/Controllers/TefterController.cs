@@ -38,33 +38,55 @@ public class ApiExcelController : ControllerBase
 			byte[] bytes = null;
 			switch (exportType)
 			{
-				case "export-view":
+				case "export-view-to-excel":
 					{
 						var data = JsonSerializer.Deserialize<TfExportViewData>(Request.Form["data"]);
 						bytes = await _tfSpaceViewUIService.ExportViewToExcel(data);
+						if (bytes == null)
+							throw new Exception("No bytes were generated during the export");
+						var random = new Random().Next(10, 99);
+						DateTime dt = DateTime.Now;
+						string time = dt.Year.ToString() + dt.Month.ToString() + dt.Day.ToString() + dt.Hour.ToString() + dt.Minute.ToString() + dt.Second.ToString() + dt.Millisecond.ToString();
+
+						var fileName = $"{exportType}-{time}{random}.xlsx";
+						System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+						{
+							FileName = fileName,
+							Inline = true  // false = prompt the user for downloading;  true = browser to try to show the file inline
+						};
+						Response.Headers.Append("Content-Type", $"application/vnd.openxmlformats-officedocument.spreadsheetml");
+						Response.Headers.Append("Content-Disposition", cd.ToString());
+						Response.Headers.Append("X-Content-Type-Options", "nosniff");
+
+						return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml");
 					}
-					break;
+				case "export-view-to-csv":
+					{
+						var data = JsonSerializer.Deserialize<TfExportViewData>(Request.Form["data"]);
+						bytes = await _tfSpaceViewUIService.ExportViewToCSV(data);
+						if (bytes == null)
+							throw new Exception("No bytes were generated during the export");
+						var random = new Random().Next(10, 99);
+						DateTime dt = DateTime.Now;
+						string time = dt.Year.ToString() + dt.Month.ToString() + dt.Day.ToString() + dt.Hour.ToString() + dt.Minute.ToString() + dt.Second.ToString() + dt.Millisecond.ToString();
+
+						var fileName = $"{exportType}-{time}{random}.csv";
+						System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+						{
+							FileName = fileName,
+							Inline = true  // false = prompt the user for downloading;  true = browser to try to show the file inline
+						};
+						Response.Headers.Append("Content-Type", $"text/csv; charset=utf-8");
+						Response.Headers.Append("Content-Disposition", cd.ToString());
+						Response.Headers.Append("X-Content-Type-Options", "nosniff");
+
+						return File(bytes, "text/csv; charset=utf-8");
+					}
 				default:
 					throw new Exception("Export type not supported");
 			}
 
-			if (bytes == null)
-				throw new Exception("No bytes were generated during the export");
-			var random = new Random().Next(10, 99);
-			DateTime dt = DateTime.Now;
-			string time = dt.Year.ToString() + dt.Month.ToString() + dt.Day.ToString() + dt.Hour.ToString() + dt.Minute.ToString() + dt.Second.ToString() + dt.Millisecond.ToString();
-
-			var fileName = $"{exportType}-{time}{random}.xlsx";
-			System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
-			{
-				FileName = fileName,
-				Inline = true  // false = prompt the user for downloading;  true = browser to try to show the file inline
-			};
-			Response.Headers.Append("Content-Type", $"application/vnd.openxmlformats-officedocument.spreadsheetml");
-			Response.Headers.Append("Content-Disposition", cd.ToString());
-			Response.Headers.Append("X-Content-Type-Options", "nosniff");
-
-			return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml");
+			
 		}
 		catch (Exception exception)
 		{

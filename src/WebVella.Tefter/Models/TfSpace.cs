@@ -6,7 +6,7 @@ public record TfSpace
 	public short Position { get; set; }
 	public bool IsPrivate { get; set; }
 	public string FluentIconName { get; set; }
-	public TfColor Color { get; set; }
+	public TfColor? Color { get; set; }
 	public List<TfRole> Roles { get; set; } = new();
 }
 

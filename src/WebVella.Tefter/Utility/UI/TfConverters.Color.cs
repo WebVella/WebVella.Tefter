@@ -4,7 +4,7 @@ public static partial class TfConverters
 {
 	public static System.Drawing.Color TfColorToColor(TfColor? color)
 	{
-		if (color is null || color == TfColor.Black)
+		if (color is null)
 		{
 			return new System.Drawing.Color();
 		}

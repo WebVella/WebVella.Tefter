@@ -98,6 +98,21 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 		excelCell.SetValue(XLCellValue.FromObject(GetDataStringByAlias(column)));
 	}
 
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override string? GetValueAsString(IServiceProvider serviceProvider)
+	{
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null) return null;
+		var value = GetDataStringByAlias(column);
+		if (value is null) return null;
+		if (value is List<string>)
+			return String.Join(", ", (List<string>)value);
+		return value.ToString();
+	}
+
 	#endregion
 
 	#region << Private logic >>

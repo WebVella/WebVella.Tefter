@@ -3,7 +3,7 @@ public partial class TucSelectColor : TfBaseComponent
 {
 	[Parameter] public bool Required { get; set; } = false;
 	[Parameter] public TfColor? Value { get; set; }
-	[Parameter] public EventCallback<TfColor> ValueChanged { get; set; }
+	[Parameter] public EventCallback<TfColor?> ValueChanged { get; set; }
 	private string _elementId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 	private bool _open = false;
 	private bool _isReadonly { get => !ValueChanged.HasDelegate; }
@@ -18,9 +18,14 @@ public partial class TucSelectColor : TfBaseComponent
 		_open = isOpened;
 	}
 
-	private async Task _optionChanged(TfColor option)
+	private async Task _optionChanged(TfColor? option)
 	{
-		await ValueChanged.InvokeAsync(option);
+		if(Required && option is null) {
+			await ValueChanged.InvokeAsync(TfConstants.DefaultThemeColor);
+		}
+		else {
+			await ValueChanged.InvokeAsync(option);
+		}
 		_open = false;
 	}
 }

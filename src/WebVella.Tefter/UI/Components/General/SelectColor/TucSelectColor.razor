@@ -25,29 +25,36 @@ else
 						  Appearance="@Appearance.Outline"
 						  OnClick="@(_=> _onOpenChanged(true))">
 
-				<span>@(Value.GetAttribute().Name)</span>
 				@if (Value is null)
 				{
-					<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape")"
-								Color="Color.Neutral" />
+					<span style="color:var(--tf-font-color-mute)">@LOC("not selected")</span>
 				}
 				else
 				{
-					<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape", variant: IconVariant.Filled)"
-								Color="Color.Custom"
-								CustomColor="@Value.Value.GetAttribute().Value" />
+					<span>@(Value.GetAttribute().Name)</span>
+					@if (Value == TfColor.White)
+					{
+						<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape")"
+									Color="Color.Neutral" />
+					}
+					else
+					{
+						<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape", variant: IconVariant.Filled)"
+									Color="Color.Custom"
+									CustomColor="@Value.Value.GetAttribute().Value" />
+					}
 				}
 				<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-fill-strong-focus)" Color="@Color.Custom" />
 			</FluentButton>
 			@if (!Required && Value is not null)
 			{
-				<FluentButton Appearance=@Appearance.Outline IconStart="@TfConstants.GetIcon("Dismiss").WithColor(Color.Error)" OnClick="@(() => _optionChanged(TfColor.Black))" />
+				<FluentButton Appearance=@Appearance.Outline IconStart="@TfConstants.GetIcon("Dismiss").WithColor(Color.Error)" OnClick="@(() => _optionChanged(null))" />
 			}
 		</FluentStack>
 		@if (_open)
 		{
-			<FluentOverlay Visible="@true" OnClose="@(_=> _onOpenChanged(false))" Transparent="true" FullScreen="true" />
-			<FluentAnchoredRegion Anchor="@_elementId" Style="max-height:300px;overflow:scroll;position:relative;"
+			<FluentOverlay Visible="@true" OnClose="@(_ => _onOpenChanged(false))" Transparent="true" FullScreen="true" />
+			<FluentAnchoredRegion Anchor="@_elementId" Style="max-height:100px;overflow:scroll;position:relative;height:100px"
 								  AutoFocus="true" FixedPlacement="true" Class="tf-select-menu"
 								  HorizontalDefaultPosition="HorizontalPosition.Center"
 								  VerticalDefaultPosition="VerticalPosition.Bottom"
@@ -58,7 +65,7 @@ else
 					<FluentNavMenu>
 						<Virtualize TItem="TfColor" Items="@_colors" Context="option" ItemSize="32">
 							<FluentMenuItem @key=@((int)option) OnClick="@(() => _optionChanged(option))" Class="@(option == Value ? "tf-menu__item--active" : "")">
-								@if (option == TfColor.Black)
+								@if (option == TfColor.White)
 								{
 									<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape")"
 												Color="Color.Neutral" />

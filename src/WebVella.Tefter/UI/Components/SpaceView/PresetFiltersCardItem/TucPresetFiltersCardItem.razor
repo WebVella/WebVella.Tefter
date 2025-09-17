@@ -36,7 +36,7 @@
 					{
 						<FluentIcon Value="@TfConstants.GetIcon(Item.Icon)" />
 					}
-					@if (Item.Color != TfColor.Black)
+					@if (Item.Color.HasValue)
 					{
 						<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape", variant: IconVariant.Filled)"
 									Color="Color.Custom"
@@ -62,7 +62,7 @@
 					{
 						<FluentIcon Value="@TfConstants.GetIcon(Item.Icon)" />
 					}
-					@if (Item.Color != TfColor.Black)
+					@if (Item.Color.HasValue)
 					{
 						<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape", variant: IconVariant.Filled)"
 									Color="Color.Custom"

@@ -87,6 +87,23 @@ public partial class TucIntegerEditColumnComponent : TucBaseViewColumn<TucIntege
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports int.");
 		excelCell.SetValue(XLCellValue.FromObject((int?)columnData));
 	}
+
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override string? GetValueAsString(IServiceProvider serviceProvider)
+	{
+		var column = GetColumnByAlias(VALUE_ALIAS);
+		if (column == null) return null;
+		object? columnData = GetColumnData(column);
+		if (columnData is not null && columnData is not int)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports int.");
+
+		if(columnData is null) return null;
+
+		return ((int)columnData!).ToString();
+	}
 	#endregion
 
 	#region << Private logic >>
