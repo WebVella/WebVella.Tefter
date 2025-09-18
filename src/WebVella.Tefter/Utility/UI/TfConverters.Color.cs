@@ -109,12 +109,12 @@ public static partial class TfConverters
 		if (int.TryParse(colorString, out int value)
 		&& Enum.IsDefined(typeof(TfColor), value))
 		{
-			return ((TfColor)value).ToAttributeValue();
+			return ((TfColor)value).GetAttribute().Value;
 		}
 		//Check if TfColor string
 		if (Enum.TryParse<TfColor>(colorString, true, out TfColor outColor))
 		{
-			return outColor.ToAttributeValue();
+			return outColor.GetAttribute().Value;
 		}
 		//named color
 		return colorString;

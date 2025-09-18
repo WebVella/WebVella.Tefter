@@ -17,6 +17,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 	[Inject] private ITfService TfService { get; set; } = default!;
 	[Inject] private ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
 	[Inject] private ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
+	[Inject] private IWvBlazorTraceService WvBlazorTraceService { get; set; } = default!;
 	#endregion
 
 	#region << Constructor >>
@@ -67,6 +68,17 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 
 	#region << Lifecycle >>
 
+	protected override void OnInitialized()
+	{
+		WvBlazorTraceService.OnSignal(this, $"OnInitialized-{this.GetType().Name}");
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		WvBlazorTraceService.OnSignal(this, $"OnAfterRender-{this.GetType().Name}", null, firstRender.ToString());
+	}
+
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
@@ -74,7 +86,9 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
+		if(RegionContext is null) return;
 		var contextHash = RegionContext.GetHash();
+		WvBlazorTraceService.OnSignal(this, "OnParametersSetAsync",null,_renderedHash);
 		if (contextHash != _renderedHash)
 		{
 			_initContextData();
@@ -92,7 +106,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
 		var column = GetColumnByAlias(VALUE_ALIAS);
-		if(column is null) return;
+		if (column is null) return;
 		excelCell.SetValue(XLCellValue.FromObject(GetDataStringByAlias(column)));
 	}
 	/// <summary>
@@ -105,7 +119,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 		if (column is null) return null;
 		var value = GetDataStringByAlias(column);
 		if (value is null) return null;
-		if(value is List<string>)
+		if (value is List<string>)
 			return String.Join(", ", (List<string>)value);
 		return value.ToString();
 	}
@@ -156,6 +170,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 
 	private void _initContextData()
 	{
+		if (RegionContext.Mode == TfComponentPresentationMode.Options) return;
 		_storageKey = this.GetType().Name + "_" + RegionContext.SpaceViewColumnId;
 		TfDataColumn? currentColumn = GetColumnByAlias(VALUE_ALIAS);
 		if (currentColumn is null)
@@ -347,6 +362,16 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 			sb.Append($"color:{_selectedOption.Color};");
 		if (!String.IsNullOrWhiteSpace(_selectedOption?.BackgroundColor))
 			sb.Append($"background-color:{_selectedOption.BackgroundColor};");
+
+		return sb.ToString();
+	}
+
+	private string _getClass()
+	{
+		var sb = new StringBuilder();
+		sb.Append("tf-select-btn ");
+		if (!String.IsNullOrWhiteSpace(_selectedOption?.BackgroundColor))
+			sb.Append("tf-select-btn--with-background ");
 
 		return sb.ToString();
 	}

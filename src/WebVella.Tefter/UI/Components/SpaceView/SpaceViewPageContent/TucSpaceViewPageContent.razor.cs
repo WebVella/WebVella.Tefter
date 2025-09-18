@@ -34,6 +34,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private List<TfDataProvider>? _allDataProviders = null;
 	private List<TfSharedColumn>? _allSharedColumns = null;
 	private List<Guid> _selectedDataRows = new();
+	private List<Guid> _editableDataRows = new();
 	private Dictionary<string, object> _contextData = new();
 	private string _tableId = "space-view-table";
 	private RenderFragment _caretDownInactive = default!;
@@ -120,8 +121,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private async void On_SpaceViewUpdated(object? caller, List<TfSpaceViewColumn> args)
 	{
 		_spaceViewColumns = args;
-		_setColumnPersonalizations(_spaceViewColumns);
-		await InvokeAsync(StateHasChanged);
+		await _init(null);
 	}
 
 	private async Task _init(TfNavigationState? navState = null)
@@ -179,7 +179,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				_preset = _spaceView!.Presets.GetPresetById(_navState.SpaceViewPresetId.Value);
 
 			_spaceViewColumns = TfSpaceViewUIService.GetViewColumns(_spaceView.Id);
-			_setColumnPersonalizations(_spaceViewColumns);
 
 			_data = TfSpaceDataUIService.QuerySpaceData(
 							spaceDataId: _spaceView!.SpaceDataId,
@@ -191,6 +190,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 							page: _page,
 							pageSize: _pageSize
 					);
+
+			_generateMeta();
 			//Process last page (-1) case
 			if (_page == -1)
 			{
@@ -334,6 +335,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		if (_data is null) return;
 		_data.Rows.Insert(0, dataTable.Rows[0]);
+		_editableDataRows.Add(dataTable.Rows[0].GetRowId());
+		_generateMeta();
 		StateHasChanged();
 	}
 
@@ -341,36 +344,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	#endregion
 
 	#region <<Utility Methods >>
-
-	private void _setColumnPersonalizations(List<TfSpaceViewColumn> columns)
-	{
-		//set personalization
-		var widthPersonalizationList = _currentUser.Settings.ViewPresetColumnPersonalizations.Where(x =>
-			x.SpaceViewId == _spaceView.Id && x.PresetId == _preset?.Id).ToList();
-		if (widthPersonalizationList.Any())
-		{
-			foreach (var column in columns)
-			{
-				var columnPersonalization = widthPersonalizationList.FirstOrDefault(x => x.SpaceViewColumnId == column.Id);
-				if (columnPersonalization != null)
-				{
-					column.Settings.Width = (short)columnPersonalization.Width;
-				}
-			}
-		}
-
-		if (_navState.Sorts is not null)
-		{
-			foreach (var column in columns)
-			{
-				var columnSort = _navState.Sorts.FirstOrDefault(x => x.Name == column.QueryName);
-				if (columnSort != null)
-				{
-					column.PersonalizedSort = (TfSortDirection)columnSort.Direction;
-				}
-			}
-		}
-	}
 
 	// Navigation Methods
 
@@ -405,41 +378,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		await Navigator.ApplyChangeToUrlQuery(TfConstants.PageSizeQueryName, pageSize);
 	}
 
-	private string _generatePresetPathHtml()
-	{
-		if (_navState.SpaceViewPresetId is null || _spaceView.Presets.Count == 0) return "";
-
-		var preset = _spaceView.Presets.GetPresetById(_navState.SpaceViewPresetId.Value);
-		if (preset is null) return "";
-
-		var result = new StringBuilder();
-		var path = new List<TfSpaceViewPreset>();
-		ModelHelpers.FillPresetPathById(_spaceView.Presets, _navState.SpaceViewPresetId.Value, path);
-		if (path.Count == 0) return "";
-		path.Reverse();
-		foreach (var item in path)
-		{
-			result.Append($"<span class=\"page-header-divider\">:</span>");
-			result.Append(item.Name);
-		}
-		return result.ToString();
-
-	}
-	private string _getEmbeddedStyles()
-	{
-		var sb = new StringBuilder();
-		sb.AppendLine("<style>");
-		sb.AppendLine("html:root .tf-layout__body__main {");
-		//sb.AppendLine($"--tf-grid-row-selected: {TfAppState.Value.SpaceGridSelectedColor};");
-		//sb.AppendLine($"--space-color: {TfAppState.Value.SpaceColorString};");
-		//sb.AppendLine($"--accent-base-color: {TfAppState.Value.SpaceColorString};");
-		//sb.AppendLine($"--accent-fill-rest: {TfAppState.Value.SpaceColorString};");
-		//sb.AppendLine($"--tf-grid-border-color: {TfAppState.Value.SpaceBorderColor};");
-		sb.AppendLine("}");
-		sb.AppendLine("</style>");
-		return sb.ToString();
-	}
-
 	private async Task _onRowChanged(TfDataTable value)
 	{
 		try
@@ -472,38 +410,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		}
 	}
 
-	private Dictionary<string, object> _getColumnComponentContext(TfSpaceViewColumn column, TfDataTable dataTable, int rowIndex)
+	private void _toggleItemSelection(Guid rowId, bool isChecked)
 	{
-		var componentData = new Dictionary<string, object>();
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_ROW_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<TfDataTable>(this, _onRowChanged);
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext(_contextData)
-		{
-			Mode = TfComponentPresentationMode.Display,
-			ComponentOptionsJson = column.ComponentOptionsJson,
-			DataMapping = column.DataMapping,
-			DataTable = dataTable,
-			RowIndex = rowIndex,
-			QueryName = column.QueryName,
-			SpaceViewId = column.SpaceViewId,
-			SpaceViewColumnId = column.Id
-		};
-		return componentData;
-	}
-
-	private bool _getItemSelection(int rowIndex)
-	{
-		var row = _data.Rows[rowIndex];
-		object rowId = row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-		if (rowId is not null)
-		{
-			return _selectedDataRows.Contains((Guid)rowId);
-		}
-		return false;
-	}
-
-	private void _toggleItemSelection(int rowIndex, bool isChecked)
-	{
-		Guid rowId = (Guid)_data.Rows[rowIndex][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
 		if (isChecked)
 		{
 			if (!_selectedDataRows.Contains(rowId)) _selectedDataRows.Add(rowId);
@@ -512,6 +420,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		{
 			_selectedDataRows.RemoveAll(x => x == rowId);
 		}
+		_generateMeta();
 	}
 
 	private void _toggleSelectAll(bool isChecked)
@@ -533,57 +442,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 			}
 		}
-	}
-
-	private Dictionary<int, Tuple<int?, string, string>> _generateColumnConfigurationCss(TfSpaceView view, List<TfSpaceViewColumn> columns)
-	{
-		int _freezeLeftColumnsCount = _spaceView.Settings.FreezeStartingNColumns ?? 0;
-		int _freezeLeftWidth = 0;
-		int _freezeRightColumnsCount = _spaceView.Settings.FreezeFinalNColumns ?? 0;
-		int _freezeRightWidth = 0;
-		var result = new Dictionary<int, Tuple<int?, string, string>>();
-
-		//Position 0 is always the checkbox , width 40
-		result[0] = new Tuple<int?, string, string>(40, "tf--sticky", "");
-		_freezeLeftWidth += 40;
-		for (int i = 0; i < columns.Count; i++)
-		{
-			var column = columns[i];
-			var position = i + 1;
-			if (position > _freezeLeftColumnsCount && position <= (columns.Count - _freezeRightColumnsCount))
-			{
-				result[position] = new Tuple<int?, string, string>(column.Settings.Width, "", "");
-			}
-			else if (position <= _freezeLeftColumnsCount)
-			{
-				var width = column.Settings.Width ?? 140;
-				var lastLeftSticyClass = position == _freezeLeftColumnsCount ? "tf--sticky-last" : "";
-				result[position] = new Tuple<int?, string, string>(width, $"tf--sticky {lastLeftSticyClass}", $"left:{(_freezeLeftWidth)}px;");
-				_freezeLeftWidth += width;
-			}
-			else
-			{
-				result[position] = new Tuple<int?, string, string>(column.Settings.Width, "", "");
-			}
-
-		}
-
-		for (int i = columns.Count - 1; i >= 0; i--)
-		{
-			var column = columns[i];
-			var position = i + 1;
-			if (position > (columns.Count - _freezeRightColumnsCount))
-			{
-				var width = column.Settings.Width ?? 140;
-				var firstRightSticyClass = position == (columns.Count - _freezeRightColumnsCount + 1) ? "tf--sticky-first" : "";
-				result[position] = new Tuple<int?, string, string>(width, $"tf--sticky {firstRightSticyClass}", $"right:{(_freezeRightWidth)}px;");
-				_freezeRightWidth += width;
-
-			}
-		}
-
-		return result;
-
+		_generateMeta();
 	}
 
 	public bool _allDataRowsSelected()
@@ -619,7 +478,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	}
 
 	[JSInvokable("OnColumnResized")]
-	public async Task OnColumnResized(int position, int width)
+	public async Task OnColumnResized(int position, short width)
 	{
 		var column = _spaceViewColumns.SingleOrDefault(x => x.Position == position);
 		if (column is null) return;
@@ -629,25 +488,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		 preset: _preset?.Id,
 		 spaceViewColumnId: column.Id,
 		 width: width);
-	}
-
-	private string _getSortColumnClass(TfSpaceViewColumn column)
-	{
-		_columnSortClass.Clear();
-		_columnSortClass.Append("tf-column-action tf-column-sort");
-		if (column.PersonalizedSort == TfSortDirection.ASC)
-		{
-			_columnSortClass.Append(" tf-column-sort--ascending");
-		}
-		else if (column.PersonalizedSort == TfSortDirection.DESC)
-		{
-			_columnSortClass.Append(" tf-column-sort--descending");
-		}
-		else
-		{
-			_columnSortClass.Append(" tf-column-sort--none");
-		}
-		return _columnSortClass.ToString();
 	}
 
 	private async Task _manageColumn(TfSpaceViewColumn column)
@@ -663,9 +503,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 					TrapFocus = false
 				});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-		}
 	}
 	#endregion
 }

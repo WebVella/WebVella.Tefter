@@ -31,7 +31,7 @@ public partial interface ITfUserUIService
 	Task<TfUser> SetStartUpUrl(Guid userId, string url);
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
-	Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, int width);
+	Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, short? width);
 	List<TfSortQuery> CalculateViewPresetSortPersonalization(List<TfSortQuery> currentSorts,Guid spaceViewId, Guid spaceViewColumnId, bool hasShiftKey);
 	Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId);
 
@@ -193,7 +193,7 @@ public partial class TfUserUIService : ITfUserUIService
 		return user;
 	}
 
-	public async Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, int width)
+	public async Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, short? width)
 	{
 		var user = await _tfService.SetViewPresetColumnPersonalization(userId, spaceViewId, preset, spaceViewColumnId, width);
 		_currentUser = user;

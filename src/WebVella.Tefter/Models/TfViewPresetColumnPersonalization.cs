@@ -10,5 +10,5 @@ public record TfViewPresetColumnPersonalization
 	public Guid SpaceViewId { get; init; } = default;
 	public Guid SpaceViewColumnId { get; init; } = default;
 	public Guid? PresetId { get; init; } = null;
-	public int Width { get; init; } = default!;
+	public short? Width { get; init; } = null;
 }

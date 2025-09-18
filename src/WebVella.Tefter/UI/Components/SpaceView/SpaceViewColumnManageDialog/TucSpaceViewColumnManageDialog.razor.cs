@@ -291,7 +291,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			ComponentOptionsJson = _form.ComponentOptionsJson,
 			DataMapping = _form.DataMapping,
 			DataTable = null,
-			RowIndex = -1,
+			RowId = Guid.Empty,
 			QueryName = _form.QueryName,
 			SpaceViewId = _form.SpaceViewId,
 			SpaceViewColumnId = _form.Id,

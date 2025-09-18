@@ -1,5 +1,6 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
+using DocumentFormat.OpenXml.Drawing.Spreadsheet;
 using System.Text.RegularExpressions;
 
 namespace WebVella.Tefter.UIServices;
@@ -275,7 +276,7 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 				SpaceViewId = view.Id,
 				EditContext = null, //ignored here
 				ValidationMessageStore = null, //ignored here
-				RowIndex = 0,//set in row loop
+				RowId = Guid.Empty,//set in row loop
 				ComponentOptionsJson = null, //set in column loop
 				DataMapping = null,//set in column loop
 				QueryName = null,//set in column loop
@@ -284,9 +285,9 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 			for (int i = 0; i < viewData.Rows.Count; i++)
 			{
 				var row = viewData.Rows[i];
-				currentExcelColumn = 1;
-				compContext.RowIndex = i;
 				var rowId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+				currentExcelColumn = 1;
+				compContext.RowId = rowId;
 				if (data.SelectedRows is not null && data.SelectedRows.Count > 0
 					&& !data.SelectedRows.Contains(rowId)) continue;
 				foreach (TfSpaceViewColumn column in viewColumns)
@@ -394,7 +395,7 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 			SpaceViewId = view.Id,
 			EditContext = null, //ignored here
 			ValidationMessageStore = null, //ignored here
-			RowIndex = 0,//set in row loop
+			RowId = Guid.Empty,//set in row loop
 			ComponentOptionsJson = null, //set in column loop
 			DataMapping = null,//set in column loop
 			QueryName = null,//set in column loop
@@ -407,7 +408,7 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 			var rowId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
 			if (data.SelectedRows is not null && data.SelectedRows.Count > 0
 				&& !data.SelectedRows.Contains(rowId)) continue;
-			compContext.RowIndex = rowIndex;
+			compContext.RowId = rowId;
 			foreach (var column in viewColumns)
 			{
 				compContext.SpaceViewColumnId = column.Id;

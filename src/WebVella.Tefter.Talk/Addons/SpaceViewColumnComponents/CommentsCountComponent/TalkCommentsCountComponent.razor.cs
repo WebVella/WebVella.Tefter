@@ -104,7 +104,7 @@ public partial class TalkCommentsCountComponent : TucBaseViewColumn<TfTalkCommen
 		{
 			ChannelId = componentOptions.ChannelId,
 			DataTable = RegionContext.DataTable,
-			RowIndex = RegionContext.RowIndex
+			RowId = RegionContext.RowId
 		};
 
 		_dialog = await DialogService.ShowPanelAsync<TalkThreadPanel>(

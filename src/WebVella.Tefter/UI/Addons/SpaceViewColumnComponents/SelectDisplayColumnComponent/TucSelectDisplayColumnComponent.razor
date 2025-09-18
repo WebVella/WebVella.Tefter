@@ -2,11 +2,10 @@
 @inherits TucBaseViewColumn<TucSelectDisplayColumnComponentOptions>
 @if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
-
 	<div>
 		@if (_selectedOption is not null)
 		{
-			<div style="@_getStyle()" class="tf-select-btn">
+			<div style="@_getStyle()" class="@_getClass()">
 				@if (!String.IsNullOrWhiteSpace(_selectedOption?.IconName))
 				{
 					<div class="tf-select-btn__start">

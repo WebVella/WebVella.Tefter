@@ -22,7 +22,6 @@ public partial class TucSpaceViewPageContentNavigation : TfBaseComponent
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
-		WvBlazorTraceService.OnSignal(this,"On_NavigationStateChanged",customData: args.Uri);
 		if (UriInitialized != args.Uri)
 			await _init();
 	}

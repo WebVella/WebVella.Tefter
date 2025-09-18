@@ -105,7 +105,7 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 		{
 			FolderId = componentOptions.FolderId,
 			DataTable = RegionContext.DataTable,
-			RowIndex = RegionContext.RowIndex
+			RowId = RegionContext.RowId
 		};
 
 		_dialog = await DialogService.ShowPanelAsync<AssetsFolderPanel>(

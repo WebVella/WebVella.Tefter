@@ -27,10 +27,10 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			if (Content.FolderId is not null)
 			{
 				_folder = AssetsService.GetFolder(Content.FolderId.Value);
-				if (_folder is not null && !String.IsNullOrWhiteSpace(_folder.DataIdentity) && Content.RowIndex > -1)
+				if (_folder is not null && !String.IsNullOrWhiteSpace(_folder.DataIdentity) && Content.RowId != Guid.Empty)
 				{
-					_rowId = (Guid)Content.DataTable.Rows[Content.RowIndex][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-					_dataIdentityValue = Content.DataTable.Rows[Content.RowIndex].GetDataIdentityValue(_folder.DataIdentity);
+					_rowId = (Guid)Content.DataTable[Content.RowId,TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+					_dataIdentityValue = Content.DataTable.Rows[Content.RowId].GetDataIdentityValue(_folder.DataIdentity);
 					if (_dataIdentityValue is not null)
 						_items = AssetsService.GetAssets(_folder.Id, _dataIdentityValue);
 				}
@@ -264,7 +264,7 @@ public record AssetsFolderPanelContext
 {
 	public Guid? FolderId { get; set; }
 	public TfDataTable DataTable { get; set; } = null;
-	public int RowIndex { get; set; } = -1;
+	public Guid RowId { get; set; } = Guid.Empty;
 	public long CountChange { get; set; } = 0;
 }
 

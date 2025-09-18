@@ -86,7 +86,7 @@
 		<PackageReference Include="System.Formats.Asn1" Version="9.0.9" />
 		<PackageReference Include="System.IO.Packaging" Version="9.0.9" />
 		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.9" />
-		<PackageReference Include="HtmlAgilityPack" Version="1.12.2" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.12.3" />
 		<PackageReference Include="WebVella.BlazorTrace" Version="1.1.0" />
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>

@@ -166,12 +166,6 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	}
 	private async Task _initValues()
 	{
-		TfDataColumn? column = GetColumnByAlias(VALUE_ALIAS);
-		if (column is null)
-			throw new Exception("Column not found");
-		if (column.IsJoinColumn)
-			throw new Exception("Joined data cannot be edited");
-
 		if (RegionContext.Mode == TfComponentPresentationMode.Options)
 		{
 			var spaceView = TfSpaceViewUIService.GetSpaceView(RegionContext.SpaceViewId);
@@ -189,6 +183,12 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 			return;
 		}
 
+		TfDataColumn? column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
+		if (column.IsJoinColumn)
+			throw new Exception("Joined data cannot be edited");
+
 		_value = GetColumnData(column);
 		_selectedOption = null;
 		var valueJson = JsonSerializer.Serialize(_value);
@@ -205,7 +205,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	}
 	private void _initContextData()
 	{
-
+		if(RegionContext.Mode == TfComponentPresentationMode.Options) return;
 		_storageKey = this.GetType().Name + "_" + RegionContext.SpaceViewColumnId;
 		TfDataColumn? currentColumn = GetColumnByAlias(VALUE_ALIAS);
 		if (currentColumn is null)

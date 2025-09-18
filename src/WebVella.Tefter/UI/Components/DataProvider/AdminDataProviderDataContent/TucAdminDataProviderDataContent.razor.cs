@@ -28,8 +28,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
-			WvBlazorTraceService.OnSignal(this, "On_NavigationDataChanged");
-		await _init(args);
+			await _init(args);
 	}
 
 	private async void On_DataProviderUpdated(object? caller, TfDataProvider args)
@@ -120,7 +119,6 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			{ TfConstants.PageQueryName, -1}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this, "_goLastPage");
 	}
 	private async Task _goOnPage(int page)
 	{
@@ -132,7 +130,6 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this, "_goOnPage");
 	}
 
 	private async Task _pageSizeChange(int pageSize)
@@ -155,7 +152,6 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		};
 		queryDict[TfConstants.PageSizeQueryName] = pageSize;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this, "_pageSizeChange");
 	}
 
 	private bool _columnIsVisible(TfDataColumn column)

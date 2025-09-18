@@ -243,7 +243,8 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 	public TfDataTable InsertRowInDataTable(TfDataTable dt)
 	{
 		var newDt = dt.NewTable();
-		newDt.Rows.Add(newDt.NewRow());
+		var newRow = newDt.NewRow();
+		newDt.Rows.Add(newRow);
 		return SaveDataTable(newDt);
 	}
 	#endregion

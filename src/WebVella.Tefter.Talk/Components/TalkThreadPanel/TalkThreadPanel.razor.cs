@@ -42,10 +42,10 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 			if (Content.ChannelId is not null)
 			{
 				_channel = TalkService.GetChannel(Content.ChannelId.Value);
-				if (_channel is not null && !String.IsNullOrWhiteSpace(_channel.DataIdentity) && Content.RowIndex > -1)
+				if (_channel is not null && !String.IsNullOrWhiteSpace(_channel.DataIdentity) && Content.RowId != Guid.Empty)
 				{
-					_rowId = (Guid)Content.DataTable.Rows[Content.RowIndex][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-					_dataIdentityValue = Content.DataTable.Rows[Content.RowIndex].GetDataIdentityValue(_channel.DataIdentity);
+					_rowId = (Guid)Content.DataTable[Content.RowId,TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+					_dataIdentityValue = Content.DataTable.Rows[Content.RowId].GetDataIdentityValue(_channel.DataIdentity);
 					if (_dataIdentityValue is not null)
 						_threads = TalkService.GetThreads(_channel.Id, _dataIdentityValue);
 				}
@@ -292,6 +292,6 @@ public record TalkThreadPanelContext
 {
 	public Guid? ChannelId { get; set; }
 	public TfDataTable DataTable { get; set; } = null;
-	public int RowIndex { get; set; } = -1;
+	public Guid RowId { get; set; } = Guid.Empty;
 	public long CountChange { get; set; } = 0;
 }
