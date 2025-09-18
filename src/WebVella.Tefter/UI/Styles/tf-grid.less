@@ -289,6 +289,18 @@
             &:last-child > td {
                 border-bottom: 1px solid var(--tf-stroke-base);
             }
+
+            &.tf-grid-tr--edited .tf-grid-td-check::after {
+                content:"";
+                position:absolute;
+                height:100%;
+                width:5px;
+                top:0;
+                bottom:0;
+                left:0;
+                background:var(--tf-amber-500);
+
+            }
         }
     }
 

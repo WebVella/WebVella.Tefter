@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.DataProviderColumnManageDialog.TfDataProviderColumnManageDialog", "WebVella.Tefter")]
 public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProviderColumn?>
 {
@@ -86,7 +87,8 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 					DataProviderId = _provider.Id,
 					CreatedOn = DateTime.Now
 				};
-				if(_providerColumnTypeToSourceTypes[_form.DbType].Count > 0){ 
+				if (_providerColumnTypeToSourceTypes[_form.DbType].Count > 0)
+				{
 					_form.SourceType = _providerColumnTypeToSourceTypes[_form.DbType][0];
 				}
 			}
@@ -149,17 +151,9 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			if (!_isConnected)
-				_form.SourceName = null;
 
-			if (!_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue))
-			{
-				_form.DefaultValue = String.Empty;
-			}
-			else if (_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue))
-			{
-				_form.DefaultValue = null;
-			}
+			await Task.Delay(1);
+
 			var submit = new TfDataProviderColumn
 			{
 				Id = _form.Id,
@@ -178,6 +172,22 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 				SourceName = _form.SourceName,
 				SourceType = _form.SourceType,
 			};
+
+			if (!_isConnected)
+			{
+				submit.SourceName = null;
+				submit.SourceType = null;
+			}
+
+			if (!submit.IsNullable && String.IsNullOrWhiteSpace(submit.DefaultValue))
+			{
+				submit.DefaultValue = String.Empty;
+			}
+			if (submit.IsNullable && String.IsNullOrWhiteSpace(submit.DefaultValue))
+			{
+				submit.DefaultValue = null;
+			}
+
 			submit.FixPrefix(_provider.ColumnPrefix);
 			if (_isCreate)
 			{
@@ -206,6 +216,16 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 	{
 		await Dialog.CancelAsync();
 	}
+
+	private async Task _dbTypeChanged(TfDatabaseColumnType dbType)
+	{
+		_form.DbType = dbType;
+		await InvokeAsync(StateHasChanged);
+		await Task.Delay(1);
+		_form.SourceType = _providerColumnTypeToSourceTypes[_form.DbType][0];
+		await InvokeAsync(StateHasChanged);
+	}
+
 	private bool _providerTypeSupportsAutogen()
 	{
 		var dbInfo = _providerColumnTypeOptions.FirstOrDefault(x => x.Type == _form.DbType);
