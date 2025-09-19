@@ -34,7 +34,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private List<TfDataProvider>? _allDataProviders = null;
 	private List<TfSharedColumn>? _allSharedColumns = null;
 	private List<Guid> _selectedDataRows = new();
-	private List<Guid> _editableDataRows = new();
+	private List<Guid> _unsavedDataRows = new();
 	private Dictionary<string, object> _contextData = new();
 	private string _tableId = "space-view-table";
 	private RenderFragment _caretDownInactive = default!;
@@ -170,6 +170,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				_spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
 				_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _spaceData.DataProviderId);
 				_selectedDataRows = new();
+				_unsavedDataRows = new();
 			}
 			_currentUser = Context!.CurrentUser;
 			_page = _navState.Page ?? 1;
@@ -335,7 +336,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		if (_data is null) return;
 		_data.Rows.Insert(0, dataTable.Rows[0]);
-		_editableDataRows.Add(dataTable.Rows[0].GetRowId());
+		_unsavedDataRows.Add(dataTable.Rows[0].GetRowId());
 		_generateMeta();
 		StateHasChanged();
 	}
@@ -382,17 +383,20 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		try
 		{
+			if(value is null || value.Rows.Count == 0) return;
+			var changedRow = value.Rows[0];
+			var changedRowTfId = changedRow.GetRowId();
+
 			var dataTable = TfSpaceDataUIService.SaveDataTable(value);
 
 			//Apply changed to the datatable
 			if (_data is null || _data.Rows.Count == 0 || _data.Rows.Count == 0) return;
-			var changedRow = dataTable.Rows[0];
-			var changedRowTfId = (Guid)changedRow[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+
 			var clonedData = _data.Clone();
 			for (int i = 0; i < clonedData.Rows.Count; i++)
 			{
 				TfDataRow row = clonedData.Rows[i];
-				Guid tfId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+				Guid tfId = row.GetRowId();
 				if (changedRowTfId != tfId) continue;
 
 				for (int j = 0; j < clonedData.Columns.Count; j++)
@@ -460,6 +464,19 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		}
 
 		return allSelected;
+	}
+
+	private void _setRowEditable(Guid rowId, bool isEditable)
+	{
+		if (isEditable)
+		{
+			if (!_unsavedDataRows.Contains(rowId)) _unsavedDataRows.Add(rowId);
+		}
+		else
+		{
+			_unsavedDataRows.RemoveAll(x => x == rowId);
+		}
+		_generateMeta();
 	}
 
 	[JSInvokable("OnColumnSort")]

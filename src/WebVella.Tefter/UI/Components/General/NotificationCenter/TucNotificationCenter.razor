@@ -4,7 +4,7 @@
 	private RenderFragment NotificationIcon() =>
         @<FluentIcon Value="@TfConstants.GetIcon("Alert")" Title="Notification center" />;
 }
-<FluentAnchor Href="#" OnClick="OpenNotificationCenterAsync"
+<TucAnchor Href="#" OnClick="OpenNotificationCenterAsync"
 			  Title="Notification center" Appearance="Appearance.Hypertext">
 	@if (MessageService.Count(TfConstants.MESSAGES_NOTIFICATION_CENTER) > 0)
 	{
@@ -23,6 +23,6 @@
 	{
 		@NotificationIcon()
 	}
-</FluentAnchor>
+</TucAnchor>
 
 

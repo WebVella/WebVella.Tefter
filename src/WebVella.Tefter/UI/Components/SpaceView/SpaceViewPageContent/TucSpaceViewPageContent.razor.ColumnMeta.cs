@@ -28,7 +28,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			#endregion
 
 			#region << EditMode >>
-			_rowMeta[tfId].EditMode = _editableDataRows is not null && _editableDataRows.Contains(tfId);
+			_rowMeta[tfId].UnsavedRow = _unsavedDataRows is not null && _unsavedDataRows.Contains(tfId);
 			#endregion
 
 			#region << Context >>

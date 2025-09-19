@@ -62,7 +62,7 @@
 													  Title="@LOC("Change file content")" OnClick="@(()=> _editFile(context))" />
 										<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete column")"
 													  OnClick="@(() => _deleteFile(context))" IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" />
-										<FluentAnchor Appearance="@Appearance.Outline" Target="_blank"
+										<TucAnchor Appearance="@Appearance.Outline" Target="_blank"
 													  Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload")" />
 									</FluentStack>
 								</div>

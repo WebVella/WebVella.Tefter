@@ -15,7 +15,7 @@ else if (_isReadonly && String.IsNullOrWhiteSpace(Value))
 else if (_isReadonly && !String.IsNullOrWhiteSpace(Value))
 {
 	<FluentStack VerticalAlignment="@VerticalAlignment.Center" HorizontalGap="5">
-		<FluentAnchor Href="@Value" IconStart="@TfConstants.GetIcon("ArrowDownload")" Appearance="Appearance.Outline" Target="_blank" />
+		<TucAnchor Href="@Value" IconStart="@TfConstants.GetIcon("ArrowDownload")" Appearance="Appearance.Outline" Target="_blank" />
 		<FluentTextField ReadOnly="true" Value="@_fileName" Style="width:100%" />
 	</FluentStack>
 }
@@ -25,7 +25,7 @@ else
 		@if (!String.IsNullOrWhiteSpace(Value))
 		{
 
-			<FluentAnchor Href="@Value" IconStart="@TfConstants.GetIcon("ArrowDownload")" Appearance="Appearance.Outline" Target="_blank" />
+			<TucAnchor Href="@Value" IconStart="@TfConstants.GetIcon("ArrowDownload")" Appearance="Appearance.Outline" Target="_blank" />
 			<FluentTextField ReadOnly="true" Value="@_fileName" Style="width:100%" />
 			@if (!String.IsNullOrWhiteSpace(_originalValue) && _originalValue != Value)
 			{

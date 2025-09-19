@@ -278,7 +278,7 @@
             }
 
             &.tf-grid-tr--selected .tf-grid-td-hover {
-                background: var(--tf-blue-300);
+                background: var(--tf-blue-200);
             }
 
             &:hover .tf-grid-td-hover {
@@ -290,16 +290,19 @@
                 border-bottom: 1px solid var(--tf-stroke-base);
             }
 
-            &.tf-grid-tr--edited .tf-grid-td-check::after {
-                content:"";
-                position:absolute;
-                height:100%;
-                width:5px;
-                top:0;
-                bottom:0;
-                left:0;
-                background:var(--tf-amber-500);
+            &.tf-grid-tr--edited .tf-grid-td--check::after {
+                content: "";
+                position: absolute;
+                border-radius: 0 5px 5px 0;
+                top: 2px;
+                bottom: 2px;
+                width: 5px;
+                left: -1px;
+                background: var(--tf-stroke-base);
+            }
 
+            &.tf-grid-tr--selected .tf-grid-td--check::after {
+                background: var(--tf-blue-500);
             }
         }
     }
@@ -337,24 +340,49 @@
                 .check-content {
                     padding: 0;
                     display: flex;
-                    /*					flex-flow: row;
-					justify-content: center;*/
-                    position: relative;
 
-                    fluent-button {
-                        flex: 1 1 auto;
-                        display: block;
-                        height: 100%;
-                        width: 100%;
-                        background: transparent !important;
-                        --neutral-stroke-input-active: var(--tf-stroke-button);
+                    &.unsaved {
+                        display: flex;
+                        flex-flow: column;
+                        justify-content: center;
+                        align-items: center;
 
-                        &:part(control) {
+                        fluent-button {
+                            flex: 0 0 auto;
                             background: transparent !important;
+                            --neutral-stroke-input-active: var(--tf-stroke-button);
+                            border-radius: 3px !important;
+                            height: unset;
+                            margin: 2px 0;
+
+                            &::part(control) {
+                                width: 100%;
+                            }
+
+                            &:hover {
+                                background: var(--tf-white) !important;
+                            }
                         }
+                    }
 
-                        &:hover {
+                    &.check {
+                        fluent-button {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            height: 100%;
+                            width: 100%;
                             background: transparent !important;
+                            --neutral-stroke-input-active: var(--tf-stroke-button);
+
+                            &::part(control) {
+                                background: transparent !important;
+                                border: none;
+                            }
+
+                            &:hover {
+                                background: transparent !important;
+                            }
                         }
                     }
                 }
@@ -427,7 +455,7 @@
 }
 
 .tf-grid-tr.tf-grid-tr--selected .tf-grid-td-selection {
-    background: var(--tf-blue-200);
+    background: var(--tf-blue-100);
 }
 
 .tf-grid-tr:hover .tf-grid-td-hover {

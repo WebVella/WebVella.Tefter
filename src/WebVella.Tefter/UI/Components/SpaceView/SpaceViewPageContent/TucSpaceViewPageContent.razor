@@ -47,7 +47,7 @@ else
 							}
 							<tr class="tf-grid-tr">
 								<th class="@_columnsMeta[Guid.Empty].HeaderCellClass" style="@_columnsMeta[Guid.Empty].HeaderCellStyles">
-									<div class="check-content">
+									<div class="check-content check">
 										@if (_allDataRowsSelected())
 										{
 											<FluentButton OnClick="@(() => _toggleSelectAll(false))" BackgroundColor="transparent" Color="transparent">
@@ -64,7 +64,8 @@ else
 								</th>
 								@foreach (var column in _spaceViewColumns.OrderBy(x => x.Position))
 								{
-									<th data-query-name="@column.QueryName" class="@_columnsMeta[column.Id].HeaderCellClass" style="@_columnsMeta[column.Id].HeaderCellStyles">
+									<th data-query-name="@column.QueryName" class="@_columnsMeta[column.Id].HeaderCellClass"
+										style="@_columnsMeta[column.Id].HeaderCellStyles">
 										<div>
 											@if (String.IsNullOrWhiteSpace(column.Icon))
 											{
@@ -117,28 +118,41 @@ else
 							else
 							{
 								foreach (TfDataRow row in _data.Rows)
-								{ 
+								{
 									var tfId = row.GetRowId();
-									<tr @key=@tfId class="@_rowMeta[tfId].RowClass">
+									<tr @key=@tfId class="@_rowMeta[tfId].RowClass" @ondblclick="@(() => _setRowEditable(tfId, true))">
 										<td class="@_columnsMeta[Guid.Empty].BodyCellClass" style="@_columnsMeta[Guid.Empty].BodyCellStyles">
 											<div class="tf-grid-td-color" style="@_columnsMeta[Guid.Empty].BodyFillCellStyles"></div>
 											<div class="tf-grid-td-selection"></div>
 											<div class="tf-grid-td-hover"></div>
-											<div class="check-content">
-												@if (_rowMeta[tfId].Selected)
-												{
+
+											@if (_rowMeta[tfId].UnsavedRow)
+											{
+												<div class="check-content unsaved">
+													<FluentButton OnClick="@(() => _setRowEditable(tfId, false))" BackgroundColor="transparent" Color="transparent">
+														<FluentIcon Value="@TfConstants.GetIcon("Checkmark")!.WithColor(TfColor.Green500.GetAttribute().Value)" />
+													</FluentButton>
+													<FluentButton OnClick="@(() => _setRowEditable(tfId, false))" BackgroundColor="transparent" Color="transparent">
+														<FluentIcon Value="@TfConstants.GetIcon("Dismiss")!.WithColor("var(--error)")" />
+													</FluentButton>
+												</div>
+											}
+											else if (_rowMeta[tfId].Selected)
+											{
+												<div class="check-content check">
 													<FluentButton OnClick="@(() => _toggleItemSelection(tfId, false))" BackgroundColor="transparent" Color="transparent">
 														<FluentIcon Value="@TfConstants.GetIcon("CheckboxChecked", variant: IconVariant.Filled)" Color="@Color.Accent" />
 													</FluentButton>
-												}
-												else
-												{
+												</div>
+											}
+											else
+											{
+												<div class="check-content check">
 													<FluentButton OnClick="@(() => _toggleItemSelection(tfId, true))" BackgroundColor="transparent" Color="transparent">
 														<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")" Color="@Color.Custom" CustomColor="var(--neutral-stroke-input-active)" />
 													</FluentButton>
-												}
-											</div>
-
+												</div>
+											}
 										</td>
 										@foreach (var column in _spaceViewColumns)
 										{
@@ -147,7 +161,7 @@ else
 												<div class="tf-grid-td-selection"></div>
 												<div class="tf-grid-td-hover"></div>
 
-												@if (_rowMeta[tfId].EditMode && _componentMetaDict.ContainsKey(column.EditComponentId))
+												@if (_rowMeta[tfId].UnsavedRow && _componentMetaDict.ContainsKey(column.EditComponentId))
 												{
 													<TucErrorBoundry>
 														<DynamicComponent Type="_componentMetaDict[column.EditComponentId].InstanceType" Parameters="@_rowColumnContext[tfId][column.Id]" />

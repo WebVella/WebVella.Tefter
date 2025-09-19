@@ -40,10 +40,10 @@
 										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 											<td class="tf-grid-td" style="width:30px;">
 												<div>
-													<FluentAnchor Appearance="@Appearance.Outline" title="@LOC("view details")"
+													<TucAnchor Appearance="@Appearance.Outline" title="@LOC("view details")"
 																  Href="@String.Format(TfConstants.SpacePagePageUrl, context.SpaceId, context.Id)">
 														<FluentIcon Value="@TfConstants.GetIcon("Eye")" />
-													</FluentAnchor>
+													</TucAnchor>
 												</div>
 											</td>
 											<td class="tf-grid-td">

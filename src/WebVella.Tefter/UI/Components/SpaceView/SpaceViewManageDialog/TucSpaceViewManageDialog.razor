@@ -53,16 +53,22 @@
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
-				<FluentGridItem xs="6">
-					<FluentInputLabel Label="@LOC("New Rows (Experimental)")" />
+				<FluentGridItem xs="4">
+					<FluentInputLabel Label="@LOC("New Rows")" />
 					<FluentCheckbox @bind-Value="@_form.Settings.CanCreateRows" Style="height:32px;"
-									Label="@LOC("can create new rows")" />
+									Label="@LOC("can create data")" />
 					<FluentValidationMessage For="@(() => _form.Settings.CanCreateRows)" />
 				</FluentGridItem>
-				<FluentGridItem xs="6">
-					<FluentInputLabel Label="@LOC("Delete Rows (Experimental)")" />
+				<FluentGridItem xs="4">
+					<FluentInputLabel Label="@LOC("Update Rows")" />
+					<FluentCheckbox @bind-Value="@_form.Settings.CanUpdateRows" Style="height:32px;"
+									Label="@LOC("can update data")" />
+					<FluentValidationMessage For="@(() => _form.Settings.CanUpdateRows)" />
+				</FluentGridItem>
+				<FluentGridItem xs="4">
+					<FluentInputLabel Label="@LOC("Delete Rows")" />
 					<FluentCheckbox @bind-Value="@_form.Settings.CanDeleteRows" Style="height:32px;"
-									Label="@LOC("can delete rows")" />
+									Label="@LOC("can delete data")" />
 					<FluentValidationMessage For="@(() => _form.Settings.CanDeleteRows)" />
 				</FluentGridItem>
 			</FluentGrid>

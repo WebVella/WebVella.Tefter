@@ -120,17 +120,18 @@ else
 						<div>
 							@if (!_showDetails)
 							{
-								<a href="javascript:void(0)" @onclick=@(_=> _showDetails = true)>@LOC("show details")</a>
+								<a href="javascript:void(0)" @onclick=@(_ => _showDetails = true)>@LOC("show details")</a>
 							}
 							else
 							{
-								<a href="javascript:void(0)" @onclick=@(_=> _showDetails = false)>@LOC("hide details")</a>
+								<a href="javascript:void(0)" @onclick=@(_ => _showDetails = false)>@LOC("hide details")</a>
 							}
 						</div>
 					</td>
 					<td class="tf-grid-td" style="width:160px;max-width:160px;">
 						<div style="text-align:right;">
-							<FluentAnchor Target="_blank" Appearance="Appearance.Accent" Href="@_result.ZipDownloadUrl" IconStart="@TfConstants.GetIcon("ArrowDownload")">@LOC("download")</FluentAnchor>
+							<TucAnchor Target="_blank" Appearance="Appearance.Accent" Href="@_result.ZipDownloadUrl"
+									   IconStart="@TfConstants.GetIcon("ArrowDownload")">@LOC("download")</TucAnchor>
 						</div>
 					</td>
 				</tr>

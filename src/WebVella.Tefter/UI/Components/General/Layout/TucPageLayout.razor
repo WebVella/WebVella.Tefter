@@ -9,7 +9,7 @@
 				@if (!String.IsNullOrWhiteSpace(_returnUrl))
 				{
 					<div class="tf-page-layout__toolbar__left__back-btn">
-						<FluentAnchor Appearance="@Appearance.Outline" Href="@_returnUrl" IconStart="@TfConstants.GetIcon("ChevronLeft")">@LOC("Back")</FluentAnchor>
+						<TucAnchor Appearance="@Appearance.Outline" Href="@_returnUrl" IconStart="@TfConstants.GetIcon("ChevronLeft")">@LOC("Back")</TucAnchor>
 					</div>
 				}
 				@if (Icon is not null)

@@ -1,0 +1,19 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@if (!String.IsNullOrWhiteSpace(Href) && Href != "#")
+{
+	<FluentAnchor Href="@Href" Target="@Target"
+				  Id="@Id" AdditionalAttributes=@_additionalAttributes
+				  Class="@Class" Style="@Style"
+				  IconStart="IconStart" IconEnd="IconEnd"
+				  Appearance="@Appearance">@ChildContent</FluentAnchor>
+}
+else
+{
+	<FluentAnchor OnClick="@OnClick" Href="#"
+				  Id="@Id" AdditionalAttributes=@_additionalAttributes
+				  Class="@Class" Style="@Style"
+				  IconStart="IconStart" IconEnd="IconEnd"
+				  Appearance="@Appearance">@ChildContent</FluentAnchor>
+}
+

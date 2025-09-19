@@ -28,9 +28,11 @@ public partial class TucSpaceViewActionSelector : TfBaseComponent
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private Task _deleteSelectedRecords()
+	private async Task _deleteSelectedRecords()
 	{
-		if (SelectedRows.Count == 0) return Task.CompletedTask;
+		if (SelectedRows.Count == 0) return;
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need these records deleted?")))
+			return;
 		try
 		{
 			var spaceData = TfSpaceDataUIService.GetSpaceData(SpaceView.SpaceDataId);
@@ -45,6 +47,6 @@ public partial class TucSpaceViewActionSelector : TfBaseComponent
 		{
 			ProcessException(ex);
 		}
-		return Task.CompletedTask;
+		return;
 	}
 }
