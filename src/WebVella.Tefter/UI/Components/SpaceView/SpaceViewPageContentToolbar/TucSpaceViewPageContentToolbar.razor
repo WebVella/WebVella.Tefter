@@ -79,6 +79,21 @@
 				<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" />
 			</FluentButton>
 		}
+		@if (SpaceView.Settings.CanUpdateRows)
+		{
+			@if (TucSpaceViewPageContent.GetEditAll())
+			{
+				<FluentButton OnClick="_onEditAllClick" BackgroundColor="var(--warning)" Color="transparent">
+					<FluentIcon Value="@TfConstants.GetIcon("Edit")!.WithColor("white")" />
+				</FluentButton>
+			}
+			else
+			{
+				<FluentButton OnClick="_onEditAllClick" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" />
+				</FluentButton>
+			}
+		}
 		<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("Connector")" Color="@Color.Accent" />
 		</FluentButton>

@@ -1,5 +1,5 @@
 ﻿::deep fluent-button:hover::part(control) {
-	border:1px solid var(--neutral-stroke-strong-hover);
+	border: 1px solid var(--neutral-stroke-strong-hover);
 }
 
 ::deep fluent-button::part(control) {

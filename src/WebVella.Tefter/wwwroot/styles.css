@@ -1028,6 +1028,11 @@ fluent-dialog .tf-divider,
   width: 0;
   animation: gridLoadingBar 2s linear infinite;
 }
+.tf-grid tbody tr {
+  /*            &.tf-grid-tr--selected .tf-grid-td--check::after {
+                background: var(--tf-amber-400);
+            }*/
+}
 .tf-grid tbody tr > th,
 .tf-grid tbody tr > td {
   border-bottom-width: 0;
@@ -1135,10 +1140,7 @@ fluent-dialog .tf-divider,
   bottom: 2px;
   width: 5px;
   left: -1px;
-  background: var(--tf-stroke-base);
-}
-.tf-grid tbody tr.tf-grid-tr--selected .tf-grid-td--check::after {
-  background: var(--tf-blue-500);
+  background: var(--tf-amber-300);
 }
 .tf-grid > tbody tr:first-child > td,
 .tf-grid > tbody tr:first-child > th {
@@ -1172,19 +1174,19 @@ fluent-dialog .tf-divider,
   padding: 0;
   display: flex;
 }
-.tf-grid thead > tr > .tf-grid-th--check .check-content.unsaved,
-.tf-grid tbody > tr > .tf-grid-th--check .check-content.unsaved,
-.tf-grid thead > tr > .tf-grid-td--check .check-content.unsaved,
-.tf-grid tbody > tr > .tf-grid-td--check .check-content.unsaved {
+.tf-grid thead > tr > .tf-grid-th--check .check-content.multi,
+.tf-grid tbody > tr > .tf-grid-th--check .check-content.multi,
+.tf-grid thead > tr > .tf-grid-td--check .check-content.multi,
+.tf-grid tbody > tr > .tf-grid-td--check .check-content.multi {
   display: flex;
   flex-flow: column;
   justify-content: center;
   align-items: center;
 }
-.tf-grid thead > tr > .tf-grid-th--check .check-content.unsaved fluent-button,
-.tf-grid tbody > tr > .tf-grid-th--check .check-content.unsaved fluent-button,
-.tf-grid thead > tr > .tf-grid-td--check .check-content.unsaved fluent-button,
-.tf-grid tbody > tr > .tf-grid-td--check .check-content.unsaved fluent-button {
+.tf-grid thead > tr > .tf-grid-th--check .check-content.multi fluent-button,
+.tf-grid tbody > tr > .tf-grid-th--check .check-content.multi fluent-button,
+.tf-grid thead > tr > .tf-grid-td--check .check-content.multi fluent-button,
+.tf-grid tbody > tr > .tf-grid-td--check .check-content.multi fluent-button {
   flex: 0 0 auto;
   background: transparent !important;
   --neutral-stroke-input-active: var(--tf-stroke-button);
@@ -1192,16 +1194,16 @@ fluent-dialog .tf-divider,
   height: unset;
   margin: 2px 0;
 }
-.tf-grid thead > tr > .tf-grid-th--check .check-content.unsaved fluent-button::part(control),
-.tf-grid tbody > tr > .tf-grid-th--check .check-content.unsaved fluent-button::part(control),
-.tf-grid thead > tr > .tf-grid-td--check .check-content.unsaved fluent-button::part(control),
-.tf-grid tbody > tr > .tf-grid-td--check .check-content.unsaved fluent-button::part(control) {
+.tf-grid thead > tr > .tf-grid-th--check .check-content.multi fluent-button::part(control),
+.tf-grid tbody > tr > .tf-grid-th--check .check-content.multi fluent-button::part(control),
+.tf-grid thead > tr > .tf-grid-td--check .check-content.multi fluent-button::part(control),
+.tf-grid tbody > tr > .tf-grid-td--check .check-content.multi fluent-button::part(control) {
   width: 100%;
 }
-.tf-grid thead > tr > .tf-grid-th--check .check-content.unsaved fluent-button:hover,
-.tf-grid tbody > tr > .tf-grid-th--check .check-content.unsaved fluent-button:hover,
-.tf-grid thead > tr > .tf-grid-td--check .check-content.unsaved fluent-button:hover,
-.tf-grid tbody > tr > .tf-grid-td--check .check-content.unsaved fluent-button:hover {
+.tf-grid thead > tr > .tf-grid-th--check .check-content.multi fluent-button:hover,
+.tf-grid tbody > tr > .tf-grid-th--check .check-content.multi fluent-button:hover,
+.tf-grid thead > tr > .tf-grid-td--check .check-content.multi fluent-button:hover,
+.tf-grid tbody > tr > .tf-grid-td--check .check-content.multi fluent-button:hover {
   background: var(--tf-white) !important;
 }
 .tf-grid thead > tr > .tf-grid-th--check .check-content.check fluent-button,
@@ -1244,6 +1246,14 @@ fluent-dialog .tf-divider,
 .tf-grid thead > tr > td > div:not([class]):empty,
 .tf-grid tbody > tr > td > div:not([class]):empty {
   height: 30px;
+}
+.tf-grid thead > tr .tr-actions,
+.tf-grid tbody > tr .tr-actions {
+  display: none;
+}
+.tf-grid thead > tr:hover .tr-actions,
+.tf-grid tbody > tr:hover .tr-actions {
+  display: flex;
 }
 .tf-grid thead th.tf--sticky,
 .tf-grid tbody th.tf--sticky,

@@ -34,7 +34,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private List<TfDataProvider>? _allDataProviders = null;
 	private List<TfSharedColumn>? _allSharedColumns = null;
 	private List<Guid> _selectedDataRows = new();
-	private List<Guid> _unsavedDataRows = new();
+	private List<Guid> _editedDataRows = new();
+	private bool _editAll = false;
 	private Dictionary<string, object> _contextData = new();
 	private string _tableId = "space-view-table";
 	private RenderFragment _caretDownInactive = default!;
@@ -170,7 +171,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				_spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
 				_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _spaceData.DataProviderId);
 				_selectedDataRows = new();
-				_unsavedDataRows = new();
+				_editedDataRows = new();
 			}
 			_currentUser = Context!.CurrentUser;
 			_page = _navState.Page ?? 1;
@@ -336,12 +337,50 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		if (_data is null) return;
 		_data.Rows.Insert(0, dataTable.Rows[0]);
-		_unsavedDataRows.Add(dataTable.Rows[0].GetRowId());
+		_editedDataRows.Add(dataTable.Rows[0].GetRowId());
 		_generateMeta();
 		StateHasChanged();
 	}
 
+	public void ToggleEditAll()
+	{
+		_editAll = !_editAll;
+		_generateMeta();
+		StateHasChanged();
+	}
+
+	public bool GetEditAll() => _editAll;
+	
+
 	public TfDataTable? GetCurrentData() => _data;
+
+	public void OnDeleteRows(List<Guid> tfIds)
+	{
+		if (_spaceView is null) return;
+		if (tfIds is null || tfIds.Count == 0) return;
+		try
+		{
+			var spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
+			TfDataProviderUIService.DeleteDataProviderRowsByTfId(
+				providerId: spaceData.DataProviderId,
+				idList: _selectedDataRows
+			);
+			ToastService.ShowSuccess(LOC("Records deleted"));
+			Navigator.ReloadCurrentUrl();
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+	}
+
+	public void OnEditRows(List<Guid> tfIds)
+	{
+		if (tfIds is null || tfIds.Count == 0) return;
+		_editedDataRows = _editedDataRows.Union(tfIds).ToList();
+		_generateMeta();
+		StateHasChanged();
+	}
 	#endregion
 
 	#region <<Utility Methods >>
@@ -383,7 +422,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		try
 		{
-			if(value is null || value.Rows.Count == 0) return;
+			if (value is null || value.Rows.Count == 0) return;
 			var changedRow = value.Rows[0];
 			var changedRowTfId = changedRow.GetRowId();
 
@@ -470,11 +509,12 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		if (isEditable)
 		{
-			if (!_unsavedDataRows.Contains(rowId)) _unsavedDataRows.Add(rowId);
+			if (!_spaceView.Settings.CanUpdateRows) return;
+			if (!_editedDataRows.Contains(rowId)) _editedDataRows.Add(rowId);
 		}
 		else
 		{
-			_unsavedDataRows.RemoveAll(x => x == rowId);
+			_editedDataRows.RemoveAll(x => x == rowId);
 		}
 		_generateMeta();
 	}

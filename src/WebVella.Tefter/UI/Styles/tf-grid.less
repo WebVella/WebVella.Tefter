@@ -298,12 +298,12 @@
                 bottom: 2px;
                 width: 5px;
                 left: -1px;
-                background: var(--tf-stroke-base);
+                background: var(--tf-amber-300);
             }
 
-            &.tf-grid-tr--selected .tf-grid-td--check::after {
-                background: var(--tf-blue-500);
-            }
+/*            &.tf-grid-tr--selected .tf-grid-td--check::after {
+                background: var(--tf-amber-400);
+            }*/
         }
     }
 
@@ -341,7 +341,7 @@
                     padding: 0;
                     display: flex;
 
-                    &.unsaved {
+                    &.multi {
                         display: flex;
                         flex-flow: column;
                         justify-content: center;
@@ -398,6 +398,14 @@
 
             & > td > div:not([class]):empty {
                 height: 30px;
+            }
+
+            .tr-actions {
+                display: none;
+            }
+
+            &:hover .tr-actions {
+                display: flex;
             }
         }
 

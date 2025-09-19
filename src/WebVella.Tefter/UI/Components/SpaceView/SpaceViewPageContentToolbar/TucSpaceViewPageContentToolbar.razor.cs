@@ -88,4 +88,9 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 		}
 		return Task.CompletedTask;
 	}
+
+	private void _onEditAllClick()
+	{
+		TucSpaceViewPageContent.ToggleEditAll();
+	}
 }
