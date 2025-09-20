@@ -63,6 +63,29 @@ public partial class TucDataProviderIdentityManageDialog : TfFormBaseComponent, 
 		base.InitForm(_form);
 	}
 
+	private async Task addDataIdentity()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucDataIdentityManageDialog>(
+		new TfDataIdentity(),
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var item = (TfDataIdentity)result.Data;
+			_identityOptions.Add(item.DataIdentity);
+			_form.DataIdentity = item.DataIdentity;
+			await InvokeAsync(StateHasChanged);
+		}
+
+	}
+
+
 	private async Task _save()
 	{
 		if (_isSubmitting) return;

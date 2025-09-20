@@ -21,20 +21,10 @@
 					<TucCard Title="@LOC("Implemented Data Identities")"
 							 SubTitle="@LOC("Data Identities are used to generate keys for joining auxilary data. Each record can have several data identities.")">
 						<ToolbarTemplate>
-							@if (_allIdentitiesImplemented)
-							{
-								<FluentButton Appearance="@Appearance.Outline" Disabled=true>
-									@LOC("All identities implemented")
-									<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Color="@Color.Accent" Slot="start" />
-								</FluentButton>
-							}
-							else
-							{
-								<FluentButton Appearance="@Appearance.Outline" OnClick="_implementDataIdentity">
-									@LOC("Data identity")
-									<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start" />
-								</FluentButton>
-							}
+							<FluentButton Appearance="@Appearance.Outline" OnClick="_implementDataIdentity">
+								@LOC("Data identity")
+								<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start" />
+							</FluentButton>
 						</ToolbarTemplate>
 						<ChildContent>
 							<table class="tf-grid">

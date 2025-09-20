@@ -6,7 +6,6 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 	[Inject] public ITfDataIdentityUIService TfDataIdentityUIService { get; set; } = default!;
 
 	private TfDataProvider? _provider = null;
-	public bool _allIdentitiesImplemented = false;
 	private List<TfDataProvider> _connectedProviders = new();
 	public void Dispose()
 	{
@@ -47,14 +46,6 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 			_provider = TfDataProviderUIService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
-
-			var allIdentities = TfDataIdentityUIService.GetDataIdentities();
-			_allIdentitiesImplemented = true;
-			foreach (var item in allIdentities)
-			{
-				if (!_provider.Identities.Any(x => x.DataIdentity == item.DataIdentity))
-					_allIdentitiesImplemented = false;
-			}
 			_connectedProviders = TfDataProviderUIService.GetDataProviderConnectedProviders(_provider.Id);
 		}
 		finally
