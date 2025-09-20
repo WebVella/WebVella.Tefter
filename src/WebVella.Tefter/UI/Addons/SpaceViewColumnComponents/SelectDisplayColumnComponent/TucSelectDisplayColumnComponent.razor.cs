@@ -17,7 +17,6 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 	[Inject] private ITfService TfService { get; set; } = default!;
 	[Inject] private ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
 	[Inject] private ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
-	[Inject] private IWvBlazorTraceService WvBlazorTraceService { get; set; } = default!;
 	#endregion
 
 	#region << Constructor >>
@@ -68,17 +67,6 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 
 	#region << Lifecycle >>
 
-	protected override void OnInitialized()
-	{
-		WvBlazorTraceService.OnSignal(this, $"OnInitialized-{this.GetType().Name}");
-	}
-
-	protected override void OnAfterRender(bool firstRender)
-	{
-		base.OnAfterRender(firstRender);
-		WvBlazorTraceService.OnSignal(this, $"OnAfterRender-{this.GetType().Name}", null, firstRender.ToString());
-	}
-
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
@@ -88,7 +76,6 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 		await base.OnParametersSetAsync();
 		if(RegionContext is null) return;
 		var contextHash = RegionContext.GetHash();
-		WvBlazorTraceService.OnSignal(this, "OnParametersSetAsync",null,_renderedHash);
 		if (contextHash != _renderedHash)
 		{
 			_initContextData();

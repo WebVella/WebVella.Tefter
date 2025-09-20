@@ -1,0 +1,91 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Select local file")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	<div>
+		<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween">
+			<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@_search"
+						  AutoComplete="off" @ref=_refSearch />
+			<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
+				<FluentInputFile @ref="@fileUploader"
+								 DragDropZoneVisible="false"
+								 Mode="InputFileMode.SaveToTemporaryFolder"
+								 Multiple="false"
+								 AnchorId="@_uploadId"
+								 MaximumFileSize="@(100 * 1024 * 1024)"
+								 Accept="*"
+								 OnProgressChange="@_onProgress"
+								 OnCompleted="@_onCompleted" />
+				<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0)"
+							  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">@LOC("Upload file")</FluentButton>
+			</FluentStack>
+		</FluentStack>
+		<table class="tf-grid" style="margin-top:1rem;">
+			<thead class="tf-grid-thead">
+				<tr class="tf-grid-thead-bkg"></tr>
+				<tr class="tf-grid-tr">
+					<th class="tf-grid-th" style="width:1%;min-width:1%;"></th>
+					<th class="tf-grid-th">name</th>
+					<th class="tf-grid-th" style="width:140px;min-width:140px;">created</th>
+					<th class="tf-grid-th">tefter URI</th>
+				</tr>
+			</thead>
+			<tbody class="tf-grid-tbody">
+				@foreach (var context in _items)
+				{
+					<tr @key=context.Id class="tf-grid-tr">
+						<td class="tf-grid-td">
+							<div>
+								<FluentStack Wrap="false">
+									<FluentButton Appearance="@Appearance.Outline" 
+												  Title="@LOC("Select")" OnClick="@(()=> _selectFile(context))">@LOC("select")</FluentButton>
+								</FluentStack>
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								<div>@context.Filename</div>
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								<div>@context.CreatedOn.ToString(TfConstants.DateHourFormat)</div>
+								@if (!context.LastModifiedOn.Equals(context.CreatedOn))
+								{
+									<div class="td-description" title="@LOC("last updated")">@context.LastModifiedOn.ToString(TfConstants.DateHourFormat)</div>
+								}
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								<div style="display:flex;align-items:center">
+									@context.Uri.ToString()
+								</div>
+							</div>
+						</td>
+					</tr>
+				}
+				@if (_items.Count == 0)
+				{
+					<tr class="tf-grid-tr">
+						<td class="tf-grid-td" colspan="4">
+							<FluentMessageBar AllowDismiss="false"
+											  Intent="@MessageIntent.Info">@LOC("No items are found for this search")</FluentMessageBar>
+						</td>
+					</tr>
+
+				}
+			</tbody>
+		</table>
+	</div>
+</FluentDialogBody>

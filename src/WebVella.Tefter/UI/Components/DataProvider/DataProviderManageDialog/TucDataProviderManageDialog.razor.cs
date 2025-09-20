@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 [LocalizationResource("WebVella.Tefter.UI.Components.Admin.DataProviderManageDialog.TfDataProviderManageDialog", "WebVella.Tefter")]
 public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProvider?>
 {
@@ -29,13 +30,6 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 		_initForm();
 		_initDynamicComponent();
 	}
-	protected override void OnParametersSet()
-	{
-		base.OnParametersSet();
-		_initForm();
-		_initDynamicComponent();
-	}
-
 	private void _initForm()
 	{
 		if (Content is null) throw new Exception("Content is null");
@@ -146,6 +140,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 	private void _settingsChanged(string json)
 	{
 		_form.SettingsJson = json;
+		StateHasChanged();
 	}
 
 	private void _providerTypeChanged(ITfDataProviderAddon selection)

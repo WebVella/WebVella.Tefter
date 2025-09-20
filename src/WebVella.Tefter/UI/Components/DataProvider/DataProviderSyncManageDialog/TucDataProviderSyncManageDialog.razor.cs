@@ -18,11 +18,6 @@ public partial class TucDataProviderSyncManageDialog : TfFormBaseComponent, IDia
 		await base.OnInitializedAsync();
 		_initForm();
 	}
-	protected override void OnParametersSet()
-	{
-		base.OnParametersSet();
-		_initForm();
-	}
 
 	private void _initForm()
 	{
