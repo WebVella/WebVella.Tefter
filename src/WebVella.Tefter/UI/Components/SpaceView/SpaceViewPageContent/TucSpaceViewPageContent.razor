@@ -126,7 +126,7 @@ else
 											<div class="tf-grid-td-color" style="@_columnsMeta[Guid.Empty].BodyFillCellStyles"></div>
 											<div class="tf-grid-td-selection"></div>
 											<div class="tf-grid-td-hover"></div>
-											@if (_rowMeta[tfId].UnsavedRow)
+											@if (_rowMeta[tfId].EditMode)
 											{
 												@if (!_editAll)
 												{
@@ -162,7 +162,7 @@ else
 												<div class="tf-grid-td-selection"></div>
 												<div class="tf-grid-td-hover"></div>
 
-												@if (_rowMeta[tfId].UnsavedRow && _componentMetaDict.ContainsKey(column.EditComponentId))
+												@if (_rowMeta[tfId].EditMode && _componentMetaDict.ContainsKey(column.EditComponentId))
 												{
 													<TucErrorBoundry>
 														<DynamicComponent Type="_componentMetaDict[column.EditComponentId].InstanceType" Parameters="@_rowColumnContext[tfId][column.Id]" />

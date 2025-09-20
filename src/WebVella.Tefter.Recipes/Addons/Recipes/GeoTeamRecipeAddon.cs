@@ -526,8 +526,9 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				Type = TfSpaceViewType.DataGrid,
 				Settings = new TfSpaceViewSettings
 				{
-					CanCreateRows = false,
-					CanDeleteRows = false,
+					CanCreateRows = true,
+                    CanUpdateRows = true,
+                    CanDeleteRows = true,
 					FreezeFinalNColumns = 0,
 					FreezeStartingNColumns = 0,
 				},
@@ -628,7 +629,10 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					ComponentOptionsJson = JsonSerializer.Serialize(new TfTalkCommentsCountComponentOptions{
 						ChannelId = talkChannelId
 					}),
-					Settings = new TfSpaceViewColumnSettings{
+                    EditComponentOptionsJson = JsonSerializer.Serialize(new TfTalkCommentsCountComponentOptions{
+                        ChannelId = talkChannelId
+                    }),
+                    Settings = new TfSpaceViewColumnSettings{
 						Width = 65
 					}
 				},
@@ -645,7 +649,10 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					ComponentOptionsJson = JsonSerializer.Serialize(new TfFolderAssetsCountComponentOptions{
 						FolderId = assetFolderId
 					}),
-					Settings = new TfSpaceViewColumnSettings{
+                    EditComponentOptionsJson = JsonSerializer.Serialize(new TfFolderAssetsCountComponentOptions{
+                        FolderId = assetFolderId
+                    }),
+                    Settings = new TfSpaceViewColumnSettings{
 						Width = 65
 					}
 				},

@@ -296,6 +296,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		finally
 		{
 			_selectAllLoading = false;
+			_generateMeta();
 			await InvokeAsync(StateHasChanged);
 		}
 	}
@@ -312,6 +313,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		finally
 		{
 			_selectAllLoading = false;
+			_generateMeta();
 			await InvokeAsync(StateHasChanged);
 		}
 	}
@@ -350,7 +352,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	}
 
 	public bool GetEditAll() => _editAll;
-	
+
 
 	public TfDataTable? GetCurrentData() => _data;
 
@@ -441,15 +443,18 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				for (int j = 0; j < clonedData.Columns.Count; j++)
 				{
 					TfDataColumn column = clonedData.Columns[j];
+					if (column.IsSystem) continue;
 					row[column.Name] = changedRow[column.Name];
+					Console.WriteLine(changedRow[column.Name]);
 				}
 			}
 			_data = clonedData;
+			_generateMeta();
 			await InvokeAsync(StateHasChanged);
 		}
 		catch (Exception ex)
 		{
-			throw new TfException(LOC("Data change failed!"), ex);
+			throw new TfException(LOC($"Data change failed! {ex.Message}"), ex);
 		}
 	}
 

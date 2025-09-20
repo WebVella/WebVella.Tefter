@@ -14,6 +14,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	private TfUser? _currentUser = null;
 	private string? _search = null;
 	private string _uploadId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
+	private string _uploadEmptyId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 
 	private FluentSearch? _refSearch = null;
 	public void Dispose()

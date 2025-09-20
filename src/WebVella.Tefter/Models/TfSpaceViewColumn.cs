@@ -14,6 +14,7 @@ public record TfSpaceViewColumn
 	public Guid EditComponentId { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string ComponentOptionsJson { get; set; } = "{}";
+	public string EditComponentOptionsJson { get; set; } = "{}";
 	public TfSpaceViewColumnSettings Settings { get; set; } = new();
 	public string? GetColumnNameFromDataMapping(){ 
 		if(DataMapping is null || DataMapping.Keys.Count == 0) return null;
@@ -59,6 +60,9 @@ internal class TfSpaceViewColumnDbo
 
 	[TfDboModelProperty("custom_options_json")]
 	public string ComponentOptionsJson { get; set; } = "{}";
+
+	[TfDboModelProperty("edit_custom_options_json")]
+	public string EditComponentOptionsJson { get; set; } = "{}";
 
 	[TfDboModelProperty("settings_json")]
 	public string SettingsJson { get; set; } = "{}";

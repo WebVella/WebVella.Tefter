@@ -4,7 +4,7 @@ namespace WebVella.Tefter.Models;
 
 public record TfSpaceViewRowPresentationMeta
 {
-	public bool UnsavedRow { get; set; } = false;
+	public bool EditMode { get; set; } = false;
 	public bool Selected { get; set; } = false;
 
 	public string RowClass
@@ -15,7 +15,7 @@ public record TfSpaceViewRowPresentationMeta
 			sb.Append(" tf-grid-tr ");
 			if(Selected)
 				sb.Append(" tf-grid-tr--selected ");
-			if (UnsavedRow)
+			if (EditMode)
 				sb.Append(" tf-grid-tr--edited ");
 			return sb.ToString();
 		}

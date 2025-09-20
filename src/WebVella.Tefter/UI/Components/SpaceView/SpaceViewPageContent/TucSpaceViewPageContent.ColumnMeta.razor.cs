@@ -28,7 +28,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			#endregion
 
 			#region << EditMode >>
-			_rowMeta[tfId].UnsavedRow = _editAll || (_editedDataRows is not null && _editedDataRows.Contains(tfId));
+			_rowMeta[tfId].EditMode = _editAll || (_editedDataRows is not null && _editedDataRows.Contains(tfId));
 			#endregion
 
 			#region << Context >>
@@ -39,7 +39,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				_rowColumnContext[tfId][column.Id][TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext(_contextData)
 				{
 					Mode = TfComponentPresentationMode.Display,
-					ComponentOptionsJson = column.ComponentOptionsJson,
+					ComponentOptionsJson = _rowMeta[tfId].EditMode ? column.EditComponentOptionsJson : column.ComponentOptionsJson,
 					DataMapping = column.DataMapping,
 					DataTable = _data,
 					RowId = tfId,

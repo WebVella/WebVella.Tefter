@@ -33,6 +33,19 @@
 		{
 			<FluentMessageBar Title="@LOC("No Files")" AllowDismiss="false"
 							  Intent="@MessageIntent.Info">@LOC("No files are created yet")</FluentMessageBar>
+			<div style="padding:var(--tf-layout-content-padding)">
+				<FluentButton Id="@_uploadEmptyId" Disabled="@(progressPercent > 0)"
+							  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">@LOC("Upload file")</FluentButton>
+				<FluentInputFile @ref="@fileUploader"
+								 DragDropZoneVisible="false"
+								 Mode="InputFileMode.SaveToTemporaryFolder"
+								 Multiple="false"
+								 AnchorId="@_uploadEmptyId"
+								 MaximumFileSize="@(100 * 1024 * 1024)"
+								 Accept="*"
+								 OnProgressChange="@_onProgress"
+								 OnCompleted="@_onCompleted" />
+			</div>
 		}
 		else if (!String.IsNullOrWhiteSpace(_search) && (_items is null || _items.Count == 0))
 		{
@@ -63,7 +76,7 @@
 										<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete column")"
 													  OnClick="@(() => _deleteFile(context))" IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" />
 										<TucAnchor Appearance="@Appearance.Outline" Target="_blank"
-													  Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload")" />
+												   Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload")" />
 									</FluentStack>
 								</div>
 							</td>
