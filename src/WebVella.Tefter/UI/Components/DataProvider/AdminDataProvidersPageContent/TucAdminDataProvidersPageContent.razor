@@ -1,6 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout>
+<TucPageLayout Icon="@TfConstants.GetIcon("Database")" Area="@LOC("Data")"
+			   Title="@LOC("Data Providers")" Color="TfConstants.AdminColor">
 	<div style="padding:var(--tf-layout-content-padding)">
 		<FluentMessageBar Title="Information" AllowDismiss="false"
 						  Intent="@MessageIntent.Info">
