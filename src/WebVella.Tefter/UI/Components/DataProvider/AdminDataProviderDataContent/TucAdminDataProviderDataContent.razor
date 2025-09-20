@@ -52,7 +52,18 @@
 						</ToolbarLeft>
 						<ToolbarRight>
 							<FluentStack VerticalAlignment="@VerticalAlignment.Center">
-								<div style="margin-right:10px;color:var(--neutral-foreground-hint)">@LOC("{0} total rows", _totalRows)</div>
+								@if (_syncRunning)
+								{
+									<div style="margin-right:10px;color:var(--neutral-foreground-hint)">
+										<FluentBadge Fill="somevalue" BackgroundColor="var(--tf-amber-500)" Color="white">
+											data sync is running
+										</FluentBadge>
+									</div>
+								}
+								else
+								{
+									<div style="margin-right:10px;color:var(--neutral-foreground-hint)">@LOC("{0} total rows", _totalRows)</div>
+								}
 								<FluentButton OnClick="_deleteAllData" Appearance="@Appearance.Outline">
 									<FluentIcon Value="@TfConstants.GetIcon("Delete")" Slot="start" Color="@Color.Error" />
 									@LOC("delete all data")
@@ -95,7 +106,11 @@
 									else if (_data.Rows.Count == 0)
 									{
 										<tr class="tf-grid-tr">
-											<td class="tf-grid-td" colspan="@columnCount"><div>@LOC("No records")</div></td>
+											<td class="tf-grid-td" colspan="@columnCount">
+												<div>
+													@(_syncRunning? LOC("No records found, but the data synchronization is currently running. Try again in a minute") : LOC("No records found"))
+												</div>
+											</td>
 										</tr>
 									}
 									else
@@ -118,12 +133,6 @@
 														}
 													</td>
 												}
-											</tr>
-										}
-										@if (_data.Rows.Count == 0)
-										{
-											<tr class="tf-grid-tr">
-												<td class="tf-grid-td" colspan="@columnCount">No records found</td>
 											</tr>
 										}
 									}

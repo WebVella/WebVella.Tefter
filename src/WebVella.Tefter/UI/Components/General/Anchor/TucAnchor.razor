@@ -2,18 +2,46 @@
 @inherits TfBaseComponent
 @if (!String.IsNullOrWhiteSpace(Href) && Href != "#")
 {
-	<FluentAnchor Href="@Href" Target="@Target"
-				  Id="@Id" AdditionalAttributes=@_additionalAttributes
-				  Class="@Class" Style="@Style"
-				  IconStart="IconStart" IconEnd="IconEnd"
-				  Appearance="@Appearance">@ChildContent</FluentAnchor>
+	@if (ChildContent is null && IconStart is not null)
+	{
+		<FluentAnchor Href="@Href" Target="@Target"
+					  Id="@Id" AdditionalAttributes=@_additionalAttributes
+					  Class="@Class" Style="@Style"
+					  IconEnd="IconEnd"
+					  Appearance="@Appearance">
+			<FluentIcon Value="IconStart" />
+		</FluentAnchor>
+
+	}
+	else
+	{
+		<FluentAnchor Href="@Href" Target="@Target"
+					  Id="@Id" AdditionalAttributes=@_additionalAttributes
+					  Class="@Class" Style="@Style"
+					  IconStart="IconStart" IconEnd="IconEnd"
+					  Appearance="@Appearance">@ChildContent</FluentAnchor>
+	}
 }
 else
 {
-	<FluentAnchor OnClick="@OnClick" Href="#"
-				  Id="@Id" AdditionalAttributes=@_additionalAttributes
-				  Class="@Class" Style="@Style"
-				  IconStart="IconStart" IconEnd="IconEnd"
-				  Appearance="@Appearance">@ChildContent</FluentAnchor>
+	@if (ChildContent is null && IconStart is not null)
+	{
+		<FluentAnchor OnClick="@OnClick" Href="#"
+					  Id="@Id" AdditionalAttributes=@_additionalAttributes
+					  Class="@Class" Style="@Style"
+					  IconEnd="IconEnd"
+					  Appearance="@Appearance">
+			<FluentIcon Value="IconStart" />
+		</FluentAnchor>
+	}
+	else
+	{
+		<FluentAnchor OnClick="@OnClick" Href="#"
+					  Id="@Id" AdditionalAttributes=@_additionalAttributes
+					  Class="@Class" Style="@Style"
+					  IconStart="IconStart" IconEnd="IconEnd"
+					  Appearance="@Appearance">@ChildContent</FluentAnchor>
+
+	}
 }
 

@@ -21,6 +21,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 	private TfDataProviderManageSettingsScreenRegionContext _dynamicComponentContext = default!;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private ReadOnlyCollection<ITfDataProviderAddon> _providerTypes = default!;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -94,6 +95,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
+			await Task.Delay(1);
 			TfDataProvider provider;
 			if (_isCreate)
 			{
@@ -105,8 +107,9 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 					ProviderType = _form.ProviderType,
 					SettingsJson = _form.SettingsJson,
 					SynchPrimaryKeyColumns = _form.SynchPrimaryKeyColumns,
-					SynchScheduleEnabled = _form.SynchScheduleEnabled,
+					SynchScheduleEnabled = !_form.AutoInitialize ? false : _form.SynchScheduleEnabled,
 					SynchScheduleMinutes = _form.SynchScheduleMinutes,
+					AutoInitialize = _form.AutoInitialize
 				});
 			}
 			else
