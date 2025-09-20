@@ -415,9 +415,12 @@ public partial class TfService : ITfService
 						column.FixPrefix(provider.ColumnPrefix);
 						columns.Add(column);
 					}
-					CreateBulkDataProviderColumn(provider.Id, columns);
-					//Trigger Initial Sync
-					TriggerSynchronization(provider.Id);
+					if (columns.Count > 0)
+					{
+						CreateBulkDataProviderColumn(provider.Id, columns);
+						//Trigger Initial Sync
+						TriggerSynchronization(provider.Id);
+					}
 				}
 
 
