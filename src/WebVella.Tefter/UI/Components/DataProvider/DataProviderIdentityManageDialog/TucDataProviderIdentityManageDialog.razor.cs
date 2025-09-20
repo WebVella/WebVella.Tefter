@@ -79,6 +79,8 @@ public partial class TucDataProviderIdentityManageDialog : TfFormBaseComponent, 
 		{
 			var item = (TfDataIdentity)result.Data;
 			_identityOptions.Add(item.DataIdentity);
+			await InvokeAsync(StateHasChanged);
+			await Task.Delay(10);
 			_form.DataIdentity = item.DataIdentity;
 			await InvokeAsync(StateHasChanged);
 		}

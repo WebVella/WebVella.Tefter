@@ -25,12 +25,18 @@
 				<DataAnnotationsValidator />
 				<FluentGrid>
 					<FluentGridItem xs="6">
-						<FluentSelect TOption="string"
-									  Items="_identityOptions"
-									  OptionSelected="(x => x == _form.DataIdentity)"
-									  @bind-SelectedOption="@_form.DataIdentity"
-									  Placeholder="@LOC("select identity...")"
-									  Label="@LOC("Data Identity")" Style="width:100%" />
+						<FluentInputLabel Label="@LOC("Data Identity")" />
+						<FluentStack>
+							<FluentSelect TOption="string"
+										  Items="_identityOptions"
+										  OptionSelected="(x => x == _form.DataIdentity)"
+										  @bind-SelectedOption="@_form.DataIdentity"
+										  Placeholder="@LOC("select identity...")" Style="flex:1 1 auto" />
+							<FluentButton Title="@LOC("Create a new data identity")" OnClick="addDataIdentity"
+										  Appearance="@Appearance.Outline">
+								<FluentIcon Value="@TfConstants.GetIcon("Add")"/>
+							</FluentButton>
+						</FluentStack>
 						<FluentValidationMessage For="@(() => _form.DataIdentity)" />
 					</FluentGridItem>
 				</FluentGrid>
