@@ -42,7 +42,8 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 		{
 			_form = new TfCreateDataProvider
 			{
-				ProviderType = _providerTypes.First()
+				ProviderType = _providerTypes.First(),
+				AutoInitialize = true
 			};
 		}
 		else
@@ -57,6 +58,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 				SynchPrimaryKeyColumns = Content.SynchPrimaryKeyColumns.ToList(),
 				SynchScheduleMinutes = Content.SynchScheduleMinutes,
 				SynchScheduleEnabled = Content.SynchScheduleEnabled,
+				AutoInitialize = false
 			};
 		}
 		base.InitForm(_form);

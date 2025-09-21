@@ -41,8 +41,7 @@ public partial class AssetSpaceViewSelectorAction : TfBaseComponent,
 					TrapFocus = false,
 					OnDialogClosing = EventCallback.Factory.Create<DialogInstance>(this, async (instance) =>
 					{
-						var dataChange = _applyCountChange(
-							data: TucSpaceViewPageContent.GetCurrentData(),
+						var dataChange = TucSpaceViewPageContent.GetCurrentData().ApplyCountChange(
 							countChange: ((AssetsAttachModalContext)instance.Content).CountChange);
 						if (dataChange is null) return;
 						TucSpaceViewPageContent.OnDataChange(dataChange);

@@ -1,17 +1,13 @@
-﻿namespace WebVella.Tefter.Talk.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-internal static class TalkUtility
+namespace WebVella.Tefter.Assets.Services;
+
+internal static class AssetUtility
 {
-    internal static NpgsqlParameter CreateParameter( string name, object value, DbType type )
-	{
-		NpgsqlParameter par = new NpgsqlParameter(name, type);
-		if (value is null)
-			par.Value = DBNull.Value;
-		else
-			par.Value = value;
-
-		return par;
-	}
     internal static Dictionary<Guid, Dictionary<string, object>>? ApplyCountChange(this TfDataTable? data, Dictionary<Guid, Dictionary<string, long>>? countChange)
     {
         if (data is null || countChange is null || countChange.Keys.Count == 0) return null;

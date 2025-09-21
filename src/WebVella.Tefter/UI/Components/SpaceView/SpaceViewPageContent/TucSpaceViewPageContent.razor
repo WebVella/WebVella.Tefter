@@ -29,7 +29,6 @@ else
 												SpaceData="_spaceData" SpaceViewPreset=_preset
 												SelectAllLoading="_selectAllLoading"
 												SelectedRows="_selectedDataRows" />
-
 				<div class="tf-grid-wrapper">
 					<table class="tf-grid" id="@_tableId">
 						<colgroup>
@@ -117,9 +116,11 @@ else
 							}
 							else
 							{
-								foreach (TfDataRow row in _data.Rows)
-								{
-									var tfId = row.GetRowId();
+								<Virtualize Items="@_data.Rows.GetList()" TItem="TfDataRow" Context="row">
+									@* foreach (TfDataRow row in _data.Rows) *@
+									@{
+										var tfId = row.GetRowId();
+									}
 									<tr @key=@tfId class="@_rowMeta[tfId].RowClass" @ondblclick="@(() => _setRowEditable(tfId, true))"
 										id="@($"row-{tfId}")">
 										<td class="@_columnsMeta[Guid.Empty].BodyCellClass" style="@_columnsMeta[Guid.Empty].BodyCellStyles">
@@ -177,7 +178,8 @@ else
 											</td>
 										}
 									</tr>
-								}
+									@* } *@
+								</Virtualize>
 							}
 						</tbody>
 					</table>

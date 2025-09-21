@@ -42,7 +42,7 @@ public record TfCreateDataProvider
 	[Required]
 	public short SynchScheduleMinutes { get; set; } = 60;
 	public bool SynchScheduleEnabled { get; set; } = false;
-	public bool AutoInitialize { get; set; } = true;
+	public bool AutoInitialize { get; set; } = false;
 }
 
 public record TfUpdateDataProvider
