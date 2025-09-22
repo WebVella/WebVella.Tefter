@@ -18,31 +18,29 @@ else
 	{
 		<h4>@LOC("Errors")</h4>
 		<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("Errors occurred while generating the preview")</FluentMessageBar>
-		<div class="tf-grid-wrapper" style="margin-top:15px;">
-			<table class="tf-grid">
-				<thead class="tf-grid-thead">
-					<tr class="tf-grid-tr">
-						<th class="tf-grid-th">@LOC("property")</th>
-						<th class="tf-grid-th">@LOC("error")</th>
+		<table class="tf-grid" style="margin-top:15px;">
+			<thead class="tf-grid-thead">
+				<tr class="tf-grid-tr">
+					<th class="tf-grid-th">@LOC("property")</th>
+					<th class="tf-grid-th">@LOC("error")</th>
+				</tr>
+			</thead>
+			<tbody class="tf-grid-tbody">
+				@foreach (var error in _result.Errors)
+				{
+					<tr @key=@(Guid.NewGuid())>
+						<td class="tf-grid-td">
+							<div>
+								@error.PropertyName
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@error.Message</div>
+						</td>
 					</tr>
-				</thead>
-				<tbody class="tf-grid-tbody">
-					@foreach (var error in _result.Errors)
-					{
-						<tr @key=@(Guid.NewGuid())>
-							<td class="tf-grid-td">
-								<div>
-									@error.PropertyName
-								</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>@error.Message</div>
-							</td>
-						</tr>
-					}
-				</tbody>
-			</table>
-		</div>
+				}
+			</tbody>
+		</table>
 	}
 	@if (_result.Items.Count == 0)
 	{
@@ -54,66 +52,62 @@ else
 		{
 			<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("{0} files have errors", _result.ItemsWithErrorsCount)</FluentMessageBar>
 			<h4>@LOC("Email errors")</h4>
-			<div class="tf-grid-wrapper" style="margin-top:15px;">
-				<table class="tf-grid">
-					<thead class="tf-grid-thead">
-						<tr class="tf-grid-tr">
-							<th class="tf-grid-th">@LOC("recipient")</th>
-							<th class="tf-grid-th" style="width:80px;max-width:80px;">@LOC("used rows")</th>
-							<th class="tf-grid-th">@LOC("errors")</th>
+			<table class="tf-grid" style="margin-top:15px;">
+				<thead class="tf-grid-thead">
+					<tr class="tf-grid-tr">
+						<th class="tf-grid-th">@LOC("recipient")</th>
+						<th class="tf-grid-th" style="width:80px;max-width:80px;">@LOC("used rows")</th>
+						<th class="tf-grid-th">@LOC("errors")</th>
+					</tr>
+				</thead>
+				<tbody class="tf-grid-tbody">
+					@foreach (var item in _result.Items)
+					{
+						<tr @key=@(Guid.NewGuid())>
+							<td class="tf-grid-td">
+								<div>
+									@String.Join(";", item.Recipients)
+								</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>@item.RelatedRowIds.Count</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>
+									@if (item.Errors.Count > 0)
+									{
+										<ul>
+											@foreach (var error in item.Errors)
+											{
+												<li style="color:var(--accent-base-color)">@error.PropertyName > @error.Message</li>
+											}
+										</ul>
+									}
+									else
+									{
+										<span>@LOC("no errors")</span>
+									}
+								</div>
+							</td>
 						</tr>
-					</thead>
-					<tbody class="tf-grid-tbody">
-						@foreach (var item in _result.Items)
-						{
-							<tr @key=@(Guid.NewGuid())>
-								<td class="tf-grid-td">
-									<div>
-										@String.Join(";",item.Recipients)
-									</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>@item.RelatedRowIds.Count</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>
-										@if (item.Errors.Count > 0)
-										{
-											<ul>
-												@foreach (var error in item.Errors)
-												{
-													<li style="color:var(--accent-base-color)">@error.PropertyName > @error.Message</li>
-												}
-											</ul>
-										}
-										else
-										{
-											<span>@LOC("no errors")</span>
-										}
-									</div>
-								</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
+					}
+				</tbody>
+			</table>
 		}
 		else if (_result.Errors.Count == 0)
 		{
 			<FluentMessageBar Intent="@MessageIntent.Success" AllowDismiss="false">@LOC("Template file generation is successfull")</FluentMessageBar>
-			<div class="tf-grid-wrapper" style="margin-top:15px;">
-				<table class="tf-grid">
-					<tbody class="tf-grid-tbody">
-						<tr>
-							<td class="tf-grid-td">
-								<div>
-									@LOC("{0} emails are generated", _result.Items.Count)
-								</div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+			<table class="tf-grid" style="margin-top:15px;">
+				<tbody class="tf-grid-tbody">
+					<tr>
+						<td class="tf-grid-td">
+							<div>
+								@LOC("{0} emails are generated", _result.Items.Count)
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		}
 
 	}

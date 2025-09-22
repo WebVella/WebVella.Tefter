@@ -4,11 +4,11 @@
 
 <TucPageLayout Title="@LOC("Asset Folders")"
 			   Icon="@TfConstants.GetIcon("Document")" Color="@TfConstants.AdminColor">
-	<ToolbarRight>
+	<NavigationRight>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_createFolderHandler" IconStart="@TfConstants.GetIcon("Add")">
 			@LOC("Create folder")
 		</FluentButton>
-	</ToolbarRight>
+	</NavigationRight>
 	<ChildContent>
 		<table class="tf-grid">
 			<thead class="tf-grid-thead">

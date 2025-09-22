@@ -33,60 +33,58 @@ else
 		<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@string.Format("{0} content have errors", _preview.ItemWithErrorsCount)</FluentMessageBar>
 	}
 	<h4 style="margin-top:1rem;">Content to be generated</h4>
-	<div class="tf-grid-wrapper" style="margin-top:15px;">
-		<table class="tf-grid">
-			<thead class="tf-grid-thead">
-				<tr class="tf-grid-thead-bkg"></tr>
-				<tr class="tf-grid-tr">
-					<th class="tf-grid-th">group</th>
-					<th class="tf-grid-th" style="width:80px;max-width:80px;">used rows</th>
-					<th class="tf-grid-th">errors</th>
+	<table class="tf-grid" style="margin-top:15px;">
+		<thead class="tf-grid-thead">
+			<tr class="tf-grid-thead-bkg"></tr>
+			<tr class="tf-grid-tr">
+				<th class="tf-grid-th">group</th>
+				<th class="tf-grid-th" style="width:80px;max-width:80px;">used rows</th>
+				<th class="tf-grid-th">errors</th>
+			</tr>
+		</thead>
+		<tbody class="tf-grid-tbody">
+			@foreach (var item in _preview.Items)
+			{
+				<tr @key=@(Guid.NewGuid())>
+					<td class="tf-grid-td">
+						<div>
+							@string.Format("group {0}", _itemPosition)
+						</div>
+					</td>
+					<td class="tf-grid-td">
+						<div>@item.NumberOfRows</div>
+					</td>
+					<td class="tf-grid-td">
+						<div style="white-space:normal">
+							@if (item.Errors.Count > 0)
+							{
+								<ul>
+									@foreach (var error in item.Errors)
+									{
+										<li style="color:var(--error)">
+											@if (String.IsNullOrWhiteSpace(error.PropertyName))
+											{
+												<span>@error.Message</span>
+											}
+											else
+											{
+												<span><i>@error.PropertyName :</i> <span>@error.Message</span></span>
+											}
+										</li>
+									}
+								</ul>
+							}
+							else
+							{
+								<span>no errors</span>
+							}
+						</div>
+					</td>
 				</tr>
-			</thead>
-			<tbody class="tf-grid-tbody">
-				@foreach (var item in _preview.Items)
-				{
-					<tr @key=@(Guid.NewGuid())>
-						<td class="tf-grid-td">
-							<div>
-								@string.Format("group {0}",_itemPosition)
-							</div>
-						</td>
-						<td class="tf-grid-td">
-							<div>@item.NumberOfRows</div>
-						</td>
-						<td class="tf-grid-td">
-							<div style="white-space:normal">
-								@if (item.Errors.Count > 0)
-								{
-									<ul>
-										@foreach (var error in item.Errors)
-										{
-											<li style="color:var(--error)">
-												@if (String.IsNullOrWhiteSpace(error.PropertyName))
-												{
-													<span>@error.Message</span>
-												}
-												else
-												{
-													<span><i>@error.PropertyName :</i> <span>@error.Message</span></span>
-												}
-											</li>
-										}
-									</ul>
-								}
-								else
-								{
-									<span>no errors</span>
-								}
-							</div>
-						</td>
-					</tr>
-					_itemPosition++;
-				}
-			</tbody>
-		</table>
-	</div>
+				_itemPosition++;
+			}
+		</tbody>
+	</table>
 }
 
 

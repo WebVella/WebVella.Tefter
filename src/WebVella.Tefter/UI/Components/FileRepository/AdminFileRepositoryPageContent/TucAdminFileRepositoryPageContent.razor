@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 <TucPageLayout Icon="@TfConstants.GetIcon("DocumentDatabase")" Area="@LOC("File Repository")"
 			   Title="@LOC("Files")" Color="TfConstants.AdminColor">
-	<ToolbarRight>
+	<NavigationRight>
 		@if (progressPercent < 100)
 		{
 			<TucProgress Value="progressPercent" Visible="@(progressPercent > 0)" />
@@ -30,7 +30,7 @@
 		}
 		<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@_search"
 					  AutoComplete="off" Style="margin-left:1rem;" @ref=_refSearch />
-	</ToolbarRight>
+	</NavigationRight>
 	<ChildContent>
 		@if (String.IsNullOrWhiteSpace(_search) && (_items is null || _items.Count == 0))
 		{

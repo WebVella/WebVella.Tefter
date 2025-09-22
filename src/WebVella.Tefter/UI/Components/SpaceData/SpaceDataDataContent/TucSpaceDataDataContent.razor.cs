@@ -13,8 +13,6 @@ public partial class TucSpaceDataDataContent : TfBaseComponent, IDisposable
 	public bool _submitting = false;
 	public TfNavigationState? _navState = null;
 	private TfDataTable? _data = null;
-	private int _page = 1;
-	private int _pageSize = TfConstants.PageSize;
 	private TfUser? _currentUser = null;
 	public void Dispose()
 	{
@@ -62,8 +60,6 @@ public partial class TucSpaceDataDataContent : TfBaseComponent, IDisposable
 			}
 			if (_spaceData is null) return;
 			_space = TfSpaceUIService.GetSpace(_spaceData.SpaceId);
-			_page = _navState.Page ?? 1;
-			_pageSize = _navState.PageSize ?? TfConstants.PageSize;
 			_data = TfSpaceDataUIService.QuerySpaceData(
 				spaceDataId: _spaceData.Id,
 				userFilters: null,
@@ -71,12 +67,9 @@ public partial class TucSpaceDataDataContent : TfBaseComponent, IDisposable
 				presetFilters: null,
 				presetSorts: null,
 				search: _navState.Search,
-				page: _page,
-				pageSize: _pageSize
+				page: 1,
+				pageSize: TfConstants.ItemsMaxLimit
 			);
-			_page = _data.QueryInfo.Page ?? 1;
-			_pageSize = _data.QueryInfo.PageSize ?? 1;
-
 		}
 		finally
 		{
@@ -84,25 +77,6 @@ public partial class TucSpaceDataDataContent : TfBaseComponent, IDisposable
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-
-	private async Task _goLastPage()
-	{
-		if (_page == -1) return;
-		var queryDict = new Dictionary<string, object>{
-			{ TfConstants.PageQueryName, -1}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
-	private async Task _goOnPage(int page)
-	{
-		if (page < 1 && page != -1) page = 1;
-		if (_page == page) return;
-		var queryDict = new Dictionary<string, object>{
-			{ TfConstants.PageQueryName, page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
-
 
 	private async Task _onSearch(string value)
 	{

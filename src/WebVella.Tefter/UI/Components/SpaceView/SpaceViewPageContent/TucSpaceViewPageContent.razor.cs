@@ -20,8 +20,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private bool _selectAllLoading = false;
 	private ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> _componentMetaDict = default!;
 	public TfNavigationState _navState = default!;
-	private int _page = 1;
-	private int _pageSize = TfConstants.PageSize;
 	private TfUser _currentUser = default!;
 	private TfSpace? _space = null;
 	private TfSpacePage? _spacePage = null;
@@ -174,8 +172,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				_editedDataRows = new();
 			}
 			_currentUser = Context!.CurrentUser;
-			_page = _navState.Page ?? 1;
-			_pageSize = _navState.PageSize ?? (_currentUser.Settings.PageSize ?? TfConstants.PageSize);
 			_preset = null;
 			if (_navState.SpaceViewPresetId is not null)
 				_preset = _spaceView!.Presets.GetPresetById(_navState.SpaceViewPresetId.Value);
@@ -189,17 +185,11 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 							userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _allDataProviders, _allSharedColumns),
 							userSorts: _navState.Sorts.ConvertQuerySortToList(_spaceViewColumns),
 							search: _navState.Search,
-							page: _page,
-							pageSize: _pageSize
+							page: 1,
+							pageSize: TfConstants.ItemsMaxLimit
 					);
 
 			_generateMeta();
-			//Process last page (-1) case
-			if (_page == -1)
-			{
-				_page = _data.QueryInfo.Page ?? 1;
-				await Navigator.ApplyChangeToUrlQuery(TfConstants.PageQueryName, _page);
-			}
 		}
 		finally
 		{
@@ -386,40 +376,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	#endregion
 
 	#region <<Utility Methods >>
-
-	// Navigation Methods
-
-	private async Task _goLastPage()
-	{
-		if (_isDataLoading) return;
-		if (_page == -1) return;
-		await Navigator.ApplyChangeToUrlQuery(TfConstants.PageQueryName, -1);
-	}
-	private async Task _goOnPage(int page)
-	{
-		if (_isDataLoading) return;
-		if (page < 1 && page != -1) page = 1;
-		if (_page == page) return;
-		await Navigator.ApplyChangeToUrlQuery(TfConstants.PageQueryName, page == 1 ? null : page);
-	}
-	private async Task _pageSizeChange(int pageSize)
-	{
-		if (_isDataLoading) return;
-		if (pageSize < 0) pageSize = TfConstants.PageSize;
-		if (_pageSize == pageSize) return;
-		try
-		{
-			var currentUser = await TfUserUIService.GetCurrentUserAsync();
-			var user = await TfUserUIService.SetPageSize(
-						userId: currentUser!.Id,
-						pageSize: pageSize == TfConstants.PageSize ? null : pageSize
-					);
-		}
-		catch { }
-
-		await Navigator.ApplyChangeToUrlQuery(TfConstants.PageSizeQueryName, pageSize);
-	}
-
 	private async Task _onRowChanged(TfDataTable value)
 	{
 		try

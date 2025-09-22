@@ -2,99 +2,90 @@
 @inherits TfBaseComponent
 <TucPageLayout Icon="@TfConstants.GetIcon("Database")" Color="@(_space?.Color ?? TfConstants.DefaultThemeColor)"
 			   Area="@($"{_space?.Name} : {LOC("Space Data")}")" Title="@_spaceData?.Name" SubTitle="@LOC("Data")">
-	<ToolbarLeft>
+	<NavigationLeft>
 		<TucSpaceDataDetailsContentToolbar />
+	</NavigationLeft>
+	<ToolbarLeft>
+		<FluentSearch Value="@_navState.Search" ValueChanged="_onSearch" AutoComplete="off" Placeholder="@LOC("search...")" />
 	</ToolbarLeft>
 	<ChildContent>
-		<TucErrorBoundry>
-			<div style="padding:var(--tf-layout-content-padding)">
-				@if (String.IsNullOrWhiteSpace(UriInitialized))
-				{
-					<TucSkeletonPageHeader />
-				}
-				else if (_spaceData is null)
-				{
-					<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-				}
-				else
-				{
-					var columnCount = 0;
-					<TucGridToolbar>
-						<ToolbarSearch>
-							<FluentSearch Value="@_navState.Search" ValueChanged="_onSearch" AutoComplete="off" Placeholder="@LOC("search...")" />
-						</ToolbarSearch>
-					</TucGridToolbar>
-					@if (_data is not null)
-					{
-						<div class="tf-grid-wrapper">
-							<table class="tf-grid">
-								<thead class="tf-grid-thead">
-									<tr class="tf-grid-thead-bkg"></tr>
-									<tr class="tf-grid-tr">
-										@foreach (var column in _data.Columns)
-										{
-											@if (column.IsSystem) continue;
-											<th class="tf-grid-th">@column.Name</th>
-											columnCount++;
-										}
-										@if (_data.Columns.Count == 0)
-										{
-											<th class="tf-grid-th"></th>
-										}
-									</tr>
-								</thead>
-								<tbody class="tf-grid-tbody">
-									@if (_data.Columns.Count == 0)
-									{
-										<tr class="tf-grid-tr">
-											<td class="tf-grid-td"><div>@LOC("No columns are created for this data provider yet")</div></td>
-										</tr>
+		@if (String.IsNullOrWhiteSpace(UriInitialized))
+		{
+			<TucSkeletonPageHeader />
+		}
+		else if (_spaceData is null)
+		{
+			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+		}
+		else
+		{
+			var columnCount = 0;
+			@if (_data is not null)
+			{
+				<table class="tf-grid">
+					<thead class="tf-grid-thead">
+						<tr class="tf-grid-thead-bkg"></tr>
+						<tr class="tf-grid-tr">
+							@foreach (var column in _data.Columns)
+							{
+								@if (column.IsSystem) continue;
+								<th class="tf-grid-th">@column.Name</th>
+								columnCount++;
+							}
+							@if (_data.Columns.Count == 0)
+							{
+								<th class="tf-grid-th"></th>
+							}
+						</tr>
+					</thead>
+					<tbody class="tf-grid-tbody">
+						@if (_data.Columns.Count == 0)
+						{
+							<tr class="tf-grid-tr">
+								<td class="tf-grid-td"><div>@LOC("No columns are created for this data provider yet")</div></td>
+							</tr>
 
-									}
-									else if (_data.Rows.Count == 0)
+						}
+						else if (_data.Rows.Count == 0)
+						{
+							<tr class="tf-grid-tr">
+								<td class="tf-grid-td" colspan="@columnCount"><div>@LOC("No records")</div></td>
+							</tr>
+						}
+						else
+						{
+							<Virtualize Items="@_data.Rows.GetList()" TItem="TfDataRow" Context="row">
+								<tr @key=@row["tf_id"] class="tf-grid-tr">
+									@foreach (var column in _data.Columns)
 									{
-										<tr class="tf-grid-tr">
-											<td class="tf-grid-td" colspan="@columnCount"><div>@LOC("No records")</div></td>
-										</tr>
+										@if (column.IsSystem) continue;
+										<td class="tf-grid-td">
+											<div class="tf-grid-td-hover"></div>
+											@if (column.IsJoinColumn)
+											{
+												<div>@(String.Join(", ", (List<string>)row[column.Name]))</div>
+											}
+											else
+											{
+												<div>@row[column.Name]</div>
+											}
+										</td>
 									}
-									else
-									{
-										foreach (TfDataRow row in _data.Rows)
-										{
-											<tr @key=@row["tf_id"] class="tf-grid-tr">
-												@foreach (var column in _data.Columns)
-												{
-													@if (column.IsSystem) continue;
-													<td class="tf-grid-td">
-														<div class="tf-grid-td-hover"></div>
-														@if (column.IsJoinColumn)
-														{
-															<div>@(String.Join(", ", (List<string>)row[column.Name]))</div>
-														}
-														else
-														{
-															<div>@row[column.Name]</div>
-														}
-													</td>
-												}
-											</tr>
-										}
-										@if (_data.Rows.Count == 0)
-										{
-											<tr class="tf-grid-tr">
-												<td class="tf-grid-td" colspan="@columnCount">No records found</td>
-											</tr>
-										}
-									}
-								</tbody>
-							</table>
-						</div>
-					}
-					<div class="tf-grid__pager">
-						<TucPager UserPageSize="@_currentUser?.Settings?.PageSize" GoLast="@_goLastPage" GoOnPage="@_goOnPage"/>
-					</div>
-				}
-			</div>
-		</TucErrorBoundry>
+								</tr>
+
+							</Virtualize>
+							@if (_data.Rows.Count >= TfConstants.ItemsMaxLimit)
+							{
+								<tr class="tf-grid-tr">
+									<td class="tf-grid-td" colspan="@(columnCount + 1)">
+										<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("Your query exceeded the allowed maximum of {0} rows. Please fine tune your query or export and process in another program", TfConstants.ItemsMaxLimit)</FluentMessageBar>
+									</td>
+								</tr>
+							}
+						}
+					</tbody>
+				</table>
+			}
+		}
 	</ChildContent>
 </TucPageLayout>

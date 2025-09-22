@@ -246,6 +246,7 @@
 html:root {
   --tf-layout-header-height: 50px;
   --tf-layout-toolbar-height: 40px;
+  --tf-layout-content-toolbar-height: calc(40px + 2rem);
   --tf-layout-header-border-height: 3px;
   --tf-layout-content-padding: 1rem;
   --tf-font-size-base: 14px;
@@ -666,96 +667,6 @@ a:hover {
 .tf-console-box__row__message .error {
   color: var(--error);
 }
-.tf-content-toolbar {
-  display: flex;
-  height: 100%;
-  width: 100%;
-  justify-content: space-between;
-  font-size: var(--tf-font-size-sm);
-  background: var(--tf-white);
-  color: var(--tf-font-color-base);
-  padding: 0 1rem;
-  padding-top: 0.75rem;
-}
-.tf-content-toolbar a {
-  text-decoration: none;
-  color: var(--tf-font-color-link);
-}
-.tf-content-toolbar__left,
-.tf-content-toolbar__right {
-  display: flex;
-}
-.tf-content-toolbar .tf-menu {
-  height: 100%;
-  display: flex;
-}
-.tf-content-toolbar .tf-menu__item fluent-anchor {
-  height: 100%;
-  --accent-foreground-rest: var(--tf-font-color-base);
-  --accent-foreground-hover: var(--tf-font-color-link-hover);
-  --accent-foreground-active: var(--tf-font-color-link-hover);
-  --accent-fill-rest: var(--tf-font-color-base);
-}
-.tf-content-toolbar .tf-menu__item fluent-anchor::part(control) {
-  text-decoration: none !important;
-  padding: 0 1em;
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-  border-radius: 0;
-}
-.tf-content-toolbar .tf-menu__item fluent-anchor::part(control):focus-visible {
-  outline: none !important;
-}
-.tf-content-toolbar .tf-menu__item fluent-anchor::part(control):hover {
-  --accent-fill-rest: var(--tf-font-color-link-hover);
-}
-.tf-content-toolbar .tf-menu__item fluent-anchor::part(start) {
-  top: 1px !important;
-  margin-inline-end: 5px;
-}
-.tf-content-toolbar .tf-menu__item fluent-anchor::part(end) {
-  top: 1px !important;
-}
-.tf-content-toolbar .tf-menu__item--disabled fluent-anchor {
-  --accent-foreground-rest: var(--tf-font-color-mute);
-  --accent-foreground-hover: var(--tf-font-color-mute);
-  --accent-foreground-active: var(--tf-font-color-mute);
-  --accent-fill-rest: var(--tf-font-color-mute);
-  color: var(--tf-font-color-mute);
-}
-.tf-content-toolbar .tf-menu__item--disabled fluent-anchor::part(control):hover {
-  --accent-fill-rest: var(--tf-font-color-mute);
-}
-.tf-content-toolbar .tf-menu__item--expand fluent-anchor::part(control) {
-  padding: 0 0.25em;
-}
-.tf-content-toolbar .tf-menu__item--active fluent-anchor::part(control) {
-  background: var(--tf-fill-color-base);
-  border-radius: 4px 4px 0 0;
-}
-.tf-content-toolbar fluent-menu {
-  background: var(--tf-white);
-  color: var(--tf-font-color-mute);
-  border-radius: 0;
-}
-.tf-content-toolbar fluent-menu fluent-menu-item:hover {
-  background: var(--tf-fill-color-hover);
-}
-.tf-content-toolbar fluent-menu fluent-menu-item::part(content) {
-  color: var(--tf-font-color-base);
-}
-.tf-content-toolbar fluent-menu fluent-menu-item::part(expand-collapse-glyph-container) {
-  color: var(--tf-font-color-base);
-}
-.tf-content-toolbar fluent-menu fluent-menu-item::part(start) {
-  position: relative;
-  top: 1px !important;
-}
-.tf-content-toolbar fluent-menu fluent-menu-item::part(end) {
-  position: relative;
-  top: 1px !important;
-}
 .tf-divider {
   display: flex;
   align-items: end;
@@ -884,9 +795,6 @@ fluent-dialog .tf-divider,
   border-spacing: 0;
   margin-bottom: 0;
   background: var(--tf-white);
-}
-.tf-grid-wrapper {
-  margin-right: var(--tf-layout-content-padding);
 }
 .tf-grid thead {
   position: sticky;
@@ -1898,10 +1806,16 @@ fluent-dialog .tf-divider,
 .tf-page-header--skeleton .tf-page-header__primary__meta__title {
   margin-top: 5px;
 }
-.tf-page-layout--with-toolbar {
+.tf-page-layout--with-navigation {
   --content-top: var(--tf-layout-header-height);
 }
-.tf-page-layout__toolbar {
+.tf-page-layout--with-toolbar {
+  --content-top: var(--tf-layout-content-toolbar-height);
+}
+.tf-page-layout--with-navigation.tf-page-layout--with-toolbar {
+  --content-top: calc(var(--tf-layout-header-height) + var(--tf-layout-content-toolbar-height));
+}
+.tf-page-layout__navigation {
   height: var(--tf-layout-header-height);
   position: absolute;
   top: 0;
@@ -1910,30 +1824,30 @@ fluent-dialog .tf-divider,
   display: flex;
   background: var(--tf-white);
 }
-.tf-page-layout__toolbar__left {
+.tf-page-layout__navigation__left {
   display: flex;
   flex: 0 0 340px;
   align-items: center;
   padding-left: var(--tf-layout-content-padding);
 }
-.tf-page-layout__toolbar__left__back-btn {
+.tf-page-layout__navigation__left__back-btn {
   flex: 0 0 auto;
   padding-right: 0.5rem;
   display: flex;
   align-items: center;
   padding-top: 5px;
 }
-.tf-page-layout__toolbar__left__back-btn fluent-anchor {
+.tf-page-layout__navigation__left__back-btn fluent-anchor {
   background: var(--tf-white);
 }
-.tf-page-layout__toolbar__left__icon-wrapper {
+.tf-page-layout__navigation__left__icon-wrapper {
   flex: 0 0 auto;
   margin-right: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.tf-page-layout__toolbar__left__icon {
+.tf-page-layout__navigation__left__icon {
   width: 32px;
   height: 32px;
   /*border-radius: var(--tf-border-radius-base);*/
@@ -1943,21 +1857,21 @@ fluent-dialog .tf-divider,
   align-items: center;
   background: var(--tf-fill-color-base);
 }
-.tf-page-layout__toolbar__left__meta__area {
+.tf-page-layout__navigation__left__meta__area {
   color: var(--tf-font-color-mute);
   font-size: var(--tf-font-size-xs);
   line-height: 1.25em;
 }
-.tf-page-layout__toolbar__left__meta__title {
+.tf-page-layout__navigation__left__meta__title {
   font-weight: var(--tf-font-weight-lg);
   font-size: var(--tf-font-size-lg);
   line-height: 1.15em;
 }
-.tf-page-layout__toolbar__right {
+.tf-page-layout__navigation__right {
   flex: 1 1 auto;
   display: flex;
 }
-.tf-page-layout__toolbar__right__inner {
+.tf-page-layout__navigation__right__inner {
   display: flex;
   width: 100%;
   justify-content: space-between;
@@ -1966,22 +1880,133 @@ fluent-dialog .tf-divider,
   color: var(--tf-font-color-base);
   padding: 0 1rem;
 }
-.tf-page-layout__toolbar__right__inner a {
+.tf-page-layout__navigation__right__inner a {
   text-decoration: none;
   color: var(--tf-font-color-link);
 }
-.tf-page-layout__toolbar__right__inner__left,
-.tf-page-layout__toolbar__right__inner__right {
+.tf-page-layout__navigation__right__inner__left,
+.tf-page-layout__navigation__right__inner__right {
   display: flex;
   align-items: center;
+  flex: 1 1 auto;
 }
-.tf-page-layout__toolbar__right__inner__right {
+.tf-page-layout__navigation__right__inner__right {
   justify-content: end;
+}
+.tf-page-layout__navigation .tf-menu {
+  height: 100%;
+  display: flex;
+  padding-top: 0.75rem;
+}
+.tf-page-layout__navigation .tf-menu__item fluent-anchor {
+  height: 100%;
+  --accent-foreground-rest: var(--tf-font-color-base);
+  --accent-foreground-hover: var(--tf-font-color-link-hover);
+  --accent-foreground-active: var(--tf-font-color-link-hover);
+  --accent-fill-rest: var(--tf-font-color-base);
+}
+.tf-page-layout__navigation .tf-menu__item fluent-anchor::part(control) {
+  text-decoration: none !important;
+  padding: 0 1em;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  border-radius: 0;
+}
+.tf-page-layout__navigation .tf-menu__item fluent-anchor::part(control):focus-visible {
+  outline: none !important;
+}
+.tf-page-layout__navigation .tf-menu__item fluent-anchor::part(control):hover {
+  --accent-fill-rest: var(--tf-font-color-link-hover);
+}
+.tf-page-layout__navigation .tf-menu__item fluent-anchor::part(start) {
+  top: 1px !important;
+  margin-inline-end: 5px;
+}
+.tf-page-layout__navigation .tf-menu__item fluent-anchor::part(end) {
+  top: 1px !important;
+}
+.tf-page-layout__navigation .tf-menu__item--disabled fluent-anchor {
+  --accent-foreground-rest: var(--tf-font-color-mute);
+  --accent-foreground-hover: var(--tf-font-color-mute);
+  --accent-foreground-active: var(--tf-font-color-mute);
+  --accent-fill-rest: var(--tf-font-color-mute);
+  color: var(--tf-font-color-mute);
+}
+.tf-page-layout__navigation .tf-menu__item--disabled fluent-anchor::part(control):hover {
+  --accent-fill-rest: var(--tf-font-color-mute);
+}
+.tf-page-layout__navigation .tf-menu__item--expand fluent-anchor::part(control) {
+  padding: 0 0.25em;
+}
+.tf-page-layout__navigation .tf-menu__item--active fluent-anchor::part(control) {
+  background: var(--tf-fill-color-base);
+  border-radius: 4px 4px 0 0;
+}
+.tf-page-layout__navigation fluent-menu {
+  background: var(--tf-white);
+  color: var(--tf-font-color-mute);
+  border-radius: 0;
+}
+.tf-page-layout__navigation fluent-menu fluent-menu-item:hover {
+  background: var(--tf-fill-color-hover);
+}
+.tf-page-layout__navigation fluent-menu fluent-menu-item::part(content) {
+  color: var(--tf-font-color-base);
+}
+.tf-page-layout__navigation fluent-menu fluent-menu-item::part(expand-collapse-glyph-container) {
+  color: var(--tf-font-color-base);
+}
+.tf-page-layout__navigation fluent-menu fluent-menu-item::part(start) {
+  position: relative;
+  top: 1px !important;
+}
+.tf-page-layout__navigation fluent-menu fluent-menu-item::part(end) {
+  position: relative;
+  top: 1px !important;
+}
+.tf-page-layout__toolbar {
+  height: var(--tf-layout-content-toolbar-height);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--tf-font-size-sm);
+  color: var(--tf-font-color-base);
+}
+.tf-page-layout--with-navigation .tf-page-layout__toolbar {
+  top: var(--tf-layout-header-height);
+}
+.tf-page-layout__toolbar a {
+  text-decoration: none;
+  color: var(--tf-font-color-link);
+}
+.tf-page-layout__toolbar__left,
+.tf-page-layout__toolbar__right {
+  display: flex;
+  flex: 1 1 auto;
+  align-content: center;
+  flex-wrap: wrap;
+}
+.tf-page-layout__toolbar__left {
+  padding-left: 1rem;
+  justify-content: start;
+}
+.tf-page-layout__toolbar__left > * {
+  margin-right: 0.25rem;
+}
+.tf-page-layout__toolbar__right {
+  padding-right: 1rem;
+  justify-content: end;
+}
+.tf-page-layout__toolbar__right > * {
+  margin-left: 0.25rem;
 }
 .tf-page-layout__toolbar .tf-menu {
   height: 100%;
   display: flex;
-  padding-top: 0.75rem;
 }
 .tf-page-layout__toolbar .tf-menu__item fluent-anchor {
   height: 100%;

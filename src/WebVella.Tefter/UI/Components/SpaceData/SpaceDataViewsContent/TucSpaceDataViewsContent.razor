@@ -2,9 +2,9 @@
 @inherits TfBaseComponent
 <TucPageLayout Icon="@TfConstants.GetIcon("Database")" Color="@(_space?.Color ?? TfConstants.DefaultThemeColor)"
 			   Area="@($"{_space?.Name} : {LOC("Space Data")}")" Title="@_spaceData?.Name" SubTitle="@LOC("Used in Views")">
-	<ToolbarLeft>
+	<NavigationLeft>
 		<TucSpaceDataDetailsContentToolbar />
-	</ToolbarLeft>
+	</NavigationLeft>
 	<ChildContent>
 		<TucErrorBoundry>
 			<div style="padding:var(--tf-layout-content-padding)">

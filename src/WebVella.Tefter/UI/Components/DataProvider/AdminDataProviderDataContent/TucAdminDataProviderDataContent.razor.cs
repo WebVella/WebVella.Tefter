@@ -67,8 +67,8 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			_data = TfDataProviderUIService.QueryDataProvider(
 				providerId: _provider.Id,
 				search: _navState.Search ?? String.Empty,
-				page: _navState.Page ?? 1,
-				pageSize: _navState.PageSize ?? _currentUser.Settings.PageSize ?? TfConstants.PageSize);
+				page: 1,
+				pageSize: TfConstants.ItemsMaxLimit);
 		}
 		finally
 		{

@@ -3,11 +3,11 @@
 @inherits TfBaseComponent
 <TucPageLayout Title="@LOC("Talk Channels")"
 			   Icon="@TfConstants.GetIcon("Comment")" Color="@TfConstants.AdminColor">
-	<ToolbarRight>
+	<NavigationRight>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_createChannelHandler" IconStart="@TfConstants.GetIcon("Add")">
 			@LOC("Create channel")
 		</FluentButton>
-	</ToolbarRight>
+	</NavigationRight>
 	<ChildContent>
 		<table class="tf-grid">
 			<thead class="tf-grid-thead">

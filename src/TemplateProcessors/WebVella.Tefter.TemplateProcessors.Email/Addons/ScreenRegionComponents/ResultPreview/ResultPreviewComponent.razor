@@ -61,19 +61,19 @@ else
 			</FluentGridItem>
 			<FluentGridItem xs="6">
 				<FluentInputLabel Label="@LOC("To")" />
-				<FluentTextField Value=@(String.Join(";",_form.Recipients)) ValueChanged="@((v) => _emailListChanged(v,nameof(_form.Recipients)))" TextFieldType="TextFieldType.Text" Style="width:100%" />
+				<FluentTextField Value=@(String.Join(";", _form.Recipients)) ValueChanged="@((v) => _emailListChanged(v, nameof(_form.Recipients)))" TextFieldType="TextFieldType.Text" Style="width:100%" />
 				<FluentValidationMessage For="@(() => _form.Recipients)" />
 			</FluentGridItem>
 		</FluentGrid>
 		<FluentGrid>
 			<FluentGridItem xs="6">
 				<FluentInputLabel Label="@LOC("Cc")" />
-				<FluentTextField Value=@(String.Join(";",_form.CcRecipients)) ValueChanged="@((v) => _emailListChanged(v,nameof(_form.CcRecipients)))" TextFieldType="TextFieldType.Text" Style="width:100%" />
+				<FluentTextField Value=@(String.Join(";", _form.CcRecipients)) ValueChanged="@((v) => _emailListChanged(v, nameof(_form.CcRecipients)))" TextFieldType="TextFieldType.Text" Style="width:100%" />
 				<FluentValidationMessage For="@(() => _form.CcRecipients)" />
 			</FluentGridItem>
 			<FluentGridItem xs="6">
 				<FluentInputLabel Label="@LOC("Bcc")" />
-				<FluentTextField Value=@(String.Join(";",_form.BccRecipients)) ValueChanged="@((v) => _emailListChanged(v,nameof(_form.BccRecipients)))" TextFieldType="TextFieldType.Text" Style="width:100%" />
+				<FluentTextField Value=@(String.Join(";", _form.BccRecipients)) ValueChanged="@((v) => _emailListChanged(v, nameof(_form.BccRecipients)))" TextFieldType="TextFieldType.Text" Style="width:100%" />
 				<FluentValidationMessage For="@(() => _form.BccRecipients)" />
 			</FluentGridItem>
 		</FluentGrid>
@@ -92,43 +92,41 @@ else
 			</FluentGridItem>
 		</FluentGrid>
 	</FluentEditForm>
-	<div class="tf-grid-wrapper" style="margin-top:15px;">
-		<table class="tf-grid">
-			<thead class="tf-grid-thead">
-				<tr class="tf-grid-thead-bkg"></tr>
-				<tr class="tf-grid-tr">
-					<th class="tf-grid-th">attachments</th>
+	<table class="tf-grid" style="margin-top:15px;">
+		<thead class="tf-grid-thead">
+			<tr class="tf-grid-thead-bkg"></tr>
+			<tr class="tf-grid-tr">
+				<th class="tf-grid-th">attachments</th>
+			</tr>
+		</thead>
+		<tbody class="tf-grid-tbody">
+			@foreach (var row in _form.Attachments)
+			{
+				<tr @key=(Guid.NewGuid()) class="tf-grid-tr">
+					<td class="tf-grid-td">
+						<div>
+							@if (String.IsNullOrWhiteSpace(row.FileName) || String.IsNullOrWhiteSpace(row.DownloadUrl))
+							{
+								<span style="color:var(--error)">attachment generated with error (no name or download url)</span>
+							}
+							else
+							{
+								<a href="@row.DownloadUrl" target="_blank">@row.FileName</a>
+							}
+						</div>
+					</td>
 				</tr>
-			</thead>
-			<tbody class="tf-grid-tbody">
-				@foreach (var row in _form.Attachments)
-				{
-					<tr @key=(Guid.NewGuid()) class="tf-grid-tr">
-						<td class="tf-grid-td">
-							<div>
-								@if (String.IsNullOrWhiteSpace(row.FileName) || String.IsNullOrWhiteSpace(row.DownloadUrl))
-								{
-									<span style="color:var(--error)">attachment generated with error (no name or download url)</span>
-								}
-								else
-								{
-									<a href="@row.DownloadUrl" target="_blank">@row.FileName</a>
-								}
-							</div>
-						</td>
-					</tr>
-				}
-				@if (_form.Attachments.Count == 0)
-				{
-					<tr class="tf-grid-tr">
-						<td class="tf-grid-td">
-							<div>
-								@LOC("No attachments added")
-							</div>
-						</td>
-					</tr>
-				}
-			</tbody>
-		</table>
-	</div>
+			}
+			@if (_form.Attachments.Count == 0)
+			{
+				<tr class="tf-grid-tr">
+					<td class="tf-grid-td">
+						<div>
+							@LOC("No attachments added")
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
