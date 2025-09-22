@@ -23,7 +23,7 @@ public partial interface ITfService
 	internal void UpdateDataProviderSunchronization(Guid providerId, short syncScheduleMinutes, bool syncScheduleEnabled);
 	internal void UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns);
 
-	internal void UpdateSychronizationTask(
+	internal void UpdateSychronizationTask( 
 		Guid taskId,
 		TfSynchronizationStatus status,
 		ITfDataProviderSychronizationLog log,

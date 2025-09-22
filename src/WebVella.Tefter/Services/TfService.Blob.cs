@@ -93,7 +93,7 @@ public partial class TfService : ITfService
 			if (!Directory.Exists(folderPath))
 				Directory.CreateDirectory(folderPath);
 
-			using Stream fileStream = File.Open(path, FileMode.CreateNew, FileAccess.ReadWrite);
+			using Stream fileStream = File.Open(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
 
 			inputStream.Seek(0, SeekOrigin.Begin);
 
@@ -146,7 +146,7 @@ public partial class TfService : ITfService
 			if (!Directory.Exists(folderPath))
 				Directory.CreateDirectory(folderPath);
 
-			using Stream fileStream = File.Open(path, FileMode.CreateNew, FileAccess.ReadWrite);
+			using Stream fileStream = File.Open(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
 
 			inputStream.Seek(0, SeekOrigin.Begin);
 
@@ -265,7 +265,7 @@ public partial class TfService : ITfService
 
 			var path = GetFileSystemPath(blobId, temporary);
 
-			using Stream fileStream = File.Open(path, FileMode.Create, FileAccess.ReadWrite);
+			using Stream fileStream = File.Open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
 
 			inputStream.Seek(0, SeekOrigin.Begin);
 
@@ -439,7 +439,7 @@ public partial class TfService : ITfService
 				throw new TfException("Blob content with specified identifier is not found.");
 			}
 
-			return File.Open(path, FileMode.Open, FileAccess.ReadWrite);
+			return File.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
 		}
 		catch (Exception ex)
 		{

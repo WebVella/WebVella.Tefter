@@ -101,7 +101,7 @@ public partial class TfServiceTest : BaseTest
 
 				//create from local path
 				string tmpFilePath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
-				Stream fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite);
+				Stream fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
 				var bw = new BinaryWriter(fileStream);
 				bw.Write(sampleJsonFileContent2);
 				bw.Close();
@@ -125,14 +125,14 @@ public partial class TfServiceTest : BaseTest
 
 				//create from stream
 				tmpFilePath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
-				fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite);
+				fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
 				bw = new BinaryWriter(fileStream);
 				bw.Write(sampleJsonFileContent2);
 				bw.Close();
 				fileStream.Close();
 
 				blobId = Guid.Empty;
-				task = Task.Run(() => { blobId = tfService.CreateBlob(File.Open(tmpFilePath, FileMode.Open)); });
+				task = Task.Run(() => { blobId = tfService.CreateBlob(File.Open(tmpFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				blobId.Should().NotBe(Guid.Empty);
@@ -224,7 +224,7 @@ public partial class TfServiceTest : BaseTest
 
 				//create from local path
 				string tmpFilePath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
-				Stream fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite);
+				Stream fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
 				var bw = new BinaryWriter(fileStream);
 				bw.Write(sampleJsonFileContent2);
 				bw.Close();
@@ -240,13 +240,13 @@ public partial class TfServiceTest : BaseTest
 
 				//create from stream
 				tmpFilePath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
-				fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite);
+				fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
 				bw = new BinaryWriter(fileStream);
 				bw.Write(sampleJsonFileContent2);
 				bw.Close();
 				fileStream.Close();
 
-				blobId = tfService.CreateBlob(File.Open(tmpFilePath, FileMode.Open), true);
+				blobId = tfService.CreateBlob(File.Open(tmpFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite), true);
 
 				//file should not deleted after successful create of blob because its from stream
 				File.Exists(tmpFilePath).Should().BeTrue();

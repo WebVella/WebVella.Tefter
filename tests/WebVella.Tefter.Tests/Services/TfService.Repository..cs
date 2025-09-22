@@ -57,7 +57,7 @@ public partial class TfServiceTest : BaseTest
 	public static string CreateTmpFile(string content)
 	{
 		var tmpFilePath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
-		var fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite);
+		var fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
 		var bw = new BinaryWriter(fileStream);
 		bw.Write(Encoding.UTF8.GetBytes(content));
 		bw.Close();
