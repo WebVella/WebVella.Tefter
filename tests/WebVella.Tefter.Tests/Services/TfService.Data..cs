@@ -21,7 +21,7 @@ public partial class TfServiceTest : BaseTest
 
 				Data_GetDataIdentityValue(provider);
 
-				Data_InsertUpdateTableTest(provider.Id,spaceData.Id);
+				Data_InsertUpdateTableTest(provider.Id, spaceData.Id);
 
 				Data_SimpleQueryTest(provider.Id, spaceData.Id);
 

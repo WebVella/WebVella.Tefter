@@ -97,10 +97,24 @@ public class BaseTest
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>($"dp{provider.Index}_long_int_column", TfDatabaseColumnType.LongInteger, "LONG_INTEGER"));
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>($"dp{provider.Index}_number_column", TfDatabaseColumnType.Number, "NUMBER"));
 
+		
+
 		foreach (var column in columns)
 		{
-			CreateProviderColumn(tfService, provider, column.Item1, column.Item2, column.Item3);
+			CreateProviderColumn(tfService, provider, column.Item1, column.Item2, column.Item3,sourceName: column.Item1);
 		}
+
+		//create columns with no source and unique to test unique generation
+		CreateProviderColumn(tfService, provider, $"dp{provider.Index}_guid_column_unique", TfDatabaseColumnType.Guid, "GUID", sourceName:null,isUnique:true);
+		CreateProviderColumn(tfService, provider, $"dp{provider.Index}_short_text_column_unique", TfDatabaseColumnType.ShortText, "SHORT_TEXT", sourceName: null, isUnique: true);
+		CreateProviderColumn(tfService, provider, $"dp{provider.Index}_text_column_unique", TfDatabaseColumnType.Text, "TEXT", sourceName: null, isUnique: true);
+		CreateProviderColumn(tfService, provider, $"dp{provider.Index}_date_column_unique", TfDatabaseColumnType.DateOnly, "DATE", sourceName: null, isUnique: true);
+		CreateProviderColumn(tfService, provider, $"dp{provider.Index}_datetime_column_unique", TfDatabaseColumnType.DateTime, "DATETIME", sourceName: null, isUnique: true);
+		CreateProviderColumn(tfService, provider, $"dp{provider.Index}_short_int_column_unique", TfDatabaseColumnType.ShortInteger, "SHORT_INTEGER", sourceName: null, isUnique: true);
+		CreateProviderColumn(tfService, provider, $"dp{provider.Index}_int_column_unique", TfDatabaseColumnType.Integer, "INTEGER", sourceName: null, isUnique: true);
+		CreateProviderColumn(tfService, provider, $"dp{provider.Index}_long_int_column_unique", TfDatabaseColumnType.LongInteger, "LONG_INTEGER", sourceName: null, isUnique: true);
+		CreateProviderColumn(tfService, provider, $"dp{provider.Index}_number_column_unique", TfDatabaseColumnType.Number, "NUMBER", sourceName: null, isUnique: true);
+
 
 		//get provider with new columns
 		provider = tfService.GetDataProvider(provider.Id);
@@ -283,7 +297,9 @@ public class BaseTest
 		TfDataProvider provider,
 		string dbName,
 		TfDatabaseColumnType dbType,
-		string sourceType)
+		string sourceType,
+		string sourceName,
+		bool? isUnique = null)
 	{
 		var column = new TfDataProviderColumn
 		{
@@ -293,13 +309,13 @@ public class BaseTest
 			DataProviderId = provider.Id,
 			DbName = dbName,
 			DbType = dbType,
-			SourceName = dbName,
+			SourceName = sourceName,
 			SourceType = sourceType,
 			IncludeInTableSearch = true,
 			IsNullable = true,
 			IsSearchable = true,
 			IsSortable = false,
-			IsUnique = false,
+			IsUnique = isUnique??false,
 			PreferredSearchType = TfDataProviderColumnSearchType.Contains
 		};
 

@@ -23,7 +23,7 @@ public partial interface ITfService
 	internal void UpdateDataProviderSunchronization(Guid providerId, short syncScheduleMinutes, bool syncScheduleEnabled);
 	internal void UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns);
 
-	internal void UpdateSychronizationTask( 
+	internal void UpdateSychronizationTask(
 		Guid taskId,
 		TfSynchronizationStatus status,
 		ITfDataProviderSychronizationLog log,
@@ -179,14 +179,17 @@ public partial class TfService : ITfService
 		return task.Id;
 	}
 
-	public void TriggerSynchronization(Guid providerId){ 
+	public void TriggerSynchronization(Guid providerId)
+	{
 		CreateSynchronizationTask(providerId, new TfSynchronizationPolicy());
 	}
-	public void UpdateDataProviderSunchronization(Guid providerId, short syncScheduleMinutes, bool syncScheduleEnabled){ 
+	public void UpdateDataProviderSunchronization(Guid providerId, short syncScheduleMinutes, bool syncScheduleEnabled)
+	{
 		var provider = GetDataProvider(providerId);
 		if (provider is null)
 			throw new TfException("Provider not found");
-		UpdateDataProvider(new TfUpdateDataProvider{ 
+		UpdateDataProvider(new TfUpdateDataProvider
+		{
 			Id = provider.Id,
 			Name = provider.Name,
 			SettingsJson = provider.SettingsJson,
@@ -195,11 +198,13 @@ public partial class TfService : ITfService
 			SynchScheduleMinutes = syncScheduleMinutes
 		});
 	}
-	public void UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns){ 
+	public void UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns)
+	{
 		var provider = GetDataProvider(providerId);
 		if (provider is null)
 			throw new TfException("Provider not found");
-		UpdateDataProvider(new TfUpdateDataProvider{ 
+		UpdateDataProvider(new TfUpdateDataProvider
+		{
 			Id = provider.Id,
 			Name = provider.Name,
 			SettingsJson = provider.SettingsJson,
@@ -295,6 +300,7 @@ public partial class TfService : ITfService
 
 	private ReadOnlyCollection<TfDataProviderDataRow> GetNewData(
 		TfDataProvider provider,
+		Dictionary<string, object> uniqueValuesDict,
 		ITfDataProviderSychronizationLog synchLog)
 	{
 		ReadOnlyCollection<TfDataProviderDataRow> newData = new List<TfDataProviderDataRow>().AsReadOnly();
@@ -352,7 +358,7 @@ public partial class TfService : ITfService
 
 				if (!column.IsNullable && row[column.DbName] == null)
 				{
-					row[column.DbName] = GetColumnDefaultValue(column);
+					row[column.DbName] = GetColumnDefaultOrUniqueValue(column, uniqueValuesDict);
 				}
 
 				if (column.IsUnique)
@@ -423,8 +429,141 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private object GetColumnDefaultValue(TfDataProviderColumn column)
+	private object GetColumnDefaultOrUniqueValue(
+		TfDataProviderColumn column,
+		Dictionary<string, object> uniqueValuesDict)
 	{
+		if (column.IsUnique)
+		{
+			switch (column.DbType)
+			{
+				//for boolean we can have only 2 unique values - true or false,
+				//so we cannot generate unique value and use default value 
+				case TfDatabaseColumnType.Boolean:
+					return Convert.ToBoolean(column.DefaultValue);
+				case TfDatabaseColumnType.Text:
+				case TfDatabaseColumnType.ShortText:
+					{
+						if (!uniqueValuesDict.ContainsKey(column.DbName))
+							uniqueValuesDict[column.DbName] = new HashSet<string>();
+						do
+						{
+							var newValue = Guid.NewGuid().ToSha1();
+							if (!((HashSet<string>)uniqueValuesDict[column.DbName]).Contains(newValue))
+							{
+								((HashSet<string>)uniqueValuesDict[column.DbName]).Add(newValue);
+								return newValue;
+							}
+						} while (true);
+					}
+				case TfDatabaseColumnType.Guid:
+					{
+						return Guid.NewGuid();
+					}
+				case TfDatabaseColumnType.DateOnly:
+					{
+						if (!uniqueValuesDict.ContainsKey(column.DbName))
+							uniqueValuesDict[column.DbName] = new HashSet<long>();
+
+						var newValue = DateOnly.FromDateTime(DateTime.Now);
+						do
+						{
+							long seconds = (long)(newValue.ToDateTime() - DateTime.UnixEpoch).TotalSeconds;
+							if (!((HashSet<long>)uniqueValuesDict[column.DbName]).Contains(seconds))
+							{
+								((HashSet<long>)uniqueValuesDict[column.DbName]).Add(seconds);
+								return newValue.ToDateTime();
+							}
+							newValue = newValue.AddDays(1);
+						} while (true);
+					}
+
+				case TfDatabaseColumnType.DateTime:
+					{
+						if (!uniqueValuesDict.ContainsKey(column.DbName))
+							uniqueValuesDict[column.DbName] = new HashSet<long>();
+
+						var newValue = DateTime.Now;
+						do
+						{
+							long seconds = (long)(newValue - DateTime.UnixEpoch).TotalSeconds;
+							if (!((HashSet<long>)uniqueValuesDict[column.DbName]).Contains(seconds))
+							{
+								((HashSet<long>)uniqueValuesDict[column.DbName]).Add(seconds);
+								return newValue;
+							}
+							newValue = newValue.AddSeconds(1);
+						} while (true);
+					}
+				case TfDatabaseColumnType.Number:
+					{
+						if (!uniqueValuesDict.ContainsKey(column.DbName))
+							uniqueValuesDict[column.DbName] = new HashSet<decimal>();
+
+						decimal newValue = 1;
+						do
+						{
+							if (!((HashSet<decimal>)uniqueValuesDict[column.DbName]).Contains(newValue))
+							{
+								((HashSet<decimal>)uniqueValuesDict[column.DbName]).Add(newValue);
+								return newValue;
+							}
+							newValue++;
+						} while (true);
+					}
+				case TfDatabaseColumnType.ShortInteger:
+					{
+						if (!uniqueValuesDict.ContainsKey(column.DbName))
+							uniqueValuesDict[column.DbName] = new HashSet<short>();
+
+						short newValue = 1;
+						do
+						{
+							if (!((HashSet<short>)uniqueValuesDict[column.DbName]).Contains(newValue))
+							{
+								((HashSet<short>)uniqueValuesDict[column.DbName]).Add(newValue);
+								return newValue;
+							}
+							newValue++;
+						} while (true);
+					}
+				case TfDatabaseColumnType.Integer:
+					{
+						if (!uniqueValuesDict.ContainsKey(column.DbName))
+							uniqueValuesDict[column.DbName] = new HashSet<int>();
+
+						int newValue = 1;
+						do
+						{
+							if (!((HashSet<int>)uniqueValuesDict[column.DbName]).Contains(newValue))
+							{
+								((HashSet<int>)uniqueValuesDict[column.DbName]).Add(newValue);
+								return newValue;
+							}
+							newValue++;
+						} while (true);
+					}
+				case TfDatabaseColumnType.LongInteger:
+					{
+						if (!uniqueValuesDict.ContainsKey(column.DbName))
+							uniqueValuesDict[column.DbName] = new HashSet<long>();
+
+						long newValue = 1;
+						do
+						{
+							if (!((HashSet<long>)uniqueValuesDict[column.DbName]).Contains(newValue))
+							{
+								((HashSet<long>)uniqueValuesDict[column.DbName]).Add(newValue);
+								return newValue;
+							}
+							newValue++;
+						} while (true);
+					}
+				default:
+					throw new Exception("Not supported database column type while validate default value.");
+			}
+		}
+
 		if (!column.IsNullable && column.DefaultValue is null)
 			throw new Exception("Column is not nullable, but default value is null.");
 
@@ -532,11 +671,12 @@ public partial class TfService : ITfService
 	}
 
 	public List<TfDataProviderSynchronizeTask> GetDataProviderSynchronizationTasks(Guid providerId, int? page = null, int? pageSize = null,
-		TfSynchronizationStatus? status = null){ 
+		TfSynchronizationStatus? status = null)
+	{
 		var tasks = GetSynchronizationTasks(providerId, status: status);
-		tasks = tasks.OrderByDescending(x=> x.CreatedOn).ToList();
-		if(page is null || pageSize is null) 
-			return tasks;	
+		tasks = tasks.OrderByDescending(x => x.CreatedOn).ToList();
+		if (page is null || pageSize is null)
+			return tasks;
 
 		return tasks.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value).ToList();
 	}
@@ -561,6 +701,7 @@ public partial class TfService : ITfService
 			{
 				#region <--- loads existing data --->
 
+				Dictionary<string, object> uniqueValuesDict = new Dictionary<string, object>();
 				Dictionary<string, DataRow> existingData = null;
 				try
 				{
@@ -582,7 +723,7 @@ public partial class TfService : ITfService
 				try
 				{
 					task.SynchronizationLog.Log($"start loading data from provider");
-					newData = GetNewData(provider, task.SynchronizationLog);
+					newData = GetNewData(provider, uniqueValuesDict, task.SynchronizationLog);
 					task.SynchronizationLog.Log($"complete loading data from provider");
 				}
 				catch (Exception ex)
@@ -622,7 +763,8 @@ public partial class TfService : ITfService
 				{
 					task.SynchronizationLog.Log($"start prepare new data for database insert");
 
-					PrepareQueryArrayParametersNew(provider, existingData, newData, out columnList, out paramList);
+					PrepareQueryArrayParametersNew(provider, existingData, newData, 
+						uniqueValuesDict, out columnList, out paramList);
 
 					task.SynchronizationLog.Log($"complete prepare new data for database insert");
 				}
@@ -747,10 +889,22 @@ public partial class TfService : ITfService
 		}
 	}
 
+	bool AreAllUnique(List<DateTime?> list)
+	{
+		var set = new HashSet<DateTime?>();
+		foreach (var item in list)
+		{
+			if (!set.Add(item))
+				return false; // Duplicate found
+		}
+		return true; // All unique
+	}
+
 	private void PrepareQueryArrayParametersNew(
 		TfDataProvider provider,
 		Dictionary<string, DataRow> existingDataDict,
 		ReadOnlyCollection<TfDataProviderDataRow> newData,
+		Dictionary<string, object> uniqueValuesDict,
 		out List<string> columnNames,
 		out List<NpgsqlParameter> paramList)
 	{
@@ -797,7 +951,7 @@ public partial class TfService : ITfService
 				case TfDatabaseColumnType.DateOnly:
 				case TfDatabaseColumnType.DateTime:
 					{
-						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Date);
+						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Timestamp );
 						parameter.Value = new List<DateTime?>();
 						paramsDict.Add(column.DbName, parameter);
 					}
@@ -882,9 +1036,11 @@ public partial class TfService : ITfService
 				existingDataRow = existingDataDict[key];
 			}
 
-			ProcessColumnsWithoutSource(columnsWithoutSource, paramsDict, searchSb, existingDataRow);
+			ProcessColumnsWithoutSource(columnsWithoutSource, paramsDict, searchSb,
+				existingDataRow, uniqueValuesDict);
 
-			ProcessColumnsWithSource(columnsWithSource, paramsDict, searchSb, row);
+			ProcessColumnsWithSource(columnsWithSource, paramsDict, searchSb, 
+				row, uniqueValuesDict);
 
 			#region <--- processs system columns data --->
 
@@ -922,7 +1078,8 @@ public partial class TfService : ITfService
 		List<TfDataProviderColumn> columns,
 		Dictionary<string, NpgsqlParameter> paramsDict,
 		StringBuilder searchSb,
-		DataRow existingDataRow)
+		DataRow existingDataRow,
+		Dictionary<string, object> uniqueValuesDict)
 	{
 		if (existingDataRow is not null)
 		{
@@ -940,17 +1097,34 @@ public partial class TfService : ITfService
 					case TfDatabaseColumnType.Boolean:
 						{
 							((List<bool?>)paramsDict[column.DbName].Value).Add((bool?)existingDataRow[column.DbName]);
+							//we do not process unique for boolean type, because it can have only 2 values - true or false
 						}
 						break;
 					case TfDatabaseColumnType.Guid:
 						{
 							((List<Guid?>)paramsDict[column.DbName].Value).Add((Guid?)existingDataRow[column.DbName]);
+							
+							if(column.IsUnique)
+							{
+								if (!uniqueValuesDict.ContainsKey(column.DbName))
+									uniqueValuesDict[column.DbName] = new HashSet<Guid>();
+
+								((HashSet<Guid>)uniqueValuesDict[column.DbName]).Add((Guid)existingDataRow[column.DbName]);
+							}
 						}
 						break;
 					case TfDatabaseColumnType.Text:
 					case TfDatabaseColumnType.ShortText:
 						{
 							((List<string>)paramsDict[column.DbName].Value).Add((string)existingDataRow[column.DbName]);
+
+							if (column.IsUnique)
+							{
+								if (!uniqueValuesDict.ContainsKey(column.DbName))
+									uniqueValuesDict[column.DbName] = new HashSet<string>();
+
+								((HashSet<string>)uniqueValuesDict[column.DbName]).Add((string)existingDataRow[column.DbName]);
+							}
 						}
 						break;
 					case TfDatabaseColumnType.DateOnly:
@@ -997,27 +1171,66 @@ public partial class TfService : ITfService
 							}
 
 							((List<DateTime?>)paramsDict[column.DbName].Value).Add(value);
+
+							if (column.IsUnique)
+							{
+								if (!uniqueValuesDict.ContainsKey(column.DbName))
+									uniqueValuesDict[column.DbName] = new HashSet<DateTime>();
+
+								((HashSet<DateTime>)uniqueValuesDict[column.DbName]).Add((DateTime)existingDataRow[column.DbName]);
+							}
 						}
 						break;
 					case TfDatabaseColumnType.ShortInteger:
 						{
 							((List<short?>)paramsDict[column.DbName].Value).Add((short?)existingDataRow[column.DbName]);
+
+							if (column.IsUnique)
+							{
+								if (!uniqueValuesDict.ContainsKey(column.DbName))
+									uniqueValuesDict[column.DbName] = new HashSet<short>();
+
+								((HashSet<short>)uniqueValuesDict[column.DbName]).Add((short)existingDataRow[column.DbName]);
+							}
 						}
 						break;
 					case TfDatabaseColumnType.Integer:
 						{
 							((List<int?>)paramsDict[column.DbName].Value).Add((int?)existingDataRow[column.DbName]);
 
+							if (column.IsUnique)
+							{
+								if (!uniqueValuesDict.ContainsKey(column.DbName))
+									uniqueValuesDict[column.DbName] = new HashSet<int>();
+
+								((HashSet<int>)uniqueValuesDict[column.DbName]).Add((int)existingDataRow[column.DbName]);
+							}
 						}
 						break;
 					case TfDatabaseColumnType.LongInteger:
 						{
 							((List<long?>)paramsDict[column.DbName].Value).Add((long?)existingDataRow[column.DbName]);
+							
+							if (column.IsUnique)
+							{
+								if (!uniqueValuesDict.ContainsKey(column.DbName))
+									uniqueValuesDict[column.DbName] = new HashSet<long>();
+
+								((HashSet<long>)uniqueValuesDict[column.DbName]).Add((long)existingDataRow[column.DbName]);
+							}
 						}
 						break;
 					case TfDatabaseColumnType.Number:
 						{
 							((List<decimal?>)paramsDict[column.DbName].Value).Add((decimal?)existingDataRow[column.DbName]);
+							
+							if (column.IsUnique)
+							{
+								if (!uniqueValuesDict.ContainsKey(column.DbName))
+									uniqueValuesDict[column.DbName] = new HashSet<decimal>();
+
+								((HashSet<decimal>)uniqueValuesDict[column.DbName]).Add((decimal)existingDataRow[column.DbName]);
+							}
 						}
 						break;
 					default:
@@ -1030,9 +1243,10 @@ public partial class TfService : ITfService
 			foreach (var column in columns)
 			{
 				object defaultValue = null;
-				if (!column.IsNullable)
+
+				if (!column.IsNullable || column.IsUnique)
 				{
-					defaultValue = GetColumnDefaultValue(column);
+					defaultValue = GetColumnDefaultOrUniqueValue(column, uniqueValuesDict);
 				}
 
 				if (column.IncludeInTableSearch)
@@ -1082,10 +1296,17 @@ public partial class TfService : ITfService
 		List<TfDataProviderColumn> columns,
 		Dictionary<string, NpgsqlParameter> paramsDict,
 		StringBuilder searchSb,
-		TfDataProviderDataRow newDataRow)
+		TfDataProviderDataRow newDataRow,
+		Dictionary<string, object> uniqueValuesDict)
 	{
 		foreach (var column in columns)
 		{
+			//for unique columns with null values we generate new unique value
+			if (column.IsUnique && newDataRow[column.DbName] == null)
+			{
+				newDataRow[column.DbName] = GetColumnDefaultOrUniqueValue(column, uniqueValuesDict);
+			}
+
 			if (column.IncludeInTableSearch)
 			{
 				object value = newDataRow[column.DbName];
