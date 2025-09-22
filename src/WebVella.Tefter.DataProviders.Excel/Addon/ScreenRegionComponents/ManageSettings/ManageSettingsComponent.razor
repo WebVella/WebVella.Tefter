@@ -1,0 +1,47 @@
+﻿@namespace WebVella.Tefter.DataProviders.Excel.Addons
+@inherits TfFormBaseComponent
+
+<FluentEditForm EditContext="EditContext" FormName="dp-settings" class="tf-form" novalidate>
+	<FluentGrid>
+		<FluentGridItem xs="9">
+			<FluentInputLabel Label="@LOC("CSV File with full access path")" />
+			<FluentStack>
+				<FluentTextField Required="true"
+								 TextFieldType="@TextFieldType.Text"
+								 Placeholder="@LOC("local, network or tefter protocols are supported")"
+								 @bind-Value=@_form.Filepath AutoComplete="off"
+								 @bind-Value:after=_valueChanged
+								 Style="flex:1 1 auto" />
+				<FluentButton IconStart="@(TfConstants.GetIcon("Folder"))" Title="@LOC("upload to the server")"
+							  Appearance="@Appearance.Outline" 
+							  OnClick="_selectFile" />
+			</FluentStack>
+			<FluentValidationMessage For="@(() => _form.Filepath)" />
+		</FluentGridItem>
+		<FluentGridItem xs="3">
+			<FluentTextField Disabled="true"
+							 TextFieldType="@TextFieldType.Text"
+							 Value="UTF-8"
+							 Label="@LOC("File encoding")" Style="width:100%" />
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentInputLabel Label="@LOC("Locale")" />
+			<FluentStack>
+				<FluentTextField TextFieldType="@TextFieldType.Text"
+								 @bind-Value=@_form.CultureName
+								 @bind-Value:after=_valueChanged
+								 AutoComplete="off"
+								 Style="width:100%"
+								 Required="true"
+								 Placeholder="@LOC("empty uses culture invariant")" />
+				<FluentButton IconStart="@(TfConstants.GetIcon("CloudArrowDown"))" Title="@LOC("get from server")"
+							  OnClick="_getCultureFromServer" Appearance="@Appearance.Outline" />
+			</FluentStack>
+			<FluentValidationMessage For="@(() => _form.CultureName)" />
+		</FluentGridItem>
+	</FluentGrid>
+</FluentEditForm>
+
+
