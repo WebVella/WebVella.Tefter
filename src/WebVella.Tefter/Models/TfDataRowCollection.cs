@@ -58,6 +58,8 @@ public class TfDataRowCollection : IEnumerable
 		return _rows.GetEnumerator();
 	}
 
+	public List<TfDataRow> GetList() => _rows;
+
 	public override string ToString()
 	{
 		return $"{Count} row(s)";

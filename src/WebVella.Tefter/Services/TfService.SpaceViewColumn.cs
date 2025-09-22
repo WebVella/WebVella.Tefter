@@ -363,6 +363,7 @@ public partial class TfService : ITfService
 			EditComponentId = dbo.EditComponentId,
 			DataMapping = JsonSerializer.Deserialize<Dictionary<string, string>>(dbo.DataMappingJson) ?? new Dictionary<string, string>(),
 			ComponentOptionsJson = dbo.ComponentOptionsJson,
+			EditComponentOptionsJson = dbo.EditComponentOptionsJson,
 			Settings = !String.IsNullOrWhiteSpace(dbo.SettingsJson) && dbo.SettingsJson.StartsWith("{") && dbo.SettingsJson.EndsWith("}")
 				? (JsonSerializer.Deserialize<TfSpaceViewColumnSettings>(dbo.SettingsJson) ?? new TfSpaceViewColumnSettings())
 				: new TfSpaceViewColumnSettings()
@@ -389,6 +390,7 @@ public partial class TfService : ITfService
 			EditComponentId = model.EditComponentId,
 			DataMappingJson = JsonSerializer.Serialize(model.DataMapping ?? new Dictionary<string, string>()),
 			ComponentOptionsJson = model.ComponentOptionsJson,
+			EditComponentOptionsJson = model.EditComponentOptionsJson,
 			SettingsJson = JsonSerializer.Serialize(model.Settings),
 		};
 	}

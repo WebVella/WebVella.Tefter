@@ -193,7 +193,7 @@ public partial interface ITfService
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
 
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
-	Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? presetId, Guid spaceViewColumnId, int width);
+	Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? presetId, Guid spaceViewColumnId, short? width);
 	List<TfSortQuery> CalculateViewPresetSortPersonalization(List<TfSortQuery> currentSorts, Guid spaceViewId, Guid spaceViewColumnId, bool hasShiftKey);
 	Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId);
 }
@@ -1211,8 +1211,13 @@ public partial class TfService : ITfService
 		return GetUser(userId);
 	}
 
-	public virtual async Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? presetId, Guid spaceViewColumnId, int width)
+	public virtual async Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? presetId, Guid spaceViewColumnId, short? width)
 	{
+		if (width is null)
+		{
+			return await RemoveSpaceViewPersonalizations(userId,spaceViewId,presetId);
+		}
+
 		TfUser user = GetUser(userId);
 		if (user is null) throw new Exception("User not found");
 		var spaceView = GetSpaceView(spaceViewId);

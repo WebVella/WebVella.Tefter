@@ -74,6 +74,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
+		if(RegionContext is null) return;
 		var contextHash = RegionContext.GetHash();
 		if (contextHash != _renderedHash)
 		{
@@ -92,7 +93,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
 		var column = GetColumnByAlias(VALUE_ALIAS);
-		if(column is null) return;
+		if (column is null) return;
 		excelCell.SetValue(XLCellValue.FromObject(GetDataStringByAlias(column)));
 	}
 	/// <summary>
@@ -105,7 +106,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 		if (column is null) return null;
 		var value = GetDataStringByAlias(column);
 		if (value is null) return null;
-		if(value is List<string>)
+		if (value is List<string>)
 			return String.Join(", ", (List<string>)value);
 		return value.ToString();
 	}
@@ -156,6 +157,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 
 	private void _initContextData()
 	{
+		if (RegionContext.Mode == TfComponentPresentationMode.Options) return;
 		_storageKey = this.GetType().Name + "_" + RegionContext.SpaceViewColumnId;
 		TfDataColumn? currentColumn = GetColumnByAlias(VALUE_ALIAS);
 		if (currentColumn is null)
@@ -347,6 +349,16 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 			sb.Append($"color:{_selectedOption.Color};");
 		if (!String.IsNullOrWhiteSpace(_selectedOption?.BackgroundColor))
 			sb.Append($"background-color:{_selectedOption.BackgroundColor};");
+
+		return sb.ToString();
+	}
+
+	private string _getClass()
+	{
+		var sb = new StringBuilder();
+		sb.Append("tf-select-btn ");
+		if (!String.IsNullOrWhiteSpace(_selectedOption?.BackgroundColor))
+			sb.Append("tf-select-btn--with-background ");
 
 		return sb.ToString();
 	}

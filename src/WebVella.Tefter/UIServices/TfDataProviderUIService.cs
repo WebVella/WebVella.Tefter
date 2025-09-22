@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.UIServices;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+
+namespace WebVella.Tefter.UIServices;
 
 public partial interface ITfDataProviderUIService
 {
@@ -39,6 +41,7 @@ public partial interface ITfDataProviderUIService
 	void TriggerSynchronization(Guid providerId);
 	TfDataProvider UpdateDataProviderSunchronization(Guid providerId, short syncScheduleMinutes, bool syncScheduleEnabled);
 	TfDataProvider UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns);
+	bool IsSyncRunning(Guid providerId);
 
 	//Data
 	long GetDataProviderRowsCount(Guid dataProviderId);
@@ -192,6 +195,9 @@ public partial class TfDataProviderUIService : ITfDataProviderUIService
 		DataProviderUpdated?.Invoke(this, dataProvider);
 		return dataProvider;
 	}
+
+	public bool IsSyncRunning(Guid providerId)
+		=> _tfService.GetDataProviderSynchronizationTasks(providerId, status: TfSynchronizationStatus.InProgress).Count > 0;
 
 	#endregion
 

@@ -2,9 +2,9 @@
 @inherits TfBaseComponent
 <TucPageLayout Icon="@TfConstants.GetIcon("Table")" Color="@(_space?.Color ?? TfConstants.DefaultThemeColor)"
 			   Area="@($"{_space?.Name} : {LOC("Space View")}")" Title="@_spaceView?.Name" SubTitle="@LOC("Details")">
-	<ToolbarLeft>
+	<NavigationLeft>
 		<TucSpaceViewDetailsContentToolbar />
-	</ToolbarLeft>
+	</NavigationLeft>
 	<ChildContent>
 		<TucErrorBoundry>
 			<div style="padding:var(--tf-layout-content-padding)">
@@ -50,9 +50,11 @@
 										<FluentStack>
 											<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_spaceData.Name
 															 ReadOnly="true" Style="flex:1 1 auto" />
-											<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open dataset")"
-														  Href="@(String.Format(TfConstants.SpaceDataPageUrl, _space!.Id, _spaceData.Id))"
-														  IconStart="@TfConstants.GetIcon("Eye")" Target="_blank" />
+											<TucAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" Title="@LOC("open dataset")"
+													   Href="@(String.Format(TfConstants.SpaceDataPageUrl, _space!.Id, _spaceData.Id))"
+													   Target="_blank">
+												<FluentIcon Value="@TfConstants.GetIcon("Eye")" />
+											</TucAnchor>
 										</FluentStack>
 									}
 									else
@@ -84,17 +86,22 @@
 									<FluentNumberField TValue="int?" Value=@_spaceView.Settings.FreezeFinalNColumns
 													   ReadOnly="true" Style="width:100%" />
 								</FluentGridItem>
-								<FluentGridItem xs="3">
-									<FluentInputLabel Label="@LOC("New Rows (Experimental)")" />
-									<FluentCheckbox Value="@_spaceView.Settings.CanCreateRows"
-													Style="height:32px" ReadOnly="true"
-													Label="@LOC("can create new rows")" />
-								</FluentGridItem>
-								<FluentGridItem xs="3">
-									<FluentInputLabel Label="@LOC("Delete Rows (Experimental)")" />
-									<FluentCheckbox Value="@_spaceView.Settings.CanDeleteRows"
-													Style="height:32px" ReadOnly="true"
-													Label="@LOC("can delete rows")" />
+								<FluentGridItem xs="6">
+									<FluentInputLabel Label="@LOC("Allowed Data manipulation")" />
+									<FluentStack Orientation="@Orientation.Horizontal">
+										@if (_spaceView.Settings.CanCreateRows)
+										{
+											<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">@LOC("Create")</FluentBadge>
+										}
+										@if (_spaceView.Settings.CanUpdateRows)
+										{
+											<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">@LOC("Update")</FluentBadge>
+										}
+										@if (_spaceView.Settings.CanDeleteRows)
+										{
+											<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">@LOC("Delete")</FluentBadge>
+										}
+									</FluentStack>
 								</FluentGridItem>
 							</FluentGrid>
 						</ChildContent>

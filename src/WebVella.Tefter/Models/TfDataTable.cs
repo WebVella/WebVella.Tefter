@@ -72,6 +72,56 @@ public sealed class TfDataTable
 	}
 
 	internal TfDataTable(
+			TfDataTable table,
+			params Guid[] tfIds)
+	{
+		Sql = string.Empty;
+		SqlParameters = new List<NpgsqlParameter>().AsReadOnly();
+		QueryInfo = null;
+
+		if (table.QueryInfo != null)
+		{
+			QueryInfo = new TfDataTableQueryInfo(
+				this,
+				table.QueryInfo.DataProviderId,
+				table.QueryInfo.SpaceDataId,
+				table.QueryInfo.Page,
+				table.QueryInfo.PageSize,
+				table.QueryInfo.Search);
+		}
+
+		Columns = new TfDataColumnCollection(this);
+
+		foreach (var column in table.Columns)
+		{
+			Columns.Add(new TfDataColumn(
+				this,
+				column.Name,
+				column.DbType,
+				column.IsNullable,
+				column.IsShared,
+				column.IsSystem,
+				column.IsJoinColumn,
+				column.IsIdentityColumn
+			));
+		}
+
+		Rows = new TfDataRowCollection(this);
+		if (tfIds is not null)
+		{
+			foreach (var tfId in tfIds)
+			{
+				if(table.Rows[tfId] is null) continue;
+				Rows.Add(
+					new TfDataRow(
+					this,
+					table.Rows[tfId]!.GetValues())
+				);
+			}
+		}
+	}
+
+	internal TfDataTable(
 		TfDataProvider dataProvider,
 		List<SqlBuilderJoinData> joinData,
 		List<SqlBuilderSharedColumnData> sharedColumnsData,
@@ -278,10 +328,40 @@ public sealed class TfDataTable
 		}
 	}
 
+	public object this[int rowIndex, string columnName]
+	{
+		get
+		{
+			var row = this.Rows[rowIndex];
+			var column = this.Columns[columnName];
+			if (row is null)
+				throw new Exception($"Row with index '{rowIndex}' is not found.");
+			if (column is null)
+				throw new Exception($"Column with name '{columnName}' is not found.");
+			return row[columnName];
+		}
+		set
+		{
+			var row = this.Rows[rowIndex];
+			var column = this.Columns[columnName];
+			if (row is null)
+				throw new Exception($"Row with tf_id '{rowIndex}' is not found.");
+			if (column is null)
+				throw new Exception($"Column with name '{columnName}' is not found.");
+			row[columnName] = value;
+		}
+	}
+
 	public TfDataTable NewTable(
 		params int[] rows)
 	{
 		return new TfDataTable(this, rows);
+	}
+
+	public TfDataTable NewTableFromRowIds(
+		params Guid[] tfIds)
+	{
+		return new TfDataTable(this, tfIds);
 	}
 
 	public TfDataTable Clone()

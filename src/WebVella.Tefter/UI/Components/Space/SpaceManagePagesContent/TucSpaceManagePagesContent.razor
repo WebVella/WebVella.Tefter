@@ -2,9 +2,9 @@
 @inherits TfBaseComponent
 <TucPageLayout Icon="@(TfConstants.GetIcon(name: _space.FluentIconName, defaultIcon: "Folder"))" Color="@_space.Color"
 			   Area="@LOC("Spaces")" Title="@_space.Name" SubTitle="@LOC("Pages")">
-	<ToolbarLeft>
+	<NavigationLeft>
 		<TucSpaceManageDetailsContentToolbar />
-	</ToolbarLeft>
+	</NavigationLeft>
 	<ChildContent>
 		<TucErrorBoundry>
 			<div style="padding:var(--tf-layout-content-padding)">

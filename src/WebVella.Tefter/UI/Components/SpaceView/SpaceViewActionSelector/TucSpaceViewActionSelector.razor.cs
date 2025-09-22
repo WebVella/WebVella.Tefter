@@ -9,6 +9,9 @@ public partial class TucSpaceViewActionSelector : TfBaseComponent
 	[Parameter] public TfDataTable Data { get; set; } = default!;
 	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
 
+	[CascadingParameter(Name = "TucSpaceViewPageContent")]
+	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
+
 	private bool _open = false;
 	private TfSpaceViewSelectorActionScreenRegionContext _context
 	{
@@ -28,23 +31,11 @@ public partial class TucSpaceViewActionSelector : TfBaseComponent
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private Task _deleteSelectedRecords()
+	private async Task _deleteSelectedRecords()
 	{
-		if (SelectedRows.Count == 0) return Task.CompletedTask;
-		try
-		{
-			var spaceData = TfSpaceDataUIService.GetSpaceData(SpaceView.SpaceDataId);
-			TfDataProviderUIService.DeleteDataProviderRowsByTfId(
-				providerId: spaceData.DataProviderId,
-				idList: SelectedRows
-			);
-			ToastService.ShowSuccess(LOC("Records deleted"));
-			Navigator.ReloadCurrentUrl();
-		}
-		catch (Exception ex)
-		{
-			ProcessException(ex);
-		}
-		return Task.CompletedTask;
+		if (SelectedRows.Count == 0) return;
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need these records deleted?")))
+			return;
+		TucSpaceViewPageContent.OnDeleteRows(SelectedRows);
 	}
 }

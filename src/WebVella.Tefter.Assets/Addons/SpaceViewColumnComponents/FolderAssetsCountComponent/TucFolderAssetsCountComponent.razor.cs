@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using WebVella.Tefter.UI.Components;
 
 namespace WebVella.Tefter.Assets.Addons;
 
@@ -12,13 +13,15 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 
 	#region << Injects >>
 	[Inject] protected IAssetsService AssetsService { get; set; }
-	#endregion
+    [CascadingParameter(Name = "TucSpaceViewPageContent")]
+    public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
+    #endregion
 
-	#region << Constructor >>
-	/// <summary>
-	/// Needed because of the custom constructor
-	/// </summary>
-	[ActivatorUtilitiesConstructor]
+    #region << Constructor >>
+    /// <summary>
+    /// Needed because of the custom constructor
+    /// </summary>
+    [ActivatorUtilitiesConstructor]
 	public TucFolderAssetsCountComponent()
 	{
 	}
@@ -51,10 +54,11 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 	private List<AssetsFolder> _folders = new();
 	private AssetsFolder _selectedFolder = null;
 	private long? _value = null;
-	#endregion
+    private string? _columnName = null;
+    #endregion
 
-	#region << Lifecycle >>
-	protected override async Task OnInitializedAsync()
+    #region << Lifecycle >>
+    protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		_initStorageKeys();
@@ -70,7 +74,9 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 	{
 		await base.OnParametersSetAsync();
 		var contextHash = RegionContext.GetHash();
-		if (contextHash != _renderedHash)
+		if(_columnName is not null)
+			contextHash += RegionContext.DataTable[RegionContext.RowId,_columnName];
+        if (contextHash != _renderedHash)
 		{
 			await _initValues();
 			_renderedHash = contextHash;
@@ -105,7 +111,7 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 		{
 			FolderId = componentOptions.FolderId,
 			DataTable = RegionContext.DataTable,
-			RowIndex = RegionContext.RowIndex
+			RowId = RegionContext.RowId
 		};
 
 		_dialog = await DialogService.ShowPanelAsync<AssetsFolderPanel>(
@@ -122,11 +128,19 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 			TrapFocus = false,
 			OnDialogClosing = EventCallback.Factory.Create<DialogInstance>(this, async (instance) =>
 			{
-				var change = ((AssetsFolderPanelContext)instance.Content).CountChange;
-				_value = (_value ?? 0) + change;
-				if (_value <= 0) _value = null;
-				await InvokeAsync(StateHasChanged);
-			})
+
+                var change = ((AssetsFolderPanelContext)instance.Content).CountChange;
+				if(change == 0) return;
+                if (_columnName is null) return;
+                var changeRequest = new Dictionary<Guid, Dictionary<string, long>>();
+                changeRequest[RegionContext.RowId] = new();
+                changeRequest[RegionContext.RowId][_columnName] = change;
+
+                var dataChange = TucSpaceViewPageContent.GetCurrentData().ApplyCountChange(
+                    countChange: changeRequest);
+                if (dataChange is null) return;
+                TucSpaceViewPageContent.OnDataChange(dataChange);
+            })
 		});
 	}
 
@@ -189,8 +203,8 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 				&& !String.IsNullOrWhiteSpace(_selectedFolder.DataIdentity)
 				&& !String.IsNullOrWhiteSpace(_selectedFolder.CountSharedColumnName))
 			{
-				var columnName = $"{_selectedFolder.DataIdentity}.{_selectedFolder.CountSharedColumnName}";
-				_value = (long?)GetDataStruct<long>(columnName, null);
+                _columnName = $"{_selectedFolder.DataIdentity}.{_selectedFolder.CountSharedColumnName}";
+				_value = (long?)GetDataStruct<long>(_columnName, null);
 			}
 
 		}

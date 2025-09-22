@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
+public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 {
 	[Parameter] public bool SelectAllLoading { get; set; } = false;
 	[Parameter] public List<Guid> SelectedRows { get; set; } = new();

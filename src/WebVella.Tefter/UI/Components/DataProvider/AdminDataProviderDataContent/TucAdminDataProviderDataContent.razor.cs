@@ -14,6 +14,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	private bool _showCustomColumns = true;
 	private long _totalRows = 0;
 	private TfDataTable? _data = null;
+	private bool _syncRunning = false;
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
@@ -28,8 +29,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
-			WvBlazorTraceService.OnSignal(this, "On_NavigationDataChanged");
-		await _init(args);
+			await _init(args);
 	}
 
 	private async void On_DataProviderUpdated(object? caller, TfDataProvider args)
@@ -52,12 +52,14 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			}
 			_navState = navState;
 			_provider = TfDataProviderUIService.GetDataProvider(_navState.DataProviderId.Value);
+			if (_provider is null)
+				return;
+			_syncRunning = TfDataProviderUIService.IsSyncRunning(_provider.Id);
 			var user = await TfUserUIService.GetCurrentUserAsync();
 			if (user is null)
 				throw new Exception("Current user not found");
 			_currentUser = user!;
-			if (_provider is null)
-				return;
+
 
 			_isDataLoading = true;
 			await InvokeAsync(StateHasChanged);
@@ -65,8 +67,8 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			_data = TfDataProviderUIService.QueryDataProvider(
 				providerId: _provider.Id,
 				search: _navState.Search ?? String.Empty,
-				page: _navState.Page ?? 1,
-				pageSize: _navState.PageSize ?? _currentUser.Settings.PageSize ?? TfConstants.PageSize);
+				page: 1,
+				pageSize: TfConstants.ItemsMaxLimit);
 		}
 		finally
 		{
@@ -120,7 +122,6 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			{ TfConstants.PageQueryName, -1}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this, "_goLastPage");
 	}
 	private async Task _goOnPage(int page)
 	{
@@ -132,7 +133,6 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this, "_goOnPage");
 	}
 
 	private async Task _pageSizeChange(int pageSize)
@@ -155,7 +155,6 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		};
 		queryDict[TfConstants.PageSizeQueryName] = pageSize;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		WvBlazorTraceService.OnSignal(this, "_pageSizeChange");
 	}
 
 	private bool _columnIsVisible(TfDataColumn column)

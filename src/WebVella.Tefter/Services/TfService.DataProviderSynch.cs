@@ -38,7 +38,8 @@ public partial interface ITfService
 
 	public DateTime? GetDataProviderNextSynchronizationTime(Guid id);
 
-	List<TfDataProviderSynchronizeTask> GetDataProviderSynchronizationTasks(Guid providerId, int? page = null, int? pageSize = null);
+	List<TfDataProviderSynchronizeTask> GetDataProviderSynchronizationTasks(Guid providerId, int? page = null, int? pageSize = null,
+		TfSynchronizationStatus? status = null);
 }
 
 public partial class TfService : ITfService
@@ -530,8 +531,9 @@ public partial class TfService : ITfService
 		return lastSynchTask.CompletedOn.Value.AddMinutes(provider.SynchScheduleMinutes);
 	}
 
-	public List<TfDataProviderSynchronizeTask> GetDataProviderSynchronizationTasks(Guid providerId, int? page = null, int? pageSize = null){ 
-		var tasks = GetSynchronizationTasks(providerId);
+	public List<TfDataProviderSynchronizeTask> GetDataProviderSynchronizationTasks(Guid providerId, int? page = null, int? pageSize = null,
+		TfSynchronizationStatus? status = null){ 
+		var tasks = GetSynchronizationTasks(providerId, status: status);
 		tasks = tasks.OrderByDescending(x=> x.CreatedOn).ToList();
 		if(page is null || pageSize is null) 
 			return tasks;	

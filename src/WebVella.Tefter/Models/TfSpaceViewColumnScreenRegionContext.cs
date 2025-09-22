@@ -11,7 +11,7 @@ public class TfSpaceViewColumnScreenRegionContext : TfBaseScreenRegionContext
 	public string ComponentOptionsJson { get; set; } = "{}";
 	public TfComponentPresentationMode Mode { get; set; } = TfComponentPresentationMode.Display;
 	public TfDataTable? DataTable { get; set; } = null;
-	public int RowIndex { get; set; } = -1;
+	public Guid RowId { get; set; } = default;
 	public EditContext? EditContext { get; set; } = null;
 	public ValidationMessageStore? ValidationMessageStore { get; set; } = null;
 	public Dictionary<string,object> ViewData { get; init; }
@@ -19,9 +19,10 @@ public class TfSpaceViewColumnScreenRegionContext : TfBaseScreenRegionContext
 	public string GetHash()
 	{
 		var sb = new StringBuilder();
-		sb.Append(RowIndex);
+		sb.Append(RowId);
 		sb.Append(SpaceViewId);
 		sb.Append(SpaceViewColumnId);
+		sb.Append(ComponentOptionsJson);
 		if (DataTable is not null && DataTable.QueryInfo is not null)
 		{
 			sb.Append(DataTable.GetHashCode());

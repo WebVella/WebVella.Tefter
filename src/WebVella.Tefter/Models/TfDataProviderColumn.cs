@@ -17,7 +17,7 @@ public class TfDataProviderColumn
 	public string? SourceName { get; set; }
 
 	[TfDboModelProperty("source_type")]
-	public string SourceType { get; set; } = default!;
+	public string? SourceType { get; set; } = null;
 
 	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
 	[TfDboModelProperty("created_on")]
@@ -35,10 +35,10 @@ public class TfDataProviderColumn
 	public string? DefaultValue { get; set; }
 
 	[TfDboModelProperty("auto_default_value")]
-	public bool AutoDefaultValue { get; set; }
+	public bool AutoDefaultValue { get; set; } = true;
 
 	[TfDboModelProperty("is_nullable")]
-	public bool IsNullable { get; set; }
+	public bool IsNullable { get; set; } = true;
 
 	[TfDboModelProperty("is_unique")]
 	public bool IsUnique { get; set; }

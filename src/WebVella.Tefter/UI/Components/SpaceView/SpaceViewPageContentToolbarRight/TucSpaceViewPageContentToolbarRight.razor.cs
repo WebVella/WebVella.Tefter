@@ -1,6 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewPageContentToolbar.TucSpaceViewPageContentToolbar", "WebVella.Tefter")]
-public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
+public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 {
 	// Dependency Injection
 	[Inject] public ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
@@ -15,6 +14,8 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 	[Parameter] public TfSpaceViewPreset? SpaceViewPreset { get; set; } = null;
 	[Parameter] public TfDataTable Data { get; set; } = default!;
 	[Parameter] public EventCallback<TfDataTable> DataChanged { get; set; }
+	[Parameter] public bool SelectAllLoading { get; set; } = false;
+	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
 
 	private TfNavigationState _navState = default!;
 	private bool _hasViewPersonalization = false;
@@ -46,7 +47,6 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 	}
 	private async Task _init()
 	{
-		WvBlazorTraceService.OnSignal(this, signalName: "toolbar init call", customData: $"{_hasViewPersonalization}");
 		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		if (navState is null) return;
 		_navState = navState;
@@ -64,12 +64,10 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 				_hasViewPersonalization = Context.CurrentUser.Settings.ViewPresetSortPersonalizations.Any(x => x.SpaceViewId == SpaceView.Id
 				 && x.PresetId == SpaceViewPreset?.Id);
 			}
-			WvBlazorTraceService.OnSignal(this, signalName: "toolbar init result", customData: $"{_hasViewPersonalization}");
 		}
 		finally
 		{
 			UriInitialized = _navState.Uri;
-			WvBlazorTraceService.OnSignal(this, signalName: "toolbar init final", customData: $"{_hasViewPersonalization}");
 			await InvokeAsync(StateHasChanged);
 		}
 	}
@@ -90,5 +88,10 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 			ProcessException(ex);
 		}
 		return Task.CompletedTask;
+	}
+
+	private void _onEditAllClick()
+	{
+		TucSpaceViewPageContent.ToggleEditAll();
 	}
 }

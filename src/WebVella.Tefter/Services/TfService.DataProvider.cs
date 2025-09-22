@@ -262,7 +262,8 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public ReadOnlyCollection<TfDataProvider> GetDataProviders(string? search = null){ 
+	public ReadOnlyCollection<TfDataProvider> GetDataProviders(string? search = null)
+	{
 		try
 		{
 			var allItems = GetDataProviders();
@@ -276,7 +277,7 @@ public partial class TfService : ITfService
 		catch (Exception ex)
 		{
 			throw ProcessException(ex);
-		}		
+		}
 	}
 
 	/// <summary>
@@ -335,7 +336,7 @@ public partial class TfService : ITfService
 							.ToHashSet();
 
 					providerIndex = 1;
-					while(existingProviderIndexes.Contains(providerIndex))
+					while (existingProviderIndexes.Contains(providerIndex))
 					{
 						providerIndex++;
 					}
@@ -391,6 +392,37 @@ public partial class TfService : ITfService
 
 				if (!success)
 					throw new TfDboServiceException("Insert<TfDataProviderIdentityDbo> failed");
+
+				if (createModel.AutoInitialize)
+				{
+					//Import schema
+					var columns = new List<TfDataProviderColumn>();
+					var schemaInfo = GetDataProviderSourceSchemaInfo(provider.Id);
+					foreach (var columnName in schemaInfo.SourceColumnDefaultDbType.Keys)
+					{
+						string? defaultValue = schemaInfo.SourceColumnDefaultValue.ContainsKey(columnName) ? schemaInfo.SourceColumnDefaultValue[columnName] : null;
+						var column = new TfDataProviderColumn
+						{
+							Id = Guid.NewGuid(),
+							SourceName = columnName,
+							SourceType = schemaInfo.SourceColumnDefaultSourceType[columnName],
+							CreatedOn = DateTime.Now,
+							DataProviderId = provider.Id,
+							DbName = columnName.GenerateDbNameFromText(),
+							DbType = schemaInfo.SourceColumnDefaultDbType[columnName],
+							DefaultValue = defaultValue
+						};
+						column.FixPrefix(provider.ColumnPrefix);
+						columns.Add(column);
+					}
+					if (columns.Count > 0)
+					{
+						CreateBulkDataProviderColumn(provider.Id, columns);
+						//Trigger Initial Sync
+						TriggerSynchronization(provider.Id);
+					}
+				}
+
 
 				scope.Complete();
 
@@ -533,15 +565,15 @@ public partial class TfService : ITfService
 		foreach (var provider in allDataProviders)
 		{
 
-			if( provider.Id == dataProviderId)
+			if (provider.Id == dataProviderId)
 				continue;
 
 			var foundSimilarJoinKey = provider
-							.Identities.Where(x=> x.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY)
+							.Identities.Where(x => x.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY)
 							.Select(x => x.DataIdentity)
-							.Intersect(dataProvider.Identities.Where(x=> x.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY).Select(x => x.DataIdentity))
+							.Intersect(dataProvider.Identities.Where(x => x.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY).Select(x => x.DataIdentity))
 							.Any();
-			
+
 			if (foundSimilarJoinKey)
 				result.Add(provider);
 		}
@@ -558,23 +590,25 @@ public partial class TfService : ITfService
 		var identities = GetDataIdentities();
 		foreach (var identity in provider.Identities)
 		{
-			var resultIdentity = identities.FirstOrDefault(x=> x.DataIdentity == identity.DataIdentity);
-			if(resultIdentity is null) continue;
+			var resultIdentity = identities.FirstOrDefault(x => x.DataIdentity == identity.DataIdentity);
+			if (resultIdentity is null) continue;
 
-			var identitySharedColumns = sharedColumns.Where(x=> x.DataIdentity == identity.DataIdentity).ToList();
-			var identityProviders = providers.Where(x=> x.Id != providerId && x.Identities.Any(x=> x.DataIdentity == identity.DataIdentity)).ToList();
+			var identitySharedColumns = sharedColumns.Where(x => x.DataIdentity == identity.DataIdentity).ToList();
+			var identityProviders = providers.Where(x => x.Id != providerId && x.Identities.Any(x => x.DataIdentity == identity.DataIdentity)).ToList();
 
-			if(identitySharedColumns.Count == 0 && identityProviders.Count == 0)
+			if (identitySharedColumns.Count == 0 && identityProviders.Count == 0)
 				continue;
 
-			var resultIdentitySchema = new TfDataProviderAuxDataSchemaIdentity{ 
+			var resultIdentitySchema = new TfDataProviderAuxDataSchemaIdentity
+			{
 				DataIdentity = resultIdentity,
 				Columns = new List<TfDataProviderAuxDataSchemaColumn>()
 			};
 
 			foreach (var column in identitySharedColumns)
 			{
-				resultIdentitySchema.Columns.Add(new TfDataProviderAuxDataSchemaColumn{ 
+				resultIdentitySchema.Columns.Add(new TfDataProviderAuxDataSchemaColumn
+				{
 					DbName = column.DbName,
 					DataIdentity = resultIdentity,
 					SharedColumn = column,
@@ -587,13 +621,14 @@ public partial class TfService : ITfService
 			{
 				foreach (var providerColumn in identityProvider.Columns)
 				{
-					resultIdentitySchema.Columns.Add(new TfDataProviderAuxDataSchemaColumn{ 
+					resultIdentitySchema.Columns.Add(new TfDataProviderAuxDataSchemaColumn
+					{
 						DbName = $"{identity.DataIdentity}.{providerColumn.DbName}",
 						DataIdentity = resultIdentity,
 						SharedColumn = null,
 						DataProvider = identityProvider,
 						DataProviderColumn = providerColumn
-					});					
+					});
 				}
 			}
 
@@ -642,7 +677,7 @@ public partial class TfService : ITfService
 
 	private static TfDataProviderDbo DataProviderToDbo(
 		TfUpdateDataProvider providerModel,
-		TfDataProvider existingProvider )
+		TfDataProvider existingProvider)
 	{
 		if (providerModel == null)
 			throw new ArgumentException(nameof(providerModel));
@@ -726,16 +761,16 @@ public partial class TfService : ITfService
 					})
 					.WithMessage("The data provider index should be -1 or positive integer value.");
 
-				RuleFor(provider => provider.Index)
-					.Must((provider, index) =>
-					{
-						var existingProviderIndexes = tfService.GetDataProviders()
-							.Select(x => x.Index)
-							.ToHashSet();
+			RuleFor(provider => provider.Index)
+				.Must((provider, index) =>
+				{
+					var existingProviderIndexes = tfService.GetDataProviders()
+						.Select(x => x.Index)
+						.ToHashSet();
 
-						return !existingProviderIndexes.Contains(index);
-					})
-					.WithMessage("There is already existing data provider with same index.");
+					return !existingProviderIndexes.Contains(index);
+				})
+				.WithMessage("There is already existing data provider with same index.");
 
 			RuleFor(provider => provider.ProviderType)
 				.NotEmpty()

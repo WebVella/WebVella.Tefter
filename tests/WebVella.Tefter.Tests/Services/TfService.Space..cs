@@ -825,6 +825,7 @@ public partial class TfServiceTest : BaseTest
 						EditComponentId = new Guid(TucTextDisplayColumnComponent.ID),
 						SpaceViewId = view.Id,
 						ComponentOptionsJson = "{}",
+						EditComponentOptionsJson = "{}",
 						DataMapping = new Dictionary<string, string> { { "Value", "test" } }
 					};
 

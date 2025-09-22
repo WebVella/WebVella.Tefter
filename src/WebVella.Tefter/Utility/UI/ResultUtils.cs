@@ -161,6 +161,10 @@ internal static class ResultUtils
 		var errors = new List<string> { };
 		if (!String.IsNullOrWhiteSpace(exception.Message))
 			errors.Add(exception.Message);
+		if (exception.InnerException is not null)
+		{
+			errors.Add(exception.InnerException.Message);
+		}
 		errors.AddRange(TfConverters.GetDataAsErrorList(exception));
 		SendErrorsToNotifications(notificationErrorTitle, errors, exception.StackTrace, messageService);
 

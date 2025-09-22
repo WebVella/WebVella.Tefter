@@ -6,6 +6,9 @@ public class TfDataRow : IEnumerable
 	internal object[] Values => _values;
 	public TfDataTable DataTable { get; init; }
 
+	public Guid GetRowId() 
+		=> Field<Guid>(TfConstants.TEFTER_ITEM_ID_PROP_NAME);
+
 	public object this[int columnIndex]
 	{
 		get { return _values[columnIndex]; }

@@ -268,15 +268,18 @@ public partial class TfService : ITfService
 									Title = column.DbName,
 									QueryName = column.DbName,
 									ComponentOptionsJson = "{}",
+									EditComponentOptionsJson = "{}",
 									DataMapping = new(),
 									TypeId = Guid.Empty,
 									ComponentId = Guid.Empty,
+									EditComponentId = Guid.Empty
 								};
 
 								if (columnType is not null)
 								{
 									tfColumn.TypeId = columnType.AddonId;
 									tfColumn.ComponentId = columnType.DefaultDisplayComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
+									tfColumn.EditComponentId = columnType.DefaultEditComponentId ?? new Guid(TucTextEditColumnComponent.ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
 										tfColumn.DataMapping[mapper.Alias] = column.DbName;
@@ -299,6 +302,7 @@ public partial class TfService : ITfService
 									Title = column.DbName,
 									QueryName = column.DbName,
 									ComponentOptionsJson = "{}",
+									EditComponentOptionsJson = "{}",
 									DataMapping = new(),
 									TypeId = Guid.Empty,
 									ComponentId = Guid.Empty,
@@ -330,6 +334,7 @@ public partial class TfService : ITfService
 									Title = column.DbName,
 									QueryName = column.DbName,
 									ComponentOptionsJson = "{}",
+									EditComponentOptionsJson = "{}",
 									DataMapping = new(),
 									TypeId = Guid.Empty,
 									ComponentId = Guid.Empty,
@@ -383,6 +388,7 @@ public partial class TfService : ITfService
 									Title = dbName,
 									QueryName = dbName,
 									ComponentOptionsJson = "{}",
+									EditComponentOptionsJson = "{}",
 									DataMapping = new(),
 									TypeId = Guid.Empty,
 									ComponentId = Guid.Empty
@@ -829,6 +835,7 @@ public partial class TfService : ITfService
 						Id = Guid.NewGuid(),
 						ComponentId = orColumn.ComponentId,
 						ComponentOptionsJson = orColumn.ComponentOptionsJson,
+						EditComponentOptionsJson = orColumn.EditComponentOptionsJson,
 						DataMapping = orColumn.DataMapping,
 						Icon = orColumn.Icon,
 						OnlyIcon = orColumn.OnlyIcon,

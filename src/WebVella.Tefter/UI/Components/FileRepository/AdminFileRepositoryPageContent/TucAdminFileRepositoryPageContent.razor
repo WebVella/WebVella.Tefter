@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 <TucPageLayout Icon="@TfConstants.GetIcon("DocumentDatabase")" Area="@LOC("File Repository")"
 			   Title="@LOC("Files")" Color="TfConstants.AdminColor">
-	<ToolbarRight>
+	<NavigationRight>
 		@if (progressPercent < 100)
 		{
 			<TucProgress Value="progressPercent" Visible="@(progressPercent > 0)" />
@@ -14,30 +14,46 @@
 				<div>@LOC("file uploaded")</div>
 			</div>
 		}
-		<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0)"
-					  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">@LOC("Upload file")</FluentButton>
-		<FluentInputFile @ref="@fileUploader"
-						 DragDropZoneVisible="false"
-						 Mode="InputFileMode.SaveToTemporaryFolder"
-						 Multiple="false"
-						 AnchorId="@_uploadId"
-						 MaximumFileSize="@(100 * 1024 * 1024)"
-						 Accept="*"
-						 OnProgressChange="@_onProgress"
-						 OnCompleted="@_onCompleted" />
+		@if (!(String.IsNullOrWhiteSpace(_search) && (_items is null || _items.Count == 0)))
+		{
+			<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0)"
+						  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">@LOC("Upload file")</FluentButton>
+			<FluentInputFile @ref="@fileUploader"
+							 DragDropZoneVisible="false"
+							 Mode="InputFileMode.SaveToTemporaryFolder"
+							 Multiple="false"
+							 AnchorId="@_uploadId"
+							 MaximumFileSize="@(100 * 1024 * 1024)"
+							 Accept="*"
+							 OnProgressChange="@_onProgress"
+							 OnCompleted="@_onCompleted" />
+		}
 		<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@_search"
 					  AutoComplete="off" Style="margin-left:1rem;" @ref=_refSearch />
-	</ToolbarRight>
+	</NavigationRight>
 	<ChildContent>
 		@if (String.IsNullOrWhiteSpace(_search) && (_items is null || _items.Count == 0))
 		{
 			<FluentMessageBar Title="@LOC("No Files")" AllowDismiss="false"
 							  Intent="@MessageIntent.Info">@LOC("No files are created yet")</FluentMessageBar>
+			<div style="padding:var(--tf-layout-content-padding)">
+				<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0)"
+							  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">@LOC("Upload file")</FluentButton>
+				<FluentInputFile @ref="@fileUploader"
+								 DragDropZoneVisible="false"
+								 Mode="InputFileMode.SaveToTemporaryFolder"
+								 Multiple="false"
+								 AnchorId="@_uploadId"
+								 MaximumFileSize="@(100 * 1024 * 1024)"
+								 Accept="*"
+								 OnProgressChange="@_onProgress"
+								 OnCompleted="@_onCompleted" />
+			</div>
 		}
 		else if (!String.IsNullOrWhiteSpace(_search) && (_items is null || _items.Count == 0))
 		{
-			<FluentMessageBar Title="@LOC("No columns found")" AllowDismiss="false"
-							  Intent="@MessageIntent.Info">@LOC("No shared columns are found for this search")</FluentMessageBar>
+			<FluentMessageBar AllowDismiss="false"
+							  Intent="@MessageIntent.Info">@LOC("No items are found for this search")</FluentMessageBar>
 		}
 		else
 		{
@@ -62,8 +78,8 @@
 													  Title="@LOC("Change file content")" OnClick="@(()=> _editFile(context))" />
 										<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete column")"
 													  OnClick="@(() => _deleteFile(context))" IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" />
-										<FluentAnchor Appearance="@Appearance.Outline" Target="_blank"
-													  Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload")" />
+										<TucAnchor Appearance="@Appearance.Outline" Target="_blank"
+												   Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload")" />
 									</FluentStack>
 								</div>
 							</td>

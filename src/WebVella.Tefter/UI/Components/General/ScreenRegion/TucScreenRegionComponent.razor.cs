@@ -36,10 +36,4 @@ public partial class TucScreenRegionComponent
 			);
 		}
 	}
-
-	protected override void OnParametersSet()
-	{
-		base.OnParametersSet();
-		StateHasChanged();
-	}
 }

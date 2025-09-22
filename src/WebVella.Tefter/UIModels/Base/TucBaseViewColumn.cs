@@ -214,7 +214,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// <param name="alias">the expected data alias as defined by the implementing component</param>
 	/// <param name="defaultValue">what value to return if value is not found in the provided datatable</param>
 	/// <returns></returns>
-	protected virtual object GetDataString(string dbName, string defaultValue = null)
+	protected virtual object? GetDataString(string dbName, string? defaultValue = null)
 	{
 
 		if (String.IsNullOrWhiteSpace(dbName))
@@ -223,12 +223,12 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		}
 		if (RegionContext.DataTable is null || RegionContext.DataTable.Rows.Count == 0) return defaultValue;
 
-		if (RegionContext.DataTable.Rows.Count < RegionContext.RowIndex + 1) return defaultValue;
-		if (RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName] is null) return defaultValue;
-		object value = RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName];
+		if (RegionContext.DataTable.Rows[RegionContext.RowId] is null) return defaultValue;
+		if (RegionContext.DataTable[RegionContext.RowId,dbName] is null) return defaultValue;
+		object value = RegionContext.DataTable.Rows[RegionContext.RowId]![dbName];
 		if (value is null) return defaultValue;
 		if (value.GetType().ImplementsInterface(typeof(IList))) return (List<string>)value;
-		return value.ToString();
+		return value!.ToString();
 	}
 
 	/// <summary>
@@ -240,7 +240,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// <param name="alias">the expected data alias as defined by the implementing component</param>
 	/// <param name="defaultValue">what value to return if value is not found in the provided datatable</param>
 	/// <returns></returns>
-	protected virtual object GetDataStruct<T>(string dbName, Nullable<T> defaultValue = null) where T : struct
+	protected virtual object? GetDataStruct<T>(string dbName, Nullable<T> defaultValue = null) where T : struct
 	{
 		if (String.IsNullOrWhiteSpace(dbName))
 		{
@@ -248,16 +248,16 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		}
 		if (RegionContext.DataTable is null || RegionContext.DataTable.Rows.Count == 0) return defaultValue;
 
-		if (RegionContext.DataTable.Rows.Count < RegionContext.RowIndex + 1) return defaultValue;
-		if (RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName] is null) return defaultValue;
+		if (RegionContext.DataTable.Rows[RegionContext.RowId] is null) return defaultValue;
+		if (RegionContext.DataTable[RegionContext.RowId,dbName] is null) return defaultValue;
 
-		object value = RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName];
+		object value = RegionContext.DataTable.Rows[RegionContext.RowId]![dbName];
 		if (value is null) return defaultValue;
 
 		if (typeof(T) == typeof(String)) return (T)value;
 		else if (value is T) return (T)value;
 		else if (value.GetType().ImplementsInterface(typeof(IList))) return (List<Nullable<T>>)value;
-		return TfConverters.Convert<T>(value.ToString());
+		return TfConverters.Convert<T>(value!.ToString());
 	}
 
 
@@ -300,16 +300,16 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	{
 		if (RegionContext.DataTable is null || RegionContext.DataTable.Rows.Count == 0) return defaultValue;
 
-		if (RegionContext.DataTable.Rows.Count < RegionContext.RowIndex + 1) return null;
-		if (RegionContext.DataTable.Rows[RegionContext.RowIndex][column.Name] is null) return null;
-		object value = RegionContext.DataTable.Rows[RegionContext.RowIndex][column.Name];
+		if (RegionContext.DataTable.Rows[RegionContext.RowId] is null) return null;
+		if (RegionContext.DataTable[RegionContext.RowId,column.Name] is null) return null;
+		object value = RegionContext.DataTable.Rows[RegionContext.RowId]![column.Name];
 		if (value is null) return null;
 		if (value is string && String.IsNullOrWhiteSpace((string)value)) return null;
 		if (value is T) return (T)value;
 
 		try
 		{
-			return JsonSerializer.Deserialize<T>(value.ToString());
+			return JsonSerializer.Deserialize<T>(value!.ToString());
 		}
 		catch { throw new Exception("Value cannot be parsed"); }
 
@@ -404,12 +404,12 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// </summary>
 	protected virtual async Task OnRowColumnChangedByAlias(string alias, object value)
 	{
-		if (!RowChanged.HasDelegate) return;
+		if (!RowChanged.HasDelegate || RegionContext.DataTable is null) return;
 
-		var dt = RegionContext.DataTable.NewTable(RegionContext.RowIndex);
+		var dt = RegionContext.DataTable.NewTableFromRowIds(RegionContext.RowId);
 		if (dt.Rows.Count == 0)
 		{
-			ToastService.ShowError(LOC("Row with index {0} is not found", RegionContext.RowIndex));
+			ToastService.ShowError(LOC("Row with id {0} is not found", RegionContext.RowId));
 			return;
 		}
 		var colName = GetColumnNameFromAlias(alias);

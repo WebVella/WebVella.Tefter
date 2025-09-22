@@ -11,31 +11,29 @@
 }
 else
 {
-	<div class="tf-grid-wrapper">
-		<table class="tf-grid">
-			<thead class="tf-grid-thead">
-				<tr class="tf-grid-thead-bkg"></tr>
-				<tr class="tf-grid-tr">
-					<th class="tf-grid-th">text</th>
-					<th class="tf-grid-th" style="min-width:140px;width:140px;">created on</th>
+	<table class="tf-grid">
+		<thead class="tf-grid-thead">
+			<tr class="tf-grid-thead-bkg"></tr>
+			<tr class="tf-grid-tr">
+				<th class="tf-grid-th">text</th>
+				<th class="tf-grid-th" style="min-width:140px;width:140px;">created on</th>
+			</tr>
+		</thead>
+		<tbody class="tf-grid-tbody">
+			@foreach (var context in notes)
+			{
+				<tr @key=@context.Id class="tf-grid-tr">
+					<td class="tf-grid-td">
+						<div>@context.NoteText</div>
+					</td>
+					<td class="tf-grid-td">
+						<div>
+							<div>@context.CreatedOn.ToString(TfConstants.DateHourFormat)</div>
+						</div>
+					</td>
 				</tr>
-			</thead>
-			<tbody class="tf-grid-tbody">
-				@foreach (var context in notes)
-				{
-					<tr @key=@context.Id class="tf-grid-tr">
-						<td class="tf-grid-td">
-							<div>@context.NoteText</div>
-						</td>
-						<td class="tf-grid-td">
-							<div>
-								<div>@context.CreatedOn.ToString(TfConstants.DateHourFormat)</div>
-							</div>
-						</td>
-					</tr>
-				}
-			</tbody>
-		</table>
-	</div>
+			}
+		</tbody>
+	</table>
 }
 

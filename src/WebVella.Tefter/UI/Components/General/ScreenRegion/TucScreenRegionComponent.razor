@@ -1,9 +1,5 @@
 ﻿@namespace WebVella.Tefter.UI.Components
-@if (_componentsMeta is null)
-{
-	
-}
-else if (_componentsMeta.Count > 0)
+@if (_componentsMeta is not null && _componentsMeta.Count > 0)
 {
 	<TucErrorBoundry>
 		@foreach (var meta in _componentsMeta)

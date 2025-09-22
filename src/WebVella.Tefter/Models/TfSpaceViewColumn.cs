@@ -14,61 +14,8 @@ public record TfSpaceViewColumn
 	public Guid EditComponentId { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string ComponentOptionsJson { get; set; } = "{}";
+	public string EditComponentOptionsJson { get; set; } = "{}";
 	public TfSpaceViewColumnSettings Settings { get; set; } = new();
-	public string HeaderStyle
-	{
-		get
-		{
-			var sb = new StringBuilder();
-			//if (Settings is not null)
-			//{
-			//	if(Settings.BackgroundColor != TfColor.Black){ 
-			//		sb.Append($"background:linear-gradient(to right, {Settings.BackgroundColor.ToAttributeValue()}35, {Settings.BackgroundColor.ToAttributeValue()}35)," +
-			//		$"linear-gradient(to right, var(--neutral-fill-layer-rest),var(--neutral-fill-layer-rest));");
-			//	}
-			//}
-
-			return sb.ToString();
-		}
-	}
-
-	public string CellColorStyle
-	{
-		get
-		{
-			var sb = new StringBuilder();
-			if (Settings is not null)
-			{
-				if (Settings.Color.HasValue)
-				{
-					sb.Append($"color: var(--tf-td-color-{Settings.Color.GetAttribute().Name});");
-				}
-			}
-			return sb.ToString();
-		}
-	}
-
-	public string CellFillColorStyle
-	{
-		get
-		{
-			var sb = new StringBuilder();
-			if (Settings is not null)
-			{
-				if (Settings.BackgroundColor.HasValue)
-				{
-					sb.Append($"background: var(--tf-td-fill-{Settings.BackgroundColor.GetAttribute().Name});");
-				}
-			}
-			if (sb.Length == 0) sb.Append("display:none;");
-
-			return sb.ToString();
-		}
-	}
-
-	//Render only helpers
-	public TfSortDirection? PersonalizedSort { get; set; } = null;
-
 	public string? GetColumnNameFromDataMapping(){ 
 		if(DataMapping is null || DataMapping.Keys.Count == 0) return null;
 		return DataMapping[DataMapping.Keys.First()];
@@ -113,6 +60,9 @@ internal class TfSpaceViewColumnDbo
 
 	[TfDboModelProperty("custom_options_json")]
 	public string ComponentOptionsJson { get; set; } = "{}";
+
+	[TfDboModelProperty("edit_custom_options_json")]
+	public string EditComponentOptionsJson { get; set; } = "{}";
 
 	[TfDboModelProperty("settings_json")]
 	public string SettingsJson { get; set; } = "{}";

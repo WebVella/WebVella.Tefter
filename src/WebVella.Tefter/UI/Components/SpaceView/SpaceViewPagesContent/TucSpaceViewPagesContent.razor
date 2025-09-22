@@ -2,9 +2,9 @@
 @inherits TfBaseComponent
 <TucPageLayout Icon="@TfConstants.GetIcon("Table")" Color="@(_space?.Color ?? TfConstants.DefaultThemeColor)"
 			   Area="@($"{_space?.Name} : {LOC("Space View")}")" Title="@_spaceView?.Name" SubTitle="@LOC("Pages")">
-	<ToolbarLeft>
+	<NavigationLeft>
 		<TucSpaceViewDetailsContentToolbar />
-	</ToolbarLeft>
+	</NavigationLeft>
 	<ChildContent>
 		<TucErrorBoundry>
 			<div style="padding:var(--tf-layout-content-padding)">
@@ -40,10 +40,10 @@
 										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 											<td class="tf-grid-td" style="width:30px;">
 												<div>
-													<FluentAnchor Appearance="@Appearance.Outline" title="@LOC("view details")"
+													<TucAnchor Appearance="@Appearance.Outline" title="@LOC("view details")"
 																  Href="@String.Format(TfConstants.SpacePagePageUrl, context.SpaceId, context.Id)">
 														<FluentIcon Value="@TfConstants.GetIcon("Eye")" />
-													</FluentAnchor>
+													</TucAnchor>
 												</div>
 											</td>
 											<td class="tf-grid-td">

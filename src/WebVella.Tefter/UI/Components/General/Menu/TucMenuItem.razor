@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 
 <div class="@_css">
-	<FluentAnchor Href="@Item.Href"
+	<TucAnchor Href="@Item.Href" 
 				  Id="@Item.Id" AdditionalAttributes=@_attributes
 				  OnClick="Item.OnClick" Appearance="@Appearance.Hypertext">
 		@if (Item.Icon is not null && !String.IsNullOrWhiteSpace(Item.Text))
@@ -55,7 +55,7 @@
 		{
 			<span class="tf-menu__item__color" style="@($"background-color:{Item.Color.GetAttribute().Value}")"></span>
 		} *@
-	</FluentAnchor>
+	</TucAnchor>
 	@if (!Item.Disabled && Item.Items.Count > 0)
 	{
 		<FluentMenu UseMenuService="false"

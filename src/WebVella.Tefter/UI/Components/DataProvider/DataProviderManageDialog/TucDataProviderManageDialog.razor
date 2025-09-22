@@ -44,6 +44,31 @@
 					<FluentValidationMessage For="@(() => _form.ProviderType)" />
 				</FluentGridItem>
 			</FluentGrid>
+			@if (_isCreate)
+			{
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentSelect TOption="bool"
+									  OptionSelected="@(x=> x == _form.AutoInitialize)"
+									  @bind-SelectedOption=@_form.AutoInitialize
+									  Items="@(new List<bool>{true, false})"
+									  Label="@LOC("Initialization")" Style="width:100%"
+									  OptionValue="@(x=> x.ToString())"
+									  OptionText="@(x=> x ? LOC("create columns and sync data") : LOC("start with blank schema"))" />
+						<FluentValidationMessage For="@(() => _form.AutoInitialize)" />
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						<FluentSelect TOption="bool"
+									  OptionSelected="@(x=> x == _form.SynchScheduleEnabled)"
+									  @bind-SelectedOption=@_form.SynchScheduleEnabled
+									  Items="@(new List<bool>{true, false})"
+									  Label="@LOC("Data synchronization")" Style="width:100%"
+									  OptionValue="@(x=> x.ToString())"
+									  OptionText="@(x=> x ? LOC("schedule is enabled") : LOC("disabled"))" />
+						<FluentValidationMessage For="@(() => _form.SynchScheduleEnabled)" />
+					</FluentGridItem>
+				</FluentGrid>
+			}
 			<FluentDivider Style="margin:15px 0" />
 			<TucScreenRegionComponent RegionContext="_dynamicComponentContext" Scope="@_dynamicComponentScope" />
 			<FluentValidationMessage For="@(() => _form.SettingsJson)" />

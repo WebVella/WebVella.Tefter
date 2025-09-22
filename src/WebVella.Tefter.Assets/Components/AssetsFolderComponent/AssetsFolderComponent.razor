@@ -22,14 +22,14 @@ else
 {
 	<TucPageLayout Title="@Context.SpacePage.Name"
 				   Icon="@TfConstants.GetIcon(Context.SpacePage.FluentIconName)" Color="@Context.Space.Color">
-		<ToolbarRight>
+		<NavigationRight>
 			<FluentButton Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Document")"
 						  OnClick="_addFile" Style="margin-right:10px;">@LOC("Add file")</FluentButton>
 			<FluentButton Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Link")"
 						  OnClick="_addLink">@LOC("Add link")</FluentButton>
 			<FluentSearch Placeholder="@LOC("search...")" AutoComplete="off" Value="@_search" ValueChanged="_searchValueChanged"
 						  Style="margin-left:1rem" @ref=_refSearch />
-		</ToolbarRight>
+		</NavigationRight>
 		<ChildContent>
 			<div style="margin:var(--tf-layout-content-padding)">
 				@if (_items.Count == 0)

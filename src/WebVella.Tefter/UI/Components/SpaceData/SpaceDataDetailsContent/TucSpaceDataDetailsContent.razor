@@ -2,9 +2,9 @@
 @inherits TfBaseComponent
 <TucPageLayout Icon="@TfConstants.GetIcon("Database")" Color="@(_space?.Color ?? TfConstants.DefaultThemeColor)"
 			   Area="@($"{_space?.Name} : {LOC("Space Data")}")" Title="@_spaceData?.Name" SubTitle="@LOC("Details")">
-	<ToolbarLeft>
+	<NavigationLeft>
 		<TucSpaceDataDetailsContentToolbar />
-	</ToolbarLeft>
+	</NavigationLeft>
 	<ChildContent>
 		<TucErrorBoundry>
 			<div style="padding:var(--tf-layout-content-padding)">
@@ -54,9 +54,9 @@
 													</td>
 													<td class="tf-grid-td" style="width:80px;">
 														<div>
-															<FluentAnchor Appearance="@Appearance.Outline" title="@LOC("open provider")"
+															<TucAnchor Appearance="@Appearance.Outline" title="@LOC("open provider")"
 																		  Href="@(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, _provider.Id))"
-																		  IconStart="@TfConstants.GetIcon("Eye")" Target="_blank">@LOC("view")</FluentAnchor>
+																		  IconStart="@TfConstants.GetIcon("Eye")" Target="_blank">@LOC("view")</TucAnchor>
 														</div>
 													</td>
 												</tr>

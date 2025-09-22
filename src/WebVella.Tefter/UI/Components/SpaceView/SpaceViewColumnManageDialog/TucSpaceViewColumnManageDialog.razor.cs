@@ -291,7 +291,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			ComponentOptionsJson = _form.ComponentOptionsJson,
 			DataMapping = _form.DataMapping,
 			DataTable = null,
-			RowIndex = -1,
+			RowId = Guid.Empty,
 			QueryName = _form.QueryName,
 			SpaceViewId = _form.SpaceViewId,
 			SpaceViewColumnId = _form.Id,
@@ -299,6 +299,29 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			ValidationMessageStore = MessageStore
 		};
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_OPTIONS_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<string>(this, _customOptionsChangedHandler);
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_DATA_MAPPING_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<Tuple<string, string>>(this, _dataMappingValueChanged);
+		return componentData;
+	}
+
+	private Dictionary<string, object> _getColumnEditComponentContext()
+	{
+		var componentData = new Dictionary<string, object>();
+
+		var contextData = new Dictionary<string, object>();
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext(contextData)
+		{
+			Mode = TfComponentPresentationMode.Options,
+			ComponentOptionsJson = _form.EditComponentOptionsJson,
+			DataMapping = _form.DataMapping,
+			DataTable = null,
+			RowId = Guid.Empty,
+			QueryName = _form.QueryName,
+			SpaceViewId = _form.SpaceViewId,
+			SpaceViewColumnId = _form.Id,
+			EditContext = EditContext,
+			ValidationMessageStore = MessageStore
+		};
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_OPTIONS_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<string>(this, _customEditOptionsChangedHandler);
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_DATA_MAPPING_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<Tuple<string, string>>(this, _dataMappingValueChanged);
 		return componentData;
 	}
@@ -315,6 +338,22 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		}
 
 		_form.ComponentOptionsJson = value;
+		await InvokeAsync(StateHasChanged);
+	}
+
+
+	private async Task _customEditOptionsChangedHandler(string value)
+	{
+		if (String.IsNullOrWhiteSpace(value)) _form.EditComponentOptionsJson = null;
+
+		if (!(value.StartsWith("{") && value.StartsWith("{"))
+		|| (value.StartsWith("[") && value.StartsWith("]")))
+		{
+			ToastService.ShowError("custom options value needs to be json");
+			return;
+		}
+
+		_form.EditComponentOptionsJson = value;
 		await InvokeAsync(StateHasChanged);
 	}
 

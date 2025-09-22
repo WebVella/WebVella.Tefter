@@ -3,5 +3,6 @@
 public enum TfComponentPresentationMode
 {
 	Display,
-	Options
+	Options,
+	Edit
 }
