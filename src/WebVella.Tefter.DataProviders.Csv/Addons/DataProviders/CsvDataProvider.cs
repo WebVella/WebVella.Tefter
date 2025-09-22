@@ -230,85 +230,87 @@ public class CsvDataProvider : ITfDataProviderAddon
             if (file is null)
                 throw new Exception($"File '{settings.Filepath}' is not found.");
 
-            stream = tfService.GetRepositoryFileContentAsFileStream(file.Filename);
-        }
-        else
-        {
-            stream = new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        }
+			stream = tfService.GetRepositoryFileContentAsFileStream(file.Filename);
+		}
+		else
+		{
+			stream = new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+		}
+
         Dictionary<string, List<TfDatabaseColumnType>> suggestedColumnTypes = new();
         using (stream)
-        {
-            using (var reader = new StreamReader(stream))
-            {
-                //for dealing with auto=generation indexes
-                //we need to split the sample between the first and the last records
-                int totalRecords = 0;
-                while (reader.ReadLine() != null)
-                {
-                    ++totalRecords;
-                }
-                //restart reader
-                stream.Position = 0;
-                reader.DiscardBufferedData();
+		{
+			using (var reader = new StreamReader(stream))
+			{
+				//for dealing with auto=generation indexes
+				//we need to split the sample between the first and the last records
+				int totalRecords = 0;
+				while (reader.ReadLine() != null)
+				{
+					++totalRecords;
+				}
+				//restart reader
+				stream.Position = 0;
+				reader.DiscardBufferedData();
 
-                totalRecords--; // discount 1 line because there are column headers in first row.
-                var rowIndexToReadHS = new HashSet<long>();
-                if (maxSampleSize >= totalRecords)
-                {
-                    for (int i = 0; i < totalRecords; i++)
-                    {
-                        rowIndexToReadHS.Add(i);
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < (maxSampleSize / 2); i++)
-                    {
-                        rowIndexToReadHS.Add(i);
-                    }
-                    for (int i = totalRecords - 1; i >= (totalRecords - maxSampleSize / 2); i--)
-                    {
-                        rowIndexToReadHS.Add(i);
-                    }
-                }
+				totalRecords--; // discount 1 line because there are column headers in first row.
+				var rowIndexToReadHS = new HashSet<long>();
+				if (maxSampleSize >= totalRecords)
+				{
+					for (int i = 0; i < totalRecords; i++)
+					{
+						rowIndexToReadHS.Add(i);
+					}
+				}
+				else
+				{
+					for (int i = 0; i < (maxSampleSize / 2); i++)
+					{
+						rowIndexToReadHS.Add(i);
+					}
+					for (int i = totalRecords - 1; i >= (totalRecords - maxSampleSize / 2); i--)
+					{
+						rowIndexToReadHS.Add(i);
+					}
+				}
 
 
 
-                using (var csvReader = new CsvReader(reader, config))
-                {
-                    csvReader.Read();
-                    csvReader.ReadHeader();
-                    foreach (var item in csvReader.HeaderRecord)
-                    {
-                        result.SourceColumnDefaultDbType[item.ToSourceColumnName()] = TfDatabaseColumnType.Text;
-                    }
+				using (var csvReader = new CsvReader(reader, config))
+				{
+					csvReader.Read();
+					csvReader.ReadHeader();
+					foreach (var item in csvReader.HeaderRecord)
+					{
+						result.SourceColumnDefaultDbType[item.ToSourceColumnName()] = TfDatabaseColumnType.Text;
+					}
 
-                    var counter = 0;
-                    while (csvReader.Read())
-                    {
-                        if (rowIndexToReadHS.Contains(counter))
-                        {
-                            foreach (var columnNameUnprocessed in csvReader.HeaderRecord)
-                            {
-                                var fieldValue = csvReader.GetField(columnNameUnprocessed);
-                                var columnName = columnNameUnprocessed.ToSourceColumnName();
-                                if (!suggestedColumnTypes.ContainsKey(columnName)) suggestedColumnTypes[columnName] = new();
-                                TfDatabaseColumnType type = CsvSourceToColumnTypeConverter.GetDataTypeFromString(fieldValue, culture);
-                                result.SourceColumnDefaultValue[columnName] = fieldValue.ToString();
-                                suggestedColumnTypes[columnName].Add(type);
-                            }
-                        }
-                        counter++;
-                    }
-                }
-            }
-        }
-        foreach (var key in result.SourceColumnDefaultDbType.Keys)
-        {
-            var columnType = TfDatabaseColumnType.Text;
-            if (suggestedColumnTypes.ContainsKey(key))
-                columnType = CsvSourceToColumnTypeConverter.GetTypeFromOptions(suggestedColumnTypes[key]);
+					var counter = 0;
+					while (csvReader.Read())
+					{
+						if (rowIndexToReadHS.Contains(counter))
+						{
+							foreach (var columnNameUnprocessed in csvReader.HeaderRecord)
+							{
+								var fieldValue = csvReader.GetField(columnNameUnprocessed);
+								var columnName = columnNameUnprocessed.ToSourceColumnName();
+								if (!suggestedColumnTypes.ContainsKey(columnName)) suggestedColumnTypes[columnName] = new();
+								TfDatabaseColumnType type = CsvSourceToColumnTypeConverter.GetDataTypeFromString(fieldValue, culture);
+								result.SourceColumnDefaultValue[columnName] = fieldValue.ToString();
+								suggestedColumnTypes[columnName].Add(type);
+							}
+						}
+						counter++;
+					}
+				}
+			}
+		}
+
+		foreach (var key in result.SourceColumnDefaultDbType.Keys)
+		{
+			var columnType = TfDatabaseColumnType.Text;
+			if (suggestedColumnTypes.ContainsKey(key))
+				columnType = CsvSourceToColumnTypeConverter.GetTypeFromOptions(suggestedColumnTypes[key]);
 
             result.SourceColumnDefaultDbType[key] = columnType;
         }
