@@ -34,15 +34,6 @@
 									 Label="@LOC("Name")" Style="width:100%" />
 					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
-				<FluentGridItem xs="6">
-					<FluentSelect Required="true"
-								  OptionSelected="(x => x.AddonId == _form.ProviderType?.AddonId)"
-								  SelectedOption="@_form.ProviderType" SelectedOptionChanged=_providerTypeChanged TOption="ITfDataProviderAddon"
-								  Items="@_providerTypes" Style="width:100%" Disabled="!_isCreate"
-								  OptionValue="@(p => p.AddonId.ToString())"
-								  OptionText="@(p => p.AddonName)" Label="@LOC("Type")" />
-					<FluentValidationMessage For="@(() => _form.ProviderType)" />
-				</FluentGridItem>
 			</FluentGrid>
 			@if (_isCreate)
 			{
@@ -69,7 +60,18 @@
 					</FluentGridItem>
 				</FluentGrid>
 			}
-			<FluentDivider Style="margin:15px 0" />
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentInputLabel Required="true" Label="@LOC("Template type")" />
+					<TucSelectComponent TOption="ITfDataProviderAddon" Items="@_providerTypes"
+										Value="@_form.ProviderType" ValueChanged="_providerTypeChanged"
+										OptionText="@(x=> x.AddonName)" 
+										OptionIcon="@(x=> x.AddonFluentIconName)" 
+										OptionDescription="@(x=> x.AddonDescription)"
+										OptionMatch="@((x,y)=> x.AddonId == y.AddonId)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentDivider Style="margin:1rem 0" />
 			<TucScreenRegionComponent RegionContext="_dynamicComponentContext" Scope="@_dynamicComponentScope" />
 			<FluentValidationMessage For="@(() => _form.SettingsJson)" />
 		</FluentEditForm>

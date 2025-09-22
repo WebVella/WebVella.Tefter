@@ -40,13 +40,19 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect TOption="string"
-								  Items="_allDataIdentities"
-								  Height="@TfConstants.ComboPanelHeight"
-								  @bind-Value=@_form.DataIdentity
-								  Placeholder="@LOC("select or add...")"
-								  Disabled="!_isCreate"
-								  Label="@LOC("Target data identity")" Style="width:100%" />
+					<FluentInputLabel Label="@LOC("Connected Data identity")" />
+					<FluentStack>
+						<FluentSelect TOption="string"
+									  Items="_allDataIdentities"
+									  Height="@TfConstants.ComboPanelHeight"
+									  @bind-Value=@_form.DataIdentity
+									  Placeholder="@LOC("select or add...")"
+									  Disabled="!_isCreate" Style="flex:1 1 auto" />
+						<FluentButton Title="@LOC("Create a new data identity")" OnClick="addDataIdentity"
+									  Appearance="@Appearance.Outline">
+							<FluentIcon Value="@TfConstants.GetIcon("Add")" />
+						</FluentButton>
+					</FluentStack>
 					<FluentValidationMessage For="@(() => _form.DataIdentity)" />
 				</FluentGridItem>
 			</FluentGrid>

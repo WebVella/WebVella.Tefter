@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace WebVella.Tefter.UI.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.SharedColumnManageDialog.TfSharedColumnManageDialog", "WebVella.Tefter")]
 public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSharedColumn?>
 {
@@ -103,5 +105,29 @@ public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogC
 		await Dialog.CancelAsync();
 	}
 
+
+	private async Task addDataIdentity()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucDataIdentityManageDialog>(
+		new TfDataIdentity(),
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var item = (TfDataIdentity)result.Data;
+			_allDataIdentities.Add(item.DataIdentity);
+			await InvokeAsync(StateHasChanged);
+			await Task.Delay(10);
+			_form.DataIdentity = item.DataIdentity;
+			await InvokeAsync(StateHasChanged);
+		}
+
+	}
 }
 
