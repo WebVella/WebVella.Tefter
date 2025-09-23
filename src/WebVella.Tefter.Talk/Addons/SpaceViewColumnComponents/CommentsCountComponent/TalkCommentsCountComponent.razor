@@ -30,6 +30,7 @@ else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">
+			<FluentInputLabel Label="@LOC("Channel")" />
 			<FluentSelect TOption="TalkChannel"
 						  Items="_channels"
 						  OptionValue="@((p)=> p.Id.ToString())"

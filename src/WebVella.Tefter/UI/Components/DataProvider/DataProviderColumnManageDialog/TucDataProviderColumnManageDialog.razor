@@ -39,7 +39,7 @@
 						{
 							<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DbName
 											 Label="@LOC("column name")" Style="width:100%"
-											 AutoComplete="off">
+											 AutoComplete="off" Class="with-prefix">
 								<span slot="start">@_provider.ColumnPrefix</span>
 							</FluentTextField>
 							<FluentValidationMessage For="@(() => _form.DbName)" />

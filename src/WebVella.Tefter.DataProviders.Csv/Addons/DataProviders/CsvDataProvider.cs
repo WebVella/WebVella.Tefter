@@ -219,7 +219,7 @@ public class CsvDataProvider : ITfDataProviderAddon
                 break;
         }
         if (string.IsNullOrWhiteSpace(settings.Filepath))
-            throw new Exception("Provider csv file path is not specified.");
+            return result;
 
         Stream stream;
         if (settings.Filepath.ToLowerInvariant().StartsWith("tefter://"))
@@ -229,7 +229,7 @@ public class CsvDataProvider : ITfDataProviderAddon
             var file = tfService.GetRepositoryFileByUri(settings.Filepath);
 
             if (file is null)
-                throw new Exception($"File '{settings.Filepath}' is not found.");
+                return result;
 
             stream = tfService.GetRepositoryFileContentAsFileStream(file.Filename);
         }
