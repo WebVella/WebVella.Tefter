@@ -4,7 +4,9 @@ using CsvHelper.Configuration;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using WebVella.Tefter.DataProviders.Excel.Models;
 using WebVella.Tefter.Exceptions;
 using WebVella.Tefter.Models;
@@ -33,14 +35,10 @@ public class ExcelDataProvider : ITfDataProviderAddon
     {
         //sample only
         return new List<string> {
-            TfExcelColumnType.Unknown.ToDescriptionString(),
             TfExcelColumnType.Text.ToDescriptionString(),
             TfExcelColumnType.Number.ToDescriptionString(),
             TfExcelColumnType.DateTime.ToDescriptionString(),
             TfExcelColumnType.Boolean.ToDescriptionString(),
-            TfExcelColumnType.Guid.ToDescriptionString(),
-            TfExcelColumnType.Currency.ToDescriptionString(),
-            TfExcelColumnType.Percentage.ToDescriptionString(),
         }.AsReadOnly();
     }
     /// <summary>
@@ -51,22 +49,21 @@ public class ExcelDataProvider : ITfDataProviderAddon
     {
         switch (dataType)
         {
-            case "UNKNOWN":
-                return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Text }.AsReadOnly();
             case "TEXT":
-                return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Text }.AsReadOnly();
+                return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Text,
+                    TfDatabaseColumnType.ShortText,
+                    TfDatabaseColumnType.Guid,
+                    }.AsReadOnly();
             case "NUMBER":
-                return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Number }.AsReadOnly();
+                return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Number,
+                    TfDatabaseColumnType.ShortInteger,
+                    TfDatabaseColumnType.Integer,
+                    TfDatabaseColumnType.LongInteger,
+                    }.AsReadOnly();
             case "DATETIME":
                 return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateTime, TfDatabaseColumnType.DateOnly }.AsReadOnly();
             case "BOOLEAN":
                 return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Boolean }.AsReadOnly();
-            case "GUID":
-                return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Guid }.AsReadOnly();
-            case "CURRENCY":
-                return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Number }.AsReadOnly();
-            case "PERCENTAGE":
-                return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Number }.AsReadOnly();
         }
         return new List<TfDatabaseColumnType>().AsReadOnly();
     }
@@ -137,7 +134,7 @@ public class ExcelDataProvider : ITfDataProviderAddon
 
                 using (var stream = tfService.GetRepositoryFileContentAsFileStream(file.Filename))
                 {
-                    return ReadExcelStream(stream, provider, settings, synchLog);
+                    return ReadExcelStream(stream, provider, settings, culture, synchLog);
                 }
             }
             else
@@ -151,7 +148,7 @@ public class ExcelDataProvider : ITfDataProviderAddon
 
                 using (var stream = new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    return ReadExcelStream(stream, provider, settings, synchLog);
+                    return ReadExcelStream(stream, provider, settings, culture, synchLog);
                 }
             }
 
@@ -170,6 +167,7 @@ public class ExcelDataProvider : ITfDataProviderAddon
     {
         int maxSampleSize = 200;
         var settings = JsonSerializer.Deserialize<ExcelDataProviderSettings>(provider.SettingsJson);
+        if (settings is null) settings = new();
         var culture = new CultureInfo(settings.CultureName);
         var result = new TfDataProviderSourceSchemaInfo();
 
@@ -181,7 +179,7 @@ public class ExcelDataProvider : ITfDataProviderAddon
         {
             var tfService = provider.ServiceProvider.GetService<ITfService>();
 
-            var file = tfService.GetRepositoryFileByUri(settings.Filepath);
+            var file = tfService!.GetRepositoryFileByUri(settings.Filepath);
 
             if (file is null)
                 throw new Exception($"File '{settings.Filepath}' is not found.");
@@ -193,11 +191,110 @@ public class ExcelDataProvider : ITfDataProviderAddon
             stream = new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         }
         Dictionary<string, List<TfDatabaseColumnType>> suggestedColumnTypes = new();
+        Dictionary<string, List<TfExcelColumnType>> suggestedSourceColumnTypes = new();
 
         using (stream)
         {
-            var columns = ReadExcelStream(stream, provider, settings);
+            using (var wb = new XLWorkbook(stream))
+            {
+                if (wb.Worksheets.Count == 0) return result;
+                var ws = wb.Worksheets.First();
+                var totalRecords = ws.Rows().Count();
+                if (totalRecords <= 1) return result;
+                if (ws.LastColumnUsed() is null) return result;
+                int totalColumns = ws.LastColumnUsed()!.ColumnNumber();
+                var colNameDict = new Dictionary<int, string>();
+                #region << Process Header >>
+                {
+                    var row = ws.Rows().First();
+                    for (int i = 1; i <= totalColumns; i++)
+                    {
+                        var value = ws.Cell(1, i).Value.ToString();
+                        var columnName = value.ToSourceColumnName();
+                        if (result.SourceColumnDefaultDbType.ContainsKey(columnName))
+                            throw new Exception($"Column with the name '{columnName}' is found multiple times in the source");
+
+                        result.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.Text;
+                        colNameDict[i] = columnName;
+                    }
+                }
+                #endregion
+
+                #region << Process Rows >>
+                HashSet<int> rowIndexToReadHS = totalRecords.GenerateSampleIndexesForList(maxSampleSize, skipCount: 1);
+                var rowIndex = 0;
+                foreach (var row in ws.Rows())
+                {
+                    if (!rowIndexToReadHS.Contains(rowIndex))
+                    {
+                        rowIndex++;
+                        continue;
+                    }
+
+                    for (int i = 1; i <= totalColumns; i++)
+                    {
+                        if (!colNameDict.ContainsKey(i))
+                            throw new Exception($"Column with the index '{i}' was not initialized");
+                        var columnName = colNameDict[i];
+                        if (!result.SourceColumnDefaultDbType.ContainsKey(columnName))
+                            throw new Exception($"Column with the name '{columnName}' was not initialized");
+                        var cell = ws.Cell(row.RowNumber(), i);
+                        var cellValue = cell.Value.ToString();
+
+                        if (!result.SourceColumnDefaultValue.ContainsKey(columnName)
+                            && !String.IsNullOrWhiteSpace(cellValue))
+                            result.SourceColumnDefaultValue[columnName] = cellValue;
+
+                        string? importFormat = null;
+                        if (cell.Style is not null)
+                        {
+                            if (cell.Style.DateFormat is not null
+                                && String.IsNullOrWhiteSpace(cell.Style.DateFormat.Format))
+                            {
+                                importFormat = cell.Style.DateFormat.Format;
+                            }
+                        }
+                        TfDatabaseColumnType type = SourceToColumnTypeConverter.GetDataTypeFromString(cellValue, culture, importFormat);
+
+                        if (!suggestedColumnTypes.ContainsKey(columnName)) suggestedColumnTypes[columnName] = new();
+                        suggestedColumnTypes[columnName].Add(type);
+
+                        if (!suggestedSourceColumnTypes.ContainsKey(columnName)) suggestedSourceColumnTypes[columnName] = new();
+                        suggestedSourceColumnTypes[columnName].Add(GetSourceTypeFromCell(cell));
+                    }
+
+                    rowIndex++;
+
+                }
+                #endregion
+            }
         }
+
+        foreach (var key in result.SourceColumnDefaultDbType.Keys)
+        {
+            var columnType = TfDatabaseColumnType.Text;
+            if (suggestedColumnTypes.ContainsKey(key))
+                columnType = suggestedColumnTypes[key].GetTypeFromOptions();
+
+            result.SourceColumnDefaultDbType[key] = columnType;
+        }
+
+        var preferredSourceTypeForDbType = new Dictionary<TfDatabaseColumnType, string>();
+        foreach (var providerDataType in provider.ProviderType.GetSupportedSourceDataTypes())
+        {
+            var supportedDBList = provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(providerDataType);
+            var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
+            result.SourceTypeSupportedDbTypes[providerDataType] = supportedDBList.ToList();
+            if (supportedDBList.Count > 0)
+            {
+                preferredSourceTypeForDbType[supportedDBList.First()] = providerDataType;
+            }
+        }
+        foreach (var columnName in suggestedSourceColumnTypes.Keys)
+        {
+            result.SourceColumnDefaultSourceType[columnName] = GetTypeFromOptions(suggestedSourceColumnTypes[columnName]).ToDescriptionString();
+        }
+
         return result;
     }
 
@@ -246,154 +343,268 @@ public class ExcelDataProvider : ITfDataProviderAddon
         Stream stream,
         TfDataProvider provider,
         ExcelDataProviderSettings settings,
-        ITfDataProviderSychronizationLog? synchLog = null)
+        CultureInfo culture,
+        ITfDataProviderSychronizationLog synchLog)
     {
         var result = new List<TfDataProviderDataRow>();
 
-        if (synchLog != null)
-            synchLog.Log($"start processing csv file");
+        synchLog.Log($"start processing Excel file");
 
         using (var wb = new XLWorkbook(stream))
         {
-            foreach (var ws in wb.Worksheets)
+            if (wb.Worksheets.Count == 0) return result.AsReadOnly();
+            var ws = wb.Worksheets.First();
+            var totalRecords = ws.Rows().Count();
+            if (totalRecords <= 1) return result.AsReadOnly();
+            if (ws.LastColumnUsed() is null) return result.AsReadOnly();
+            int totalColumns = ws.LastColumnUsed()!.ColumnNumber();
+            var sourceColumns = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
+            var colNamePositionDict = new Dictionary<string, int>();
+            #region << Process Header >>
             {
-                string? headerText = null;
-                var columns = new List<TfExcelColumnInfo>();
-
-                //if (settings.HeaderRow is not null)
-                //{
-                //    var headerRowObj = ws.Row(settings.HeaderRow.Value);
-                //    if (headerRowObj == null)
-                //        throw new InvalidOperationException($"Header row {settings.HeaderRow.Value} does not exist.");
-
-                //    foreach (var cell in headerRowObj.CellsUsed())
-                //    {
-                //        var columnIndex = cell.Address.ColumnNumber;
-                //        var headerText = cell.GetString();
-
-                //        // Grab all non‑empty cells below the header to infer type
-                //        var dataCells = ws.Range(columnIndex, settings.HeaderRow.Value + 1,
-                //                                        columnIndex, ws.LastRowUsed().RowNumber())
-                //                                .Cells()
-                //                                .Where(c => !c.IsEmpty());
-
-                //        var inferredType = dataCells.InferColumnType();
-                //        columns.Add(new TfExcelColumnInfo { Header = headerText, Type = inferredType });
-                //    }
-                //}
+                var row = ws.Rows().First();
+                for (int i = 1; i <= totalColumns; i++)
+                {
+                    var value = ws.Cell(1, i).Value.ToString();
+                    var columnName = value.ToSourceColumnName();
+                    colNamePositionDict[columnName] = i;
+                }
             }
+            #endregion
 
-            //if (synchLog != null)
-            //synchLog.Log($"successfully processed {rowCounter - 1} rows from csv file");
+            //Starts from 2 as the first row is the header
+            for (int rowPosition = 2; rowPosition <= totalRecords; rowPosition++)
+            {
+                TfDataProviderDataRow row = new TfDataProviderDataRow();
+                foreach (var dbColumn in sourceColumns)
+                {
+                    if (String.IsNullOrWhiteSpace(dbColumn.DbName)) continue;
+                    if (String.IsNullOrWhiteSpace(dbColumn.SourceName)) continue;
+                    if (!colNamePositionDict.ContainsKey(dbColumn.SourceName))
+                    {
+                        var ex = new Exception($"Source column '{dbColumn.SourceName}' is not found in csv.");
+                        synchLog.Log($"Source column '{dbColumn.SourceName}' is not found in csv.", ex);
+                        throw ex;
+                    }
+
+                    var colPosition = colNamePositionDict[dbColumn.SourceName];
+                    var cell = ws.Cell(rowPosition, colPosition);
+                    try
+                    {
+                        row[dbColumn.DbName] = ConvertValue(
+                            dbColumn,
+                            cell,
+                            settings: settings,
+                            culture: culture);
+                    }
+                    catch (Exception ex)
+                    {
+                        synchLog.Log($"failed to process value for row index={rowPosition}, source column='{dbColumn.SourceName}'," +
+                            $" provider column='{dbColumn.DbName}', provider column type='{dbColumn.DbType}'," +
+                            $"  value='{cell.Value.ToString()}'", ex);
+                        throw;
+                    }
+                }
+                result.Add(row);
+            }
+            if (synchLog != null)
+                synchLog.Log($"successfully processed {totalRecords - 1} rows from csv file");
         }
-
         return result.AsReadOnly();
     }
 
-    private object ConvertValue(
+    private object? ConvertValue(
         TfDataProviderColumn column,
-        object value,
+        IXLCell cell,
         ExcelDataProviderSettings settings,
         CultureInfo culture)
     {
-        //CSV source values are all string
-        string stringValue = value?.ToString();
-
+        if (cell.Value.IsBlank) return null;
+        var stringValue = cell.Value.ToString();
         if (string.IsNullOrEmpty(stringValue) || stringValue?.ToLowerInvariant() == "null")
             return null;
 
-        return null;
-        //string columnImportParseFormat = null;
-        //if (settings is not null && settings.AdvancedSetting is not null
-        //    && settings.AdvancedSetting.ColumnImportParseFormat is not null
-        //    && settings.AdvancedSetting.ColumnImportParseFormat.ContainsKey(column.DbName))
-        //{
-        //    columnImportParseFormat = settings.AdvancedSetting.ColumnImportParseFormat[column.DbName];
-        //}
+        string? columnImportParseFormat = null;
+        if (settings is not null && settings.AdvancedSetting is not null
+            && settings.AdvancedSetting.ColumnImportParseFormat is not null
+            && settings.AdvancedSetting.ColumnImportParseFormat.ContainsKey(column.DbName!))
+        {
+            columnImportParseFormat = settings.AdvancedSetting.ColumnImportParseFormat[column.DbName];
+        }
 
-        //switch (column.DbType)
-        //{
-        //    case TfDatabaseColumnType.ShortText:
-        //    case TfDatabaseColumnType.Text:
-        //        return stringValue;
+        switch (column.DbType)
+        {
+            case TfDatabaseColumnType.ShortText:
+            case TfDatabaseColumnType.Text:
+                return stringValue;
 
-        //    case TfDatabaseColumnType.Boolean:
-        //        {
-        //            if (Boolean.TryParse(value?.ToString(), out bool parsedValue))
-        //                return parsedValue;
+            case TfDatabaseColumnType.Boolean:
+                {
+                    if (cell.DataType == XLDataType.Boolean)
+                        return cell.Value.GetBoolean();
+                    if (Boolean.TryParse(stringValue, out bool parsedValue))
+                        return parsedValue;
 
-        //            throw new Exception($"Cannot convert value='{value?.ToString()}' to boolean value for column {column.SourceName}");
-        //        }
+                    throw new Exception($"Cannot convert value='{stringValue}' to boolean value for column {column.SourceName}");
+                }
 
-        //    case TfDatabaseColumnType.Guid:
-        //        {
-        //            if (Guid.TryParse(value?.ToString(), out Guid parsedValue))
-        //                return parsedValue;
+            case TfDatabaseColumnType.Guid:
+                {
+                    if (Guid.TryParse(stringValue, out Guid parsedValue))
+                        return parsedValue;
 
-        //            throw new Exception($"Cannot convert value='{value?.ToString()}' to GUID value for column {column.SourceName}");
-        //        }
+                    throw new Exception($"Cannot convert value='{stringValue}' to GUID value for column {column.SourceName}");
+                }
 
-        //    case TfDatabaseColumnType.DateTime:
-        //        {
-        //            if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
-        //                && DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, culture, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
-        //                return parsedValueExact;
-        //            else if (DateTime.TryParse(value?.ToString(), out DateTime parsedValue))
-        //                return parsedValue;
+            case TfDatabaseColumnType.DateTime:
+                {
+                    if (cell.DataType == XLDataType.DateTime)
+                        return cell.Value.GetDateTime();
 
-        //            throw new Exception($"Cannot convert value='{value?.ToString()}' to DateTime value for column {column.SourceName}");
-        //        }
+                    if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
+                        && DateTime.TryParseExact(stringValue, columnImportParseFormat, culture, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
+                        return parsedValueExact;
+                    if (DateTime.TryParse(stringValue, out DateTime parsedValue))
+                        return parsedValue;
 
-        //    case TfDatabaseColumnType.DateOnly:
-        //        {
-        //            if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
-        //                && DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, culture, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
-        //            {
-        //                //There are problems with DateOnly parse exact, so we use DateTime
-        //                return new DateOnly(parsedValueExact.Year, parsedValueExact.Month, parsedValueExact.Day);
-        //            }
-        //            else if (DateOnly.TryParse(value?.ToString(), out DateOnly parsedValue))
-        //                return parsedValue;
+                    throw new Exception($"Cannot convert value='{stringValue}' to DateTime value for column {column.SourceName}");
+                }
 
-        //            throw new Exception($"Cannot convert value='{value?.ToString()}' to DateOnly value for column {column.SourceName}");
-        //        }
+            case TfDatabaseColumnType.DateOnly:
+                {
+                    if (cell.DataType == XLDataType.DateTime)
+                    {
+                        return DateOnly.FromDateTime(cell.Value.GetDateTime());
+                    }
 
-        //    case TfDatabaseColumnType.ShortInteger:
-        //        {
-        //            if (short.TryParse(value?.ToString(), out short parsedValue))
-        //                return parsedValue;
+                    if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
+                        && DateTime.TryParseExact(stringValue, columnImportParseFormat, culture, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
+                    {
+                        //There are problems with DateOnly parse exact, so we use DateTime
+                        return new DateOnly(parsedValueExact.Year, parsedValueExact.Month, parsedValueExact.Day);
+                    }
+                    if (DateOnly.TryParse(stringValue, out DateOnly parsedValue))
+                        return parsedValue;
 
-        //            throw new Exception($"Cannot convert value='{value?.ToString()}' to ShortInteger value for column {column.SourceName}");
-        //        }
+                    throw new Exception($"Cannot convert value='{stringValue}' to DateOnly value for column {column.SourceName}");
+                }
 
-        //    case TfDatabaseColumnType.Integer:
-        //        {
-        //            if (int.TryParse(value?.ToString(), out int parsedValue))
-        //                return parsedValue;
+            case TfDatabaseColumnType.ShortInteger:
+                {
+                    if (cell.DataType == XLDataType.Number)
+                    {
+                        var number = cell.Value.GetNumber();
+                        try
+                        {
+                            return (short)number;
+                        }
+                        catch
+                        {
+                            throw new Exception($"Cannot convert value='{stringValue?.ToString()}' to ShortInteger value for column {column.SourceName}");
+                        }
+                    }
 
-        //            throw new Exception($"Cannot convert value='{value?.ToString()}' to Integer value for column {column.SourceName}");
-        //        }
+                    if (short.TryParse(stringValue, out short parsedValue))
+                        return parsedValue;
 
-        //    case TfDatabaseColumnType.LongInteger:
-        //        {
-        //            if (long.TryParse(value?.ToString(), out long parsedValue))
-        //                return parsedValue;
+                    throw new Exception($"Cannot convert value='{stringValue?.ToString()}' to ShortInteger value for column {column.SourceName}");
+                }
 
-        //            throw new Exception($"Cannot convert value='{value?.ToString()}' to LongInteger value for column {column.SourceName}");
-        //        }
+            case TfDatabaseColumnType.Integer:
+                {
+                    if (cell.DataType == XLDataType.Number)
+                    {
+                        var number = cell.Value.GetNumber();
+                        try
+                        {
+                            return (int)number;
+                        }
+                        catch
+                        {
+                            throw new Exception($"Cannot convert value='{stringValue}' to Integer value for column {column.SourceName}");
+                        }
+                    }
+                    if (int.TryParse(stringValue, out int parsedValue))
+                        return parsedValue;
 
-        //    case TfDatabaseColumnType.Number:
-        //        {
-        //            if (decimal.TryParse(value?.ToString(), out decimal parsedValue))
-        //                return parsedValue;
+                    throw new Exception($"Cannot convert value='{stringValue}' to Integer value for column {column.SourceName}");
+                }
 
-        //            throw new Exception($"Cannot convert value='{value?.ToString()}' to Number value for column {column.SourceName}");
-        //        }
+            case TfDatabaseColumnType.LongInteger:
+                {
+                    if (cell.DataType == XLDataType.Number)
+                    {
+                        var number = cell.Value.GetNumber();
+                        try
+                        {
+                            return (long)number;
+                        }
+                        catch
+                        {
+                            throw new Exception($"Cannot convert value='{stringValue}' to LongInteger value for column {column.SourceName}");
+                        }
+                    }
 
-        //    default:
-        //        throw new Exception($"Not supported source type for column {column.SourceName}");
-        //}
+                    if (long.TryParse(stringValue, out long parsedValue))
+                        return parsedValue;
+
+                    throw new Exception($"Cannot convert value='{stringValue}' to LongInteger value for column {column.SourceName}");
+                }
+
+            case TfDatabaseColumnType.Number:
+                {
+                    if (cell.DataType == XLDataType.Number)
+                    {
+                        var number = cell.Value.GetNumber();
+                        try
+                        {
+                            return (decimal)number;
+                        }
+                        catch
+                        {
+                            throw new Exception($"Cannot convert value='{stringValue}' to Number value for column {column.SourceName}");
+                        }
+                    }
+
+                    if (decimal.TryParse(stringValue, out decimal parsedValue))
+                        return parsedValue;
+
+                    throw new Exception($"Cannot convert value='{stringValue}' to Number value for column {column.SourceName}");
+                }
+
+            default:
+                throw new Exception($"Not supported source type for column {column.SourceName}");
+        }
     }
 
     private string LOC(string name) => name;
+
+    private TfExcelColumnType GetSourceTypeFromCell(IXLCell cell)
+    {
+        switch (cell.DataType)
+        {
+            case XLDataType.Boolean:
+                return TfExcelColumnType.Boolean;
+            case XLDataType.Number:
+                return TfExcelColumnType.Number;
+            case XLDataType.DateTime:
+                return TfExcelColumnType.DateTime;
+            default:
+                return TfExcelColumnType.Text;
+        }
+    }
+
+    private TfExcelColumnType GetTypeFromOptions(List<TfExcelColumnType> options)
+    {
+        if (options.Count == 0) return TfExcelColumnType.Text;
+        var distinctOptions = options.Distinct().ToList();
+        if (distinctOptions.Count == 1) return distinctOptions[0];
+
+        if (distinctOptions.Contains(TfExcelColumnType.Text)) return TfExcelColumnType.Text;
+        if (distinctOptions.Contains(TfExcelColumnType.Number)) return TfExcelColumnType.Number;
+        if (distinctOptions.Contains(TfExcelColumnType.DateTime)) return TfExcelColumnType.DateTime;
+        if (distinctOptions.Contains(TfExcelColumnType.Boolean)) return TfExcelColumnType.Boolean;
+        return TfExcelColumnType.Text;
+
+    }
 }

@@ -29,6 +29,15 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
     };
     [Parameter] public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; set; }
 
+    private string _advancedSettings
+    {
+        get
+        {
+            if (_form.AdvancedSetting is null) return JsonSerializer.Serialize(new ExcelDataProviderSettingsAdvanced());
+            return JsonSerializer.Serialize(_form.AdvancedSetting, new JsonSerializerOptions { WriteIndented = true });
+        }
+    }
+
     private ExcelDataProviderSettings _form = new();
 
     protected override async Task OnInitializedAsync()
@@ -89,6 +98,21 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
     {
         _form.CultureName = Thread.CurrentThread.CurrentCulture.Name;
     }
+
+    private async Task _changeAdvancedSettings(string value)
+    {
+        try
+        {
+            _form.AdvancedSetting = JsonSerializer.Deserialize<ExcelDataProviderSettingsAdvanced>(value);
+            await _valueChanged();
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError(ex.Message);
+        }
+    }
+
+
     private async Task _valueChanged()
     {
         RegionContext.SettingsJson = JsonSerializer.Serialize(_form);

@@ -42,6 +42,18 @@
 			<FluentValidationMessage For="@(() => _form.CultureName)" />
 		</FluentGridItem>
 	</FluentGrid>
+	<FluentGrid>
+		<FluentGridItem xs="12">
+			<FluentTextArea Required="true"
+							Rows="5"
+							Value=@_advancedSettings
+							ValueChanged="(x=> _changeAdvancedSettings(x))"
+							Resize="TextAreaResize.Vertical"
+							Label="@LOC("Advanced Settings")" Style="width:100%" />
+			<div class="tf-input-description">eg. ColumnImportParseFormat: {date:"dd-MM-yyyy"}</div>
+			<FluentValidationMessage For="@(() => _form.AdvancedSetting)" />
+		</FluentGridItem>
+	</FluentGrid>
 </FluentEditForm>
 
 

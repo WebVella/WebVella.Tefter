@@ -13,6 +13,10 @@ public class ExcelDataProviderSettings
     public string CultureName { get; set; } = Thread.CurrentThread.CurrentCulture.Name;
 
     [Required]
-    public int? HeaderRow { get; set; } = 0;
+    public ExcelDataProviderSettingsAdvanced AdvancedSetting { get; set; } = new ExcelDataProviderSettingsAdvanced();
+}
 
+public class ExcelDataProviderSettingsAdvanced
+{
+    public Dictionary<string, string> ColumnImportParseFormat { get; set; } = new();
 }

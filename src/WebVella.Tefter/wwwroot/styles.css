@@ -326,6 +326,14 @@ div[class^='fluent-messagebar'],
 fluent-select::part(listbox) {
   max-height: 200px;
 }
+fluent-text-field,
+fluent-number-field,
+fluent-select,
+fluent-search,
+fluent-text-area,
+fluent-combobox {
+  min-width: unset;
+}
 fluent-text-field::part(root),
 fluent-number-field::part(root),
 fluent-select::part(root),
@@ -414,6 +422,22 @@ fluent-text-area.readonly::part(control),
 fluent-combobox.readonly::part(control) {
   border-color: var(--tf-stroke-base);
   background: var(--tf-fill-color-base-1);
+}
+fluent-text-field.with-prefix::part(start),
+fluent-number-field.with-prefix::part(start),
+fluent-select.with-prefix::part(start),
+fluent-search.with-prefix::part(start),
+fluent-text-area.with-prefix::part(start),
+fluent-combobox.with-prefix::part(start) {
+  color: var(--tf-font-color-mute);
+}
+fluent-text-field.with-prefix::part(control),
+fluent-number-field.with-prefix::part(control),
+fluent-select.with-prefix::part(control),
+fluent-search.with-prefix::part(control),
+fluent-text-area.with-prefix::part(control),
+fluent-combobox.with-prefix::part(control) {
+  padding-left: 0;
 }
 .tf-select-btn {
   border-radius: 4px;

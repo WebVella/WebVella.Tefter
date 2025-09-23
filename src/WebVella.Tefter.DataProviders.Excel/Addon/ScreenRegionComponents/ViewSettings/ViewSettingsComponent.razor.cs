@@ -19,8 +19,16 @@ public partial class ViewSettingsComponent : TfBaseComponent,
 		new TfScreenRegionScope(typeof(ExcelDataProvider),null)
 	};
 	[Parameter] public TfDataProviderDisplaySettingsScreenRegionContext RegionContext { get; set; }
+    private string _advancedSettings
+    {
+        get
+        {
+            if (_form.AdvancedSetting is null) return JsonSerializer.Serialize(new ExcelDataProviderSettingsAdvanced());
+            return JsonSerializer.Serialize(_form.AdvancedSetting, new JsonSerializerOptions { WriteIndented = true });
+        }
+    }
 
-	private ExcelDataProviderSettings _form = new();
+    private ExcelDataProviderSettings _form = new();
 
 	protected override void OnInitialized()
 	{

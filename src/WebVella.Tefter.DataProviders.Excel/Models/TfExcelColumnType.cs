@@ -9,20 +9,18 @@ namespace WebVella.Tefter.DataProviders.Excel.Models;
 
 internal enum TfExcelColumnType
 {
-    [Description("UNKNOWN")]
-    Unknown = 0,
     [Description("TEXT")]
-    Text = 1,
+    Text = 0,
     [Description("NUMBER")]
-    Number = 2,
+    Number = 1,
     [Description("DATETIME")]
-    DateTime = 3,
+    DateTime = 2,
     [Description("BOOLEAN")]
-    Boolean = 4,
+    Boolean = 3,
     [Description("GUID")]
-    Guid = 5,
+    Guid = 4,
     [Description("CURRENCY")]
-    Currency = 6,
+    Currency = 5,
     [Description("PERCENTAGE")]
-    Percentage = 7
+    Percentage = 6
 }

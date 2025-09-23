@@ -45,22 +45,37 @@
 			{
 				var _rowIndex = -1;
 				<table class="tf-grid">
+					<colgroup>
+						<col style="width:60px;max-width:60px;" />
+						<col />
+						<col style="width:180px;max-width:180px;" />
+						<col />
+						<col style="width:180px;max-width:180px;" />
+						<col />
+						<col style="width:80px;max-width:80px;" />
+						<col style="width:80px;max-width:80px;" />
+						<col style="width:80px;max-width:80px;" />
+						<col style="width:80px;max-width:80px;" />
+						<col style="width:110px;max-width:110px;" />
+						<col style="width:120px;max-width:120px;" />
+						<col style="width:80px;max-width:80px;" />
+					</colgroup>
 					<thead class="tf-grid-thead">
 						<tr class="tf-grid-thead-bkg"></tr>
 						<tr class="tf-grid-tr">
-							<th class="tf-grid-th" style="width:30px;max-width:30px;"></th>
+							<th class="tf-grid-th"></th>
 							<th class="tf-grid-th">@LOC("column name")</th>
-							<th class="tf-grid-th" style="width:180px;max-width:180px;">@LOC("data type")</th>
+							<th class="tf-grid-th">@LOC("data type")</th>
 							<th class="tf-grid-th">@LOC("SOURCE column")</th>
-							<th class="tf-grid-th" style="width:180px;max-width:180px;">@LOC("SOURCE type")</th>
+							<th class="tf-grid-th">@LOC("SOURCE type")</th>
 							<th class="tf-grid-th">@LOC("default")</th>
-							<th class="tf-grid-th" style="width:80px;max-width:80px;">@LOC("nullable")</th>
-							<th class="tf-grid-th" style="width:80px;max-width:80px;">@LOC("unique")</th>
-							<th class="tf-grid-th" style="width:80px;max-width:80px;">@LOC("autogen")</th>
-							<th class="tf-grid-th" style="width:80px;max-width:80px;">@LOC("searched")</th>
-							<th class="tf-grid-th" style="width:110px;max-width:110px;">@LOC("global search")</th>
-							<th class="tf-grid-th" style="width:120px;max-width:120px;">@LOC("search type")</th>
-							<th class="tf-grid-th" style="width:80px;max-width:80px;">@LOC("sortable")</th>
+							<th class="tf-grid-th">@LOC("nullable")</th>
+							<th class="tf-grid-th">@LOC("unique")</th>
+							<th class="tf-grid-th">@LOC("autogen")</th>
+							<th class="tf-grid-th">@LOC("searched")</th>
+							<th class="tf-grid-th">@LOC("global search")</th>
+							<th class="tf-grid-th">@LOC("search type")</th>
+							<th class="tf-grid-th">@LOC("sortable")</th>
 						</tr>
 					</thead>
 					<tbody class="tf-grid-tbody">
@@ -76,7 +91,7 @@
 										<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_processColumnName(context.DbName)
 														 ValueChanged="@(x => _dbNameChanged(x,context))" AutoComplete="off"
 														 Style="width:100%"
-														 Class="@_getValidationCssClass(context.SourceName,nameof(context.DbName))">
+														 Class="@($"{_getValidationCssClass(context.SourceName,nameof(context.DbName))} with-prefix")">
 											<span slot="start">@Content!.ColumnPrefix</span>
 										</FluentTextField>
 										<TucValidationMessage Field="@nameof(context.DbName)" Index=_rowIndex Errors="ValidationErrors" />
@@ -88,12 +103,10 @@
 													  @bind-SelectedOption="@context.DbType"
 													  TOption="TfDatabaseColumnType"
 													  Style="width:100%"
-													  Class="@_getValidationCssClass(context.SourceName,nameof(context.DbType))">
-											@foreach (var op in _schemaInfo.SourceTypeSupportedDbTypes[context.SourceType])
-											{
-												<FluentOption Value="@op.ToString()">@op.ToString()</FluentOption>
-											}
-										</FluentSelect>
+													  Class="@_getValidationCssClass(context.SourceName,nameof(context.DbType))"
+													  Items="@_schemaInfo.SourceTypeSupportedDbTypes[context.SourceType]"
+													  OptionValue="@(x=> x.ToString())"
+													  OptionText="@(x => x.ToString())" />
 										<TucValidationMessage Field="@nameof(context.DbType)" Index=_rowIndex Errors="ValidationErrors" />
 									</div>
 								</td>
@@ -105,12 +118,8 @@
 										<FluentSelect Value="@context.SourceType"
 													  TOption="string"
 													  ValueChanged="@(x => _sourceTypeChanged(x,context))" Style="width:100%"
-													  Class="@_getValidationCssClass(context.SourceName,nameof(context.SourceType))">
-											@foreach (var op in _schemaInfo.SourceTypeSupportedDbTypes.Keys)
-											{
-												<FluentOption Value="@op.ToString()">@op</FluentOption>
-											}
-										</FluentSelect>
+													  Class="@_getValidationCssClass(context.SourceName,nameof(context.SourceType))"
+													  Items="@_schemaInfo.SourceTypeSupportedDbTypes.Keys"/>
 										<TucValidationMessage Field="@nameof(context.SourceType)" Index=_rowIndex Errors="ValidationErrors" />
 									</div>
 								</td>
@@ -189,21 +198,35 @@
 		else if (_activeTab == "existing")
 		{
 			<table class="tf-grid">
+				<colgroup>
+					<col />
+					<col style="width:180px;max-width:180px;" />
+					<col />
+					<col style="width:180px;max-width:180px;" />
+					<col />
+					<col style="width:80px;max-width:80px;" />
+					<col style="width:80px;max-width:80px;" />
+					<col style="width:80px;max-width:80px;" />
+					<col style="width:80px;max-width:80px;" />
+					<col style="width:110px;max-width:110px;" />
+					<col style="width:120px;max-width:120px;" />
+					<col style="width:80px;max-width:80px;" />
+				</colgroup>
 				<thead class="tf-grid-thead">
 					<tr class="tf-grid-thead-bkg"></tr>
 					<tr class="tf-grid-tr">
-						<th class="tf-grid-th" style="width:180px;max-width:180px;">@LOC("column name")</th>
-						<th class="tf-grid-th" style="width:180px;max-width:180px;">@LOC("data type")</th>
+						<th class="tf-grid-th">@LOC("column name")</th>
+						<th class="tf-grid-th">@LOC("data type")</th>
 						<th class="tf-grid-th">@LOC("SOURCE column")</th>
-						<th class="tf-grid-th" style="width:180px;max-width:180px;">@LOC("SOURCE type")</th>
-						<th class="tf-grid-th" style="width:180px;max-width:180px;">@LOC("Default")</th>
-						<th class="tf-grid-th" style="width:120px;max-width:120px;">@LOC("Nullable")</th>
-						<th class="tf-grid-th" style="width:120px;max-width:120px;">@LOC("Unique")</th>
-						<th class="tf-grid-th" style="width:120px;max-width:120px;">@LOC("Autogenerated")</th>
-						<th class="tf-grid-th" style="width:120px;max-width:120px;">@LOC("Searchable")</th>
-						<th class="tf-grid-th" style="width:120px;max-width:120px;">@LOC("Global search")</th>
-						<th class="tf-grid-th" style="width:150px;max-width:150px;">@LOC("Search type")</th>
-						<th class="tf-grid-th" style="width:120px;max-width:120px;">@LOC("Sortable")</th>
+						<th class="tf-grid-th">@LOC("SOURCE type")</th>
+						<th class="tf-grid-th">@LOC("Default")</th>
+						<th class="tf-grid-th">@LOC("Nullable")</th>
+						<th class="tf-grid-th">@LOC("Unique")</th>
+						<th class="tf-grid-th">@LOC("Autogenerated")</th>
+						<th class="tf-grid-th">@LOC("Searchable")</th>
+						<th class="tf-grid-th">@LOC("Global search")</th>
+						<th class="tf-grid-th">@LOC("Search type")</th>
+						<th class="tf-grid-th">@LOC("Sortable")</th>
 					</tr>
 				</thead>
 				<tbody class="tf-grid-tbody">

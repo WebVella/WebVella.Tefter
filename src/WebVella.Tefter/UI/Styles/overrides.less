@@ -58,6 +58,7 @@ fluent-select,
 fluent-search,
 fluent-text-area,
 fluent-combobox {
+	min-width: unset;
 
 	&::part(root), &::part(control) {
 		border-color: var(--tf-stroke-input);
@@ -89,6 +90,15 @@ fluent-combobox {
 		&::part(root), &::part(control) {
 			border-color: var(--tf-stroke-base);
 			background: var(--tf-fill-color-base-1);
+		}
+	}
+
+	&.with-prefix {
+		&::part(start){
+			color:var(--tf-font-color-mute);
+		}
+		&::part(control){
+			padding-left:0;
 		}
 	}
 }

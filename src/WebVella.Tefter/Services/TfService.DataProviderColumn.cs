@@ -1129,7 +1129,7 @@ public partial class TfService : ITfService
 				RuleFor(column => column.SourceType)
 					.Must((column, sourceType) =>
 					{
-						if(!string.IsNullOrWhiteSpace(sourceType))
+						if (!string.IsNullOrWhiteSpace(sourceType))
 							return true;
 						if (string.IsNullOrWhiteSpace(column.SourceName))
 							return true;
@@ -1267,10 +1267,8 @@ public partial class TfService : ITfService
 						if (column.IsNullable)
 							return true;
 
-						if (!column.IsNullable && column.DefaultValue == null)
-							return false;
-
-						if (column.IsNullable && column.DefaultValue == null && column.AutoDefaultValue &&
+						if ((column.DefaultValue is not null || column.AutoDefaultValue)
+							&&
 							(column.DbType == TfDatabaseColumnType.Guid ||
 							 column.DbType == TfDatabaseColumnType.DateOnly ||
 							 column.DbType == TfDatabaseColumnType.DateTime))
@@ -1278,8 +1276,12 @@ public partial class TfService : ITfService
 							return true;
 						}
 
-						if (!column.IsNullable && string.IsNullOrWhiteSpace(column.DefaultValue) &&
+						if ((string.IsNullOrWhiteSpace(column.DefaultValue) && !column.AutoDefaultValue)
+							&&
 							(column.DbType != TfDatabaseColumnType.Text && column.DbType != TfDatabaseColumnType.ShortText))
+							return false;
+
+						if (column.DefaultValue == null && !column.AutoDefaultValue)
 							return false;
 
 						return true;
@@ -1298,10 +1300,7 @@ public partial class TfService : ITfService
 							{
 								case TfDatabaseColumnType.Boolean:
 									{
-										if (column.DefaultValue is not null)
-										{
-											var booleanValue = Convert.ToBoolean(column.DefaultValue);
-										}
+										var booleanValue = Convert.ToBoolean(column.DefaultValue);
 									}
 									break;
 								case TfDatabaseColumnType.Text:
@@ -1309,61 +1308,37 @@ public partial class TfService : ITfService
 									break;
 								case TfDatabaseColumnType.Guid:
 									{
-										if (column.AutoDefaultValue == false && column.DefaultValue is not null)
-										{
-											var guid = Guid.Parse(column.DefaultValue);
-										}
+										var guid = Guid.Parse(column.DefaultValue);
 									}
 									break;
 								case TfDatabaseColumnType.DateOnly:
 									{
-										if (column.AutoDefaultValue == false && column.DefaultValue is not null)
-										{
-											var date = DateOnly.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
-										}
+										var date = DateOnly.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
 									}
 									break;
 								case TfDatabaseColumnType.DateTime:
 									{
-										if (column.AutoDefaultValue == false && column.DefaultValue is not null)
-										{
-											var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
-										}
+										var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
 									}
 									break;
 								case TfDatabaseColumnType.Number:
 									{
-										if (column.DefaultValue is not null)
-										{
-											var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
-										}
+										var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
 									}
 									break;
 								case TfDatabaseColumnType.ShortInteger:
 									{
-										if (column.DefaultValue is not null)
-										{
-											short number = Convert.ToInt16(column.DefaultValue);
-										}
-
+										short number = Convert.ToInt16(column.DefaultValue);
 									}
 									break;
 								case TfDatabaseColumnType.Integer:
 									{
-										if (column.DefaultValue is not null)
-										{
-											int number = Convert.ToInt32(column.DefaultValue);
-										}
-
+										int number = Convert.ToInt32(column.DefaultValue);
 									}
 									break;
 								case TfDatabaseColumnType.LongInteger:
 									{
-										if (column.DefaultValue is not null)
-										{
-											long number = Convert.ToInt64(column.DefaultValue);
-										}
-
+										long number = Convert.ToInt64(column.DefaultValue);
 									}
 									break;
 								default:
