@@ -1,10 +1,5 @@
-﻿using DocumentFormat.OpenXml.Office2010.Excel;
-using DocumentFormat.OpenXml.Office2013.PowerPoint.Roaming;
-using DocumentFormat.OpenXml.Spreadsheet;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using NpgsqlTypes;
-using System.Data;
-using WebVella.BlazorTrace;
 
 namespace WebVella.Tefter.Services;
 
@@ -62,23 +57,9 @@ public partial interface ITfService
 		TfDataProvider provider,
 		int index);
 
-	internal void InsertNewProviderRow(
-		TfDataProvider provider,
-		TfDataProviderDataRow row);
-
-	internal void UpdateProviderRow(
-		TfDataProvider provider,
-		TfDataProviderDataRow row);
-
 	internal void DeleteProviderRowsAfterIndex(
 		TfDataProvider provider,
 		int index);
-
-	internal void UpdateValue(
-		TfDataProvider provider,
-		Guid rowId,
-		string dbName,
-		object value);
 
 	void DeleteAllProviderRows(
 			Guid providerId);
@@ -699,22 +680,40 @@ public partial class TfService : ITfService
 
 				if (!columnFoundInDataTable)
 				{
-					var defaultValue = GetProviderColumnDefaultValue(column);
-					if (defaultValue is not null)
-						searchSb.Append($" {defaultValue}");
+					if (!column.IsUnique)
+					{
+						var defaultValue = GetProviderColumnDefaultValue(column);
+						if (defaultValue is not null)
+							searchSb.Append($" {defaultValue}");
+					}
+					else
+					{
+						var uniqueValue = GetProviderColumnUniqueValue(provider,column);
+						searchSb.Append($" {uniqueValue}");
+					}
 
-					continue;
+						continue;
 				}
 				else
 				{
 					object value = row[column.DbName];
 					if (value is not null)
+					{
 						searchSb.Append($" {value}");
+					}
 					else
 					{
-						var defaultValue = GetProviderColumnDefaultValue(column);
-						if (defaultValue is not null)
-							searchSb.Append($" {defaultValue}");
+						if (!column.IsUnique)
+						{
+							var defaultValue = GetProviderColumnDefaultValue(column);
+							if (defaultValue is not null)
+								searchSb.Append($" {defaultValue}");
+						}
+						else
+						{
+							var uniqueValue = GetProviderColumnUniqueValue(provider, column);
+							searchSb.Append($" {uniqueValue}");
+						}
 					}
 				}
 			}
@@ -774,12 +773,12 @@ public partial class TfService : ITfService
 	public void SaveSharedColumnValues(
 		Guid sharedColumnId,
 		Dictionary<string, object> valuesDict,
-		int batchSize = 100 )
+		int batchSize = 100)
 	{
-		if(batchSize <= 0)
+		if (batchSize <= 0)
 			throw new ArgumentOutOfRangeException(nameof(batchSize), "Batch size must be greater than zero");
 
-		if(valuesDict is null)
+		if (valuesDict is null)
 			throw new ArgumentNullException(nameof(valuesDict));
 
 		var sharedColumn = GetSharedColumn(sharedColumnId);
@@ -799,7 +798,7 @@ public partial class TfService : ITfService
 
 				StringBuilder sqlSb = new StringBuilder();
 
-				foreach (var identityValue in keysBatch )
+				foreach (var identityValue in keysBatch)
 				{
 					var value = valuesDict[identityValue];
 
@@ -890,7 +889,7 @@ public partial class TfService : ITfService
 
 			object defaultColumnValue = null;
 			var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == tableColumn.Name);
-			if( providerColumn is not null && providerColumn.DbType != TfDatabaseColumnType.AutoIncrement )
+			if (providerColumn is not null && providerColumn.DbType != TfDatabaseColumnType.AutoIncrement)
 				defaultColumnValue = GetProviderColumnDefaultValue(providerColumn);
 
 			var parameterType = GetDbTypeForDatabaseColumnType(tableColumn.DbType);
@@ -899,10 +898,17 @@ public partial class TfService : ITfService
 
 			if (row[tableColumn.Name] is null)
 			{
-				if(defaultColumnValue is not null)
-					parameter.Value = defaultColumnValue;
+				if (providerColumn is not null && providerColumn.IsUnique)
+				{
+					parameter.Value = GetProviderColumnUniqueValue(provider, providerColumn);
+				}
 				else
-					parameter.Value = DBNull.Value;
+				{
+					if (defaultColumnValue is not null)
+						parameter.Value = defaultColumnValue;
+					else
+						parameter.Value = DBNull.Value;
+				}
 			}
 			else
 				parameter.Value = row[tableColumn.Name];
@@ -910,18 +916,24 @@ public partial class TfService : ITfService
 			parameters.Add(parameter);
 		}
 
-		foreach(var providerColumn in provider.Columns)
+		foreach (var providerColumn in provider.Columns)
 		{
-			if( processedColumns.Contains(providerColumn.DbName))
+			if (processedColumns.Contains(providerColumn.DbName))
 				continue;
 
 			columnNames.Add(providerColumn.DbName);
 
 			var parameterType = GetDbTypeForDatabaseColumnType(providerColumn.DbType);
 			NpgsqlParameter parameter = new NpgsqlParameter($"@{providerColumn.DbName}", parameterType);
-			parameter.Value = GetProviderColumnDefaultValue(providerColumn);
-			if(parameter.Value is null)
+
+			if(providerColumn.IsUnique)
+				parameter.Value = GetProviderColumnUniqueValue(provider, providerColumn);
+			else
+				parameter.Value = GetProviderColumnDefaultValue(providerColumn);
+
+			if (parameter.Value is null)
 				parameter.Value = DBNull.Value;
+
 			parameters.Add(parameter);
 		}
 
@@ -1077,7 +1089,7 @@ public partial class TfService : ITfService
 			Guid sharedColumnId = sharedColumn.Id;
 
 			var identityColumnName = $"tf_ide_{identity.DataIdentity}";
-			if(identity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
+			if (identity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
 				identityColumnName = "tf_row_id";
 
 			string identityValue = (string)updatedRow[identityColumnName];
@@ -1285,6 +1297,95 @@ public partial class TfService : ITfService
 		}
 	}
 
+	private object GetProviderColumnUniqueValue(
+		TfDataProvider provider,
+		TfDataProviderColumn column)
+	{
+		switch (column.DbType)
+		{
+			case TfDatabaseColumnType.Boolean:
+				return Convert.ToBoolean(column.DefaultValue);
+			case TfDatabaseColumnType.Text:
+			case TfDatabaseColumnType.ShortText:
+				return Guid.NewGuid().ToSha1();
+			case TfDatabaseColumnType.Guid:
+				return Guid.NewGuid();
+			case TfDatabaseColumnType.DateOnly:
+				{
+					var maxValue = (DateTime)GetProviderColumnMaxValue(provider, column);
+					return maxValue.AddDays(1);
+				}
+			case TfDatabaseColumnType.DateTime:
+				{
+					var maxValue = (DateTime)GetProviderColumnMaxValue(provider, column);
+					return maxValue.AddSeconds(1);
+				}
+			case TfDatabaseColumnType.Number:
+				{
+					var maxValue = (decimal)GetProviderColumnMaxValue(provider, column);
+					return maxValue + 1;
+				}
+			case TfDatabaseColumnType.ShortInteger:
+				{
+					var maxValue = (short)GetProviderColumnMaxValue(provider, column);
+					return maxValue + 1;
+				}
+			case TfDatabaseColumnType.Integer:
+				{
+					var maxValue = (int)GetProviderColumnMaxValue(provider, column);
+					return maxValue + 1;
+				}
+			case TfDatabaseColumnType.LongInteger:
+				{
+					var maxValue = (long)GetProviderColumnMaxValue(provider, column);
+					return maxValue + 1;
+				}
+			default:
+				throw new Exception("Not supported database column type while validate default value.");
+		}
+	}
+
+	private object GetProviderColumnMaxValue(
+		TfDataProvider provider,
+		TfDataProviderColumn column)
+	{
+		switch (column.DbType)
+		{
+			case TfDatabaseColumnType.DateOnly:
+				{
+					var dt =_dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), CURRENT_DATE) AS result FROM dp{provider.Index};");
+					return DateOnly.FromDateTime((DateTime)dt.Rows[0]["result"]).ToDateTime();
+				}
+			case TfDatabaseColumnType.DateTime:
+				{
+					var dt = _dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), CURRENT_DATE) AS result FROM dp{provider.Index};");
+					return (DateTime)dt.Rows[0]["result"];
+				}
+			case TfDatabaseColumnType.ShortInteger:
+				{
+					var dt = _dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), 0) AS result FROM dp{provider.Index};");
+					return ((short)(int)dt.Rows[0]["result"]);
+				}
+			case TfDatabaseColumnType.Integer:
+				{
+					var dt = _dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), 0) AS result FROM dp{provider.Index};");
+					return ((int)dt.Rows[0]["result"]);
+				}
+			case TfDatabaseColumnType.LongInteger:
+				{
+					var dt = _dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), 0) AS result FROM dp{provider.Index};");
+					return ((long)dt.Rows[0]["result"]);
+				}
+			case TfDatabaseColumnType.Number:
+				{
+					var dt = _dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), 0) AS result FROM dp{provider.Index};");
+					return ((decimal)dt.Rows[0]["result"]);
+				}
+			default:
+				throw new Exception("Not supported database column type while getting max value.");
+		}
+	}
+
 
 	public TfDataProviderDataRow GetProviderRow(
 		TfDataProvider provider,
@@ -1365,88 +1466,6 @@ public partial class TfService : ITfService
 				row[column.ColumnName] = value;
 			}
 			return row;
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
-	public void InsertNewProviderRow(
-		TfDataProvider provider,
-		TfDataProviderDataRow row)
-	{
-		try
-		{
-			row["tf_id"] = Guid.NewGuid();
-			row["tf_created_on"] = DateTime.Now;
-			row["tf_updated_on"] = DateTime.Now;
-
-			//generate search
-			var searchSb = new StringBuilder();
-			foreach (var column in provider.Columns)
-			{
-				if (column.IncludeInTableSearch)
-				{
-					var index = row.ColumnNames.IndexOf(column.DbName);
-					if (index > 0)
-					{
-						object value = row[column.DbName];
-						if (value is not null)
-							searchSb.Append($" {value}");
-					}
-				}
-			}
-			row["tf_search"] = searchSb.ToString();
-
-			List<NpgsqlParameter> parameters;
-			var sql = BuildInsertNewRowSql(provider, row, out parameters);
-
-			var count = _dbService.ExecuteSqlNonQueryCommand(sql, parameters);
-			if (count != 1)
-			{
-				throw new Exception("Failed to insert new row");
-			}
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
-	public void UpdateProviderRow(
-		TfDataProvider provider,
-		TfDataProviderDataRow row)
-	{
-		try
-		{
-			row["tf_updated_on"] = DateTime.Now;
-
-			//generate search
-			var searchSb = new StringBuilder();
-			foreach (var column in provider.Columns)
-			{
-				if (column.IncludeInTableSearch)
-				{
-					var index = row.ColumnNames.IndexOf(column.DbName);
-					if (index > 0)
-					{
-						object value = row[column.DbName];
-						if (value is not null)
-							searchSb.Append($" {value}");
-					}
-				}
-			}
-			row["tf_search"] = searchSb.ToString();
-
-			List<NpgsqlParameter> parameters;
-			var sql = BuildUpdateRowSql(provider, row, out parameters);
-
-			var count = _dbService.ExecuteSqlNonQueryCommand(sql, parameters);
-			if (count != 1)
-			{
-				throw new Exception("Failed to update row");
-			}
 		}
 		catch (Exception ex)
 		{
@@ -1630,24 +1649,6 @@ public partial class TfService : ITfService
 
 		sql.AppendLine();
 		return sql.ToString();
-	}
-
-	public void UpdateValue(
-		TfDataProvider provider,
-		Guid rowId,
-		string dbName,
-		object value)
-	{
-		try
-		{
-			var row = GetProviderRow(provider, rowId);
-			row[dbName] = value;
-			UpdateProviderRow(provider, row);
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
 	}
 
 	public void DeleteAllProviderRows(
