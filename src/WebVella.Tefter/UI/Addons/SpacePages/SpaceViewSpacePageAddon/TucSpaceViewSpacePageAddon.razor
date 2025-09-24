@@ -78,7 +78,7 @@ else if (Context.Mode == TfComponentMode.Create)
 						<FluentSelect OptionSelected="(x => x.Id == _optionsDataset?.Id)"
 									  SelectedOption="@_optionsDataset"
 									  SelectedOptionChanged="_optionsDatasetSelected"
-									  TOption="TfSpaceData" Placeholder="@LOC("select...")"
+									  TOption="TfDataSet" Placeholder="@LOC("select...")"
 									  Items="@_allSpaceData" Style="width:100%"
 									  OptionValue="@((p)=> p.Id.ToString())"
 									  OptionText="@(p => p.Name)" Label="@LOC("Dataset")" />

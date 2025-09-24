@@ -4,7 +4,7 @@ public partial class TucSpaceViewActionSelector : TfBaseComponent
 	[Inject] public ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
-	[Parameter] public TfSpaceData SpaceData { get; set; } = default!;
+	[Parameter] public TfDataSet SpaceData { get; set; } = default!;
 	[Parameter] public TfUser User { get; set; } = default!;
 	[Parameter] public TfDataTable Data { get; set; } = default!;
 	[Parameter] public List<Guid> SelectedRows { get; set; } = new();

@@ -36,7 +36,7 @@ public partial interface ITfService
 		Guid templateId,
 		ITfTemplatePreviewResult preview);
 
-	List<TfSpaceDataAsOption> GetSpaceDataOptionsForTemplate();
+	List<TfDataSetAsOption> GetSpaceDataOptionsForTemplate();
 	TfTemplate UpdateTemplateSettings(Guid templateId, string settingsJson);
 }
 
@@ -346,7 +346,7 @@ public partial class TfService : ITfService
 		try
 		{
 			var template = GetTemplate(templateId);
-			var spaceData = GetSpaceData(spaceDataId);
+			var spaceData = GetDataSet(spaceDataId);
 			var processor = GetTemplateProcessor(template.ContentProcessorType);
 
 			var dataTable = QuerySpaceData(spaceData.Id, tfRecordIds);
@@ -375,7 +375,7 @@ public partial class TfService : ITfService
 			if (!template.SpaceDataList.Contains(spaceDataId))
 				throw new Exception("Template does not work for selected space data.");
 
-			var spaceData = GetSpaceData(spaceDataId);
+			var spaceData = GetDataSet(spaceDataId);
 			var processor = GetTemplateProcessor(template.ContentProcessorType);
 			var dataTable = QuerySpaceData(spaceData.Id, tfRecordIds);
 
@@ -424,14 +424,14 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfSpaceDataAsOption> GetSpaceDataOptionsForTemplate()
+	public List<TfDataSetAsOption> GetSpaceDataOptionsForTemplate()
 	{
-		var result = new List<TfSpaceDataAsOption>();
-		var spaceData = GetAllSpaceData();
+		var result = new List<TfDataSetAsOption>();
+		var spaceData = GetAllDataSets();
 		var spaceDict = GetSpacesList().ToDictionary(x => x.Id);
 		foreach (var item in spaceData)
 		{
-			result.Add(new TfSpaceDataAsOption
+			result.Add(new TfDataSetAsOption
 			{
 				Id = item.Id,
 				Name = item.Name,

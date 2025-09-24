@@ -26,7 +26,7 @@ public partial class TucSpaceDataDetailsAsideContent : TfBaseComponent, IDisposa
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async void On_SpaceDataChanged(object? caller, TfSpaceData args)
+	private async void On_SpaceDataChanged(object? caller, TfDataSet args)
 	{
 		await _init();
 	}

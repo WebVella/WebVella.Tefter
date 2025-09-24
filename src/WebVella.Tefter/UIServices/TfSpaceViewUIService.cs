@@ -233,7 +233,7 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 
 
 		var viewColumns = _tfService.GetSpaceViewColumnsList(view.Id);
-		var spaceData = _tfService.GetSpaceData(view.SpaceDataId);
+		var spaceData = _tfService.GetDataSet(view.SpaceDataId);
 		var allDataProviders = _tfService.GetDataProviders().ToList();
 		var allSharedColumns = _tfService.GetSharedColumns();
 		var dataProvider = allDataProviders.FirstOrDefault(x => x.Id == spaceData.DataProviderId);
@@ -355,7 +355,7 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 
 
 		var viewColumns = _tfService.GetSpaceViewColumnsList(view.Id);
-		var spaceData = _tfService.GetSpaceData(view.SpaceDataId);
+		var spaceData = _tfService.GetDataSet(view.SpaceDataId);
 		var allDataProviders = _tfService.GetDataProviders().ToList();
 		var allSharedColumns = _tfService.GetSharedColumns();
 		var dataProvider = allDataProviders.FirstOrDefault(x => x.Id == spaceData.DataProviderId);

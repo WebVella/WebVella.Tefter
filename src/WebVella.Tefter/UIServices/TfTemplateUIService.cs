@@ -18,7 +18,7 @@ public partial interface ITfTemplateUIService
 	//Processors
 	ReadOnlyCollection<ITfTemplateProcessorAddon> GetProcessors();
 	//Data options
-	List<TfSpaceDataAsOption> GetSpaceDataOptionsForTemplate();
+	List<TfDataSetAsOption> GetSpaceDataOptionsForTemplate();
 
 	//Settings
 	TfTemplate UpdateTemplateSettings(Guid templateId, string settingsJson);
@@ -98,7 +98,7 @@ public partial class TfTemplateUIService : ITfTemplateUIService
 	#endregion
 
 	#region << Space Data >>
-	public List<TfSpaceDataAsOption> GetSpaceDataOptionsForTemplate()
+	public List<TfDataSetAsOption> GetSpaceDataOptionsForTemplate()
 		=> _tfService.GetSpaceDataOptionsForTemplate();
 	#endregion
 

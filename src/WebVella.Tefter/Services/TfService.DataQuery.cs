@@ -228,7 +228,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			var spaceData = GetSpaceData(spaceDataId);
+			var spaceData = GetDataSet(spaceDataId);
 			if (spaceData is null)
 			{
 				throw new TfException("Found no existing space data for specified id.");
@@ -292,7 +292,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			var spaceData = GetSpaceData(spaceDataId);
+			var spaceData = GetDataSet(spaceDataId);
 			if (spaceData is null)
 			{
 				throw new TfException("Found no existing space data for specified id.");

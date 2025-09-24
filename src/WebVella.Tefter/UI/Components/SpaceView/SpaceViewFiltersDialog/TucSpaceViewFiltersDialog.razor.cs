@@ -11,7 +11,7 @@ public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogCon
 	private List<TfDataProvider> _dataProviders = new();
 	private List<TfSharedColumn> _sharedColumns = new();
 	private TfDataProvider? _dataProvider = null;
-	private TfSpaceData? _spaceData = null;
+	private TfDataSet? _spaceData = null;
 	private TfSpaceView? _spaceview = null;
 	private List<TfSpaceViewColumn> _viewColumns = new();
 	private List<TfFilterQuery> _items = new List<TfFilterQuery>();

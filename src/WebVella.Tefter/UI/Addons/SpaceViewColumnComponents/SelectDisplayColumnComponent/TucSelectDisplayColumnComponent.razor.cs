@@ -62,7 +62,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 	/// </summary>
 	private string? _renderedHash = null;
 	private string _storageKey = "";
-	private TfSpaceData? _selectedSpaceData = null;
+	private TfDataSet? _selectedSpaceData = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -334,7 +334,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 		return result;
 	}
 
-	private async Task _spaceDataChanged(TfSpaceData spaceData)
+	private async Task _spaceDataChanged(TfDataSet spaceData)
 	{
 		_selectedSpaceData = spaceData;
 		await OnOptionsChanged(nameof(componentOptions.SpaceDataId), _selectedSpaceData?.Id);

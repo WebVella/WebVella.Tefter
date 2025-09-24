@@ -8,7 +8,7 @@ public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private TfSpaceView _spaceView = new();
-	private TfSpaceData _spaceData = new();
+	private TfDataSet _spaceData = new();
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
 	private TfSpace _space = new();
 	public bool _submitting = false;

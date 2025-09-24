@@ -16,13 +16,13 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 	private bool _isCreate = false;
 
 	private TfDataProvider? _selectedDataProvider = null;
-	private TfSpaceData? _selectedDataset = null;
+	private TfDataSet? _selectedDataset = null;
 	private TfSpace _space = default!;
 	private List<string> _generatedColumns = new();
 	private int _generatedColumnCountLimit = 20;
 	private TfCreateSpaceViewExtended _form = new();
 	private ReadOnlyCollection<TfDataProvider> _providers = default!;
-	private List<TfSpaceData> _spaceDataList = default!;
+	private List<TfDataSet> _spaceDataList = default!;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -155,7 +155,7 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 		_generatedColumnsListInit();
 	}
 
-	private void _datasetSelected(TfSpaceData dataset)
+	private void _datasetSelected(TfDataSet dataset)
 	{
 		_selectedDataset = dataset;
 		_form.SpaceDataId = dataset is null ? null : dataset.Id;

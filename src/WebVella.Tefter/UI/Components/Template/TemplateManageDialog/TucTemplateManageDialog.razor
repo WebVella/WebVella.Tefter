@@ -69,7 +69,7 @@
 			<FluentGrid>
 				<FluentGridItem xs="12">
 					<FluentInputLabel Label="@LOC("Target Space Dataset")" />
-					<FluentSelect Style="width:100%" TOption="TfSpaceDataAsOption" SelectedOption="_spaceDataOption" SelectedOptionChanged="_spaceDataOptionChanged"
+					<FluentSelect Style="width:100%" TOption="TfDataSetAsOption" SelectedOption="_spaceDataOption" SelectedOptionChanged="_spaceDataOptionChanged"
 								  Placeholder="@LOC("select space dataset...")"
 								  Value="@_spaceDataOption?.Id.ToString()"
 								  OptionValue="@((p)=> p.Id.ToString())"

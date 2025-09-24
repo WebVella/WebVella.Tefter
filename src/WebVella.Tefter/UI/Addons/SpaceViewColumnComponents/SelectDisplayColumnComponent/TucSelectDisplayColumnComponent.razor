@@ -60,7 +60,7 @@ else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 		<FluentGrid>
 			<FluentGridItem xs="6">
 @* 				<FluentSelect OptionSelected="(x => x.Id == _selectedSpaceData?.Id)"
-							  TOption="TfSpaceData" Required=true
+							  TOption="TfDataSet" Required=true
 							  SelectedOption="_selectedSpaceData"
 							  SelectedOptionChanged="@((x)=> _spaceDataChanged(x))"
 							  OptionValue="((x)=> x.Id.ToString())"

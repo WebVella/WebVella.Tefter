@@ -117,7 +117,7 @@
 							<FluentSelect OptionSelected="(x => x.Id == _selectedDataset?.Id)"
 										  SelectedOption="@_selectedDataset"
 										  SelectedOptionChanged="_datasetSelected"
-										  TOption="TfSpaceData" Placeholder="@LOC("select...")"
+										  TOption="TfDataSet" Placeholder="@LOC("select...")"
 										  Items="@_spaceDataList" Style="width:100%"
 										  OptionValue="@((p)=> p.Id.ToString())"
 										  OptionText="@(p => p.Name)" Label="@LOC("Dataset")" />

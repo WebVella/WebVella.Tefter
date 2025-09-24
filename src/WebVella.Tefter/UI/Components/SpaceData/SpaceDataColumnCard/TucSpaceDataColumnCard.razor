@@ -8,7 +8,7 @@
 		@if (_columnOptions.Count > 0)
 		{
 			<FluentSelect SelectedOptionChanged="((column) => _addColumn(column))"
-						  TOption="TfSpaceDataColumn" Required="false"
+						  TOption="TfDataSetColumn" Required="false"
 						  Value="@_selectedColumn?.ColumnName"
 						  OptionValue="@((p)=> p.ColumnName)"
 						  OptionText="@(p=> p.ColumnName)"

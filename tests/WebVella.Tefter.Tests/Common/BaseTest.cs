@@ -64,7 +64,7 @@ public class BaseTest
         }
     }
 
-	public async static Task<(TfDataProvider, TfSpaceData)> CreateTestStructureAndData(
+	public async static Task<(TfDataProvider, TfDataSet)> CreateTestStructureAndData(
 		ServiceProvider serviceProvider,
 		ITfDatabaseService dbService)
 	{
@@ -246,12 +246,11 @@ public class BaseTest
 		var spaceColumns = columns.Select(x => x.Item1).ToList();
 		
 
-		var spaceData = new TfCreateSpaceData
+		var spaceData = new TfCreateDataSet
 		{
 			Id = Guid.NewGuid(),
 			DataProviderId = providerModel.Id,
 			Name = "TestSpaceData",
-			SpaceId = space.Id,
 			Columns = spaceColumns
 		};
 
@@ -259,35 +258,35 @@ public class BaseTest
 
 		//spaceData.Filters.Add(new TfFilterNumeric("sc_join_key_int", TfFilterNumericComparisonMethod.Greater, 5));
 
-		var result = tfService.CreateSpaceData(spaceData);
+		var result = tfService.CreateDataSet(spaceData);
 		provider = tfService.GetDataProvider(provider.Id);
-		var createdSpaceData = tfService.GetSpaceData(spaceData.Id);
+		var createdSpaceData = tfService.GetDataSet(spaceData.Id);
 
-		tfService.CreateSpaceDataIdentity(new TfSpaceDataIdentity
+		tfService.CreateDataSetIdentity(new TfDataSetIdentity
 		{
 			Id = Guid.NewGuid(),
-			SpaceDataId = spaceData.Id,
+			DataSetId = spaceData.Id,
 			Columns = new List<string> { sharedColumn1.DbName },
 			DataIdentity = sharedColumn1!.DataIdentity,
 		});
 
-		tfService.CreateSpaceDataIdentity(new TfSpaceDataIdentity
+		tfService.CreateDataSetIdentity(new TfDataSetIdentity
 		{
 			Id = Guid.NewGuid(),
-			SpaceDataId = spaceData.Id,
+			DataSetId = spaceData.Id,
 			Columns = new List<string> { sharedColumn2.DbName },
 			DataIdentity = sharedColumn2!.DataIdentity,
 		});
 
-		tfService.CreateSpaceDataIdentity(new TfSpaceDataIdentity
+		tfService.CreateDataSetIdentity(new TfDataSetIdentity
 		{
 			Id = Guid.NewGuid(),
-			SpaceDataId = spaceData.Id,
+			DataSetId = spaceData.Id,
 			Columns = new List<string> { sharedColumn3.DbName },
 			DataIdentity = sharedColumn3!.DataIdentity,
 		});
 
-		createdSpaceData = tfService.GetSpaceData(spaceData.Id);
+		createdSpaceData = tfService.GetDataSet(spaceData.Id);
 
 		return (provider, createdSpaceData);
 	}

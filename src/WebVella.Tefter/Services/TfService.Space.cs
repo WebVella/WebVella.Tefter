@@ -420,12 +420,6 @@ public partial class TfService : ITfService
 					DeleteSpaceView(spaceView.Id);
 				}
 
-				var spaceDataList = GetSpaceDataList(id);
-				foreach (var spaceData in spaceDataList)
-				{
-					DeleteSpaceData(spaceData.Id);
-				}
-
 				var spacePages = GetSpacePages(id);
 				foreach (var spacePage in spacePages.OrderByDescending(x => x.Position))
 				{

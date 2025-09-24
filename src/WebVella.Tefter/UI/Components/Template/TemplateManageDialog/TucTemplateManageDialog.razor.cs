@@ -20,10 +20,10 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 	private TfUser _currentUser = default!;
 	private ITfTemplateProcessorAddon? _selectedProcessor = null;
 
-	private List<TfSpaceDataAsOption> _spaceDataAll = new();
-	private List<TfSpaceDataAsOption> _spaceDataOptions = new();
-	private List<TfSpaceDataAsOption> _spaceDataSelection = new();
-	private TfSpaceDataAsOption? _spaceDataOption = null;
+	private List<TfDataSetAsOption> _spaceDataAll = new();
+	private List<TfDataSetAsOption> _spaceDataOptions = new();
+	private List<TfDataSetAsOption> _spaceDataSelection = new();
+	private TfDataSetAsOption? _spaceDataOption = null;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -144,7 +144,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 		}
 	}
 
-	private void _spaceDataOptionChanged(TfSpaceDataAsOption option)
+	private void _spaceDataOptionChanged(TfDataSetAsOption option)
 	{
 		if (option is null) return;
 
@@ -155,7 +155,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 		_recalcSpaceDataOptions();
 	}
 
-	private void _removeItem(TfSpaceDataAsOption item)
+	private void _removeItem(TfDataSetAsOption item)
 	{
 		var index = _form.SpaceDataList.FindIndex(x => x == item.Id);
 		if (index == -1) return;

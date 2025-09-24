@@ -22,7 +22,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	private string _activeTab = "data";
 	private TfSpaceViewColumn _form = new();
 	private TfSpaceView _spaceView = new();
-	private TfSpaceData _spaceData = new();
+	private TfDataSet _spaceData = new();
 	private TfDataProvider _provider = new();
 	private List<string> _options = new();
 	private ReadOnlyCollection<TfSpaceViewColumnTypeAddonMeta> _availableColumnTypes = default!;

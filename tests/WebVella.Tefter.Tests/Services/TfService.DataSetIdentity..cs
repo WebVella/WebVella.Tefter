@@ -5,7 +5,7 @@ namespace WebVella.Tefter.Tests.Services;
 public partial class TfServiceTest : BaseTest
 {
 	[Fact]
-	public async Task SpaceDataIdentity_CRUD()
+	public async Task DataSetIdentity_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -16,8 +16,8 @@ public partial class TfServiceTest : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var (spaceData,provider,provider2) = CreateSpaceDataSampleStructureForIdentities(tfService, tfMetaService);
-				spaceData.Should().NotBeNull();
+				var (dataset,provider,provider2) = CreateDataSetSampleStructureForIdentities(tfService, tfMetaService);
+				dataset.Should().NotBeNull();
 				provider.Should().NotBeNull();
 				provider2.Should().NotBeNull();
 
@@ -59,55 +59,53 @@ public partial class TfServiceTest : BaseTest
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
-				TfSpaceDataIdentity spaceDataIdentityModel =
-					new TfSpaceDataIdentity
+				TfDataSetIdentity datasetIdentityModel =
+					new TfDataSetIdentity
 					{
 						Id = Guid.NewGuid(),
-						SpaceDataId = spaceData.Id,
+						DataSetId = dataset.Id,
 						DataIdentity = dataIdentity.DataIdentity,
 						Columns = provider2.Columns.Select(x => x.DbName).ToList()
 					};
 
-				TfSpaceDataIdentity spaceDataIdentity = null;
-				task = Task.Run(() => { spaceDataIdentity = tfService.CreateSpaceDataIdentity(spaceDataIdentityModel); });
+				TfDataSetIdentity datasetIdentity = null;
+				task = Task.Run(() => { datasetIdentity = tfService.CreateDataSetIdentity(datasetIdentityModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				spaceDataIdentity.Should().NotBeNull();
+				datasetIdentity.Should().NotBeNull();
 
-				task = Task.Run(() => { spaceData = tfService.GetSpaceData(spaceData.Id); });
+				task = Task.Run(() => { dataset = tfService.GetDataSet(dataset.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				spaceData.Should().NotBeNull();
-				spaceData.Identities.Count().Should().Be(1);
-				spaceData.Identities[0].Columns.Count.Should().Be(2);
+				dataset.Should().NotBeNull();
+				dataset.Identities.Count().Should().Be(1);
+				dataset.Identities[0].Columns.Count.Should().Be(2);
 
-				spaceDataIdentityModel.Columns = new List<string> {provider2.Columns.First().DbName };
-				spaceDataIdentity = null;
-				task = Task.Run(() => { spaceDataIdentity = tfService.UpdateSpaceDataIdentity(spaceDataIdentityModel); });
+				datasetIdentityModel.Columns = new List<string> {provider2.Columns.First().DbName };
+				datasetIdentity = null;
+				task = Task.Run(() => { datasetIdentity = tfService.UpdateDataSetIdentity(datasetIdentityModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				spaceDataIdentity.Should().NotBeNull();
+				datasetIdentity.Should().NotBeNull();
 
-				task = Task.Run(() => { spaceData = tfService.GetSpaceData(spaceData.Id); });
+				task = Task.Run(() => { dataset = tfService.GetDataSet(dataset.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				spaceData.Identities[0].Columns.Count.Should().Be(1);
+				dataset.Identities[0].Columns.Count.Should().Be(1);
 
-				task = Task.Run(() => { tfService.DeleteSpaceDataIdentity(spaceDataIdentity.Id); });
+				task = Task.Run(() => { tfService.DeleteDataSetIdentity(datasetIdentity.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
-				task = Task.Run(() => { spaceData = tfService.GetSpaceData(spaceData.Id); });
+				task = Task.Run(() => { dataset = tfService.GetDataSet(dataset.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				spaceData.Identities.Count.Should().Be(0);
-
-
+				dataset.Identities.Count.Should().Be(0);
 			}
 		}
 	}
 
-	private (TfSpaceData, TfDataProvider, TfDataProvider) CreateSpaceDataSampleStructureForIdentities(
+	private (TfDataSet, TfDataProvider, TfDataProvider) CreateDataSetSampleStructureForIdentities(
 		ITfService tfService,
 		ITfMetaService tfMetaService)
 	{
@@ -212,15 +210,14 @@ public partial class TfServiceTest : BaseTest
 		tfService.CreateSpace(space);
 
 
-		var spaceData = new TfCreateSpaceData
+		var dataset = new TfCreateDataSet
 		{
 			Id = Guid.NewGuid(),
 			DataProviderId = provider.Id,
 			Name = "UnitTestDataSet",
-			SpaceId = space.Id,
 		};
 
-		return (tfService.CreateSpaceData(spaceData),provider, provider2);
+		return (tfService.CreateDataSet(dataset),provider, provider2);
 	}
 }
 

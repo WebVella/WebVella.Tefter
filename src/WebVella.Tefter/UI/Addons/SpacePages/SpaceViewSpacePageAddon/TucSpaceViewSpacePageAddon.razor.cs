@@ -104,14 +104,14 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 	private string optionsJson = "{}";
 	private TfSpaceViewSpacePageAddonOptions _options { get; set; } = new();
 	private TfDataProvider? _optionsDataProvider = null;
-	private TfSpaceData? _optionsDataset = null;
+	private TfDataSet? _optionsDataset = null;
 	private TfSpaceView? _optionsExistingSpaceView = null;
 	private List<string> _generatedColumns = new();
 	private int _generatedColumnCountLimit = 10;
 
 	private ReadOnlyCollection<TfDataProvider> _allDataProviders = default!;
 	private List<TfSpaceView> _allSpaceView = new();
-	private List<TfSpaceData> _allSpaceData = new();
+	private List<TfDataSet> _allSpaceData = new();
 
 	#endregion
 
@@ -200,7 +200,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		_generatedColumnsListInit();
 	}
 
-	private void _optionsDatasetSelected(TfSpaceData dataset)
+	private void _optionsDatasetSelected(TfDataSet dataset)
 	{
 		_optionsDataset = dataset;
 		_options.SpaceDataId = dataset is null ? null : dataset.Id;

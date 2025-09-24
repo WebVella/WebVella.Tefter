@@ -21,7 +21,7 @@ public partial class TfService : ITfService
 		private ITfService _tfService;
 		private TfDataProvider _dataProvider = null;
 		private ReadOnlyCollection<TfDataProvider> _allDataProviders = null;
-		private TfSpaceData _spaceData = null;
+		private TfDataSet _spaceData = null;
 
 		private ITfDatabaseService _dbService = null;
 		private List<SqlBuilderColumn> _availableColumns = new();
@@ -51,7 +51,7 @@ public partial class TfService : ITfService
 			ITfDatabaseService dbService,
 			TfDataProvider dataProvider,
 			ReadOnlyCollection<TfDataProvider> dataProviders,
-			TfSpaceData spaceData = null,
+			TfDataSet spaceData = null,
 			List<TfFilterBase> userFilters = null,
 			List<TfSort> userSorts = null,
 			List<TfFilterBase> presetFilters = null,
@@ -117,7 +117,7 @@ public partial class TfService : ITfService
 			ITfDatabaseService dbService,
 			TfDataProvider dataProvider,
 			ReadOnlyCollection<TfDataProvider> dataProviders,
-			TfSpaceData spaceData,
+			TfDataSet spaceData,
 			List<Guid> tfIds)
 		{
 			if (dbService is null)

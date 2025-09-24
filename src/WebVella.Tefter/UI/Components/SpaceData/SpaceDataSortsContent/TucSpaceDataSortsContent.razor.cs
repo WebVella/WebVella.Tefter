@@ -6,13 +6,13 @@ public partial class TucSpaceDataSortsContent : TfBaseComponent, IDisposable
 	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
-	private TfSpaceData _spaceData = new();
+	private TfDataSet _spaceData = new();
 	private TfSpace _space = new();
 	private TfDataProvider _provider = new();
 	public bool _submitting = false;
 	public TfNavigationState? _navState = null;
-	private List<TfSpaceDataColumn> _spaceDataColumns = new();
-	private List<TfSpaceDataColumn> _columnOptions = new();
+	private List<TfDataSetColumn> _spaceDataColumns = new();
+	private List<TfDataSetColumn> _columnOptions = new();
 	public void Dispose()
 	{
 		TfSpaceDataUIService.SpaceDataUpdated -= On_SpaceDataUpdated;
@@ -26,7 +26,7 @@ public partial class TucSpaceDataSortsContent : TfBaseComponent, IDisposable
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async void On_SpaceDataUpdated(object? caller, TfSpaceData args)
+	private async void On_SpaceDataUpdated(object? caller, TfDataSet args)
 	{
 		await _init(spaceData: args);
 	}
@@ -37,7 +37,7 @@ public partial class TucSpaceDataSortsContent : TfBaseComponent, IDisposable
 			await _init(navState: args);
 	}
 
-	private async Task _init(TfNavigationState? navState = null, TfSpaceData? spaceData = null)
+	private async Task _init(TfNavigationState? navState = null, TfDataSet? spaceData = null)
 	{
 		if (navState == null)
 			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);

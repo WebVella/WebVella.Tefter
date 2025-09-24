@@ -49,7 +49,7 @@ public partial class TfService : ITfService
 		{
 			var spaceViewsDbo = _dboManager.GetList<TfSpaceViewDbo>();
 			var allSpaceViews = spaceViewsDbo.Select(x => ConvertDboToModel(x)).ToList();
-			var spaceDataDict = (GetAllSpaceData() ?? new List<TfSpaceData>()).ToDictionary(x => x.Id);
+			var spaceDataDict = (GetAllDataSets() ?? new List<TfDataSet>()).ToDictionary(x => x.Id);
 			foreach (var spaceView in allSpaceViews)
 			{
 				if (spaceDataDict.ContainsKey(spaceView.SpaceDataId))
@@ -83,7 +83,7 @@ public partial class TfService : ITfService
 				nameof(TfSpaceView.SpaceId),
 				order: orderSettings);
 
-			var spaceDataDict = (GetSpaceDataList(spaceId) ?? new List<TfSpaceData>()).ToDictionary(x => x.Id);
+			var spaceDataDict = GetAllDataSets().ToDictionary(x => x.Id);
 			var allSpaceViews = spaceViews.Select(x => ConvertDboToModel(x)).ToList();
 
 			foreach (var spaceView in allSpaceViews)
@@ -130,7 +130,7 @@ public partial class TfService : ITfService
 				spaceViewExt.Id = Guid.NewGuid();
 
 			TfSpace? space = null;
-			TfSpaceData? spaceData = null;
+			TfDataSet? spaceData = null;
 			TfSpaceView? spaceView = null;
 			TfDataProvider? dataprovider = null;
 			var createNewDataSet = spaceViewExt.DataSetType == TfSpaceViewDataSetType.New;
@@ -168,7 +168,7 @@ public partial class TfService : ITfService
 			//SpaceData
 			if (spaceViewExt.SpaceDataId is not null)
 			{
-				spaceData = GetSpaceData(spaceViewExt.SpaceDataId.Value);
+				spaceData = GetDataSet(spaceViewExt.SpaceDataId.Value);
 				if (spaceData is null)
 					valEx.AddValidationError(nameof(spaceViewExt.SpaceDataId), "dataset is not found");
 			}
@@ -216,17 +216,16 @@ public partial class TfService : ITfService
 						selectedColumns.AddRange(dataprovider.SharedColumns.Select(x => x.DbName).ToList());
 					}
 
-					var spaceDataObj = new TfCreateSpaceData()
+					var spaceDataObj = new TfCreateDataSet()
 					{
 						Id = Guid.NewGuid(),
 						Name = spaceViewExt.NewSpaceDataName,
 						Filters = new(),//filters will not be added at this point
 						Columns = selectedColumns,
-						DataProviderId = dataprovider.Id,
-						SpaceId = space.Id
+						DataProviderId = dataprovider.Id
 					};
 
-					spaceData = CreateSpaceData(spaceDataObj);
+					spaceData = CreateDataSet(spaceDataObj);
 				}
 				#endregion
 
@@ -532,7 +531,7 @@ public partial class TfService : ITfService
 		try
 		{
 			TfSpace space = null;
-			TfSpaceData spaceData = null;
+			TfDataSet spaceData = null;
 			TfSpaceView spaceView = null;
 			TfDataProvider dataprovider = null;
 			var createNewDataSet = spaceViewExt.DataSetType == TfSpaceViewDataSetType.New;
@@ -577,7 +576,7 @@ public partial class TfService : ITfService
 			//SpaceData
 			if (spaceViewExt.SpaceDataId is not null)
 			{
-				spaceData = GetSpaceData(spaceViewExt.SpaceDataId.Value);
+				spaceData = GetDataSet(spaceViewExt.SpaceDataId.Value);
 				if (spaceData is null)
 					valEx.AddValidationError(nameof(spaceViewExt.SpaceDataId), "dataset is not found");
 			}
@@ -607,17 +606,16 @@ public partial class TfService : ITfService
 						selectedColumns.AddRange(dataprovider.SharedColumns.Select(x => x.DbName).ToList());
 					}
 
-					var spaceDataObj = new TfCreateSpaceData()
+					var spaceDataObj = new TfCreateDataSet()
 					{
 						Id = Guid.NewGuid(),
 						Name = spaceViewExt.NewSpaceDataName,
 						Filters = new(),//filters will not be added at this point
 						Columns = selectedColumns,
 						DataProviderId = dataprovider.Id,
-						SpaceId = space.Id,
 					};
 
-					spaceData = CreateSpaceData(spaceDataObj);
+					spaceData = CreateDataSet(spaceDataObj);
 				}
 				#endregion
 

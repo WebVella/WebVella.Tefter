@@ -10,7 +10,7 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
 	[Parameter] public TfSpacePageAddonContext Context { get; set; } = default!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
-	[Parameter] public TfSpaceData SpaceData { get; set; } = default!;
+	[Parameter] public TfDataSet SpaceData { get; set; } = default!;
 	[Parameter] public TfSpaceViewPreset? SpaceViewPreset { get; set; } = null;
 	[Parameter] public TfDataTable Data { get; set; } = default!;
 	[Parameter] public EventCallback<TfDataTable> DataChanged { get; set; }

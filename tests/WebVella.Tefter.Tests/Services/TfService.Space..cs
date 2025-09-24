@@ -267,273 +267,6 @@ public partial class TfServiceTest : BaseTest
 		}
 	}
 
-
-	[Fact]
-	public async Task SpaceData_CRUD()
-	{
-		using (await locker.LockAsync())
-		{
-			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			ITfService tfService = ServiceProvider.GetService<ITfService>();
-			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
-
-			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
-			{
-				var providerTypes = tfMetaService.GetDataProviderTypes();
-				var providerType = providerTypes
-					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
-
-				TfCreateDataProvider providerModel = new TfCreateDataProvider
-				{
-					Id = Guid.NewGuid(),
-					Name = "test data provider",
-					ProviderType = providerType,
-					SettingsJson = null
-				};
-
-				var provider = tfService.CreateDataProvider(providerModel);
-				provider.Should().BeOfType<TfDataProvider>();
-
-				var space = new TfSpace
-				{
-					Id = Guid.NewGuid(),
-					Name = "Space1",
-					Color = TfColor.Amber100,
-					FluentIconName = "icon1",
-					IsPrivate = false,
-					Position = 0
-				};
-				tfService.CreateSpace(space);
-
-
-				var spaceDataCreate1 = new TfCreateSpaceData
-				{
-					Id = Guid.NewGuid(),
-					DataProviderId = providerModel.Id,
-					Name = "data1",
-					SpaceId = space.Id,
-				};
-
-				var result = tfService.CreateSpaceData(spaceDataCreate1);
-				result.Should().NotBeNull();
-				result.Id.Should().Be(spaceDataCreate1.Id);
-				result.Name.Should().Be(spaceDataCreate1.Name);
-				result.SpaceId.Should().Be(space.Id);
-				result.Position.Should().Be(1);
-				result.Filters.Should().NotBeNull();
-				result.Filters.Count().Should().Be(0);
-
-
-				var spaceDataCreate2 = new TfCreateSpaceData
-				{
-					Id = Guid.NewGuid(),
-					DataProviderId = providerModel.Id,
-					Name = "data2",
-					SpaceId = space.Id,
-				};
-
-				result = tfService.CreateSpaceData(spaceDataCreate2);
-				result.Should().NotBeNull();
-				result.Id.Should().Be(spaceDataCreate2.Id);
-				result.Name.Should().Be(spaceDataCreate2.Name);
-				result.SpaceId.Should().Be(space.Id);
-				result.Position.Should().Be(2);
-				result.Filters.Should().NotBeNull();
-				result.Filters.Count().Should().Be(0);
-
-				tfService.MoveSpaceDataDown(spaceDataCreate1.Id);
-				var spaceData1 = tfService.GetSpaceData(spaceDataCreate1.Id);
-				var spaceData2 = tfService.GetSpaceData(spaceDataCreate2.Id);
-				spaceData1.Position.Should().Be(2);
-				spaceData2.Position.Should().Be(1);
-
-				tfService.MoveSpaceDataUp(spaceData1.Id);
-				spaceData1 = tfService.GetSpaceData(spaceData1.Id);
-				spaceData2 = tfService.GetSpaceData(spaceData2.Id);
-				spaceData1.Position.Should().Be(1);
-				spaceData2.Position.Should().Be(2);
-
-				result = tfService.UpdateSpaceData(new TfUpdateSpaceData
-				{
-					Id = spaceData1.Id,
-					DataProviderId = spaceData1.DataProviderId,
-					Columns = spaceData1.Columns,
-					Name = "updated name",
-					Filters = spaceData1.Filters,
-					SortOrders = spaceData1.SortOrders
-				});
-				result.Name.Should().Be("updated name");
-
-				tfService.DeleteSpaceData(spaceData1.Id);
-				spaceData2 = tfService.GetSpaceData(spaceData2.Id);
-				spaceData2.Position.Should().Be(1);
-
-				tfService.DeleteSpace(space.Id);
-			}
-		}
-	}
-
-	[Fact]
-	public async Task SpaceData_TryToChangeSpaceId()
-	{
-		using (await locker.LockAsync())
-		{
-			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			ITfService tfService = ServiceProvider.GetService<ITfService>();
-			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
-
-			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
-			{
-				var providerTypes = tfMetaService.GetDataProviderTypes();
-				var providerType = providerTypes
-					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
-
-				TfCreateDataProvider providerModel = new TfCreateDataProvider
-				{
-					Id = Guid.NewGuid(),
-					Name = "test data provider",
-					ProviderType = providerType,
-					SettingsJson = null
-				};
-				var provider = tfService.CreateDataProvider(providerModel);
-				provider.Should().BeOfType<TfDataProvider>();
-
-
-				var space = new TfSpace
-				{
-					Id = Guid.NewGuid(),
-					Name = "Space1",
-					Color = TfColor.Amber100,
-					FluentIconName = "icon1",
-					IsPrivate = false,
-					Position = 0
-				};
-				tfService.CreateSpace(space);
-
-				var space2 = new TfSpace
-				{
-					Id = Guid.NewGuid(),
-					Name = "Space2",
-					Color = TfColor.Amber100,
-					FluentIconName = "icon1",
-					IsPrivate = false,
-					Position = 0
-				};
-				tfService.CreateSpace(space2);
-
-				var spaceData1 = new TfCreateSpaceData
-				{
-					Id = Guid.NewGuid(),
-					DataProviderId = providerModel.Id,
-					Name = "data1",
-					SpaceId = space.Id,
-				};
-
-				var result = tfService.CreateSpaceData(spaceData1);
-				result.Should().NotBeNull();
-				result.Id.Should().Be(spaceData1.Id);
-				result.Name.Should().Be(spaceData1.Name);
-				result.SpaceId.Should().Be(space.Id);
-				result.Position.Should().Be(1);
-				result.Filters.Should().NotBeNull();
-				result.Filters.Count().Should().Be(0);
-
-
-				//update of space id is not allowed because update model has no such property
-				//spaceData1.SpaceId = space2.Id;
-				//var task = Task.Run(() =>
-				//{
-				//	result = tfService.UpdateSpaceData(new TfUpdateSpaceData
-				//	{
-				//		Id = Guid.NewGuid(),
-				//		DataProviderId = spaceData1.DataProviderId,
-				//		Columns = spaceData1.Columns,
-				//		Name = spaceData1.Name,
-				//		Filters = spaceData1.Filters,
-				//		SortOrders = spaceData1.SortOrders,
-				//	});
-				//});
-				//var exception = Record.ExceptionAsync(async () => await task).Result;
-				//exception.Should().NotBeNull();
-				//exception.Should().BeOfType(typeof(TfValidationException));
-				//exception.Data.Keys.Count.Should().Be(1);
-				//exception.Data.Contains(nameof(TfSpaceData.SpaceId)).Should().BeTrue();
-			}
-		}
-	}
-
-	[Fact]
-	public async Task SpaceData_ColumnsManage()
-	{
-		using (await locker.LockAsync())
-		{
-			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			ITfService tfService = ServiceProvider.GetService<ITfService>();
-			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
-
-			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
-			{
-				var providerTypes = tfMetaService.GetDataProviderTypes();
-				var providerType = providerTypes
-					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
-
-				TfCreateDataProvider providerModel = new TfCreateDataProvider
-				{
-					Id = Guid.NewGuid(),
-					Name = "test data provider",
-					ProviderType = providerType,
-					SettingsJson = null
-				};
-				var provider = tfService.CreateDataProvider(providerModel);
-				provider.Should().BeOfType<TfDataProvider>();
-
-				TfDataProviderColumn column = new TfDataProviderColumn
-				{
-					Id = Guid.Empty,
-					AutoDefaultValue = true,
-					DefaultValue = null,
-					DataProviderId = providerModel.Id,
-					DbName = $"dp{provider.Index}_textcolona",
-					DbType = TfDatabaseColumnType.Text,
-					SourceName = "source_column",
-					SourceType = "TEXT",
-					IncludeInTableSearch = true,
-					IsNullable = true,
-					IsSearchable = true,
-					IsSortable = true,
-					IsUnique = true,
-					PreferredSearchType = TfDataProviderColumnSearchType.Contains
-				};
-
-				//empty id, but internaly we set new id
-				tfService.CreateDataProviderColumn(column);
-
-				provider = tfService.GetDataProvider(providerModel.Id);
-
-				var space = new TfSpace
-				{
-					Id = Guid.NewGuid(),
-					Name = "Space1",
-					Color = TfColor.Amber100,
-					FluentIconName = "icon1",
-					IsPrivate = false,
-					Position = 0
-				};
-				tfService.CreateSpace(space);
-
-				var createSpaceDataModel = new TfCreateSpaceData
-				{
-					Id = Guid.NewGuid(),
-					DataProviderId = providerModel.Id,
-					Name = "data1",
-					SpaceId = space.Id,
-				};
-
-				//TODO rumen implement tests
-			}
-		}
-	}
-
 	[Fact]
 	public async Task Bookmark_CRUD()
 	{
@@ -599,15 +332,14 @@ public partial class TfServiceTest : BaseTest
 				space = tfService.CreateSpace(space);
 				space.Should().NotBeNull();
 
-				var spaceDataCreate = new TfCreateSpaceData
+				var spaceDataCreate = new TfCreateDataSet
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
 					Name = "data1",
-					SpaceId = space.Id,
 				};
 
-				var spaceData = tfService.CreateSpaceData(spaceDataCreate);
+				var spaceData = tfService.CreateDataSet(spaceDataCreate);
 				spaceData.Should().NotBeNull();
 
 
@@ -694,15 +426,14 @@ public partial class TfServiceTest : BaseTest
 				space = tfService.CreateSpace(space);
 				space.Should().NotBeNull();
 
-				var spaceDataCreate = new TfCreateSpaceData
+				var spaceDataCreate = new TfCreateDataSet
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
 					Name = "data1",
-					SpaceId = space.Id,
 				};
 
-				var spaceData = tfService.CreateSpaceData(spaceDataCreate);
+				var spaceData = tfService.CreateDataSet(spaceDataCreate);
 				spaceData.Should().NotBeNull();
 
 
@@ -781,15 +512,14 @@ public partial class TfServiceTest : BaseTest
 				space = tfService.CreateSpace(space);
 				space.Should().NotBeNull();
 
-				var spaceDataCreate = new TfCreateSpaceData
+				var spaceDataCreate = new TfCreateDataSet
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
 					Name = "data1",
-					SpaceId = space.Id,
 				};
 
-				var spaceData = tfService.CreateSpaceData(spaceDataCreate);
+				var spaceData = tfService.CreateDataSet(spaceDataCreate);
 				spaceData.Should().NotBeNull();
 
 				TfSpaceView view = new TfSpaceView

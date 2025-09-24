@@ -1,10 +1,10 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public record TfSpaceDataIdentity
+public record TfDataSetIdentity
 {
 	public Guid Id { get; internal set; }
 
-	public Guid SpaceDataId { get; internal set; }
+	public Guid DataSetId { get; internal set; }
 
 	public string DataIdentity { get; set; }
 
@@ -15,14 +15,14 @@ public record TfSpaceDataIdentity
 
 
 [DboCacheModel]
-[TfDboModel("tf_space_data_identity")]
-internal record TfSpaceDataIdentityDbo
+[TfDboModel("tf_dataset_identity")]
+internal record TfDataSetIdentityDbo
 {
 	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[TfDboModelProperty("space_data_id")]
-	public Guid SpaceDataId { get; set; }
+	[TfDboModelProperty("dataset_id")]
+	public Guid DataSetId { get; set; }
 
 	[TfDboModelProperty("data_identity")]
 	public string DataIdentity { get; set; }

@@ -24,7 +24,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private TfSpace? _space = null;
 	private TfSpacePage? _spacePage = null;
 	private TfSpaceView? _spaceView = null;
-	private TfSpaceData? _spaceData = null;
+	private TfDataSet? _spaceData = null;
 	private TfDataProvider? _dataProvider = null;
 	private TfSpaceViewPreset? _preset = null;
 	private TfDataTable? _data = null;

@@ -21,7 +21,7 @@ public partial class TucSpaceDataDetailsAsideToolbar : TfBaseComponent
 		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		if(navState.SpaceId is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceDataManageDialog>(
-		new TfSpaceData(){ SpaceId = navState.SpaceId.Value},
+		new TfDataSet(){ SpaceId = navState.SpaceId.Value},
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -32,7 +32,7 @@ public partial class TucSpaceDataDetailsAsideToolbar : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var item = (TfSpaceData)result.Data;
+			var item = (TfDataSet)result.Data;
 			Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, navState.SpaceId.Value, item.Id));
 		}
 

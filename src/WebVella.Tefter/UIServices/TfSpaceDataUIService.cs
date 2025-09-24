@@ -3,26 +3,26 @@
 public partial interface ITfSpaceDataUIService
 {
 	//Events
-	event EventHandler<TfSpaceData> SpaceDataCreated;
-	event EventHandler<TfSpaceData> SpaceDataUpdated;
-	event EventHandler<TfSpaceData> SpaceDataDeleted;
+	event EventHandler<TfDataSet> SpaceDataCreated;
+	event EventHandler<TfDataSet> SpaceDataUpdated;
+	event EventHandler<TfDataSet> SpaceDataDeleted;
 
 	//Space Data
-	List<TfSpaceData> GetAllSpaceData(string? search = null);
-	List<TfSpaceData> GetAllSpaceData(Guid spaceId);
-	TfSpaceData GetSpaceData(Guid spaceDataId);
-	List<TfSpaceData> GetSpaceDataList(Guid spaceId, string? search = null);
-	TfSpaceData CreateSpaceData(TfSpaceData item);
-	TfSpaceData UpdateSpaceData(TfSpaceData item);
+	List<TfDataSet> GetAllSpaceData(string? search = null);
+	List<TfDataSet> GetAllSpaceData(Guid spaceId);
+	TfDataSet GetSpaceData(Guid spaceDataId);
+	List<TfDataSet> GetSpaceDataList(Guid spaceId, string? search = null);
+	TfDataSet CreateSpaceData(TfDataSet item);
+	TfDataSet UpdateSpaceData(TfDataSet item);
 	void DeleteSpaceData(Guid itemId);
 	void CopySpaceData(Guid itemId);
 
 	//Columns
-	List<TfSpaceDataColumn> GetSpaceDataColumnOptions(Guid spaceDataId);
-	List<TfSpaceDataColumn> GetSpaceDataColumns(Guid spaceDataId);
-	void AddSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
+	List<TfDataSetColumn> GetSpaceDataColumnOptions(Guid spaceDataId);
+	List<TfDataSetColumn> GetSpaceDataColumns(Guid spaceDataId);
+	void AddSpaceDataColumn(Guid spaceDataId, TfDataSetColumn column);
 	void AddAvailableColumnsToSpaceData(Guid spaceDataId);
-	void RemoveSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column);
+	void RemoveSpaceDataColumn(Guid spaceDataId, TfDataSetColumn column);
 
 	//Filters
 	void UpdateSpaceDataFilters(Guid spaceDataId,
@@ -75,37 +75,21 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 	#endregion
 
 	#region << Events >>
-	public event EventHandler<TfSpaceData> SpaceDataCreated = default!;
-	public event EventHandler<TfSpaceData> SpaceDataUpdated = default!;
-	public event EventHandler<TfSpaceData> SpaceDataDeleted = default!;
+	public event EventHandler<TfDataSet> SpaceDataCreated = default!;
+	public event EventHandler<TfDataSet> SpaceDataUpdated = default!;
+	public event EventHandler<TfDataSet> SpaceDataDeleted = default!;
 	#endregion
 
 	#region << Space Data>>
-	public List<TfSpaceData> GetAllSpaceData(string? search = null)
-		=> _tfService.GetAllSpaceData(search);
-	public List<TfSpaceData> GetAllSpaceData(Guid spaceId)
-		=> _tfService.GetSpaceDataList(spaceId);
-	public TfSpaceData GetSpaceData(Guid itemId) => _tfService.GetSpaceData(itemId);
-	public List<TfSpaceData> GetSpaceDataList(Guid spaceId, string? search = null) => _tfService.GetSpaceDataList(spaceId, search);
-	public TfSpaceData CreateSpaceData(TfSpaceData submit)
+	public List<TfDataSet> GetAllSpaceData(string? search = null)
+		=> _tfService.GetAllDataSets(search);
+	public List<TfDataSet> GetAllSpaceData(Guid spaceId)
+		=> _tfService.GetDataSetList(spaceId);
+	public TfDataSet GetSpaceData(Guid itemId) => _tfService.GetDataSet(itemId);
+	public List<TfDataSet> GetSpaceDataList(Guid spaceId, string? search = null) => _tfService.GetDataSetList(spaceId, search);
+	public TfDataSet CreateSpaceData(TfDataSet submit)
 	{
-		var form = new TfCreateSpaceData
-		{
-			Columns = submit.Columns,
-			DataProviderId = submit.DataProviderId,
-			Filters = submit.Filters,
-			Id = submit.Id,
-			Name = submit.Name,
-			SortOrders = submit.SortOrders,
-			SpaceId = submit.SpaceId,
-		};
-		var spaceData = _tfService.CreateSpaceData(form);
-		SpaceDataCreated?.Invoke(this, spaceData);
-		return spaceData;
-	}
-	public TfSpaceData UpdateSpaceData(TfSpaceData submit)
-	{
-		var form = new TfUpdateSpaceData
+		var form = new TfCreateDataSet
 		{
 			Columns = submit.Columns,
 			DataProviderId = submit.DataProviderId,
@@ -114,20 +98,35 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 			Name = submit.Name,
 			SortOrders = submit.SortOrders
 		};
-		var spaceData = _tfService.UpdateSpaceData(form);
+		var spaceData = _tfService.CreateDataSet(form);
+		SpaceDataCreated?.Invoke(this, spaceData);
+		return spaceData;
+	}
+	public TfDataSet UpdateSpaceData(TfDataSet submit)
+	{
+		var form = new TfUpdateDataSet
+		{
+			Columns = submit.Columns,
+			DataProviderId = submit.DataProviderId,
+			Filters = submit.Filters,
+			Id = submit.Id,
+			Name = submit.Name,
+			SortOrders = submit.SortOrders
+		};
+		var spaceData = _tfService.UpdateDataSet(form);
 		SpaceDataUpdated?.Invoke(this, spaceData);
 		return spaceData;
 	}
 	public void DeleteSpaceData(Guid itemId)
 	{
-		_tfService.DeleteSpaceData(itemId);
-		var spaceData = _tfService.GetSpaceData(itemId);
+		_tfService.DeleteDataSet(itemId);
+		var spaceData = _tfService.GetDataSet(itemId);
 		SpaceDataDeleted?.Invoke(this, spaceData);
 	}
 
 	public void CopySpaceData(Guid itemId)
 	{
-		var spaceData = _tfService.CopySpaceData(itemId);
+		var spaceData = _tfService.CopyDataSet(itemId);
 		SpaceDataCreated?.Invoke(this, spaceData);
 	}
 
@@ -135,30 +134,30 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 
 	#region << Columns >>
 
-	public List<TfSpaceDataColumn> GetSpaceDataColumnOptions(Guid spaceDataId)
-		=> _tfService.GetSpaceDataColumnOptions(spaceDataId);
+	public List<TfDataSetColumn> GetSpaceDataColumnOptions(Guid spaceDataId)
+		=> _tfService.GetDataSetColumnOptions(spaceDataId);
 
-	public List<TfSpaceDataColumn> GetSpaceDataColumns(Guid spaceDataId)
-		=> _tfService.GetSpaceDataColumns(spaceDataId);
+	public List<TfDataSetColumn> GetSpaceDataColumns(Guid spaceDataId)
+		=> _tfService.GetDataSetColumns(spaceDataId);
 
 
-	public void AddSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column)
+	public void AddSpaceDataColumn(Guid spaceDataId, TfDataSetColumn column)
 	{
-		_tfService.AddSpaceDataColumn(spaceDataId, column);
-		var spaceData = _tfService.GetSpaceData(spaceDataId);
+		_tfService.AddDataSetColumn(spaceDataId, column);
+		var spaceData = _tfService.GetDataSet(spaceDataId);
 		SpaceDataUpdated?.Invoke(this, spaceData);
 	}
 
 	public void AddAvailableColumnsToSpaceData(Guid spaceDataId)
 	{
-		_tfService.AddAvailableColumnsToSpaceData(spaceDataId);
-		var spaceData = _tfService.GetSpaceData(spaceDataId);
+		_tfService.AddAvailableColumnsToDataSet(spaceDataId);
+		var spaceData = _tfService.GetDataSet(spaceDataId);
 		SpaceDataUpdated?.Invoke(this, spaceData);
 	}
-	public void RemoveSpaceDataColumn(Guid spaceDataId, TfSpaceDataColumn column)
+	public void RemoveSpaceDataColumn(Guid spaceDataId, TfDataSetColumn column)
 	{
-		_tfService.RemoveSpaceDataColumn(spaceDataId, column);
-		var spaceData = _tfService.GetSpaceData(spaceDataId);
+		_tfService.RemoveDataSetColumn(spaceDataId, column);
+		var spaceData = _tfService.GetDataSet(spaceDataId);
 		SpaceDataUpdated?.Invoke(this, spaceData);
 	}
 	#endregion
@@ -167,8 +166,8 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 	public void UpdateSpaceDataFilters(Guid spaceDataId,
 		List<TfFilterBase> filters)
 	{
-		_tfService.UpdateSpaceDataFilters(spaceDataId, filters);
-		var spaceData = _tfService.GetSpaceData(spaceDataId);
+		_tfService.UpdateDataSetFilters(spaceDataId, filters);
+		var spaceData = _tfService.GetDataSet(spaceDataId);
 		SpaceDataUpdated?.Invoke(this, spaceData);
 	}
 	#endregion
@@ -177,8 +176,8 @@ public partial class TfSpaceDataUIService : ITfSpaceDataUIService
 	public void UpdateSpaceDataSorts(Guid spaceDataId,
 		List<TfSort> sorts)
 	{
-		_tfService.UpdateSpaceDataSorts(spaceDataId, sorts);
-		var spaceData = _tfService.GetSpaceData(spaceDataId);
+		_tfService.UpdateDataSetSorts(spaceDataId, sorts);
+		var spaceData = _tfService.GetDataSet(spaceDataId);
 		SpaceDataUpdated?.Invoke(this, spaceData);
 	}
 	#endregion

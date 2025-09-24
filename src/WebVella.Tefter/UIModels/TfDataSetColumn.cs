@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace WebVella.Tefter.Models;
 
-namespace WebVella.Tefter.Models;
-
-public record TfSpaceDataColumn
+public record TfDataSetColumn
 {
 	public string? DataIdentity { get; set; } = null;
 	public string? ColumnName { get; set; }
@@ -11,5 +9,5 @@ public record TfSpaceDataColumn
 	public string? SourceCode { get; set; }
 	public TfAuxDataSourceType SourceType { get; set; } = TfAuxDataSourceType.PrimatyDataProvider;
 	public TfDatabaseColumnType DbType { get; set; }
-	
+
 }

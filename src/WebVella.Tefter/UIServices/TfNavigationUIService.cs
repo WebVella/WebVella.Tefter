@@ -88,7 +88,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				var spaces = _tfService.GetSpacesListForUser(currentUser.Id);
 				var pages = _tfService.GetAllSpacePages();
 				var views = _tfService.GetAllSpaceViews();
-				var data = _tfService.GetAllSpaceData();
+				var data = _tfService.GetAllDataSets();
 				navMenu.Menu = generateSpaceMenu(
 					routeState: _navState,
 					spaces: spaces,
@@ -286,14 +286,14 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 		List<TfSpace> spaces,
 		List<TfSpacePage> pages,
 		List<TfSpaceView> views,
-		List<TfSpaceData> data)
+		List<TfDataSet> data)
 	{
 		var menuItems = new List<TfMenuItem>();
 
 		#region << Spaces >>
 		Dictionary<Guid, List<TfSpacePage>> pageDict = new();
 		Dictionary<Guid, List<TfSpaceView>> viewDict = new();
-		Dictionary<Guid, List<TfSpaceData>> dataDict = new();
+		Dictionary<Guid, List<TfDataSet>> dataDict = new();
 
 
 		foreach (var page in pages)
@@ -335,7 +335,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 		{
 			var spacePages = pageDict.ContainsKey(space.Id) ? pageDict[space.Id] : new List<TfSpacePage>();
 			var spaceViews = viewDict.ContainsKey(space.Id) ? viewDict[space.Id] : new List<TfSpaceView>();
-			var spaceData = dataDict.ContainsKey(space.Id) ? dataDict[space.Id] : new List<TfSpaceData>();
+			var spaceData = dataDict.ContainsKey(space.Id) ? dataDict[space.Id] : new List<TfDataSet>();
 			Guid? firstPageId = null;
 			foreach (var page in spacePages)
 			{

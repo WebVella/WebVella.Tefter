@@ -23,7 +23,7 @@ public partial class TucSpaceDataDetailsContentToolbar : TfBaseComponent, IDispo
 		if (UriInitialized != args.Uri)
 			await _init(args);
 	}
-	private async void On_SpaceDataUpdated(object? caller, TfSpaceData args)
+	private async void On_SpaceDataUpdated(object? caller, TfDataSet args)
 	{
 		await _init(null);
 	}

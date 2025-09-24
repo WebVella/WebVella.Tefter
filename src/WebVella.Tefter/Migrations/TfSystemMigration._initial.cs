@@ -618,17 +618,15 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 
 		#endregion
 
-		#region  TABLE: SPACE_DATA
+		#region  TABLE: DATASET
 
 		dbBuilder
-			.NewTableBuilder(Guid.NewGuid(), "tf_space_data")
+			.NewTableBuilder(Guid.NewGuid(), "tf_dataset")
 			.WithColumns(columns =>
 			{
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
-					.AddGuidColumn("space_id", c => { c.NotNullable(); })
 					.AddShortTextColumn("name", c => { c.NotNullable(); })
-					.AddShortIntegerColumn("position", c => { c.NotNullable(); })
 					.AddGuidColumn("data_provider_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 					.AddTextColumn("filters_json", c => { c.NotNullable().WithDefaultValue("[]"); })
 					.AddTextColumn("columns_json", c => { c.NotNullable().WithDefaultValue("[]"); })
@@ -638,20 +636,12 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithConstraints(constraints =>
 			{
 				constraints
-					.AddPrimaryKeyConstraint("pk_space_data_id", c => { c.WithColumns("id"); })
-					.AddForeignKeyConstraint("fk_space_data_space", c =>
-					{
-						c
-						.WithForeignTable("tf_space")
-						.WithForeignColumns("id")
-						.WithColumns("space_id");
-					});
+					.AddPrimaryKeyConstraint("pk_space_data_id", c => { c.WithColumns("id"); });					
 			})
 			.WithIndexes(indexes =>
 			{
 				indexes
 					.AddBTreeIndex("ix_space_data_id", i => { i.WithColumns("id"); })
-					.AddBTreeIndex("ix_space_data_space_id", i => { i.WithColumns("space_id"); })
 					.AddBTreeIndex("ix_space_data_name", i => { i.WithColumns("name"); });
 			});
 
@@ -1075,29 +1065,29 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			});
 		#endregion
 
-		#region  TABLE: SPACE_DATA_IDENTITY
+		#region  TABLE: DATASET_IDENTITY
 		dbBuilder
-			.NewTableBuilder(Guid.NewGuid(), "tf_space_data_identity")
+			.NewTableBuilder(Guid.NewGuid(), "tf_dataset_identity")
 			.WithColumns(columns =>
 			{
 				columns
 					.AddGuidColumn("id", c => { c.NotNullable().WithAutoDefaultValue(); })
-					.AddGuidColumn("space_data_id", c => { c.NotNullable().WithoutAutoDefaultValue(); })
+					.AddGuidColumn("dataset_id", c => { c.NotNullable().WithoutAutoDefaultValue(); })
 					.AddShortTextColumn("data_identity", c => { c.NotNullable(); })
 					.AddTextColumn("column_names_json", c => { c.NotNullable().WithDefaultValue("[]"); });
 			})
 			.WithConstraints(constraints =>
 			{
 				constraints
-					.AddPrimaryKeyConstraint("pk_space_data_identity", c => { c.WithColumns("id"); })
-					.AddUniqueKeyConstraint("ux_space_data_identity_space_data", c => { c.WithColumns("space_data_id", "data_identity"); })
-					.AddForeignKeyConstraint("fk_space_data_identity_space_data", c =>
+					.AddPrimaryKeyConstraint("pk_dataset_identity", c => { c.WithColumns("id"); })
+					.AddUniqueKeyConstraint("ux_dataset_identity_dataset", c => { c.WithColumns("dataset_id", "data_identity"); })
+					.AddForeignKeyConstraint("fk_dataset_identity_dataset", c =>
 					{
-						c.WithColumns("space_data_id")
-						.WithForeignTable("tf_space_data")
+						c.WithColumns("dataset_id")
+						.WithForeignTable("tf_dataset")
 						.WithForeignColumns("id");
 					})
-					.AddForeignKeyConstraint("fk_space_data_identity_data_identity", c =>
+					.AddForeignKeyConstraint("fk_dataset_identity_data_identity", c =>
 					{
 						c.WithColumns("data_identity")
 						.WithForeignTable("tf_data_identity")

@@ -7,15 +7,15 @@ public partial class TucSpaceDataColumnCard : TfBaseComponent
 	public string? Title { get; set; } = null;
 
 	[Parameter]
-	public List<TfSpaceDataColumn>? Options { get; set; } = null;
+	public List<TfDataSetColumn>? Options { get; set; } = null;
 
 	[Parameter]
-	public List<TfSpaceDataColumn> Items { get; set; } = new();
+	public List<TfDataSetColumn> Items { get; set; } = new();
 	[Parameter]
-	public EventCallback<TfSpaceDataColumn> AddColumn { get; set; }
+	public EventCallback<TfDataSetColumn> AddColumn { get; set; }
 
 	[Parameter]
-	public EventCallback<TfSpaceDataColumn> RemoveColumn { get; set; }
+	public EventCallback<TfDataSetColumn> RemoveColumn { get; set; }
 
 	[Parameter]
 	public EventCallback AddAllColumns { get; set; }
@@ -26,7 +26,7 @@ public partial class TucSpaceDataColumnCard : TfBaseComponent
 	[Parameter]
 	public RenderFragment? NoItemsTemplate { get; set; }
 
-	internal List<TfSpaceDataColumn> _columnOptions
+	internal List<TfDataSetColumn> _columnOptions
 	{
 		get
 		{
@@ -35,10 +35,10 @@ public partial class TucSpaceDataColumnCard : TfBaseComponent
 		}
 	}
 
-	private TfSpaceDataColumn? _selectedColumn = null;
+	private TfDataSetColumn? _selectedColumn = null;
 	public bool _submitting = false;
 
-	private async Task _addColumn(TfSpaceDataColumn? column)
+	private async Task _addColumn(TfDataSetColumn? column)
 	{
 		if (_submitting || column is null) return;
 
@@ -57,7 +57,7 @@ public partial class TucSpaceDataColumnCard : TfBaseComponent
 		_submitting = false;
 	}
 
-	private async Task _deleteColumn(TfSpaceDataColumn column)
+	private async Task _deleteColumn(TfDataSetColumn column)
 	{
 		if (_submitting) return;
 		if (!Items.Contains(column)) return;

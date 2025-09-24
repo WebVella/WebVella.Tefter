@@ -20,7 +20,7 @@ public class TfCreateSpaceViewRecipeStep : ITfRecipeStepAddon
 			throw new Exception("Wrong data model type provided for application");
 
 		var step = (TfCreateSpaceViewRecipeStepData)addon.Data;
-		var spaceData = tfService.GetSpaceData(step.SpaceDataId);
+		var spaceData = tfService.GetDataSet(step.SpaceDataId);
 		var dataProvider = tfService.GetDataProvider(spaceData.DataProviderId);
 		var dpPrefix = $"dp{dataProvider.Index}_";
 		if (step.Presets is not null)

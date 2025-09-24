@@ -8,7 +8,7 @@ public partial class TucSpaceViewSortsDialog : TfFormBaseComponent, IDialogConte
 	[Parameter] public Guid Content { get; set; } = default!;
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
-	private TfSpaceData _spaceData = null;
+	private TfDataSet _spaceData = null;
 	private List<TfSpaceViewColumn> _viewColumns = new();
 	private List<TfSortQuery> _items = new();
 

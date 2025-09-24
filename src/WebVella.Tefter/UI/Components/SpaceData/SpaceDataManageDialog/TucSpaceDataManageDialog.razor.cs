@@ -1,11 +1,11 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceData.SpaceDataManageDialog.TfSpaceDataManageDialog", "WebVella.Tefter")]
-public partial class TucSpaceDataManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpaceData?>
+public partial class TucSpaceDataManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataSet?>
 {
 	[Inject] protected ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Inject] protected ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Inject] protected ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
-	[Parameter] public TfSpaceData? Content { get; set; }
+	[Parameter] public TfDataSet? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
@@ -15,7 +15,7 @@ public partial class TucSpaceDataManageDialog : TfFormBaseComponent, IDialogCont
 	private bool _isCreate = false;
 
 	private TfDataProvider? _selectedDataProvider = null;
-	private TfSpaceData _form = new();
+	private TfDataSet _form = new();
 	private TfSpace _space = default!;
 	private ReadOnlyCollection<TfDataProvider> _providers = default!;
 	protected override async Task OnInitializedAsync()
@@ -56,7 +56,7 @@ public partial class TucSpaceDataManageDialog : TfFormBaseComponent, IDialogCont
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			TfSpaceData result = default!;
+			TfDataSet result = default!;
 			if (_isCreate)
 			{
 				result = TfSpaceDataUIService.CreateSpaceData(_form);

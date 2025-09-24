@@ -1,31 +1,32 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public record TfSpaceData
+public record TfDataSet
 {
 	public Guid Id { get; set; }
 	public Guid DataProviderId { get; set; }
+	[Obsolete("Property is not used anymore and will be removed")]
 	public Guid SpaceId { get; set; }
 	public string Name { get; set; }
+	[Obsolete("Property is not used anymore and will be removed")]
 	public short Position { get; set; }
 	public List<TfFilterBase> Filters { get; set; } = new();
 	public List<string> Columns { get; set; } = new();
 	public List<TfSort> SortOrders { get; set; } = new();
-	public ReadOnlyCollection<TfSpaceDataIdentity> Identities { get; internal set; }
+	public ReadOnlyCollection<TfDataSetIdentity> Identities { get; internal set; }
 }
 
-public class TfCreateSpaceData
+public class TfCreateDataSet
 {
 	public Guid Id { get; set; }
 	public Guid DataProviderId { get; set; }
-	public Guid SpaceId { get; set; }
 	public string Name { get; set; }
 	public List<TfFilterBase> Filters { get; set; } = new();
 	public List<string> Columns { get; set; } = new();
 	public List<TfSort> SortOrders { get; set; } = new();
-	public List<TfSpaceDataIdentity> Identities { get; set; } = new();
+	public List<TfDataSetIdentity> Identities { get; set; } = new();
 }
 
-public class TfUpdateSpaceData
+public class TfUpdateDataSet
 {
 	public Guid Id { get; set; }
 	public string? Name { get; set; }
@@ -34,24 +35,26 @@ public class TfUpdateSpaceData
 	public List<string> Columns { get; set; } = new();
 	public List<TfSort> SortOrders { get; set; } = new();
 
-	public TfUpdateSpaceData(){}
-	public TfUpdateSpaceData(TfSpaceData spaceData){
-		Id = spaceData.Id;
-		Name = spaceData.Name;
-		DataProviderId = spaceData.DataProviderId;
-		Filters = spaceData.Filters;
-		Columns = spaceData.Columns;
-		SortOrders = spaceData.SortOrders;
+	public TfUpdateDataSet() { }
+
+	public TfUpdateDataSet(TfDataSet ds)
+	{
+		Id = ds.Id;
+		Name = ds.Name;
+		DataProviderId = ds.DataProviderId;
+		Filters = ds.Filters;
+		Columns = ds.Columns;
+		SortOrders = ds.SortOrders;
 	}
 }
 
-public class TfAvailableSpaceDataColumn
+public class TfAvailableDataSetColumn
 {
 	public string DbName { get; set; }
 	public TfDatabaseColumnType DbType { get; init; }
 }
 
-public class TfSpaceDataAsOption
+public class TfDataSetAsOption
 {
 	public Guid Id { get; set; }
 	public string SpaceName { get; set; }
@@ -60,8 +63,8 @@ public class TfSpaceDataAsOption
 
 
 [DboCacheModel]
-[TfDboModel("tf_space_data")]
-internal class TfSpaceDataDbo
+[TfDboModel("tf_dataset")]
+internal class TfDataSetDbo
 {
 	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
@@ -69,14 +72,8 @@ internal class TfSpaceDataDbo
 	[TfDboModelProperty("data_provider_id")]
 	public Guid DataProviderId { get; set; }
 
-	[TfDboModelProperty("space_id")]
-	public Guid SpaceId { get; set; }
-
 	[TfDboModelProperty("name")]
 	public string Name { get; set; }
-
-	[TfDboModelProperty("position")]
-	public short Position { get; set; }
 
 	[TfDboModelProperty("filters_json")]
 	public string FiltersJson { get; set; }
