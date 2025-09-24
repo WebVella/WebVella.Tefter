@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.UI.Addons;
+﻿using DocumentFormat.OpenXml.EMMA;
+using WebVella.Tefter.UI.Addons;
 
 namespace WebVella.Tefter.Tests.Services;
 
@@ -88,6 +89,107 @@ public partial class TfServiceTest : BaseTest
 				tfService.DeleteDataset(ds1.Id);
 				ds2 = tfService.GetDataset(ds2.Id);
 				tfService.DeleteSpace(space.Id);
+			}
+		}
+	}
+
+
+	[Fact]
+	public async Task Dataset_TestExistingName()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
+
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var providerTypes = tfMetaService.GetDataProviderTypes();
+				var providerType = providerTypes
+					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+
+				TfCreateDataProvider providerModel = new TfCreateDataProvider
+				{
+					Id = Guid.NewGuid(),
+					Name = "test data provider",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+
+				var provider = tfService.CreateDataProvider(providerModel);
+				provider.Should().BeOfType<TfDataProvider>();
+
+				var space = new TfSpace
+				{
+					Id = Guid.NewGuid(),
+					Name = "Space1",
+					Color = TfColor.Amber100,
+					FluentIconName = "icon1",
+					IsPrivate = false,
+					Position = 0
+				};
+				tfService.CreateSpace(space);
+
+
+				var datasetCreate1 = new TfCreateDataset
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = providerModel.Id,
+					Name = "data1",
+				};
+
+				var dataset1 = tfService.CreateDataset(datasetCreate1);
+				dataset1.Should().NotBeNull();
+
+
+				var datasetCreate2 = new TfCreateDataset
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = providerModel.Id,
+					Name = "data2",
+				};
+
+				var dataset2 = tfService.CreateDataset(datasetCreate2);
+				dataset2.Should().NotBeNull();
+
+				var updateDatasetModel = new TfUpdateDataset
+				{
+					Id = dataset2.Id,
+					DataProviderId = dataset2.DataProviderId,
+					Columns = dataset2.Columns,
+					Name = "data1", //not unique name
+					Filters = dataset2.Filters,
+					SortOrders = dataset2.SortOrders
+				};
+
+				//test update with existing name
+				var task = Task.Run(() => { tfService.UpdateDataset(updateDatasetModel); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType<TfValidationException>();
+				((TfValidationException)exception).Data.Should().NotBeNull();
+				((TfValidationException)exception).Data.Count.Should().Be(1);
+
+				updateDatasetModel.Name = dataset2.Name;
+				task = Task.Run(() => { tfService.UpdateDataset(updateDatasetModel); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+
+				//test create with same name
+				var datasetCreateWithSameName = new TfCreateDataset
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = providerModel.Id,
+					Name = datasetCreate1.Name,
+				};
+
+				task = Task.Run(() => { tfService.CreateDataset(datasetCreateWithSameName); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType<TfValidationException>();
+				((TfValidationException)exception).Data.Should().NotBeNull();
+				((TfValidationException)exception).Data.Count.Should().Be(1);
 			}
 		}
 	}

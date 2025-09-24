@@ -730,6 +730,17 @@ public partial class TfService : ITfService
 						.Must((dataset, id) => { return tfService.GetDataset(id) == null; })
 						.WithMessage("There is already existing dataset with specified identifier.");
 
+				RuleFor(dataset => dataset.Name)
+						.Must((dataset, name) =>
+						{
+							if (string.IsNullOrEmpty(name))
+								return true;
+
+							var datasets = tfService.GetDatasets();
+							return !datasets.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
+						})
+						.WithMessage("There is already existing dataset with specified name.");
+
 			});
 
 			RuleSet("update", () =>
@@ -740,6 +751,17 @@ public partial class TfService : ITfService
 							return tfService.GetDataset(id) != null;
 						})
 						.WithMessage("There is not existing dataset with specified identifier.");
+
+				RuleFor(dataset => dataset.Name)
+						.Must((dataset, name) =>
+						{
+							if (string.IsNullOrEmpty(name))
+								return true;
+
+							var datasets = tfService.GetDatasets();
+							return !datasets.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim() && x.Id != dataset.Id);
+						})
+						.WithMessage("There is already existing dataset with specified name.");
 			});
 
 			RuleSet("delete", () =>
