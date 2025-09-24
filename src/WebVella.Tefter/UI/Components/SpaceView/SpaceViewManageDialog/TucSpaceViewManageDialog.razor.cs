@@ -3,7 +3,7 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 {
 	[Inject] protected ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Inject] protected ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-	[Inject] protected ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
+	[Inject] protected ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Inject] protected ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Parameter] public TfSpaceView? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
@@ -15,13 +15,13 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 	private bool _isCreate = false;
 
 	private TfDataProvider? _selectedDataProvider = null;
-	private TfDataSet? _selectedDataset = null;
+	private TfDataset? _selectedDataset = null;
 	private TfSpace _space = default!;
 	private List<string> _generatedColumns = new();
 	private int _generatedColumnCountLimit = 20;
 	private TfCreateSpaceViewExtended _form = new();
 	private ReadOnlyCollection<TfDataProvider> _providers = default!;
-	private List<TfDataSet> _spaceDataList = default!;
+	private List<TfDataset> _spaceDataList = default!;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -34,7 +34,7 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 		_providers = TfDataProviderUIService.GetDataProviders();
-		_spaceDataList = TfSpaceDataUIService.GetSpaceDataList(_space.Id);
+		_spaceDataList = TfDatasetUIService.GetDatasets();
 		if (_isCreate)
 		{
 			_form = new TfCreateSpaceViewExtended()
@@ -53,8 +53,8 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 		{
 			_form = new TfCreateSpaceViewExtended() { 
 				Id = Content.Id, 
-				DataSetType = TfSpaceViewDataSetType.Existing,
-				SpaceDataId = Content.SpaceDataId,
+				DatasetType = TfSpaceViewDatasetType.Existing,
+				SpaceDataId = Content.DatasetId,
 				Name = Content.Name,
 				Position = Content.Position,
 				SpaceId = Content.SpaceId,
@@ -67,7 +67,7 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 			{
 				_form.Settings = JsonSerializer.Deserialize<TfSpaceViewSettings>(Content.SettingsJson) ?? new();
 			}
-			_selectedDataset = _spaceDataList.SingleOrDefault(x => x.Id == Content.SpaceDataId);
+			_selectedDataset = _spaceDataList.SingleOrDefault(x => x.Id == Content.DatasetId);
 		}
 
 		base.InitForm(_form);
@@ -115,31 +115,31 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 		await Dialog.CancelAsync();
 	}
 
-	private void _dataSetTypeChangeHandler(TfSpaceViewDataSetType type)
+	private void _dataSetTypeChangeHandler(TfSpaceViewDatasetType type)
 	{
 		_selectedDataProvider = null;
 		_form.DataProviderId = null;
 		_selectedDataset = null;
 		_form.SpaceDataId = null;
-		_form.DataSetType = TfSpaceViewDataSetType.New;
+		_form.DatasetType = TfSpaceViewDatasetType.New;
 
-		if (type == TfSpaceViewDataSetType.New)
+		if (type == TfSpaceViewDatasetType.New)
 		{
 			if (_providers.Any())
 			{
 				_form.DataProviderId = _providers[0].Id;
 				_selectedDataProvider = _providers[0];
 			}
-			_form.DataSetType = type;
+			_form.DatasetType = type;
 		}
-		else if (type == TfSpaceViewDataSetType.Existing)
+		else if (type == TfSpaceViewDatasetType.Existing)
 		{
 			if (_spaceDataList.Any())
 			{
 				_form.SpaceDataId = _spaceDataList[0].Id;
 				_selectedDataset = _spaceDataList[0];
 			}
-			_form.DataSetType = type;
+			_form.DatasetType = type;
 		}
 		_generatedColumnsListInit();
 	}
@@ -154,7 +154,7 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 		_generatedColumnsListInit();
 	}
 
-	private void _datasetSelected(TfDataSet dataset)
+	private void _datasetSelected(TfDataset dataset)
 	{
 		_selectedDataset = dataset;
 		_form.SpaceDataId = dataset is null ? null : dataset.Id;
@@ -176,9 +176,9 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 		{
 			_form.AddSystemColumns = value;
 		}
-		else if (field == nameof(_form.AddDataSetColumns))
+		else if (field == nameof(_form.AddDatasetColumns))
 		{
-			_form.AddDataSetColumns = value;
+			_form.AddDatasetColumns = value;
 		}
 		_generatedColumnsListInit();
 	}
@@ -198,7 +198,7 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 		}
 		else if (_selectedDataset is not null)
 		{
-			if (_form.AddDataSetColumns)
+			if (_form.AddDatasetColumns)
 			{
 				if (_selectedDataset.Columns.Count > 0)
 				{

@@ -5,7 +5,7 @@ namespace WebVella.Tefter.Tests.Services;
 public partial class TfServiceTest : BaseTest
 {
 	[Fact]
-	public async Task DataSetIdentity_CRUD()
+	public async Task DatasetIdentity_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -16,7 +16,7 @@ public partial class TfServiceTest : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var (dataset,provider,provider2) = CreateDataSetSampleStructureForIdentities(tfService, tfMetaService);
+				var (dataset,provider,provider2) = CreateDatasetSampleStructureForIdentities(tfService, tfMetaService);
 				dataset.Should().NotBeNull();
 				provider.Should().NotBeNull();
 				provider2.Should().NotBeNull();
@@ -59,22 +59,22 @@ public partial class TfServiceTest : BaseTest
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
-				TfDataSetIdentity datasetIdentityModel =
-					new TfDataSetIdentity
+				TfDatasetIdentity datasetIdentityModel =
+					new TfDatasetIdentity
 					{
 						Id = Guid.NewGuid(),
-						DataSetId = dataset.Id,
+						DatasetId = dataset.Id,
 						DataIdentity = dataIdentity.DataIdentity,
 						Columns = provider2.Columns.Select(x => x.DbName).ToList()
 					};
 
-				TfDataSetIdentity datasetIdentity = null;
-				task = Task.Run(() => { datasetIdentity = tfService.CreateDataSetIdentity(datasetIdentityModel); });
+				TfDatasetIdentity datasetIdentity = null;
+				task = Task.Run(() => { datasetIdentity = tfService.CreateDatasetIdentity(datasetIdentityModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				datasetIdentity.Should().NotBeNull();
 
-				task = Task.Run(() => { dataset = tfService.GetDataSet(dataset.Id); });
+				task = Task.Run(() => { dataset = tfService.GetDataset(dataset.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				dataset.Should().NotBeNull();
@@ -83,21 +83,21 @@ public partial class TfServiceTest : BaseTest
 
 				datasetIdentityModel.Columns = new List<string> {provider2.Columns.First().DbName };
 				datasetIdentity = null;
-				task = Task.Run(() => { datasetIdentity = tfService.UpdateDataSetIdentity(datasetIdentityModel); });
+				task = Task.Run(() => { datasetIdentity = tfService.UpdateDatasetIdentity(datasetIdentityModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				datasetIdentity.Should().NotBeNull();
 
-				task = Task.Run(() => { dataset = tfService.GetDataSet(dataset.Id); });
+				task = Task.Run(() => { dataset = tfService.GetDataset(dataset.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				dataset.Identities[0].Columns.Count.Should().Be(1);
 
-				task = Task.Run(() => { tfService.DeleteDataSetIdentity(datasetIdentity.Id); });
+				task = Task.Run(() => { tfService.DeleteDatasetIdentity(datasetIdentity.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
-				task = Task.Run(() => { dataset = tfService.GetDataSet(dataset.Id); });
+				task = Task.Run(() => { dataset = tfService.GetDataset(dataset.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				dataset.Identities.Count.Should().Be(0);
@@ -105,7 +105,7 @@ public partial class TfServiceTest : BaseTest
 		}
 	}
 
-	private (TfDataSet, TfDataProvider, TfDataProvider) CreateDataSetSampleStructureForIdentities(
+	private (TfDataset, TfDataProvider, TfDataProvider) CreateDatasetSampleStructureForIdentities(
 		ITfService tfService,
 		ITfMetaService tfMetaService)
 	{
@@ -210,14 +210,14 @@ public partial class TfServiceTest : BaseTest
 		tfService.CreateSpace(space);
 
 
-		var dataset = new TfCreateDataSet
+		var dataset = new TfCreateDataset
 		{
 			Id = Guid.NewGuid(),
 			DataProviderId = provider.Id,
-			Name = "UnitTestDataSet",
+			Name = "UnitTestDataset",
 		};
 
-		return (tfService.CreateDataSet(dataset),provider, provider2);
+		return (tfService.CreateDataset(dataset),provider, provider2);
 	}
 }
 

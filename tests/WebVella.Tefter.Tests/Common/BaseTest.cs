@@ -64,7 +64,7 @@ public class BaseTest
         }
     }
 
-	public async static Task<(TfDataProvider, TfDataSet)> CreateTestStructureAndData(
+	public async static Task<(TfDataProvider, TfDataset)> CreateTestStructureAndData(
 		ServiceProvider serviceProvider,
 		ITfDatabaseService dbService)
 	{
@@ -246,7 +246,7 @@ public class BaseTest
 		var spaceColumns = columns.Select(x => x.Item1).ToList();
 		
 
-		var spaceData = new TfCreateDataSet
+		var spaceData = new TfCreateDataset
 		{
 			Id = Guid.NewGuid(),
 			DataProviderId = providerModel.Id,
@@ -258,35 +258,35 @@ public class BaseTest
 
 		//spaceData.Filters.Add(new TfFilterNumeric("sc_join_key_int", TfFilterNumericComparisonMethod.Greater, 5));
 
-		var result = tfService.CreateDataSet(spaceData);
+		var result = tfService.CreateDataset(spaceData);
 		provider = tfService.GetDataProvider(provider.Id);
-		var createdSpaceData = tfService.GetDataSet(spaceData.Id);
+		var createdSpaceData = tfService.GetDataset(spaceData.Id);
 
-		tfService.CreateDataSetIdentity(new TfDataSetIdentity
+		tfService.CreateDatasetIdentity(new TfDatasetIdentity
 		{
 			Id = Guid.NewGuid(),
-			DataSetId = spaceData.Id,
+			DatasetId = spaceData.Id,
 			Columns = new List<string> { sharedColumn1.DbName },
 			DataIdentity = sharedColumn1!.DataIdentity,
 		});
 
-		tfService.CreateDataSetIdentity(new TfDataSetIdentity
+		tfService.CreateDatasetIdentity(new TfDatasetIdentity
 		{
 			Id = Guid.NewGuid(),
-			DataSetId = spaceData.Id,
+			DatasetId = spaceData.Id,
 			Columns = new List<string> { sharedColumn2.DbName },
 			DataIdentity = sharedColumn2!.DataIdentity,
 		});
 
-		tfService.CreateDataSetIdentity(new TfDataSetIdentity
+		tfService.CreateDatasetIdentity(new TfDatasetIdentity
 		{
 			Id = Guid.NewGuid(),
-			DataSetId = spaceData.Id,
+			DatasetId = spaceData.Id,
 			Columns = new List<string> { sharedColumn3.DbName },
 			DataIdentity = sharedColumn3!.DataIdentity,
 		});
 
-		createdSpaceData = tfService.GetDataSet(spaceData.Id);
+		createdSpaceData = tfService.GetDataset(spaceData.Id);
 
 		return (provider, createdSpaceData);
 	}

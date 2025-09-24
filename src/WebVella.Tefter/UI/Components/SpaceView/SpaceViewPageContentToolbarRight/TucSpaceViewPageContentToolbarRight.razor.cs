@@ -2,7 +2,7 @@
 public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 {
 	// Dependency Injection
-	[Inject] public ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
+	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
@@ -10,7 +10,7 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
 	[Parameter] public TfSpacePageAddonContext Context { get; set; } = default!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
-	[Parameter] public TfDataSet SpaceData { get; set; } = default!;
+	[Parameter] public TfDataset SpaceData { get; set; } = default!;
 	[Parameter] public TfSpaceViewPreset? SpaceViewPreset { get; set; } = null;
 	[Parameter] public TfDataTable Data { get; set; } = default!;
 	[Parameter] public EventCallback<TfDataTable> DataChanged { get; set; }
@@ -79,7 +79,7 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 		if (Data is null) return Task.CompletedTask;
 		try
 		{
-			var result = TfSpaceDataUIService.InsertRowInDataTable(Data);
+			var result = TfDatasetUIService.InsertRowInDataTable(Data);
 			TucSpaceViewPageContent.OnNewRow(result);
 			ToastService.ShowSuccess(LOC("Row added"));
 		}

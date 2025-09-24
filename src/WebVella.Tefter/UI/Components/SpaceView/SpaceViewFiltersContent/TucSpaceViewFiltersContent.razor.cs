@@ -2,13 +2,13 @@
 public partial class TucSpaceViewFiltersContent : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-	[Inject] public ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
+	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private TfSpaceView _spaceView = default!;
-	private TfDataSet _spaceData = default!;
+	private TfDataset _spaceData = default!;
 	private TfDataProvider _dataProvider = default!;
 	private TfSpace _space = default!;
 	public bool _submitting = false;
@@ -63,7 +63,7 @@ public partial class TucSpaceViewFiltersContent : TfBaseComponent, IDisposable
 			}
 			if (_spaceView is null) return;
 			_space = TfSpaceUIService.GetSpace(_spaceView.SpaceId);
-			_spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
+			_spaceData = TfDatasetUIService.GetDataset(_spaceView.DatasetId);
 			_dataProvider = TfDataProviderUIService.GetDataProvider(_spaceData.DataProviderId);
 		}
 		finally

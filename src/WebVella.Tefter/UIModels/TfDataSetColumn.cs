@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public record TfDataSetColumn
+public record TfDatasetColumn
 {
 	public string? DataIdentity { get; set; } = null;
 	public string? ColumnName { get; set; }

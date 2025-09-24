@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public record TfDataSet
+public record TfDataset
 {
 	public Guid Id { get; set; }
 	public Guid DataProviderId { get; set; }
@@ -12,10 +12,10 @@ public record TfDataSet
 	public List<TfFilterBase> Filters { get; set; } = new();
 	public List<string> Columns { get; set; } = new();
 	public List<TfSort> SortOrders { get; set; } = new();
-	public ReadOnlyCollection<TfDataSetIdentity> Identities { get; internal set; }
+	public ReadOnlyCollection<TfDatasetIdentity> Identities { get; internal set; }
 }
 
-public class TfCreateDataSet
+public class TfCreateDataset
 {
 	public Guid Id { get; set; }
 	public Guid DataProviderId { get; set; }
@@ -23,10 +23,10 @@ public class TfCreateDataSet
 	public List<TfFilterBase> Filters { get; set; } = new();
 	public List<string> Columns { get; set; } = new();
 	public List<TfSort> SortOrders { get; set; } = new();
-	public List<TfDataSetIdentity> Identities { get; set; } = new();
+	public List<TfDatasetIdentity> Identities { get; set; } = new();
 }
 
-public class TfUpdateDataSet
+public class TfUpdateDataset
 {
 	public Guid Id { get; set; }
 	public string? Name { get; set; }
@@ -35,9 +35,9 @@ public class TfUpdateDataSet
 	public List<string> Columns { get; set; } = new();
 	public List<TfSort> SortOrders { get; set; } = new();
 
-	public TfUpdateDataSet() { }
+	public TfUpdateDataset() { }
 
-	public TfUpdateDataSet(TfDataSet ds)
+	public TfUpdateDataset(TfDataset ds)
 	{
 		Id = ds.Id;
 		Name = ds.Name;
@@ -48,13 +48,13 @@ public class TfUpdateDataSet
 	}
 }
 
-public class TfAvailableDataSetColumn
+public class TfAvailableDatasetColumn
 {
 	public string DbName { get; set; }
 	public TfDatabaseColumnType DbType { get; init; }
 }
 
-public class TfDataSetAsOption
+public class TfDatasetAsOption
 {
 	public Guid Id { get; set; }
 	public string SpaceName { get; set; }
@@ -64,7 +64,7 @@ public class TfDataSetAsOption
 
 [DboCacheModel]
 [TfDboModel("tf_dataset")]
-internal class TfDataSetDbo
+internal class TfDatasetDbo
 {
 	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }

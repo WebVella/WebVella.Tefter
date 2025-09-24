@@ -7,7 +7,7 @@ public class TfTemplateProcessorResultScreenRegionContext : TfBaseScreenRegionCo
 {
 	public TfTemplate Template { get; set; } = default!;
 	public List<Guid> SelectedRowIds { get; set; } = new();
-	public TfDataSet SpaceData { get; set; } = default!;
+	public TfDataset SpaceData { get; set; } = default!;
 	public TfUser User { get; set; } = default!;
 	public string? CustomSettingsJson { get; set; } = null;
 	public ITfTemplatePreviewResult Preview { get; set; } = default!;

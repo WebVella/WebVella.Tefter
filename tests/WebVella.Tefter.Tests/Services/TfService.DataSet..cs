@@ -5,7 +5,7 @@ namespace WebVella.Tefter.Tests.Services;
 public partial class TfServiceTest : BaseTest
 {
 	[Fact]
-	public async Task DataSet_CRUD()
+	public async Task Dataset_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -42,14 +42,14 @@ public partial class TfServiceTest : BaseTest
 				tfService.CreateSpace(space);
 
 
-				var datasetCreate1 = new TfCreateDataSet
+				var datasetCreate1 = new TfCreateDataset
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
 					Name = "data1",
 				};
 
-				var result = tfService.CreateDataSet(datasetCreate1);
+				var result = tfService.CreateDataset(datasetCreate1);
 				result.Should().NotBeNull();
 				result.Id.Should().Be(datasetCreate1.Id);
 				result.Name.Should().Be(datasetCreate1.Name);
@@ -57,24 +57,24 @@ public partial class TfServiceTest : BaseTest
 				result.Filters.Count().Should().Be(0);
 
 
-				var datasetCreate2 = new TfCreateDataSet
+				var datasetCreate2 = new TfCreateDataset
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
 					Name = "data2",
 				};
 
-				result = tfService.CreateDataSet(datasetCreate2);
+				result = tfService.CreateDataset(datasetCreate2);
 				result.Should().NotBeNull();
 				result.Id.Should().Be(datasetCreate2.Id);
 				result.Name.Should().Be(datasetCreate2.Name);
 				result.Filters.Should().NotBeNull();
 				result.Filters.Count().Should().Be(0);
 
-				var ds1 = tfService.GetDataSet(datasetCreate1.Id);
-				var ds2 = tfService.GetDataSet(datasetCreate2.Id);
+				var ds1 = tfService.GetDataset(datasetCreate1.Id);
+				var ds2 = tfService.GetDataset(datasetCreate2.Id);
 
-				result = tfService.UpdateDataSet(new TfUpdateDataSet
+				result = tfService.UpdateDataset(new TfUpdateDataset
 				{
 					Id = ds1.Id,
 					DataProviderId = ds1.DataProviderId,
@@ -85,15 +85,15 @@ public partial class TfServiceTest : BaseTest
 				});
 				result.Name.Should().Be("updated name");
 
-				tfService.DeleteDataSet(ds1.Id);
-				ds2 = tfService.GetDataSet(ds2.Id);
+				tfService.DeleteDataset(ds1.Id);
+				ds2 = tfService.GetDataset(ds2.Id);
 				tfService.DeleteSpace(space.Id);
 			}
 		}
 	}
 
 	[Fact]
-	public async Task DataSet_ColumnsManage()
+	public async Task Dataset_ColumnsManage()
 	{
 		using (await locker.LockAsync())
 		{
@@ -151,7 +151,7 @@ public partial class TfServiceTest : BaseTest
 				};
 				tfService.CreateSpace(space);
 
-				var createDataSetModel = new TfCreateDataSet
+				var createDatasetModel = new TfCreateDataset
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,

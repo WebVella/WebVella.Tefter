@@ -5,97 +5,80 @@ namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
-	public List<TfDataSet> GetAllDataSets(string? search = null);
+	public List<TfDataset> GetDatasets(string? search = null, Guid? providerId = null);
 
-	[Obsolete("SpaceId parameter is no longer used. Use GetAllDataSets(string? search = null) instead.", false)]
-	public List<TfDataSet> GetDataSetList(
-		Guid spaceId,
-		string? search = null);
-
-	public TfDataSet? GetDataSet(
+	public TfDataset? GetDataset(
 		Guid id);
 
-	public TfDataSet? CreateDataSet(
-		TfCreateDataSet dataset);
+	public TfDataset CreateDataset(
+		TfCreateDataset dataset);
 
-	public TfDataSet? UpdateDataSet(
-		TfUpdateDataSet dataset);
+	public TfDataset UpdateDataset(
+		TfUpdateDataset dataset);
 
-	public void DeleteDataSet(
+	public void DeleteDataset(
 		Guid id);
 
-	public TfDataSet? CopyDataSet(
-		Guid id);
-
-	[Obsolete("This method is not used and not implemented")]
-	public void MoveDataSetUp(
-		Guid id);
-
-	[Obsolete("This method is not used and not implemented")]
-	public void MoveDataSetDown(
+	public TfDataset? CopyDataset(
 		Guid id);
 
 	//Columns
-	public List<TfAvailableDataSetColumn> GetDataSetAvailableColumns(
+	public List<TfAvailableDatasetColumn> GetDatasetAvailableColumns(
 		Guid datasetId);
 
-	List<TfDataSetColumn> GetDataSetColumns(
+	List<TfDatasetColumn> GetDatasetColumns(
 		Guid datasetId);
 
-	List<TfDataSetColumn> GetDataSetColumnOptions(
+	List<TfDatasetColumn> GetDatasetColumnOptions(
 		Guid datasetId);
 
-	void AddDataSetColumn(
-		Guid datasetId, 
-		TfDataSetColumn column);
-	
-	void AddAvailableColumnsToDataSet(
-		Guid datasetId);
-	
-	void RemoveDataSetColumn(
+	void AddDatasetColumn(
 		Guid datasetId,
-		TfDataSetColumn column);
+		TfDatasetColumn column);
 
-	public void UpdateDataSetFilters(
+	void AddAvailableColumnsToDataset(
+		Guid datasetId);
+
+	void RemoveDatasetColumn(
+		Guid datasetId,
+		TfDatasetColumn column);
+
+	public void UpdateDatasetFilters(
 		Guid datasetId,
 		List<TfFilterBase> filters);
-	
-	public void UpdateDataSetSorts(
+
+	public void UpdateDatasetSorts(
 		Guid datasetId,
 		List<TfSort> sorts);
 }
 
 public partial class TfService : ITfService
 {
-	public List<TfDataSet> GetAllDataSets(
-		string? search = null)
+	public List<TfDataset> GetDatasets(
+		string? search = null, Guid? providerId = null)
 	{
 		try
 		{
-			var dbos = _dboManager.GetList<TfDataSetDbo>();
-
-			var datasets = dbos.Select(x => ConvertDboToModel(x)).ToList();
+			var dbos = _dboManager.GetList<TfDatasetDbo>();
+			var datasets = dbos.Where(x => x is not null).Select(x => ConvertDboToModel(x)).ToList();
+			var result = new List<TfDataset>();
 			foreach (var dataset in datasets)
 			{
-				if(dataset == null)
+				if (dataset == null)
 					continue;
 
-				dataset.Identities = new ReadOnlyCollection<TfDataSetIdentity>(
-					GetDataSetIdentities(dataset.Id).ToList());
+				if (providerId is not null && dataset.DataProviderId != providerId.Value)
+					continue;
+				if (!String.IsNullOrWhiteSpace(search)
+					&& !dataset.Name.ToLowerInvariant().Contains(search.Trim().ToLowerInvariant()))
+					continue;
+
+				dataset.Identities = new ReadOnlyCollection<TfDatasetIdentity>(
+					GetDatasetIdentities(dataset.Id).ToList());
+
+				result.Add(dataset);
 			}
-			
-			//disable nullability warning for the Linq below - we filter out nulls above
-			#pragma warning disable CS8619
-
-			if (String.IsNullOrWhiteSpace(search))
-				return datasets;
-
-			return datasets.Where(x =>
-				x.Name.ToLowerInvariant().Contains(search.Trim().ToLowerInvariant())
-				).ToList();
-
-			#pragma warning restore CS8619
-
+			return result;
 		}
 		catch (Exception ex)
 		{
@@ -103,37 +86,22 @@ public partial class TfService : ITfService
 		}
 	}
 
-	[Obsolete("SpaceId parameter is no longer used. Use GetAllDataSets(string? search = null) instead.", false)]
-	public List<TfDataSet> GetDataSetList(
-		Guid spaceId,
-		string? search = null)
-	{
-		try
-		{
-			throw new NotImplementedException();
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
-	public TfDataSet? GetDataSet(
+	public TfDataset? GetDataset(
 		Guid id)
 	{
 		try
 		{
-			var dbo = _dboManager.Get<TfDataSetDbo>(id);
+			var dbo = _dboManager.Get<TfDatasetDbo>(id);
 			if (dbo == null)
 				return null;
 
 			var dataset = ConvertDboToModel(dbo);
-			
-			if(dataset == null)
+
+			if (dataset == null)
 				return null;
 
-			dataset.Identities = new ReadOnlyCollection<TfDataSetIdentity>(
-					GetDataSetIdentities(dataset.Id).ToList());
+			dataset.Identities = new ReadOnlyCollection<TfDatasetIdentity>(
+					GetDatasetIdentities(dataset.Id).ToList());
 			return dataset;
 		}
 		catch (Exception ex)
@@ -142,89 +110,36 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfAvailableDataSetColumn> GetDataSetAvailableColumns(
-		Guid datasetId)
+	public TfDataset CreateDataset(
+		TfCreateDataset dataset)
 	{
-		try
-		{
-			List<TfAvailableDataSetColumn> columns = new List<TfAvailableDataSetColumn>();
-
-			var dbo = _dboManager.Get<TfDataSetDbo>(datasetId);
-			var dataset = ConvertDboToModel(dbo);
-
-			if (dataset == null)
-				return columns;
-
-			var provider = GetDataProvider(dataset.DataProviderId);
-			if (provider is null)
-				throw new TfException("Not found specified data provider");
-
-			foreach (var column in provider.Columns)
-			{
-				columns.Add(new TfAvailableDataSetColumn
-				{
-					DbName = column.DbName,
-					DbType = column.DbType
-				});
-			}
-
-			foreach (var identity in provider.Identities)
-			{
-				columns.Add(new TfAvailableDataSetColumn
-				{
-					DbName = identity.DataIdentity,
-					DbType = TfDatabaseColumnType.ShortText,
-				});
-			}
-
-			foreach (var column in provider.SharedColumns)
-			{
-				columns.Add(new TfAvailableDataSetColumn
-				{
-					DbName = column.DbName,
-					DbType = column.DbType,
-				});
-			}
-
-			return columns;
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
-	public TfDataSet? CreateDataSet(
-		TfCreateDataSet? dataset)
-	{
-		if (dataset is null) throw new ArgumentException("required", nameof(dataset));
 		try
 		{
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var newDataSet = new TfDataSet();
-				newDataSet.Id = dataset.Id;
-				newDataSet.DataProviderId = dataset.DataProviderId;
-				newDataSet.Name = dataset.Name;
-				newDataSet.Filters = dataset.Filters ?? new List<TfFilterBase>();
-				newDataSet.Columns = dataset.Columns ?? new List<string>();
-				newDataSet.SortOrders = dataset.SortOrders ?? new List<TfSort>();
+				var newDataset = new TfDataset();
+				newDataset.Id = dataset.Id;
+				newDataset.DataProviderId = dataset.DataProviderId;
+				newDataset.Name = dataset.Name;
+				newDataset.Filters = dataset.Filters ?? new List<TfFilterBase>();
+				newDataset.Columns = dataset.Columns ?? new List<string>();
+				newDataset.SortOrders = dataset.SortOrders ?? new List<TfSort>();
 
-				if (newDataSet.Id == Guid.Empty)
-					newDataSet.Id = Guid.NewGuid();
+				if (newDataset.Id == Guid.Empty)
+					newDataset.Id = Guid.NewGuid();
 
-				new TfDataSetValidator(this)
-					.ValidateCreate(newDataSet)
+				new TfDatasetValidator(this)
+					.ValidateCreate(newDataset)
 					.ToValidationException()
 					.ThrowIfContainsErrors();
 
-				var datasets = GetAllDataSets();
+				var datasets = GetDatasets();
 
-				var dbo = ConvertModelToDbo(newDataSet);
-				var success = _dboManager.Insert<TfDataSetDbo>(dbo);
+				var dbo = ConvertModelToDbo(newDataset);
+				var success = _dboManager.Insert<TfDatasetDbo>(dbo!);
 
 				if (!success)
-					throw new TfDboServiceException("Insert<TfDataSetDbo> failed.");
+					throw new TfDboServiceException("Insert<TfDatasetDbo> failed.");
 
 				if (dataset.Identities.Count > 0)
 				{
@@ -239,7 +154,7 @@ public partial class TfService : ITfService
 							var sharedColumn = sharedColumns.FirstOrDefault(x => x.DbName == column);
 							if (columnProvider is null && sharedColumn is null) continue;
 
-							var colSubmit = new TfDataSetColumn
+							var colSubmit = new TfDatasetColumn
 							{
 								DataIdentity = sdIdentity.DataIdentity,
 								ColumnName = $"{sdIdentity}.{column}",
@@ -269,14 +184,14 @@ public partial class TfService : ITfService
 								colSubmit.DbType = sharedColumn!.DbType;
 							}
 
-							AddDataSetColumn(newDataSet.Id, colSubmit);
+							AddDatasetColumn(newDataset.Id, colSubmit);
 						}
 					}
 				}
 
 				scope.Complete();
 
-				return GetDataSet(newDataSet.Id);
+				return GetDataset(newDataset.Id) ?? throw new Exception($"GetDataset failed for id: {newDataset.Id}");
 			}
 		}
 		catch (Exception ex)
@@ -285,46 +200,38 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfDataSet? UpdateDataSet(
-		TfUpdateDataSet? updateDataSet)
+	public TfDataset UpdateDataset(
+		TfUpdateDataset updateDataset)
 	{
 		try
 		{
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				TfDataSet dataset = null;
-				TfDataSetDbo existingDataSet = null;
+				var dataset = new TfDataset();
+				dataset.Id = updateDataset.Id;
+				dataset.DataProviderId = updateDataset.DataProviderId;
+				dataset.Name = updateDataset.Name ?? String.Empty;
+				dataset.Filters = updateDataset.Filters ?? new List<TfFilterBase>();
+				dataset.Columns = updateDataset.Columns ?? new List<string>();
+				dataset.SortOrders = updateDataset.SortOrders ?? new List<TfSort>();
 
-				if (updateDataSet is not null)
-				{
-					existingDataSet = _dboManager.Get<TfDataSetDbo>(updateDataSet.Id);
-
-					dataset = new TfDataSet();
-					dataset.Id = updateDataSet.Id;
-					dataset.DataProviderId = updateDataSet.DataProviderId;
-					dataset.Name = updateDataSet.Name;
-					dataset.Filters = updateDataSet.Filters ?? new List<TfFilterBase>();
-					dataset.Columns = updateDataSet.Columns ?? new List<string>();
-					dataset.SortOrders = updateDataSet.SortOrders ?? new List<TfSort>();
-				}
-
-				new TfDataSetValidator(this)
+				new TfDatasetValidator(this)
 					.ValidateUpdate(dataset)
 					.ToValidationException()
 					.ThrowIfContainsErrors();
 
 				var dbo = ConvertModelToDbo(dataset);
 
-				if(dbo is null)
+				if (dbo is null)
 					throw new TfDboServiceException("ConvertModelToDbo returned null.");
 
-				var success = _dboManager.Update<TfDataSetDbo>(dbo);
+				var success = _dboManager.Update<TfDatasetDbo>(dbo);
 				if (!success)
-					throw new TfDboServiceException("Update<TfDataSetDbo> failed.");
+					throw new TfDboServiceException("Update<TfDatasetDbo> failed.");
 
 				scope.Complete();
 
-				return GetDataSet(dbo.Id);
+				return GetDataset(dbo.Id) ?? throw new Exception($"UpdateDataset failed for id: {updateDataset.Id}");
 			}
 		}
 		catch (Exception ex)
@@ -333,33 +240,34 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void DeleteDataSet(
+
+	public void DeleteDataset(
 		Guid id)
 	{
 		try
 		{
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var dataset = GetDataSet(id);
-				
-				new TfDataSetValidator(this)
+				var dataset = GetDataset(id);
+
+				new TfDatasetValidator(this)
 					.ValidateDelete(dataset)
 					.ToValidationException()
 					.ThrowIfContainsErrors();
 
 				//delete identities
-				var dataSetIdentities = GetDataSetIdentities(id);
+				var dataSetIdentities = GetDatasetIdentities(id);
 				foreach (var identity in dataSetIdentities)
 				{
-					var successDeleteIdentity = _dboManager.Delete<TfDataSetIdentityDbo>(identity.Id);
+					var successDeleteIdentity = _dboManager.Delete<TfDatasetIdentityDbo>(identity.Id);
 					if (!successDeleteIdentity)
-						throw new TfDboServiceException("Delete<TfDataSetIdentityDbo> failed during delete dataset process.");
+						throw new TfDboServiceException("Delete<TfDatasetIdentityDbo> failed during delete dataset process.");
 				}
 
-				var success = _dboManager.Delete<TfDataSetDbo>(id);
+				var success = _dboManager.Delete<TfDatasetDbo>(id);
 
 				if (!success)
-					throw new TfDboServiceException("Delete<TfDataSetDbo> failed.");
+					throw new TfDboServiceException("Delete<TfDatasetDbo> failed.");
 
 				scope.Complete();
 			}
@@ -370,47 +278,47 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfDataSet? CopyDataSet(
+	public TfDataset CopyDataset(
 		Guid originalId)
 	{
-		TfDataSet? originalDataSet = GetDataSet(originalId);
-		if (originalDataSet is null)
-			throw new Exception("DataSet not found");
+		var originalDataset = GetDataset(originalId);
+		if (originalDataset is null)
+			throw new Exception("Dataset not found");
 
 		try
 		{
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var datasetList = GetAllDataSets();
+				var datasetList = GetDatasets();
 
-				var copyName = GetDataSetCopyName(originalDataSet.Name, datasetList);
+				var copyName = GetDatasetCopyName(originalDataset.Name, datasetList);
 				if (String.IsNullOrWhiteSpace(copyName))
-					throw new Exception("DataSet copy name could not be generated");
+					throw new Exception("Dataset copy name could not be generated");
 
-				TfDataSet dataset = new()
+				TfDataset dataset = new()
 				{
 					Id = Guid.NewGuid(),
-					DataProviderId = originalDataSet.DataProviderId,
+					DataProviderId = originalDataset.DataProviderId,
 					Name = copyName,
-					Filters = originalDataSet.Filters ?? new List<TfFilterBase>(),
-					Columns = originalDataSet.Columns ?? new List<string>(),
-					SortOrders = originalDataSet.SortOrders ?? new List<TfSort>(),
-					Identities = originalDataSet.Identities,
+					Filters = originalDataset.Filters ?? new List<TfFilterBase>(),
+					Columns = originalDataset.Columns ?? new List<string>(),
+					SortOrders = originalDataset.SortOrders ?? new List<TfSort>(),
+					Identities = originalDataset.Identities,
 				};
-				new TfDataSetValidator(this)
+				new TfDatasetValidator(this)
 					.ValidateCreate(dataset)
 					.ToValidationException()
 					.ThrowIfContainsErrors();
 
 				var dbo = ConvertModelToDbo(dataset);
 
-				var success = _dboManager.Insert<TfDataSetDbo>(dbo);
+				var success = _dboManager.Insert<TfDatasetDbo>(dbo);
 				if (!success)
-					throw new TfDboServiceException("Insert<TfDataSetDbo> failed.");
+					throw new TfDboServiceException("Insert<TfDatasetDbo> failed.");
 
 				scope.Complete();
 
-				return GetDataSet(dataset.Id);
+				return GetDataset(dataset.Id) ?? throw new Exception($"CopyDataset failed for id: {originalId}");
 			}
 		}
 		catch (Exception ex)
@@ -419,13 +327,51 @@ public partial class TfService : ITfService
 		}
 	}
 
-	[Obsolete("This method is not used and not implemented")]
-	public void MoveDataSetUp(
-		Guid id)
+	public List<TfAvailableDatasetColumn> GetDatasetAvailableColumns(
+			Guid datasetId)
 	{
 		try
 		{
-			throw new NotImplementedException();
+			List<TfAvailableDatasetColumn> columns = new List<TfAvailableDatasetColumn>();
+
+			var dbo = _dboManager.Get<TfDatasetDbo>(datasetId);
+			var dataset = ConvertDboToModel(dbo);
+
+			if (dataset == null)
+				return columns;
+
+			var provider = GetDataProvider(dataset.DataProviderId);
+			if (provider is null)
+				throw new TfException("Not found specified data provider");
+
+			foreach (var column in provider.Columns)
+			{
+				columns.Add(new TfAvailableDatasetColumn
+				{
+					DbName = column.DbName!,
+					DbType = column.DbType
+				});
+			}
+
+			foreach (var identity in provider.Identities)
+			{
+				columns.Add(new TfAvailableDatasetColumn
+				{
+					DbName = identity.DataIdentity,
+					DbType = TfDatabaseColumnType.ShortText,
+				});
+			}
+
+			foreach (var column in provider.SharedColumns)
+			{
+				columns.Add(new TfAvailableDatasetColumn
+				{
+					DbName = column.DbName,
+					DbType = column.DbType,
+				});
+			}
+
+			return columns;
 		}
 		catch (Exception ex)
 		{
@@ -433,30 +379,16 @@ public partial class TfService : ITfService
 		}
 	}
 
-	[Obsolete("This method is not used and not implemented")]
-	public void MoveDataSetDown(
-		Guid id)
-	{
-		try
-		{
-			throw new NotImplementedException();
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
 
-
-	public List<TfDataSetColumn> GetDataSetColumns(
+	public List<TfDatasetColumn> GetDatasetColumns(
 		Guid datasetId)
 	{
-		var dataset = GetDataSet(datasetId);
-		if (dataset is null) 
-			throw new Exception("DataSet not found");
+		var dataset = GetDataset(datasetId);
+		if (dataset is null)
+			throw new Exception("Dataset not found");
 
-		var result = new List<TfDataSetColumn>();
-		var allColumns = GetDataSetColumnOptions(datasetId);
+		var result = new List<TfDatasetColumn>();
+		var allColumns = GetDatasetColumnOptions(datasetId);
 		var datasetColumns = dataset.Columns.ToList();
 
 		foreach (var identity in dataset.Identities)
@@ -469,11 +401,11 @@ public partial class TfService : ITfService
 
 		foreach (var item in datasetColumns)
 		{
-			TfDataSetColumn? column = null;
+			TfDatasetColumn? column = null;
 			column = allColumns.FirstOrDefault(x => x.ColumnName == item);
 			if (column is null)
 			{
-				result.Add(new TfDataSetColumn
+				result.Add(new TfDatasetColumn
 				{
 					ColumnName = item,
 					DataIdentity = null,
@@ -493,21 +425,21 @@ public partial class TfService : ITfService
 		return result;
 	}
 
-	public List<TfDataSetColumn> GetDataSetColumnOptions(
+	public List<TfDatasetColumn> GetDatasetColumnOptions(
 		Guid datasetId)
 	{
-		var dataset = GetDataSet(datasetId);
-		if (dataset is null) 
-			throw new Exception("DataSet not found");
+		var dataset = GetDataset(datasetId);
+		if (dataset is null)
+			throw new Exception("Dataset not found");
 
 		var provider = GetDataProvider(dataset.DataProviderId);
 		var auxDataSchema = GetDataProviderAuxDataSchema(provider.Id);
 
-		var result = new List<TfDataSetColumn>();
+		var result = new List<TfDatasetColumn>();
 
 		foreach (var providerColumn in provider.Columns)
 		{
-			var item = new TfDataSetColumn
+			var item = new TfDatasetColumn
 			{
 				DataIdentity = null,
 				ColumnName = providerColumn.DbName,
@@ -525,7 +457,7 @@ public partial class TfService : ITfService
 			if (implementedIdentity.DataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY) continue;
 			foreach (var schemaColumn in implementedIdentity.Columns)
 			{
-				var item = new TfDataSetColumn
+				var item = new TfDatasetColumn
 				{
 					DataIdentity = schemaColumn.DataIdentity?.DataIdentity,
 					ColumnName = schemaColumn.DbName,
@@ -556,9 +488,9 @@ public partial class TfService : ITfService
 		return result;
 	}
 
-	public void AddDataSetColumn(
+	public void AddDatasetColumn(
 		Guid datasetId,
-		TfDataSetColumn column)
+		TfDatasetColumn column)
 	{
 		if (column is null)
 			new ArgumentException(nameof(column), "Column is required");
@@ -566,15 +498,15 @@ public partial class TfService : ITfService
 		if (String.IsNullOrWhiteSpace(column!.ColumnName))
 			new ArgumentException(nameof(column), "Column name is required");
 
-		var dataset = GetDataSet(datasetId);
+		var dataset = GetDataset(datasetId);
 		if (dataset is null)
-			new TfException("DataSet not found");
+			new TfException("Dataset not found");
 
 		if (column!.SourceType == TfAuxDataSourceType.PrimatyDataProvider)
 		{
 			if (!dataset!.Columns.Any(x => x.ToLowerInvariant() == column!.ColumnName!.ToLowerInvariant()))
 			{
-				var submit = new TfUpdateDataSet
+				var submit = new TfUpdateDataset
 				{
 					Id = dataset.Id,
 					Columns = dataset.Columns,
@@ -584,7 +516,7 @@ public partial class TfService : ITfService
 					SortOrders = dataset.SortOrders,
 				};
 				submit.Columns.Add(column.ColumnName!);
-				UpdateDataSet(submit);
+				UpdateDataset(submit);
 			}
 		}
 		else if (column.SourceType == TfAuxDataSourceType.AuxDataProvider
@@ -599,10 +531,10 @@ public partial class TfService : ITfService
 			var dataIdentity = dataset!.Identities.FirstOrDefault(x => x.DataIdentity == column!.DataIdentity);
 			if (dataIdentity is null)
 			{
-				CreateDataSetIdentity(new TfDataSetIdentity
+				CreateDatasetIdentity(new TfDatasetIdentity
 				{
 					Id = Guid.NewGuid(),
-					DataSetId = datasetId,
+					DatasetId = datasetId,
 					Columns = new List<string> { column!.SourceColumnName },
 					DataIdentity = column!.DataIdentity,
 				});
@@ -616,10 +548,10 @@ public partial class TfService : ITfService
 				{
 					dataIdentity.Columns.Add(column.SourceColumnName);
 				}
-				UpdateDataSetIdentity(new TfDataSetIdentity
+				UpdateDatasetIdentity(new TfDatasetIdentity
 				{
 					Id = dataIdentity.Id,
-					DataSetId = dataIdentity.DataSetId,
+					DatasetId = dataIdentity.DatasetId,
 					Columns = dataIdentity.Columns,
 					DataIdentity = dataIdentity.DataIdentity,
 				});
@@ -627,17 +559,17 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void AddAvailableColumnsToDataSet(
+	public void AddAvailableColumnsToDataset(
 		Guid datasetId)
 	{
-		var columnOptions = GetDataSetColumnOptions(datasetId);
+		var columnOptions = GetDatasetColumnOptions(datasetId);
 		try
 		{
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				foreach (var column in columnOptions)
 				{
-					AddDataSetColumn(datasetId, column);
+					AddDatasetColumn(datasetId, column);
 				}
 				scope.Complete();
 			}
@@ -648,9 +580,9 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void RemoveDataSetColumn(
-		Guid datasetId, 
-		TfDataSetColumn column)
+	public void RemoveDatasetColumn(
+		Guid datasetId,
+		TfDatasetColumn column)
 	{
 		if (column is null)
 			new ArgumentException(nameof(column), "column is required");
@@ -658,15 +590,15 @@ public partial class TfService : ITfService
 		if (String.IsNullOrWhiteSpace(column!.ColumnName))
 			new ArgumentException(nameof(column), "column name is required");
 
-		var dataset = GetDataSet(datasetId);
+		var dataset = GetDataset(datasetId);
 		if (dataset is null)
-			new TfException("DataSet not found");
+			new TfException("Dataset not found");
 
 		if (column.SourceType == TfAuxDataSourceType.PrimatyDataProvider)
 		{
 			if (dataset!.Columns.Any(x => x.ToLowerInvariant() == column!.ColumnName!.ToLowerInvariant()))
 			{
-				var submit = new TfUpdateDataSet
+				var submit = new TfUpdateDataset
 				{
 					Id = dataset.Id,
 					Columns = dataset.Columns,
@@ -676,7 +608,7 @@ public partial class TfService : ITfService
 					SortOrders = dataset.SortOrders,
 				};
 				submit.Columns = dataset.Columns.Where(x => x.ToLowerInvariant() != column!.ColumnName!.ToLowerInvariant()).ToList();
-				var updatedSpaceData = UpdateDataSet(submit);
+				var updatedSpaceData = UpdateDataset(submit);
 			}
 		}
 		else if (column.SourceType == TfAuxDataSourceType.AuxDataProvider
@@ -700,57 +632,57 @@ public partial class TfService : ITfService
 				}
 				if (dataIdentity.Columns.Count > 0)
 				{
-					UpdateDataSetIdentity(new TfDataSetIdentity
+					UpdateDatasetIdentity(new TfDatasetIdentity
 					{
 						Id = dataIdentity.Id,
-						DataSetId = dataIdentity.DataSetId,
+						DatasetId = dataIdentity.DatasetId,
 						Columns = dataIdentity.Columns,
 						DataIdentity = dataIdentity.DataIdentity,
 					});
 				}
 				else
 				{
-					DeleteDataSetIdentity(dataIdentity.Id);
+					DeleteDatasetIdentity(dataIdentity.Id);
 				}
 			}
 		}
 
 	}
 
-	public void UpdateDataSetFilters(
+	public void UpdateDatasetFilters(
 		Guid datasetId,
 		List<TfFilterBase> filters)
 	{
-		var dataset = GetDataSet(datasetId);
+		var dataset = GetDataset(datasetId);
 		if (dataset is null)
-			throw new TfException("DataSet not found");
+			throw new TfException("Dataset not found");
 
-		var submit = new TfUpdateDataSet(dataset);
+		var submit = new TfUpdateDataset(dataset);
 		submit.Filters = filters;
-		
-		UpdateDataSet(submit);
+
+		UpdateDataset(submit);
 	}
 
-	public void UpdateDataSetSorts(
+	public void UpdateDatasetSorts(
 		Guid datasetId,
 		List<TfSort> sorts)
 	{
-		var dataset = GetDataSet(datasetId);
+		var dataset = GetDataset(datasetId);
 		if (dataset is null)
-			throw new TfException("DataSet not found");
+			throw new TfException("Dataset not found");
 
-		var submit = new TfUpdateDataSet(dataset);
+		var submit = new TfUpdateDataset(dataset);
 		submit.SortOrders = sorts;
-		
-		UpdateDataSet(submit);
+
+		UpdateDataset(submit);
 	}
-	
+
 	#region <--- validation --->
 
-	internal class TfDataSetValidator
-	: AbstractValidator<TfDataSet>
+	internal class TfDatasetValidator
+	: AbstractValidator<TfDataset>
 	{
-		public TfDataSetValidator(
+		public TfDatasetValidator(
 			ITfService tfService)
 		{
 
@@ -795,7 +727,7 @@ public partial class TfService : ITfService
 			RuleSet("create", () =>
 			{
 				RuleFor(dataset => dataset.Id)
-						.Must((dataset, id) => { return tfService.GetDataSet(id) == null; })
+						.Must((dataset, id) => { return tfService.GetDataset(id) == null; })
 						.WithMessage("There is already existing dataset with specified identifier.");
 
 			});
@@ -805,7 +737,7 @@ public partial class TfService : ITfService
 				RuleFor(dataset => dataset.Id)
 						.Must((dataset, id) =>
 						{
-							return tfService.GetDataSet(id) != null;
+							return tfService.GetDataset(id) != null;
 						})
 						.WithMessage("There is not existing dataset with specified identifier.");
 			});
@@ -817,7 +749,7 @@ public partial class TfService : ITfService
 		}
 
 		public ValidationResult ValidateCreate(
-			TfDataSet? dataset)
+			TfDataset? dataset)
 		{
 			if (dataset == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -830,7 +762,7 @@ public partial class TfService : ITfService
 		}
 
 		public ValidationResult ValidateUpdate(
-			TfDataSet? dataset)
+			TfDataset? dataset)
 		{
 			if (dataset == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -843,7 +775,7 @@ public partial class TfService : ITfService
 		}
 
 		public ValidationResult ValidateDelete(
-			TfDataSet? dataset)
+			TfDataset? dataset)
 		{
 			if (dataset == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -860,8 +792,8 @@ public partial class TfService : ITfService
 
 	#region <--- private --->
 
-	private TfDataSet? ConvertDboToModel(
-		TfDataSetDbo? dbo)
+	private TfDataset? ConvertDboToModel(
+		TfDatasetDbo? dbo)
 	{
 		if (dbo == null)
 			return null;
@@ -878,7 +810,7 @@ public partial class TfService : ITfService
 		var columns = JsonSerializer.Deserialize<List<string>>(dbo.ColumnsJson, jsonOptions);
 		var sortOrders = JsonSerializer.Deserialize<List<TfSort>>(dbo.SortOrdersJson, jsonOptions);
 
-		return new TfDataSet
+		return new TfDataset
 		{
 			Id = dbo.Id,
 			DataProviderId = dbo.DataProviderId,
@@ -890,8 +822,8 @@ public partial class TfService : ITfService
 
 	}
 
-	private TfDataSetDbo? ConvertModelToDbo(
-		TfDataSet? model)
+	private TfDatasetDbo? ConvertModelToDbo(
+		TfDataset? model)
 	{
 		if (model == null)
 			return null;
@@ -904,7 +836,7 @@ public partial class TfService : ITfService
 			},
 		};
 
-		return new TfDataSetDbo
+		return new TfDatasetDbo
 		{
 			Id = model.Id,
 			DataProviderId = model.DataProviderId,
@@ -915,9 +847,9 @@ public partial class TfService : ITfService
 		};
 	}
 
-	private string? GetDataSetCopyName(
-		string originalName, 
-		List<TfDataSet> datasets)
+	private string? GetDatasetCopyName(
+		string originalName,
+		List<TfDataset> datasets)
 	{
 		var index = 1;
 		var presentNamesHS = datasets.Select(x => x.Name).ToHashSet();

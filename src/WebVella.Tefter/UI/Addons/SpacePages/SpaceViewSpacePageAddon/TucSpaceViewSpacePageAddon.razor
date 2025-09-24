@@ -35,17 +35,17 @@ else if (Context.Mode == TfComponentMode.Create)
 		</FluentGrid>
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<TucSelect SelectedOption="@_options.DataSetType"
-							  SelectedOptionChanged="_optionsDataSetTypeChangeHandler"
-							  TOption="TfSpaceViewDataSetType"
-							  Items="@(Enum.GetValues<TfSpaceViewDataSetType>())" Style="width:100%"
+				<TucSelect SelectedOption="@_options.DatasetType"
+							  SelectedOptionChanged="_optionsDatasetTypeChangeHandler"
+							  TOption="TfSpaceViewDatasetType"
+							  Items="@(Enum.GetValues<TfSpaceViewDatasetType>())" Style="width:100%"
 							  OptionValue="@((p)=> ((int)p).ToString())"
 							  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Dataset")" />
-				<TucValidationMessage Field="@(nameof(_options.DataSetType))" Errors="ValidationErrors" />
+				<TucValidationMessage Field="@(nameof(_options.DatasetType))" Errors="ValidationErrors" />
 			</FluentGridItem>
 		</FluentGrid>
 		<FluentGrid>
-			@if (_options.DataSetType == TfSpaceViewDataSetType.New)
+			@if (_options.DatasetType == TfSpaceViewDatasetType.New)
 			{
 				<FluentGridItem xs="6">
 					<TucSelect SelectedOption="@_optionsDataProvider"
@@ -74,7 +74,7 @@ else if (Context.Mode == TfComponentMode.Create)
 					{
 						<TucSelect SelectedOption="@_optionsDataset"
 									  SelectedOptionChanged="_optionsDatasetSelected"
-									  TOption="TfDataSet" Placeholder="@LOC("select...")"
+									  TOption="TfDataset" Placeholder="@LOC("select...")"
 									  Items="@_allSpaceData" Style="width:100%"
 									  OptionValue="@((p)=> p.Id.ToString())"
 									  OptionText="@(p => p.Name)" Label="@LOC("Dataset")" />
@@ -103,8 +103,8 @@ else if (Context.Mode == TfComponentMode.Create)
 						}
 						else if (_optionsDataset is not null)
 						{
-							<FluentCheckbox Value="@_options.AddDataSetColumns"
-											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddDataSetColumns)))"
+							<FluentCheckbox Value="@_options.AddDatasetColumns"
+											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddDatasetColumns)))"
 											Label="@LOC("add dateset columns")" />
 							<FluentCheckbox Value="@_options.AddProviderColumns"
 											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_options.AddProviderColumns)))"

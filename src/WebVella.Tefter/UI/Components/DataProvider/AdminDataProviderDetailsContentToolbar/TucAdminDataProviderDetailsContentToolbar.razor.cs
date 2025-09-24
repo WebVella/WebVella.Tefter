@@ -66,17 +66,9 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),
-				Url = string.Format(TfConstants.AdminDataProviderAuxPageUrl, navState.DataProviderId),
-				Selected = navState.HasNode(RouteDataNode.Aux, 3),
-				Text = LOC("Connected Data"),
-				IconCollapsed = TfConstants.GetIcon("PlugConnected")
-			});
-			_menu.Add(new TfMenuItem
-			{
-				Id = Guid.NewGuid().ToString(),
 				Url = string.Format(TfConstants.AdminDataProviderSynchronizationPageUrl, navState.DataProviderId),
 				Selected = navState.HasNode(RouteDataNode.Synchronization, 3),
-				Text = LOC("Synchronization"),
+				Text = LOC("Synch"),
 				IconCollapsed = TfConstants.GetIcon("ArrowSync")
 			});
 			_menu.Add(new TfMenuItem
@@ -86,6 +78,22 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 				Selected = navState.HasNode(RouteDataNode.Data, 3),
 				Text = LOC("Data"),
 				IconCollapsed = TfConstants.GetIcon("Database")
+			});
+			_menu.Add(new TfMenuItem
+			{
+				Id = Guid.NewGuid().ToString(),
+				Url = string.Format(TfConstants.AdminDataProviderDatasetsPageUrl, navState.DataProviderId),
+				Selected = navState.HasNode(RouteDataNode.Datasets, 3),
+				Text = LOC("Datasets"),
+				IconCollapsed = TfConstants.GetIcon("DatabaseWindow")
+			});
+			_menu.Add(new TfMenuItem
+			{
+				Id = Guid.NewGuid().ToString(),
+				Url = string.Format(TfConstants.AdminDataProviderAuxPageUrl, navState.DataProviderId),
+				Selected = navState.HasNode(RouteDataNode.Aux, 3),
+				Text = LOC("Connected Data"),
+				IconCollapsed = TfConstants.GetIcon("PlugConnected")
 			});
 		}
 		finally

@@ -1,0 +1,21 @@
+﻿@namespace WebVella.Tefter.UI.Pages
+@page "/admin/data-providers/{ItemId:guid}/datasets"
+@inherits TfBasePage
+
+<TucLayoutListDetails>
+	<Header>
+		<TucHeader />
+	</Header>
+	<AsideToolbar>
+		<TucAdminDataProviderDetailsAsideToolbar />
+	</AsideToolbar>
+	<AsideContent>
+		<TucAdminDataProviderDetailsAsideContent />
+	</AsideContent>
+	<Content>
+		<TucAdminDataProviderDatasetsContent />
+	</Content>
+</TucLayoutListDetails>
+
+
+

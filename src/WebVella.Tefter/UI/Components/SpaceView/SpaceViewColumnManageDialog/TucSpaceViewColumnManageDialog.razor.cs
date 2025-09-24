@@ -3,7 +3,7 @@
 public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpaceViewColumn?>
 {
 	[Inject] public ITfMetaUIService TfMetaUIService { get; set; } = default!;
-	[Inject] public ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
+	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Parameter] public TfSpaceViewColumn? Content { get; set; }
@@ -21,7 +21,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	private string _activeTab = "data";
 	private TfSpaceViewColumn _form = new();
 	private TfSpaceView _spaceView = new();
-	private TfDataSet _spaceData = new();
+	private TfDataset _spaceData = new();
 	private TfDataProvider _provider = new();
 	private List<string> _options = new();
 	private ReadOnlyCollection<TfSpaceViewColumnTypeAddonMeta> _availableColumnTypes = default!;
@@ -63,7 +63,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		base.InitForm(_form);
 		_renderComponentTypeSelect = true;
 		_spaceView = TfSpaceViewUIService.GetSpaceView(_form.SpaceViewId);
-		_spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
+		_spaceData = TfDatasetUIService.GetDataset(_spaceView.DatasetId);
 		_options = new();
 		if (_spaceData is not null)
 		{

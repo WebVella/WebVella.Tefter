@@ -31,7 +31,7 @@ public class TfCreateSpaceDataRecipeStep : ITfRecipeStepAddon
 		List<string> providerColumns = dataProvider.Columns.Where(x => !String.IsNullOrWhiteSpace(x.DbName)
 			&& step.Columns.Contains(x.DbName)).Select(x => x.DbName!).ToList();
 
-		var spData = new TfCreateDataSet
+		var spData = new TfCreateDataset
 		{
 			Id = step.SpaceDataId == Guid.Empty ? Guid.NewGuid() : step.SpaceDataId,
 			DataProviderId = step.DataProviderId,
@@ -49,12 +49,12 @@ public class TfCreateSpaceDataRecipeStep : ITfRecipeStepAddon
 			var spaceDataIdentity = spData.Identities.FirstOrDefault(x => x.DataIdentity == colArray[0]);
 			if (spaceDataIdentity == null)
 			{
-				spaceDataIdentity = new TfDataSetIdentity
+				spaceDataIdentity = new TfDatasetIdentity
 				{
 					Id = Guid.NewGuid(),
 					Columns = new List<string>(),
 					DataIdentity = colArray[0],
-					DataSetId = spData.Id,
+					DatasetId = spData.Id,
 				};
 				spData.Identities.Add(spaceDataIdentity);
 			}
@@ -62,7 +62,7 @@ public class TfCreateSpaceDataRecipeStep : ITfRecipeStepAddon
 		}
 
 
-		var result = tfService.CreateDataSet(spData);
+		var result = tfService.CreateDataset(spData);
 
 		return Task.CompletedTask;
 	}

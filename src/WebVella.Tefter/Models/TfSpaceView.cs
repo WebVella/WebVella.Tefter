@@ -3,7 +3,7 @@
 public class TfSpaceView
 {
 	public Guid Id { get; set; }
-	public Guid SpaceDataId { get; set; }
+	public Guid DatasetId { get; set; }
 	public string SpaceDataName { get; set; } = default!;
 	public Guid SpaceId { get; set; }
 	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
@@ -66,14 +66,14 @@ public class TfCreateSpaceViewExtended
 	public string SettingsJson { get; set; } = "{}";
 	public List<TfSpaceViewPreset> Presets { get; set; } = new();
 	public List<string> Groups { get; set; } = new();
-	public TfSpaceViewDataSetType DataSetType { get; set; } = TfSpaceViewDataSetType.New;
+	public TfSpaceViewDatasetType DatasetType { get; set; } = TfSpaceViewDatasetType.New;
 	public Guid? SpaceDataId { get; set; } = null;
 	public string? NewSpaceDataName { get; set; } = null;
 	public Guid? DataProviderId { get; set; } = null;
 	public bool AddSystemColumns { get; set; } = false;
 	public bool AddProviderColumns { get; set; } = true;
 	public bool AddSharedColumns { get; set; } = true;
-	public bool AddDataSetColumns { get; set; } = true;
+	public bool AddDatasetColumns { get; set; } = true;
 	public TfSpaceViewSettings Settings { get; set; } = new TfSpaceViewSettings();
 }
 
@@ -119,7 +119,7 @@ public enum TfSpaceViewType
 	Dashboard = 3
 }
 
-public enum TfSpaceViewDataSetType
+public enum TfSpaceViewDatasetType
 {
 	[Description("new dataset")]
 	New = 0,

@@ -2,13 +2,13 @@
 public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-	[Inject] public ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
+	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Inject] public ITfMetaUIService TfMetaUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private TfSpaceView _spaceView = new();
-	private TfDataSet _spaceData = new();
+	private TfDataset _spaceData = new();
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
 	private TfSpace _space = new();
 	public bool _submitting = false;
@@ -68,7 +68,7 @@ public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 			if (_spaceView is null) return;
 			_space = TfSpaceUIService.GetSpace(_spaceView.SpaceId);
 			_spaceViewColumns = TfSpaceViewUIService.GetViewColumns(_spaceView.Id);
-			_spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
+			_spaceData = TfDatasetUIService.GetDataset(_spaceView.DatasetId);
 			_typeMetaDict = TfMetaUIService.GetSpaceViewColumnTypeDict();
 			_componentMetaDict = TfMetaUIService.GetSpaceViewColumnComponentDict();
 		}

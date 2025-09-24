@@ -49,11 +49,11 @@ public partial class TfService : ITfService
 		{
 			var spaceViewsDbo = _dboManager.GetList<TfSpaceViewDbo>();
 			var allSpaceViews = spaceViewsDbo.Select(x => ConvertDboToModel(x)).ToList();
-			var spaceDataDict = (GetAllDataSets() ?? new List<TfDataSet>()).ToDictionary(x => x.Id);
+			var spaceDataDict = (GetDatasets() ?? new List<TfDataset>()).ToDictionary(x => x.Id);
 			foreach (var spaceView in allSpaceViews)
 			{
-				if (spaceDataDict.ContainsKey(spaceView.SpaceDataId))
-					spaceView.SpaceDataName = spaceDataDict[spaceView.SpaceDataId].Name;
+				if (spaceDataDict.ContainsKey(spaceView.DatasetId))
+					spaceView.SpaceDataName = spaceDataDict[spaceView.DatasetId].Name;
 			}
 
 			if (String.IsNullOrWhiteSpace(search))
@@ -83,13 +83,13 @@ public partial class TfService : ITfService
 				nameof(TfSpaceView.SpaceId),
 				order: orderSettings);
 
-			var spaceDataDict = GetAllDataSets().ToDictionary(x => x.Id);
+			var spaceDataDict = GetDatasets().ToDictionary(x => x.Id);
 			var allSpaceViews = spaceViews.Select(x => ConvertDboToModel(x)).ToList();
 
 			foreach (var spaceView in allSpaceViews)
 			{
-				if (spaceDataDict.ContainsKey(spaceView.SpaceDataId))
-					spaceView.SpaceDataName = spaceDataDict[spaceView.SpaceDataId].Name;
+				if (spaceDataDict.ContainsKey(spaceView.DatasetId))
+					spaceView.SpaceDataName = spaceDataDict[spaceView.DatasetId].Name;
 			}
 			if (String.IsNullOrWhiteSpace(search))
 				return allSpaceViews;
@@ -130,10 +130,10 @@ public partial class TfService : ITfService
 				spaceViewExt.Id = Guid.NewGuid();
 
 			TfSpace? space = null;
-			TfDataSet? spaceData = null;
+			TfDataset? spaceData = null;
 			TfSpaceView? spaceView = null;
 			TfDataProvider? dataprovider = null;
-			var createNewDataSet = spaceViewExt.DataSetType == TfSpaceViewDataSetType.New;
+			var createNewDataset = spaceViewExt.DatasetType == TfSpaceViewDatasetType.New;
 			#region << Validate>>
 
 			var valEx = new TfValidationException();
@@ -145,7 +145,7 @@ public partial class TfService : ITfService
 			if (spaceViewExt.SpaceId == Guid.Empty)
 				valEx.AddValidationError(nameof(spaceViewExt.SpaceId), "required");
 
-			if (createNewDataSet)
+			if (createNewDataset)
 			{
 				if (String.IsNullOrWhiteSpace(spaceViewExt.NewSpaceDataName))
 					valEx.AddValidationError(nameof(spaceViewExt.NewSpaceDataName), "required");
@@ -168,7 +168,7 @@ public partial class TfService : ITfService
 			//SpaceData
 			if (spaceViewExt.SpaceDataId is not null)
 			{
-				spaceData = GetDataSet(spaceViewExt.SpaceDataId.Value);
+				spaceData = GetDataset(spaceViewExt.SpaceDataId.Value);
 				if (spaceData is null)
 					valEx.AddValidationError(nameof(spaceViewExt.SpaceDataId), "dataset is not found");
 			}
@@ -216,7 +216,7 @@ public partial class TfService : ITfService
 						selectedColumns.AddRange(dataprovider.SharedColumns.Select(x => x.DbName).ToList());
 					}
 
-					var spaceDataObj = new TfCreateDataSet()
+					var spaceDataObj = new TfCreateDataset()
 					{
 						Id = Guid.NewGuid(),
 						Name = spaceViewExt.NewSpaceDataName,
@@ -225,7 +225,7 @@ public partial class TfService : ITfService
 						DataProviderId = dataprovider.Id
 					};
 
-					spaceData = CreateDataSet(spaceDataObj);
+					spaceData = CreateDataset(spaceDataObj);
 				}
 				#endregion
 
@@ -236,7 +236,7 @@ public partial class TfService : ITfService
 						Id = Guid.NewGuid(),
 						Name = spaceViewExt.Name,
 						Position = 1,//will be overrided later
-						SpaceDataId = spaceData.Id,
+						DatasetId = spaceData.Id,
 						SpaceId = space.Id,
 						Type = spaceViewExt.Type,
 						Presets = spaceViewExt.Presets,
@@ -252,7 +252,7 @@ public partial class TfService : ITfService
 					var availableTypes = GetAvailableSpaceViewColumnTypes();
 					var columnsToCreate = new List<TfSpaceViewColumn>();
 					short position = 1;
-					if (createNewDataSet)
+					if (createNewDataset)
 					{
 						if (spaceViewExt.AddProviderColumns)
 						{
@@ -355,7 +355,7 @@ public partial class TfService : ITfService
 					}
 					else
 					{
-						if (spaceViewExt.AddDataSetColumns)
+						if (spaceViewExt.AddDatasetColumns)
 						{
 							var columnsList = new List<string>();
 							if (spaceData.Columns.Count > 0)
@@ -531,10 +531,10 @@ public partial class TfService : ITfService
 		try
 		{
 			TfSpace space = null;
-			TfDataSet spaceData = null;
+			TfDataset spaceData = null;
 			TfSpaceView spaceView = null;
 			TfDataProvider dataprovider = null;
-			var createNewDataSet = spaceViewExt.DataSetType == TfSpaceViewDataSetType.New;
+			var createNewDataset = spaceViewExt.DatasetType == TfSpaceViewDatasetType.New;
 			#region << Validate>>
 
 			var valEx = new TfValidationException();
@@ -546,7 +546,7 @@ public partial class TfService : ITfService
 			if (spaceViewExt.SpaceId == Guid.Empty)
 				valEx.AddValidationError(nameof(spaceViewExt.SpaceId), "required");
 
-			if (createNewDataSet)
+			if (createNewDataset)
 			{
 				if (String.IsNullOrWhiteSpace(spaceViewExt.NewSpaceDataName))
 					valEx.AddValidationError(nameof(spaceViewExt.NewSpaceDataName), "required");
@@ -576,7 +576,7 @@ public partial class TfService : ITfService
 			//SpaceData
 			if (spaceViewExt.SpaceDataId is not null)
 			{
-				spaceData = GetDataSet(spaceViewExt.SpaceDataId.Value);
+				spaceData = GetDataset(spaceViewExt.SpaceDataId.Value);
 				if (spaceData is null)
 					valEx.AddValidationError(nameof(spaceViewExt.SpaceDataId), "dataset is not found");
 			}
@@ -606,7 +606,7 @@ public partial class TfService : ITfService
 						selectedColumns.AddRange(dataprovider.SharedColumns.Select(x => x.DbName).ToList());
 					}
 
-					var spaceDataObj = new TfCreateDataSet()
+					var spaceDataObj = new TfCreateDataset()
 					{
 						Id = Guid.NewGuid(),
 						Name = spaceViewExt.NewSpaceDataName,
@@ -615,7 +615,7 @@ public partial class TfService : ITfService
 						DataProviderId = dataprovider.Id,
 					};
 
-					spaceData = CreateDataSet(spaceDataObj);
+					spaceData = CreateDataset(spaceDataObj);
 				}
 				#endregion
 
@@ -626,7 +626,7 @@ public partial class TfService : ITfService
 						Id = spaceViewExt.Id,
 						Name = spaceViewExt.Name,
 						Position = 1,//will be updated later
-						SpaceDataId = spaceData.Id,
+						DatasetId = spaceData.Id,
 						SpaceId = space.Id,
 						Type = spaceViewExt.Type,
 						SettingsJson = spaceViewExt.SettingsJson,
@@ -818,7 +818,7 @@ public partial class TfService : ITfService
 					Position = 0,
 					Presets = originalSV.Presets,
 					SettingsJson = originalSV.SettingsJson,
-					SpaceDataId = originalSV.SpaceDataId,
+					DatasetId = originalSV.DatasetId,
 					SpaceDataName = originalSV.SpaceDataName,
 					Type = originalSV.Type,
 				};
@@ -884,7 +884,7 @@ public partial class TfService : ITfService
 			Name = dbo.Name,
 			Position = dbo.Position,
 			SettingsJson = dbo.SettingsJson,
-			SpaceDataId = dbo.SpaceDataId,
+			DatasetId = dbo.SpaceDataId,
 			SpaceId = dbo.SpaceId,
 			Type = dbo.Type,
 			Presets = presets
@@ -904,7 +904,7 @@ public partial class TfService : ITfService
 			Name = model.Name,
 			Position = model.Position,
 			SettingsJson = model.SettingsJson,
-			SpaceDataId = model.SpaceDataId,
+			SpaceDataId = model.DatasetId,
 			SpaceId = model.SpaceId,
 			Type = model.Type,
 			PresetsJson = JsonSerializer.Serialize(model.Presets ?? new List<TfSpaceViewPreset>())
@@ -934,7 +934,7 @@ public partial class TfService : ITfService
 					.NotEmpty()
 					.WithMessage("The space id is required.");
 
-				RuleFor(spaceView => spaceView.SpaceDataId)
+				RuleFor(spaceView => spaceView.DatasetId)
 					.NotEmpty()
 					.WithMessage("The space data id is required.");
 

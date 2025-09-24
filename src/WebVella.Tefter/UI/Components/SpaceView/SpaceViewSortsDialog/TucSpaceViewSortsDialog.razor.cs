@@ -3,11 +3,11 @@ public partial class TucSpaceViewSortsDialog : TfFormBaseComponent, IDialogConte
 {
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-	[Inject] public ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
+	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Parameter] public Guid Content { get; set; } = default!;
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
-	private TfDataSet _spaceData = null;
+	private TfDataset _spaceData = null;
 	private List<TfSpaceViewColumn> _viewColumns = new();
 	private List<TfSortQuery> _items = new();
 
@@ -23,7 +23,7 @@ public partial class TucSpaceViewSortsDialog : TfFormBaseComponent, IDialogConte
 			throw new Exception("SpaceView not found");
 
 		_viewColumns = TfSpaceViewUIService.GetViewColumns(Content);
-		_spaceData = TfSpaceDataUIService.GetSpaceData(view.SpaceDataId);
+		_spaceData = TfDatasetUIService.GetDataset(view.DatasetId);
 		await _init();
 	}
 

@@ -67,20 +67,19 @@ public static class TfDependencyInjection
 
 		//UI
 		services.AddScoped<ITfNavigationUIService, TfNavigationUIService>();
+		services.AddScoped<ITfMetaUIService, TfMetaUIService>();
 		services.AddScoped<ITfRecipeUIService, TfRecipeUIService>();
 		services.AddScoped<ITfRoleUIService, TfRoleUIService>();
 		services.AddScoped<ITfUserUIService, TfUserUIService>();
-		services.AddScoped<ITfDashboardUIService, TfDashboardUIService>();
-		services.AddScoped<ITfSpaceUIService, TfSpaceUIService>();
-		services.AddScoped<ITfSpaceDataUIService, TfSpaceDataUIService>();
-		services.AddScoped<ITfSpaceViewUIService, TfSpaceViewUIService>();
 		services.AddScoped<ITfDataProviderUIService, TfDataProviderUIService>();
-		services.AddScoped<ITfMetaUIService, TfMetaUIService>();
+		services.AddScoped<ITfDatasetUIService, TfDatasetUIService>();
 		services.AddScoped<ITfDataIdentityUIService, TfDataIdentityUIService>();
 		services.AddScoped<ITfSharedColumnUIService, TfSharedColumnUIService>();
 		services.AddScoped<ITfTemplateUIService, TfTemplateUIService>();
 		services.AddScoped<ITfFileRepositoryUIService, TfFileRepositoryUIService>();
-
+		services.AddScoped<ITfSpaceUIService, TfSpaceUIService>();
+		services.AddScoped<ITfSpaceViewUIService, TfSpaceViewUIService>();
+		services.AddScoped<ITfDashboardUIService, TfDashboardUIService>();
 
 		//hosted services
 		services.AddHostedService<TfDataProviderSynchronizeJob>();

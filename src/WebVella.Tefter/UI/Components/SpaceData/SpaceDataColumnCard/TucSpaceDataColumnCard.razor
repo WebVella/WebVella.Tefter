@@ -1,4 +1,4 @@
-﻿@namespace WebVella.Tefter.UI.Components
+﻿@* @namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
 <TucCard Title="@Title">
@@ -8,7 +8,7 @@
 		@if (_columnOptions.Count > 0)
 		{
 			<TucSelect SelectedOptionChanged="((column) => _addColumn(column))"
-						  TOption="TfDataSetColumn" Required="false"
+						  TOption="TfDatasetColumn" Required="false"
 						  SelectedOption="@_selectedColumn"
 						  OptionValue="@((p)=> p.ColumnName)"
 						  OptionText="@(p=> p.ColumnName)"
@@ -19,8 +19,6 @@
 		{
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:300px" Disabled="true" />
 		}
-@* 		<FluentButton OnClick="_addColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
-					  Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Selected")</FluentButton> *@
 	</ToolbarTemplate>
 	<ChildContent>
 		<div>@_selectedColumn</div>
@@ -99,4 +97,4 @@
 			</table>
 		}
 	</ChildContent>
-</TucCard>
+</TucCard> *@

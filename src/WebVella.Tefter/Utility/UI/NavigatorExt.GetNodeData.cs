@@ -730,6 +730,10 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Data);
 		}
+		else if (result.NodesDict[3] == TfConstants.RouteNameDatasets)
+		{
+			result = result.AddRouteNodes(RouteDataNode.Datasets);
+		}
 		return result;
 	}
 	#endregion

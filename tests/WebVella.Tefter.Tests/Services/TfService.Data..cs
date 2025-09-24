@@ -40,7 +40,7 @@ public partial class TfServiceTest : BaseTest
 		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
 			var provider = tfService.GetDataProvider(providerId);
-			var spaceData = tfService.GetDataSet(spaceDataId);
+			var spaceData = tfService.GetDataset(spaceDataId);
 
 			//var result = tfService.QuerySpaceData(spaceData.Id);
 			var result = tfService.QueryDataProvider(provider);
@@ -128,7 +128,7 @@ public partial class TfServiceTest : BaseTest
 			result = tfService.QueryDataProvider(provider);
 
 
-			var newSpaceDataModel = new TfCreateDataSet
+			var newSpaceDataModel = new TfCreateDataset
 			{
 				Id = Guid.NewGuid(),
 				DataProviderId = provider.Id,
@@ -136,7 +136,7 @@ public partial class TfServiceTest : BaseTest
 				Columns = new List<string> { spaceData.Columns[0] }
 			};
 
-			var newSpaceData = tfService.CreateDataSet(newSpaceDataModel);
+			var newSpaceData = tfService.CreateDataset(newSpaceDataModel);
 			var newSpaceDataTable = tfService.QuerySpaceData(newSpaceData.Id);
 
 			newTable = newSpaceDataTable.NewTable();
@@ -163,7 +163,7 @@ public partial class TfServiceTest : BaseTest
 		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
 			var provider = tfService.GetDataProvider(providerId);
-			var spaceData = tfService.GetDataSet(spaceDataId);
+			var spaceData = tfService.GetDataset(spaceDataId);
 
 			var result = tfService.QuerySpaceData(spaceData.Id,
 				page: 1,
@@ -229,7 +229,7 @@ public partial class TfServiceTest : BaseTest
 		{
 			//var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
 			var provider = tfService.GetDataProvider(providerId);
-			var spaceData = tfService.GetDataSet(spaceDataId);
+			var spaceData = tfService.GetDataset(spaceDataId);
 
 			var result = tfService.QuerySpaceData(spaceData.Id,
 				noRows: false,

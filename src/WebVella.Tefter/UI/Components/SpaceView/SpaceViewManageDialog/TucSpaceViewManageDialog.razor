@@ -75,17 +75,17 @@
 			<FluentDivider Style="margin:1rem 0" />
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<TucSelect SelectedOption="@_form.DataSetType"
+					<TucSelect SelectedOption="@_form.DatasetType"
 								  SelectedOptionChanged="_dataSetTypeChangeHandler"
-								  TOption="TfSpaceViewDataSetType"
-								  Items="@(Enum.GetValues<TfSpaceViewDataSetType>())" Style="width:100%"
+								  TOption="TfSpaceViewDatasetType"
+								  Items="@(Enum.GetValues<TfSpaceViewDatasetType>())" Style="width:100%"
 								  OptionValue="@((p)=> ((int)p).ToString())"
 								  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Dataset")" />
-					<FluentValidationMessage For="@(() => _form.DataSetType)" />
+					<FluentValidationMessage For="@(() => _form.DatasetType)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
-				@if (_form.DataSetType == TfSpaceViewDataSetType.New)
+				@if (_form.DatasetType == TfSpaceViewDatasetType.New)
 				{
 					<FluentGridItem xs="6">
 						<TucSelect SelectedOption="@_selectedDataProvider"
@@ -114,7 +114,7 @@
 						{
 							<TucSelect SelectedOption="@_selectedDataset"
 										  SelectedOptionChanged="_datasetSelected"
-										  TOption="TfDataSet" Placeholder="@LOC("select...")"
+										  TOption="TfDataset" Placeholder="@LOC("select...")"
 										  Items="@_spaceDataList" Style="width:100%"
 										  OptionValue="@((p)=> p.Id.ToString())"
 										  OptionText="@(p => p.Name)" Label="@LOC("Dataset")" />
@@ -144,8 +144,8 @@
 							}
 							else if (_selectedDataset is not null)
 							{
-								<FluentCheckbox Value="@_form.AddDataSetColumns"
-												ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_form.AddDataSetColumns)))"
+								<FluentCheckbox Value="@_form.AddDatasetColumns"
+												ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_form.AddDatasetColumns)))"
 												Label="@LOC("add dateset columns")" />
 							}
 						</FluentStack>

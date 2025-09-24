@@ -91,4 +91,8 @@
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="UI\Components\Dataset\" />
+	</ItemGroup>
+
 </Project>

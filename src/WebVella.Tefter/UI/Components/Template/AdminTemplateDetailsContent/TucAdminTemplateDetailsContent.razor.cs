@@ -6,7 +6,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private TfTemplate? _template = null;
-	private List<TfDataSetAsOption> _spaceDataSelection = new();
+	private List<TfDatasetAsOption> _spaceDataSelection = new();
 	public bool _submitting = false;
 	private TfTemplateProcessorDisplaySettingsScreenRegionContext? _dynamicComponentContext = null;
 	private TfScreenRegionScope? _dynamicComponentScope = null;

@@ -332,14 +332,14 @@ public partial class TfServiceTest : BaseTest
 				space = tfService.CreateSpace(space);
 				space.Should().NotBeNull();
 
-				var spaceDataCreate = new TfCreateDataSet
+				var spaceDataCreate = new TfCreateDataset
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
 					Name = "data1",
 				};
 
-				var spaceData = tfService.CreateDataSet(spaceDataCreate);
+				var spaceData = tfService.CreateDataset(spaceDataCreate);
 				spaceData.Should().NotBeNull();
 
 
@@ -348,7 +348,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "view",
 					Position = 1,
-					SpaceDataId = spaceData.Id,
+					DatasetId = spaceData.Id,
 					SpaceId = space.Id,
 					Type = TfSpaceViewType.DataGrid
 				};
@@ -358,7 +358,7 @@ public partial class TfServiceTest : BaseTest
 				spaceView.Id.Should().Be(view.Id);
 				spaceView.Name.Should().Be(view.Name);
 				spaceView.Position.Should().Be(view.Position);
-				spaceView.SpaceDataId.Should().Be(view.SpaceDataId);
+				spaceView.DatasetId.Should().Be(view.DatasetId);
 				spaceView.SpaceId.Should().Be(view.SpaceId);
 				spaceView.Type.Should().Be(view.Type);
 
@@ -426,14 +426,14 @@ public partial class TfServiceTest : BaseTest
 				space = tfService.CreateSpace(space);
 				space.Should().NotBeNull();
 
-				var spaceDataCreate = new TfCreateDataSet
+				var spaceDataCreate = new TfCreateDataset
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
 					Name = "data1",
 				};
 
-				var spaceData = tfService.CreateDataSet(spaceDataCreate);
+				var spaceData = tfService.CreateDataset(spaceDataCreate);
 				spaceData.Should().NotBeNull();
 
 
@@ -442,7 +442,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "view",
 					Position = 1,
-					SpaceDataId = spaceData.Id,
+					DatasetId = spaceData.Id,
 					SpaceId = space.Id,
 					Type = TfSpaceViewType.DataGrid
 				};
@@ -452,7 +452,7 @@ public partial class TfServiceTest : BaseTest
 				spaceView.Id.Should().Be(view.Id);
 				spaceView.Name.Should().Be(view.Name);
 				spaceView.Position.Should().Be(view.Position);
-				spaceView.SpaceDataId.Should().Be(view.SpaceDataId);
+				spaceView.DatasetId.Should().Be(view.DatasetId);
 				spaceView.SpaceId.Should().Be(view.SpaceId);
 				spaceView.Type.Should().Be(view.Type);
 
@@ -465,7 +465,7 @@ public partial class TfServiceTest : BaseTest
 				spaceView.Id.Should().Be(view.Id);
 				spaceView.Name.Should().Be(view.Name);
 				spaceView.Position.Should().Be(view.Position);
-				spaceView.SpaceDataId.Should().Be(view.SpaceDataId);
+				spaceView.DatasetId.Should().Be(view.DatasetId);
 				spaceView.SpaceId.Should().Be(view.SpaceId);
 				spaceView.Type.Should().Be(view.Type);
 
@@ -512,14 +512,14 @@ public partial class TfServiceTest : BaseTest
 				space = tfService.CreateSpace(space);
 				space.Should().NotBeNull();
 
-				var spaceDataCreate = new TfCreateDataSet
+				var spaceDataCreate = new TfCreateDataset
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
 					Name = "data1",
 				};
 
-				var spaceData = tfService.CreateDataSet(spaceDataCreate);
+				var spaceData = tfService.CreateDataset(spaceDataCreate);
 				spaceData.Should().NotBeNull();
 
 				TfSpaceView view = new TfSpaceView
@@ -527,7 +527,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "view",
 					Position = 1,
-					SpaceDataId = spaceData.Id,
+					DatasetId = spaceData.Id,
 					SpaceId = space.Id,
 					Type = TfSpaceViewType.DataGrid
 				};

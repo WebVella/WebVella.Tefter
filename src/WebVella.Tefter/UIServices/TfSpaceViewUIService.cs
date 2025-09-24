@@ -94,7 +94,7 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 			Id = submit.Id,
 			Name = submit.Name,
 			Type = submit.Type,
-			SpaceDataId = submit.SpaceDataId ?? Guid.Empty,
+			DatasetId = submit.SpaceDataId ?? Guid.Empty,
 			SpaceId = submit.SpaceId,
 			SettingsJson = JsonSerializer.Serialize(submit.Settings),
 			Presets = submit.Presets,
@@ -233,7 +233,7 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 
 
 		var viewColumns = _tfService.GetSpaceViewColumnsList(view.Id);
-		var spaceData = _tfService.GetDataSet(view.SpaceDataId);
+		var spaceData = _tfService.GetDataset(view.DatasetId);
 		var allDataProviders = _tfService.GetDataProviders().ToList();
 		var allSharedColumns = _tfService.GetSharedColumns();
 		var dataProvider = allDataProviders.FirstOrDefault(x => x.Id == spaceData.DataProviderId);
@@ -241,7 +241,7 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns); ;
 
 		var viewData = _tfService.QuerySpaceData(
-			spaceDataId: view.SpaceDataId,
+			datasetId: view.DatasetId,
 			userFilters: filters,
 			userSorts: sorts,
 			search: data.RouteState.Search,
@@ -355,7 +355,7 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 
 
 		var viewColumns = _tfService.GetSpaceViewColumnsList(view.Id);
-		var spaceData = _tfService.GetDataSet(view.SpaceDataId);
+		var spaceData = _tfService.GetDataset(view.DatasetId);
 		var allDataProviders = _tfService.GetDataProviders().ToList();
 		var allSharedColumns = _tfService.GetSharedColumns();
 		var dataProvider = allDataProviders.FirstOrDefault(x => x.Id == spaceData.DataProviderId);
@@ -363,7 +363,7 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns); ;
 
 		var viewData = _tfService.QuerySpaceData(
-			spaceDataId: view.SpaceDataId,
+			datasetId: view.DatasetId,
 			userFilters: filters,
 			userSorts: sorts,
 			search: data.RouteState.Search,

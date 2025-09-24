@@ -5,38 +5,38 @@ namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
-	public TfDataSetIdentity? GetDataSetIdentity(
+	public TfDatasetIdentity? GetDatasetIdentity(
 	   Guid id);
 
-	public List<TfDataSetIdentity> GetDataSetIdentities(
+	public List<TfDatasetIdentity> GetDatasetIdentities(
 		Guid datasetId);
 
-	public List<TfDataSetIdentity> GetDataSetIdentities(
+	public List<TfDatasetIdentity> GetDatasetIdentities(
 	   string dataIdentity);
 
-	public TfDataSetIdentity? CreateDataSetIdentity(
-		TfDataSetIdentity? identity);
+	public TfDatasetIdentity? CreateDatasetIdentity(
+		TfDatasetIdentity? identity);
 
-	public TfDataSetIdentity? UpdateDataSetIdentity(
-		TfDataSetIdentity? identity);
+	public TfDatasetIdentity? UpdateDatasetIdentity(
+		TfDatasetIdentity? identity);
 
-	public void DeleteDataSetIdentity(
+	public void DeleteDatasetIdentity(
 		Guid id);
 }
 
 public partial class TfService : ITfService
 {
-	public TfDataSetIdentity? GetDataSetIdentity(
+	public TfDatasetIdentity? GetDatasetIdentity(
 		Guid id)
 	{
 		try
 		{
-			var dbo = _dboManager.Get<TfDataSetIdentityDbo>(id);
+			var dbo = _dboManager.Get<TfDatasetIdentityDbo>(id);
 
 			if (dbo == null)
 				return null;
 
-			return DataSetIdentityFromDbo(dbo);
+			return DatasetIdentityFromDbo(dbo);
 		}
 		catch (Exception ex)
 		{
@@ -45,23 +45,23 @@ public partial class TfService : ITfService
 	}
 
 
-	public List<TfDataSetIdentity> GetDataSetIdentities(
+	public List<TfDatasetIdentity> GetDatasetIdentities(
 		Guid spaceDataId)
 	{
 		try
 		{
 			var orderSettings = new TfOrderSettings(
-				nameof(TfDataSetIdentity.DataIdentity),
+				nameof(TfDatasetIdentity.DataIdentity),
 				OrderDirection.ASC);
 
-			var dbos = _dboManager.GetList<TfDataSetIdentityDbo>(
+			var dbos = _dboManager.GetList<TfDatasetIdentityDbo>(
 				spaceDataId,
-				nameof(TfDataSetIdentityDbo.DataSetId),
+				nameof(TfDatasetIdentityDbo.DatasetId),
 				order: orderSettings
 			);
 
 			return dbos
-				.Select(x => DataSetIdentityFromDbo(x))
+				.Select(x => DatasetIdentityFromDbo(x))
 				.ToList();
 		}
 		catch (Exception ex)
@@ -70,23 +70,23 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfDataSetIdentity> GetDataSetIdentities(
+	public List<TfDatasetIdentity> GetDatasetIdentities(
 		string dataIdentity)
 	{
 		try
 		{
 			var orderSettings = new TfOrderSettings(
-				nameof(TfDataSetIdentity.DataIdentity),
+				nameof(TfDatasetIdentity.DataIdentity),
 				OrderDirection.ASC);
 
-			var dbos = _dboManager.GetList<TfDataSetIdentityDbo>(
+			var dbos = _dboManager.GetList<TfDatasetIdentityDbo>(
 				dataIdentity,
-				nameof(TfDataSetIdentityDbo.DataIdentity),
+				nameof(TfDatasetIdentityDbo.DataIdentity),
 				order: orderSettings
 			);
 
 			return dbos
-				.Select(x => DataSetIdentityFromDbo(x))
+				.Select(x => DatasetIdentityFromDbo(x))
 				.ToList();
 		}
 		catch (Exception ex)
@@ -95,8 +95,8 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfDataSetIdentity? CreateDataSetIdentity(
-		TfDataSetIdentity? dataIdentity)
+	public TfDatasetIdentity? CreateDatasetIdentity(
+		TfDatasetIdentity? dataIdentity)
 	{
 		try
 		{
@@ -110,16 +110,16 @@ public partial class TfService : ITfService
 
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var dbo = DataSetIdentityToDbo(dataIdentity);
+				var dbo = DatasetIdentityToDbo(dataIdentity);
 
-				var success = _dboManager.Insert<TfDataSetIdentityDbo>(dbo);
+				var success = _dboManager.Insert<TfDatasetIdentityDbo>(dbo);
 				if (!success)
-					throw new TfDboServiceException("Insert<TfDataSetIdentityDbo>");
+					throw new TfDboServiceException("Insert<TfDatasetIdentityDbo>");
 
 				scope.Complete();
 
 				if (dataIdentity is not null)
-					return GetDataSetIdentity(dataIdentity.Id);
+					return GetDatasetIdentity(dataIdentity.Id);
 				else
 					throw new ArgumentException(nameof(dataIdentity));
 			}
@@ -131,8 +131,8 @@ public partial class TfService : ITfService
 	}
 
 
-	public TfDataSetIdentity? UpdateDataSetIdentity(
-		TfDataSetIdentity? dataIdentity)
+	public TfDatasetIdentity? UpdateDatasetIdentity(
+		TfDatasetIdentity? dataIdentity)
 	{
 		try
 		{
@@ -143,16 +143,16 @@ public partial class TfService : ITfService
 
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var dbo = DataSetIdentityToDbo(dataIdentity);
+				var dbo = DatasetIdentityToDbo(dataIdentity);
 
-				var success = _dboManager.Update<TfDataSetIdentityDbo>(dbo);
+				var success = _dboManager.Update<TfDatasetIdentityDbo>(dbo);
 				if (!success)
-					throw new TfDboServiceException("Update<TfDataSetIdentityDbo>");
+					throw new TfDboServiceException("Update<TfDatasetIdentityDbo>");
 
 				scope.Complete();
 
 				if(dataIdentity is not null)
-					return GetDataSetIdentity(dataIdentity.Id);
+					return GetDatasetIdentity(dataIdentity.Id);
 				else
 					throw new ArgumentException(nameof(dataIdentity));
 			}
@@ -164,12 +164,12 @@ public partial class TfService : ITfService
 	}
 
 
-	public void DeleteDataSetIdentity(
+	public void DeleteDatasetIdentity(
 		Guid id)
 	{
 		try
 		{
-			var dataIdentity = GetDataSetIdentity(id);
+			var dataIdentity = GetDatasetIdentity(id);
 
 			new TfSpaceDataIdentityValidator(this)
 				.ValidateDelete(dataIdentity)
@@ -178,9 +178,9 @@ public partial class TfService : ITfService
 
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				bool success = _dboManager.Delete<TfDataSetIdentityDbo>(id);
+				bool success = _dboManager.Delete<TfDatasetIdentityDbo>(id);
 				if (!success)
-					throw new TfDboServiceException("Delete<TfDataSetIdentityDbo> failed.");
+					throw new TfDboServiceException("Delete<TfDatasetIdentityDbo> failed.");
 
 				scope.Complete();
 			}
@@ -194,8 +194,8 @@ public partial class TfService : ITfService
 
 	#region <--- utility --->
 
-	private static TfDataSetIdentityDbo DataSetIdentityToDbo(
-		TfDataSetIdentity? identity)
+	private static TfDatasetIdentityDbo DatasetIdentityToDbo(
+		TfDatasetIdentity? identity)
 	{
 		if (identity == null)
 			throw new ArgumentException(nameof(identity));
@@ -204,28 +204,28 @@ public partial class TfService : ITfService
 		if (identity.Columns is not null)
 			columnNamesJson = JsonSerializer.Serialize(identity.Columns);
 
-		return new TfDataSetIdentityDbo
+		return new TfDatasetIdentityDbo
 		{
 			Id = identity.Id,
-			DataSetId = identity.DataSetId,
+			DatasetId = identity.DatasetId,
 			DataIdentity = identity.DataIdentity,
 			ColumnNamesJson = columnNamesJson
 		};
 	}
 
-	private static TfDataSetIdentity DataSetIdentityFromDbo(
-		TfDataSetIdentityDbo? dbo)
+	private static TfDatasetIdentity DatasetIdentityFromDbo(
+		TfDatasetIdentityDbo? dbo)
 	{
 		if (dbo == null)
 			throw new ArgumentException(nameof(dbo));
 
 		var columns = JsonSerializer.Deserialize<List<string>>(dbo.ColumnNamesJson ?? "[]") ?? new List<string>();
 
-		return new TfDataSetIdentity
+		return new TfDatasetIdentity
 		{
 			Id = dbo.Id,
 			DataIdentity = dbo.DataIdentity,
-			DataSetId = dbo.DataSetId,
+			DatasetId = dbo.DatasetId,
 			Columns = columns
 		};
 	}
@@ -235,7 +235,7 @@ public partial class TfService : ITfService
 	#region <--- validation --->
 
 	internal class TfSpaceDataIdentityValidator
-		: AbstractValidator<TfDataSetIdentity>
+		: AbstractValidator<TfDatasetIdentity>
 	{
 		private readonly ITfService _tfService;
 
@@ -251,12 +251,12 @@ public partial class TfService : ITfService
 					.NotEmpty()
 					.WithMessage("The data provider identity id is required.");
 
-				RuleFor(dataProviderIdentity => dataProviderIdentity.DataSetId)
+				RuleFor(dataProviderIdentity => dataProviderIdentity.DatasetId)
 					.NotEmpty()
 					.WithMessage("The dataset id is required.");
 
-				RuleFor(datasetIdentity => datasetIdentity.DataSetId)
-					.Must( datasetId=> { return tfService.GetDataSet(datasetId) != null; })
+				RuleFor(datasetIdentity => datasetIdentity.DatasetId)
+					.Must( datasetId=> { return tfService.GetDataset(datasetId) != null; })
 					.WithMessage("There is no existing dataset for specified dataset id.");
 
 				RuleFor(datasetIdentity => datasetIdentity.DataIdentity)
@@ -349,7 +349,7 @@ public partial class TfService : ITfService
 				RuleFor(datasetIdentity => datasetIdentity.Id)
 					.Must((datasetIdentity, id) =>
 					{
-						return tfService.GetDataSetIdentity(id) == null;
+						return tfService.GetDatasetIdentity(id) == null;
 					})
 					.WithMessage("There is already existing dataset identity with specified identifier.");
 
@@ -360,7 +360,7 @@ public partial class TfService : ITfService
 						if (string.IsNullOrEmpty(dataIdentity))
 							return true;
 
-						var identities = tfService.GetDataSetIdentities(datasetIdentity.DataSetId);
+						var identities = tfService.GetDatasetIdentities(datasetIdentity.DatasetId);
 						return !identities.Any(x => x.DataIdentity.ToLowerInvariant().Trim() == dataIdentity.ToLowerInvariant().Trim());
 					})
 					.WithMessage("There is already existing dataset identity for specified identity attached to space data.");
@@ -371,18 +371,18 @@ public partial class TfService : ITfService
 				RuleFor(datasetIdentity => datasetIdentity.Id)
 					.Must((datasetIdentity, id) =>
 					{
-						return tfService.GetDataSetIdentity(id) != null;
+						return tfService.GetDatasetIdentity(id) != null;
 					})
 					.WithMessage("There is not existing dataset identity with specified identifier.");
 
-				RuleFor(datasetIdentity => datasetIdentity.DataSetId)
+				RuleFor(datasetIdentity => datasetIdentity.DatasetId)
 					.Must((datasetIdentity, datasetId) =>
 					{
-						var existingDataIdentity = tfService.GetDataSetIdentity(datasetIdentity.Id);
+						var existingDataIdentity = tfService.GetDatasetIdentity(datasetIdentity.Id);
 						if (existingDataIdentity is null)
 							return true;
 
-						return existingDataIdentity.DataSetId == datasetId;
+						return existingDataIdentity.DatasetId == datasetId;
 					})
 					.WithMessage("There dataset cannot be changed for dataset identity.");
 
@@ -390,7 +390,7 @@ public partial class TfService : ITfService
 					.Must((datasetIdentity, dbName) =>
 					{
 
-						var existingDataIdentity = tfService.GetDataSetIdentity(datasetIdentity.Id);
+						var existingDataIdentity = tfService.GetDatasetIdentity(datasetIdentity.Id);
 						if (existingDataIdentity is null)
 							return true;
 
@@ -401,7 +401,7 @@ public partial class TfService : ITfService
 		}
 
 		public ValidationResult ValidateCreate(
-			TfDataSetIdentity? dataIdentity)
+			TfDatasetIdentity? dataIdentity)
 		{
 			if (dataIdentity == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -414,7 +414,7 @@ public partial class TfService : ITfService
 		}
 
 		public ValidationResult ValidateUpdate(
-			TfDataSetIdentity? dataIdentity)
+			TfDatasetIdentity? dataIdentity)
 		{
 			if (dataIdentity == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -427,7 +427,7 @@ public partial class TfService : ITfService
 		}
 
 		public ValidationResult ValidateDelete(
-			TfDataSetIdentity? dataIdentity)
+			TfDatasetIdentity? dataIdentity)
 		{
 			if (dataIdentity == null)
 				return new ValidationResult(new[] { new ValidationFailure("",

@@ -11,7 +11,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 	#region << Injects >>
 	[Inject] private ITfService TfService { get; set; } = default!;
 	[Inject] private ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-	[Inject] private ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
+	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	#endregion
 
 	#region << Constructor >>
@@ -57,7 +57,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 	/// </summary>
 	private string? _renderedHash = null;
 	private string _storageKey = "";
-	private TfDataSet? _selectedSpaceData = null;
+	private TfDataset? _selectedSpaceData = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -114,11 +114,11 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 		if (RegionContext.Mode == TfComponentPresentationMode.Options)
 		{
 			var spaceView = TfSpaceViewUIService.GetSpaceView(RegionContext.SpaceViewId);
-			_selectedSpaceData = TfSpaceDataUIService.GetSpaceData(spaceView.SpaceDataId);
+			_selectedSpaceData = TfDatasetUIService.GetDataset(spaceView.DatasetId);
 
 			if (_selectedSpaceData is null)
 			{
-				var spaceDataList = TfSpaceDataUIService.GetSpaceDataList(spaceView.SpaceId);
+				var spaceDataList = TfDatasetUIService.GetDatasets();
 				if (spaceDataList is not null && spaceDataList.Count > 0)
 				{
 					_selectedSpaceData = spaceDataList[0];
@@ -174,7 +174,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 				if (componentOptions.SpaceDataId != Guid.Empty)
 				{
 					var optionsDT = TfService.QuerySpaceData(
-						spaceDataId: componentOptions.SpaceDataId,
+						datasetId: componentOptions.SpaceDataId,
 						userFilters: null,
 						userSorts: null,
 						search: null,
@@ -329,7 +329,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 		return result;
 	}
 
-	private async Task _spaceDataChanged(TfDataSet spaceData)
+	private async Task _spaceDataChanged(TfDataset spaceData)
 	{
 		_selectedSpaceData = spaceData;
 		await OnOptionsChanged(nameof(componentOptions.SpaceDataId), _selectedSpaceData?.Id);

@@ -6,7 +6,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	// Dependency Injection
 	[Inject] private ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Inject] private ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-	[Inject] private ITfSpaceDataUIService TfSpaceDataUIService { get; set; } = default!;
+	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Inject] private ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Inject] private ITfSharedColumnUIService TfSharedColumnUIService { get; set; } = default!;
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
@@ -24,7 +24,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private TfSpace? _space = null;
 	private TfSpacePage? _spacePage = null;
 	private TfSpaceView? _spaceView = null;
-	private TfDataSet? _spaceData = null;
+	private TfDataset? _spaceData = null;
 	private TfDataProvider? _dataProvider = null;
 	private TfSpaceViewPreset? _preset = null;
 	private TfDataTable? _data = null;
@@ -166,7 +166,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			if (oldViewId != options.SpaceViewId.Value)
 			{
 				_contextData = new();
-				_spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
+				_spaceData = TfDatasetUIService.GetDataset(_spaceView.DatasetId);
 				_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _spaceData.DataProviderId);
 				_selectedDataRows = new();
 				_editedDataRows = new();
@@ -178,8 +178,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 			_spaceViewColumns = TfSpaceViewUIService.GetViewColumns(_spaceView.Id);
 
-			_data = TfSpaceDataUIService.QuerySpaceData(
-							spaceDataId: _spaceView!.SpaceDataId,
+			_data = TfDatasetUIService.QueryDataset(
+							datasetId: _spaceView!.DatasetId,
 							presetFilters: _preset is not null ? _preset.Filters : null,
 							presetSorts: _preset is not null ? _preset.SortOrders : null,
 							userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _allDataProviders, _allSharedColumns),
@@ -273,8 +273,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			if (_navState.SpaceViewPresetId is not null)
 				preset = _spaceView!.Presets.GetPresetById(_navState.SpaceViewPresetId.Value);
 
-			_selectedDataRows = TfSpaceDataUIService.QuerySpaceDataIdList(
-							spaceDataId: _spaceView!.SpaceDataId,
+			_selectedDataRows = TfDatasetUIService.QueryDatasetIdList(
+							datasetId: _spaceView!.DatasetId,
 							presetFilters: preset is not null ? preset.Filters : null,
 							presetSorts: preset is not null ? preset.SortOrders : null,
 							userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _allDataProviders, _allSharedColumns),
@@ -352,7 +352,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		if (tfIds is null || tfIds.Count == 0) return;
 		try
 		{
-			var spaceData = TfSpaceDataUIService.GetSpaceData(_spaceView.SpaceDataId);
+			var spaceData = TfDatasetUIService.GetDataset(_spaceView.DatasetId);
 			TfDataProviderUIService.DeleteDataProviderRowsByTfId(
 				providerId: spaceData.DataProviderId,
 				idList: _selectedDataRows
@@ -384,7 +384,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			var changedRow = value.Rows[0];
 			var changedRowTfId = changedRow.GetRowId();
 
-			var dataTable = TfSpaceDataUIService.SaveDataTable(value);
+			var dataTable = TfDatasetUIService.SaveDataTable(value);
 
 			//Apply changed to the datatable
 			if (_data is null || _data.Rows.Count == 0 || _data.Rows.Count == 0) return;

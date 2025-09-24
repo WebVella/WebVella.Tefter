@@ -31,7 +31,7 @@ public partial class TucSpaceViewSettingsSelector : TfBaseComponent
 	private void _manageData()
 	{
 		var url = NavigatorExt.AddQueryValueToUri(
-			url: string.Format(TfConstants.SpaceDataPageUrl, SpaceView.SpaceId, SpaceView.SpaceDataId),
+			url: string.Format(TfConstants.SpaceDataPageUrl, SpaceView.SpaceId, SpaceView.DatasetId),
 			paramName: TfConstants.ReturnUrlQueryName,
 			Navigator.GetLocalUrl()
 			);

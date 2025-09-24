@@ -34,6 +34,7 @@ public partial class TfConstants
 	public static string RouteNameAux = "aux";
 	public static string RouteNameSynchronization = "synchronization";
 	public static string RouteNameData = "data";
+	public static string RouteNameDatasets = "datasets";
 	public static string RouteNamePages = "pages";
 	public static string RouteNameColumns = "columns";
 	public static string RouteNameFilters = "filters";
@@ -59,6 +60,8 @@ public partial class TfConstants
 	public static string AdminDataProviderAuxPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameAux}";
 	public static string AdminDataProviderSynchronizationPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameSynchronization}";
 	public static string AdminDataProviderDataPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameData}";
+	public static string AdminDataProviderDatasetsPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameDatasets}";
+	public static string AdminDataProviderDatasetDetailsPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameDatasets}/{{1}}";
 	public static string AdminSharedColumnsPageUrl = $"/{RouteNameAdmin}/{RouteNameSharedColumns}";
 	public static string AdminSharedColumnDetailsPageUrl = $"/{RouteNameAdmin}/{RouteNameSharedColumns}/{{0}}";
 	public static string AdminDataIdentitiesPageUrl = $"/{RouteNameAdmin}/{RouteNameDataIdentities}";

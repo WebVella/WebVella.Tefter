@@ -47,6 +47,8 @@ public enum RouteDataNode
 	Synchronization,
 	[Description("Data")]
 	Data,
+	[Description("Datasets")]
+	Datasets,
 	[Description("Views")]
 	Views,
 	[Description("List")]

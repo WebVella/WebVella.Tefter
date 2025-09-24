@@ -94,21 +94,22 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 	private async Task _addSpaceDataHandler(TfMenuItem args)
 	{
 		if (args.Data?.SpaceId == null) return;
-		var dialog = await DialogService.ShowDialogAsync<TucSpaceDataManageDialog>(
-		new TfDataSet() { SpaceId = args.Data.SpaceId.Value },
-		new DialogParameters()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			var item = (TfDataSet)result.Data;
-			Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, args.Data.SpaceId.Value, item.Id));
-		}
+		throw new NotImplementedException();
+		//var dialog = await DialogService.ShowDialogAsync<TucSpaceDataManageDialog>(
+		//new TfDataset() { SpaceId = args.Data.SpaceId.Value },
+		//new DialogParameters()
+		//{
+		//	PreventDismissOnOverlayClick = true,
+		//	PreventScroll = true,
+		//	Width = TfConstants.DialogWidthLarge,
+		//	TrapFocus = false
+		//});
+		//var result = await dialog.Result;
+		//if (!result.Cancelled && result.Data != null)
+		//{
+		//	var item = (TfDataset)result.Data;
+		//	Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, args.Data.SpaceId.Value, item.Id));
+		//}
 	}
 	private async Task _addSpaceViewHandler(TfMenuItem args)
 	{

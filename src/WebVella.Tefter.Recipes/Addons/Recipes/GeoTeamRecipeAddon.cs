@@ -686,7 +686,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					Name = "World Cities",
 					Type = TfSpaceViewType.DataGrid,
 					DataProviderId = dataProviderId,
-					DataSetType = TfSpaceViewDataSetType.Existing,
+					DatasetType = TfSpaceViewDatasetType.Existing,
 					SpaceDataId = spaceDataId,
 				})
 			}
