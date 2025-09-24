@@ -31,11 +31,10 @@ else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentInputLabel Label="@LOC("Channel")" />
-			<FluentSelect TOption="TalkChannel"
+			<TucSelect TOption="TalkChannel"
 						  Items="_channels"
 						  OptionValue="@((p)=> p.Id.ToString())"
 						  OptionText="(x=> x.Name)"
-						  OptionSelected="(x => x.Id == _selectedChannel?.Id)"
 						  SelectedOption="_selectedChannel"
 						  SelectedOptionChanged="_channelSelectHandler" />
 		</FluentGridItem>

@@ -9,8 +9,7 @@ else if (Context.Mode == TfComponentMode.Create)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentSelect OptionSelected="(x => x == _options.SetType)"
-						  SelectedOption="@_options.SetType"
+			<TucSelect SelectedOption="@_options.SetType"
 						  SelectedOptionChanged="_optionsSetTypeChangeHandler"
 						  TOption="TfSpaceViewSetType"
 						  Items="@(Enum.GetValues<TfSpaceViewSetType>())" Style="width:100%"
@@ -36,8 +35,7 @@ else if (Context.Mode == TfComponentMode.Create)
 		</FluentGrid>
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<FluentSelect OptionSelected="(x => x == _options?.DataSetType)"
-							  SelectedOption="@_options.DataSetType"
+				<TucSelect SelectedOption="@_options.DataSetType"
 							  SelectedOptionChanged="_optionsDataSetTypeChangeHandler"
 							  TOption="TfSpaceViewDataSetType"
 							  Items="@(Enum.GetValues<TfSpaceViewDataSetType>())" Style="width:100%"
@@ -50,8 +48,7 @@ else if (Context.Mode == TfComponentMode.Create)
 			@if (_options.DataSetType == TfSpaceViewDataSetType.New)
 			{
 				<FluentGridItem xs="6">
-					<FluentSelect OptionSelected="(x => x.Id == _optionsDataProvider?.Id)"
-								  SelectedOption="@_optionsDataProvider"
+					<TucSelect SelectedOption="@_optionsDataProvider"
 								  SelectedOptionChanged="_optionsDataProviderSelectedHandler"
 								  TOption="TfDataProvider" Required="false" Placeholder="@LOC("select...")"
 								  Items="@_allDataProviders" Style="width:100%"
@@ -75,8 +72,7 @@ else if (Context.Mode == TfComponentMode.Create)
 					}
 					else
 					{
-						<FluentSelect OptionSelected="(x => x.Id == _optionsDataset?.Id)"
-									  SelectedOption="@_optionsDataset"
+						<TucSelect SelectedOption="@_optionsDataset"
 									  SelectedOptionChanged="_optionsDatasetSelected"
 									  TOption="TfDataSet" Placeholder="@LOC("select...")"
 									  Items="@_allSpaceData" Style="width:100%"
@@ -159,8 +155,7 @@ else if (Context.Mode == TfComponentMode.Create)
 	{
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<FluentSelect OptionSelected="(x => x.Id == _optionsExistingSpaceView?.Id)"
-							  SelectedOption="@_optionsExistingSpaceView"
+				<TucSelect SelectedOption="@_optionsExistingSpaceView"
 							  SelectedOptionChanged="_optionsSpaceViewSelected"
 							  TOption="TfSpaceView" Placeholder="@LOC("select...")"
 							  Items="@_allSpaceView" Style="width:100%"
@@ -176,8 +171,7 @@ else if (Context.Mode == TfComponentMode.Update)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentSelect OptionSelected="(x => x.Id == _optionsExistingSpaceView?.Id)"
-						  SelectedOption="@_optionsExistingSpaceView"
+			<TucSelect SelectedOption="@_optionsExistingSpaceView"
 						  SelectedOptionChanged="_optionsSpaceViewSelected"
 						  TOption="TfSpaceView" Placeholder="@LOC("select...")"
 						  Items="@_allSpaceView" Style="width:100%"

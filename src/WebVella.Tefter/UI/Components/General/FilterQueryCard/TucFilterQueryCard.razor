@@ -8,7 +8,7 @@
 	<ToolbarTemplate>
 		<FluentStack VerticalAlignment="@VerticalAlignment.Center" HorizontalAlignment="@HorizontalAlignment.Right">
 			<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">@LOC("columns:")</FluentLabel>
-			<FluentSelect Value="@_selectedOption?.Name"
+			<TucSelect SelectedOption="@_selectedOption"
 						  SelectedOptionChanged="(x=> _addColumnFilterHandler(x))"
 						  TOption="TfFilterQuery" Required="false"
 						  Items="@_allOptions" Style="width:140px"

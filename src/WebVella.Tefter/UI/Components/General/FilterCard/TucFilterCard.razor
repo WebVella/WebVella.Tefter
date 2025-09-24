@@ -19,8 +19,7 @@
 				}
 				else
 				{
-					<FluentSelect OptionSelected="(x => x == _selectedColumn)"
-								  @bind-SelectedOption="@_selectedColumn"
+					<TucSelect @bind-SelectedOption="@_selectedColumn"
 								  TOption="string" Required="false"
 								  Items="@AllColumnOptions" Style="width:140px"
 								  Placeholder="@LOC("select...")" />

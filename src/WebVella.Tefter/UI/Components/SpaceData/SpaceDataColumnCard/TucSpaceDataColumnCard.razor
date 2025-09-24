@@ -7,9 +7,9 @@
 					  Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("All Available")</FluentButton>
 		@if (_columnOptions.Count > 0)
 		{
-			<FluentSelect SelectedOptionChanged="((column) => _addColumn(column))"
+			<TucSelect SelectedOptionChanged="((column) => _addColumn(column))"
 						  TOption="TfDataSetColumn" Required="false"
-						  Value="@_selectedColumn?.ColumnName"
+						  SelectedOption="@_selectedColumn"
 						  OptionValue="@((p)=> p.ColumnName)"
 						  OptionText="@(p=> p.ColumnName)"
 						  Items="@_columnOptions" Style="width:300px"

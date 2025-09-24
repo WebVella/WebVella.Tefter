@@ -34,7 +34,7 @@
 					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentSelect Required="true" TOption="string" Disabled="!_isCreate"
+					<TucSelect Required="true" TOption="string" Disabled="!_isCreate"
 								  Items="_sharedColumnsOptions"
 								  Height="@TfConstants.ComboPanelHeight"
 								  @bind-Value=@_form.CountSharedColumnName

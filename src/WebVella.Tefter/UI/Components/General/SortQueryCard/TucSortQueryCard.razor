@@ -8,7 +8,7 @@
 			@if (_options.Count > 0)
 			{
 				<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">@LOC("columns:")</FluentLabel>
-				<FluentSelect SelectedOptionChanged="(x=> _addSortColumn(x))"
+				<TucSelect SelectedOptionChanged="(x=> _addSortColumn(x))"
 							  TOption="TfSortQuery" Required="false"
 							  Items="@_options" Style="width:200px"
 							  Placeholder="@LOC("select to add")"
@@ -59,7 +59,7 @@
 							</td>
 							<td class="tf-grid-td">
 								<div>
-									<FluentSelect SelectedOption="@((TfSortDirection)context.Direction)"
+									<TucSelect SelectedOption="@((TfSortDirection)context.Direction)"
 												  Items="@(Enum.GetValues<TfSortDirection>())"
 												  OptionValue="@((p)=> ((int)p).ToString())"
 												  OptionText="@((p)=> p.ToDescriptionString())"

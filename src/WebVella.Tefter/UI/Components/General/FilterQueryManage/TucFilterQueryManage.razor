@@ -13,8 +13,7 @@
 					@if (!ReadOnly)
 					{
 						<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
-							<FluentSelect OptionSelected="(x => x.Name == _selectedOption?.Name)"
-										  @bind-SelectedOption="@_selectedOption"
+							<TucSelect @bind-SelectedOption="@_selectedOption"
 										  TOption="TfFilterQuery" Required="false"
 										  Items="@AllOptions" Style="width:140px"
 										  Placeholder="@LOC("select...")"
@@ -75,8 +74,7 @@
 							else if (TypeDict[Item.Name] == TfDatabaseColumnType.Boolean)
 							{
 								var context = new TfFilterBoolean();
-								<FluentSelect OptionSelected="(x => (int)x == Item.Method)"
-											  SelectedOption="@((TfFilterBooleanComparisonMethod)Item.Method)"
+								<TucSelect SelectedOption="@((TfFilterBooleanComparisonMethod)Item.Method)"
 											  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(Item.Method),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TfFilterBooleanComparisonMethod" Required="true"
@@ -85,8 +83,7 @@
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 								@if (context.RequiresValue)
 								{
-									<FluentSelect OptionSelected="(x => x.Value == Item.Value)"
-												  @bind-Value="@Item.Value"
+									<TucSelect @bind-Value="@Item.Value"
 												  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.Value),value))"
 												  Disabled="@(Disabled || ReadOnly)"
 												  TOption="Option<string>" Required="false"
@@ -99,8 +96,7 @@
 							|| TypeDict[Item.Name] == TfDatabaseColumnType.DateTime)
 							{
 								var context = new TfFilterDateTime();
-								<FluentSelect OptionSelected="(x => (int)x == Item.Method)"
-											  SelectedOption="@((TfFilterDateTimeComparisonMethod)Item.Method)"
+								<TucSelect SelectedOption="@((TfFilterDateTimeComparisonMethod)Item.Method)"
 											  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TfFilterDateTimeComparisonMethod" Required="true"
@@ -125,8 +121,7 @@
 							else if (TypeDict[Item.Name] == TfDatabaseColumnType.Guid)
 							{
 								var context = new TfFilterGuid();
-								<FluentSelect OptionSelected="(x => (int)x == Item.Method)"
-											  SelectedOption="@((TfFilterGuidComparisonMethod)Item.Method)"
+								<TucSelect SelectedOption="@((TfFilterGuidComparisonMethod)Item.Method)"
 											  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TfFilterGuidComparisonMethod" Required="true"
@@ -147,8 +142,7 @@
 							|| TypeDict[Item.Name] == TfDatabaseColumnType.LongInteger)
 							{
 								var context = new TfFilterNumeric();
-								<FluentSelect OptionSelected="(x => (int)x == Item.Method)"
-											  SelectedOption="@((TfFilterNumericComparisonMethod)Item.Method)"
+								<TucSelect SelectedOption="@((TfFilterNumericComparisonMethod)Item.Method)"
 											  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TfFilterNumericComparisonMethod" Required="true"
@@ -168,8 +162,7 @@
 							else if (TypeDict[Item.Name] == TfDatabaseColumnType.Number)
 							{
 								var context = new TfFilterNumeric();
-								<FluentSelect OptionSelected="(x => (int)x == Item.Method)"
-											  SelectedOption="@((TfFilterNumericComparisonMethod)Item.Method)"
+								<TucSelect SelectedOption="@((TfFilterNumericComparisonMethod)Item.Method)"
 											  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TfFilterNumericComparisonMethod" Required="true"
@@ -190,8 +183,7 @@
 							|| TypeDict[Item.Name] == TfDatabaseColumnType.Text)
 							{
 								var context = new TfFilterText();
-								<FluentSelect OptionSelected="(x => (int)x == Item.Method)"
-											  SelectedOption="@((TfFilterTextComparisonMethod)Item.Method)"
+								<TucSelect SelectedOption="@((TfFilterTextComparisonMethod)Item.Method)"
 											  SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TfFilterTextComparisonMethod" Required="true"

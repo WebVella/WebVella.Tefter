@@ -28,8 +28,7 @@
 					<FluentValidationMessage For="@(() => _form.DbName)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentSelect OptionSelected="(x => x.Type == _form.DbType)"
-								  @bind-SelectedOption="_selectedColumnType"
+					<TucSelect @bind-SelectedOption="_selectedColumnType"
 								  TOption="DatabaseColumnTypeInfo"
 								  Items="@_columnTypeOptions" Style="width:100%"
 								  OptionValue="@(p => ((int)p.Type).ToString())"
@@ -42,7 +41,7 @@
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Connected Data identity")" />
 					<FluentStack>
-						<FluentSelect TOption="string"
+						<TucSelect TOption="string"
 									  Items="_allDataIdentities"
 									  Height="@TfConstants.ComboPanelHeight"
 									  @bind-Value=@_form.DataIdentity

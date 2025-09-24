@@ -36,8 +36,7 @@
 					<FluentGridItem xs="4">
 						<FluentInputLabel Label="@LOC("Parent Group")" />
 						<FluentStack>
-							<FluentSelect Required="false"
-										  OptionSelected="(x => x.Id == _selectedParent?.Id)"
+							<TucSelect Required="false"
 										  @bind-SelectedOption="@_selectedParent"
 										  TOption="TfSpaceViewPreset"
 										  Items="@Content.Parents" Style="width:100%"

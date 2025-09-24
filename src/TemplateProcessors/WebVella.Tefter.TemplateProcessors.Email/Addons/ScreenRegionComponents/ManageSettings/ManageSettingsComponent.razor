@@ -59,16 +59,15 @@ else
 				</Header>
 				<ChildContent>
 					<FluentInputLabel Label="@LOC("Applicable Templates")" />
-					<FluentSelect Style="width:100%" TOption="TfTemplate" SelectedOption="_selectedOption" SelectedOptionChanged="_selectedOptionChanged"
+					<TucSelect Style="width:100%" TOption="TfTemplate" SelectedOption="_selectedOption" SelectedOptionChanged="_selectedOptionChanged"
 								  Placeholder="@LOC("select template to add...")"
-								  Value="@_selectedOption?.Id.ToString()"
 								  OptionValue="@((p)=> p.Id.ToString())"
 								  @bind-Items="_templatesOptions">
 						<OptionTemplate Context="option">
 							<span>@option.Name</span>
 							<FluentIcon Slot="start" Value="@TfConstants.GetIcon(option.FluentIconName)" />
 						</OptionTemplate>
-					</FluentSelect>
+					</TucSelect>
 					<table class="tf-grid" style="margin-top:15px;">
 						<thead class="tf-grid-thead">
 							<tr class="tf-grid-thead-bkg"></tr>

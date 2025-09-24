@@ -99,14 +99,13 @@
 								</td>
 								<td class="tf-grid-td">
 									<div>
-										<FluentSelect OptionSelected="(x => x == context.DbType)"
-													  @bind-SelectedOption="@context.DbType"
-													  TOption="TfDatabaseColumnType"
-													  Style="width:100%"
-													  Class="@_getValidationCssClass(context.SourceName,nameof(context.DbType))"
-													  Items="@_schemaInfo.SourceTypeSupportedDbTypes[context.SourceType]"
-													  OptionValue="@(x=> x.ToString())"
-													  OptionText="@(x => x.ToString())" />
+										<TucSelect @bind-SelectedOption="@context.DbType"
+												   TOption="TfDatabaseColumnType"
+												   Style="width:100%"
+												   Class="@_getValidationCssClass(context.SourceName,nameof(context.DbType))"
+												   Items="@_schemaInfo.SourceTypeSupportedDbTypes[context.SourceType]"
+												   OptionValue="@(x=> x.ToString())"
+												   OptionText="@(x => x.ToString())" />
 										<TucValidationMessage Field="@nameof(context.DbType)" Index=_rowIndex Errors="ValidationErrors" />
 									</div>
 								</td>
@@ -115,11 +114,11 @@
 								</td>
 								<td class="tf-grid-td">
 									<div>
-										<FluentSelect Value="@context.SourceType"
-													  TOption="string"
-													  ValueChanged="@(x => _sourceTypeChanged(x,context))" Style="width:100%"
-													  Class="@_getValidationCssClass(context.SourceName,nameof(context.SourceType))"
-													  Items="@_schemaInfo.SourceTypeSupportedDbTypes.Keys"/>
+										<TucSelect SelectedOption="@context.SourceType"
+												   TOption="string"
+												   SelectedOptionChanged="@(x => _sourceTypeChanged(x,context))" Style="width:100%"
+												   Class="@_getValidationCssClass(context.SourceName,nameof(context.SourceType))"
+												   Items="@_schemaInfo.SourceTypeSupportedDbTypes.Keys" />
 										<TucValidationMessage Field="@nameof(context.SourceType)" Index=_rowIndex Errors="ValidationErrors" />
 									</div>
 								</td>
@@ -169,8 +168,7 @@
 								</td>
 								<td class="tf-grid-td">
 									<div>
-										<FluentSelect OptionSelected="(x => x.ToString() == context.PreferredSearchType.ToString())"
-													  TOption="TfDataProviderColumnSearchType"
+										<TucSelect TOption="TfDataProviderColumnSearchType"
 													  @bind-SelectedOption="@context.PreferredSearchType"
 													  Items="@(Enum.GetValues<TfDataProviderColumnSearchType>())"
 													  Style="width:100%" Class="@_getValidationCssClass(context.SourceName,nameof(context.PreferredSearchType))"

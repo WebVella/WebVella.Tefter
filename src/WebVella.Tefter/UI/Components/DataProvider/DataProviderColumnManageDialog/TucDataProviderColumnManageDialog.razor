@@ -52,7 +52,7 @@
 						}
 					</FluentGridItem>
 					<FluentGridItem xs="4">
-						<FluentSelect SelectedOption="@_form.DbType"
+						<TucSelect SelectedOption="@_form.DbType"
 									  SelectedOptionChanged="_dbTypeChanged"
 									  TOption="TfDatabaseColumnType"
 									  Items="@_providerColumnTypeToSourceTypes.Keys"
@@ -80,7 +80,7 @@
 							<FluentValidationMessage For="@(() => _form.SourceName)" />
 						</FluentGridItem>
 						<FluentGridItem xs="4">
-							<FluentSelect @bind-Value="@_form.SourceType"
+							<TucSelect @bind-Value="@_form.SourceType"
 										  TOption="string"
 										  Items="@_providerColumnTypeToSourceTypes[_form.DbType]"
 										  Style="width:100%"
@@ -106,7 +106,7 @@
 						<FluentValidationMessage For="@(() => _form.IncludeInTableSearch)" />
 					</FluentGridItem>
 					<FluentGridItem xs="4">
-						<FluentSelect @bind-SelectedOption="@_form.PreferredSearchType"
+						<TucSelect @bind-SelectedOption="@_form.PreferredSearchType"
 									  TOption="TfDataProviderColumnSearchType"
 									  Items="@_searchTypes" Style="width:100%;min-width:200px;"
 									  OptionText="@(p => p.ToString())"
@@ -149,8 +149,7 @@
 					@if (!_form.IsNullable)
 					{
 						<FluentGridItem xs="4">
-							<FluentSelect OptionSelected="@((p) => p == _form.AutoDefaultValue)"
-										  @bind-SelectedOption="@_form.AutoDefaultValue"
+							<TucSelect @bind-SelectedOption="@_form.AutoDefaultValue"
 										  TOption="bool"
 										  Items="@(new List<bool>{true, false})"
 										  OptionValue="((p) => p.ToString())"

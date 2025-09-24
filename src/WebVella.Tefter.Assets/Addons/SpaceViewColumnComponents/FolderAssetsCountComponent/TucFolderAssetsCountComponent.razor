@@ -31,11 +31,10 @@ else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentInputLabel Label="@LOC("Folder")" />
-			<FluentSelect TOption="AssetsFolder"
+			<TucSelect TOption="AssetsFolder"
 						  Items="_folders"
 						  OptionValue="(x=> x.Id.ToString())"
 						  OptionText="(x=> x.Name)"
-						  OptionSelected="(x => x.Id == _selectedFolder?.Id)"
 						  SelectedOption="_selectedFolder"
 						  SelectedOptionChanged="_folderSelectHandler" />
 		</FluentGridItem>

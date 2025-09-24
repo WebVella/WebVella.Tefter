@@ -25,6 +25,9 @@ public partial class TucSelect<TOption> : TfBaseComponent where TOption : notnul
 	[Parameter] public string? Style { get; set; }
 	[Parameter] public string? Class { get; set; }
 	[Parameter] public string? Placeholder { get; set; }
+	[Parameter] public string? Id { get; set; }
+	[Parameter] public string? Height { get; set; }
+	[Parameter] public string? Width { get; set; }
 	[Parameter] public bool Disabled { get; set; } = false;
 	[Parameter] public bool Required { get; set; } = false;
 

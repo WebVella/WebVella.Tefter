@@ -27,9 +27,8 @@
 					<FluentGridItem xs="6">
 						<FluentInputLabel Label="@LOC("Data Identity")" />
 						<FluentStack>
-							<FluentSelect TOption="string"
+							<TucSelect TOption="string"
 										  Items="_identityOptions"
-										  OptionSelected="(x => x == _form.DataIdentity)"
 										  @bind-SelectedOption="@_form.DataIdentity"
 										  Placeholder="@LOC("select identity...")" Style="flex:1 1 auto" />
 							<FluentButton Title="@LOC("Create a new data identity")" OnClick="addDataIdentity"

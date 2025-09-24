@@ -7,15 +7,13 @@
 						 Disabled="_submitting"
 						 Placeholder="@LOC("name")"
 						 Required="true" Style="width:180px" />
-		<FluentSelect OptionSelected="(x => x == _selectedType)"
-					  @bind-SelectedOption="@_selectedType"
+		<TucSelect @bind-SelectedOption="@_selectedType"
 					  Disabled="_submitting"
 					  TOption="TfPresetFilterItemType" Required="true"
 					  Items="@(Enum.GetValues<TfPresetFilterItemType>())" Style="min-width:60px"
 					  OptionValue="@((p)=> ((int)p).ToString())"
 					  OptionText="@(x=> x.ToDescriptionString())" />
-		<FluentSelect OptionSelected="(x => x.Id == _selectedParent?.Id)"
-					  @bind-SelectedOption="@_selectedParent"
+		<TucSelect @bind-SelectedOption="@_selectedParent"
 					  Disabled="_submitting"
 					  TOption="TfSpaceViewPreset"
 					  Items="@_getParents()" Style="min-width:180px"

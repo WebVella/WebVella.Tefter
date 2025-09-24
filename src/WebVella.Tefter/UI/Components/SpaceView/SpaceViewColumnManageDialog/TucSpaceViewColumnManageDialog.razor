@@ -53,10 +53,9 @@
 						{
 							<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon(_selectedColumnType!.Instance.AddonFluentIconName)" />
 						}
-						<FluentSelect Style="width:100%"
+						<TucSelect Style="width:100%"
 									  TOption="TfSpaceViewColumnTypeAddonMeta"
 									  Placeholder="@LOC("select...")"
-									  OptionSelected="(x => x.Instance.AddonId == _form.TypeId)"
 									  SelectedOption="@_selectedColumnType"
 									  SelectedOptionChanged="_columnTypeChangeHandler"
 									  OptionText="((x)=> x.Instance.AddonName)"
@@ -71,7 +70,7 @@
 									@option.Instance.AddonName
 								</FluentStack>
 							</OptionTemplate>
-						</FluentSelect>
+						</TucSelect>
 					</FluentStack>
 					<FluentValidationMessage For="@(() => _form.TypeId)" />
 				</FluentGridItem>
@@ -138,9 +137,8 @@
 			{
 				<FluentGrid>
 					<FluentGridItem xs="6">
-						<FluentSelect Label="@LOC("Display component")"
+						<TucSelect Label="@LOC("Display component")"
 									  Style="width:100%" Required=true
-									  OptionSelected="(x => x.AddonId == _form.ComponentId)"
 									  SelectedOption="@_selectedColumnComponent"
 									  SelectedOptionChanged="_columnComponentChangeHandler"
 									  TOption="ITfSpaceViewColumnComponentAddon"
@@ -184,9 +182,8 @@
 			{
 				<FluentGrid>
 					<FluentGridItem xs="6">
-						<FluentSelect Label="@LOC("Edit component")"
+						<TucSelect Label="@LOC("Edit component")"
 									  Style="width:100%" Required=true
-									  OptionSelected="(x => x.AddonId == _form.EditComponentId)"
 									  SelectedOption="@_selectedEditColumnComponent"
 									  SelectedOptionChanged="_columnEditComponentChangeHandler"
 									  TOption="ITfSpaceViewColumnComponentAddon"

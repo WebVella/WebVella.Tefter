@@ -74,8 +74,7 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect OptionSelected="(x => x == _form.ThemeMode)"
-								  @bind-SelectedOption="@_form.ThemeMode" TOption="DesignThemeModes"
+					<TucSelect @bind-SelectedOption="@_form.ThemeMode" TOption="DesignThemeModes"
 								  Items="@(Enum.GetValues<DesignThemeModes>())" Style="width:100%"
 								  OptionValue="@(p => ((int)p).ToString())"
 								  OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")" />
@@ -89,8 +88,7 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect OptionSelected="(x => x.CultureCode == _form.Culture?.CultureCode)"
-								  @bind-SelectedOption="@_form.Culture" TOption="TfCultureOption"
+					<TucSelect @bind-SelectedOption="@_form.Culture" TOption="TfCultureOption"
 								  Items="@TfConstants.CultureOptions" Style="width:100%"
 								  OptionValue="@(p => p.CultureCode)"
 								  OptionText="@(p => p.CultureInfo.NativeName)" Label="@LOC("Localization")" />

@@ -108,7 +108,7 @@ else
 		<FluentStack Style="flex:1 1 auto" HorizontalGap="5">
 			<FluentButton IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="@Appearance.Outline" Style="flex:0 0 80px" OnClick="_prevItem"
 						  Disabled="@(_result.Items.Count == 1)" />
-			<FluentSelect TOption="TextContentTemplateResultItem" Style="flex:1 1 auto" SelectedOption="@_form"
+			<TucSelect TOption="TextContentTemplateResultItem" Style="flex:1 1 auto" SelectedOption="@_form"
 						  SelectedOptionChanged="_selectedOptionChanged" Value="@_form.Id.ToString()"
 						  Disabled="@(_result.Items.Count == 1)"
 						  OptionValue="@((p)=> p.Id.ToString())"
@@ -116,7 +116,7 @@ else
 				<OptionTemplate Context="p">
 					@LOC("content {0}", _itemPositionDict[p.Id])
 				</OptionTemplate>
-			</FluentSelect>
+			</TucSelect>
 			<FluentButton IconStart="@TfConstants.GetIcon("Copy")" Appearance="@Appearance.Outline" Style="flex:0 0 100px" OnClick="_copyToClipboard">@LOC("copy")</FluentButton>
 			<FluentButton IconStart="@TfConstants.GetIcon("ArrowRight")" Appearance="@Appearance.Outline" Style="flex:0 0 80px" OnClick="_nextItem"
 						  Disabled="@(_result.Items.Count == 1)" />

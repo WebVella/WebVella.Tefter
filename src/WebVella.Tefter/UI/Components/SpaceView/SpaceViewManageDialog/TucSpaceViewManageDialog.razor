@@ -75,8 +75,7 @@
 			<FluentDivider Style="margin:1rem 0" />
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect OptionSelected="(x => x == _form.DataSetType)"
-								  SelectedOption="@_form.DataSetType"
+					<TucSelect SelectedOption="@_form.DataSetType"
 								  SelectedOptionChanged="_dataSetTypeChangeHandler"
 								  TOption="TfSpaceViewDataSetType"
 								  Items="@(Enum.GetValues<TfSpaceViewDataSetType>())" Style="width:100%"
@@ -89,8 +88,7 @@
 				@if (_form.DataSetType == TfSpaceViewDataSetType.New)
 				{
 					<FluentGridItem xs="6">
-						<FluentSelect OptionSelected="(x => x.Id == _selectedDataProvider?.Id)"
-									  SelectedOption="@_selectedDataProvider"
+						<TucSelect SelectedOption="@_selectedDataProvider"
 									  SelectedOptionChanged="_dataProviderSelectedHandler"
 									  TOption="TfDataProvider" Required="false" Placeholder="@LOC("select...")"
 									  Items="@_providers" Style="width:100%"
@@ -114,8 +112,7 @@
 						}
 						else
 						{
-							<FluentSelect OptionSelected="(x => x.Id == _selectedDataset?.Id)"
-										  SelectedOption="@_selectedDataset"
+							<TucSelect SelectedOption="@_selectedDataset"
 										  SelectedOptionChanged="_datasetSelected"
 										  TOption="TfDataSet" Placeholder="@LOC("select...")"
 										  Items="@_spaceDataList" Style="width:100%"

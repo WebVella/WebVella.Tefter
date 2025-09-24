@@ -41,8 +41,7 @@
 					@if (parentItems.Count() > 0)
 					{
 						<FluentStack>
-							<FluentSelect OptionSelected="(x => x.Id == _parentNode?.Id)"
-										  TOption="TfSpacePage" SelectedOption="@_parentNode"
+							<TucSelect TOption="TfSpacePage" SelectedOption="@_parentNode"
 										  SelectedOptionChanged="_selectedParentChanged"
 										  Style="width:100%" Items="@parentItems" Placeholder="@LOC("select...")"
 										  OptionValue="@(x=> x.Id.ToString())">
@@ -50,7 +49,7 @@
 									<FluentIcon Value="@TfConstants.GetIcon(option.FluentIconName)" Slot="start" />
 									<span>@option.Name</span>
 								</OptionTemplate>
-							</FluentSelect>
+							</TucSelect>
 							@if (_form.ParentId is not null)
 							{
 								<FluentButton IconStart="@TfConstants.GetIcon("Dismiss").WithColor(Color.Error)" OnClick="@(_ => _form.ParentId = null)" />
@@ -67,8 +66,7 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect OptionSelected="(x => x == _form.Type)"
-								  TOption="TfSpacePageType" SelectedOption=@_form.Type SelectedOptionChanged="_typeChanged"
+					<TucSelect TOption="TfSpacePageType" SelectedOption=@_form.Type SelectedOptionChanged="_typeChanged"
 								  Label="@LOC("Type")" Style="width:100%" Items="@(Enum.GetValues<TfSpacePageType>())"
 								  OptionValue="@((p)=> ((int)p).ToString())"
 								  OptionText="@(x=> x.ToDescriptionString())" />

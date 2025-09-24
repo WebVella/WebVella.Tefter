@@ -69,15 +69,14 @@
 			<FluentGrid>
 				<FluentGridItem xs="12">
 					<FluentInputLabel Label="@LOC("Target Space Dataset")" />
-					<FluentSelect Style="width:100%" TOption="TfDataSetAsOption" SelectedOption="_spaceDataOption" SelectedOptionChanged="_spaceDataOptionChanged"
+					<TucSelect Style="width:100%" TOption="TfDataSetAsOption" SelectedOption="_spaceDataOption" SelectedOptionChanged="_spaceDataOptionChanged"
 								  Placeholder="@LOC("select space dataset...")"
-								  Value="@_spaceDataOption?.Id.ToString()"
 								  OptionValue="@((p)=> p.Id.ToString())"
 								  @bind-Items="_spaceDataOptions">
 						<OptionTemplate Context="option">
 							<span>@option.SpaceName <span class="text-muted">></span> @option.Name</span>
 						</OptionTemplate>
-					</FluentSelect>
+					</TucSelect>
 					<FluentValidationMessage For="@(() => _form.SpaceDataList)" />
 					<table class="tf-grid" style="margin-top:15px;">
 						<thead class="tf-grid-thead">
