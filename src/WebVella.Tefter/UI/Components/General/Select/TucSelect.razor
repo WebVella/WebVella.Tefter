@@ -1,0 +1,30 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+@typeparam TOption
+@if (_shouldRender)
+{
+	<FluentSelect TOption="TOption"
+				  SelectedOption="@SelectedOption"
+				  SelectedOptionChanged="SelectedOptionChanged"
+				  Items="@Items"
+				  Class="@Class"
+				  Style="@Style"
+				  Placeholder="@Placeholder"
+				  OptionText="@OptionText"
+				  OptionValue="@OptionValue"
+				  OptionTemplate="@OptionTemplate"
+				  Label="@Label"
+				  Required=Required
+				  Disabled="Disabled" />
+}
+else
+{
+	<FluentSelect TOption="TOption"
+				  Class="@Class"
+				  Style="@Style"
+				  Placeholder="..."
+				  Label="@Label"
+				  Required=Required
+				  Disabled="Disabled" />
+}
