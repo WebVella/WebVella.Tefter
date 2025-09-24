@@ -320,17 +320,17 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			viewDict[spaceId] = viewDict[spaceId].OrderBy(x => x.Position).ToList();
 		}
 
-		foreach (var item in data)
-		{
-			if (!dataDict.ContainsKey(item.SpaceId))
-				dataDict[item.SpaceId] = new();
+		//foreach (var item in data)
+		//{
+		//	if (!dataDict.ContainsKey(item.SpaceId))
+		//		dataDict[item.SpaceId] = new();
 
-			dataDict[item.SpaceId].Add(item);
-		}
-		foreach (var spaceId in dataDict.Keys)
-		{
-			dataDict[spaceId] = dataDict[spaceId].OrderBy(x => x.Position).ToList();
-		}
+		//	dataDict[item.SpaceId].Add(item);
+		//}
+		//foreach (var spaceId in dataDict.Keys)
+		//{
+		//	dataDict[spaceId] = dataDict[spaceId].OrderBy(x => x.Position).ToList();
+		//}
 		foreach (var space in spaces.OrderBy(x => x.Position))
 		{
 			var spacePages = pageDict.ContainsKey(space.Id) ? pageDict[space.Id] : new List<TfSpacePage>();

@@ -70,8 +70,8 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 				Disabled = true,
 			});
 
-			var colorName = navMenu.SpaceColor.GetAttribute().Name;
-			var colorVariable = navMenu.SpaceColor.GetAttribute().Variable;
+			var colorName = navMenu.SpaceColor.GetColor().Name;
+			var colorVariable = navMenu.SpaceColor.GetColor().Variable;
 			var sb = new StringBuilder();
 			sb.AppendLine("<style>");
 			sb.AppendLine($"html:root body {{");

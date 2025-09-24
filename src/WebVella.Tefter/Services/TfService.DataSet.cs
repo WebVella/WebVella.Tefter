@@ -60,7 +60,7 @@ public partial class TfService : ITfService
 		try
 		{
 			var dbos = _dboManager.GetList<TfDatasetDbo>();
-			var datasets = dbos.Where(x => x is not null).Select(x => ConvertDboToModel(x)).ToList();
+			var datasets = dbos.Where(x => x is not null).Select(x => ConvertDboToModel(x)).OrderBy(x=> x.Name).ToList();
 			var result = new List<TfDataset>();
 			foreach (var dataset in datasets)
 			{

@@ -4,12 +4,12 @@
 <TucCard Title="@Title" Class="tf-card--filter">
 	<ToolbarTemplate>
 		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
-			@if (AllColumnOptions.Count > 0)
+			@if (_options.Count > 0)
 			{
 				<TucSelect @bind-SelectedOption="@_selectedColumn"
 							  Disabled="_submitting"
 							  TOption="string" Required="false"
-							  Items="@AllColumnOptions" Style="width:200px"
+						   Items="@_options" Style="width:220px"
 							  Placeholder="@LOC("select provider column")" />
 				<TucSelect @bind-SelectedOption="@_selectedDirection"
 							  Disabled="_submitting"
@@ -17,18 +17,18 @@
 							  Items="@(Enum.GetValues<TfSortDirection>())"
 							  OptionValue="@((p)=> ((int)p).ToString())"
 							  OptionText="@((p)=> p.ToDescriptionString())"
-							  Style="width:100px" />
+							  Style="width:160px" />
 			}
 			else
 			{
 				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
 			}
 			<FluentButton OnClick="_addSortColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
-						  Disabled="@(AllColumnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+						  Disabled="@(_options.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
 		</FluentStack>
 	</ToolbarTemplate>
 	<ChildContent>
-		@if (Items.Count == 0)
+		@if (_items.Count == 0)
 		{
 			@LOC("No data sort order defined yet")
 		}
@@ -36,18 +36,26 @@
 		{
 				<table class="tf-grid">
 					<tbody class="tf-grid-tbody">
-						@foreach (var context in Items)
+					@foreach (var context in _items)
 						{
 							<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+							<td class="tf-grid-td" style="width:1%;">
+								<div>
+									<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteSortColumn(context))" Title="@LOC("Delete sort order")"
+												  Disabled="_submitting">
+										<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
+									</FluentButton>
+								</div>
+							</td>
 								<td class="tf-grid-td" style="width:1%;vertical-align:middle">
 									<div>
-										@if (AllColumnOptions.Contains(context.ColumnName))
+									@if (!_columnDict.ContainsKey(context.ColumnName) || _columnDict[context.ColumnName].SourceType == TfAuxDataSourceType.NotFound)
 										{
-											<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
+											<FluentIcon Value="@TfConstants.GetIcon("ErrorCircle")" Color="@Color.Error" Title="@LOC("not found")"></FluentIcon>
 										}
 										else
 										{
-											<FluentIcon Value="@TfConstants.GetIcon("ErrorCircle")" Color="@Color.Error" Title="@LOC("not found in provider")"></FluentIcon>
+										<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
 										}
 									</div>
 								</td>
@@ -56,14 +64,6 @@
 								</td>
 								<td class="tf-grid-td">
 									<div>@context.Direction.ToDescriptionString()</div>
-								</td>
-								<td class="tf-grid-td" style="width:1%;">
-									<div>
-										<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteSortColumn(context))" Title="@LOC("Delete sort order")"
-													  Disabled="_submitting">
-										<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
-										</FluentButton>
-									</div>
 								</td>
 							</tr>
 						}

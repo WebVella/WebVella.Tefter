@@ -17,8 +17,8 @@ public record TfMenuItem
 		get
 		{
 			return Expanded
-			? (IconExpanded is null || IconColor is null ? IconExpanded : IconExpanded?.WithColor(IconColor.GetAttribute().Value))
-			: (IconCollapsed is null || IconColor is null ? IconCollapsed : IconCollapsed?.WithColor(IconColor.GetAttribute().Value));
+			? (IconExpanded is null || IconColor is null ? IconExpanded : IconExpanded?.WithColor(IconColor.GetColor().Value))
+			: (IconCollapsed is null || IconColor is null ? IconCollapsed : IconCollapsed?.WithColor(IconColor.GetColor().Value));
 		}
 	}
 	public string? Url { get; set; }

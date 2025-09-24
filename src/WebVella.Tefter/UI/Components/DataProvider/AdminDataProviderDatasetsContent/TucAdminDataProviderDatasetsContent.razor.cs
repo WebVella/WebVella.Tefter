@@ -4,6 +4,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 {
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
+	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 
 	TfDataProvider? _provider = null;
 	List<TfDataset> _items = new();
@@ -11,14 +12,18 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated -= On_DataProviderUpdated;
+		TfDatasetUIService.DatasetCreated -= On_DatasetChanged;
+		TfDatasetUIService.DatasetUpdated -= On_DatasetChanged;
+		TfDatasetUIService.DatasetDeleted -= On_DatasetChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
 
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
+		TfDatasetUIService.DatasetCreated += On_DatasetChanged;
+		TfDatasetUIService.DatasetUpdated += On_DatasetChanged;
+		TfDatasetUIService.DatasetDeleted += On_DatasetChanged;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -26,7 +31,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 			await _init(args);
 	}
 
-	private async void On_DataProviderUpdated(object? caller, TfDataProvider args)
+	private async void On_DatasetChanged(object? caller, TfDataset args)
 	{
 		await _init();
 	}
@@ -47,7 +52,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 			_provider = TfDataProviderUIService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
-
+			_items = TfDatasetUIService.GetDatasets(providerId:_provider.Id);
 		}
 		finally
 		{
@@ -58,8 +63,8 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 
 	private async Task _createDataset()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TucDataProviderIdentityManageDialog>(
-		new TfDataProviderIdentity() { DataProviderId = _provider!.Id },
+		var dialog = await DialogService.ShowDialogAsync<TucDatasetManageDialog>(
+		new TfDataset() { DataProviderId = _provider!.Id },
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -71,10 +76,10 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 		if (!result.Cancelled && result.Data != null) { }
 	}
 
-	private async Task _editDataset(TfDataProviderIdentity identity)
+	private async Task _editDataset(TfDataset dataset)
 	{
-		var dialog = await DialogService.ShowDialogAsync<TucDataProviderIdentityManageDialog>(
-				identity,
+		var dialog = await DialogService.ShowDialogAsync<TucDatasetManageDialog>(
+				dataset,
 				new DialogParameters()
 				{
 					PreventDismissOnOverlayClick = true,
@@ -86,13 +91,13 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 		if (!result.Cancelled && result.Data != null) { }
 	}
 
-	private async Task _deleteDataset(TfDataProviderIdentity key)
+	private async Task _deleteDataset(TfDataset dataset)
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this key deleted?")))
 			return;
 		try
 		{
-			var provider = TfDataProviderUIService.DeleteDataProviderIdentity(key.Id);
+			TfDatasetUIService.DeleteDataset(dataset.Id);
 			ToastService.ShowSuccess(LOC("The implementation is successfully deleted!"));
 
 		}
@@ -100,6 +105,21 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 		{
 			ProcessException(ex);
 		}
+	}
+
+	private async Task _manageSort(TfDataset dataset)
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucDatasetSortOrderDialog>(
+				dataset,
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge,
+					TrapFocus = false
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null) { }
 	}
 
 }

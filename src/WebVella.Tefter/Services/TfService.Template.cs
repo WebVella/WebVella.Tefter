@@ -435,7 +435,6 @@ public partial class TfService : ITfService
 			{
 				Id = item.Id,
 				Name = item.Name,
-				SpaceName = spaceDict[item.SpaceId].Name
 			});
 		}
 

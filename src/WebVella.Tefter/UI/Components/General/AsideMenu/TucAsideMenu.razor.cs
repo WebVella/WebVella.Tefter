@@ -72,7 +72,7 @@ public partial class TucAsideMenu : TfBaseComponent
 		if (item.IconColor is null)
 			return String.Empty;
 
-		return $"background-color:var({item.IconColor!.GetAttribute().Variable})";
+		return $"background-color:var({item.IconColor!.GetColor().Variable})";
 	}
 
 	private string _getAbbriviationStyle(TfMenuItem item)
@@ -80,7 +80,7 @@ public partial class TucAsideMenu : TfBaseComponent
 		if (item.IconColor is null)
 			return String.Empty;
 
-		var color = item.IconColor!.GetAttribute();
+		var color = item.IconColor!.GetColor();
 		if(color.UseWhiteForeground)
 			return $"color:var(--tf-white)";
 
@@ -92,7 +92,7 @@ public partial class TucAsideMenu : TfBaseComponent
 		if (item.IconColor is null)
 			return String.Empty;
 
-		var color = item.IconColor!.GetAttribute();
+		var color = item.IconColor!.GetColor();
 		if(color.UseWhiteForeground)
 			return $"color:var(--tf-white)";
 

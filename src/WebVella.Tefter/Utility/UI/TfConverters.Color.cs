@@ -8,7 +8,7 @@ public static partial class TfConverters
 		{
 			return new System.Drawing.Color();
 		}
-		return System.Drawing.ColorTranslator.FromHtml(color.GetAttribute().Value);
+		return System.Drawing.ColorTranslator.FromHtml(color.GetColor().Value);
 	}
 
 	public static System.Drawing.Color HEXToColor(string color)
@@ -109,12 +109,12 @@ public static partial class TfConverters
 		if (int.TryParse(colorString, out int value)
 		&& Enum.IsDefined(typeof(TfColor), value))
 		{
-			return ((TfColor)value).GetAttribute().Value;
+			return ((TfColor)value).GetColor().Value;
 		}
 		//Check if TfColor string
 		if (Enum.TryParse<TfColor>(colorString, true, out TfColor outColor))
 		{
-			return outColor.GetAttribute().Value;
+			return outColor.GetColor().Value;
 		}
 		//named color
 		return colorString;

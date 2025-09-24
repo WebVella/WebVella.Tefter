@@ -775,7 +775,7 @@ public static partial class TfConverters
 
 	public static List<TfColor> GetSelectableColors()
 	{
-		return Enum.GetValues<TfColor>().Where(x => x.GetAttribute().Selectable).ToList();
+		return Enum.GetValues<TfColor>().Where(x => x.GetColor().Selectable).ToList();
 	}
 
 	#endregion
