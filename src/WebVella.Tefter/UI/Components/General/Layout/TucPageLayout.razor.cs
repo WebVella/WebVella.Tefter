@@ -38,7 +38,7 @@ public partial class TucPageLayout : TfBaseComponent
 		get
 		{
 			if (Color is null) return "";
-			return $"background-color:var({Color.GetAttribute().Variable})";
+			return $"background-color:var({Color.GetColor().Variable})";
 		}
 	}
 

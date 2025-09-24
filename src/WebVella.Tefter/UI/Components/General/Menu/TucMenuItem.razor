@@ -10,7 +10,7 @@
 			<span slot="start">
 				@if (Item.Color is not null)
 				{
-					<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetAttribute().Value)" />
+					<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().Value)" />
 				}
 
 				else
@@ -23,7 +23,7 @@
 		{
 			@if (Item.Color is not null)
 			{
-				<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetAttribute().Value)" />
+				<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().Value)" />
 			}
 
 			else

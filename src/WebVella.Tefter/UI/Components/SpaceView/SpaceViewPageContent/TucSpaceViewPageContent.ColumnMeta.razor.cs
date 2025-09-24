@@ -143,13 +143,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 			#region << Color >>
 			_columnsMeta[column.Id].Color = column.Settings.Color is not null
-				? $"var(--tf-td-color-{column.Settings.Color.Value.GetAttribute().Name})"
+				? $"var(--tf-td-color-{column.Settings.Color.Value.GetColor().Name})"
 				: null;
 			#endregion
 
 			#region << BackgroundColor >>
 			_columnsMeta[column.Id].BackgroundColor = column.Settings.BackgroundColor is not null
-				? $"var(--tf-td-fill-{column.Settings.BackgroundColor.Value.GetAttribute().Name})"
+				? $"var(--tf-td-fill-{column.Settings.BackgroundColor.Value.GetColor().Name})"
 				: null;
 			#endregion
 		}

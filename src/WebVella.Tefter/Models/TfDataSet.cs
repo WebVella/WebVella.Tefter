@@ -4,11 +4,7 @@ public record TfDataset
 {
 	public Guid Id { get; set; }
 	public Guid DataProviderId { get; set; }
-	[Obsolete("Property is not used anymore and will be removed")]
-	public Guid SpaceId { get; set; }
 	public string Name { get; set; }
-	[Obsolete("Property is not used anymore and will be removed")]
-	public short Position { get; set; }
 	public List<TfFilterBase> Filters { get; set; } = new();
 	public List<string> Columns { get; set; } = new();
 	public List<TfSort> SortOrders { get; set; } = new();

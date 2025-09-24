@@ -26,8 +26,8 @@ public partial class TucHomeDashboard : TfBaseComponent
 			MoreInfoUrl = "https://tefter.webvella.com/en/docs/administrators/data-providers",
 			FluentIconName = _data.ProvidersCount > 0 ? "Checkmark" : null,
 			Count = _data.ProvidersCount > 0 ? null : 1,
-			BackgroundColor = _data.ProvidersCount > 0 ? TfColor.Green100.GetAttribute().Value : null,
-			Color = _data.ProvidersCount > 0 ? TfColor.Green700.GetAttribute().Value : null,
+			BackgroundColor = _data.ProvidersCount > 0 ? TfColor.Green100.GetColor().Value : null,
+			Color = _data.ProvidersCount > 0 ? TfColor.Green700.GetColor().Value : null,
 		});
 
 		_howToItems.Add(new TfHowToItem
@@ -37,8 +37,8 @@ public partial class TucHomeDashboard : TfBaseComponent
 			MoreInfoUrl = "https://tefter.webvella.com/en/docs/end-users/space",
 			FluentIconName = _data.SpacesCount > 0 ? "Checkmark" : null,
 			Count = _data.SpacesCount > 0 ? null : 2,
-			BackgroundColor = _data.SpacesCount > 0 ? TfColor.Green100.GetAttribute().Value : null,
-			Color = _data.SpacesCount > 0 ? TfColor.Green700.GetAttribute().Value : null,
+			BackgroundColor = _data.SpacesCount > 0 ? TfColor.Green100.GetColor().Value : null,
+			Color = _data.SpacesCount > 0 ? TfColor.Green700.GetColor().Value : null,
 		});
 
 		_howToItems.Add(new TfHowToItem
@@ -48,8 +48,8 @@ public partial class TucHomeDashboard : TfBaseComponent
 			MoreInfoUrl = "https://tefter.webvella.com/en/docs/end-users/space-page",
 			FluentIconName = _data.SpacePagesCount > 0 ? "Checkmark" : null,
 			Count = _data.SpacePagesCount > 0 ? null : 3,
-			BackgroundColor = _data.SpacePagesCount > 0 ? TfColor.Green100.GetAttribute().Value : null,
-			Color = _data.SpacePagesCount > 0 ? TfColor.Green700.GetAttribute().Value : null,
+			BackgroundColor = _data.SpacePagesCount > 0 ? TfColor.Green100.GetColor().Value : null,
+			Color = _data.SpacePagesCount > 0 ? TfColor.Green700.GetColor().Value : null,
 		});
 	}
 

@@ -28,59 +28,125 @@
 						</ToolbarTemplate>
 						<ChildContent>
 							<table class="tf-grid">
+								<colgroup>
+									<col style="width:100px;min-width:100px" />
+									<col />
+									<col />
+									<col style="width:100px;min-width:100px" />
+									<col style="width:100px;min-width:100px" />
+									<col style="width:100px;min-width:100px" />
+									<col style="width:100px;min-width:100px" />
+								</colgroup>
 								<thead class="tf-grid-thead">
 									<tr class="tf-grid-thead-bkg"></tr>
 									<tr class="tf-grid-tr">
 										<th class="tf-grid-th" style="width:110px;min-width:110px;"></th>
 										<th class="tf-grid-th">name</th>
+										<th class="tf-grid-th">identities</th>
 										<th class="tf-grid-th">columns</th>
-										@* <th class="tf-grid-th" style="width:220px;min-width:220px;">details</th> *@
+										<th class="tf-grid-th">filters</th>
+										<th class="tf-grid-th">sort order</th>
+										<th class="tf-grid-th">data</th>
 									</tr>
 								</thead>
 								<tbody class="tf-grid-tbody">
-									@* @foreach (var context in _provider.Identities)
+									@foreach (TfDataset context in _items)
 									{
 										<tr @key=context.Id class="tf-grid-tr">
 											<td class="tf-grid-td">
 												<div>
-													@if (context.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-													{
-														<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("LockClosed")"
-																	  Title="@LOC("always implemented")" Disabled=true />
-													}
-													else
-													{
-														<FluentStack Wrap="false">
-															<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
-																		  Title="@LOC("Edit column")" OnClick="@(()=> _editDataset(context))" />
-															<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteDataset(context))" Title="@LOC("Delete")">
-																<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
-															</FluentButton>
-														</FluentStack>
-													}
-												</div>
-											</td>
-											<td class="tf-grid-td">
-												<div>
-													@context.DataIdentity
-												</div>
-											</td>
-											<td class="tf-grid-td">
-												<div>
-													<FluentStack>
-														@foreach (var item in context.Columns)
-														{
-															<FluentBadge Appearance="@Appearance.Neutral">@item</FluentBadge>
-														}
+													<FluentStack Wrap="false">
+														<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
+																	  Title="@LOC("Edit")" OnClick="@(()=> _editDataset(context))" />
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteDataset(context))" Title="@LOC("Delete")">
+															<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
+														</FluentButton>
 													</FluentStack>
 												</div>
 											</td>
+											<td class="tf-grid-td">
+												<div>
+													@context.Name
+												</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>
+													@if (context.Identities.Count == 0)
+													{
+														<div style="color:var(--tf-font-color-mute)">@LOC("no connected data")</div>
+													}
+													@foreach (var item in context.Identities)
+													{
+														<FluentBadge Appearance="Appearance.Neutral">@item.DataIdentity (@item.Columns.Count)</FluentBadge>
+													}
+												</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>
+													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Manage Columns")" IconStart="@TfConstants.GetIcon("Column")">
+														<div slot="end">
+															@if (context.Columns.Count == 0)
+															{
+																<FluentBadge Appearance="Appearance.Neutral">@context.Columns.Count</FluentBadge>
+															}
+															else
+															{
+																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().Value)" Color="@(TfColor.Orange700.GetColor().Value)">@context.Columns.Count</FluentBadge>
+															}
+														</div>
+														@LOC("columns")
+													</FluentButton>
+												</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>
+													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Manage Filters")" IconStart="@TfConstants.GetIcon("DataFunnel")">
+														<div slot="end">
+															@if (context.Filters.Count == 0)
+															{
+																<FluentBadge Appearance="Appearance.Neutral">@context.Filters.Count</FluentBadge>
+															}
+															else
+															{
+																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().Value)" Color="@(TfColor.Orange700.GetColor().Value)">@context.Filters.Count</FluentBadge>
+															}
+														</div>
+														@LOC("filters")
+													</FluentButton>
+												</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>
+													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Manage Sort orders")" IconStart="@TfConstants.GetIcon("ArrowSortDownLines")"
+																  OnClick="@(() => _manageSort(context))">
+														<div slot="end">
+															@if (context.SortOrders.Count == 0)
+															{
+																<FluentBadge Appearance="Appearance.Neutral">@context.SortOrders.Count</FluentBadge>
+															}
+															else
+															{
+																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().Value)" Color="@(TfColor.Orange700.GetColor().Value)">@context.SortOrders.Count</FluentBadge>
+															}
+														</div>
+														@LOC("sorting")
+													</FluentButton>
+												</div>
+											</td>
+
+											<td class="tf-grid-td">
+												<div>
+													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("View Data")" IconStart="@TfConstants.GetIcon("Database")">
+														@LOC("data")
+													</FluentButton>
+												</div>
+											</td>
 										</tr>
-									} *@
+									}
 									@if (_items.Count == 0)
 									{
 										<tr class="tf-grid-tr">
-											<td class="tf-grid-td" colspan="3">
+											<td class="tf-grid-td" colspan="7">
 												<div>
 													<FluentMessageBar AllowDismiss="false"
 																	  Intent="@MessageIntent.Info">@LOC("There are no datasets for this provider. Without a dataset this data cannot be used")</FluentMessageBar>

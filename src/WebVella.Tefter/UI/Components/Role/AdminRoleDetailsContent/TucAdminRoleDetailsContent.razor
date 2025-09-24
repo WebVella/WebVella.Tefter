@@ -42,7 +42,7 @@
 									<FluentStack VerticalAlignment="@VerticalAlignment.Center" Class="fluent-plaintext-field">
 										@if (_role.IsSystem)
 										{
-											<FluentIcon Value="@TfConstants.GetIcon("ShieldError")!.WithColor(TfColor.Red600.GetAttribute().Value)"></FluentIcon>
+											<FluentIcon Value="@TfConstants.GetIcon("ShieldError")!.WithColor(TfColor.Red600.GetColor().Value)"></FluentIcon>
 											<span>@LOC("system role")</span>
 										}
 										else

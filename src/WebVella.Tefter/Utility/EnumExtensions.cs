@@ -71,7 +71,7 @@ public static class EnumExtensions
 		return "ErrorCircle";
 	}
 
-	public static TfColorAttribute GetAttribute<TEnum>(this TEnum e) where TEnum : Enum
+	public static TfColorAttribute GetColor<TEnum>(this TEnum e) where TEnum : Enum
 	{
 		TfColorAttribute result = new TfColorAttribute(name: "", value: "", variable: "", number: 0, selectable: false);
 		if (e is null)
@@ -93,7 +93,7 @@ public static class EnumExtensions
 		}
 		return result;
 	}
-	public static TfColorAttribute GetAttribute<TEnum>(this TEnum? e) where TEnum : struct, Enum
+	public static TfColorAttribute GetColor<TEnum>(this TEnum? e) where TEnum : struct, Enum
 	{
 		TfColorAttribute result = new TfColorAttribute(name: "", value: "", variable: "", number: 0, selectable: false);
 		if (e is null)

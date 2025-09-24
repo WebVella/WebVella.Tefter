@@ -19,7 +19,7 @@ public partial class TucAvatar :ComponentBase
 			if (User is not null)
 			{
 				if (UseUserColor && User.Settings is not null && User.Settings.ThemeColor.HasValue)
-					list.Add($"background-color:{User.Settings.ThemeColor.GetAttribute().Value};");
+					list.Add($"background-color:{User.Settings.ThemeColor.GetColor().Value};");
 				else
 					list.Add("background-color:var(--neutral-fill-layer-hover);");
 			}
