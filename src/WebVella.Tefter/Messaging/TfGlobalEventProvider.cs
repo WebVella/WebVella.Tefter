@@ -1,14 +1,23 @@
-﻿namespace WebVella.Tefter.Messaging;
+﻿using WebVella.Tefter.Authentication;
 
-public interface IGlobalEvent : ITfEvent { }
+namespace WebVella.Tefter.Messaging;
+
+public interface IGlobalEvent : ITfEvent 
+{
+	Guid? UserId { get; set; }
+}
 
 public partial class TfGlobalEventProvider : IAsyncDisposable
 {
 	private const string GLOBAL_CHANNEL = "GLOBAL_CHANNEL";
 	private readonly ITfEventBus _eventBus;
+	private readonly AuthenticationStateProvider _authStateProvider;
 
-	public TfGlobalEventProvider(ITfEventBus eventBus)
+	public TfGlobalEventProvider(
+		ITfEventBus eventBus,
+		AuthenticationStateProvider authStateProvider)
 	{
+		_authStateProvider = authStateProvider;
 		_eventBus = eventBus;
 		_eventBus.JoinChannelsAsync(GLOBAL_CHANNEL);
 		_eventBus.OnEvent += OnEventReceived;
@@ -16,6 +25,14 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 
 	public async Task PublishEventAsync(IGlobalEvent globalEvent)
 	{
+		var authState = _authStateProvider.GetAuthenticationStateAsync().GetAwaiter().GetResult();
+		if (authState is not null && authState.User.Identity != null && authState.User.Identity.IsAuthenticated)
+		{
+			var _currentUser = ((TfIdentity)authState.User.Identity).User;
+			if (_currentUser is not null)
+				globalEvent.UserId = _currentUser.Id;
+		}
+
 		await _eventBus.PublishEventAsync(globalEvent);
 	}
 
