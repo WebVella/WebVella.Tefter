@@ -415,12 +415,37 @@ public partial class TfService : ITfService
 						column.FixPrefix(provider.ColumnPrefix);
 						columns.Add(column);
 					}
+
 					if (columns.Count > 0)
 					{
 						CreateBulkDataProviderColumn(provider.Id, columns);
 						//Trigger Initial Sync
 						TriggerSynchronization(provider.Id);
 					}
+
+					//get unique dataset name
+					var index = 0;
+					var presentDataSetNamesHS = GetDatasets().Select(x => x.Name).ToHashSet();
+					var datasetName = provider.Name;
+					do
+					{
+						if (!presentDataSetNamesHS.Contains(datasetName))
+							break;
+
+						index++;
+						datasetName = $"{provider.Name} {index}";
+					} 
+					while (true);
+
+					TfCreateDataset createDatasetModel = new TfCreateDataset
+					{
+						Id = Guid.NewGuid(),
+						Name = datasetName,
+						Filters = new(),
+						Columns = new(),//when no columns specified all columns are added to the dataset
+						DataProviderId = provider.Id
+					};
+					CreateDataset(createDatasetModel);
 				}
 
 
@@ -434,6 +459,7 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 	}
+
 
 	/// <summary>
 	/// Update existing data provider
