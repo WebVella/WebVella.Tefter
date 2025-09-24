@@ -13,8 +13,8 @@ public partial class TucTreeViewItemContent : ComponentBase
 			if (Item.Data is not null)
 				classList.Add($"tf-treemenu__item--{Item.Data.SpacePageType.ToDescriptionString()}");
 
-			if (Item.OnClick is not null) classList.Add("tf-clickable");
-			if (Item.OnExpand is not null) classList.Add("tf-expandable");
+			if (Item.OnClick.HasDelegate) classList.Add("tf-clickable");
+			if (Item.OnExpand.HasDelegate) classList.Add("tf-expandable");
 			if (Item.Expanded) classList.Add("tf-expanded");
 			if (Item.Selected) classList.Add("tf-active");
 			if (Item.Items.Count > 0) classList.Add("tf-parent");
@@ -23,11 +23,11 @@ public partial class TucTreeViewItemContent : ComponentBase
 		}
 	}
 
-	private void _onClick()
+	private async Task _onClick()
 	{
-		if (Item.OnClick != null)
+		if (Item.OnClick.HasDelegate)
 		{
-			Item.OnClick();
+			await Item.OnClick.InvokeAsync();
 			return;
 		}
 		if (!String.IsNullOrWhiteSpace(Item.Url))

@@ -7,10 +7,10 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
+	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
-	private TfUser _user = default!;
 	private string? _search = String.Empty;
 	private TfSpaceNavigationActiveTab _activeTab = TfSpaceNavigationActiveTab.Pages;
 	private List<string> _expandedNodeIdList = new();
@@ -59,10 +59,6 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 			if (_navState.SpaceId is null)
 				return;
 
-			var user = await TfUserUIService.GetCurrentUserAsync();
-			if (user is null)
-				return;
-			_user = user;
 			_search = _navState.SearchAside;
 			_activeTab = NavigatorExt.GetEnumFromQuery<TfSpaceNavigationActiveTab>(Navigator, TfConstants.TabQueryName, TfSpaceNavigationActiveTab.Pages)!.Value;
 			await _generateMenu();
@@ -120,7 +116,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		}
 		else if (_activeTab == TfSpaceNavigationActiveTab.Bookmarks)
 		{
-			var bookmarks = TfUserUIService.GetUserBookmarks(_user.Id);
+			var bookmarks = TfUserUIService.GetUserBookmarks(CurrentUser.Id);
 			var spaceViewDict = (TfSpaceViewUIService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
 			foreach (var record in bookmarks
 				.Where(x => spaceViewDict.ContainsKey(x.SpaceViewId)).OrderBy(x => x.Name))
@@ -143,7 +139,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		}
 		else if (_activeTab == TfSpaceNavigationActiveTab.Saves)
 		{
-			var saves = TfUserUIService.GetUserSaves(_user.Id);
+			var saves = TfUserUIService.GetUserSaves(CurrentUser.Id);
 			var spaceViewDict = (TfSpaceViewUIService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
 			foreach (var record in saves
 				.Where(x => spaceViewDict.ContainsKey(x.SpaceViewId)).OrderBy(x => x.Name))
@@ -170,8 +166,8 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 
 	private void _assignMenuItemActions(TfMenuItem item)
 	{
-		item.OnClick = async () => await _onMenuItemClick(item);
-		item.OnExpand = async (bool expanded) => await _onMenuItemExpand(item);
+		item.OnClick = EventCallback.Factory.Create(this, async () => await _onMenuItemClick(item));
+		item.OnExpand = EventCallback.Factory.Create<bool>(this, async (bool expanded) => await _onMenuItemExpand(item));
 	}
 
 	private bool _filterPage(TfSpacePage page)

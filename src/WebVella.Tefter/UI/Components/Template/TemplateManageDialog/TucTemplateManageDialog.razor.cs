@@ -6,8 +6,8 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 	[Inject] public ITfTemplateUIService TfTemplateUIService { get; set; } = default!;
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Parameter] public TfTemplate? Content { get; set; }
-
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
@@ -17,7 +17,6 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 	private bool _isCreate = false;
 	private TfManageTemplateModel _form = new();
 	private ReadOnlyCollection<ITfTemplateProcessorAddon> _processors = default!;
-	private TfUser _currentUser = default!;
 	private ITfTemplateProcessorAddon? _selectedProcessor = null;
 
 	private List<TfDataSetAsOption> _spaceDataAll = new();
@@ -33,7 +32,6 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")!.WithColor(Color.Neutral) : TfConstants.GetIcon("Save")!.WithColor(Color.Neutral);
 		_processors = TfTemplateUIService.GetProcessors();
-		_currentUser = (await TfUserUIService.GetCurrentUserAsync())!;
 		_form = new TfManageTemplateModel
 		{
 			Id = Content.Id,
@@ -44,7 +42,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 			IsSelectable = Content.IsSelectable,
 			Name = Content.Name,
 			SettingsJson = Content.SettingsJson,
-			UserId = _currentUser.Id,
+			UserId = CurrentUser.Id,
 			SpaceDataList = Content.SpaceDataList,
 		};
 		if (_form.ContentProcessorType is not null && _form.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
@@ -93,7 +91,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			TfManageTemplateModel submit = _form with { UserId = _currentUser.Id };
+			TfManageTemplateModel submit = _form with { UserId = CurrentUser.Id };
 			if (_isCreate)
 				submit = submit with { Id = Guid.NewGuid() };
 

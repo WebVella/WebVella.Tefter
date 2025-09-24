@@ -42,8 +42,8 @@ public partial class TucAsideMenu : TfBaseComponent
 
 	private void _initItemActions(TfMenuItem item)
 	{
-		item.OnClick = async () => await _onClick(item);
-		item.OnExpand = async (expand) => await _onExpand(item, expand);
+		item.OnClick = EventCallback.Factory.Create(this, async () => await _onClick(item));
+		item.OnExpand = EventCallback.Factory.Create<bool>(this, async (expand) => await _onExpand(item, expand));
 		foreach (var node in item.Items)
 		{
 			_initItemActions(node);

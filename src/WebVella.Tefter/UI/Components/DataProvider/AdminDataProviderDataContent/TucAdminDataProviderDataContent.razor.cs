@@ -5,8 +5,10 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 
+	[CascadingParameter(Name = "CurrentUser")]
+	public TfUser CurrentUser { get; set; } = default!;
+
 	private TfDataProvider? _provider = null;
-	private TfUser _currentUser = default!;
 	private TfNavigationState _navState = default!;
 	private bool _isDataLoading = false;
 	private bool _showSystemColumns = false;
@@ -55,11 +57,6 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			if (_provider is null)
 				return;
 			_syncRunning = TfDataProviderUIService.IsSyncRunning(_provider.Id);
-			var user = await TfUserUIService.GetCurrentUserAsync();
-			if (user is null)
-				throw new Exception("Current user not found");
-			_currentUser = user!;
-
 
 			_isDataLoading = true;
 			await InvokeAsync(StateHasChanged);
@@ -143,7 +140,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		try
 		{
 			var user = await TfUserUIService.SetPageSize(
-						userId: _currentUser.Id,
+						userId: CurrentUser.Id,
 						pageSize: pageSize == TfConstants.PageSize ? null : pageSize
 					);
 		}

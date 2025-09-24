@@ -3,6 +3,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 {
 	[Inject] protected ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] protected ITfConfigurationService TfConfigurationService { get; set; } = default!;
+	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Inject] protected NavigationManager Navigator { get; set; } = default!;
 
 	public ValueTask DisposeAsync()
@@ -13,7 +14,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	}
 
 	private bool _isLoaded = false;
-
+	private TfUser _currentUser = default!;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -25,26 +26,27 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 			return;
 		}
+		_currentUser = user;
 		var uri = new Uri(Navigator.Uri);
 		var queryDictionary = System.Web.HttpUtility.ParseQueryString(uri.Query);
 		Uri? startupUri = null;
-		if (!String.IsNullOrWhiteSpace(user.Settings.StartUpUrl))
+		if (!String.IsNullOrWhiteSpace(_currentUser.Settings.StartUpUrl))
 		{
-			if (user.Settings.StartUpUrl.StartsWith("http:"))
-				startupUri = new Uri(user.Settings.StartUpUrl);
+			if (_currentUser.Settings.StartUpUrl.StartsWith("http:"))
+				startupUri = new Uri(_currentUser.Settings.StartUpUrl);
 			else
-				startupUri = new Uri(TfConfigurationService.BaseUrl + user.Settings.StartUpUrl);
+				startupUri = new Uri(TfConfigurationService.BaseUrl + _currentUser.Settings.StartUpUrl);
 		}
 
 
 		if (uri.LocalPath == "/" && startupUri is not null && uri.LocalPath != startupUri.LocalPath
 			&& queryDictionary[TfConstants.NoDefaultRedirectQueryName] is null)
 		{
-			Navigator.NavigateTo(user.Settings.StartUpUrl, true);
+			Navigator.NavigateTo(_currentUser.Settings.StartUpUrl ?? "/", true);
 		}
 		else
 		{
-			await _checkAccess();
+			_checkAccess();
 			_isLoaded = true;
 		}
 
@@ -62,18 +64,25 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	private async void CurrentUser_Changed(object? sender, TfUser? user)
 	{
-		await InvokeAsync(async () => await _checkAccess());
+		if (user is null)
+		{
+			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
+			return;
+		}
+		_currentUser = user;
+		await InvokeAsync(() => _checkAccess());
 	}
 
 	private async void Navigator_LocationChanged(object? sender, LocationChangedEventArgs e)
 	{
-		await InvokeAsync(async () => await _checkAccess());
+		await InvokeAsync(() => _checkAccess());
+		//Get state so it can trigger NavStateChange if needed
+		await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 	}
 
-	private async Task _checkAccess()
+	private void _checkAccess()
 	{
-		var currentUser = await TfUserUIService.GetCurrentUserAsync();
-		if (currentUser is not null && TfUserUIService.UserHasAccess(currentUser, Navigator))
+		if (_currentUser is not null && TfUserUIService.UserHasAccess(_currentUser, Navigator))
 			return;
 
 		Navigator.NavigateTo(string.Format(TfConstants.NoAccessPage));

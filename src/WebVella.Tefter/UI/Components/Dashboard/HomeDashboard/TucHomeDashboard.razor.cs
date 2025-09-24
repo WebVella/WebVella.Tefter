@@ -8,6 +8,9 @@ public partial class TucHomeDashboard : TfBaseComponent
 	[Inject] protected ITfDashboardUIService TfDashboardUIService { get; set; } = default!;
 	[Inject] protected ITfNavigationUIService ITfNavigationUIService { get; set; } = default!;
 
+	[CascadingParameter(Name = "CurrentUser")]
+	public TfUser CurrentUser { get; set; } = default!;
+
 	private TfHomeDashboardData _data = new();
 	private List<TfHowToItem> _howToItems = new();
 
@@ -15,9 +18,7 @@ public partial class TucHomeDashboard : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		var user = await TfUserUIService.GetCurrentUserAsync();
-		if (user is not null)
-			_data = TfDashboardUIService.GetHomeDashboardData(user.Id);
+		_data = TfDashboardUIService.GetHomeDashboardData(CurrentUser.Id);
 
 		_howToItems.Add(new TfHowToItem
 		{

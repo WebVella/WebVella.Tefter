@@ -6,6 +6,7 @@ public partial class TucSpaceDataDataContent : TfBaseComponent, IDisposable
 	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
+	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 
 	private TfDataSet _spaceData = new();
 	private TfSpace _space = new();
@@ -13,7 +14,7 @@ public partial class TucSpaceDataDataContent : TfBaseComponent, IDisposable
 	public bool _submitting = false;
 	public TfNavigationState? _navState = null;
 	private TfDataTable? _data = null;
-	private TfUser? _currentUser = null;
+
 	public void Dispose()
 	{
 		TfSpaceDataUIService.SpaceDataUpdated -= On_SpaceDataUpdated;
@@ -22,7 +23,6 @@ public partial class TucSpaceDataDataContent : TfBaseComponent, IDisposable
 
 	protected override async Task OnInitializedAsync()
 	{
-		_currentUser = await TfUserUIService.GetCurrentUserAsync();
 		await _init();
 		TfSpaceDataUIService.SpaceDataUpdated += On_SpaceDataUpdated;
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;

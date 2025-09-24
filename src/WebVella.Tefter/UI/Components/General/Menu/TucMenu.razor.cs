@@ -92,8 +92,8 @@ public partial class TucMenu : TfBaseComponent
 	{
 		if (String.IsNullOrWhiteSpace(item.Id))
 			item.Id = TfConverters.ConvertGuidToHtmlElementId();
-		item.OnClick = async () => await _onClick(item);
-		item.OnExpand = async (expand) => await _onExpand(item, expand);
+		item.OnClick = EventCallback.Factory.Create(this, async () => await _onClick(item));
+		item.OnExpand = EventCallback.Factory.Create<bool>(this, async (expand) => await _onExpand(item, expand));
 		foreach (var node in item.Items)
 		{
 			_initItemActions(node);

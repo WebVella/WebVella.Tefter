@@ -9,7 +9,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
 	[Parameter] public TfBookmark? ActiveBookmark { get; set; } = null;
 	[Parameter] public TfBookmark? ActiveSavedUrl { get; set; } = null;
-
+	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 	private bool _open = false;
 	private string _exportCSVUrl = "/api/export/export-view-to-csv";
 	private string _exportExcelUrl = "/api/export/export-view-to-excel";
@@ -73,12 +73,11 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 	{
 		try
 		{
-			var currentUser = await TfUserUIService.GetCurrentUserAsync();
 			var submit = new TfBookmark
 			{
 				Id = Guid.NewGuid(),
 				SpaceViewId = SpaceView.Id,
-				UserId = currentUser!.Id,
+				UserId = CurrentUser!.Id,
 				CreatedOn = DateTime.Now,
 				Description = String.Empty,//initially nothing is added for convenience
 				Name = SpaceView.Name + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
@@ -102,12 +101,11 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 	{
 		try
 		{
-			var currentUser = await TfUserUIService.GetCurrentUserAsync();
 			var submit = new TfBookmark
 			{
 				Id = Guid.NewGuid(),
 				SpaceViewId = SpaceView.Id,
-				UserId = currentUser.Id,
+				UserId = CurrentUser.Id,
 				CreatedOn = DateTime.Now,
 				Description = String.Empty,//initially nothing is added for convenience
 				Name = SpaceView.Name + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),

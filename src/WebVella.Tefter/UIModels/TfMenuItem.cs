@@ -76,7 +76,7 @@ public record TfMenuItem
 		get
 		{
 			var sb = new StringBuilder();
-			sb.Append($"{Id}{Url}{Text}{Description}{Expanded}{Selected}{IconCollapsed?.Name}{IconExpanded?.Name}{(int?)Color}{(int?)IconColor}");
+			sb.Append($"{Id}{Url}{Text}{Description}{Expanded}{Selected}{IconCollapsed?.Name}{IconExpanded?.Name}{(int?)Color}{(int?)IconColor}{OnClick.HasDelegate}{OnExpand.HasDelegate}");
 			foreach (var item in Items)
 			{
 				sb.Append(item.Hash);
@@ -85,11 +85,27 @@ public record TfMenuItem
 		}
 	}
 
-	[JsonIgnore]
-	public Action? OnClick { get; set; } = null;
+	EventCallback _onClick;
 
 	[JsonIgnore]
-	public Action<bool>? OnExpand { get; set; } = null;
+	public EventCallback OnClick {
+		get
+		{
+			if(Tooltip == "Global Search [CTRL+G]")
+				Console.WriteLine($"GET {Tooltip}   : Value = {_onClick} : {_onClick.HasDelegate}");
+			return _onClick;
+		}
+		set
+		{
+			if (Tooltip == "Global Search [CTRL+G]")
+				Console.WriteLine($"SET  {Tooltip} : Value from {_onClick} → {value} : { _onClick.HasDelegate} {value.HasDelegate}");
+			_onClick = value;                // actually store the new value
+		}
+
+	}
+
+	[JsonIgnore]
+	public EventCallback<bool> OnExpand { get; set; }
 }
 
 

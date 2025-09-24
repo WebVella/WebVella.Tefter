@@ -64,8 +64,6 @@ public record TfSpacePage
 			IconExpanded = TfConstants.GetIcon(FluentIconName),
 			Text = Name,
 			Items = new(),
-			OnClick = null,
-			OnExpand = null,
 			Data = new TfMenuItemData
 			{
 				MenuType = TfMenuItemType.None,

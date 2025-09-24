@@ -8,7 +8,10 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] private ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
-	private TfUser? _currentUser = null;
+	[Inject] private IKeyCodeService KeyCodeService { get; set; } = default!;
+
+	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
+
 	private bool _visible = false;
 	private bool _helpVisible = false;
 	private bool _isAdmin = false;
@@ -16,38 +19,45 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		Navigator.LocationChanged -= Navigator_LocationChanged;
+		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
 		TfUserUIService.CurrentUserChanged -= CurrentUser_Changed;
+		KeyCodeService.UnregisterListener(HandleKeyDownAsync);
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
-		_currentUser = await TfUserUIService.GetCurrentUserAsync();
 		await initAdmin(null);
-		Navigator.LocationChanged += Navigator_LocationChanged;
+		KeyCodeService.RegisterListener(HandleKeyDownAsync);
+		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfUserUIService.CurrentUserChanged += CurrentUser_Changed;
 	}
-	private async void Navigator_LocationChanged(object? sender, LocationChangedEventArgs e)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
-		if (!Navigator.UrlHasState()) return;
-		await initAdmin(e.Location);
+		if (UriInitialized != args.Uri)
+			await initAdmin(args);
 		StateHasChanged();
 	}
 
 	private void CurrentUser_Changed(object? sender, TfUser? user)
 	{
-		_currentUser = user;
 		StateHasChanged();
 	}
 
-	private async Task initAdmin(string? location)
+	public Task HandleKeyDownAsync(FluentKeyCodeEventArgs args)
 	{
+		if (args.CtrlKey && args.Key == KeyCode.KeyG)
+			_openGlobalSearch();
+		return Task.CompletedTask;
+	}
 
-		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+	private async Task initAdmin(TfNavigationState? navState = null)
+	{
+		if(navState is null)
+			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 
 		_adminMenu = new();
-		if (_currentUser!.IsAdmin)
+		if (CurrentUser!.IsAdmin)
 		{
 			_adminMenu.Add(new TfMenuItem
 			{
@@ -58,22 +68,37 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 				//Text = LOC("Admin"),
 				Selected = navState.RouteNodes.Count > 0 && navState.RouteNodes[0] == RouteDataNode.Admin
 			});
+			_adminMenu.Add(new TfMenuItem
+			{
+				Url = "#",
+				OnClick = EventCallback.Factory.Create(this, _openGlobalSearch),
+				Tooltip = LOC("Global Search [CTRL+G]"),
+				IconCollapsed = TfConstants.GetIcon("Search"),
+				IconExpanded = TfConstants.GetIcon("Search"),
+			});
 		}
+		UriInitialized = navState.Uri;
 	}
 
-	private void _onClick()
+	void _onClick()
 	{
 		_visible = !_visible;
 	}
 
-	private async Task _setUrlAsStartup()
+	Task _openGlobalSearch()
 	{
-		if (_currentUser is null) return;
+		ToastService.ShowSuccess("Global search");
+		Console.WriteLine("Clicked");
+		return Task.CompletedTask;
+	}
+
+	async Task _setUrlAsStartup()
+	{
 		var uri = new Uri(Navigator.Uri);
 		try
 		{
 			var user = await TfUserUIService.SetStartUpUrl(
-						userId: _currentUser.Id,
+						userId: CurrentUser.Id,
 						url: uri.PathAndQuery
 					);
 			ToastService.ShowSuccess(LOC("Startup URL was successfully changed!"));

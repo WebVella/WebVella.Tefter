@@ -5,9 +5,9 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
+	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 
 	private bool _isRemoving = false;
-	private TfUser? _currentUser = null;
 	private TfSpacePage? _spacePage = null;
 	private TfSpace? _space = null;
 	public TfNavigationState? _navState = null;
@@ -43,7 +43,6 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 			_navState = navState;
 		try
 		{
-			_currentUser = await TfUserUIService.GetCurrentUserAsync();
 			if (_navState.SpacePageId.HasValue && _spacePage?.Id != _navState.SpacePageId)
 			{
 				_spacePage = TfSpaceUIService.GetSpacePage(_navState.SpacePageId.Value);
@@ -71,7 +70,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 				Mode = TfComponentMode.Read,
 				SpacePage = _spacePage,
 				Space = _space,
-				CurrentUser = _currentUser,
+				CurrentUser = CurrentUser,
 				EditNode = EventCallback.Factory.Create(this, _onEdit),
 				DeleteNode = EventCallback.Factory.Create(this, _onRemove)
 			};

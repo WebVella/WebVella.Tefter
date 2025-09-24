@@ -5,13 +5,14 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] private ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
+	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
+
 	private List<TfRepositoryFile>? _items = null;
 
 	FluentInputFile fileUploader = default!;
 	int progressPercent = 0;
 	List<FluentInputFileEventArgs> Files = new();
 	private TfNavigationState _navState = default!;
-	private TfUser? _currentUser = null;
 	private string? _search = null;
 	private string _uploadId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 
@@ -57,7 +58,6 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	{
 		try
 		{
-			_currentUser = await TfUserUIService.GetCurrentUserAsync();
 			if (navState is not null)
 				_navState = navState;
 			else
@@ -85,7 +85,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 				var result = TfFileRepositoryUIService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
-					CreatedBy = _currentUser?.Id,
+					CreatedBy = CurrentUser?.Id,
 					LocalFilePath = file.LocalFile.ToString(),
 					Filename = file.Name,
 				});

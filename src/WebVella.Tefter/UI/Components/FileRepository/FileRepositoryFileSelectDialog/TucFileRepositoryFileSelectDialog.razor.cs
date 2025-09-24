@@ -5,13 +5,10 @@ public partial class TucFileRepositoryFileSelectDialog : TfBaseComponent, IDialo
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] private ITfFileRepositoryUIService TfFileRepositoryUIService { get; set; } = default!;
 	[Parameter] public string? Content { get; set; }
-
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 
 	private bool _isSubmitting = false;
-
-
-	private TfUser? _currentUser = default!;
 
 	private FluentInputFileEventArgs? _upload = null;
 	private string _uploadId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
@@ -26,8 +23,6 @@ public partial class TucFileRepositoryFileSelectDialog : TfBaseComponent, IDialo
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_currentUser = await TfUserUIService.GetCurrentUserAsync();
-		if (_currentUser == null) throw new Exception("Current user not found");
 		_init();
 	}
 
@@ -69,7 +64,7 @@ public partial class TucFileRepositoryFileSelectDialog : TfBaseComponent, IDialo
 				var result = TfFileRepositoryUIService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
-					CreatedBy = _currentUser?.Id,
+					CreatedBy = CurrentUser?.Id,
 					LocalFilePath = file.LocalFile.ToString(),
 					Filename = file.Name,
 				});

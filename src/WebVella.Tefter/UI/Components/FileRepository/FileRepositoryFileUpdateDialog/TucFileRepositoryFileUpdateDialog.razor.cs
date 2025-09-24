@@ -1,17 +1,15 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Admin.FileRepositoryFileUpdateDialog.TfFileRepositoryFileUpdateDialog", "WebVella.Tefter")]
 public partial class TucFileRepositoryFileUpdateDialog : TfFormBaseComponent, IDialogContentComponent<TfRepositoryFile?>
 {
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] private ITfFileRepositoryUIService TfFileRepositoryUIService { get; set; } = default!;
 	[Parameter] public TfRepositoryFile? Content { get; set; }
-
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 
 	private bool _isSubmitting = false;
 
 	private TfFileForm _form = new();
-	private TfUser? _currentUser = default!;
 	private FluentInputFileEventArgs? _upload = null;
 	private string _uploadId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 
@@ -23,12 +21,10 @@ public partial class TucFileRepositoryFileUpdateDialog : TfFormBaseComponent, ID
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
-		_currentUser = await TfUserUIService.GetCurrentUserAsync();
-		if(_currentUser == null) throw new Exception("Current user not found");
 		_form = new TfFileForm
 		{
 			Id = Content.Id,
-			CreatedBy = _currentUser.Id,
+			CreatedBy = CurrentUser.Id,
 			LocalFilePath = null,
 			Filename = Content.Filename
 		};

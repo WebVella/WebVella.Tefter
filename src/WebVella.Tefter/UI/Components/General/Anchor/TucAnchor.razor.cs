@@ -15,7 +15,7 @@ public partial class TucAnchor : TfBaseComponent
 	[Parameter] public Appearance? Appearance { get; set; } = null;
 	[Parameter] public RenderFragment? ChildContent { get; set; } = null;
 
-	private IReadOnlyDictionary<string, object>? _additionalAttributes
+	IReadOnlyDictionary<string, object>? _additionalAttributes
 	{
 		get
 		{
@@ -30,7 +30,20 @@ public partial class TucAnchor : TfBaseComponent
 			if (!String.IsNullOrWhiteSpace(Title))
 				result["title"] = Title;
 
+
+			if (String.IsNullOrWhiteSpace(Href) || Href == "#")
+			{
+				result["data-onclick"] = "true";
+			}
+
 			return result.Keys.Count == 0 ? null : result;
 		}
+	}
+
+	async Task _OnClick()
+	{
+		if(!OnClick.HasDelegate) return;
+		Console.WriteLine("Anchor clicked");
+		await OnClick.InvokeAsync();
 	}
 }

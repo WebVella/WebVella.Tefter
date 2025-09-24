@@ -4,7 +4,7 @@
 <div class="@_css">
 	<TucAnchor Href="@Item.Href" 
 				  Id="@Item.Id" AdditionalAttributes=@_attributes
-				  OnClick="Item.OnClick" Appearance="@Appearance.Hypertext">
+				  OnClick="_OnClick" Appearance="@Appearance.Hypertext">
 		@if (Item.Icon is not null && !String.IsNullOrWhiteSpace(Item.Text))
 		{
 			<span slot="start">
@@ -60,7 +60,7 @@
 	{
 		<FluentMenu UseMenuService="false"
 					Open="@Item.Expanded"
-					OpenChanged="@((x) => Item.OnExpand(x))"
+					OpenChanged="@(async (x) => await Item.OnExpand.InvokeAsync(x))"
 					Anchor="@Item.Id">
 			@foreach (var node in Item.Items)
 			{

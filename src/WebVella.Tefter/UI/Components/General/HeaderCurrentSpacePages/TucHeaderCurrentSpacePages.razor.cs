@@ -4,6 +4,7 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
+	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 	private List<TfMenuItem> _menu = new();
 	private bool _isLoading = true;
 
@@ -41,10 +42,9 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 		if (navState is null)
 			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 
-		var currentUser = await TfUserUIService.GetCurrentUserAsync();
 		try
 		{
-			_menu = (await TfNavigationUIService.GetNavigationMenu(Navigator, currentUser)).Menu;
+			_menu = (await TfNavigationUIService.GetNavigationMenu(Navigator, CurrentUser)).Menu;
 		}
 		finally
 		{

@@ -4,8 +4,8 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] public ITfRoleUIService TfRoleUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
+	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 
-	private TfUser _currentUser = default!;
 	private TfRole? _role = null;
 	private List<TfUser> _userOptions = new();
 	private TfUser? _selectedUser = null;
@@ -42,7 +42,6 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
-			_currentUser = (await TfUserUIService.GetCurrentUserAsync())!;
 			if (role is not null && role.Id == _role?.Id)
 			{
 				_role = role;

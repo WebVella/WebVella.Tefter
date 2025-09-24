@@ -106,8 +106,7 @@
 											</td>
 											<td class="tf-grid-td" style="width:1%;">
 												<div>
-													@if (_currentUser.Id == context.Id
-																							&& _role.Id == TfConstants.ADMIN_ROLE_ID)
+													@if (CurrentUser.Id == context.Id && _role.Id == TfConstants.ADMIN_ROLE_ID)
 													{
 														<FluentButton Appearance="@Appearance.Outline" Title="@LOC("the current user cannot unassign admin role to self")"
 																	  Disabled="true">

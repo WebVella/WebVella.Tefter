@@ -5,13 +5,14 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
+	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 
 	private TfDataProvider? _provider = null;
 	private TfNavigationState _navState = new();
 
 	private string _nextSyncronization = default!;
 	private List<TfDataProviderSynchronizeTask> _syncTasks = new();
-	private TfUser? _currentUser = null;
+
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
@@ -19,7 +20,6 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		_currentUser = await TfUserUIService.GetCurrentUserAsync();
 		await _init();
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;

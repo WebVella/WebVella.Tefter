@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucMenuItem : TfBaseComponent
 {
 	[Parameter] public string? Class { get; set; } = null;
@@ -7,7 +8,7 @@ public partial class TucMenuItem : TfBaseComponent
 
 	private IReadOnlyDictionary<string, object>? _attributes = null;
 	private TfMenuItem? _expandItem = null;
-	private string? _css  = null;
+	private string? _css = null;
 	private string? _expandItemCss = null;
 	private string _hash = String.Empty;
 
@@ -20,17 +21,17 @@ public partial class TucMenuItem : TfBaseComponent
 	protected override void OnParametersSet()
 	{
 		var hash = Item.Hash;
-		if(_hash != hash){ 
+		if (_hash != hash)
+		{
 			_hash = hash;
 			_init();
-			StateHasChanged();
 		}
 	}
 
 	private void _init()
 	{
 		_expandItem = null;
-		_css  = null;
+		_css = null;
 		_expandItemCss = null;
 
 		_attributes = (new Dictionary<string, object>() { { "title", Item.Tooltip ?? String.Empty } }).AsReadOnly();
@@ -43,7 +44,7 @@ public partial class TucMenuItem : TfBaseComponent
 		if (Item.Disabled)
 			classList.Add("tf-menu__item--disabled");
 
-		if(Item.Data is not null) 
+		if (Item.Data is not null)
 			classList.Add($"tf-menu__item--{Item.Data.SpacePageType.ToDescriptionString()}");
 
 		_css = String.Join(" ", classList);
@@ -52,16 +53,26 @@ public partial class TucMenuItem : TfBaseComponent
 		expandClassList.Add("tf-menu__item--expand");
 		_expandItemCss = String.Join(" ", expandClassList);
 
-		if(Item.IsSeparateChevron is not null 
-		&& Item.IsSeparateChevron.Value){ 
-			_expandItem = new TfMenuItem{
+		if (Item.IsSeparateChevron is not null
+		&& Item.IsSeparateChevron.Value)
+		{
+			_expandItem = new TfMenuItem
+			{
 				Id = Guid.NewGuid().ToString(),
 				Text = null,
 				IconCollapsed = TfConstants.GetIcon("ChevronDown"),
 				IconExpanded = TfConstants.GetIcon("ChevronDown"),
-				OnClick = () => Item.OnExpand(!Item.Expanded)
+				OnClick = EventCallback.Factory.Create(this, async () => await Item.OnExpand.InvokeAsync(!Item.Expanded)),
 			};
 
 		}
 	}
+
+	async Task _OnClick()
+	{
+		if (!Item.OnClick.HasDelegate) return;
+		Console.WriteLine("Menu Item Click");
+		await Item.OnClick.InvokeAsync();
+	}
+
 }
