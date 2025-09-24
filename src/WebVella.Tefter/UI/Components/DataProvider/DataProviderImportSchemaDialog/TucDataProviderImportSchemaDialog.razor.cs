@@ -2,7 +2,6 @@
 using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Admin.DataProviderImportSchemaDialog.TfDataProviderImportSchemaDialog", "WebVella.Tefter")]
 public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialogContentComponent<TfDataProvider?>
 {
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;

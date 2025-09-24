@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewSettingsSelector.TucSpaceViewSettingsSelector", "WebVella.Tefter")]
 public partial class TucSpaceViewSettingsSelector : TfBaseComponent
 {
 	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;

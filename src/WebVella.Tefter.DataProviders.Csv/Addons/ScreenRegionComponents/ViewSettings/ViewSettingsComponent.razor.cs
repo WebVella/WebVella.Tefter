@@ -2,7 +2,6 @@
 
 namespace WebVella.Tefter.DataProviders.Csv.Addons;
 
-[LocalizationResource("WebVella.Tefter.DataProviders.Csv.Addons.ScreenRegionComponents.ViewSettings.ViewSettingsComponent", "WebVella.Tefter.DataProviders.Csv")]
 public partial class ViewSettingsComponent : TfBaseComponent,
 	ITfScreenRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>
 {

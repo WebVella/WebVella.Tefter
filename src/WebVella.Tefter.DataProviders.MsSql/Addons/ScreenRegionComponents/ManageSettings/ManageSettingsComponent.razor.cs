@@ -2,7 +2,6 @@
 using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.DataProviders.MsSql.Addons;
-[LocalizationResource("WebVella.Tefter.DataProviders.MsSql.Addons.ScreenRegionComponents.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.DataProviders.MsSql")]
 public partial class ManageSettingsComponent : TfFormBaseComponent,	ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
 	public const string ID = "b543421c-c77f-45d9-8c81-ac0c5a0a303f";

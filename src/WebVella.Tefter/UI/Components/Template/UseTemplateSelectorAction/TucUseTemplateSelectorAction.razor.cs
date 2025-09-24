@@ -1,6 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.UseTemplateSelectorAction.TfUseTemplateSelectorAction", "WebVella.Tefter")]
-
 public partial class TucUseTemplateSelectorAction : TfBaseComponent, ITfScreenRegionComponent<TfSpaceViewSelectorActionScreenRegionContext>
 {
 	//State

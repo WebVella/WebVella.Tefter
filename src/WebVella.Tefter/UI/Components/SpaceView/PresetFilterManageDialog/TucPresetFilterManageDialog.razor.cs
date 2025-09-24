@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.General.PresetFilterManageDialog.TucPresetFilterManageDialog", "WebVella.Tefter")]
 public partial class TucPresetFilterManageDialog : TfFormBaseComponent, IDialogContentComponent<TfPresetFilterManagementContext>
 {
 	[Parameter] public TfPresetFilterManagementContext Content { get; set; } = default!;

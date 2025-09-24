@@ -1,6 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewColumnManageDialog.TucSpaceViewColumnManageDialog", "WebVella.Tefter")]
 public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpaceViewColumn?>
 {
 	[Inject] public ITfMetaUIService TfMetaUIService { get; set; } = default!;

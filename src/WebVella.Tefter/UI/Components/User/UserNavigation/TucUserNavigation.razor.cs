@@ -2,7 +2,6 @@
 
 namespace WebVella.Tefter.UI.Components;
 
-[LocalizationResource("WebVella.Tefter.UI.Components.General.UserNavigation.TucUserNavigation", "WebVella.Tefter")]
 public partial class TucUserNavigation : TfBaseComponent, IDisposable
 {
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;

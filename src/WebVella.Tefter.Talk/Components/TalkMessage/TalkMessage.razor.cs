@@ -5,7 +5,6 @@ using WebVella.Tefter.UI.Components;
 
 namespace WebVella.Tefter.Talk.Components;
 
-[LocalizationResource("WebVella.Tefter.Talk.Components.TalkMessage.TalkMessage", "WebVella.Tefter.Talk")]
 public partial class TalkMessage : TfBaseComponent
 {
 	[Parameter] public TalkThread Item { get; set; }

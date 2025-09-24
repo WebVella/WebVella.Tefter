@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewManageDialog.TfSpaceViewManageDialog", "WebVella.Tefter")]
 public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpaceView?>
 {
 	[Inject] protected ITfSpaceUIService TfSpaceUIService { get; set; } = default!;

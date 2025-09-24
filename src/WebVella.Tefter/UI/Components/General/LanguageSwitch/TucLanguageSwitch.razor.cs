@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Localization;
 namespace WebVella.Tefter.UI.Components;
 
-[LocalizationResource("WebVella.Tefter.UI.Components.General.LanguageSwitch.TucLanguageSwitch", "WebVella.Tefter")]
 public partial class TucLanguageSwitch : TfBaseComponent
 {
 	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;

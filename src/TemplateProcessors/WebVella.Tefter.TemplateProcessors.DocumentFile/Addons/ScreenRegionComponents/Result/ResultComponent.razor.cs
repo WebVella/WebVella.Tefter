@@ -2,7 +2,6 @@
 
 namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Addons;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.DocumentFile.Addons.ScreenRegionComponents.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.DocumentFile")]
 public partial class ResultComponent : TfBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {

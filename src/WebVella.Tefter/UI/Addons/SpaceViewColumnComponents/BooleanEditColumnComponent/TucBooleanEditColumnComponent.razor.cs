@@ -1,10 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Addons;
 
-/// <summary>
-/// Description attribute is needed when presenting the component to the user as a select option
-/// Localization attributes is needed to strongly type the location of the components translation resource
-/// </summary>
-[LocalizationResource("WebVella.Tefter.Web.Addons.SpaceViewColumnComponents.BooleanEditColumnComponent.TucBooleanEditColumnComponent", "WebVella.Tefter")]
 public partial class TucBooleanEditColumnComponent : TucBaseViewColumn<TucBooleanEditColumnComponentOptions>
 {
 	public const string ID = "1faec857-0ae5-4912-ba6e-3a8624a06666";

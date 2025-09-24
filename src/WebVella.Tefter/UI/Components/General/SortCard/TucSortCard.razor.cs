@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.General.SortCard.TfSortCard", "WebVella.Tefter")]
 public partial class TucSortCard : TfBaseComponent
 {
 	[Parameter]

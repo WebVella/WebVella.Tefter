@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.General.FileField.TfFileField", "WebVella.Tefter")]
 public partial class TucFileField : TfBaseComponent
 {
 	[Parameter] public bool IsLoading { get; set; } = false;

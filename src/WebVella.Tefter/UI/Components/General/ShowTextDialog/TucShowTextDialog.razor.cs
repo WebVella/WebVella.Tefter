@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.UI.Components.General.ShowTextDialog.TucShowTextDialog", "WebVella.Tefter")]
 public partial class TucShowTextDialog : TfFormBaseComponent, IDialogContentComponent<string>
 {
 	[Parameter] public string Content { get; set; }

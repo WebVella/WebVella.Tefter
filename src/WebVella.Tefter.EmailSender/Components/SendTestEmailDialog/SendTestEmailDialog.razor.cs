@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebVella.Tefter.EmailSender.Components;
-[LocalizationResource("WebVella.Tefter.EmailSender.Components.SendTestEmailDialog.SendTestEmailDialog", "WebVella.Tefter.EmailSender")]
 public partial class SendTestEmailDialog : TfFormBaseComponent, IDialogContentComponent<EmailMessage>
 {
 	[Inject] public IEmailService EmailService { get; set; }

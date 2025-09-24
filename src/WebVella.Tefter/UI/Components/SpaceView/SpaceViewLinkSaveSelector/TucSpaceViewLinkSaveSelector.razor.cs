@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewLinkSaveSelector.TucSpaceViewLinkSaveSelector", "WebVella.Tefter")]
 public partial class TucSpaceViewLinkSaveSelector : TfBaseComponent
 {
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;

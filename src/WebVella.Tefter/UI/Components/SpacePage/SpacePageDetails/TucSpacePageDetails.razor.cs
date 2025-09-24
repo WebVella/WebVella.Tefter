@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpacePage.SpacePageDetails.TucSpacePageDetails", "WebVella.Tefter")]
 public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;

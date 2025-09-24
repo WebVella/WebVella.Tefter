@@ -1,6 +1,5 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Addons.ScreenRegionComponents.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
 public partial class DisplaySettingsComponent : TfBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegionContext>
 {

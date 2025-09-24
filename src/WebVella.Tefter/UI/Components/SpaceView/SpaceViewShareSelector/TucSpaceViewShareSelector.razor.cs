@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewShareSelector.TucSpaceViewShareSelector", "WebVella.Tefter")]
 public partial class TucSpaceViewShareSelector : TfBaseComponent
 {
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;

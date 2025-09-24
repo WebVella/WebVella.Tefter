@@ -1,6 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-[LocalizationResource("WebVella.Tefter.Web.Components.Admin.DataProviderColumnManageDialog.TfDataProviderColumnManageDialog", "WebVella.Tefter")]
 public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProviderColumn?>
 {
 	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;

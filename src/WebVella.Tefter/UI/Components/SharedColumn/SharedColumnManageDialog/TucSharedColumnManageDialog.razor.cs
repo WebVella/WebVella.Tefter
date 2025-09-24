@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
 namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Admin.SharedColumnManageDialog.TfSharedColumnManageDialog", "WebVella.Tefter")]
 public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSharedColumn?>
 {
 	[Inject] protected ITfSharedColumnUIService TfSharedColumnUIService { get; set; } = default!;

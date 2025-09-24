@@ -2,7 +2,6 @@
 using WebVella.Tefter.Utility;
 
 namespace WebVella.Tefter.Assets.Components;
-[LocalizationResource("WebVella.Tefter.Assets.Components.AssetsFolderPanelFileModal.AssetsFolderPanelFileModal", "WebVella.Tefter.Assets")]
 public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogContentComponent<AssetsFolderPanelFileModalContext>
 {
 	[Inject] public IAssetsService AssetsService { get; set; }

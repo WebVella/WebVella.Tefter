@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Admin.DataIdentityManageDialog.TfDataIdentityManageDialog", "WebVella.Tefter")]
 public partial class TucDataIdentityManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataIdentity?>
 {
 	[Inject] private ITfDataIdentityUIService TfDataIdentityUIService { get; set; } = default!;

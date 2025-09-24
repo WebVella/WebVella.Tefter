@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewSortsDialog.TucSpaceViewSortsDialog", "WebVella.Tefter")]
 public partial class TucSpaceViewSortsDialog : TfFormBaseComponent, IDialogContentComponent<Guid>
 {
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;

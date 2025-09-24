@@ -2,7 +2,6 @@
 
 namespace WebVella.Tefter.TemplateProcessors.Email.Addons;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Addons.ScreenRegionComponents.Help.HelpComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class HelpComponent : TfBaseComponent,
 	ITfScreenRegionComponent<TfTemplateProcessorHelpScreenRegionContext>
 {

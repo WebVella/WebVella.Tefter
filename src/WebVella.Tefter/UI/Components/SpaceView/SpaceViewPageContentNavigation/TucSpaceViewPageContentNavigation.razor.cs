@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewPageContentNavigation.TucSpaceViewPageContentNavigation", "WebVella.Tefter")]
 public partial class TucSpaceViewPageContentNavigation : TfBaseComponent
 {
 	// Dependency Injection

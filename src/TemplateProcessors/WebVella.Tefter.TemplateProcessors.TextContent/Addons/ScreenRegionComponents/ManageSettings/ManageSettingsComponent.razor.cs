@@ -3,7 +3,6 @@ using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.TemplateProcessors.TextContent.Addons;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Addons.ScreenRegionComponents.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorManageSettingsScreenRegionContext>
 {

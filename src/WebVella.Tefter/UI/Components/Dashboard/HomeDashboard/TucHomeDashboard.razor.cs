@@ -1,7 +1,6 @@
 ﻿
 namespace WebVella.Tefter.UI.Components;
 
-[LocalizationResource("WebVella.Tefter.UI.Components.Dashboard.HomeDashboard.TucHomeDashboard", "WebVella.Tefter")]
 public partial class TucHomeDashboard : TfBaseComponent
 {
 	[Inject] protected ITfUserUIService TfUserUIService { get; set; } = default!;

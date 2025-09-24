@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.UI.Components.Admin.RoleManageDialog.TfRoleManageDialog", "WebVella.Tefter")]
 public partial class TucRoleManageDialog : TfFormBaseComponent, IDialogContentComponent<TfRole?>
 {
 	[Inject] public ITfRoleUIService TfRoleUIService { get; set; } = default!;

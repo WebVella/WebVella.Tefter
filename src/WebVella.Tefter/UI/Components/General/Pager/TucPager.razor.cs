@@ -4,7 +4,6 @@ using Microsoft.FluentUI.AspNetCore.Components.Utilities;
 using System.Drawing.Printing;
 
 namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.General.Pager.TfPager", "WebVella.Tefter")]
 public partial class TucPager : TfBaseComponent, IDisposable
 {
 	[Inject] private IKeyCodeService KeyCodeService { get; set; } = default!;

@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.General.Editor.TfEditor", "WebVella.Tefter")]
 public partial class TucEditor : TfBaseComponent,IAsyncDisposable
 {
 	[Parameter] public string Value { get; set; }

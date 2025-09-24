@@ -2,7 +2,6 @@
 
 namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Addons.ScreenRegionComponents.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
 public partial class ResultComponent : TfBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {

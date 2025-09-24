@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Space.SpaceManageNodeItem.TfSpaceManageNodeItem", "WebVella.Tefter")]
 public partial class TucSpaceManageNodeItem : TfBaseComponent
 {
 	[Parameter]

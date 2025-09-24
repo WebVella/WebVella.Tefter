@@ -91,16 +91,4 @@
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <EmbeddedResource Update="Resources\SharedResource.es-ES.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\SharedResource.fr-FR.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\SharedResource.de-DE.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	</ItemGroup>
-
 </Project>

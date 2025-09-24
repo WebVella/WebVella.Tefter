@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.UseTemplateDialog.TucUseTemplateDialog", "WebVella.Tefter")]
 public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentComponent<TfUseTemplateContext?>
 {
 	[Inject] protected ITfTemplateUIService TfTemplateUIService { get; set; } = default!;

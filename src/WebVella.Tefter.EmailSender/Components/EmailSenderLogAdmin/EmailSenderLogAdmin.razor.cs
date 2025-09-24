@@ -2,7 +2,6 @@
 using WebVella.Tefter.UIServices;
 
 namespace WebVella.Tefter.EmailSender.Components;
-[LocalizationResource("WebVella.Tefter.EmailSender.Components.EmailSenderLogAdmin.EmailSenderLogAdmin", "WebVella.Tefter.EmailSender")]
 public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 {
 	[Inject] public IEmailService EmailService { get; set; }

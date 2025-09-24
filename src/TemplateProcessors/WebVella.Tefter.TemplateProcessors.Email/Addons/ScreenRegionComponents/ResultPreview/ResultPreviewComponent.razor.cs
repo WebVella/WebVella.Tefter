@@ -3,7 +3,6 @@ using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.TemplateProcessors.Email.Addons;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Addons.ScreenRegionComponents.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class ResultPreviewComponent : TfFormBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
 {

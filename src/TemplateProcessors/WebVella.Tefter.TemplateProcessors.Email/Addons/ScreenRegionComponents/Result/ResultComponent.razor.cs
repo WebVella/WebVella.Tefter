@@ -1,6 +1,5 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.Email.Addons;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Addons.ScreenRegionComponents.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class ResultComponent : TfBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {

@@ -1,6 +1,5 @@
 ﻿
 namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Admin.TemplateManageDialog.TfTemplateManageDialog", "WebVella.Tefter")]
 public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogContentComponent<TfTemplate?>
 {
 	[Inject] public ITfTemplateUIService TfTemplateUIService { get; set; } = default!;

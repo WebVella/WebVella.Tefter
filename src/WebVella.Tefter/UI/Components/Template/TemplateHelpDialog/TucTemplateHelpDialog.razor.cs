@@ -1,6 +1,5 @@
 ﻿
 namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Admin.TemplateHelpDialog.TfTemplateHelpDialog", "WebVella.Tefter")]
 public partial class TucTemplateHelpDialog : TfBaseComponent, IDialogContentComponent<TfTemplate?>
 {
 	[Parameter] public TfTemplate? Content { get; set; }

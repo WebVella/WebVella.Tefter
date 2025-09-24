@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewBookmarkSelector.TucSpaceViewBookmarkSelector", "WebVella.Tefter")]
 public partial class TucSpaceViewBookmarkSelector : TfBaseComponent
 {
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;

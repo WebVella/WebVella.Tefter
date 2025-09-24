@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.General.PresetFiltersCard.TucPresetFiltersCard", "WebVella.Tefter")]
 public partial class TucPresetFiltersCard : TfBaseComponent
 {
 	[Parameter]

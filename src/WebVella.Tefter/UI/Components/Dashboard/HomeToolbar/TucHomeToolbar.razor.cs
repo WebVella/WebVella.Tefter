@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Home.HomeToolbar.TfHomeToolbar", "WebVella.Tefter")]
 public partial class TucHomeToolbar : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;

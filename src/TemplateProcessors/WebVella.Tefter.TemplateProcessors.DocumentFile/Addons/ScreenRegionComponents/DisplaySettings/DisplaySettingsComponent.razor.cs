@@ -1,6 +1,5 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Addons;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.DocumentFile.Addons.ScreenRegionComponents.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.DocumentFile")]
 public partial class DisplaySettingsComponent : TfBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegionContext>
 {

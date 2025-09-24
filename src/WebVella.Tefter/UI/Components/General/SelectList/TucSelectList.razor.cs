@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.General.SelectList.TfSelectList", "WebVella.Tefter")]
 public partial class TucSelectList : TfBaseComponent
 {
 	[Parameter]
