@@ -388,7 +388,7 @@ public partial class TfService : ITfService
 				SourceColumnName = providerColumn.DbName,
 				SourceName = provider.Name,
 				SourceCode = $"dp{provider.Index}",
-				SourceType = TfAuxDataSourceType.PrimatyDataProvider,
+				SourceType = TfAuxDataSourceType.PrimaryDataProvider,
 				DbType = providerColumn.DbType
 			};
 			result.Add(item);
@@ -444,7 +444,7 @@ public partial class TfService : ITfService
 		if (dataset is null)
 			new TfException("Dataset not found");
 
-		if (column!.SourceType == TfAuxDataSourceType.PrimatyDataProvider)
+		if (column!.SourceType == TfAuxDataSourceType.PrimaryDataProvider)
 		{
 			if (!dataset!.Columns.Any(x => x.ToLowerInvariant() == column!.ColumnName!.ToLowerInvariant()))
 			{
@@ -500,7 +500,10 @@ public partial class TfService : ITfService
 			}
 		}
 	}
-	public void UpdataDatasetColumns(Guid datasetId, List<TfDatasetColumn> newColumns)
+
+	public void UpdataDatasetColumns(
+		Guid datasetId, 
+		List<TfDatasetColumn> newColumns)
 	{
 		//TODO RUMEN: check implementation and create unit test
 		if (newColumns is null)
@@ -526,7 +529,7 @@ public partial class TfService : ITfService
 							SourceColumnName = column,
 							ColumnName = column,
 							DataIdentity = null,
-							SourceType = TfAuxDataSourceType.PrimatyDataProvider
+							SourceType = TfAuxDataSourceType.PrimaryDataProvider
 						});
 				}
 			}
@@ -597,7 +600,7 @@ public partial class TfService : ITfService
 		if (dataset is null)
 			new TfException("Dataset not found");
 
-		if (column.SourceType == TfAuxDataSourceType.PrimatyDataProvider)
+		if (column.SourceType == TfAuxDataSourceType.PrimaryDataProvider)
 		{
 			if (dataset!.Columns.Any(x => x.ToLowerInvariant() == column!.ColumnName!.ToLowerInvariant()))
 			{
