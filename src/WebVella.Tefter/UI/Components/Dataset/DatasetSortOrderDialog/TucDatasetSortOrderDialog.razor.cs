@@ -2,7 +2,6 @@
 
 public partial class TucDatasetSortOrderDialog : TfBaseComponent, IDialogContentComponent<TfDataset?>
 {
-	[Inject] protected ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Inject] protected ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Inject] protected ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Parameter] public TfDataset? Content { get; set; }
@@ -24,7 +23,7 @@ public partial class TucDatasetSortOrderDialog : TfBaseComponent, IDialogContent
 		if (Content.Id == Guid.Empty) _isCreate = true;
 
 		_provider = TfDataProviderUIService.GetDataProvider(Content.DataProviderId);
-		if(_provider is null) throw new Exception("DataProviderId not found");
+		if (_provider is null) throw new Exception("DataProviderId not found");
 
 		_title = LOC("Manage primary sort order");
 		_btnText = LOC("Save");

@@ -107,9 +107,54 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 		}
 	}
 
+	private async Task _manageColumns(TfDataset dataset)
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucDatasetColumnsDialog>(
+				dataset,
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge,
+					TrapFocus = false
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null) { }
+	}
+
+	private async Task _manageFilters(TfDataset dataset)
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucDatasetFiltersDialog>(
+				dataset,
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge,
+					TrapFocus = false
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null) { }
+	}
+
 	private async Task _manageSort(TfDataset dataset)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetSortOrderDialog>(
+				dataset,
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge,
+					TrapFocus = false
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null) { }
+	}
+
+	private async Task _viewData(TfDataset dataset)
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucDatasetDataDialog>(
 				dataset,
 				new DialogParameters()
 				{

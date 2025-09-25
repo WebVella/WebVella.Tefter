@@ -83,7 +83,8 @@
 											</td>
 											<td class="tf-grid-td">
 												<div>
-													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Manage Columns")" IconStart="@TfConstants.GetIcon("Column")">
+													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Manage Columns")" IconStart="@TfConstants.GetIcon("Column")"
+																  OnClick="@(() => _manageColumns(context))">
 														<div slot="end">
 															@if (context.Columns.Count == 0)
 															{
@@ -100,7 +101,8 @@
 											</td>
 											<td class="tf-grid-td">
 												<div>
-													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Manage Filters")" IconStart="@TfConstants.GetIcon("DataFunnel")">
+													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Manage Filters")" IconStart="@TfConstants.GetIcon("DataFunnel")"
+																  OnClick="@(() => _manageFilters(context))">
 														<div slot="end">
 															@if (context.Filters.Count == 0)
 															{
@@ -136,7 +138,8 @@
 
 											<td class="tf-grid-td">
 												<div>
-													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("View Data")" IconStart="@TfConstants.GetIcon("Database")">
+													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("View Data")" IconStart="@TfConstants.GetIcon("Database")"
+																  OnClick="@(() => _viewData(context))">
 														@LOC("data")
 													</FluentButton>
 												</div>

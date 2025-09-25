@@ -46,12 +46,14 @@ public partial class TucSortCard : TfBaseComponent
 		var current = _items.Select(x => x.ColumnName).ToList();
 		_options = _allOptions.Where(x => !current.Contains(x)).ToList();
 
+		if(_options.Count > 0)
+			_selectedColumn = _options[0];
 	}
 
 	private async Task _addSortColumn()
 	{
 		if (String.IsNullOrWhiteSpace(_selectedColumn)) return;
-		if (Dataset.SortOrders.Any(x => x.ColumnName == _selectedColumn))
+		if (_items.Any(x => x.ColumnName == _selectedColumn))
 			return;
 
 		_items.Add(new TfSort { ColumnName = _selectedColumn, Direction = _selectedDirection });
@@ -67,6 +69,8 @@ public partial class TucSortCard : TfBaseComponent
 	private async Task _deleteSortColumn(TfSort sort)
 	{
 		if (_submitting) return;
+		if (!_items.Any(x => x.ColumnName == _selectedColumn))
+			return;
 
 		_items = _items.Where(x => x.ColumnName != sort.ColumnName).ToList();
 

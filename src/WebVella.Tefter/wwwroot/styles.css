@@ -447,7 +447,7 @@ fluent-switch::part(label) {
 }
 /*Dialog*/
 .fluent-dialog-header {
-  background: var(--tf-fill-color-base);
+  border: 1px dashed var(--tf-stroke-base);
   border-radius: var(--tf-border-radius-base);
   padding: 0.5rem 1rem !important;
   column-gap: 0 !important;

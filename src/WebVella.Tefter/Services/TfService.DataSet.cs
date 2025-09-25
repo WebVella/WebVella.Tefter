@@ -35,6 +35,7 @@ public partial interface ITfService
 	void AddDatasetColumn(
 		Guid datasetId,
 		TfDatasetColumn column);
+	void UpdataDatasetColumns(Guid datasetId, List<TfDatasetColumn> columns);
 
 	void AddAvailableColumnsToDataset(
 		Guid datasetId);
@@ -60,7 +61,7 @@ public partial class TfService : ITfService
 		try
 		{
 			var dbos = _dboManager.GetList<TfDatasetDbo>();
-			var datasets = dbos.Where(x => x is not null).Select(x => ConvertDboToModel(x)).OrderBy(x=> x.Name).ToList();
+			var datasets = dbos.Where(x => x is not null).Select(x => ConvertDboToModel(x)).OrderBy(x => x.Name).ToList();
 			var result = new List<TfDataset>();
 			foreach (var dataset in datasets)
 			{
@@ -558,7 +559,10 @@ public partial class TfService : ITfService
 			}
 		}
 	}
-
+	public void UpdataDatasetColumns(Guid datasetId, List<TfDatasetColumn> columns)
+	{
+		throw new NotImplementedException();
+	}
 	public void AddAvailableColumnsToDataset(
 		Guid datasetId)
 	{

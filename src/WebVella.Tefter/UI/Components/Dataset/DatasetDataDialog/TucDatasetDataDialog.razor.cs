@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataset?>
+public partial class TucDatasetDataDialog : TfBaseComponent, IDialogContentComponent<TfDataset?>
 {
 	[Inject] protected ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Inject] protected ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
@@ -13,7 +13,7 @@ public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogConten
 	private Icon _iconBtn = default!;
 	private bool _isCreate = false;
 
-	private TfDataset _form = new();
+	private TfDataset _dataset = new();
 	private TfDataProvider _provider = default!;
 	protected override async Task OnInitializedAsync()
 	{
@@ -25,50 +25,33 @@ public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogConten
 		_provider = TfDataProviderUIService.GetDataProvider(Content.DataProviderId);
 		if(_provider is null) throw new Exception("DataProviderId not found");
 
-		_title = _isCreate ? LOC("Create dataset in {0}", _provider.Name) : LOC("Manage dataset in {0}", _provider.Name);
-		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
-		if (_isCreate)
-			_form = Content with { Id = Guid.NewGuid() };
-		else
-			_form = Content with { Id = Content.Id };
+		_title = LOC("Current Data");
+		_btnText = LOC("Save");
+		_iconBtn = TfConstants.GetIcon("Save")!;
+		_dataset = Content with { Id = Content.Id };
 
-		base.InitForm(_form);
 	}
+
+	private async Task _onSortChanged(List<TfSort> sorts)
+	{
+		_dataset.SortOrders = sorts;
+	}
+
 
 	private async Task _save()
 	{
 		if (_isSubmitting) return;
 		try
 		{
-			//Workaround to wait for the form to be bound 
-			//on enter click without blur
-			await Task.Delay(10);
-
-			MessageStore.Clear();
-
-			if (!EditContext.Validate()) return;
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-
-			TfDataset result = default!;
-			if (_isCreate)
-			{
-				result = TfDatasetUIService.CreateDataset(_form);
-				ToastService.ShowSuccess(LOC("Dataset successfully created!"));
-			}
-			else
-			{
-				result = TfDatasetUIService.UpdateDataset(_form);
-				ToastService.ShowSuccess(LOC("Dataset successfully updated!"));
-			}
-
-			await Dialog.CloseAsync(result);
+			//TfDatasetUIService.UpdateDatasetSorts(_dataset.Id, _dataset.SortOrders);
+			await Dialog.CloseAsync(_dataset);
 		}
 		catch (Exception ex)
 		{
-			ProcessFormSubmitResponse(ex);
+			ProcessException(ex);
 		}
 		finally
 		{
@@ -80,5 +63,4 @@ public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogConten
 	{
 		await Dialog.CancelAsync();
 	}
-
 }

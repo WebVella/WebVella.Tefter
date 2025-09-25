@@ -18,9 +18,7 @@ public partial interface ITfDatasetUIService
 	//Columns
 	List<TfDatasetColumn> GetDatasetColumnOptions(Guid datasetId);
 	List<TfDatasetColumn> GetDatasetColumns(Guid datasetId);
-	void AddDatasetColumn(Guid datasetId, TfDatasetColumn column);
-	void AddAvailableColumnsToDataset(Guid datasetId);
-	void RemoveDatasetColumn(Guid datasetId, TfDatasetColumn column);
+	void UpdateDatasetColumns(Guid datasetId, List<TfDatasetColumn> columns);
 
 	//Filters
 	void UpdateDatasetFilters(Guid datasetId,
@@ -79,7 +77,7 @@ public partial class TfDatasetUIService : ITfDatasetUIService
 
 	#region << Data set>>
 	public List<TfDataset> GetDatasets(string? search = null, Guid? providerId = null)
-		=> _tfService.GetDatasets(search:search, providerId:providerId);
+		=> _tfService.GetDatasets(search: search, providerId: providerId);
 	public TfDataset? GetDataset(Guid datasetId) => _tfService.GetDataset(datasetId);
 	public TfDataset CreateDataset(TfDataset submit)
 	{
@@ -123,7 +121,6 @@ public partial class TfDatasetUIService : ITfDatasetUIService
 		var dataset = _tfService.CopyDataset(itemId);
 		DatasetCreated?.Invoke(this, dataset);
 	}
-
 	#endregion
 
 	#region << Columns >>
@@ -135,25 +132,13 @@ public partial class TfDatasetUIService : ITfDatasetUIService
 		=> _tfService.GetDatasetColumns(datasetId);
 
 
-	public void AddDatasetColumn(Guid datasetId, TfDatasetColumn column)
+	public void UpdateDatasetColumns(Guid datasetId, List<TfDatasetColumn> columns)
 	{
-		_tfService.AddDatasetColumn(datasetId, column);
+		_tfService.UpdataDatasetColumns(datasetId, columns);
 		var dataset = _tfService.GetDataset(datasetId);
 		DatasetUpdated?.Invoke(this, dataset!);
 	}
 
-	public void AddAvailableColumnsToDataset(Guid datasetId)
-	{
-		_tfService.AddAvailableColumnsToDataset(datasetId);
-		var dataSet = _tfService.GetDataset(datasetId);
-		DatasetUpdated?.Invoke(this, dataSet!);
-	}
-	public void RemoveDatasetColumn(Guid datasetId, TfDatasetColumn column)
-	{
-		_tfService.RemoveDatasetColumn(datasetId, column);
-		var dataset = _tfService.GetDataset(datasetId);
-		DatasetUpdated?.Invoke(this, dataset!);
-	}
 	#endregion
 
 	#region << Filters >>

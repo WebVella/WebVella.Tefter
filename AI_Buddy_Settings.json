@@ -1,0 +1,12 @@
+{
+  "AIProvider": "LM Studio",
+  "AIPromptURL": "http://127.0.0.1:1234",
+  "AIPromptKey": null,
+  "PromptLLMName": "Autodetect",
+  "IsPromptResponseStreaming": false,
+  "CodingLanguage": "C#",
+  "TestFramework": "MSTest",
+  "DateLastModified": "2025-09-25T08:41:47.3504441+03:00",
+  "LastPrompt": null,
+  "SettingsFilename": "AI_Buddy_Settings.json"
+}
