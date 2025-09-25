@@ -381,17 +381,6 @@ public partial class TfService : ITfService
 				dateOnlyColumns.Add(column.Name);
 		}
 
-		Dictionary<string, TfDataProviderColumn> joinedColumns = new();
-
-		foreach (var data in joinData)
-		{
-			foreach (var column in data.Columns)
-			{
-				var providerColumn = data.Provider.Columns.Single(x => x.DbName == column.DbName);
-				joinedColumns.Add($"jp$dp{data.Provider.Index}${data.DataIdentity}", providerColumn);
-			}
-		}
-
 		foreach (DataRow row in dataTable.Rows)
 		{
 			var joinColumnValuesDict = GetRowJoinedValues(row, joinData);
