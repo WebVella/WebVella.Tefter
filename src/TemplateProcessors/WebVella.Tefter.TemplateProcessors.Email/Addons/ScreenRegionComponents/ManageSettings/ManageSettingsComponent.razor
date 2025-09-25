@@ -62,7 +62,7 @@ else
 					<TucSelect Style="width:100%" TOption="TfTemplate" SelectedOption="_selectedOption" SelectedOptionChanged="_selectedOptionChanged"
 								  Placeholder="@LOC("select template to add...")"
 								  OptionValue="@((p)=> p.Id.ToString())"
-								  @bind-Items="_templatesOptions">
+								  Items="_templatesOptions">
 						<OptionTemplate Context="option">
 							<span>@option.Name</span>
 							<FluentIcon Slot="start" Value="@TfConstants.GetIcon(option.FluentIconName)" />

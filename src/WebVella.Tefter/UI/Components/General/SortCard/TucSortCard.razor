@@ -1,44 +1,42 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-<TucCard Title="@Title" Class="tf-card--filter">
+<TucCard Class="tf-card--filter">
 	<ToolbarTemplate>
-		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
-			@if (_options.Count > 0)
-			{
-				<TucSelect @bind-SelectedOption="@_selectedColumn"
-							  Disabled="_submitting"
-							  TOption="string" Required="false"
-						   Items="@_options" Style="width:220px"
-							  Placeholder="@LOC("select provider column")" />
-				<TucSelect @bind-SelectedOption="@_selectedDirection"
-							  Disabled="_submitting"
-							  TOption="TfSortDirection"
-							  Items="@(Enum.GetValues<TfSortDirection>())"
-							  OptionValue="@((p)=> ((int)p).ToString())"
-							  OptionText="@((p)=> p.ToDescriptionString())"
-							  Style="width:160px" />
-			}
-			else
-			{
-				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
-			}
-			<FluentButton OnClick="_addSortColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
-						  Disabled="@(_options.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
-		</FluentStack>
+		@if (_options.Count > 0)
+		{
+			<TucSelect @bind-SelectedOption="@_selectedColumn"
+					   Disabled="_submitting"
+					   TOption="string" Required="false"
+					   Items="@_options" Style="width:220px"
+					   Placeholder="@LOC("select provider column")" />
+			<TucSelect @bind-SelectedOption="@_selectedDirection"
+					   Disabled="_submitting"
+					   TOption="TfSortDirection"
+					   Items="@(Enum.GetValues<TfSortDirection>())"
+					   OptionValue="@((p)=> ((int)p).ToString())"
+					   OptionText="@((p)=> p.ToDescriptionString())"
+					   Style="width:160px" />
+		}
+		else
+		{
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
+		}
+		<FluentButton OnClick="_addSortColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
+					  Disabled="@(_options.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
 	</ToolbarTemplate>
 	<ChildContent>
 		@if (_items.Count == 0)
 		{
-			@LOC("No data sort order defined yet")
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No data sort order defined yet")</FluentMessageBar>
 		}
 		else
 		{
-				<table class="tf-grid">
-					<tbody class="tf-grid-tbody">
+			<table class="tf-grid">
+				<tbody class="tf-grid-tbody">
 					@foreach (var context in _items)
-						{
-							<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+					{
+						<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 							<td class="tf-grid-td" style="width:1%;">
 								<div>
 									<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteSortColumn(context))" Title="@LOC("Delete sort order")"
@@ -47,28 +45,28 @@
 									</FluentButton>
 								</div>
 							</td>
-								<td class="tf-grid-td" style="width:1%;vertical-align:middle">
-									<div>
+							<td class="tf-grid-td" style="width:1%;vertical-align:middle">
+								<div>
 									@if (!_columnDict.ContainsKey(context.ColumnName) || _columnDict[context.ColumnName].SourceType == TfAuxDataSourceType.NotFound)
-										{
-											<FluentIcon Value="@TfConstants.GetIcon("ErrorCircle")" Color="@Color.Error" Title="@LOC("not found")"></FluentIcon>
-										}
-										else
-										{
+									{
+										<FluentIcon Value="@TfConstants.GetIcon("ErrorCircle")" Color="@Color.Error" Title="@LOC("not found")"></FluentIcon>
+									}
+									else
+									{
 										<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
-										}
-									</div>
-								</td>
-								<td class="tf-grid-td" style="width:300px;">
-									<div>@context.ColumnName</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>@context.Direction.ToDescriptionString()</div>
-								</td>
-							</tr>
-						}
-					</tbody>
-				</table>
+									}
+								</div>
+							</td>
+							<td class="tf-grid-td" style="width:300px;">
+								<div>@context.ColumnName</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>@context.Direction.ToDescriptionString()</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
 		}
 	</ChildContent>
 </TucCard>

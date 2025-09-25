@@ -1,10 +1,12 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-<TucCard Title="@Title">
-	<ToolbarTemplate>
+<TucCard>
+	<TitleTemplate>
 		<FluentButton OnClick="_addAllColumns" IconStart="@TfConstants.GetIcon("AddSquareMultiple")" Appearance="@Appearance.Outline"
 					  Disabled="@(_options.Count == 0 || _submitting)">@LOC("All Available")</FluentButton>
+	</TitleTemplate>
+	<ToolbarTemplate>
 		@if (_options.Count > 0)
 		{
 			<TucSelect SelectedOptionChanged="((column) => _addColumn(column))"
@@ -23,7 +25,7 @@
 	<ChildContent>
 		@if (_items.Count == 0)
 		{
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("This dataset will return all data provider columns. Select columns for limitation.")</FluentMessageBar>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("This dataset will return ALL data provider columns (only) if not columns are selected. To add limitation or connected data select columns from the list.")</FluentMessageBar>
 
 		}
 		else
@@ -33,6 +35,14 @@
 					@foreach (var context in _items)
 					{
 						<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+							<td class="tf-grid-td" style="width:1%;">
+								<div>
+									<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteColumn(context))" Title="@LOC("Delete column")"
+												  Disabled="_submitting">
+										<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
+									</FluentButton>
+								</div>
+							</td>
 							<td class="tf-grid-td" style="width:120px;min-width:120px;vertical-align:middle">
 								<div>
 									@if (context.SourceType == TfAuxDataSourceType.PrimatyDataProvider)
@@ -74,14 +84,6 @@
 										</div>
 									}
 									<div class="td-description">@context.SourceColumnName</div>
-								</div>
-							</td>
-							<td class="tf-grid-td" style="width:1%;">
-								<div>
-									<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteColumn(context))" Title="@LOC("Delete column")"
-												  Disabled="_submitting">
-										<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
-									</FluentButton>
 								</div>
 							</td>
 						</tr>

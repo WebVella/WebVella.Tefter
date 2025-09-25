@@ -109,7 +109,7 @@ else
 			<FluentButton IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="@Appearance.Outline" Style="flex:0 0 80px" OnClick="_prevItem"
 						  Disabled="@(_result.Items.Count == 1)" />
 			<TucSelect TOption="TextContentTemplateResultItem" Style="flex:1 1 auto" SelectedOption="@_form"
-						  SelectedOptionChanged="_selectedOptionChanged" Value="@_form.Id.ToString()"
+						  SelectedOptionChanged="_selectedOptionChanged"
 						  Disabled="@(_result.Items.Count == 1)"
 						  OptionValue="@((p)=> p.Id.ToString())"
 						  Items="_result.Items">

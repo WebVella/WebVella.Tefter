@@ -14,16 +14,12 @@ public partial class TucDatasetFiltersDialog : TfBaseComponent, IDialogContentCo
 	private bool _isCreate = false;
 
 	private TfDataset _dataset = new();
-	private TfDataProvider _provider = default!;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.DataProviderId == Guid.Empty) throw new Exception("DataProviderId is required");
 		if (Content.Id == Guid.Empty) _isCreate = true;
-
-		_provider = TfDataProviderUIService.GetDataProvider(Content.DataProviderId);
-		if(_provider is null) throw new Exception("DataProviderId not found");
 
 		_title = LOC("Manage primary filters");
 		_btnText = LOC("Save");
@@ -32,9 +28,10 @@ public partial class TucDatasetFiltersDialog : TfBaseComponent, IDialogContentCo
 
 	}
 
-	private async Task _onSortChanged(List<TfSort> sorts)
+	private void _onFiltersChanged(List<TfFilterBase> filters)
 	{
-		_dataset.SortOrders = sorts;
+		_dataset.Filters = filters;
+		StateHasChanged();
 	}
 
 
@@ -46,7 +43,7 @@ public partial class TucDatasetFiltersDialog : TfBaseComponent, IDialogContentCo
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			//TfDatasetUIService.UpdateDatasetSorts(_dataset.Id, _dataset.SortOrders);
+			TfDatasetUIService.UpdateDatasetFilters(_dataset.Id, _dataset.Filters);
 			await Dialog.CloseAsync(_dataset);
 		}
 		catch (Exception ex)

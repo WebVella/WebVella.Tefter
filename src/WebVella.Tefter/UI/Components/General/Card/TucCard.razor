@@ -10,30 +10,33 @@
 	{
 		<div class="tf-card__title" style="@TitleStyle">
 			<div class="tf-card__title__left">
-				<div>
-					@if (TitleTemplate is not null)
-					{
-						@TitleTemplate
-					}
-					else if (!String.IsNullOrWhiteSpace(Title))
-					{
-						@Title
-					}
-				</div>
-				@if (SubTitleTemplate is not null
-							|| !String.IsNullOrWhiteSpace(SubTitle))
+				@if (TitleTemplate is not null)
 				{
-					<div class="tf-card__subtitle">
-						@if (SubTitleTemplate is not null)
+					@TitleTemplate
+				}
+				else
+				{
+					<div>
+						@if (!String.IsNullOrWhiteSpace(Title))
 						{
-							@SubTitleTemplate
+							<div>@Title</div>
 						}
-						else if (!String.IsNullOrWhiteSpace(SubTitle))
+						@if (SubTitleTemplate is not null
+										|| !String.IsNullOrWhiteSpace(SubTitle))
 						{
-							@SubTitle
+							<div class="tf-card__subtitle">
+								@if (SubTitleTemplate is not null)
+								{
+									@SubTitleTemplate
+								}
+								else if (!String.IsNullOrWhiteSpace(SubTitle))
+								{
+									@SubTitle
+								}
+							</div>
+
 						}
 					</div>
-
 				}
 			</div>
 			@if (ToolbarTemplate is not null)

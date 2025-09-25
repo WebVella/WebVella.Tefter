@@ -23,9 +23,6 @@ public partial interface ITfService
 		Guid id);
 
 	//Columns
-	public List<TfAvailableDatasetColumn> GetDatasetAvailableColumns(
-		Guid datasetId);
-
 	List<TfDatasetColumn> GetDatasetColumns(
 		Guid datasetId);
 
@@ -36,9 +33,6 @@ public partial interface ITfService
 		Guid datasetId,
 		TfDatasetColumn column);
 	void UpdataDatasetColumns(Guid datasetId, List<TfDatasetColumn> columns);
-
-	void AddAvailableColumnsToDataset(
-		Guid datasetId);
 
 	void RemoveDatasetColumn(
 		Guid datasetId,
@@ -328,59 +322,6 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfAvailableDatasetColumn> GetDatasetAvailableColumns(
-			Guid datasetId)
-	{
-		try
-		{
-			List<TfAvailableDatasetColumn> columns = new List<TfAvailableDatasetColumn>();
-
-			var dbo = _dboManager.Get<TfDatasetDbo>(datasetId);
-			var dataset = ConvertDboToModel(dbo);
-
-			if (dataset == null)
-				return columns;
-
-			var provider = GetDataProvider(dataset.DataProviderId);
-			if (provider is null)
-				throw new TfException("Not found specified data provider");
-
-			foreach (var column in provider.Columns)
-			{
-				columns.Add(new TfAvailableDatasetColumn
-				{
-					DbName = column.DbName!,
-					DbType = column.DbType
-				});
-			}
-
-			foreach (var identity in provider.Identities)
-			{
-				columns.Add(new TfAvailableDatasetColumn
-				{
-					DbName = identity.DataIdentity,
-					DbType = TfDatabaseColumnType.ShortText,
-				});
-			}
-
-			foreach (var column in provider.SharedColumns)
-			{
-				columns.Add(new TfAvailableDatasetColumn
-				{
-					DbName = column.DbName,
-					DbType = column.DbType,
-				});
-			}
-
-			return columns;
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
-
 	public List<TfDatasetColumn> GetDatasetColumns(
 		Guid datasetId)
 	{
@@ -559,28 +500,86 @@ public partial class TfService : ITfService
 			}
 		}
 	}
-	public void UpdataDatasetColumns(Guid datasetId, List<TfDatasetColumn> columns)
+	public void UpdataDatasetColumns(Guid datasetId, List<TfDatasetColumn> newColumns)
 	{
-		throw new NotImplementedException();
-	}
-	public void AddAvailableColumnsToDataset(
-		Guid datasetId)
-	{
-		var columnOptions = GetDatasetColumnOptions(datasetId);
-		try
+		//TODO RUMEN: check implementation and create unit test
+		if (newColumns is null)
+			throw new ArgumentException(nameof(newColumns), "Column is required");
+		using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
-			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			var dataset = GetDataset(datasetId);
+			if (dataset is null)
+				new TfException("Dataset not found");
+
+			var provider = GetDataProvider(dataset!.DataProviderId);
+
+			//Remove all current dataset columns that are not submitted
+			foreach (var column in dataset.Columns)
 			{
-				foreach (var column in columnOptions)
+				var newColumn = newColumns.FirstOrDefault(x => x.DataIdentity is null && x.SourceColumnName == column);
+				if (newColumn is null)
 				{
-					AddDatasetColumn(datasetId, column);
+					RemoveDatasetColumn(
+						datasetId: datasetId,
+						column: new TfDatasetColumn
+						{
+							SourceColumnName = column,
+							ColumnName = column,
+							DataIdentity = null,
+							SourceType = TfAuxDataSourceType.PrimatyDataProvider
+						});
 				}
-				scope.Complete();
 			}
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
+			foreach (var identity in dataset.Identities)
+			{
+				foreach (var column in identity.Columns)
+				{
+					var newColumn = newColumns.FirstOrDefault(x => x.DataIdentity == identity.DataIdentity && x.SourceColumnName == column);
+					if (newColumn is null)
+					{
+						RemoveDatasetColumn(
+							datasetId: datasetId,
+							column: new TfDatasetColumn
+							{
+								SourceColumnName = column,
+								ColumnName = $"{identity.DataIdentity}.{column}",
+								DataIdentity = identity.DataIdentity,
+								SourceType = column.StartsWith("dp_") ? TfAuxDataSourceType.AuxDataProvider : TfAuxDataSourceType.SharedColumn
+							});
+					}
+				}
+			}
+
+			dataset = GetDataset(datasetId);
+			//Add new columns that are submitted
+			foreach (var column in newColumns)
+			{
+				if (column.DataIdentity is null)
+				{
+					var dsColumn = dataset!.Columns.FirstOrDefault(x => x == column.SourceColumnName);
+					if (dsColumn is null)
+					{
+						AddDatasetColumn(
+							datasetId: datasetId,
+							column: column);
+					}
+				}
+				else
+				{
+					string? dsColumn = null;
+					var dsIdentity = dataset!.Identities.FirstOrDefault(x => x.DataIdentity == column.DataIdentity);
+					if (dsIdentity is not null)
+						dsColumn = dsIdentity.Columns.FirstOrDefault(x => x == column.SourceColumnName);
+
+					if (dsColumn is null)
+					{
+						AddDatasetColumn(
+							datasetId: datasetId,
+							column: column);
+					}
+				}
+			}
+			scope.Complete();
 		}
 	}
 

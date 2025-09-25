@@ -6,7 +6,7 @@ public partial class TucFilterManage : TfBaseComponent
 	public TfFilterBase? Item { get; set; }
 
 	[Parameter]
-	public TfDataProvider? SelectedProvider { get; set; }
+	public List<string> AllColumnOptions { get; set; } = new();
 
 	[Parameter]
 	public EventCallback<(Type, string, Guid?)> AddFilter { get; set; }
@@ -27,14 +27,7 @@ public partial class TucFilterManage : TfBaseComponent
 	public bool ReadOnly { get; set; } = false;
 
 	private string? _selectedFilterColumn = null;
-	public List<string?> AllColumnOptions
-	{
-		get
-		{
-			if (SelectedProvider is null) return new List<string?>();
-			return SelectedProvider.Columns.Select(x => x.DbName).ToList();
-		}
-	}
+
 	private async Task _addColumnFilterHandler()
 	{
 		if (String.IsNullOrWhiteSpace(_selectedFilterColumn)) return;

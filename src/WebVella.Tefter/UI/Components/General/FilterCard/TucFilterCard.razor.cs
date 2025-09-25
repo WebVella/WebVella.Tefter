@@ -1,27 +1,46 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucFilterCard : TfBaseComponent
 {
+	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 
 	[Parameter]
-	public string? Title { get; set; } = null;
-	[Parameter]
-	public TfDataProvider? DataProvider { get; set; } = null;
-	[Parameter]
-	public List<TfFilterBase> Items { get; set; } = new();
+	public TfDataset Dataset { get; set; } = default!;
 	[Parameter]
 	public EventCallback<List<TfFilterBase>> ItemsChanged { get; set; }
 
-	public List<string?> AllColumnOptions
+	List<string> _allOptions = new();
+	Dictionary<string, TfDatasetColumn> _columnDict = new();
+
+	internal string _selectedColumn = default!;
+	public bool _submitting = false;
+	List<TfFilterBase> _items = default!;
+
+	protected override void OnInitialized()
 	{
-		get
+		if (Dataset is null) throw new Exception("Dataset is required");
+
+		foreach (TfDatasetColumn item in TfDatasetUIService.GetDatasetColumnOptions(Dataset.Id))
 		{
-			if (DataProvider is null) return new List<string?>();
-			return DataProvider.Columns.Select(x => x.DbName).ToList();
+			if (String.IsNullOrWhiteSpace(item.ColumnName)) continue;
+			_allOptions.Add(item.ColumnName);
+			_columnDict[item.ColumnName] = item;
 		}
+		_initOptions();
 	}
 
-	internal string? _selectedColumn = null;
-	public bool _submitting = false;
+	protected override void OnParametersSet()
+	{
+		_initOptions();
+	}
+
+	void _initOptions()
+	{
+		_items = Dataset.Filters.ToList();
+
+		if (_allOptions.Count > 0)
+			_selectedColumn = _allOptions[0];
+	}
 
 	private async Task _addColumnFilterHandler()
 	{
@@ -32,9 +51,8 @@ public partial class TucFilterCard : TfBaseComponent
 
 	public async Task AddColumnFilter(string dbColumn, Guid? parentId)
 	{
-		if (String.IsNullOrWhiteSpace(dbColumn)) return;
-		if (DataProvider is null) return;
-		var column = DataProvider.Columns.FirstOrDefault(x => x.DbName == dbColumn);
+		if(!_columnDict.ContainsKey(dbColumn)) return;
+		var column = _columnDict[dbColumn];
 		if (column is null) return;
 
 		switch (column.DbType)
@@ -79,20 +97,20 @@ public partial class TucFilterCard : TfBaseComponent
 		TfFilterBase? filter = null;
 		if (type == typeof(TfFilterAnd)) filter = new TfFilterAnd() { ColumnName = dbName };
 		else if (type == typeof(TfFilterOr)) filter = new TfFilterOr() { ColumnName = dbName };
-		else if (type == typeof(TfFilterBoolean)) filter = new TfFilterBoolean(dbName,TfFilterBooleanComparisonMethod.IsTrue,null);
-		else if (type == typeof(TfFilterDateTime)) filter = new TfFilterDateTime(dbName, TfFilterDateTimeComparisonMethod.Greater,null);
-		else if (type == typeof(TfFilterGuid)) filter = new TfFilterGuid(dbName, TfFilterGuidComparisonMethod.Equal,null);
-		else if (type == typeof(TfFilterNumeric)) filter = new TfFilterNumeric(dbName,TfFilterNumericComparisonMethod.Equal,null);
-		else if (type == typeof(TfFilterText)) filter = new TfFilterText(dbName, TfFilterTextComparisonMethod.Equal,null);
+		else if (type == typeof(TfFilterBoolean)) filter = new TfFilterBoolean(dbName, TfFilterBooleanComparisonMethod.IsTrue, null);
+		else if (type == typeof(TfFilterDateTime)) filter = new TfFilterDateTime(dbName, TfFilterDateTimeComparisonMethod.Greater, null);
+		else if (type == typeof(TfFilterGuid)) filter = new TfFilterGuid(dbName, TfFilterGuidComparisonMethod.Equal, null);
+		else if (type == typeof(TfFilterNumeric)) filter = new TfFilterNumeric(dbName, TfFilterNumericComparisonMethod.Equal, null);
+		else if (type == typeof(TfFilterText)) filter = new TfFilterText(dbName, TfFilterTextComparisonMethod.Equal, null);
 		else throw new Exception("Filter type not supported");
 		if (parentId is null)
 		{
-			Items.Add(filter);
+			_items.Add(filter);
 		}
 		else
 		{
 			TfFilterBase? parentFilter = null;
-			foreach (var item in Items)
+			foreach (var item in _items)
 			{
 				var (result, resultParent) = FindFilter(item, parentId.Value, null);
 				if (result is not null)
@@ -108,14 +126,14 @@ public partial class TucFilterCard : TfBaseComponent
 			}
 		}
 
-		await ItemsChanged.InvokeAsync(Items);
+		await ItemsChanged.InvokeAsync(_items);
 	}
 
 	public async Task RemoveColumnFilter(Guid filterId)
 	{
 		TfFilterBase? filter = null;
 		TfFilterBase? parentFilter = null;
-		foreach (var item in Items)
+		foreach (var item in _items)
 		{
 			var (result, resultParent) = FindFilter(item, filterId, null);
 			if (result is not null)
@@ -128,11 +146,11 @@ public partial class TucFilterCard : TfBaseComponent
 
 		if (filter is not null)
 		{
-			if (parentFilter is null) Items.Remove(filter);
+			if (parentFilter is null) _items.Remove(filter);
 			else if (parentFilter is TfFilterAnd) ((TfFilterAnd)parentFilter).Remove(filter);
 			else if (parentFilter is TfFilterOr) ((TfFilterOr)parentFilter).Remove(filter);
 			await InvokeAsync(StateHasChanged);
-			await ItemsChanged.InvokeAsync(Items);
+			await ItemsChanged.InvokeAsync(_items);
 		}
 	}
 
@@ -140,7 +158,7 @@ public partial class TucFilterCard : TfBaseComponent
 	{
 		TfFilterBase? filter = null;
 		TfFilterBase? parentFilter = null;
-		foreach (var item in Items)
+		foreach (var item in _items)
 		{
 			var (result, resultParent) = FindFilter(item, input.Id, null);
 			if (result is not null)
@@ -155,7 +173,7 @@ public partial class TucFilterCard : TfBaseComponent
 		{
 			filter = input;
 			await InvokeAsync(StateHasChanged);
-			await ItemsChanged.InvokeAsync(Items);
+			await ItemsChanged.InvokeAsync(_items);
 		}
 	}
 

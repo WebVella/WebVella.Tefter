@@ -5,11 +5,12 @@ namespace WebVella.Tefter.UI.Components;
 public partial class TucDatasetColumnCard : TfBaseComponent
 {
 	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
-	[Parameter]
-	public string? Title { get; set; } = null;
 
 	[Parameter]
-	public TfDataset Dataset { get; set; } = default!;
+	public List<TfDatasetColumn> Items { get; set; } = new();
+
+	[Parameter]
+	public List<TfDatasetColumn> AllOptions { get; set; } = new();
 
 	[Parameter]
 	public EventCallback<List<TfDatasetColumn>> ItemsChanged { get; set; }
@@ -17,7 +18,6 @@ public partial class TucDatasetColumnCard : TfBaseComponent
 	[Parameter]
 	public string NoItemsMessage { get; set; } = "This dataset will return all data provider columns. Select columns for limitation.";
 
-	List<TfDatasetColumn> _allOptions = new();
 	List<TfDatasetColumn> _options = new();
 	private TfDatasetColumn? _selectedColumn = null;
 	public bool _submitting = false;
@@ -26,8 +26,6 @@ public partial class TucDatasetColumnCard : TfBaseComponent
 
 	protected override void OnInitialized()
 	{
-		if (Dataset is null) throw new Exception("Dataset is required");
-		_allOptions = TfDatasetUIService.GetDatasetColumnOptions(Dataset.Id);
 		_initOptions();
 	}
 
@@ -38,26 +36,10 @@ public partial class TucDatasetColumnCard : TfBaseComponent
 
 	void _initOptions()
 	{
-		_items = new List<TfDatasetColumn>();
-		foreach (var column in Dataset.Columns)
-		{
-			var option = _allOptions.FirstOrDefault(x => x.ColumnName == column);
-			if (option != null)
-				_items.Add(option);
-		}
-
-		foreach (var identity in Dataset.Identities)
-		{
-			foreach (var column in identity.Columns)
-			{
-				var option = _allOptions.FirstOrDefault(x => x.DataIdentity == identity.DataIdentity && x.SourceColumnName == column);
-				if (option != null)
-					_items.Add(option);
-			}
-		}
+		_items = Items.ToList();
 
 		var current = _items.Select(x => x.ColumnName).ToList();
-		_options = _allOptions.Where(x => !current.Contains(x.ColumnName)).ToList();
+		_options = AllOptions.Where(x => !current.Contains(x.ColumnName)).ToList();
 
 		_submitting = false;
 		_selectedColumn = null;

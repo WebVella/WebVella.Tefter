@@ -11,33 +11,50 @@ public partial class TucDatasetColumnsDialog : TfBaseComponent, IDialogContentCo
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn = default!;
-	private bool _isCreate = false;
 
 	private TfDataset _dataset = new();
 	private TfDataProvider _provider = default!;
+	private List<TfDatasetColumn> _items = new();
+	List<TfDatasetColumn> _allOptions = new();
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.DataProviderId == Guid.Empty) throw new Exception("DataProviderId is required");
-		if (Content.Id == Guid.Empty) _isCreate = true;
 
 		_provider = TfDataProviderUIService.GetDataProvider(Content.DataProviderId);
-		if(_provider is null) throw new Exception("DataProviderId not found");
+		if (_provider is null) throw new Exception("DataProviderId not found");
 
 		_title = LOC("Manage columns");
 		_btnText = LOC("Save");
 		_iconBtn = TfConstants.GetIcon("Save")!;
 		_dataset = Content with { Id = Content.Id };
 
+		_items = new List<TfDatasetColumn>();
+		_allOptions = TfDatasetUIService.GetDatasetColumnOptions(_dataset.Id);
+		foreach (var column in _dataset.Columns)
+		{
+			var option = _allOptions.FirstOrDefault(x => x.ColumnName == column);
+			if (option != null)
+				_items.Add(option);
+		}
+
+		foreach (var identity in _dataset.Identities)
+		{
+			foreach (var column in identity.Columns)
+			{
+				var option = _allOptions.FirstOrDefault(x => x.DataIdentity == identity.DataIdentity && x.SourceColumnName == column);
+				if (option != null)
+					_items.Add(option);
+			}
+		}
+
 	}
 
 	private async Task _onItemsChanged(List<TfDatasetColumn> columns)
 	{
-		_dataset.Columns = new();
-		_dataset.Identities = new List<TfDatasetIdentity>().AsReadOnly();
-
+		_items = columns.ToList();
 	}
 
 
@@ -49,7 +66,7 @@ public partial class TucDatasetColumnsDialog : TfBaseComponent, IDialogContentCo
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			//TfDatasetUIService.UpdateDatasetSorts(_dataset.Id, _dataset.SortOrders);
+			TfDatasetUIService.UpdateDatasetColumns(_dataset.Id, _items);
 			await Dialog.CloseAsync(_dataset);
 		}
 		catch (Exception ex)

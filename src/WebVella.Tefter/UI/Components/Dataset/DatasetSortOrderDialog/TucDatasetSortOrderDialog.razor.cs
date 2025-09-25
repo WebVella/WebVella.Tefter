@@ -11,7 +11,6 @@ public partial class TucDatasetSortOrderDialog : TfBaseComponent, IDialogContent
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn = default!;
-	private bool _isCreate = false;
 
 	private TfDataset _dataset = new();
 	private TfDataProvider _provider = default!;
@@ -20,7 +19,6 @@ public partial class TucDatasetSortOrderDialog : TfBaseComponent, IDialogContent
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.DataProviderId == Guid.Empty) throw new Exception("DataProviderId is required");
-		if (Content.Id == Guid.Empty) _isCreate = true;
 
 		_provider = TfDataProviderUIService.GetDataProvider(Content.DataProviderId);
 		if (_provider is null) throw new Exception("DataProviderId not found");
@@ -32,7 +30,7 @@ public partial class TucDatasetSortOrderDialog : TfBaseComponent, IDialogContent
 
 	}
 
-	private async Task _onSortChanged(List<TfSort> sorts)
+	private void _onSortChanged(List<TfSort> sorts)
 	{
 		_dataset.SortOrders = sorts;
 	}

@@ -439,6 +439,15 @@ fluent-text-area.with-prefix::part(control),
 fluent-combobox.with-prefix::part(control) {
   padding-left: 0;
 }
+fluent-text-field::part(selected-value),
+fluent-number-field::part(selected-value),
+fluent-select::part(selected-value),
+fluent-search::part(selected-value),
+fluent-text-area::part(selected-value),
+fluent-combobox::part(selected-value) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .tf-select-btn {
   border-radius: 4px;
 }
@@ -447,24 +456,32 @@ fluent-switch::part(label) {
 }
 /*Dialog*/
 .fluent-dialog-header {
+  --dialog-padding: 1rem;
   border: 1px dashed var(--tf-stroke-base);
   border-radius: var(--tf-border-radius-base);
-  padding: 0.5rem 1rem !important;
+  padding: 0.25rem 0.5rem !important;
   column-gap: 0 !important;
   margin-bottom: var(--dialog-padding);
   font-size: var(--tf-font-size-md);
+  position: relative;
+}
+.fluent-dialog-header fluent-button {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  margin-top: -16px;
 }
 .fluent-dialog-header .fluent-typography {
-  font-size: var(--tf-font-size-lg) !important;
+  font-size: var(--tf-font-size-md) !important;
+  color: var(--tf-font-color-mute);
+  color: var(--tf-gray-400);
+  text-align: center;
 }
 .fluent-dialog-header fluent-button::part(control) {
   background: transparent;
 }
-.fluent-dialog-header fluent-button:hover::part(control) {
-  /*background: var(--tf-body-color-accent-2);*/
-}
-.fluent-dialog-header fluent-button svg {
-  /*fill: var(--tf-font-color-mute) !important;*/
+.fluent-dialog-main::part(control) {
+  padding: 1rem !important;
 }
 .fluent-dialog-main.right::part(control),
 .fluent-dialog-main.left::part(control) {
@@ -604,9 +621,13 @@ a:hover {
   font-weight: var(--tf-font-weight-base);
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 .tf-card__title__left {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
+  display: grid;
+  grid-gap: 10px;
+  grid-auto-flow: column;
 }
 .tf-card__title__right {
   flex: 0 0 auto;

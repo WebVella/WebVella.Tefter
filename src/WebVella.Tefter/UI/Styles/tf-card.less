@@ -22,9 +22,13 @@
 		font-weight: var(--tf-font-weight-base);
 		display: flex;
 		align-items: center;
+		justify-content:space-between;
 
 		&__left {
-			flex: 1 1 auto;
+			flex: 0 0 auto;
+			display: grid;
+			grid-gap: 10px;
+			grid-auto-flow: column;
 		}
 
 		&__right {

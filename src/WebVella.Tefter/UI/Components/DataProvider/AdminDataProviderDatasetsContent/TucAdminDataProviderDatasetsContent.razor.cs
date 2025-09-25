@@ -130,7 +130,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge,
+					Width = TfConstants.DialogWidthExtraLarge,
 					TrapFocus = false
 				});
 		var result = await dialog.Result;
@@ -158,9 +158,9 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 				dataset,
 				new DialogParameters()
 				{
-					PreventDismissOnOverlayClick = true,
+					PreventDismissOnOverlayClick = false,
 					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge,
+					Width = TfConstants.DialogWidthFullScreen,
 					TrapFocus = false
 				});
 		var result = await dialog.Result;

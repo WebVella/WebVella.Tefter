@@ -72,7 +72,7 @@
 					<TucSelect Style="width:100%" TOption="TfDatasetAsOption" SelectedOption="_spaceDataOption" SelectedOptionChanged="_spaceDataOptionChanged"
 								  Placeholder="@LOC("select space dataset...")"
 								  OptionValue="@((p)=> p.Id.ToString())"
-								  @bind-Items="_spaceDataOptions">
+								  Items="_spaceDataOptions">
 						<OptionTemplate Context="option">
 							<span>@option.SpaceName <span class="text-muted">></span> @option.Name</span>
 						</OptionTemplate>

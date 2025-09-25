@@ -38,7 +38,7 @@ else
 		<FluentStack Style="flex:1 1 auto" HorizontalGap="5">
 			<FluentButton IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="@Appearance.Outline" Style="flex:0 0 80px" OnClick="_prevItem" Disabled="@(_preview.Items.Count == 1)" />
 			<TucSelect TOption="EmailTemplateResultItem" Style="flex:1 1 auto" SelectedOption="@_form"
-						  SelectedOptionChanged="_selectedOptionChanged" Value="@_form.Id.ToString()"
+						  SelectedOptionChanged="_selectedOptionChanged"
 						  Disabled="@(_preview.Items.Count == 1)"
 						  OptionValue="@((p)=> p.Id.ToString())"
 						  Items="_preview.Items">

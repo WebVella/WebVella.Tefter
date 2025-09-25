@@ -22,7 +22,7 @@
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DbName
 									 Label="@LOC("Column name")" Style="width:100%"
-									 ReadOnly="!_isCreate" AutoComplete="off">
+									 ReadOnly="!_isCreate" AutoComplete="off" Class="with-prefix">
 						<span slot="start">sc_</span>
 					</FluentTextField>
 					<FluentValidationMessage For="@(() => _form.DbName)" />
@@ -44,7 +44,7 @@
 						<TucSelect TOption="string"
 									  Items="_allDataIdentities"
 									  Height="@TfConstants.ComboPanelHeight"
-									  @bind-Value=@_form.DataIdentity
+									  @bind-SelectedOption=@_form.DataIdentity
 									  Placeholder="@LOC("select or add...")"
 									  Disabled="!_isCreate" Style="flex:1 1 auto" />
 						<FluentButton Title="@LOC("Create a new data identity")" OnClick="addDataIdentity"

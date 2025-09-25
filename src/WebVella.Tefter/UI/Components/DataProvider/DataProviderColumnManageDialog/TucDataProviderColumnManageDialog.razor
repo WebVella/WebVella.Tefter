@@ -80,7 +80,7 @@
 							<FluentValidationMessage For="@(() => _form.SourceName)" />
 						</FluentGridItem>
 						<FluentGridItem xs="4">
-							<TucSelect @bind-Value="@_form.SourceType"
+							<TucSelect @bind-SelectedOption="@_form.SourceType"
 										  TOption="string"
 										  Items="@_providerColumnTypeToSourceTypes[_form.DbType]"
 										  Style="width:100%"

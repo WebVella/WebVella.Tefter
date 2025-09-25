@@ -4,8 +4,6 @@ public partial class TucSortCard : TfBaseComponent
 {
 	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Parameter]
-	public string? Title { get; set; } = null;
-	[Parameter]
 	public TfDataset Dataset { get; set; } = default!;
 
 	[Parameter]
@@ -29,7 +27,6 @@ public partial class TucSortCard : TfBaseComponent
 			_allOptions.Add(item.ColumnName);
 			_columnDict[item.ColumnName] = item;
 		}
-		_allOptions = _allOptions.Order().ToList();
 		_initOptions();
 	}
 
@@ -40,13 +37,12 @@ public partial class TucSortCard : TfBaseComponent
 
 	void _initOptions()
 	{
-		_items = JsonSerializer.Deserialize<List<TfSort>>(JsonSerializer.Serialize(Dataset.SortOrders))
-			?? throw new Exception("cannot serialize object");
+		_items = Dataset.SortOrders.ToList();
 
 		var current = _items.Select(x => x.ColumnName).ToList();
 		_options = _allOptions.Where(x => !current.Contains(x)).ToList();
 
-		if(_options.Count > 0)
+		if (_options.Count > 0)
 			_selectedColumn = _options[0];
 	}
 
@@ -69,7 +65,7 @@ public partial class TucSortCard : TfBaseComponent
 	private async Task _deleteSortColumn(TfSort sort)
 	{
 		if (_submitting) return;
-		if (!_items.Any(x => x.ColumnName == _selectedColumn))
+		if (!_items.Any(x => x.ColumnName == sort.ColumnName))
 			return;
 
 		_items = _items.Where(x => x.ColumnName != sort.ColumnName).ToList();

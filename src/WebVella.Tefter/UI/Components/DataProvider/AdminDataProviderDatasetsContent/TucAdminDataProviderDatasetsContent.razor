@@ -42,7 +42,7 @@
 									<tr class="tf-grid-tr">
 										<th class="tf-grid-th" style="width:110px;min-width:110px;"></th>
 										<th class="tf-grid-th">name</th>
-										<th class="tf-grid-th">identities</th>
+										<th class="tf-grid-th">connected data</th>
 										<th class="tf-grid-th">columns</th>
 										<th class="tf-grid-th">filters</th>
 										<th class="tf-grid-th">sort order</th>
@@ -52,6 +52,9 @@
 								<tbody class="tf-grid-tbody">
 									@foreach (TfDataset context in _items)
 									{
+										var columnCount = context.ColumnsCount;
+										var filterCount = context.FiltersCount;
+										var sortCount = context.SortOrdersCount;
 										<tr @key=context.Id class="tf-grid-tr">
 											<td class="tf-grid-td">
 												<div>
@@ -86,13 +89,13 @@
 													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Manage Columns")" IconStart="@TfConstants.GetIcon("Column")"
 																  OnClick="@(() => _manageColumns(context))">
 														<div slot="end">
-															@if (context.Columns.Count == 0)
+															@if (columnCount == 0)
 															{
-																<FluentBadge Appearance="Appearance.Neutral">@context.Columns.Count</FluentBadge>
+																<FluentBadge Appearance="Appearance.Neutral">all</FluentBadge>
 															}
 															else
 															{
-																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().Value)" Color="@(TfColor.Orange700.GetColor().Value)">@context.Columns.Count</FluentBadge>
+																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().Value)" Color="@(TfColor.Orange700.GetColor().Value)">@columnCount</FluentBadge>
 															}
 														</div>
 														@LOC("columns")
@@ -104,13 +107,13 @@
 													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Manage Filters")" IconStart="@TfConstants.GetIcon("DataFunnel")"
 																  OnClick="@(() => _manageFilters(context))">
 														<div slot="end">
-															@if (context.Filters.Count == 0)
+															@if (filterCount == 0)
 															{
-																<FluentBadge Appearance="Appearance.Neutral">@context.Filters.Count</FluentBadge>
+																<FluentBadge Appearance="Appearance.Neutral">0</FluentBadge>
 															}
 															else
 															{
-																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().Value)" Color="@(TfColor.Orange700.GetColor().Value)">@context.Filters.Count</FluentBadge>
+																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().Value)" Color="@(TfColor.Orange700.GetColor().Value)">@filterCount</FluentBadge>
 															}
 														</div>
 														@LOC("filters")
@@ -122,13 +125,13 @@
 													<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Manage Sort orders")" IconStart="@TfConstants.GetIcon("ArrowSortDownLines")"
 																  OnClick="@(() => _manageSort(context))">
 														<div slot="end">
-															@if (context.SortOrders.Count == 0)
+															@if (sortCount == 0)
 															{
-																<FluentBadge Appearance="Appearance.Neutral">@context.SortOrders.Count</FluentBadge>
+																<FluentBadge Appearance="Appearance.Neutral">0</FluentBadge>
 															}
 															else
 															{
-																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().Value)" Color="@(TfColor.Orange700.GetColor().Value)">@context.SortOrders.Count</FluentBadge>
+																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().Value)" Color="@(TfColor.Orange700.GetColor().Value)">@sortCount</FluentBadge>
 															}
 														</div>
 														@LOC("sorting")
