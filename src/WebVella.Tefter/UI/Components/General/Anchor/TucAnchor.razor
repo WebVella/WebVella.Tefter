@@ -11,7 +11,6 @@
 					  Appearance="@Appearance">
 			<FluentIcon Value="IconStart" />
 		</FluentAnchor>
-
 	}
 	else
 	{
@@ -26,7 +25,7 @@ else
 {
 	@if (ChildContent is null && IconStart is not null)
 	{
-		<FluentAnchor OnClick="@_OnClick" Href="#"
+		<FluentAnchor OnClick="@OnClick" Href="#"
 					  Id="@Id" AdditionalAttributes=@_additionalAttributes
 					  Class="@Class" Style="@Style"
 					  IconEnd="IconEnd"
@@ -36,7 +35,7 @@ else
 	}
 	else
 	{
-		<FluentAnchor OnClick="@_OnClick" Href="#"
+		<FluentAnchor OnClick="@OnClick" Href="#"
 					  Id="@Id" AdditionalAttributes=@_additionalAttributes
 					  Class="@Class" Style="@Style"
 					  IconStart="IconStart" IconEnd="IconEnd"

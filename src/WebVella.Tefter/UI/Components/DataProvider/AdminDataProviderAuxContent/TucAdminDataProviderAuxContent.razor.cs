@@ -103,9 +103,9 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 
 	private string _showCommonIdentities(TfDataProvider subProvider)
 	{
-		var commonIdentities = _provider.Identities.Where(x => x.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY)
+		var commonIdentities = _provider.Identities
 							.Select(x => x.DataIdentity)
-							.Intersect(subProvider.Identities.Where(x => x.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY).Select(x => x.DataIdentity)).ToList();
+							.Intersect(subProvider.Identities.Select(x => x.DataIdentity)).ToList();
 		if (commonIdentities.Count == 0) return "n/a";
 		return String.Join(", ", commonIdentities);
 	}

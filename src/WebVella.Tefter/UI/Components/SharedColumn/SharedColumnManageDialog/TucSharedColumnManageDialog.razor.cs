@@ -51,7 +51,7 @@ public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogC
 		else
 		{
 			_form.DbType = TfDatabaseColumnType.Text;
-			_form.DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
+			_form.DataIdentity = _allDataIdentities.Count > 0 ? _allDataIdentities[0] : String.Empty;
 		}
 		_selectedColumnType = _columnTypeOptions.Single(x=> x.Type == _form.DbType);
 		base.InitForm(_form);

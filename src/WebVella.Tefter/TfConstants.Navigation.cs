@@ -19,28 +19,6 @@ public partial class TfConstants
 		}
 	}
 
-	public static string HomeMenuTitle = "Home";
-	public static string AdminMenuTitle = "Administration";
-	public static string PagesMenuTitle = "Application Pages";
-	public static string SpaceDataMenuTitle = "Space data";
-	public static string SpaceViewMenuTitle = "Space view";
-
-	//Admin
-	public static string AdminDashboardMenuTitle = "Dashboard";
-	public static string AdminAddonsMenuTitle = "Addons";
-	public static string AdminDataMenuTitle = "Data";
-	public static string AdminDataProvidersMenuTitle = "Data Providers";
-	public static string AdminDataIdentitiesMenuTitle = "Data Identities";
-	public static string AdminAccessMenuTitle = "Access";
-	public static string AdminUsersMenuTitle = "Users Accounts";
-	public static string AdminRolesMenuTitle = "Access Roles";
-	public static string AdminSharedColumnsMenuTitle = "Shared Columns";
-	public static string AdminFileRepositoryMenuTitle = "File Repository";
-	public static string AdminTemplatesMenuTitle = "Templates";
-	public static string AdminTemplateMenuTitle = "Template {0}";
-	public static string AdminContentMenuTitle = "Content";
-
-
 	//Action icons
 	public static Icon ErrorIcon = IconsExtensions.GetInstance(new IconInfo { Name = "ErrorCircle", Size = IconSize.Size20, Variant = IconVariant.Filled }).WithColor(Color.Error);
 

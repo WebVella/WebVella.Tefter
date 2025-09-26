@@ -251,7 +251,6 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 			{
 				foreach (var identity in _optionsDataProvider.Identities)
 				{
-					if(identity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY) continue;
 					foreach (var column in identity.Columns)
 					{
 						_generatedColumns.Add($"{identity.DataIdentity}.{column}");
