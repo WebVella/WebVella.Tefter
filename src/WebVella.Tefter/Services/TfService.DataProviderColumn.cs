@@ -32,6 +32,8 @@ public partial interface ITfService
 	public TfDataProvider CreateDataProviderColumn(
 		TfDataProviderColumn column);
 
+	public TfDataProvider CreateDataProviderColumn(
+		TfUpsertDataProviderColumn column);
 
 	/// <summary>
 	/// Creates new data provider column
@@ -41,6 +43,9 @@ public partial interface ITfService
 	public TfDataProvider CreateBulkDataProviderColumn(Guid providerId,
 		List<TfDataProviderColumn> columns);
 
+	public TfDataProvider CreateBulkDataProviderColumn(Guid providerId,
+		List<TfUpsertDataProviderColumn> columns);
+
 	/// <summary>
 	/// Updates existing data provider column
 	/// </summary>
@@ -48,6 +53,9 @@ public partial interface ITfService
 	/// <returns></returns>
 	public TfDataProvider UpdateDataProviderColumn(
 		TfDataProviderColumn column);
+
+	public TfDataProvider UpdateDataProviderColumn(
+		TfUpsertDataProviderColumn column);
 
 	/// <summary>
 	/// Deletes existing data provider column
@@ -229,6 +237,11 @@ public partial class TfService : ITfService
 	}
 
 
+	public TfDataProvider CreateDataProviderColumn(
+		TfUpsertDataProviderColumn column)
+	 => CreateDataProviderColumn(
+		 column: column.ToModel());
+
 	/// <summary>
 	/// Creates new data provider columns in bulk
 	/// </summary>
@@ -285,6 +298,13 @@ public partial class TfService : ITfService
 		}
 	}
 
+	public TfDataProvider CreateBulkDataProviderColumn(Guid providerId,
+		List<TfUpsertDataProviderColumn> columns)
+	{
+		var models = new List<TfDataProviderColumn>();
+		columns.ForEach(x => models.Add(x.ToModel()));
+		return CreateBulkDataProviderColumn(providerId, models);
+	}
 
 	/// <summary>
 	/// Updates existing data provider column
@@ -325,6 +345,11 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 	}
+
+	public TfDataProvider UpdateDataProviderColumn(
+			TfUpsertDataProviderColumn column)
+	 => UpdateDataProviderColumn(
+		 column: column.ToModel());
 
 	/// <summary>
 	/// Deletes existing data provider column

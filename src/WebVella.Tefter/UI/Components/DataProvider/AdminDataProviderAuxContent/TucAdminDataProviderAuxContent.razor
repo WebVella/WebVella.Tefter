@@ -43,21 +43,13 @@
 										<tr @key=context.Id class="tf-grid-tr">
 											<td class="tf-grid-td">
 												<div>
-													@if (context.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-													{
-														<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("LockClosed")"
-																	  Title="@LOC("always implemented")" Disabled=true />
-													}
-													else
-													{
-														<FluentStack Wrap="false">
-															<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
-																		  Title="@LOC("Edit column")" OnClick="@(()=> _editIdentity(context))" />
-															<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteIdentity(context))" Title="@LOC("Delete")">
-																<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
-															</FluentButton>
-														</FluentStack>
-													}
+													<FluentStack Wrap="false">
+														<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
+																	  Title="@LOC("Edit column")" OnClick="@(()=> _editIdentity(context))" />
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteIdentity(context))" Title="@LOC("Delete")">
+															<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
+														</FluentButton>
+													</FluentStack>
 												</div>
 											</td>
 											<td class="tf-grid-td">

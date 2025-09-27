@@ -59,7 +59,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 			{
 				if (!currentUser.IsAdmin)
 					throw new Exception("Current user is not admin");
-				navMenu.SpaceName = TfConstants.AdminMenuTitle;
+				navMenu.SpaceName = "Administration";
 				navMenu.SpaceColor = TfConstants.AdminColor;
 				navMenu.SpaceIcon = TfConstants.GetIcon("Settings")!;
 

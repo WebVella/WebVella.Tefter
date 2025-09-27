@@ -15,7 +15,7 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 	private bool _isConnected = false;
 	private Icon _iconBtn = default!;
 	private TfDataProvider _provider = new();
-	private TfDataProviderColumn _form = new();
+	private TfUpsertDataProviderColumn _form = new();
 	private Dictionary<TfDatabaseColumnType, List<string>> _providerColumnTypeToSourceTypes = new();
 	private List<DatabaseColumnTypeInfo> _providerColumnTypeOptions = new();
 	private List<TfDataProviderColumnSearchType> _searchTypes = new();
@@ -80,11 +80,11 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 		{
 			if (_isCreate)
 			{
-				_form = new TfDataProviderColumn
+				_form = new TfUpsertDataProviderColumn
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = _provider.Id,
-					CreatedOn = DateTime.Now
+					CreatedOn = DateTime.Now,
 				};
 				if (_providerColumnTypeToSourceTypes[_form.DbType].Count > 0)
 				{
@@ -93,24 +93,7 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 			}
 			else
 			{
-				_form = new TfDataProviderColumn
-				{
-					Id = Content!.Id,
-					AutoDefaultValue = Content.AutoDefaultValue,
-					CreatedOn = Content.CreatedOn,
-					DataProviderId = Content.DataProviderId,
-					DbName = Content.DbName,
-					DbType = Content.DbType,
-					PreferredSearchType = Content.PreferredSearchType,
-					DefaultValue = Content.DefaultValue,
-					IncludeInTableSearch = Content.IncludeInTableSearch,
-					IsNullable = Content.IsNullable,
-					IsSearchable = Content.IsSearchable,
-					IsSortable = Content.IsSortable,
-					IsUnique = Content.IsUnique,
-					SourceName = Content.SourceName,
-					SourceType = Content.SourceType,
-				};
+				_form = Content!.ToUpsert();
 				_isConnected = !String.IsNullOrWhiteSpace(_form.SourceName);
 			}
 			base.InitForm(_form);
@@ -153,38 +136,28 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 
 			await Task.Delay(1);
 
-			var submit = new TfDataProviderColumn
+			var submit = new TfUpsertDataProviderColumn
 			{
 				Id = _form.Id,
-				AutoDefaultValue = _form.AutoDefaultValue,
 				CreatedOn = _form.CreatedOn,
 				DataProviderId = _form.DataProviderId,
 				DbName = _form.DbName,
 				DbType = _form.DbType,
-				PreferredSearchType = _form.PreferredSearchType,
 				DefaultValue = _form.DefaultValue,
 				IncludeInTableSearch = _form.IncludeInTableSearch,
-				IsNullable = _form.IsNullable,
-				IsSearchable = _form.IsSearchable,
-				IsSortable = _form.IsSortable,
-				IsUnique = _form.IsUnique,
 				SourceName = _form.SourceName,
 				SourceType = _form.SourceType,
+				RuleSet = _form.RuleSet,
 			};
+
+			if (submit.DefaultValue is null
+				&& submit.RuleSet == TfDataProviderColumnRuleSet.NullableWithDefault)
+				submit.DefaultValue = String.Empty;
 
 			if (!_isConnected)
 			{
 				submit.SourceName = null;
 				submit.SourceType = null;
-			}
-
-			if (!submit.IsNullable && String.IsNullOrWhiteSpace(submit.DefaultValue))
-			{
-				submit.DefaultValue = String.Empty;
-			}
-			if (submit.IsNullable && String.IsNullOrWhiteSpace(submit.DefaultValue))
-			{
-				submit.DefaultValue = null;
 			}
 
 			submit.FixPrefix(_provider.ColumnPrefix);

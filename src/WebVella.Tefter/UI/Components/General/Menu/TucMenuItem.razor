@@ -4,7 +4,7 @@
 <div class="@_css">
 	<TucAnchor Href="@Item.Href" 
 				  Id="@Item.Id" AdditionalAttributes=@_attributes
-				  OnClick="_OnClick" Appearance="@Appearance.Hypertext">
+				  OnClick="@Item.OnClick" Appearance="@Appearance.Hypertext">
 		@if (Item.Icon is not null && !String.IsNullOrWhiteSpace(Item.Text))
 		{
 			<span slot="start">

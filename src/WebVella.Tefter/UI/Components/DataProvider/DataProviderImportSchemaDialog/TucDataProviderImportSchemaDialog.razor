@@ -52,12 +52,7 @@
 						<col />
 						<col style="width:180px;max-width:180px;" />
 						<col />
-						<col style="width:80px;max-width:80px;" />
-						<col style="width:80px;max-width:80px;" />
-						<col style="width:80px;max-width:80px;" />
-						<col style="width:80px;max-width:80px;" />
-						<col style="width:110px;max-width:110px;" />
-						<col style="width:120px;max-width:120px;" />
+						<col />
 						<col style="width:80px;max-width:80px;" />
 					</colgroup>
 					<thead class="tf-grid-thead">
@@ -68,14 +63,9 @@
 							<th class="tf-grid-th">@LOC("data type")</th>
 							<th class="tf-grid-th">@LOC("SOURCE column")</th>
 							<th class="tf-grid-th">@LOC("SOURCE type")</th>
+							<th class="tf-grid-th">@LOC("ruleset")</th>
 							<th class="tf-grid-th">@LOC("default")</th>
-							<th class="tf-grid-th">@LOC("nullable")</th>
-							<th class="tf-grid-th">@LOC("unique")</th>
-							<th class="tf-grid-th">@LOC("autogen")</th>
-							<th class="tf-grid-th">@LOC("searched")</th>
 							<th class="tf-grid-th">@LOC("global search")</th>
-							<th class="tf-grid-th">@LOC("search type")</th>
-							<th class="tf-grid-th">@LOC("sortable")</th>
 						</tr>
 					</thead>
 					<tbody class="tf-grid-tbody">
@@ -124,6 +114,17 @@
 								</td>
 								<td class="tf-grid-td">
 									<div>
+										<TucSelect @bind-SelectedOption="@context.RuleSet"
+												   TOption="TfDataProviderColumnRuleSet"
+												   OptionValue="((p) => p.ToString())"
+												   OptionText="@((p) => p.ToDescriptionString())"
+												   Class="@_getValidationCssClass(context.SourceName,nameof(context.SourceType))"
+												   Items="@(Enum.GetValues<TfDataProviderColumnRuleSet>())" />
+										<TucValidationMessage Field="@nameof(context.RuleSet)" Index=_rowIndex Errors="ValidationErrors" />
+									</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>
 										<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@context.DefaultValue AutoComplete="off"
 														 Class="@_getValidationCssClass(context.SourceName,nameof(context.DefaultValue))" Style="width:100%" />
 										<TucValidationMessage Field="@nameof(context.DefaultValue)" Index=_rowIndex Errors="ValidationErrors" />
@@ -131,56 +132,8 @@
 								</td>
 								<td class="tf-grid-td">
 									<div>
-										<FluentSwitch @bind-Value=@context.IsNullable @bind-Value:after=@(() => _nullableChanged(context)) Class="@_getValidationCssClass(context.SourceName, nameof(context.IsNullable))" />
-										<TucValidationMessage Field="@nameof(context.IsNullable)" Index=_rowIndex Errors="ValidationErrors" />
-									</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>
-										<FluentSwitch @bind-Value=@context.IsUnique Class="@_getValidationCssClass(context.SourceName, nameof(context.IsUnique))" />
-										<TucValidationMessage Field="@nameof(context.IsUnique)" Index=_rowIndex Errors="ValidationErrors" />
-									</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>
-										@if (_dbTypeInfoDict[context.DbType].SupportAutoDefaultValue)
-										{
-											<FluentSwitch @bind-Value=@context.AutoDefaultValue Class="@_getValidationCssClass(context.SourceName, nameof(context.AutoDefaultValue))" />
-											<TucValidationMessage Field="@nameof(context.AutoDefaultValue)" Index=_rowIndex Errors="ValidationErrors" />
-										}
-										else
-										{
-											<span>n/a</span>
-										}
-									</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>
-										<FluentSwitch @bind-Value=@context.IsSearchable Class="@_getValidationCssClass(context.SourceName, nameof(context.IsSearchable))" />
-										<TucValidationMessage Field="@nameof(context.IsSearchable)" Index=_rowIndex Errors="ValidationErrors" />
-									</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>
 										<FluentSwitch @bind-Value=@context.IncludeInTableSearch Class="@_getValidationCssClass(context.SourceName, nameof(context.IncludeInTableSearch))" />
 										<TucValidationMessage Field="@nameof(context.IncludeInTableSearch)" Index=_rowIndex Errors="ValidationErrors" />
-									</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>
-										<TucSelect TOption="TfDataProviderColumnSearchType"
-													  @bind-SelectedOption="@context.PreferredSearchType"
-													  Items="@(Enum.GetValues<TfDataProviderColumnSearchType>())"
-													  Style="width:100%" Class="@_getValidationCssClass(context.SourceName,nameof(context.PreferredSearchType))"
-													  OptionText="((p)=> p.ToString())"
-													  OptionValue="((p)=> ((int)p).ToString())" />
-										<TucValidationMessage Field="@nameof(context.PreferredSearchType)" Index=_rowIndex Errors="ValidationErrors" />
-									</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>
-										<FluentSwitch @bind-Value=@context.IsSortable Class="@_getValidationCssClass(context.SourceName, nameof(context.IsSortable))" />
-										<TucValidationMessage Field="@nameof(context.IsSortable)" Index=_rowIndex Errors="ValidationErrors" />
 									</div>
 								</td>
 							</tr>
@@ -202,12 +155,7 @@
 					<col />
 					<col style="width:180px;max-width:180px;" />
 					<col />
-					<col style="width:80px;max-width:80px;" />
-					<col style="width:80px;max-width:80px;" />
-					<col style="width:80px;max-width:80px;" />
-					<col style="width:80px;max-width:80px;" />
-					<col style="width:110px;max-width:110px;" />
-					<col style="width:120px;max-width:120px;" />
+					<col />
 					<col style="width:80px;max-width:80px;" />
 				</colgroup>
 				<thead class="tf-grid-thead">
@@ -217,14 +165,9 @@
 						<th class="tf-grid-th">@LOC("data type")</th>
 						<th class="tf-grid-th">@LOC("SOURCE column")</th>
 						<th class="tf-grid-th">@LOC("SOURCE type")</th>
-						<th class="tf-grid-th">@LOC("Default")</th>
-						<th class="tf-grid-th">@LOC("Nullable")</th>
-						<th class="tf-grid-th">@LOC("Unique")</th>
-						<th class="tf-grid-th">@LOC("Autogenerated")</th>
-						<th class="tf-grid-th">@LOC("Searchable")</th>
-						<th class="tf-grid-th">@LOC("Global search")</th>
-						<th class="tf-grid-th">@LOC("Search type")</th>
-						<th class="tf-grid-th">@LOC("Sortable")</th>
+						<th class="tf-grid-th">@LOC("ruleset")</th>
+						<th class="tf-grid-th">@LOC("default")</th>
+						<th class="tf-grid-th">@LOC("global search")</th>
 					</tr>
 				</thead>
 				<tbody class="tf-grid-tbody">
@@ -244,39 +187,14 @@
 								<div>@context.SourceType</div>
 							</td>
 							<td class="tf-grid-td">
+								<div>@context.RuleSet.ToDescriptionString()</div>
+							</td>
+							<td class="tf-grid-td">
 								<div>@context.DefaultValue</div>
 							</td>
 							<td class="tf-grid-td">
 								<div>
-									<FluentSwitch @bind-Value=@context.IsNullable Disabled="true" />
-								</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>
-									<FluentSwitch @bind-Value=@context.IsUnique Disabled="true" />
-								</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>
-									<FluentSwitch @bind-Value=@context.AutoDefaultValue Disabled="true" />
-								</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>
-									<FluentSwitch @bind-Value=@context.IsSearchable Disabled="true" />
-								</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>
 									<FluentSwitch @bind-Value=@context.IncludeInTableSearch Disabled="true" />
-								</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>@context.PreferredSearchType.ToString()</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>
-									<FluentSwitch @bind-Value=@context.IsSortable Disabled="true" />
 								</div>
 							</td>
 						</tr>

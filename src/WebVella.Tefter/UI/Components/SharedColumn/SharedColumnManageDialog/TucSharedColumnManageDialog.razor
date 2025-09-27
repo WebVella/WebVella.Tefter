@@ -29,11 +29,11 @@
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<TucSelect @bind-SelectedOption="_selectedColumnType"
-								  TOption="DatabaseColumnTypeInfo"
-								  Items="@_columnTypeOptions" Style="width:100%"
-								  OptionValue="@(p => ((int)p.Type).ToString())"
-								  OptionText="@(p => p.Name)"
-								  Label="@LOC("Data type")" Disabled="!_isCreate" />
+							   TOption="DatabaseColumnTypeInfo"
+							   Items="@_columnTypeOptions" Style="width:100%"
+							   OptionValue="@(p => ((int)p.Type).ToString())"
+							   OptionText="@(p => p.Name)"
+							   Label="@LOC("Data type")" Disabled="!_isCreate" />
 					<FluentValidationMessage For="@(() => _form.DbType)" />
 				</FluentGridItem>
 			</FluentGrid>
@@ -41,12 +41,20 @@
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Connected Data identity")" />
 					<FluentStack>
-						<TucSelect TOption="string"
-									  Items="_allDataIdentities"
-									  Height="@TfConstants.ComboPanelHeight"
-									  @bind-SelectedOption=@_form.DataIdentity
-									  Placeholder="@LOC("select or add...")"
-									  Disabled="!_isCreate" Style="flex:1 1 auto" />
+						@if (_allDataIdentities.Count > 0)
+						{
+							<TucSelect TOption="string"
+									   Items="_allDataIdentities"
+									   Height="@TfConstants.ComboPanelHeight"
+									   @bind-SelectedOption=@_form.DataIdentity
+									   Placeholder="@LOC("select or add...")"
+									Disabled="!_isCreate" Style="flex:1 1 auto" />
+						}
+						else
+						{
+							<FluentTextField Placeholder="@LOC("no identities yet")" Disabled="true" Style="flex:1 1 auto" />
+						
+						}
 						<FluentButton Title="@LOC("Create a new data identity")" OnClick="addDataIdentity"
 									  Appearance="@Appearance.Outline">
 							<FluentIcon Value="@TfConstants.GetIcon("Add")" />

@@ -13,8 +13,8 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 	private bool _isSubmitting = false;
 	private string _activeTab = "new";
 
-	private List<TfDataProviderColumn> _newColumns = new List<TfDataProviderColumn>();
-	private List<TfDataProviderColumn> _existingColumns = new List<TfDataProviderColumn>();
+	private List<TfUpsertDataProviderColumn> _newColumns = new List<TfUpsertDataProviderColumn>();
+	private List<TfUpsertDataProviderColumn> _existingColumns = new List<TfUpsertDataProviderColumn>();
 	private TfDataProviderSourceSchemaInfo _schemaInfo = new TfDataProviderSourceSchemaInfo();
 	public virtual List<ValidationError> ValidationErrors { get; set; } = new();
 
@@ -56,7 +56,7 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 				if (matchColumn is null)
 				{
 					string? defaultValue = _schemaInfo.SourceColumnDefaultValue.ContainsKey(columnName) ? _schemaInfo.SourceColumnDefaultValue[columnName] : null;
-					_newColumns.Add(new TfDataProviderColumn
+					_newColumns.Add(new TfUpsertDataProviderColumn
 					{
 						Id = Guid.NewGuid(),
 						SourceName = columnName,
@@ -65,12 +65,14 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 						DataProviderId = Content.Id,
 						DbName = columnName.GenerateDbNameFromText(),
 						DbType = _schemaInfo.SourceColumnDefaultDbType[columnName],
-						DefaultValue = defaultValue
+						DefaultValue = defaultValue,
+						IncludeInTableSearch = false,
+						RuleSet = TfDataProviderColumnRuleSet.Nullable
 					});
 				}
 				else
 				{
-					_existingColumns.Add(matchColumn);
+					_existingColumns.Add(matchColumn.ToUpsert());
 				}
 			}
 		}
@@ -131,12 +133,12 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 		await Dialog.CancelAsync();
 	}
 
-	private void _removeRow(TfDataProviderColumn column)
+	private void _removeRow(TfUpsertDataProviderColumn column)
 	{
 		_newColumns.Remove(column);
 	}
 
-	private void _sourceTypeChanged(string option, TfDataProviderColumn column)
+	private void _sourceTypeChanged(string option, TfUpsertDataProviderColumn column)
 	{
 		column.SourceType = option;
 		TfDatabaseColumnType defaultDbType = TfDatabaseColumnType.Text;
@@ -156,29 +158,9 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 			column.DbType = defaultDbType;
 		}
 	}
-	private void _dbNameChanged(string option, TfDataProviderColumn column)
+	private void _dbNameChanged(string option, TfUpsertDataProviderColumn column)
 	{
 		column.DbName = option;
-	}
-
-	private void _searchTypeChanged(TfDataProviderColumn column, TfDataProviderColumnSearchType type)
-	{
-		column.PreferredSearchType = type;
-	}
-
-	private void _nullableChanged(TfDataProviderColumn column)
-	{
-		if (column.IsNullable)
-		{
-			column.DefaultValue = null;
-		}
-		else
-		{
-			if (_schemaInfo.SourceColumnDefaultValue.ContainsKey(column.DbName))
-				column.DefaultValue = _schemaInfo.SourceColumnDefaultValue[column.DbName];
-			else
-				column.DefaultValue = null;
-		}
 	}
 
 	private string _processColumnName(string columnName)

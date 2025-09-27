@@ -85,24 +85,8 @@ public record TfMenuItem
 		}
 	}
 
-	EventCallback _onClick;
-
 	[JsonIgnore]
-	public EventCallback OnClick {
-		get
-		{
-			if(Tooltip == "Global Search [CTRL+G]")
-				Console.WriteLine($"GET {Tooltip}   : Value = {_onClick} : {_onClick.HasDelegate}");
-			return _onClick;
-		}
-		set
-		{
-			if (Tooltip == "Global Search [CTRL+G]")
-				Console.WriteLine($"SET  {Tooltip} : Value from {_onClick} → {value} : { _onClick.HasDelegate} {value.HasDelegate}");
-			_onClick = value;                // actually store the new value
-		}
-
-	}
+	public EventCallback OnClick { get; set; }
 
 	[JsonIgnore]
 	public EventCallback<bool> OnExpand { get; set; }

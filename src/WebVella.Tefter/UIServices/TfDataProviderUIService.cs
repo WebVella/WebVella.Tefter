@@ -21,13 +21,13 @@ public partial interface ITfDataProviderUIService
 	//Data provider column
 	ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfosList();
 	string? GetDatabaseColumnTypeInfo(TfDatabaseColumnType columnType);
-	TfDataProvider CreateDataProviderColumn(TfDataProviderColumn column);
-	TfDataProvider UpdateDataProviderColumn(TfDataProviderColumn column);
+	TfDataProvider CreateDataProviderColumn(TfUpsertDataProviderColumn column);
+	TfDataProvider UpdateDataProviderColumn(TfUpsertDataProviderColumn column);
 	TfDataProvider DeleteDataProviderColumn(Guid columnId);
 	TfDataProviderSourceSchemaInfo GetDataProviderSourceSchemaInfo(TfDataProvider provider);
 	TfDataProvider CreateBulkDataProviderColumn(
 		Guid providerId,
-		List<TfDataProviderColumn> columns);
+		List<TfUpsertDataProviderColumn> columns);
 
 	//Data provider identity
 	TfDataProvider CreateDataProviderIdentity(TfDataProviderIdentity identity);
@@ -111,13 +111,13 @@ public partial class TfDataProviderUIService : ITfDataProviderUIService
 		return columnTypes.FirstOrDefault(x => x.Type == columnType)?.Name;
 	}
 
-	public TfDataProvider CreateDataProviderColumn(TfDataProviderColumn column)
+	public TfDataProvider CreateDataProviderColumn(TfUpsertDataProviderColumn column)
 	{
 		var provider = _tfService.CreateDataProviderColumn(column);
 		DataProviderUpdated?.Invoke(this, provider);
 		return provider;
 	}
-	public TfDataProvider UpdateDataProviderColumn(TfDataProviderColumn column)
+	public TfDataProvider UpdateDataProviderColumn(TfUpsertDataProviderColumn column)
 	{
 		var provider = _tfService.UpdateDataProviderColumn(column);
 		DataProviderUpdated?.Invoke(this, provider);
@@ -134,7 +134,7 @@ public partial class TfDataProviderUIService : ITfDataProviderUIService
 
 	public TfDataProvider CreateBulkDataProviderColumn(
 		Guid providerId,
-		List<TfDataProviderColumn> columns)
+		List<TfUpsertDataProviderColumn> columns)
 	{
 		var provider = _tfService.CreateBulkDataProviderColumn(providerId, columns);
 		DataProviderUpdated?.Invoke(this, provider);

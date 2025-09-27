@@ -66,13 +66,7 @@ public partial class TucMenuItem : TfBaseComponent
 			};
 
 		}
-	}
 
-	async Task _OnClick()
-	{
-		if (!Item.OnClick.HasDelegate) return;
-		Console.WriteLine("Menu Item Click");
-		await Item.OnClick.InvokeAsync();
 	}
 
 }

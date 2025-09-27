@@ -58,7 +58,7 @@ public partial class TucMenu : TfBaseComponent
 		//Style
 		_style = Style;
 
-		//Assign actions
+		////Assign actions
 		foreach (var item in Items)
 		{
 			_initItemActions(item);
@@ -92,8 +92,11 @@ public partial class TucMenu : TfBaseComponent
 	{
 		if (String.IsNullOrWhiteSpace(item.Id))
 			item.Id = TfConverters.ConvertGuidToHtmlElementId();
-		item.OnClick = EventCallback.Factory.Create(this, async () => await _onClick(item));
-		item.OnExpand = EventCallback.Factory.Create<bool>(this, async (expand) => await _onExpand(item, expand));
+
+		if (!item.OnClick.HasDelegate)
+			item.OnClick = EventCallback.Factory.Create(this, async () => await _onClick(item));
+		if (!item.OnExpand.HasDelegate)
+			item.OnExpand = EventCallback.Factory.Create<bool>(this, async (expand) => await _onExpand(item, expand));
 		foreach (var node in item.Items)
 		{
 			_initItemActions(node);
