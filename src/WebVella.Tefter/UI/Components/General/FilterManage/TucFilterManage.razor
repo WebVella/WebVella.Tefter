@@ -21,7 +21,7 @@
 							<TucSelect @bind-SelectedOption="@_selectedFilterColumn"
 									   TOption="string" Required="false"
 									   Items="@AllColumnOptions" Style="width:300px"
-									   Placeholder="@LOC("select...")" />
+									   Placeholder="@LOC("select to add...")" />
 							<FluentButton Disabled="@Disabled" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
 						}
 						<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((typeof(TfFilterAnd), null, Item.Id)))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
@@ -52,9 +52,8 @@
 	{
 		<TucCard Class="card-rule">
 			<TitleTemplate>
-				<div style="color:var(--tf-font-color-mute);">@LOC("Column:")</div>
-				<FluentLabel Typo="@Typography.Body">@(new TfFilterBase().GetColumnName(Item))</FluentLabel>
 				<FluentLabel Typo="@Typography.Body" Style="color:var(--neutral-foreground-rest);opacity:0.5">@(new TfFilterBase().GetFieldType(Item))</FluentLabel>
+				<FluentLabel Typo="@Typography.Body">@(new TfFilterBase().GetColumnName(Item))</FluentLabel>
 				@if (AllColumnOptions is null || !AllColumnOptions.Contains(Item.ColumnName))
 				{
 					<div>
@@ -70,7 +69,7 @@
 							   SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterBooleanComparisonMethod" Required="true"
-							   Items="@(Enum.GetValues<TfFilterBooleanComparisonMethod>())" Style="width:140px"
+							   Items="@(Enum.GetValues<TfFilterBooleanComparisonMethod>())" Style="width:220px"
 							   OptionValue="@((p)=> ((int)p).ToString())"
 							   OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 					@if (context.RequiresValue)
@@ -92,7 +91,7 @@
 							   SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterDateTimeComparisonMethod" Required="true"
-							   Items="@(Enum.GetValues<TfFilterDateTimeComparisonMethod>())" Style="width:140px"
+							   Items="@(Enum.GetValues<TfFilterDateTimeComparisonMethod>())" Style="width:220px"
 							   OptionValue="@((p)=> ((int)p).ToString())"
 							   OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 					@if (context.RequiresValue)
@@ -117,7 +116,7 @@
 							   SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterGuidComparisonMethod" Required="true"
-							   Items="@(Enum.GetValues<TfFilterGuidComparisonMethod>())" Style="width:140px"
+							   Items="@(Enum.GetValues<TfFilterGuidComparisonMethod>())" Style="width:220px"
 							   OptionValue="@((p)=> ((int)p).ToString())"
 							   OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 					@if (context.RequiresValue)
@@ -136,7 +135,7 @@
 							   SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterNumericComparisonMethod" Required="true"
-							   Items="@(Enum.GetValues<TfFilterNumericComparisonMethod>())" Style="width:140px"
+							   Items="@(Enum.GetValues<TfFilterNumericComparisonMethod>())" Style="width:220px"
 							   OptionValue="@((p)=> ((int)p).ToString())"
 							   OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 					@if (context.RequiresValue)
@@ -154,7 +153,7 @@
 							   SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterTextComparisonMethod" Required="true"
-							   Items="@(Enum.GetValues<TfFilterTextComparisonMethod>())" Style="width:140px"
+							   Items="@(Enum.GetValues<TfFilterTextComparisonMethod>())" Style="width:220px"
 							   OptionValue="@((p)=> ((int)p).ToString())"
 							   OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 					@if (context.RequiresValue)

@@ -1,0 +1,171 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+@if (DbType == TfDatabaseColumnType.ShortInteger)
+{
+	if (Value is not null && Value is not short)
+	{
+		throw new Exception("value is not short int");
+	}
+	<FluentNumberField TValue="short?"
+					   Value="@((short?)Value)"
+					   ValueChanged="@((x) => _valueChanged(x))"
+					   Step="1"
+					   AutoComplete="off"
+					   Required="false"
+					   Style="@Style"
+					   Class="@Class"
+					   Placeholder="@Placeholder"
+					   Min="@(short.MinValue.ToString())"
+					   Max="@(short.MaxValue.ToString())" />
+}
+else if (DbType == TfDatabaseColumnType.Integer)
+{
+	if (Value is not null && Value is not int)
+	{
+		throw new Exception("value is not int");
+	}
+	<FluentNumberField TValue="int?"
+					   Value="@((int?)Value)"
+					   ValueChanged="@((x) => _valueChanged(x))"
+					   Step="1"
+					   AutoComplete="off"
+					   Required="false"
+					   Style="@Style"
+					   Class="@Class"
+					   Placeholder="@Placeholder"
+					   Min="@(int.MinValue.ToString())"
+					   Max="@(int.MaxValue.ToString())" />
+}
+else if (DbType == TfDatabaseColumnType.LongInteger)
+{
+	if (Value is not null && Value is not long)
+	{
+		throw new Exception("value is not long");
+	}
+	<FluentNumberField TValue="long?"
+					   Value="@((long?)Value)"
+					   ValueChanged="@((x) => _valueChanged(x))"
+					   Step="1"
+					   AutoComplete="off"
+					   Required="false"
+					   Style="@Style"
+					   Class="@Class"
+					   Placeholder="@Placeholder"
+					   Min="@(long.MinValue.ToString())"
+					   Max="@(long.MaxValue.ToString())" />
+}
+else if (DbType == TfDatabaseColumnType.Number)
+{
+	if (Value is not null && Value is not decimal)
+	{
+		throw new Exception("value is not decimal");
+	}
+	<FluentNumberField TValue="decimal?"
+					   Value="@((decimal?)Value)"
+					   ValueChanged="@((x) => _valueChanged(x))"
+					   Step="1"
+					   AutoComplete="off"
+					   Required="false"
+					   Style="@Style"
+					   Class="@Class"
+					   Placeholder="@Placeholder"
+					   Min="@(decimal.MinValue.ToString())"
+					   Max="@(decimal.MaxValue.ToString())" />
+}
+else if (DbType == TfDatabaseColumnType.Boolean)
+{
+	if (Value is not null && Value is not bool)
+	{
+		throw new Exception("value is not bool");
+	}
+	<TucSelect TOption="string"
+			   SelectedOption="@_getBoolLabel((bool?)Value)"
+			   SelectedOptionChanged="(x=> _valueChanged(x))"
+			   Items="@(new List<string>{"TRUE","FALSE","NULL"})"
+			   Required="false"
+			   Style="@Style"
+			   Class="@Class"
+			   Placeholder="@Placeholder" />
+}
+else if (DbType == TfDatabaseColumnType.DateOnly)
+{
+	if (Value is not null && Value is not DateOnly)
+	{
+		throw new Exception("value is not DateOnly");
+	}
+	<FluentDatePicker Value="@(((DateOnly?)Value)?.ToDateTime())"
+					  ValueChanged="@((x) => _valueChanged(x))"
+					  View="@CalendarViews.Days"
+					  Required="false"
+					  Style="@Style"
+					  Class="@Class"
+					  Placeholder="@Placeholder" />
+}
+else if (DbType == TfDatabaseColumnType.DateTime)
+{
+	if (Value is not null && Value is not DateTime)
+	{
+		throw new Exception("value is not DateTime");
+	}
+	<FluentStack Wrap="false" Style="@Style" Class="@Class">
+		<FluentDatePicker Value="@((DateTime?)Value)"
+						  ValueChanged="@((x) => _valueChanged(x))"
+						  View="@CalendarViews.Days"
+						  Required="false"
+						  Placeholder="@Placeholder"
+						  Style="width:60%;min-width:120px;" />
+		<FluentTimePicker Value="@((DateTime?)Value)"
+						  ValueChanged="@((x) => _valueChanged(x))"
+						  Style="width:40%;min-width:120px;" />
+	</FluentStack>
+}
+else if (DbType == TfDatabaseColumnType.ShortText)
+{
+	if (Value is not null && Value is not string)
+	{
+		throw new Exception("value is not string");
+	}
+	<FluentTextField Value="@((string?)Value)"
+					 ValueChanged="@((x) => _valueChanged(x))"
+					 AutoComplete="off"
+					 Required="false"
+					 Style="@Style"
+					 Class="@Class"
+					 Placeholder="@Placeholder" />
+}
+else if (DbType == TfDatabaseColumnType.Text)
+{
+	if (Value is not null && Value is not string)
+	{
+		throw new Exception("value is not string");
+	}
+	<FluentTextArea Value="@((string?)Value)"
+					ValueChanged="@((x) => _valueChanged(x))"
+					Rows="2"
+					Required="false"
+					Style="@Style"
+					Class="@Class"
+	Placeholder="@Placeholder" />
+}
+else if (DbType == TfDatabaseColumnType.Guid)
+{
+	if (Value is not null && Value is not Guid)
+	{
+		throw new Exception("value is not Guid");
+	}
+	<FluentTextField Value="@(((Guid?)Value)?.ToString())"
+					 ValueChanged="@((x) => _valueChanged(x))"
+					 AutoComplete="off"
+					 Required="false"
+					 Style="@Style"
+					 Class="@Class"
+					 Placeholder="@Placeholder" />
+}
+@if (!String.IsNullOrWhiteSpace(_getError()))
+{
+	<div class="validation-message" style="color:var(--error);font-size:var(--tf-font-size-sm);">
+		<FluentIcon Value="@TfConstants.GetIcon("ErrorCircle", IconSize.Size12)" Color="@Color.Error" Style="vertical-align:middle;" />
+		<span>@_getError()</span>
+	</div>
+}

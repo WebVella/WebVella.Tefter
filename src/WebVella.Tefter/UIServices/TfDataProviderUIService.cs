@@ -52,6 +52,7 @@ public partial interface ITfDataProviderUIService
 		List<Guid> idList);
 
 	TfDataTable QueryDataProvider(Guid providerId, string search = null, int? page = null, int? pageSize = null);
+	TfDataTable AddNewRow(TfDataTable dt);
 
 }
 public partial class TfDataProviderUIService : ITfDataProviderUIService
@@ -215,6 +216,11 @@ public partial class TfDataProviderUIService : ITfDataProviderUIService
 
 	public TfDataTable QueryDataProvider(Guid providerId, string search = null, int? page = null, int? pageSize = null)
 	=> _tfService.QueryDataProvider(providerId, search, page, pageSize);
+
+	public TfDataTable AddNewRow(TfDataTable dt)
+	{
+		return _tfService.SaveDataTable(dt);
+	}
 
 	#endregion
 }

@@ -158,15 +158,23 @@ fluent-switch::part(label) {
 	--dialog-padding: 0px;
 }
 
+
+/*Badge*/
 fluent-badge::part(control) {
 	font-size: 14px;
 	padding: 3px 5px;
+
+	fluent-button & {
+		padding: 1px 3px;
+	}
 }
 
 fluent-badge.input-badge::part(control) {
 	padding: 7px 5px;
 }
 
+
+/*Button*/
 fluent-button {
 	--neutral-stroke-rest: var(--tf-stroke-button);
 	--neutral-stroke-control-rest: var(--neutral-stroke-rest);
@@ -234,4 +242,9 @@ fluent-menu {
 		line-height:1em;
 
 	}
+}
+
+/*Divider*/
+fluent-divider {
+	--neutral-stroke-divider-rest: var(--tf-stroke-invert-base);
 }

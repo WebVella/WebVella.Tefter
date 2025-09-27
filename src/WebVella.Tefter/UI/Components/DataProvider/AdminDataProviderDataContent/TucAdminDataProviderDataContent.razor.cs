@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposable
 {
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
@@ -13,7 +14,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	private bool _isDataLoading = false;
 	private bool _showSystemColumns = false;
 	private bool _showJoinKeyColumns = false;
-	private bool _showCustomColumns = true;
+	private bool _showProviderColumns = true;
 	private long _totalRows = 0;
 	private TfDataTable? _data = null;
 	private bool _syncRunning = false;
@@ -87,7 +88,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	}
 	private void _toggleCustomColumns()
 	{
-		_showCustomColumns = !_showCustomColumns;
+		_showProviderColumns = !_showProviderColumns;
 		StateHasChanged();
 	}
 
@@ -99,6 +100,59 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		ToastService.ShowSuccess(LOC("Data provider data deletion is triggered!"));
 		Navigator.ReloadCurrentUrl();
 	}
+
+	private async Task _addRow()
+	{
+		if (_provider is null || _data is null) return;
+		var dialog = await DialogService.ShowDialogAsync<TucDataProviderManageDataDialog>(
+			new TfManageDataProviderRowContext
+			{
+				Provider = _provider,
+				RowId = null,
+				Data = _data
+			},
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge,
+					TrapFocus = false
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+		}
+		//Navigator.ReloadCurrentUrl();
+	}
+
+	private async Task _editRow(TfDataRow row)
+	{
+		if (_provider is null || _data is null) return;
+		var dialog = await DialogService.ShowDialogAsync<TucDataProviderManageDataDialog>(
+			new TfManageDataProviderRowContext
+			{
+				Provider = _provider,
+				RowId = row.GetRowId(),
+				Data = _data
+			},
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge,
+					TrapFocus = false
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+		}
+		//Navigator.ReloadCurrentUrl();
+	}
+	private async Task _deleteRow(TfDataRow row)
+	{
+		throw new NotImplementedException();
+	}
+
 
 	private async Task _onSearch(string value)
 	{
@@ -158,7 +212,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	{
 		if (_showJoinKeyColumns && column.IsShared) return true;
 		if (_showSystemColumns && column.IsSystem) return true;
-		if (_showCustomColumns && !column.IsSystem) return true;
+		if (_showProviderColumns && !column.IsSystem) return true;
 
 		return false;
 	}
@@ -168,7 +222,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	{
 		if (_data is null) return false;
 		foreach (var column in _data.Columns)
-		{ 
+		{
 			if (_columnIsVisible(column)) return true;
 		}
 		return false;

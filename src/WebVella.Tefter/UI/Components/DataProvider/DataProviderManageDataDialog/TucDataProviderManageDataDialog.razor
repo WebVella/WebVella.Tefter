@@ -1,0 +1,38 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Add data row")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
+				  Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false" Style="margin-bottom:1rem;">@_error</FluentMessageBar>
+	}
+	else if (_errors.Keys.Count > 0)
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false" Title="@LOC("Validation error")" Style="margin-bottom:1rem;" />
+	}
+
+	@foreach (var column in Content!.Provider!.Columns)
+	{
+		<FluentGrid>
+			<FluentGridItem xs="12">
+				<FluentInputLabel Label="@column.DbName" />
+				<TucDbTypeInput DbType=@column.DbType Placeholder="@_placeholders[column.DbName!]" Value="@_form[column.DbName!]"
+								ValueChanged="@((x)=> _valueChanged(x,column))" Class="@(_errors.ContainsKey(column.DbName!) ? "invalid" : "")" Style="width:100%"
+								Error="@(_errors.ContainsKey(column.DbName!) ? _errors[column.DbName!] : null)" />
+			</FluentGridItem>
+		</FluentGrid>
+	}
+
+</FluentDialogBody>

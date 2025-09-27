@@ -487,13 +487,18 @@ fluent-switch::part(label) {
 .fluent-dialog-main.left::part(control) {
   --dialog-padding: 0px;
 }
+/*Badge*/
 fluent-badge::part(control) {
   font-size: 14px;
   padding: 3px 5px;
 }
+fluent-button fluent-badge::part(control) {
+  padding: 1px 3px;
+}
 fluent-badge.input-badge::part(control) {
   padding: 7px 5px;
 }
+/*Button*/
 fluent-button {
   --neutral-stroke-rest: var(--tf-stroke-button);
   --neutral-stroke-control-rest: var(--neutral-stroke-rest);
@@ -543,6 +548,10 @@ fluent-menu fluent-badge::part(control) {
   padding: 0 3px 2px 3px;
   font-size: var(--tf-font-size-sm);
   line-height: 1em;
+}
+/*Divider*/
+fluent-divider {
+  --neutral-stroke-divider-rest: var(--tf-stroke-invert-base);
 }
 body {
   color: var(--tf-font-color-base);
@@ -2032,7 +2041,7 @@ fluent-dialog .tf-divider,
 .tf-page-layout__toolbar__right {
   display: flex;
   flex: 1 1 auto;
-  align-content: center;
+  align-items: center;
   flex-wrap: wrap;
 }
 .tf-page-layout__toolbar__left {

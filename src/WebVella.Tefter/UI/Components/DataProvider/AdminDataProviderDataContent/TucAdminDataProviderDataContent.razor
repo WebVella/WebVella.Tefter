@@ -10,24 +10,24 @@
 		{
 			<FluentSearch Value="@_navState.Search" ValueChanged="_onSearch" AutoComplete="off" Placeholder="@LOC("search...")" />
 			<FluentButton Id="view-filter-selector" Title="toggle custom columns" OnClick="_toggleCustomColumns"
-						  Appearance="@(_showCustomColumns ? Appearance.Accent : Appearance.Outline)">
-				<span>schema</span>
+						  Appearance="@(_showProviderColumns ? Appearance.Accent : Appearance.Outline)">
+				<span>user</span>
 				<span slot="end">
 					<FluentBadge>@_provider.Columns.Count</FluentBadge>
 				</span>
 			</FluentButton>
+			@* 			<FluentButton Id="view-filter-selector" Title="toggle join key columns" OnClick="_toggleJoinKeyColumns"
+						  Appearance="@(_showJoinKeyColumns ? Appearance.Accent : Appearance.Outline)">
+				<span>shared columns</span>
+				<span slot="end">
+					<FluentBadge>@_provider.SharedColumns.Count</FluentBadge>
+				</span>
+			</FluentButton> *@
 			<FluentButton Id="view-filter-selector" Title="toggle system columns" OnClick="_toggleSystemColumns"
 						  Appearance="@(_showSystemColumns ? Appearance.Accent : Appearance.Outline)">
 				<span>system</span>
 				<span slot="end">
 					<FluentBadge>@_provider.SystemColumns.Count</FluentBadge>
-				</span>
-			</FluentButton>
-			<FluentButton Id="view-filter-selector" Title="toggle join key columns" OnClick="_toggleJoinKeyColumns"
-						  Appearance="@(_showJoinKeyColumns ? Appearance.Accent : Appearance.Outline)">
-				<span>shared columns</span>
-				<span slot="end">
-					<FluentBadge>@_provider.SharedColumns.Count</FluentBadge>
 				</span>
 			</FluentButton>
 		}
@@ -47,11 +47,19 @@
 			{
 				<div style="margin-right:10px;color:var(--neutral-foreground-hint);line-height:32px;">@LOC("{0} total rows", _totalRows)</div>
 			}
-			<FluentButton OnClick="_deleteAllData" Appearance="@Appearance.Outline">
-				<FluentIcon Value="@TfConstants.GetIcon("Delete")" Slot="start" Color="@Color.Error" />
-				@LOC("delete all data")
-			</FluentButton>
+			@if (_totalRows > 0)
+			{
+				<FluentButton OnClick="_deleteAllData" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@TfConstants.GetIcon("Delete")" Slot="start" Color="@Color.Error" />
+					@LOC("delete all data")
+				</FluentButton>
+				<FluentDivider Orientation="@Orientation.Vertical" Role="DividerRole.Separator" Style="height:1rem; margin:0 1rem;" />
+			}
 		}
+		<FluentButton OnClick="_addRow" Appearance="@Appearance.Outline">
+			<FluentIcon Value="@TfConstants.GetIcon("Add")" Slot="start" Color="@Color.Success" />
+			@LOC("add data")
+		</FluentButton>
 	</ToolbarRight>
 	<ChildContent>
 		<TucErrorBoundry>
@@ -69,7 +77,7 @@
 			}
 			else
 			{
-				var columnCount = 0;
+				var columnCount = 1;
 				@if (_data is not null)
 				{
 					if (_hasVisibleColumns())
@@ -78,6 +86,7 @@
 							<thead class="tf-grid-thead">
 								<tr class="tf-grid-thead-bkg"></tr>
 								<tr class="tf-grid-tr">
+									<th class="tf-grid-th" style="width:100px;min-width:100px"></th>
 									@foreach (var column in _data.Columns)
 									{
 										if (!_columnIsVisible(column)) { continue; }
@@ -114,6 +123,17 @@
 								{
 									<Virtualize Items="@_data.Rows.GetList()" TItem="TfDataRow" Context="row">
 										<tr @key=@row["tf_id"] class="tf-grid-tr">
+											<td class="tf-grid-td">
+												<div class="tf-grid-td-hover"></div>
+												<div>
+													<FluentStack Wrap="false">
+														<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
+																	  Title="@LOC("Edit Row")" OnClick="@(()=> _editRow(row))" />
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteRow(row))" Title="@LOC("Delete Row")"
+																	  IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" />
+													</FluentStack>
+												</div>
+											</td>
 											@foreach (var column in _data.Columns)
 											{
 												if (!_columnIsVisible(column)) { continue; }
