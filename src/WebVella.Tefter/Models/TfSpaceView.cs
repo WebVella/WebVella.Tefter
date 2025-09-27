@@ -8,6 +8,8 @@ public class TfSpaceView
 
 	[Obsolete("Will be removed")]
 	public Guid SpaceId { get; set; }
+
+	[Obsolete("Will be removed")]
 	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
 	public string Name { get; set; } = default!;
 	public short Position { get; set; }
