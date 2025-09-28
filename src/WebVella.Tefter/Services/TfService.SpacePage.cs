@@ -250,6 +250,7 @@ public partial class TfService : ITfService
 							{
 								Space = space,
 								SpacePage = spacePage,
+								TemplateId = spacePage.TemplateId,
 								ComponentOptionsJson = spacePage.ComponentOptionsJson,
 								Icon = spacePage.FluentIconName,
 								Mode = TfComponentMode.Update

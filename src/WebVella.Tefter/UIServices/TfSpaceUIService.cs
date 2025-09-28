@@ -8,6 +8,7 @@ public partial interface ITfSpaceUIService
 	event EventHandler<TfSpace> SpaceDeleted;
 
 	//Space
+	List<TfSpace> GetSpaces();
 	TfSpace GetSpace(Guid spaceId);
 	TfSpace CreateSpace(TfSpace space);
 	TfSpace UpdateSpace(TfSpace space);
@@ -22,8 +23,9 @@ public partial interface ITfSpaceUIService
 
 	//Space Page
 	TfSpacePage GetSpacePage(Guid pageId);
+	List<TfSpacePage> GetAllSpacePages();
 	List<TfSpacePage> GetSpacePages(Guid spaceId);
-	void CreateSpacePage(TfSpacePage page);
+	TfSpacePage CreateSpacePage(TfSpacePage page);
 	void UpdateSpacePage(TfSpacePage page);
 	void DeleteSpacePage(TfSpacePage page);
 	void MoveSpacePage(TfSpacePage page, bool isMoveUp);
@@ -52,6 +54,8 @@ public partial class TfSpaceUIService : ITfSpaceUIService
 	#endregion
 
 	#region << Space >>
+
+	public List<TfSpace> GetSpaces() => _tfService.GetSpacesList();
 	public TfSpace GetSpace(Guid spaceId) => _tfService.GetSpace(spaceId);
 	public TfSpace CreateSpace(TfSpace space)
 	{
@@ -107,13 +111,17 @@ public partial class TfSpaceUIService : ITfSpaceUIService
 	#region << Page >>
 	public TfSpacePage GetSpacePage(Guid pageId)
 		=> _tfService.GetSpacePage(pageId);
+
+	public List<TfSpacePage> GetAllSpacePages()
+		=> _tfService.GetAllSpacePages();
 	public List<TfSpacePage> GetSpacePages(Guid spaceId)
 		=> _tfService.GetSpacePages(spaceId);
 
-	public void CreateSpacePage(TfSpacePage page)
+	public TfSpacePage CreateSpacePage(TfSpacePage page)
 	{
 		var (pageId, pageList) = _tfService.CreateSpacePage(page);
 		SpaceUpdated?.Invoke(this, GetSpace(page.SpaceId));
+		return _tfService.GetSpacePage(pageId);
 	}
 	public void UpdateSpacePage(TfSpacePage page)
 	{

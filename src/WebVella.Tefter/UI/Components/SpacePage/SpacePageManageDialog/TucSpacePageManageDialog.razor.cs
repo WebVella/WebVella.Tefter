@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpacePage?>
 {
 	[Inject] protected ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
@@ -10,7 +11,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn;
+	private Icon _iconBtn = default!;
 	private bool _isCreate = false;
 	private TfSpacePage _form = new();
 	private TfSpacePage? _parentNode = null;
@@ -18,23 +19,62 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 	private ReadOnlyCollection<TfSpacePageAddonMeta> _pageComponents = default!;
 	private TfSpacePageAddonMeta? _selectedPageComponent = null;
 	private DynamicComponent typeSettingsComponent = default!;
-	private TfSpace _space = null;
+	private TfSpace? _space = null;
+	private List<Option<bool>> _copyOptions = new();
+	private List<Option<Guid>> _allPageOptions = new();
+	private Option<bool> _copyOption = default!;
+	private Option<Guid>? _copyPage = null;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		_init();
+	}
+
+	private void _init()
+	{
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.SpaceId == Guid.Empty) throw new Exception("Space Id is required");
 		if (Content.Id == Guid.Empty) _isCreate = true;
-
 		_title = _isCreate ? LOC("Create page") : LOC("Manage page");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
+
+		var spaceDict = TfSpaceUIService.GetSpaces().ToDictionary(x => x.Id);
+		var allPages = TfSpaceUIService.GetAllSpacePages().Where(x => x.Type == TfSpacePageType.Page).ToList();
+
+		foreach (var page in allPages)
+		{
+			_allPageOptions.Add(new Option<Guid>()
+			{
+				Value = page.Id,
+				Icon = (TfConstants.GetIcon(page.FluentIconName!)!, Color.Accent, "start"),
+				Text = $"{spaceDict[page.SpaceId].Name} > {page.Name}"
+			});
+		}
+		
+		_copyOptions.Add(new Option<bool>
+		{
+			Value = false,
+			Text = LOC("create from blank")
+		});
+		if (_allPageOptions.Any())
+		{
+			_allPageOptions = _allPageOptions.OrderBy(x => x.Text).ToList();
+			_copyPage = _allPageOptions[0];
+			_copyOptions.Add(new Option<bool>
+			{
+				Value = true,
+				Text = LOC("use existing page")
+			});
+		}
+		_copyOption = _copyOptions[0];
+
 		_pageComponents = TfMetaService.GetSpacePagesComponentsMeta();
-		_space = TfSpaceUIService.GetSpace(Content.SpaceId);
+		_space = spaceDict[Content.SpaceId];
 		_parentNodeOptions = _getParents();
 		if (_isCreate)
 		{
-			_form = _form with
+			_form = new()
 			{
 				Id = Guid.NewGuid(),
 				SpaceId = Content.SpaceId,
@@ -46,9 +86,23 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		else
 		{
 
-			_form = Content with { Id = Content.Id };
-			_parentNode = _parentNodeOptions.FirstOrDefault(x => x.Id == _form.ParentId);
+			_form = new()
+			{
+				Id = Content.Id,
+				SpaceId = Content.SpaceId,
+				Type = TfSpacePageType.Page,
+				ChildPages = Content.ChildPages,
+				ComponentId = Content.ComponentId,
+				ComponentOptionsJson = Content.ComponentOptionsJson,
+				ComponentType = Content.ComponentType,
+				FluentIconName = Content.FluentIconName,
+				Name = Content.Name,
+				ParentId = Content.ParentId,
+				ParentPage = Content.ParentPage,
+				Position = Content.Position,
+			};
 		}
+		
 		if (_form.ComponentId.HasValue)
 		{
 			_selectedPageComponent = _pageComponents.FirstOrDefault(x => x.ComponentId == _form.ComponentId);
@@ -56,6 +110,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 
 		base.InitForm(_form);
 	}
+
 	private async Task _cancel()
 	{
 		await Dialog.CancelAsync();
@@ -71,25 +126,31 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		List<ValidationError> settingsErrors = new();
 		ITfSpacePageAddon addonComponent = null;
 		TfSpacePage submit = _form with { Id = _form.Id };
-		if (submit.Type == TfSpacePageType.Folder)
+		if (_copyPage is null)
 		{
-			submit.ComponentOptionsJson = null;
-			submit.ComponentType = null;
-			submit.ComponentId = null;
-
-		}
-		else if (submit.Type == TfSpacePageType.Page)
-		{
-			if (typeSettingsComponent is not null)
+			if (submit.Type == TfSpacePageType.Folder)
 			{
-				addonComponent = typeSettingsComponent.Instance as ITfSpacePageAddon;
-				settingsErrors = addonComponent.ValidateOptions();
-				submit.ComponentOptionsJson = addonComponent.GetOptions();
-				submit.ComponentType = _selectedPageComponent?.Instance.GetType();
-				submit.ComponentId = _selectedPageComponent?.Instance.AddonId;
+				submit.ComponentOptionsJson = null;
+				submit.ComponentType = null;
+				submit.ComponentId = null;
+
+			}
+			else if (submit.Type == TfSpacePageType.Page)
+			{
+				if (typeSettingsComponent is not null)
+				{
+					addonComponent = typeSettingsComponent.Instance as ITfSpacePageAddon;
+					settingsErrors = addonComponent.ValidateOptions();
+					submit.ComponentOptionsJson = addonComponent.GetOptions();
+					submit.ComponentType = _selectedPageComponent?.Instance.GetType();
+					submit.ComponentId = _selectedPageComponent?.Instance.AddonId;
+				}
 			}
 		}
-
+		else
+		{
+			submit.TemplateId = _copyPage?.Value;
+		}
 		//Check form
 		var isValid = EditContext.Validate();
 		if (!isValid || settingsErrors.Count > 0) return;
@@ -105,8 +166,11 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 
 			if (_isCreate)
 			{
-				TfSpaceUIService.CreateSpacePage(submit);
+				var newPage = TfSpaceUIService.CreateSpacePage(
+					page: submit
+					);
 				ToastService.ShowSuccess(LOC("Space page created!"));
+				Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl, newPage.SpaceId, newPage.Id));
 			}
 			else
 			{
@@ -115,11 +179,11 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 			}
 
 			_parentNodeOptions = _getParents();
-			await _cancel();
+			await Dialog.CloseAsync();
 		}
 		catch (Exception ex)
 		{
-			ProcessFormSubmitException(ex, EditContext,MessageStore);
+			ProcessFormSubmitException(ex, EditContext, MessageStore);
 		}
 		finally
 		{

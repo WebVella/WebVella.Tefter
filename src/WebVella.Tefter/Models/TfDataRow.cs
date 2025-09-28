@@ -285,6 +285,15 @@ public class TfDataRow : IEnumerable
 		return (string)_values[index];
 	}
 
+	[JsonIgnore]
+	public Action OnEdit { get; set;}
+
+	[JsonIgnore]
+	public Action OnDelete { get; set; }
+
+	[JsonIgnore]
+	public Action OnSelect { get; set; }
+
 	private static class UnboxT<T>
 	{
 		internal static readonly Converter<object, T> Unbox = Create(typeof(T));
@@ -324,5 +333,6 @@ public class TfDataRow : IEnumerable
 			return new Nullable<TElem>((TElem)value);
 		}
 	}
+
 
 }

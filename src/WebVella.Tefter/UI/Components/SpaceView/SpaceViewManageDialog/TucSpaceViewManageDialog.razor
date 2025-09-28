@@ -27,7 +27,7 @@
 		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
 						FormName="submit-form" class="tf-form" novalidate>
 			<DataAnnotationsValidator />
-			<FluentGrid>
+			@* <FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
 									 Label="@LOC("Name")" Style="width:100%" AutoComplete="off" />
@@ -183,8 +183,8 @@
 							<div>@LOC("No columns found in data provider")</div>
 						}
 					</FluentGridItem>
-				</FluentGrid>
-			}
+				</FluentGrid> 
+			}*@
 		</FluentEditForm>
 	}
 </FluentDialogBody>

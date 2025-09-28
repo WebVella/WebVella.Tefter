@@ -127,7 +127,7 @@ else
 								@{
 									var tfId = row.GetRowId();
 								}
-								<tr @key=@tfId class="@_rowMeta[tfId].RowClass" @ondblclick="@(() => _setRowEditable(tfId, true))"
+								<tr @key=@tfId class="@_rowMeta[tfId].RowClass" @ondblclick="@row.OnEdit"
 									id="@($"row-{tfId}")">
 									<td class="@_columnsMeta[Guid.Empty].BodyCellClass" style="@_columnsMeta[Guid.Empty].BodyCellStyles">
 										<div class="tf-grid-td-color" style="@_columnsMeta[Guid.Empty].BodyFillCellStyles"></div>
@@ -138,7 +138,7 @@ else
 											@if (!_editAll)
 											{
 												<div class="check-content check">
-													<FluentButton OnClick="@(() => _setRowEditable(tfId, false))" BackgroundColor="transparent" Color="transparent">
+													<FluentButton OnClick="@row.OnEdit" BackgroundColor="transparent" Color="transparent">
 														<FluentIcon Value="@TfConstants.GetIcon("Dismiss")" Color="@Color.Custom" CustomColor="var(--neutral-stroke-input-active)" />
 													</FluentButton>
 												</div>
@@ -149,13 +149,13 @@ else
 											<div class="check-content check">
 												@if (_rowMeta[tfId].Selected)
 												{
-													<FluentButton OnClick="@(() => _toggleItemSelection(tfId, false))" BackgroundColor="transparent" Color="transparent">
+													<FluentButton OnClick="@row.OnSelect" BackgroundColor="transparent" Color="transparent">
 														<FluentIcon Value="@TfConstants.GetIcon("CheckboxChecked", variant: IconVariant.Filled)" Color="@Color.Accent" />
 													</FluentButton>
 												}
 												else
 												{
-													<FluentButton OnClick="@(() => _toggleItemSelection(tfId, true))" BackgroundColor="transparent" Color="transparent">
+													<FluentButton OnClick="@row.OnSelect" BackgroundColor="transparent" Color="transparent">
 														<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")" Color="@Color.Custom" CustomColor="var(--neutral-stroke-input-active)" />
 													</FluentButton>
 												}

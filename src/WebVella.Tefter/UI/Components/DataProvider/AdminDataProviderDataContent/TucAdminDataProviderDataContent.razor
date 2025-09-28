@@ -127,9 +127,9 @@
 												<div class="tf-grid-td-hover"></div>
 												<div>
 													<FluentStack Wrap="false">
-														<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
-																	  Title="@LOC("Edit Row")" OnClick="@(()=> _editRow(row))" />
-														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteRow(row))" Title="@LOC("Delete Row")"
+ 		 												<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
+																	  Title="@LOC("Edit Row")" OnClick="row.OnEdit" />
+														<FluentButton Appearance="@Appearance.Outline" OnClick="row.OnDelete" Title="@LOC("Delete Row")"
 																	  IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" />
 													</FluentStack>
 												</div>

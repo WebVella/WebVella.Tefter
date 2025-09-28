@@ -93,12 +93,9 @@ public partial class TfSpaceViewUIService : ITfSpaceViewUIService
 		{
 			Id = submit.Id,
 			Name = submit.Name,
-			Type = submit.Type,
 			DatasetId = submit.SpaceDataId ?? Guid.Empty,
-			SpaceId = submit.SpaceId,
 			SettingsJson = JsonSerializer.Serialize(submit.Settings),
 			Presets = submit.Presets,
-			Position = submit.Position,
 		};
 		var spaceView = _tfService.UpdateSpaceView(form);
 		SpaceViewUpdated?.Invoke(this, spaceView);

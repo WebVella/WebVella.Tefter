@@ -6,6 +6,4 @@ public enum TfSpacePageType
 	Folder = 0,
 	[Description("page")]
 	Page = 1,
-	[Description("")]
-	None = 2
 }

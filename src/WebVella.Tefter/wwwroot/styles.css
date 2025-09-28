@@ -2348,35 +2348,7 @@ fluent-dialog .tf-divider,
 }
 .tf-sidetoolbar {
   display: flex;
-}
-.tf-sidetoolbar__mode {
-  flex: 0 0 auto;
-}
-.tf-sidetoolbar__mode .modebar {
-  padding: 0;
-  background: transparent;
-}
-.tf-sidetoolbar__mode .modebar .btn {
-  margin: 0;
-  border-radius: 0;
-}
-.tf-sidetoolbar__mode .modebar .btn.active {
-  background: var(--accent-base-color);
-  border-color: var(--accent-base-color);
-  color: var(--foreground-on-accent-rest) !important;
-}
-.tf-sidetoolbar__mode .modebar .btn.active svg {
-  fill: var(--foreground-on-accent-rest) !important;
-}
-.tf-sidetoolbar__mode .modebar .btn:first-child {
-  border-radius: calc(var(--control-corner-radius) * 1px) 0 0 calc(var(--control-corner-radius) * 1px);
-}
-.tf-sidetoolbar__mode .modebar .btn:last-child {
-  border-radius: 0 calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0;
-  margin-right: 5px;
-}
-.tf-sidetoolbar__mode .modebar .btn + .btn {
-  margin-left: 0;
+  padding: var(--tf-layout-content-padding) 0.5rem;
 }
 .tf-sidetoolbar__search {
   flex: 1 1 auto;
@@ -2387,6 +2359,18 @@ fluent-dialog .tf-divider,
 }
 .tf-sidetoolbar__search .search::part(start) {
   display: none;
+}
+.tf-sidetoolbar__search fluent-button {
+  border-radius: 0;
+}
+.tf-sidetoolbar__search fluent-button::part(control) {
+  border-left: none;
+}
+.tf-sidetoolbar__search fluent-button:last-child {
+  border-radius: 0 calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0;
+}
+.tf-sidetoolbar__search .stack-horizontal .search::part(root) {
+  border-radius: calc(var(--control-corner-radius) * 1px) 0 0 calc(var(--control-corner-radius) * 1px);
 }
 .tf-sidetoolbar__title {
   flex: 1 1 auto;

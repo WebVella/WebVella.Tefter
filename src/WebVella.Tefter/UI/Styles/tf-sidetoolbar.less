@@ -1,75 +1,58 @@
 ﻿@import '_variables.less';
 
 .tf-sidetoolbar {
-	display: flex;
+    display: flex;
+    padding: var(--tf-layout-content-padding) 0.5rem;
 
-	&__mode {
-		flex: 0 0 auto;
+    &__search {
+        flex: 1 1 auto;
+        padding-right: 5px;
 
-		.modebar {
-			padding: 0;
-			background: transparent;
+        .search {
+            width: 100%;
 
-			.btn {
-				margin: 0;
-				border-radius: 0;
-
-				&.active {
-					background: var(--accent-base-color);
-					border-color: var(--accent-base-color);
-					color: var(--foreground-on-accent-rest) !important;
-
-					svg {
-						fill: var(--foreground-on-accent-rest) !important;
-					}
-				}
+            &::part(start) {
+                display: none;
+            }
+        }
 
 
 
-				&:first-child {
-					border-radius: calc(var(--control-corner-radius) * 1px) 0 0 calc(var(--control-corner-radius) * 1px);
-				}
+        fluent-button {
+            border-radius: 0;
 
-				&:last-child {
-					border-radius: 0 calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0;
-					margin-right: 5px;
-				}
-			}
+            &::part(control) {
+                border-left: none;
+            }
 
-			.btn + .btn {
-				margin-left: 0;
-			}
-		}
-	}
+            &:last-child {
+                border-radius:0 calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0;
+            }
+        }
 
-	&__search {
-		flex: 1 1 auto;
-		padding-right: 5px;
+        .stack-horizontal {
+            .search {
+                &::part(root) {
+                    border-radius: calc(var(--control-corner-radius) * 1px) 0 0 calc(var(--control-corner-radius) * 1px);
+                }
+            }
+        }
+    }
 
-		.search {
-			width: 100%;
-			&::part(start){
-				display:none;
-			}
-		}
+    &__title {
+        flex: 1 1 auto;
+        padding-right: 5px;
+        font-size: var(--tf-font-size-md);
+        font-weight: var(--tf-font-weight-lg);
+        display: flex;
+        align-items: center;
+    }
 
+    &__actions {
+        flex: 0 0 auto;
+    }
 
-	}
-
-	&__title {
-		flex: 1 1 auto;
-		padding-right: 5px;
-		font-size: var(--tf-font-size-md);
-		font-weight: var(--tf-font-weight-lg);
-		display: flex;
-		align-items: center;
-	}
-
-	&__actions {
-		flex: 0 0 auto;
-	}
-
-	.red-btn {
-		color: var(--tf-red-500);
-	}
+    .red-btn {
+        color: var(--tf-red-500);
+    }
 }

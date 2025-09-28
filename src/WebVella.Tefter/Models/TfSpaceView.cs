@@ -12,6 +12,7 @@ public class TfSpaceView
 	[Obsolete("Will be removed")]
 	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
 	public string Name { get; set; } = default!;
+	[Obsolete("Will be removed")]
 	public short Position { get; set; }
 	public string SettingsJson { get; set; } = "{}";
 	public TfSpaceViewSettings Settings
@@ -39,15 +40,19 @@ public class TfSpaceViewDbo
 	[TfDboModelProperty("space_data_id")]
 	public Guid SpaceDataId { get; set; }
 
+	[Obsolete]
 	[TfDboModelProperty("space_id")]
 	public Guid SpaceId { get; set; }
 
+	[Obsolete]
 	[TfDboModelProperty("type")]
 	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfSpaceViewType>))]
 	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
 
 	[TfDboModelProperty("name")]
 	public string Name { get; set; }
+
+	[Obsolete]
 
 	[TfDboModelProperty("position")]
 	public short Position { get; set; }
@@ -63,21 +68,9 @@ public class TfSpaceViewDbo
 public class TfCreateSpaceViewExtended
 {
 	public Guid Id { get; set; }
-	public Guid SpaceId { get; set; }
-	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
-	public short Position { get; set; }
 	public string Name { get; set; }
-	public string SettingsJson { get; set; } = "{}";
-	public List<TfSpaceViewPreset> Presets { get; set; } = new();
-	public List<string> Groups { get; set; } = new();
-	public TfSpaceViewDatasetType DatasetType { get; set; } = TfSpaceViewDatasetType.New;
 	public Guid? SpaceDataId { get; set; } = null;
-	public string? NewSpaceDataName { get; set; } = null;
-	public Guid? DataProviderId { get; set; } = null;
-	public bool AddSystemColumns { get; set; } = false;
-	public bool AddProviderColumns { get; set; } = true;
-	public bool AddSharedColumns { get; set; } = true;
-	public bool AddDatasetColumns { get; set; } = true;
+	public List<TfSpaceViewPreset> Presets { get; set; } = new();
 	public TfSpaceViewSettings Settings { get; set; } = new TfSpaceViewSettings();
 }
 

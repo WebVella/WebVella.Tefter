@@ -90,7 +90,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 		try
 		{
 			TfSpaceUIService.DeleteSpacePage(node);
-			ToastService.ShowSuccess(LOC("Space node deleted!"));
+			ToastService.ShowSuccess(LOC("Space page deleted!"));
 		}
 		catch (Exception ex)
 		{
@@ -113,7 +113,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 		{
 			TfSpaceUIService.MoveSpacePage(args.Item1, args.Item2);
 
-			ToastService.ShowSuccess(LOC("Space node updated!"));
+			ToastService.ShowSuccess(LOC("Space page updated!"));
 		}
 		catch (Exception ex)
 		{
@@ -137,7 +137,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 		{
 			TfSpaceUIService.CopySpacePage(nodeId);
 
-			ToastService.ShowSuccess(LOC("Space node updated!"));
+			ToastService.ShowSuccess(LOC("Space page updated!"));
 		}
 		catch (Exception ex)
 		{
@@ -155,7 +155,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 		var node = _spacePages.GetSpaceNodeById(nodeId);
 		if (node == null)
 		{
-			ToastService.ShowError(LOC("Space node not found"));
+			ToastService.ShowError(LOC("Space page not found"));
 			return;
 		}
 		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(

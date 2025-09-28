@@ -681,13 +681,8 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				ComponentId = new Guid(TucSpaceViewSpacePageAddon.ID),
 				ComponentOptionsJson = JsonSerializer.Serialize(new TfSpaceViewSpacePageAddonOptions
 				{
-					SetType = TfSpaceViewSetType.Existing,
 					SpaceViewId = spaceViewId,
-					Name = "World Cities",
-					Type = TfSpaceViewType.DataGrid,
-					DataProviderId = dataProviderId,
-					DatasetType = TfSpaceViewDatasetType.Existing,
-					SpaceDataId = spaceDataId,
+					DatasetId = spaceDataId,
 				})
 			}
 		});

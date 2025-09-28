@@ -189,6 +189,12 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 							pageSize: TfConstants.ItemsMaxLimit
 					);
 
+			foreach (TfDataRow row in _data.Rows)
+			{
+					row.OnEdit = () => _setRowEditable(row);
+					row.OnSelect = () => _toggleItemSelection(row);
+			}
+
 			_generateMeta();
 		}
 		finally
@@ -414,11 +420,12 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		}
 	}
 
-	private void _toggleItemSelection(Guid rowId, bool isChecked)
+	private void _toggleItemSelection(TfDataRow row)
 	{
-		if (isChecked)
+		var rowId = row.GetRowId();
+		if (!_selectedDataRows.Contains(rowId))
 		{
-			if (!_selectedDataRows.Contains(rowId)) _selectedDataRows.Add(rowId);
+			_selectedDataRows.Add(rowId);
 		}
 		else
 		{
@@ -466,12 +473,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		return allSelected;
 	}
 
-	private void _setRowEditable(Guid rowId, bool isEditable)
+	private void _setRowEditable(TfDataRow row)
 	{
-		if (isEditable)
+		if (!_spaceView.Settings.CanUpdateRows) return;
+		var rowId = row.GetRowId();
+		if (!_editedDataRows.Contains(rowId))
 		{
-			if (!_spaceView.Settings.CanUpdateRows) return;
-			if (!_editedDataRows.Contains(rowId)) _editedDataRows.Add(rowId);
+			_editedDataRows.Add(rowId);
 		}
 		else
 		{
