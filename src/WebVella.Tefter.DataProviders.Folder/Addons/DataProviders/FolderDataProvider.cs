@@ -198,7 +198,7 @@ public class FolderDataProvider : ITfDataProviderAddon
 
         column = provider.Columns.SingleOrDefault(x => x.SourceName == COLUMN_NAME_FULLNAME);
         if (column is not null)
-            row[column.DbName!] = String.IsNullOrWhiteSpace(pathPrefix) ? info.FullName : $"{pathPrefix}/{info.FullName}";
+            row[column.DbName!] = info.FullName;
 
         column = provider.Columns.SingleOrDefault(x => x.SourceName == COLUMN_NAME_NAME);
         if (column is not null)
