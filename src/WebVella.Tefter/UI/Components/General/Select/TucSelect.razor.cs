@@ -151,15 +151,15 @@ public partial class TucSelect<TOption> : TfBaseComponent where TOption : notnul
 
 	}
 
-	//async Task _selectedOptionChanged(TOption? option)
-	//{
-	//	if (option is null && SelectedOption is null) return;
-	//	//Infinite change trigger
-	//	if (JsonSerializer.Serialize(option) == JsonSerializer.Serialize(SelectedOption))
-	//		return;
-	//	Console.WriteLine($"_selectedOptionChanged: {(option is null ? "--NULL" : option)} /// {(SelectedOption is null ? "--NULL" : SelectedOption)}");
-	//	SelectedOption = option;
-	//	if (SelectedOptionChanged.HasDelegate)
-	//		await SelectedOptionChanged.InvokeAsync(option);
-	//}
+	async Task _selectedOptionChanged(TOption? option)
+	{
+		if (option is null && SelectedOption is null) return;
+		//Infinite change trigger
+		if (JsonSerializer.Serialize(option) == JsonSerializer.Serialize(SelectedOption))
+			return;
+		Console.WriteLine($"_selectedOptionChanged: {(option is null ? "--NULL" : option)} /// {(SelectedOption is null ? "--NULL" : SelectedOption)}");
+		SelectedOption = option;
+		if (SelectedOptionChanged.HasDelegate)
+			await SelectedOptionChanged.InvokeAsync(option);
+	}
 }

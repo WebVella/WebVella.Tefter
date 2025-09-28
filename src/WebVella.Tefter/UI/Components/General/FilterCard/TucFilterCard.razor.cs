@@ -12,7 +12,7 @@ public partial class TucFilterCard : TfBaseComponent
 	List<string> _allOptions = new();
 	Dictionary<string, TfDatasetColumn> _columnDict = new();
 
-	internal string _selectedColumn = default!;
+	internal string? _selectedColumn = null;
 	public bool _submitting = false;
 	List<TfFilterBase> _items = default!;
 
@@ -37,16 +37,6 @@ public partial class TucFilterCard : TfBaseComponent
 	void _initOptions()
 	{
 		_items = Dataset.Filters.ToList();
-
-		if (_allOptions.Count > 0)
-			_selectedColumn = _allOptions[0];
-	}
-
-	private async Task _addColumnFilterHandler()
-	{
-		if (String.IsNullOrWhiteSpace(_selectedColumn)) return;
-		await AddColumnFilter(_selectedColumn, null);
-		//_selectedFilterColumn = null; //do not clear for convenience
 	}
 
 	public async Task AddColumnFilter(string dbColumn, Guid? parentId)
@@ -90,6 +80,9 @@ public partial class TucFilterCard : TfBaseComponent
 			default: throw new Exception("Unsupported column data type");
 
 		}
+
+		_selectedColumn = null;
+		await InvokeAsync(StateHasChanged);
 	}
 
 	public async Task AddFilter(Type type, string dbName, Guid? parentId)

@@ -24,7 +24,7 @@ public partial class TucFilterQueryCard : TfBaseComponent
 	[Parameter]
 	public List<TfSharedColumn> AllSharedColumns { get; set; } = new();
 
-	private TfFilterQuery _selectedOption = new();
+	private TfFilterQuery? _selectedOption = null;
 	private List<TfFilterQuery> _allOptions = new();
 	private Dictionary<string, string> _columnDict = new();
 	private Dictionary<string, TfDatabaseColumnType> _typeDict = new();
@@ -97,7 +97,7 @@ public partial class TucFilterQueryCard : TfBaseComponent
 					filter.Parent.Items.Add(filter);
 			}
 		}
-		_selectedOption = new();
+		_selectedOption = null;
 		await ItemsChanged.InvokeAsync(items);
 	}
 

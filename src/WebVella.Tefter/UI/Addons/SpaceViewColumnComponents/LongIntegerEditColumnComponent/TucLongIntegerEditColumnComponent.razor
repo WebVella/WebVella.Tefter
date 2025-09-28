@@ -8,7 +8,9 @@
 						   Value="@_value"
 						   ValueChanged="@((x) => _valueChanged(x))"
 						   Step="1"
-						   Style="width:100%;min-width:80px;" />
+						   Style="width:100%;min-width:80px;" 
+						   Min="@(long.MinValue.ToString())"
+						   Max="@(long.MaxValue.ToString())" />
 	</div>
 }
 else if (RegionContext.Mode == TfComponentPresentationMode.Options)
