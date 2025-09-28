@@ -681,7 +681,7 @@ public partial class TfService : ITfService
 						searchSb.Append($" {uniqueValue}");
 					}
 
-						continue;
+					continue;
 				}
 				else
 				{
@@ -893,10 +893,17 @@ public partial class TfService : ITfService
 				}
 				else
 				{
-					if (defaultColumnValue is not null)
-						parameter.Value = defaultColumnValue;
+					if (providerColumn != null && !providerColumn.IsNullable)
+					{
+						if (defaultColumnValue is not null)
+							parameter.Value = defaultColumnValue;
+						else
+							parameter.Value = DBNull.Value;
+					}
 					else
+					{
 						parameter.Value = DBNull.Value;
+					}
 				}
 			}
 			else
@@ -907,18 +914,23 @@ public partial class TfService : ITfService
 
 		foreach (var providerColumn in provider.Columns)
 		{
-			if (processedColumns.Contains(providerColumn.DbName))
+			if (processedColumns.Contains(providerColumn.DbName!))
 				continue;
 
-			columnNames.Add(providerColumn.DbName);
+			columnNames.Add(providerColumn.DbName!);
 
 			var parameterType = GetDbTypeForDatabaseColumnType(providerColumn.DbType);
 			NpgsqlParameter parameter = new NpgsqlParameter($"@{providerColumn.DbName}", parameterType);
 
-			if(providerColumn.IsUnique)
+			if (providerColumn.IsUnique)
 				parameter.Value = GetProviderColumnUniqueValue(provider, providerColumn);
 			else
-				parameter.Value = GetProviderColumnDefaultValue(providerColumn);
+			{
+				if (!providerColumn.IsNullable)
+					parameter.Value = GetProviderColumnDefaultValue(providerColumn);
+				else
+					parameter.Value = DBNull.Value;
+			}
 
 			if (parameter.Value is null)
 				parameter.Value = DBNull.Value;

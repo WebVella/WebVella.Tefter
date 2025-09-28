@@ -22,6 +22,7 @@
 		<ProjectReference Include="..\WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.DataProviders.Blank\WebVella.Tefter.DataProviders.Blank.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.DataProviders.Excel\WebVella.Tefter.DataProviders.Excel.csproj" />
+		<ProjectReference Include="..\WebVella.Tefter.DataProviders.Folder\WebVella.Tefter.DataProviders.Folder.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.DataProviders.MsSql\WebVella.Tefter.DataProviders.MsSql.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.DataProviders.Csv\WebVella.Tefter.DataProviders.Csv.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.Recipes\WebVella.Tefter.Recipes.csproj" />

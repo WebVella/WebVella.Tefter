@@ -43,8 +43,8 @@ public class TfDataRow : IEnumerable
 			if (column is null)
 				throw new TfValidationException($"A column with name {columnName} is not found in DataTable object.");
 
-			if (!column.IsNullable && value is null)
-				throw new TfValidationException($"Trying to set null as value to non nullable column.");
+			//if (!column.IsNullable && value is null)
+			//	throw new TfValidationException($"Trying to set null as value to non nullable column.");
 
 			if (column.IsNullable && value is null)
 			{

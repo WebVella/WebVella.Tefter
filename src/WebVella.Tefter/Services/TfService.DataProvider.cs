@@ -418,7 +418,19 @@ public partial class TfService : ITfService
 
 					if (columns.Count > 0)
 					{
-						CreateBulkDataProviderColumn(provider.Id, columns);
+						provider = CreateBulkDataProviderColumn(provider.Id, columns);
+
+						List<string> syncPrimaryKeyColumns = new List<string>();
+						foreach (var synchKeyColumn in schemaInfo.SynchPrimaryKeyColumns)
+						{
+							var providerColumn = provider.Columns.SingleOrDefault(x => x.SourceName == synchKeyColumn);
+							if(providerColumn is not null)
+								syncPrimaryKeyColumns.Add(providerColumn.DbName!);
+						}
+
+						if (syncPrimaryKeyColumns.Count > 0)
+							UpdateDataProviderSynchPrimaryKeyColumns(provider.Id, syncPrimaryKeyColumns);
+
 						//Trigger Initial Sync
 						TriggerSynchronization(provider.Id);
 					}
