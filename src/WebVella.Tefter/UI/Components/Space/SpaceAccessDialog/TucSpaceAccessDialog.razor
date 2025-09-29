@@ -1,0 +1,108 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+    <FluentLabel Typo="Typography.PaneHeader">@LOC("Space Access")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+    <FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+    @if (!string.IsNullOrWhiteSpace(_error))
+    {
+        <FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+    }
+    else
+    {
+		<table class="tf-grid">
+			<tbody class="tf-grid-tbody">
+				<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+					<td class="tf-grid-td">
+						<div>
+							@if (_space.IsPrivate)
+							{
+								<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false Title="@LOC("Access Restricted")">@LOC("Only users with the explicitly listed roles will be granted entry.")</FluentMessageBar>
+							}
+							else
+							{
+								<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss=false Title="@LOC("Free Access")">@LOC("All users will have access.")</FluentMessageBar>
+							}
+						</div>
+					</td>
+					<td class="tf-grid-td" style="width:250px;vertical-align:middle;">
+						<div>
+							<FluentSwitch Value=@_space.IsPrivate ValueChanged=_setPrivacy CheckedMessage="@LOC("restricted access")" UnCheckedMessage="@LOC("restricted access")" />
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<TucCard Style="margin-top:30px;" Title="@LOC("Roles with Access")">
+			<ToolbarTemplate>
+				@if (_roleOptions.Count > 0)
+				{
+					<TucSelect @bind-SelectedOption="@_selectedRole"
+							   Disabled="_submitting"
+							   TOption="TfRole" Required="false"
+							   OptionValue="@(x=> x.Id.ToString())"
+							   OptionText="@(x=> x.Name)"
+							   Items="@_roleOptions" Style="width:250px"
+							   Placeholder="@LOC("select role")" />
+				}
+				else
+				{
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all roles added") Style="width:250px" Disabled="true" />
+				}
+				<FluentButton OnClick="_addRole" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline" Disabled="@(_roleOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+			</ToolbarTemplate>
+			<ChildContent>
+				<table class="tf-grid">
+					<thead class="tf-grid-thead">
+						<tr class="tf-grid-thead-bkg"></tr>
+						<tr class="tf-grid-tr">
+							<th class="tf-grid-th">name</th>
+							<th class="tf-grid-th"></th>
+						</tr>
+					</thead>
+					<tbody class="tf-grid-tbody">
+						<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+							<td class="tf-grid-td">
+								<div>@_adminRole.Name</div>
+							</td>
+							<td class="tf-grid-td" style="width:1%;">
+								<div>
+									<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Administrators has always access")"
+												  Disabled="true">
+										<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
+										<span>@LOC("locked")</span>
+									</FluentButton>
+								</div>
+							</td>
+						</tr>
+						@foreach (var context in _space.Roles)
+						{
+							<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+								<td class="tf-grid-td">
+									<div>@context.Name</div>
+								</td>
+								<td class="tf-grid-td" style="width:1%;">
+									<div>
+										<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _removeRole(context))" Title="@LOC("Remove the role")"
+													  Disabled="_submitting">
+											<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" Slot="start" />
+											<span>@LOC("remove")</span>
+										</FluentButton>
+									</div>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</ChildContent>
+		</TucCard>
+    }
+</FluentDialogBody>

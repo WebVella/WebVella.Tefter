@@ -163,23 +163,22 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		{
 			if (_parentNode is null) submit.ParentId = null;
 			else submit.ParentId = _parentNode.Id;
-
+			TfSpacePage newPage = default!;
 			if (_isCreate)
 			{
-				var newPage = TfSpaceUIService.CreateSpacePage(
+				newPage = TfSpaceUIService.CreateSpacePage(
 					page: submit
 					);
 				ToastService.ShowSuccess(LOC("Space page created!"));
-				Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl, newPage.SpaceId, newPage.Id));
 			}
 			else
 			{
-				TfSpaceUIService.UpdateSpacePage(submit);
+				newPage = TfSpaceUIService.UpdateSpacePage(submit);
 				ToastService.ShowSuccess(LOC("Space page updated!"));
 			}
 
 			_parentNodeOptions = _getParents();
-			await Dialog.CloseAsync();
+			await Dialog.CloseAsync(newPage);
 		}
 		catch (Exception ex)
 		{

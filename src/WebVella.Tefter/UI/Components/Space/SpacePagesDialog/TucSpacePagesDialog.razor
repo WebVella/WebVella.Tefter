@@ -1,0 +1,52 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+    <FluentLabel Typo="Typography.PaneHeader">@LOC("Space Pages")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+    <FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+    @if (!string.IsNullOrWhiteSpace(_error))
+    {
+        <FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+    }
+    else
+    {
+		<TucCard Title="@LOC("Pages")">
+			<ToolbarTemplate>
+				<FluentButton OnClick="_addPage" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
+							  Disabled="@_submitting">@LOC("Add page")</FluentButton>
+			</ToolbarTemplate>
+			<ChildContent>
+				@if (_spacePages.Count == 0)
+				{
+					@LOC("No pages or folders created yet.")
+				}
+				else
+				{
+					<table class="tf-grid">
+						<colgroup style="width:1%"></colgroup>
+						<colgroup></colgroup>
+						<colgroup style="width:120px;"></colgroup>
+						<colgroup style="width:120px;"></colgroup>
+						<tbody class="tf-grid-tbody">
+							@foreach (var context in _spacePages)
+							{
+								var contextIndex = _spacePages.FindIndex(x => x.Id == context.Id);
+								<TucSpaceManageNodeItem Item="context" Level="0" OnRemove="_removePage" OnMove="_movePage"
+														IsFirst="(contextIndex == 0)" IsLast="(contextIndex == _spacePages.Count -1)"
+														OnEdit="_editPage" OnCopy="_copyPage" />
+							}
+						</tbody>
+					</table>
+				}
+			</ChildContent>
+		</TucCard>
+    }
+</FluentDialogBody>

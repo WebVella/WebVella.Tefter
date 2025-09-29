@@ -9,8 +9,8 @@ public class BlankDataProvider : ITfDataProviderAddon
 
     public const string ID = "d4191b4b-9f18-40cb-b2ca-fc33a5750124";
     public const string NAME = "Blank Data Provider";
-    public const string DESCRIPTION = "Providers way to create blank data provider with ability to create manually structure";
-    public const string FLUENT_ICON_NAME = "DocumentTable";
+    public const string DESCRIPTION = "Local data with manually created structure";
+    public const string FLUENT_ICON_NAME = "CalendarEmpty";
 
     public Guid AddonId { get; init; } = new Guid(ID);
     public string AddonName { get; init; } = NAME;

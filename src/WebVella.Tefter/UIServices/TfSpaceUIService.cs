@@ -26,7 +26,7 @@ public partial interface ITfSpaceUIService
 	List<TfSpacePage> GetAllSpacePages();
 	List<TfSpacePage> GetSpacePages(Guid spaceId);
 	TfSpacePage CreateSpacePage(TfSpacePage page);
-	void UpdateSpacePage(TfSpacePage page);
+	TfSpacePage UpdateSpacePage(TfSpacePage page);
 	void DeleteSpacePage(TfSpacePage page);
 	void MoveSpacePage(TfSpacePage page, bool isMoveUp);
 	void CopySpacePage(Guid pageId);
@@ -123,10 +123,11 @@ public partial class TfSpaceUIService : ITfSpaceUIService
 		SpaceUpdated?.Invoke(this, GetSpace(page.SpaceId));
 		return _tfService.GetSpacePage(pageId);
 	}
-	public void UpdateSpacePage(TfSpacePage page)
+	public TfSpacePage UpdateSpacePage(TfSpacePage page)
 	{
 		var pageList = _tfService.UpdateSpacePage(page);
 		SpaceUpdated?.Invoke(this, GetSpace(page.SpaceId));
+		return _tfService.GetSpacePage(page.Id);
 	}
 	public void DeleteSpacePage(TfSpacePage page)
 	{

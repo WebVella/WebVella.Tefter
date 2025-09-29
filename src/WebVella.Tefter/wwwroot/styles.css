@@ -2364,13 +2364,13 @@ fluent-dialog .tf-divider,
   border-radius: 0;
 }
 .tf-sidetoolbar__search fluent-button::part(control) {
-  border-left: none;
+  border-right: none;
 }
-.tf-sidetoolbar__search fluent-button:last-child {
-  border-radius: 0 calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0;
+.tf-sidetoolbar__search fluent-button:first-child {
+  border-radius: calc(var(--control-corner-radius) * 1px) 0 0 calc(var(--control-corner-radius) * 1px);
 }
 .tf-sidetoolbar__search .stack-horizontal .search::part(root) {
-  border-radius: calc(var(--control-corner-radius) * 1px) 0 0 calc(var(--control-corner-radius) * 1px);
+  border-radius: 0 calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0;
 }
 .tf-sidetoolbar__title {
   flex: 1 1 auto;

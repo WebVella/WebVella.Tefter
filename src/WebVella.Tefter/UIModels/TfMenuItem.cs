@@ -105,6 +105,5 @@ public enum TfMenuItemType
 	None = 0,
 	CreateSpace = 1,
 	CreateSpacePage = 2,
-	CreateSpaceView = 3,
-	CreateSpaceData = 4
+	DeleteSpace = 3,
 }

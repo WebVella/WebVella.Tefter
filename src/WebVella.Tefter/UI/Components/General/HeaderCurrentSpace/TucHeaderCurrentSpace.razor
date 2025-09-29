@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucErrorBoundry>
+@* <TucErrorBoundry>
 	@if (_isLoading)
 	{
 		<TucSkeletonMenu Class="current-space" HasIcon=true BackgroundColor="var(--tf-fill-color-dark-1)"/>
@@ -10,6 +10,7 @@
 		@((MarkupString)_styles)
 		<TucMenu Class="current-space" Items="_menu" EllipsesLimit="@_ellipsisCount" />
 	}
-</TucErrorBoundry>
+</TucErrorBoundry> *@
+@((MarkupString)_styles)
 
 

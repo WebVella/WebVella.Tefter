@@ -3,7 +3,7 @@
 public partial class ViewSettingsComponent : TfBaseComponent,
     ITfScreenRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>
 {
-    public const string ID = "1f907447-0f99-4f1a-872d-fdde1fc79f3f";
+    public const string ID = "0518a537-cdef-49e4-ad12-0c456cedb267";
     public const string NAME = "Folder Data Provider View Settings";
     public const string DESCRIPTION = "";
     public const string FLUENT_ICON_NAME = "PuzzlePiece";
