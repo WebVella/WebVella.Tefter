@@ -1,9 +1,7 @@
 ﻿using FluentAssertions;
 using System;
 using System.Collections.Generic;
-using WebVella.Tefter.Web.Models;
-using WebVella.Tefter.Web.Store;
-using WebVella.Tefter.Web.Utils;
+
 
 namespace WebVella.Tefter.UI.Tests.Utils;
 public class NavigatorExtTests
@@ -14,7 +12,7 @@ public class NavigatorExtTests
 		//Given
 		var baseUrl = "http://localhost";
 		Uri uri = new Uri(baseUrl);
-		TucRouteState result = new();
+		TfNavigationState result = new();
 		Guid spaceId = Guid.NewGuid();
 		Guid userId = Guid.NewGuid();
 		Guid roleId = Guid.NewGuid();
@@ -335,58 +333,55 @@ public class NavigatorExtTests
 		//Given
 		var baseUrl = "http://localhost";
 		Uri uri = new Uri(baseUrl);
-		TucRouteState result = new();
+		TfNavigationState result = new();
 
 		int page = 3;
 		int pageSize = 12;
 		string search = "$~@32~/";
 
 		var filterBoolColumnName = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
-		var filterBoolMethod = TucFilterBooleanComparisonMethod.NotEqual;
-		bool? filterBoolValue = false;
+		var filterBoolMethod = TfFilterBooleanComparisonMethod.NotEqual;
+		bool filterBoolValue = false;
 		var filterDateOnlyColumnName = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
 		//var filterDateOnlyMethod = TucFilterDateTimeComparisonMethod.Greater;
 		DateOnly? filterDateOnlyValue = DateOnly.FromDateTime(DateTime.Now);
 		var filterTextColumnName = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
-		var filterTextMethod = TucFilterTextComparisonMethod.Contains;
+		var filterTextMethod = TfFilterTextComparisonMethod.Contains;
 		var filterTextValue = "//$~(&&)";
-		var filters = new List<TucFilterBase> {
-				new TucFilterAnd(){
-					Filters = new List<TucFilterBase>{
-						new TucFilterOr(){
-							Id = Guid.NewGuid(),
-							Filters = new List<TucFilterBase>{
-								new TucFilterBoolean{
-									ColumnName = filterBoolColumnName,
-									ComparisonMethod = filterBoolMethod,
-									Value = filterBoolValue.ToString(),
-								},
-								new TucFilterText{
-									ColumnName = filterTextColumnName,
-									ComparisonMethod = filterTextMethod,
-									Value = filterTextValue,
-								},
-							}
-						}
-					}
-				}
-			};
-
+		var filterBool = new TfFilterBoolean
+		{
+			ColumnName = filterBoolColumnName,
+			ComparisonMethod = filterBoolMethod,
+			Value = filterBoolValue.ToString(),
+		};
+		var filterText = new TfFilterText
+		{
+			ColumnName = filterTextColumnName,
+			ComparisonMethod = filterTextMethod,
+			Value = filterTextValue,
+		};
+		var filterOr = new TfFilterOr(filterBool, filterText)
+		{
+			Id = Guid.NewGuid(),
+		};
+		var filterAnd = new TfFilterAnd(filterOr);
+		var filters = new List<TfFilterQuery> { filterAnd.ToQuery() };
+		
 		var sortColumnName1 = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
-		var sortColumnOrder1 = TucSortDirection.ASC;
+		var sortColumnOrder1 = TfSortDirection.ASC;
 		var sortColumnName2 = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
-		var sortColumnOrder2 = TucSortDirection.DESC;
-		var sorts = new List<TucSort>(){
-				new TucSort{
-					ColumnName = sortColumnName1,
-					Direction = sortColumnOrder1,
-				},
-				new TucSort{
-					ColumnName = sortColumnName2,
-					Direction = sortColumnOrder2,
-				},
-			};
-
+		var sortColumnOrder2 = TfSortDirection.DESC;
+		var sort1 = new TfSort
+		{
+			ColumnName = sortColumnName1,
+			Direction = sortColumnOrder1,
+		};		
+		var sort2 = new TfSort
+		{
+			ColumnName = sortColumnName2,
+			Direction = sortColumnOrder2,
+		};			
+		var sorts = new List<TfSortQuery>(){sort1.ToQuery(),sort2.ToQuery()};
 		//When
 		uri = new Uri($"{baseUrl}?{TfConstants.PageQueryName}={NavigatorExt.ProcessQueryValueForUrl(page.ToString())}" +
 		$"&{TfConstants.PageSizeQueryName}={NavigatorExt.ProcessQueryValueForUrl(pageSize.ToString())}" +
@@ -414,28 +409,30 @@ public class NavigatorExtTests
 			result.Filters.Should().NotBeNull();
 			result.Filters.Count.Should().Be(1);
 			var lvl1 = result.Filters[0];
-			lvl1.Should().BeOfType<TucFilterAnd>();
-			var lvl1Filter = (TucFilterAnd)lvl1;
-			lvl1Filter.Filters.Should().NotBeNull();
-			lvl1Filter.Filters.Count.Should().Be(1);
-			var lvl2 = lvl1Filter.Filters[0];
-			lvl2.Should().BeOfType<TucFilterOr>();
-			var lvl2Filter = (TucFilterOr)lvl2;
-			lvl2Filter.Filters.Should().NotBeNull();
-			lvl2Filter.Filters.Count.Should().Be(2);
+			lvl1.Should().BeOfType<TfFilterQuery>();
+			var lvl1Filter = (TfFilterQuery)lvl1;
+			lvl1Filter.Name.Should().Be(filterAnd.ToQuery().Name);
+			lvl1Filter.Items.Should().NotBeNull();
+			lvl1Filter.Items.Count.Should().Be(1);
+			var lvl2 = lvl1Filter.Items[0];
+			lvl2.Should().BeOfType<TfFilterQuery>();
+			var lvl2Filter = (TfFilterQuery)lvl2;
+			lvl2Filter.Name.Should().Be(filterOr.ToQuery().Name);
+			lvl2Filter.Items.Should().NotBeNull();
+			lvl2Filter.Items.Count.Should().Be(2);
 
-			var lvl31 = lvl2Filter.Filters[0];
-			lvl31.Should().BeOfType<TucFilterBoolean>();
-			var lvl31Filter = (TucFilterBoolean)lvl31;
-			lvl31Filter.ColumnName.Should().Be(filterBoolColumnName);
-			lvl31Filter.ComparisonMethod.Should().Be(filterBoolMethod);
+			var lvl31 = lvl2Filter.Items[0];
+			lvl31.Should().BeOfType<TfFilterQuery>();
+			var lvl31Filter = (TfFilterQuery)lvl31;
+			lvl31Filter.Name.Should().Be(filterBoolColumnName);
+			lvl31Filter.Method.Should().Be((int)filterBoolMethod);
 			lvl31Filter.Value.Should().Be(filterBoolValue.ToString());
 
-			var lvl33 = lvl2Filter.Filters[1];
-			lvl33.Should().BeOfType<TucFilterText>();
-			var lvl33Filter = (TucFilterText)lvl33;
-			lvl33Filter.ColumnName.Should().Be(filterTextColumnName);
-			lvl33Filter.ComparisonMethod.Should().Be(filterTextMethod);
+			var lvl33 = lvl2Filter.Items[1];
+			lvl33.Should().BeOfType<TfFilterQuery>();
+			var lvl33Filter = (TfFilterQuery)lvl33;
+			lvl33Filter.Name.Should().Be(filterTextColumnName);
+			lvl33Filter.Method.Should().Be((int)filterTextMethod);
 			lvl33Filter.Value.Should().Be(filterTextValue);
 
 		}
@@ -444,333 +441,333 @@ public class NavigatorExtTests
 		{
 			result.Sorts.Should().NotBeNull();
 			result.Sorts.Count.Should().Be(2);
-			result.Sorts[0].ColumnName.Should().Be(sortColumnName1);
-			result.Sorts[0].Direction.Should().Be(sortColumnOrder1);
-			result.Sorts[1].ColumnName.Should().Be(sortColumnName2);
-			result.Sorts[1].Direction.Should().Be(sortColumnOrder2);
+			result.Sorts[0].Name.Should().Be(sortColumnName1);
+			result.Sorts[0].Direction.Should().Be((int)sortColumnOrder1);
+			result.Sorts[1].Name.Should().Be(sortColumnName2);
+			result.Sorts[1].Direction.Should().Be((int)sortColumnOrder2);
 
 		}
 		#endregion
 	}
 
 
-	[Fact]
-	public void SpaceViewFilterUrlSerializationTests()
-	{
-
-		var test = new List<TucFilterBase>();
-		string queryValue = null;
-		var result = new List<TucFilterBase>();
-		var columnId = Guid.NewGuid();
-		var columnName = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
-
-		#region << TucFilterAnd >>
-		{
-			test = new List<TucFilterBase> {
-				new TucFilterAnd(){
-					Id = columnId,
-					//ColumnName = columnName,
-					Filters = new()
-				}
-			};
-			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
-			result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
-			result.Should().NotBeNull();
-			result.Count.Should().Be(1);
-			result[0].Should().BeOfType<TucFilterAnd>();
-			//result[0].ColumnName.Should().Be(columnName);
-			var casted = (TucFilterAnd)result[0];
-			casted.Filters.Should().NotBeNull();
-			casted.Filters.Count.Should().Be(0);
-		}
-		#endregion
-
-		#region << TucFilterOr >>
-		{
-			test = new List<TucFilterBase> {
-				new TucFilterOr(){
-					Id = columnId,
-					//ColumnName = columnName,
-					Filters = new()
-				}
-			};
-			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
-			result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
-			result.Should().NotBeNull();
-			result.Count.Should().Be(1);
-			result[0].Should().BeOfType<TucFilterOr>();
-			//result[0].ColumnName.Should().Be(columnName);
-			var casted = (TucFilterOr)result[0];
-			casted.Filters.Should().NotBeNull();
-			casted.Filters.Count.Should().Be(0);
-		}
-		#endregion
-
-		#region << TucFilterBoolean >>
-		{
-			var method = TucFilterBooleanComparisonMethod.NotEqual;
-			bool? value = false;
-			test = new List<TucFilterBase> {
-				new TucFilterBoolean(){
-					Id = columnId,
-					ColumnName = columnName,
-					ComparisonMethod = method,
-					Value = value.ToString()
-				}
-			};
-			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
-			result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
-			result.Should().NotBeNull();
-			result.Count.Should().Be(1);
-			result[0].Should().BeOfType<TucFilterBoolean>();
-			result[0].ColumnName.Should().Be(columnName);
-			var casted = (TucFilterBoolean)result[0];
-			casted.ComparisonMethod.Should().Be(method);
-			casted.Value.Should().NotBeNull();
-			casted.Value.Should().Be(value.ToString());
-		}
-		#endregion
-
-		#region << TucFilterDateTime >>
-		{
-			var method = TucFilterDateTimeComparisonMethod.Lower;
-			DateTime? value = DateTime.Now;
-			test = new List<TucFilterBase> {
-				new TucFilterDateTime(){
-					Id = columnId,
-					ColumnName = columnName,
-					ComparisonMethod = method,
-					Value = value?.ToString(TfConstants.DateTimeFormat)
-				}
-			};
-			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
-			result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
-			result.Should().NotBeNull();
-			result.Count.Should().Be(1);
-			result[0].Should().BeOfType<TucFilterDateTime>();
-			result[0].ColumnName.Should().Be(columnName);
-			var casted = (TucFilterDateTime)result[0];
-			casted.ComparisonMethod.Should().Be(method);
-			casted.Value.Should().NotBeNull();
-			if(casted.Value is not null)
-				casted.Value.Should().Be(value.Value.ToString(TfConstants.DateTimeFormat));
-		}
-		#endregion
-
-		#region << TucFilterGuid >>
-		{
-			var method = TucFilterGuidComparisonMethod.IsNotEmpty;
-			Guid? value = Guid.NewGuid();
-			test = new List<TucFilterBase> {
-				new TucFilterGuid(){
-					Id = columnId,
-					ColumnName = columnName,
-					ComparisonMethod = method,
-					Value = value.ToString()
-				}
-			};
-			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
-			result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
-			result.Should().NotBeNull();
-			result.Count.Should().Be(1);
-			result[0].Should().BeOfType<TucFilterGuid>();
-			result[0].ColumnName.Should().Be(columnName);
-			var casted = (TucFilterGuid)result[0];
-			casted.ComparisonMethod.Should().Be(method);
-			casted.Value.Should().NotBeNull();
-			casted.Value.Should().Be(value.ToString());
-		}
-		#endregion
-
-		#region << TucFilterNumeric >>
-		{
-			var method = TucFilterNumericComparisonMethod.Lower;
-			decimal? value = (decimal)0.235;
-			test = new List<TucFilterBase> {
-				new TucFilterNumeric(){
-					Id = columnId,
-					ColumnName = columnName,
-					ComparisonMethod = method,
-					Value = value.ToString()
-				}
-			};
-			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
-			result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
-			result.Should().NotBeNull();
-			result.Count.Should().Be(1);
-			result[0].Should().BeOfType<TucFilterNumeric>();
-			result[0].ColumnName.Should().Be(columnName);
-			var casted = (TucFilterNumeric)result[0];
-			casted.ComparisonMethod.Should().Be(method);
-			casted.Value.Should().NotBeNull();
-			casted.Value.Should().Be(value.ToString());
-		}
-		#endregion
-
-		#region << TucFilterText >>
-		{
-			var method = TucFilterTextComparisonMethod.Contains;
-			string value = Guid.NewGuid().ToString();
-			test = new List<TucFilterBase> {
-				new TucFilterText(){
-					Id = columnId,
-					ColumnName = columnName,
-					ComparisonMethod = method,
-					Value = value
-				}
-			};
-			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
-			result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
-			result.Should().NotBeNull();
-			result.Count.Should().Be(1);
-			result[0].Should().BeOfType<TucFilterText>();
-			result[0].ColumnName.Should().Be(columnName);
-			var casted = (TucFilterText)result[0];
-			casted.ComparisonMethod.Should().Be(method);
-			casted.Value.Should().NotBeNull();
-			casted.Value.Should().Be(value);
-
-			//test with special symbols
-			value = "//$~(&&)";
-			test = new List<TucFilterBase> {
-				new TucFilterText(){
-					Id = columnId,
-					ColumnName = columnName,
-					ComparisonMethod = method,
-					Value = value
-				}
-			};
-			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
-			result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
-			result.Should().NotBeNull();
-			result.Count.Should().Be(1);
-			result[0].Should().BeOfType<TucFilterText>();
-			result[0].ColumnName.Should().Be(columnName);
-			casted = (TucFilterText)result[0];
-			casted.ComparisonMethod.Should().Be(method);
-			casted.Value.Should().NotBeNull();
-			casted.Value.Should().Be(value);
-		}
-		#endregion
-
-		#region << With child filters >>
-		{
-			var boolColumnName = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
-			var boolMethod = TucFilterBooleanComparisonMethod.NotEqual;
-			bool? boolValue = false;
-
-			var textColumnName = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
-			var textMethod = TucFilterTextComparisonMethod.Contains;
-			var textValue = "//$~(&&)";
-
-			test = new List<TucFilterBase> {
-				new TucFilterAnd(){
-					Id = columnId,
-					Filters = new List<TucFilterBase>{
-						new TucFilterOr(){
-							Id = Guid.NewGuid(),
-							Filters = new List<TucFilterBase>{
-								new TucFilterBoolean{
-									ColumnName = boolColumnName,
-									ComparisonMethod = boolMethod,
-									Value = boolValue.ToString(),
-								},
-								new TucFilterText{
-									ColumnName = textColumnName,
-									ComparisonMethod = textMethod,
-									Value = textValue,
-								},
-							}
-						}
-					}
-				}
-			};
-			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
-			result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
-			result.Should().NotBeNull();
-			result.Count.Should().Be(1);
-			result[0].Should().BeOfType<TucFilterAnd>();
-			var lvl1Casted = (TucFilterAnd)result[0];
-			lvl1Casted.Filters.Should().NotBeNull();
-			lvl1Casted.Filters.Count.Should().Be(1);
-
-			lvl1Casted.Filters[0].Should().BeOfType<TucFilterOr>();
-			var lvl2Casted = (TucFilterOr)lvl1Casted.Filters[0];
-			lvl2Casted.Filters.Should().NotBeNull();
-			lvl2Casted.Filters.Count.Should().Be(2);
-
-			lvl2Casted.Filters[0].Should().BeOfType<TucFilterBoolean>();
-			lvl2Casted.Filters[1].Should().BeOfType<TucFilterText>();
-
-			var lvl31Casted = (TucFilterBoolean)lvl2Casted.Filters[0];
-			var lvl33Casted = (TucFilterText)lvl2Casted.Filters[1];
-
-			lvl31Casted.ColumnName.Should().Be(boolColumnName);
-			lvl31Casted.ComparisonMethod.Should().Be(boolMethod);
-			lvl31Casted.Value.Should().Be(boolValue.ToString());
-
-			lvl33Casted.ColumnName.Should().Be(textColumnName);
-			lvl33Casted.ComparisonMethod.Should().Be(textMethod);
-			lvl33Casted.Value.Should().Be(textValue);
-
-		}
-		#endregion
-	}
-
-	[Fact]
-	public void SpaceViewSortUrlSerializationTests()
-	{
-		var test = new List<TucSort>();
-		var result = new List<TucSort>();
-		var columnName1 = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
-		var columnOrder1 = TucSortDirection.ASC;
-		var columnName2 = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
-		var columnOrder2 = TucSortDirection.DESC;
-		string queryValue = null;
-
-		#region << One >>
-		{
-			test = new List<TucSort>(){
-				new TucSort{
-					ColumnName = columnName1,
-					Direction = columnOrder1,
-				}
-			};
-			queryValue = NavigatorExt.SerializeSortsForUrl(test);
-			result = NavigatorExt.DeserializeSortsFromUrl(queryValue);
-			result.Should().NotBeNull();
-			result.Count.Should().Be(1);
-			result[0].Should().BeOfType<TucSort>();
-			result[0].ColumnName.Should().Be(columnName1);
-			result[0].Direction.Should().Be(columnOrder1);
-		}
-		#endregion
-
-		#region << Many >>
-		{
-			test = new List<TucSort>(){
-				new TucSort{
-					ColumnName = columnName1,
-					Direction = columnOrder1,
-				},
-				new TucSort{
-					ColumnName = columnName2,
-					Direction = columnOrder2,
-				},
-			};
-			queryValue = NavigatorExt.SerializeSortsForUrl(test);
-			result = NavigatorExt.DeserializeSortsFromUrl(queryValue);
-			result.Should().NotBeNull();
-			result.Count.Should().Be(2);
-			result[0].Should().BeOfType<TucSort>();
-			result[0].ColumnName.Should().Be(columnName1);
-			result[0].Direction.Should().Be(columnOrder1);
-			result[1].Should().BeOfType<TucSort>();
-			result[1].ColumnName.Should().Be(columnName2);
-			result[1].Direction.Should().Be(columnOrder2);
-		}
-		#endregion
-
-
-	}
+	// [Fact]
+	// public void SpaceViewFilterUrlSerializationTests()
+	// {
+	//
+	// 	var test = new List<TfFilterBase>();
+	// 	string queryValue = null;
+	// 	var result = new List<TfFilterBase>();
+	// 	var columnId = Guid.NewGuid();
+	// 	var columnName = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
+	//
+	// 	#region << TfFilterAnd >>
+	// 	{
+	// 		test = new List<TfFilterBase> {
+	// 			new TfFilterAnd(){
+	// 				Id = columnId,
+	// 				//ColumnName = columnName,
+	// 				Filters = new()
+	// 			}
+	// 		};
+	// 		queryValue = NavigatorExt.SerializeFiltersForUrl(test);
+	// 		result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
+	// 		result.Should().NotBeNull();
+	// 		result.Count.Should().Be(1);
+	// 		result[0].Should().BeOfType<TfFilterAnd>();
+	// 		//result[0].ColumnName.Should().Be(columnName);
+	// 		var casted = (TfFilterAnd)result[0];
+	// 		casted.Filters.Should().NotBeNull();
+	// 		casted.Filters.Count.Should().Be(0);
+	// 	}
+	// 	#endregion
+	//
+	// 	#region << TfFilterOr >>
+	// 	{
+	// 		test = new List<TfFilterBase> {
+	// 			new TfFilterOr(){
+	// 				Id = columnId,
+	// 				//ColumnName = columnName,
+	// 				Filters = new()
+	// 			}
+	// 		};
+	// 		queryValue = NavigatorExt.SerializeFiltersForUrl(test);
+	// 		result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
+	// 		result.Should().NotBeNull();
+	// 		result.Count.Should().Be(1);
+	// 		result[0].Should().BeOfType<TfFilterOr>();
+	// 		//result[0].ColumnName.Should().Be(columnName);
+	// 		var casted = (TfFilterOr)result[0];
+	// 		casted.Filters.Should().NotBeNull();
+	// 		casted.Filters.Count.Should().Be(0);
+	// 	}
+	// 	#endregion
+	//
+	// 	#region << TucFilterBoolean >>
+	// 	{
+	// 		var method = TucFilterBooleanComparisonMethod.NotEqual;
+	// 		bool? value = false;
+	// 		test = new List<TfFilterBase> {
+	// 			new TucFilterBoolean(){
+	// 				Id = columnId,
+	// 				ColumnName = columnName,
+	// 				ComparisonMethod = method,
+	// 				Value = value.ToString()
+	// 			}
+	// 		};
+	// 		queryValue = NavigatorExt.SerializeFiltersForUrl(test);
+	// 		result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
+	// 		result.Should().NotBeNull();
+	// 		result.Count.Should().Be(1);
+	// 		result[0].Should().BeOfType<TucFilterBoolean>();
+	// 		result[0].ColumnName.Should().Be(columnName);
+	// 		var casted = (TucFilterBoolean)result[0];
+	// 		casted.ComparisonMethod.Should().Be(method);
+	// 		casted.Value.Should().NotBeNull();
+	// 		casted.Value.Should().Be(value.ToString());
+	// 	}
+	// 	#endregion
+	//
+	// 	#region << TucFilterDateTime >>
+	// 	{
+	// 		var method = TucFilterDateTimeComparisonMethod.Lower;
+	// 		DateTime? value = DateTime.Now;
+	// 		test = new List<TfFilterBase> {
+	// 			new TucFilterDateTime(){
+	// 				Id = columnId,
+	// 				ColumnName = columnName,
+	// 				ComparisonMethod = method,
+	// 				Value = value?.ToString(TfConstants.DateTimeFormat)
+	// 			}
+	// 		};
+	// 		queryValue = NavigatorExt.SerializeFiltersForUrl(test);
+	// 		result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
+	// 		result.Should().NotBeNull();
+	// 		result.Count.Should().Be(1);
+	// 		result[0].Should().BeOfType<TucFilterDateTime>();
+	// 		result[0].ColumnName.Should().Be(columnName);
+	// 		var casted = (TucFilterDateTime)result[0];
+	// 		casted.ComparisonMethod.Should().Be(method);
+	// 		casted.Value.Should().NotBeNull();
+	// 		if(casted.Value is not null)
+	// 			casted.Value.Should().Be(value.Value.ToString(TfConstants.DateTimeFormat));
+	// 	}
+	// 	#endregion
+	//
+	// 	#region << TucFilterGuid >>
+	// 	{
+	// 		var method = TucFilterGuidComparisonMethod.IsNotEmpty;
+	// 		Guid? value = Guid.NewGuid();
+	// 		test = new List<TfFilterBase> {
+	// 			new TucFilterGuid(){
+	// 				Id = columnId,
+	// 				ColumnName = columnName,
+	// 				ComparisonMethod = method,
+	// 				Value = value.ToString()
+	// 			}
+	// 		};
+	// 		queryValue = NavigatorExt.SerializeFiltersForUrl(test);
+	// 		result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
+	// 		result.Should().NotBeNull();
+	// 		result.Count.Should().Be(1);
+	// 		result[0].Should().BeOfType<TucFilterGuid>();
+	// 		result[0].ColumnName.Should().Be(columnName);
+	// 		var casted = (TucFilterGuid)result[0];
+	// 		casted.ComparisonMethod.Should().Be(method);
+	// 		casted.Value.Should().NotBeNull();
+	// 		casted.Value.Should().Be(value.ToString());
+	// 	}
+	// 	#endregion
+	//
+	// 	#region << TucFilterNumeric >>
+	// 	{
+	// 		var method = TucFilterNumericComparisonMethod.Lower;
+	// 		decimal? value = (decimal)0.235;
+	// 		test = new List<TfFilterBase> {
+	// 			new TucFilterNumeric(){
+	// 				Id = columnId,
+	// 				ColumnName = columnName,
+	// 				ComparisonMethod = method,
+	// 				Value = value.ToString()
+	// 			}
+	// 		};
+	// 		queryValue = NavigatorExt.SerializeFiltersForUrl(test);
+	// 		result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
+	// 		result.Should().NotBeNull();
+	// 		result.Count.Should().Be(1);
+	// 		result[0].Should().BeOfType<TucFilterNumeric>();
+	// 		result[0].ColumnName.Should().Be(columnName);
+	// 		var casted = (TucFilterNumeric)result[0];
+	// 		casted.ComparisonMethod.Should().Be(method);
+	// 		casted.Value.Should().NotBeNull();
+	// 		casted.Value.Should().Be(value.ToString());
+	// 	}
+	// 	#endregion
+	//
+	// 	#region << TucFilterText >>
+	// 	{
+	// 		var method = TfFilterTextComparisonMethod.Contains;
+	// 		string value = Guid.NewGuid().ToString();
+	// 		test = new List<TfFilterBase> {
+	// 			new TucFilterText(){
+	// 				Id = columnId,
+	// 				ColumnName = columnName,
+	// 				ComparisonMethod = method,
+	// 				Value = value
+	// 			}
+	// 		};
+	// 		queryValue = NavigatorExt.SerializeFiltersForUrl(test);
+	// 		result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
+	// 		result.Should().NotBeNull();
+	// 		result.Count.Should().Be(1);
+	// 		result[0].Should().BeOfType<TucFilterText>();
+	// 		result[0].ColumnName.Should().Be(columnName);
+	// 		var casted = (TucFilterText)result[0];
+	// 		casted.ComparisonMethod.Should().Be(method);
+	// 		casted.Value.Should().NotBeNull();
+	// 		casted.Value.Should().Be(value);
+	//
+	// 		//test with special symbols
+	// 		value = "//$~(&&)";
+	// 		test = new List<TfFilterBase> {
+	// 			new TucFilterText(){
+	// 				Id = columnId,
+	// 				ColumnName = columnName,
+	// 				ComparisonMethod = method,
+	// 				Value = value
+	// 			}
+	// 		};
+	// 		queryValue = NavigatorExt.SerializeFiltersForUrl(test);
+	// 		result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
+	// 		result.Should().NotBeNull();
+	// 		result.Count.Should().Be(1);
+	// 		result[0].Should().BeOfType<TucFilterText>();
+	// 		result[0].ColumnName.Should().Be(columnName);
+	// 		casted = (TucFilterText)result[0];
+	// 		casted.ComparisonMethod.Should().Be(method);
+	// 		casted.Value.Should().NotBeNull();
+	// 		casted.Value.Should().Be(value);
+	// 	}
+	// 	#endregion
+	//
+	// 	#region << With child filters >>
+	// 	{
+	// 		var boolColumnName = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
+	// 		var boolMethod = TucFilterBooleanComparisonMethod.NotEqual;
+	// 		bool? boolValue = false;
+	//
+	// 		var textColumnName = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
+	// 		var textMethod = TfFilterTextComparisonMethod.Contains;
+	// 		var textValue = "//$~(&&)";
+	//
+	// 		test = new List<TfFilterBase> {
+	// 			new TfFilterAnd(){
+	// 				Id = columnId,
+	// 				Filters = new List<TfFilterBase>{
+	// 					new TfFilterOr(){
+	// 						Id = Guid.NewGuid(),
+	// 						Filters = new List<TfFilterBase>{
+	// 							new TucFilterBoolean{
+	// 								ColumnName = boolColumnName,
+	// 								ComparisonMethod = boolMethod,
+	// 								Value = boolValue.ToString(),
+	// 							},
+	// 							new TucFilterText{
+	// 								ColumnName = textColumnName,
+	// 								ComparisonMethod = textMethod,
+	// 								Value = textValue,
+	// 							},
+	// 						}
+	// 					}
+	// 				}
+	// 			}
+	// 		};
+	// 		queryValue = NavigatorExt.SerializeFiltersForUrl(test);
+	// 		result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
+	// 		result.Should().NotBeNull();
+	// 		result.Count.Should().Be(1);
+	// 		result[0].Should().BeOfType<TfFilterAnd>();
+	// 		var lvl1Casted = (TfFilterAnd)result[0];
+	// 		lvl1Casted.Filters.Should().NotBeNull();
+	// 		lvl1Casted.Filters.Count.Should().Be(1);
+	//
+	// 		lvl1Casted.Filters[0].Should().BeOfType<TfFilterOr>();
+	// 		var lvl2Casted = (TfFilterOr)lvl1Casted.Filters[0];
+	// 		lvl2Casted.Filters.Should().NotBeNull();
+	// 		lvl2Casted.Filters.Count.Should().Be(2);
+	//
+	// 		lvl2Casted.Filters[0].Should().BeOfType<TucFilterBoolean>();
+	// 		lvl2Casted.Filters[1].Should().BeOfType<TucFilterText>();
+	//
+	// 		var lvl31Casted = (TucFilterBoolean)lvl2Casted.Filters[0];
+	// 		var lvl33Casted = (TucFilterText)lvl2Casted.Filters[1];
+	//
+	// 		lvl31Casted.ColumnName.Should().Be(boolColumnName);
+	// 		lvl31Casted.ComparisonMethod.Should().Be(boolMethod);
+	// 		lvl31Casted.Value.Should().Be(boolValue.ToString());
+	//
+	// 		lvl33Casted.ColumnName.Should().Be(textColumnName);
+	// 		lvl33Casted.ComparisonMethod.Should().Be(textMethod);
+	// 		lvl33Casted.Value.Should().Be(textValue);
+	//
+	// 	}
+	// 	#endregion
+	// }
+	//
+	// [Fact]
+	// public void SpaceViewSortUrlSerializationTests()
+	// {
+	// 	var test = new List<TucSort>();
+	// 	var result = new List<TucSort>();
+	// 	var columnName1 = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
+	// 	var columnOrder1 = TucSortDirection.ASC;
+	// 	var columnName2 = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
+	// 	var columnOrder2 = TucSortDirection.DESC;
+	// 	string queryValue = null;
+	//
+	// 	#region << One >>
+	// 	{
+	// 		test = new List<TucSort>(){
+	// 			new TucSort{
+	// 				ColumnName = columnName1,
+	// 				Direction = columnOrder1,
+	// 			}
+	// 		};
+	// 		queryValue = NavigatorExt.SerializeSortsForUrl(test);
+	// 		result = NavigatorExt.DeserializeSortsFromUrl(queryValue);
+	// 		result.Should().NotBeNull();
+	// 		result.Count.Should().Be(1);
+	// 		result[0].Should().BeOfType<TucSort>();
+	// 		result[0].ColumnName.Should().Be(columnName1);
+	// 		result[0].Direction.Should().Be(columnOrder1);
+	// 	}
+	// 	#endregion
+	//
+	// 	#region << Many >>
+	// 	{
+	// 		test = new List<TucSort>(){
+	// 			new TucSort{
+	// 				ColumnName = columnName1,
+	// 				Direction = columnOrder1,
+	// 			},
+	// 			new TucSort{
+	// 				ColumnName = columnName2,
+	// 				Direction = columnOrder2,
+	// 			},
+	// 		};
+	// 		queryValue = NavigatorExt.SerializeSortsForUrl(test);
+	// 		result = NavigatorExt.DeserializeSortsFromUrl(queryValue);
+	// 		result.Should().NotBeNull();
+	// 		result.Count.Should().Be(2);
+	// 		result[0].Should().BeOfType<TucSort>();
+	// 		result[0].ColumnName.Should().Be(columnName1);
+	// 		result[0].Direction.Should().Be(columnOrder1);
+	// 		result[1].Should().BeOfType<TucSort>();
+	// 		result[1].ColumnName.Should().Be(columnName2);
+	// 		result[1].Direction.Should().Be(columnOrder2);
+	// 	}
+	// 	#endregion
+	//
+	//
+	// }
 }

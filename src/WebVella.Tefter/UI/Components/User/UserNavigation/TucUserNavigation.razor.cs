@@ -46,10 +46,10 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 	private async Task initAdmin(TfNavigationState? navState = null)
 	{
 		if(navState is null)
-			navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			navState = TfAuthLayout.NavigationState;
 
 		_adminMenu = new();
-		if (CurrentUser!.IsAdmin)
+		if (TfAuthLayout.CurrentUser!.IsAdmin)
 		{
 			_adminMenu.Add(new TfMenuItem
 			{
@@ -90,7 +90,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		try
 		{
 			var user = await TfUIService.SetStartUpUrl(
-						userId: CurrentUser.Id,
+						userId: TfAuthLayout.CurrentUser.Id,
 						url: uri.PathAndQuery
 					);
 			ToastService.ShowSuccess(LOC("Startup URL was successfully changed!"));

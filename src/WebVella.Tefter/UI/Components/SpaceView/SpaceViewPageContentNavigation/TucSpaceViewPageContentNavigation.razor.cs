@@ -25,7 +25,7 @@ public partial class TucSpaceViewPageContentNavigation : TfBaseComponent
 
 	private async Task _init()
 	{
-		_navState = await TfUIService.GetNavigationStateAsync(Navigator);
+		_navState = TfAuthLayout.NavigationState;
 
 		try
 		{

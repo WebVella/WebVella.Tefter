@@ -2,9 +2,6 @@
 
 public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposable
 {
-	[CascadingParameter(Name = "CurrentUser")]
-	public TfUser CurrentUser { get; set; } = default!;
-
 	private TfDataProvider? _provider = null;
 	private TfNavigationState _navState = default!;
 	private bool _isDataLoading = false;
@@ -39,7 +36,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			navState = TfAuthLayout.NavigationState;
 
 		try
 		{
@@ -197,7 +194,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		try
 		{
 			var user = await TfUIService.SetPageSize(
-						userId: CurrentUser.Id,
+						userId: TfAuthLayout.CurrentUser.Id,
 						pageSize: pageSize == TfConstants.PageSize ? null : pageSize
 					);
 		}

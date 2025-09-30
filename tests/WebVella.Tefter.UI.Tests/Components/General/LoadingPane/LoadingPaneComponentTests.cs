@@ -8,7 +8,7 @@ public class LoadingPaneComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TfLoadingPane>();
+		var cut = Context.RenderComponent<TucLoadingPane>();
 
 		// Assert
 		cut.WaitForElements(".loading", 1, TimeSpan.FromSeconds(2));

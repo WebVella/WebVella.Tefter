@@ -70,7 +70,7 @@ public partial interface ITfService
 		Guid id);
 
 	/// <summary>
-	/// Gets the total number of rows in the data provider table for the specified data provider ID.
+	/// Gets the total number of rows in the data provider table for the specified data provider Id.
 	/// </summary>
 	/// <param name="dataProviderId">The unique identifier of the data provider.</param>
 	/// <returns>The total number of rows in the data provider table.</returns>

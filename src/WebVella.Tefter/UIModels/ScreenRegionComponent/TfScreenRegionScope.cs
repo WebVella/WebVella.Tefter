@@ -8,7 +8,7 @@ public record TfScreenRegionScope
 	public Type? ItemType { get;  private set; } = null;
 
 	/// <summary>
-	/// matched towards the ID of the region component. Null - for no restriction
+	/// matched towards the Id of the region component. Null - for no restriction
 	/// </summary>
 	public Guid? ComponentId { get; private set; } = null;
 

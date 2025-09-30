@@ -32,7 +32,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			_navState = TfAuthLayout.NavigationState;
 		else
 			_navState = navState;
 		try
@@ -64,7 +64,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 				Mode = TfComponentMode.Read,
 				SpacePage = _spacePage,
 				Space = _space,
-				CurrentUser = CurrentUser,
+				CurrentUser = TfAuthLayout.CurrentUser,
 				EditNode = EventCallback.Factory.Create(this, _onEdit),
 				DeleteNode = EventCallback.Factory.Create(this, _onRemove)
 			};

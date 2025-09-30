@@ -6,7 +6,6 @@ public partial interface IAssetsService
 {
     List<TfDataIdentity> GetAllDataIdentities();
     List<TfSharedColumn> GetAllSharedColumns();
-    Task<TfUser?> GetCurrentUser(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider);
     TfDataProvider GetDataProvider(Guid providerId);
     List<TfDataProviderIdentity> GetDataProviderIdentities(Guid providerId);
 }
@@ -27,10 +26,6 @@ internal partial class AssetsService : IAssetsService
     public List<TfDataIdentity> GetAllDataIdentities() => _tfService.GetDataIdentities();
 
     public List<TfSharedColumn> GetAllSharedColumns() => _tfService.GetSharedColumns();
-
-    public async Task<TfUser?> GetCurrentUser(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider)
-        => await _tfService.GetUserFromCookieAsync(jsRuntime, authStateProvider);
-
 	public TfDataProvider GetDataProvider(Guid providerId)
 		=> _tfService.GetDataProvider(providerId);
 	public List<TfDataProviderIdentity> GetDataProviderIdentities(Guid providerId)

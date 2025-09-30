@@ -32,7 +32,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 	private async Task _init(TfNavigationState? navState = null, TfDataIdentity? identity = null)
 	{
 		if (navState is null)
-			navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			if (identity is not null && identity.DataIdentity == _identity?.DataIdentity)

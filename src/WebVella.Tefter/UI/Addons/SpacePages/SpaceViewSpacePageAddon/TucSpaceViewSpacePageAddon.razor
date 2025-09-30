@@ -33,7 +33,7 @@ else if (Context.Mode == TfComponentMode.Update)
 }
 else
 {
-
+	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Error">@LOC("Mode: {0} not supported",Context.Mode.ToString())</FluentMessageBar>
 }
 
 

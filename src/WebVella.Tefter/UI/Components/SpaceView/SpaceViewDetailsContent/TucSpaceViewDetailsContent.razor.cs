@@ -35,7 +35,7 @@ public partial class TucSpaceViewDetailsContent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null, TfSpaceView? spaceView = null)
 	{
 		if (navState == null)
-			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			_navState = TfAuthLayout.NavigationState;
 		else
 			_navState = navState;
 		try

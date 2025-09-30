@@ -11,22 +11,27 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		await base.OnInitializedAsync();
-		await _init();
+		_init(TfAuthLayout.NavigationState);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
-			await _init(args);
+		{
+			await InvokeAsync(() =>
+			{
+				_init(args);
+				StateHasChanged();
+			});
+		}
 	}
-	private async Task _init(TfNavigationState? navState = null)
+	private void _init(TfNavigationState navState)
 	{
 		if (navState is null)
-			navState = await TfUIService.GetNavigationStateAsync(Navigator);
-		var navMenu = await TfUIService.GetNavigationMenu(Navigator, CurrentUser);
+			navState = TfAuthLayout.NavigationState;
+		var navMenu = TfAuthLayout.NavigationMenu;
 		try
 		{
 			_menu = new();
@@ -97,7 +102,6 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 		finally
 		{
 			_isLoading = false;
-			await InvokeAsync(StateHasChanged);
 		}
 	}
 }

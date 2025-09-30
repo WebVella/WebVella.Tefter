@@ -55,7 +55,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 			if (navState is not null)
 				_navState = navState;
 			else
-				_navState = await TfUIService.GetNavigationStateAsync(Navigator);
+				_navState = TfAuthLayout.NavigationState;
 
 			_items = TfUIService.GetRepositoryFiles(search: _search);
 		}
@@ -79,7 +79,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 				var result = TfUIService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
-					CreatedBy = CurrentUser?.Id,
+					CreatedBy = TfAuthLayout.CurrentUser?.Id,
 					LocalFilePath = file.LocalFile.ToString(),
 					Filename = file.Name,
 				});

@@ -1,7 +1,7 @@
 using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.UI.Components;
-public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
+public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 {
 	private List<TfMenuItem> _menu = new();
 	private bool _isLoading = true;
@@ -38,11 +38,11 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			navState = TfAuthLayout.NavigationState;
 
 		try
 		{
-			_menu = (await TfUIService.GetNavigationMenu(Navigator, CurrentUser)).Menu;
+			_menu = TfAuthLayout.NavigationMenu.Menu;
 		}
 		finally
 		{

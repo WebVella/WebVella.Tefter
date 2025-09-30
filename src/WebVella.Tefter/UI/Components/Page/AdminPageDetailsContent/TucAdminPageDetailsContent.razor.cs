@@ -22,7 +22,7 @@ public partial class TucAdminPageDetailsContent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_item = null;

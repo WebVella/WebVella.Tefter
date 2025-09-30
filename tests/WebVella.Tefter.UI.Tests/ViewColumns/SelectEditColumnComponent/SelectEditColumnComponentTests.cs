@@ -13,8 +13,8 @@ public class SelectEditColumnComponentTests : BaseTest
 		var Context = GetTestContext();
 		Context.RenderComponent<FluentMenuProvider>();
 		// Act
-		var cut = Context.RenderComponent<TfSelectEditColumnComponent>(args => args
-		.Add(x => x.RegionContext, new TfSpaceViewColumnScreenRegionContext()
+		var cut = Context.RenderComponent<TucSelectEditColumnComponent>(args => args
+		.Add(x => x.RegionContext, new TfSpaceViewColumnScreenRegionContext(ViewData)
 		{
 			DataTable = dt,
 			DataMapping = new Dictionary<string, string>{ {"Value",columnName} }

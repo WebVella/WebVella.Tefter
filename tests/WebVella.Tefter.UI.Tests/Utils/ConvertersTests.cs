@@ -1,7 +1,5 @@
 ﻿using FluentAssertions;
 using System;
-using WebVella.Tefter.Web.Store;
-using WebVella.Tefter.Web.Utils;
 
 namespace WebVella.Tefter.UI.Tests.Utils;
 public class ConvertersTests

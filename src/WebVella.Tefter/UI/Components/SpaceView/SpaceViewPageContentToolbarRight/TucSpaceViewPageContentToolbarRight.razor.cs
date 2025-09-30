@@ -51,7 +51,7 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 	}
 	private async Task _init()
 	{
-		var navState = await TfUIService.GetNavigationStateAsync(Navigator);
+		var navState = TfAuthLayout.NavigationState;
 		if (navState is null) return;
 		_navState = navState;
 		try

@@ -17,7 +17,7 @@ public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogCon
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_navState = await TfUIService.GetNavigationStateAsync(Navigator);
+		_navState = TfAuthLayout.NavigationState;
 		if(_navState is null || Content == Guid.Empty)
 			throw new Exception("SpaceViewId not found");
 		_spaceview = TfUIService.GetSpaceView(Content);

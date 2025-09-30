@@ -74,7 +74,7 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 
 	protected override async Task OnInitializedAsync()
 	{
-		_currentUser = await TalkService.GetCurrentUser(JSRuntime, AuthenticationStateProvider);
+		_currentUser = TfAuthLayout.CurrentUser;
 		await _init();
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 		_isLoaded = true;
@@ -104,7 +104,7 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_options = null;
@@ -147,7 +147,7 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	private async Task<string> _getDataIdentityValue()
 	{
 		if (_options is null) return Guid.NewGuid().ToSha1();
-		var navState = await TfUIService.GetNavigationStateAsync(Navigator);
+		var navState = TfAuthLayout.NavigationState;
 		switch (_options.DataIdentityValueType)
 		{
 			case TalkChannelDataIdentityValueType.SpacePageId:

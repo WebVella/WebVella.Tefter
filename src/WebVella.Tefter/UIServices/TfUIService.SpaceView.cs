@@ -127,7 +127,7 @@ public partial class TfUIService : ITfUIService
 		Guid columnId)
 	{
 		if (columnId == Guid.Empty)
-			throw new TfException("Column ID is not specified");
+			throw new TfException("Column Id is not specified");
 
 		var column = GetViewColumn(columnId);
 
@@ -145,7 +145,7 @@ public partial class TfUIService : ITfUIService
 		bool isUp)
 	{
 		if (columnId == Guid.Empty)
-			throw new TfException("Column ID is not specified");
+			throw new TfException("Column Id is not specified");
 		;
 		if (isUp)
 			_tfService.MoveSpaceViewColumnUp(columnId);

@@ -2,11 +2,11 @@
 using WebVella.Tefter.Models;
 public static partial class NavigatorExt
 {
-	internal static TfNavigationState GetNodeData(this Uri uri, string navUri)
+	internal static TfNavigationState GetNodeData(this Uri uri)
 	{
 		TfNavigationState result = new TfNavigationState()
 		{
-			Uri = navUri
+			Uri = uri.AbsoluteUri
 		};
 		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 		var dictIndex = 0;
@@ -213,10 +213,10 @@ public static partial class NavigatorExt
 		    )
 			return result;
 
-		if (result.NodesDict.Count < 3)
+		if (result.NodesDict.Count < 5)
 			return result;
 
-		if (result.NodesDict[5] == TfConstants.RouteNameManage)
+		if (result.NodesDict[4] == TfConstants.RouteNameManage)
 		{
 			result = result.AddRouteNodes(RouteDataNode.Manage);
 		}

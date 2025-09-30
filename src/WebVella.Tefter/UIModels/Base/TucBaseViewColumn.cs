@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
+using WebVella.Tefter.UI.Layout;
 
 namespace WebVella.Tefter.Models;
 
@@ -10,7 +11,8 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	[Inject] protected IToastService ToastService { get; set; } = default!;
 	[Inject] protected IDialogService DialogService { get; set; } = default!;
 	[Inject] protected IMessageService MessageService { get; set; } = default!;
-	[Inject] public ITfUIService TfUIService { get; set; } = default!;
+	[Inject] protected ITfUIService TfUIService { get; set; } = default!;
+	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = default!;
 
 	#endregion
 

@@ -13,9 +13,12 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		return ValueTask.CompletedTask;
 	}
 
+	public TfUser CurrentUser = default!;
+	public TfNavigationState NavigationState = default!;
+	public TfNavigationMenu NavigationMenu = default!;
+
 	private bool _isLoaded = false;
-	private TfUser _currentUser = default!;
-	private TfNavigationState? _navState = null;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -27,29 +30,30 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 			return;
 		}
-		_currentUser = user;
+		CurrentUser = user;
 		var uri = new Uri(Navigator.Uri);
 		var queryDictionary = System.Web.HttpUtility.ParseQueryString(uri.Query);
 		Uri? startupUri = null;
-		if (!String.IsNullOrWhiteSpace(_currentUser.Settings.StartUpUrl))
+		if (!String.IsNullOrWhiteSpace(CurrentUser.Settings.StartUpUrl))
 		{
-			if (_currentUser.Settings.StartUpUrl.StartsWith("http:"))
-				startupUri = new Uri(_currentUser.Settings.StartUpUrl);
+			if (CurrentUser.Settings.StartUpUrl.StartsWith("http:"))
+				startupUri = new Uri(CurrentUser.Settings.StartUpUrl);
 			else
-				startupUri = new Uri(TfConfigurationService.BaseUrl + _currentUser.Settings.StartUpUrl);
+				startupUri = new Uri(TfConfigurationService.BaseUrl + CurrentUser.Settings.StartUpUrl);
 		}
 
 
 		if (uri.LocalPath == "/" && startupUri is not null && uri.LocalPath != startupUri.LocalPath
 			&& queryDictionary[TfConstants.NoDefaultRedirectQueryName] is null)
 		{
-			Navigator.NavigateTo(_currentUser.Settings.StartUpUrl ?? "/", true);
+			Navigator.NavigateTo(CurrentUser.Settings.StartUpUrl ?? "/", true);
 		}
 		else
 		{
 			_checkAccess();
 			_isLoaded = true;
-			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			NavigationState = await TfUIService.GetNavigationStateAsync(Navigator);
+			NavigationMenu = await TfUIService.GetNavigationMenu(Navigator, CurrentUser);
 		}
 
 	}
@@ -71,7 +75,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 			return;
 		}
-		_currentUser = user;
+		CurrentUser = user;
 		await InvokeAsync(() => _checkAccess());
 	}
 
@@ -81,11 +85,11 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		{
 			_checkAccess();
 			var navState = await TfUIService.GetNavigationStateAsync(Navigator);
-			if (_navState?.Uri != navState.Uri)
+			if (NavigationState?.Uri != navState.Uri)
 			{
-				_navState = navState;
-				TfUIService.InvokeNavigationStateChanged(_navState);
-
+				NavigationState = navState;
+				NavigationMenu = await TfUIService.GetNavigationMenu(Navigator, CurrentUser);
+				TfUIService.InvokeNavigationStateChanged(NavigationState);
 			}
 		});
 
@@ -93,7 +97,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	private void _checkAccess()
 	{
-		if (_currentUser is not null && TfUIService.UserHasAccess(_currentUser, Navigator))
+		if (CurrentUser is not null && TfUIService.UserHasAccess(CurrentUser, Navigator))
 			return;
 
 		Navigator.NavigateTo(string.Format(TfConstants.NoAccessPage));

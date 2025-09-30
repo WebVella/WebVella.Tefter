@@ -7,8 +7,10 @@ public class FilterCardComponentTests : BaseTest
 	{
 		//Given
 		var Context = GetTestContext();
+		TfUIServiceMock.Setup(s => s.GetDatasetColumnOptions(It.IsAny<Guid>())).Returns(new List<TfDatasetColumn>());
 		// Act
-		var cut = Context.RenderComponent<TfFilterCard>();
+		var cut = Context.RenderComponent<TucFilterCard>(parameters => parameters
+			.Add(p => p.Dataset, new TfDataset()));
 
 		// Assert
 		cut.Find(".tf-card");
