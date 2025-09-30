@@ -126,7 +126,6 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		{
 			case TfDatabaseColumnType.ShortInteger:
 				return GetDataStructByAlias<short>(column);
-			case TfDatabaseColumnType.AutoIncrement:
 			case TfDatabaseColumnType.Integer:
 				return GetDataStructByAlias<int>(column);
 			case TfDatabaseColumnType.LongInteger:
@@ -156,7 +155,6 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		{
 			case TfDatabaseColumnType.ShortInteger:
 				return typeof(short);
-			case TfDatabaseColumnType.AutoIncrement:
 			case TfDatabaseColumnType.Integer:
 				return typeof(int);
 			case TfDatabaseColumnType.LongInteger:
@@ -187,7 +185,6 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		{
 			case TfDatabaseColumnType.ShortInteger:
 				return TfConverters.Convert<short>(stringValue);
-			case TfDatabaseColumnType.AutoIncrement:
 			case TfDatabaseColumnType.Integer:
 				return TfConverters.Convert<int>(stringValue);
 			case TfDatabaseColumnType.LongInteger:

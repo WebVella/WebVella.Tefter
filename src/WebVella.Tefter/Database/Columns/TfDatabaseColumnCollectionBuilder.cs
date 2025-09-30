@@ -15,45 +15,6 @@ public class TfDatabaseColumnCollectionBuilder
 		_databaseBuilder = databaseBuilder;
 	}
 
-	#region <--- auto increment --->
-
-	public TfDatabaseColumnCollectionBuilder AddAutoIncrementColumn(string name)
-	{
-		return AddAutoIncrementColumn(Guid.NewGuid(), name);
-	}
-
-	internal TfAutoIncrementDatabaseColumnBuilder AddAutoIncrementColumnBuilder(string name)
-	{
-		return AddAutoIncrementColumnBuilder(Guid.NewGuid(), name);
-	}
-
-	public TfDatabaseColumnCollectionBuilder AddAutoIncrementColumn(Guid id, string name)
-	{
-		_databaseBuilder.RegisterId(id);
-		_databaseBuilder.RegisterColumnName(_tableName, name);
-
-		TfAutoIncrementDatabaseColumnBuilder builder = new TfAutoIncrementDatabaseColumnBuilder(id, name, _databaseBuilder);
-
-		_builders.Add(builder);
-
-		return this;
-	}
-
-	internal TfAutoIncrementDatabaseColumnBuilder AddAutoIncrementColumnBuilder(Guid id, string name)
-	{
-		_databaseBuilder.RegisterId(id);
-
-		_databaseBuilder.RegisterColumnName(_tableName, name);
-
-		TfAutoIncrementDatabaseColumnBuilder builder = new TfAutoIncrementDatabaseColumnBuilder(id, name, _databaseBuilder);
-
-		_builders.Add(builder);
-
-		return builder;
-	}
-
-	#endregion
-
 	#region <--- guid --->
 
 	public TfDatabaseColumnCollectionBuilder AddGuidColumn(string name, Action<TfGuidDatabaseColumnBuilder> action)

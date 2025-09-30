@@ -524,16 +524,6 @@ public partial class TfService : ITfService
 					}
 					return result;
 				}
-			case TfDatabaseColumnType.AutoIncrement:
-				{
-					List<int?> result = new List<int?>();
-					foreach (var jObj in jArr)
-					{
-						var value = ((JToken)jObj[providerColumn.DbName]).Value<int?>();
-						result.Add(value);
-					}
-					return result;
-				}
 			case TfDatabaseColumnType.Guid:
 				{
 					List<Guid?> result = new List<Guid?>();
@@ -874,7 +864,7 @@ public partial class TfService : ITfService
 
 			object defaultColumnValue = null;
 			var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == tableColumn.Name);
-			if (providerColumn is not null && providerColumn.DbType != TfDatabaseColumnType.AutoIncrement)
+			if (providerColumn is not null)
 				defaultColumnValue = GetProviderColumnDefaultValue(providerColumn);
 
 			var parameterType = GetDbTypeForDatabaseColumnType(tableColumn.DbType);
@@ -1233,7 +1223,6 @@ public partial class TfService : ITfService
 				resultType = DbType.Int64; break;
 			case TfDatabaseColumnType.Number:
 				resultType = DbType.Decimal; break;
-			case TfDatabaseColumnType.AutoIncrement:
 			default:
 				throw new Exception("Not supported for conversion database column type.");
 		}

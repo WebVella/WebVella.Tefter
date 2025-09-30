@@ -21,7 +21,5 @@ public enum TfDatabaseColumnType
 	[Description("text")]
 	Text = 8,
 	[Description("GUID")]
-	Guid = 9,
-	[Description("AutoIncrement")]
-	AutoIncrement = 10
+	Guid = 9
 }

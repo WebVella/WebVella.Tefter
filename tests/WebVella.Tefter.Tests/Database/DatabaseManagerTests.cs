@@ -71,11 +71,6 @@ public partial class DatabaseManagerTests : BaseTest
 							   .AddGuidColumn("id", x => x.NotNullable().WithAutoDefaultValue())
 						   #endregion
 
-						   #region <--- AutoInc --->
-							   .AddAutoIncrementColumn("auto_inc1")
-							   .AddAutoIncrementColumn("auto_inc2")
-						   #endregion
-
 						   #region <--- Guid --->
 							   .AddGuidColumn("guid_nullable_with_auto_default", c =>
 							   {

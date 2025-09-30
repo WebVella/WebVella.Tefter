@@ -9,7 +9,6 @@ public static class ModelHelpers
 			case TfDatabaseColumnType.ShortInteger:
 				selectedType = availableTypes.FirstOrDefault(x => x.AddonId == new Guid(TfShortIntegerViewColumnType.ID));
 				break;
-			case TfDatabaseColumnType.AutoIncrement:
 			case TfDatabaseColumnType.Integer:
 				selectedType = availableTypes.FirstOrDefault(x => x.AddonId == new Guid(TfIntegerViewColumnType.ID));
 				break;

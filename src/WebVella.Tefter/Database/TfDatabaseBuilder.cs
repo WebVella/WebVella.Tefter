@@ -32,13 +32,6 @@ public class TfDatabaseBuilder
 					var columnCollectionBuilder = tableBuilder.WithColumnsBuilder();
 					switch (column)
 					{
-						case TfAutoIncrementDatabaseColumn c:
-							{
-								columnCollectionBuilder
-									.AddAutoIncrementColumnBuilder(c.Id, c.Name)
-									.WithLastCommited(c.LastCommited);
-							}
-							break;
 						case TfGuidDatabaseColumn c:
 							{
 								var cb = columnCollectionBuilder

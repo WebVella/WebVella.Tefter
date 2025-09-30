@@ -1001,15 +1001,6 @@ public partial class TfService : ITfService
 		databaseColumnTypeInfos.Add(
 			new DatabaseColumnTypeInfo
 			{
-				Name = "AUTO INCREMENT",
-				Type = TfDatabaseColumnType.AutoIncrement,
-				CanBeProviderDataType = false,
-				SupportAutoDefaultValue = false
-			});
-
-		databaseColumnTypeInfos.Add(
-			new DatabaseColumnTypeInfo
-			{
 				Name = "GUID",
 				Type = TfDatabaseColumnType.Guid,
 				CanBeProviderDataType = true,

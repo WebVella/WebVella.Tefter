@@ -287,14 +287,8 @@ $$ LANGUAGE plpgsql;
             return sb.ToString();
         };
 
-        Func<TfAutoIncrementDatabaseColumn, string> autoIncFunc = (column) =>
-        {
-            return $"ALTER TABLE \"{tableName}\" ADD COLUMN \"{column.Name}\" {column.DatabaseColumnType};";
-        };
-
         string createSql = dbColumn switch
         {
-            TfAutoIncrementDatabaseColumn c => autoIncFunc(c),
             TfNumberDatabaseColumn c => generalFunc(c),
             TfBooleanDatabaseColumn c => generalFunc(c),
             TfDateDatabaseColumn c => generalFunc(c),
@@ -349,16 +343,10 @@ $$ LANGUAGE plpgsql;
 			}
 
             return sb.ToString();
-        };
-
-        Func<TfAutoIncrementDatabaseColumn, string> autoIncFunc = (column) =>
-        {
-            throw new TfDatabaseSqlProviderException("Trying to generate update statement for auto increment column. It's not supported.");
-        };
+        };     
 
         string createSql = dbColumn switch
         {
-            TfAutoIncrementDatabaseColumn c => autoIncFunc(c),
             TfNumberDatabaseColumn c => generalFunc(c),
             TfBooleanDatabaseColumn c => generalFunc(c),
             TfDateDatabaseColumn c => generalFunc(c),

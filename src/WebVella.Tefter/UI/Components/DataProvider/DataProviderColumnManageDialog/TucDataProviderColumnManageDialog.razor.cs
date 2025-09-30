@@ -37,8 +37,7 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 			_isCreate = true;
 		}
 
-		_providerColumnTypeOptions = TfUIService.GetDatabaseColumnTypeInfosList()
-			.Where(x => x.Type != TfDatabaseColumnType.AutoIncrement).ToList();
+		_providerColumnTypeOptions = TfUIService.GetDatabaseColumnTypeInfosList().ToList();
 		_providerColumnTypeToSourceTypes = new();
 		foreach (var sourceType in _provider.ProviderType.GetSupportedSourceDataTypes())
 		{

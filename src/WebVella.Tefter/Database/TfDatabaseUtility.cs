@@ -124,7 +124,6 @@ internal class TfDatabaseUtility
 
 		return column switch
         {
-            TfAutoIncrementDatabaseColumn c => null,
             TfNumberDatabaseColumn c => numberDefaultValueFunc(c),
             TfBooleanDatabaseColumn c => booleanDefaultValueFunc(c),
             TfDateDatabaseColumn c => dateDefaultValueFunc(c),
@@ -141,11 +140,7 @@ internal class TfDatabaseUtility
 
     public static object ConvertDatabaseDefaultValueToDbColumnDefaultValue(string columnName, Type columnType, string defaultValue)
     {
-        if (columnType == typeof(TfAutoIncrementDatabaseColumn))
-        {
-            return null;
-        }
-        else if (columnType == typeof(TfNumberDatabaseColumn))
+        if (columnType == typeof(TfNumberDatabaseColumn))
         {
             if (string.IsNullOrWhiteSpace(defaultValue))
                 return null;

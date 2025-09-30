@@ -93,14 +93,6 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 								columnBuider.WithoutAutoDefaultValue();
 						}
 						break;
-					case TfDatabaseColumnType.AutoIncrement:
-						{
-							var columnBuider = columnCollectionBuilder
-								.AddAutoIncrementColumnBuilder(meta.Id, columnName)
-								.WithLastCommited(meta.LastCommited)
-								.WithLastCommited(meta.LastCommited);
-						}
-						break;
 					case TfDatabaseColumnType.Boolean:
 						{
 							bool? columnDefaultValue = (bool?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfBooleanDatabaseColumn), defaultValue);
@@ -514,14 +506,6 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 								columnBuider.WithAutoDefaultValue();
 							else
 								columnBuider.WithoutAutoDefaultValue();
-						}
-						break;
-					case TfDatabaseColumnType.AutoIncrement:
-						{
-							var columnBuider = columnCollectionBuilder
-								.AddAutoIncrementColumnBuilder(meta.Id, columnName)
-								.WithLastCommited(meta.LastCommited)
-								.WithLastCommited(meta.LastCommited);
 						}
 						break;
 					case TfDatabaseColumnType.Boolean:
