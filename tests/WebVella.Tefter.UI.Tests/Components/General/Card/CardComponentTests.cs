@@ -11,7 +11,7 @@ public class CardComponentTests : BaseTest
 			var Context = GetTestContext();
 			var cssClass = "test-avatar";
 			// Act
-			var cut = Context.RenderComponent<TfCard>(parameters => parameters
+			var cut = Context.RenderComponent<TucCard>(parameters => parameters
 			.Add(p => p.Class, cssClass)
 			);
 

@@ -8,8 +8,8 @@ public class FilterManageComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TfFilterManage>(parameters => parameters
-		.Add(p => p.Item, new TucFilterAnd { })
+		var cut = Context.RenderComponent<TucFilterManage>(parameters => parameters
+		.Add(p => p.Item, new TfFilterAnd { })
 		);
 
 		// Assert

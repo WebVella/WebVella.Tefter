@@ -1,5 +1,4 @@
-﻿using Fluxor;
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
@@ -16,15 +15,8 @@ using WebVella.Tefter.Database.Dbo;
 using WebVella.Tefter.Authentication;
 using WebVella.Tefter.Messaging;
 using WebVella.Tefter.Migrations;
-using WebVella.Tefter.UseCases.AppState;
-using WebVella.Tefter.UseCases.Export;
-using WebVella.Tefter.UseCases.Login;
-using WebVella.Tefter.UseCases.UserState;
 using WebVella.Tefter.Utility;
-using WebVella.Tefter.Web.Store;
-using WebVella.Tefter.Web.Utils;
 using WebVella.Tefter.Services;
-using WebVella.Tefter.UseCases.Recipe;
 using WebVella.BlazorTrace;
 using System.Threading;
 using WebVella.Tefter.UIServices;
@@ -56,22 +48,12 @@ public class BaseTest
 	public Mock<IWvBlazorTraceService> WvBlazorTraceServiceMock;
 	//localization
 	public Mock<IStringLocalizerFactory> StringLocalizerFactoryMock;
+	public Mock<ITfUIService> TfUIServiceMock;
 
 	//use cases
-	internal Mock<ITfNavigationUIService> TfNavigationUIService;
-	internal Mock<ITfMetaUIService> TfMetaUIService;
-	internal Mock<ITfRecipeUIService> TfRecipeUIService;
-	internal Mock<ITfRoleUIService> TfRoleUIService;
-	internal Mock<ITfUserUIService> TfUserUIService;
-	internal Mock<ITfDataProviderUIService> TfDataProviderUIService;
-	internal Mock<ITfDatasetUIService> TfDatasetUIService;
-	internal Mock<ITfDataIdentityUIService> TfDataIdentityUIService;
-	internal Mock<ITfSharedColumnUIService> TfSharedColumnUIService;
-	internal Mock<ITfTemplateUIService> TfTemplateUIService;
-	internal Mock<ITfFileRepositoryUIService> TfFileRepositoryUIService;
-	internal Mock<ITfSpaceUIService> TfSpaceUIService;
-	internal Mock<ITfSpaceViewUIService> TfSpaceViewUIService;
-	internal Mock<ITfDashboardUIService> TfDashboardUIService;
+	internal Mock<ITfUIService> TfUIService;
+	
+	public Dictionary<string, object> ViewData = new Dictionary<string, object>();
 	
 	public TestContext GetTestContext()
 	{
@@ -85,6 +67,7 @@ public class BaseTest
 		Context.Services.AddScoped<IToastService, ToastService>();
 		Context.Services.AddScoped<IDialogService, DialogService>();
 		Context.Services.AddScoped<IMessageService, MessageService>();
+		Context.Services.AddBlazorTrace(new WvBlazorTraceConfiguration(){ EnableTracing = false});
 		#endregion
 
 		AuthenticationStateProviderMock = new Mock<AuthenticationStateProvider>();
@@ -176,28 +159,8 @@ public class BaseTest
 		Context.Services.AddSingleton(typeof(IStringLocalizerFactory), Services => StringLocalizerFactoryMock.Object);
 
 		//use cases
-		TfNavigationUIService = new Mock<ITfNavigationUIService>(Context.Services);
-		Context.Services.AddScoped(typeof(TfNavigationUIService), Services => TfNavigationUIService.Object);
-
-		TfMetaUIService = new Mock<ITfMetaUIService>(Context.Services);
-		Context.Services.AddScoped(typeof(TfMetaUIService), Services => TfMetaUIService.Object);
-
-		TfRecipeUIService = new Mock<ITfRecipeUIService>(Context.Services);
-		Context.Services.AddScoped(typeof(TfRecipeUIService), Services => TfRecipeUIService.Object);
-
-		TfRoleUIService = new Mock<TfRoleUIService>(Context.Services);
-		Context.Services.AddScoped(typeof(LoginUseCase), Services => LoginUseCaseMock.Object);
-
-		InstallUseCaseMock = new Mock<RecipeUseCase>(Context.Services);
-		Context.Services.AddScoped(typeof(RecipeUseCase), Services => InstallUseCaseMock.Object);
-
-		Context.Services.AddBlazorTrace();
-		//WvBlazorTraceServiceMock = new Mock<IWvBlazorTraceService>();
-		//Context.Services.AddTransient(typeof(IWvBlazorTraceService), Services => WvBlazorTraceServiceMock.Object);
-
-		Store = Context.Services.GetRequiredService<IStore>();
-		Store.InitializeAsync().Wait();
-		Dispatcher = Context.Services.GetRequiredService<IDispatcher>();
+		TfUIServiceMock = new Mock<ITfUIService>();
+		Context.Services.AddScoped(typeof(ITfUIService), Services => TfUIServiceMock.Object);
 		return Context;
 	}
 }

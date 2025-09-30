@@ -10,7 +10,7 @@ public class ErrorBoundryComponentTests : BaseTest
 			//Given
 			var Context = GetTestContext();
 			// Act
-			var cut = Context.RenderComponent<TfErrorBoundry>();
+			var cut = Context.RenderComponent<TucErrorBoundry>();
 
 			// Assert
 			cut.Nodes.Length.Should().Be(0);

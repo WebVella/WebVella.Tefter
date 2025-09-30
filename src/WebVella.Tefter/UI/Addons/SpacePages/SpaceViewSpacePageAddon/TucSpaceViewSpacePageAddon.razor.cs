@@ -3,8 +3,8 @@
 public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 {
 	#region << Base Overrides >>
-	public static string ID = "68afeecc-6ca9-4102-831d-ef4028057128";
-	public override Guid AddonId { get; init; } = new Guid(ID);
+	private static readonly string Id = "68afeecc-6ca9-4102-831d-ef4028057128";
+	public override Guid AddonId { get; init; } = new Guid(Id);
 	public override string AddonName { get; init; } = "Data Grid";
 	public override string AddonDescription { get; init; } = "present the selected dataset in a grid";
 	public override string AddonFluentIconName { get; init; } = "Table";

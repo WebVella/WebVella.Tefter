@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Tests.Components;
-public class SpaceViewBookmarkManageDialogComponentTests : BaseTest
+public class SpacePageManageDialogComponentTests : BaseTest
 {
 
 	[Fact]
@@ -10,7 +10,7 @@ public class SpaceViewBookmarkManageDialogComponentTests : BaseTest
 		var dialogProvider = Context.RenderComponent<FluentDialogProvider>();
 		// Act
 		var dialogService = Context.Services.GetRequiredService<IDialogService>();
-		var dialog = await dialogService.ShowDialogAsync<TfSpaceViewBookmarkManageDialog>(new TucBookmark(),new DialogParameters());
+		var dialog = await dialogService.ShowDialogAsync<TucSpacePageManageDialog>(new TfSpacePage(),new DialogParameters());
 		// Assert
 		dialogProvider.Find(".fluent-dialog-main");
 		dialog.Dismiss(null);

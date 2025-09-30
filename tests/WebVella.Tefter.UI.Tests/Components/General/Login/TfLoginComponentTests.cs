@@ -8,7 +8,7 @@ public class LoginComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TfLogin>();
+		var cut = Context.RenderComponent<TucLogin>();
 
 		// Assert
 		cut.Find(".login-logo");
@@ -26,7 +26,7 @@ public class LoginComponentTests : BaseTest
 		CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("bg-BG");
 
 		// Act
-		var cut = Context.RenderComponent<TfLogin>();
+		var cut = Context.RenderComponent<TucLogin>();
 
 		// Assert
 		cut.Find(".login-logo");

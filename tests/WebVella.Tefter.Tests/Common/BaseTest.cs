@@ -124,7 +124,7 @@ public class BaseTest
 		TfDataIdentity idIdentityModel = new TfDataIdentity
 		{
 			DataIdentity = "id_identity",
-			Label = "ID identity",
+			Label = "Id identity",
 		};
 		TfDataIdentity idDataIdentity = tfService.CreateDataIdentity(idIdentityModel);
 		idDataIdentity.Should().NotBeNull();

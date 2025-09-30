@@ -2,11 +2,11 @@
 using WebVella.Tefter.Models;
 public static partial class NavigatorExt
 {
-	internal static TfNavigationState GetNodeData(this Uri uri, string navUri)
+	internal static TfNavigationState GetNodeData(this Uri uri)
 	{
 		TfNavigationState result = new TfNavigationState()
 		{
-			Uri = navUri
+			Uri = uri.AbsoluteUri
 		};
 		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 		var dictIndex = 0;

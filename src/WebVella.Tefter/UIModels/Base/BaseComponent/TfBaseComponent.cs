@@ -13,7 +13,6 @@ public class TfBaseComponent : ComponentBase
 	[Inject] protected ITfConfigurationService ConfigurationService { get; set; } = default!;
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = default!;
 	[Inject] protected IWvBlazorTraceService WvBlazorTraceService { get; set; } = default!;
-	[Inject] protected IHostEnvironment HostEnvironment { get; set; } = default!;
 	[Inject] protected IKeyCodeService KeyCodeService { get; set; } = default!;
 	[Inject] protected ITfUIService TfUIService { get; set; } = default!;
 	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = default!;

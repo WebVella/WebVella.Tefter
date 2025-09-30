@@ -71,7 +71,7 @@ public partial class TucSelect<TOption> : TfBaseComponent where TOption : notnul
 	public string? Placeholder { get; set; }
 
 	/// <summary>
-	/// Gets or sets the HTML ID attribute for the component.
+	/// Gets or sets the HTML Id attribute for the component.
 	/// </summary>
 	[Parameter]
 	public string? Id { get; set; }

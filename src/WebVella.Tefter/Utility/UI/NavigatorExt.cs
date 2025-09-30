@@ -30,7 +30,7 @@ public static partial class NavigatorExt
 			uri = new Uri(url);
 		}
 
-		return uri.GetNodeData(navigator.Uri);
+		return uri.GetNodeData();
 	}
 
 	public static async Task ApplyChangeToUrlQuery(this NavigationManager navigator, Dictionary<string, object?> replaceDict, bool forceLoad = false)

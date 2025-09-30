@@ -280,7 +280,7 @@ public partial class TfService : ITfService
 			if (spaceView != null && spaceView.Id == Guid.Empty)
 				spaceView.Id = Guid.NewGuid();
 
-			//TODO RUMEN -> As Space ID will be removed from the view it is hardcoded here but needs to be removed
+			//TODO RUMEN -> As Space Id will be removed from the view it is hardcoded here but needs to be removed
 			{
 				spaceView.SpaceId = GetSpacesList().First().Id;
 			}

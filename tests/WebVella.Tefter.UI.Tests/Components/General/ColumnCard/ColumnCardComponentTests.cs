@@ -11,7 +11,7 @@ public class ColumnCardComponentTests : BaseTest
 			var Context = GetTestContext();
 			var items = new List<string> { "col1", "col2" };
 			// Act
-			var cut = Context.RenderComponent<TfColumnCard>(parameters => parameters
+			var cut = Context.RenderComponent<TucColumnCard>(parameters => parameters
 			.Add(p => p.Items, items)
 			);
 

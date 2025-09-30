@@ -678,7 +678,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				Type = TfSpacePageType.Page,
 				ChildPages = new(),
 				ComponentType = new TucSpaceViewSpacePageAddon(),
-				ComponentId = new Guid(TucSpaceViewSpacePageAddon.ID),
+				ComponentId = new TucSpaceViewSpacePageAddon().AddonId,
 				ComponentOptionsJson = JsonSerializer.Serialize(new TfSpaceViewSpacePageAddonOptions
 				{
 					SpaceViewId = spaceViewId,

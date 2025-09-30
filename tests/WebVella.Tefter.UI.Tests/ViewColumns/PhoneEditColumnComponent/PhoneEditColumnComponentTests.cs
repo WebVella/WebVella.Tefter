@@ -12,8 +12,8 @@ public class PhoneEditColumnComponentTests : BaseTest
 		dt.Columns.Add(new TfDataColumn(dt,columnName,Database.TfDatabaseColumnType.Text,true,false,false,false, false));
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TfPhoneEditColumnComponent>(args => args
-		.Add(x => x.RegionContext, new TfSpaceViewColumnScreenRegionContext()
+		var cut = Context.RenderComponent<TucPhoneEditColumnComponent>(args => args
+		.Add(x => x.RegionContext, new TfSpaceViewColumnScreenRegionContext(ViewData)
 		{
 			DataTable = dt,
 			DataMapping = new Dictionary<string, string>{ {"Value",columnName} }
