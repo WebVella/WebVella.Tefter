@@ -673,7 +673,6 @@ internal static class TfDatabaseComparer
         switch (obj)
         {
             case TfDatabaseTable: return "table";
-            case TfAutoIncrementDatabaseColumn: return "auto increment column";
             case TfBooleanDatabaseColumn: return "boolean column";
             case TfDateDatabaseColumn: return "Date column";
             case TfDateTimeDatabaseColumn: return "DateTime column";

@@ -859,8 +859,7 @@ public partial class TfService : ITfService
 				if (!(column.DbType == TfDatabaseColumnType.Number ||
 					 column.DbType == TfDatabaseColumnType.ShortInteger ||
 					 column.DbType == TfDatabaseColumnType.Integer ||
-					 column.DbType == TfDatabaseColumnType.LongInteger ||
-					 column.DbType == TfDatabaseColumnType.AutoIncrement))
+					 column.DbType == TfDatabaseColumnType.LongInteger))
 				{
 					return string.Empty;
 				}

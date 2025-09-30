@@ -94,8 +94,6 @@ public class TfDataRow : IEnumerable
 						if (value is not List<string>)
 							throw new TfValidationException($"Trying to set non text value as value to Text or ShortText column.");
 						break;
-					case TfDatabaseColumnType.AutoIncrement:
-						throw new TfValidationException($"Trying to set value to autoincrement column.Not allowed.");
 					default:
 						throw new TfValidationException($"Not supported database column type.");
 				}
@@ -144,8 +142,6 @@ public class TfDataRow : IEnumerable
 						if (value is not string)
 							throw new TfValidationException($"Trying to set non text value as value to Text or ShortText column.");
 						break;
-					case TfDatabaseColumnType.AutoIncrement:
-						throw new TfValidationException($"Trying to set value to autoincrement column.Not allowed.");
 					default:
 						throw new TfValidationException($"Not supported database column type.");
 				}

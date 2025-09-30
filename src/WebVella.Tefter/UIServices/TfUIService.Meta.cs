@@ -20,7 +20,7 @@ public partial class TfUIService : ITfUIService
 	public ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfosList()
 	{
 		var allTypes = TfService.GetDatabaseColumnTypeInfosList();
-		return allTypes.Where(x => x.Type != TfDatabaseColumnType.AutoIncrement).ToList().AsReadOnly();
+		return allTypes.ToList().AsReadOnly();
 	}
 
 	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMetaForContext(Type context, TfScreenRegionScope? scope = null)

@@ -132,11 +132,6 @@ public partial class DatabaseBuilderTests : BaseTest
 					{
 						columns
 
-						#region <--- AutoInc --->
-							.AddAutoIncrementColumn("auto_inc1")
-							.AddAutoIncrementColumn("auto_inc2")
-						#endregion
-
 						#region <--- Guid --->
 							.AddGuidColumn("id", x => x.NotNullable().WithAutoDefaultValue())
 
@@ -424,56 +419,6 @@ public partial class DatabaseBuilderTests : BaseTest
 
 	#region <--- Column Tests --->
 
-	[Fact]
-	public void Column_CRUD_AutoIncrement()
-	{
-		var databaseBuilder = TfDatabaseBuilder.New();
-		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
-
-		Guid columnId = Guid.NewGuid();
-		const string columnName = "test_auto_inc";
-
-		TfDatabaseTable table = null;
-		var task = Task.Run(() =>
-		{
-			table = tableBuilder.WithColumns(columns =>
-			{
-				columns
-					.AddAutoIncrementColumn(columnId, columnName);
-			})
-			.Build();
-		});
-		var exception = Record.ExceptionAsync(async () => await task).Result;
-		exception.Should().BeNull();
-
-		table.Should().NotBeNull();
-		table.Columns.Should().HaveCount(1);
-		var columnById = table.Columns.Find(columnId);
-		var columnByName = table.Columns.Find(columnName);
-
-		columnById.Should().NotBeNull();
-		columnByName.Should().NotBeNull();
-		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
-		columnById.Should().BeOfType<TfAutoIncrementDatabaseColumn>();
-
-		columnById.IsNullable.Should().BeFalse();
-		columnById.DefaultValue.Should().Be(null);
-
-		task = Task.Run(() =>
-		{
-			table = tableBuilder.WithColumns(columns =>
-			{
-				columns
-					.Remove(columnName);
-			})
-			.Build();
-		});
-		exception = Record.ExceptionAsync(async () => await task).Result;
-		exception.Should().BeNull();
-
-		table.Should().NotBeNull();
-		table.Columns.Should().HaveCount(0);
-	}
 
 	[Fact]
 	public void Column_CRUD_Guid()
