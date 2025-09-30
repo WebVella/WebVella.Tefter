@@ -46,7 +46,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 	private async Task initAdmin(TfNavigationState? navState = null)
 	{
 		if(navState is null)
-			navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			navState = TfAuthLayout.NavigationState;
 
 		_adminMenu = new();
 		if (TfAuthLayout.CurrentUser!.IsAdmin)

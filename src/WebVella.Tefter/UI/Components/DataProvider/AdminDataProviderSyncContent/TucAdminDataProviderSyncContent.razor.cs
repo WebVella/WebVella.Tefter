@@ -33,7 +33,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			if (navState.DataProviderId is null)

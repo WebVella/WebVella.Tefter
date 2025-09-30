@@ -56,7 +56,7 @@ public partial class TucHomeDashboard : TfBaseComponent
 
 	private async Task _onToggleFilter(string propName)
 	{
-		var navState = await TfUIService.GetNavigationStateAsync(Navigator);
+		var navState = TfAuthLayout.NavigationState;
 		var queryDict = new Dictionary<string, object>();
 		if (propName == "HomeSearchInBookmarks")
 			queryDict[TfConstants.SearchInBookmarksQueryName] = navState!.SearchInBookmarks ? false : null;

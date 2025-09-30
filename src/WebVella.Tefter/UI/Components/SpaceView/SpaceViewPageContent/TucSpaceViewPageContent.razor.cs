@@ -124,7 +124,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			await InvokeAsync(StateHasChanged);
 
 			if (navState == null)
-				_navState = await TfUIService.GetNavigationStateAsync(Navigator);
+				_navState = TfAuthLayout.NavigationState;
 			else
 				_navState = navState;
 

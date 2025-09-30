@@ -29,7 +29,7 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			navState = TfAuthLayout.NavigationState;
 
 		try
 		{

@@ -55,7 +55,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 			if (navState is not null)
 				_navState = navState;
 			else
-				_navState = await TfUIService.GetNavigationStateAsync(Navigator);
+				_navState = TfAuthLayout.NavigationState;
 
 			_items = TfUIService.GetRepositoryFiles(search: _search);
 		}

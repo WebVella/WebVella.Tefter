@@ -32,7 +32,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null, TfSpace? space = null)
 	{
 		if (navState == null)
-			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			_navState = TfAuthLayout.NavigationState;
 		else
 			_navState = navState;
 

@@ -34,7 +34,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null, TfRole? role = null)
 	{
 		if (navState == null)
-			navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			if (role is not null && role.Id == _role?.Id)

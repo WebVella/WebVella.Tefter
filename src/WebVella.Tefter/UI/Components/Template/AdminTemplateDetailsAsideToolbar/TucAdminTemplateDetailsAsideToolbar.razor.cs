@@ -12,7 +12,7 @@ public partial class TucAdminTemplateDetailsAsideToolbar : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		_search = NavigatorExt.GetStringFromQuery(Navigator,TfConstants.AsideSearchQueryName,null);
-		_navState = await TfUIService.GetNavigationStateAsync(Navigator);
+		_navState = TfAuthLayout.NavigationState;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 

@@ -32,7 +32,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 	private async Task _init(TfNavigationState? navState = null, TfSharedColumn? column = null)
 	{
 		if (navState == null)
-			navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			navState = TfAuthLayout.NavigationState;
 
 		try
 		{

@@ -15,6 +15,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	public TfUser CurrentUser = default!;
 	public TfNavigationState NavigationState = default!;
+	public TfNavigationMenu NavigationMenu = default!;
 
 	private bool _isLoaded = false;
 
@@ -52,6 +53,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			_checkAccess();
 			_isLoaded = true;
 			NavigationState = await TfUIService.GetNavigationStateAsync(Navigator);
+			NavigationMenu = await TfUIService.GetNavigationMenu(Navigator, CurrentUser);
 		}
 
 	}
@@ -86,8 +88,8 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			if (NavigationState?.Uri != navState.Uri)
 			{
 				NavigationState = navState;
+				NavigationMenu = await TfUIService.GetNavigationMenu(Navigator, CurrentUser);
 				TfUIService.InvokeNavigationStateChanged(NavigationState);
-
 			}
 		});
 
