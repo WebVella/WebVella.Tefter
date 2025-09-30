@@ -4,8 +4,6 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentComponent<Guid>
 {
-	[Inject] private ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
-	[Inject] private ITfRoleUIService TfRoleUIService { get; set; } = default!;
 	[Parameter] public Guid Content { get; set; } = default!;
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
@@ -27,11 +25,11 @@ public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentCompo
 	private void _init(TfSpace? space = null)
 	{
 		if (space is null)
-			_space = TfSpaceUIService.GetSpace(Content);
+			_space = TfUIService.GetSpace(Content);
 		else
 			_space = space;
 
-		var allRoles = TfRoleUIService.GetRoles();
+		var allRoles = TfUIService.GetRoles();
 		_roleOptions = allRoles.Where(x => x.Id != TfConstants.ADMIN_ROLE_ID && !_space.Roles.Any(u => x.Id == u.Id)).ToList();
 		_adminRole = allRoles.Single(x => x.Id == TfConstants.ADMIN_ROLE_ID);
 	}
@@ -49,7 +47,7 @@ public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentCompo
 		try
 		{
 			_submitting = true;
-			var space = TfSpaceUIService.AddSpacesRole(_space, _selectedRole);
+			var space = TfUIService.AddSpacesRole(_space, _selectedRole);
 			ToastService.ShowSuccess(LOC("Space role added"));
 			_init(space);
 		}
@@ -72,7 +70,7 @@ public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentCompo
 		try
 		{
 			_removingRoleId = role.Id;
-			var space = TfSpaceUIService.RemoveSpacesRole(_space, role);
+			var space = TfUIService.RemoveSpacesRole(_space, role);
 			ToastService.ShowSuccess(LOC("Space role removed"));
 			_init(space);
 		}
@@ -91,7 +89,7 @@ public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentCompo
 	{
 		try
 		{
-			var space = TfSpaceUIService.SetSpacePrivacy(_space.Id, newValue);
+			var space = TfUIService.SetSpacePrivacy(_space.Id, newValue);
 			ToastService.ShowSuccess(LOC("Space access changed"));
 			_init(space);
 		}

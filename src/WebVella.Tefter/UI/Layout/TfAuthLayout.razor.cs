@@ -1,25 +1,26 @@
 ﻿namespace WebVella.Tefter.UI.Layout;
+
 public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 {
-	[Inject] protected ITfUserUIService TfUserUIService { get; set; } = default!;
+	[Inject] public ITfUIService TfUIService { get; set; } = default!;
 	[Inject] protected ITfConfigurationService TfConfigurationService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Inject] protected NavigationManager Navigator { get; set; } = default!;
 
 	public ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= Navigator_LocationChanged;
-		TfUserUIService.CurrentUserChanged -= CurrentUser_Changed;
+		TfUIService.CurrentUserChanged -= CurrentUser_Changed;
 		return ValueTask.CompletedTask;
 	}
 
 	private bool _isLoaded = false;
 	private TfUser _currentUser = default!;
+	private TfNavigationState? _navState = null;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 
-		var user = await TfUserUIService.GetCurrentUserAsync();
+		var user = await TfUIService.GetCurrentUserAsync();
 
 		if (user is null)
 		{
@@ -48,6 +49,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		{
 			_checkAccess();
 			_isLoaded = true;
+			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		}
 
 	}
@@ -58,7 +60,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		if (firstRender)
 		{
 			Navigator.LocationChanged += Navigator_LocationChanged;
-			TfUserUIService.CurrentUserChanged += CurrentUser_Changed;
+			TfUIService.CurrentUserChanged += CurrentUser_Changed;
 		}
 	}
 
@@ -75,14 +77,23 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	private async void Navigator_LocationChanged(object? sender, LocationChangedEventArgs e)
 	{
-		await InvokeAsync(() => _checkAccess());
-		//Get state so it can trigger NavStateChange if needed
-		await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+		await InvokeAsync(async () =>
+		{
+			_checkAccess();
+			var navState = await TfUIService.GetNavigationStateAsync(Navigator);
+			if (_navState?.Uri != navState.Uri)
+			{
+				_navState = navState;
+				TfUIService.InvokeNavigationStateChanged(_navState);
+
+			}
+		});
+
 	}
 
 	private void _checkAccess()
 	{
-		if (_currentUser is not null && TfUserUIService.UserHasAccess(_currentUser, Navigator))
+		if (_currentUser is not null && TfUIService.UserHasAccess(_currentUser, Navigator))
 			return;
 
 		Navigator.NavigateTo(string.Format(TfConstants.NoAccessPage));

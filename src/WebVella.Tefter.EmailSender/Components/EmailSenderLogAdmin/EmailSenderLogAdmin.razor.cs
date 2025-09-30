@@ -5,8 +5,6 @@ namespace WebVella.Tefter.EmailSender.Components;
 public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 {
 	[Inject] public IEmailService EmailService { get; set; }
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-    [Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
 
     private string? _search = null;
 	private List<EmailMessage> _messages = new();
@@ -18,15 +16,15 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 	{
 		EmailService.EmailCreated -= On_EmailChanged;
 		EmailService.EmailUpdated -= On_EmailChanged;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-        _currentUser = await TfUserUIService.GetCurrentUserAsync();
+        _currentUser = await TfUIService.GetCurrentUserAsync();
         await _init();
 		EmailService.EmailCreated += On_EmailChanged;
 		EmailService.EmailUpdated += On_EmailChanged;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -50,7 +48,7 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		else
 			_navState = navState;
 		try

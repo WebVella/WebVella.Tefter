@@ -5,10 +5,6 @@ namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 {
 	// Dependency Injection
-	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	[CascadingParameter(Name = "TucSpaceViewPageContent")]
 	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
 	[Parameter] public TfSpacePageAddonContext Context { get; set; } = default!;
@@ -27,8 +23,8 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUserUIService.UserUpdated -= On_UserChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.UserUpdated -= On_UserChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -38,8 +34,8 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 		await _init();
 		_settingsAttributes!.Add("title",LOC("Manage Settings"));
 
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUserUIService.UserUpdated += On_UserChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.UserUpdated += On_UserChanged;
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -55,13 +51,13 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 	}
 	private async Task _init()
 	{
-		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+		var navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		if (navState is null) return;
 		_navState = navState;
 		try
 		{
-			var bookmarks = TfUserUIService.GetUserBookmarks(Context.CurrentUser.Id);
-			var saves = TfUserUIService.GetUserSaves(Context.CurrentUser.Id);
+			var bookmarks = TfUIService.GetUserBookmarks(Context.CurrentUser.Id);
+			var saves = TfUIService.GetUserSaves(Context.CurrentUser.Id);
 
 			_activeBookmark = bookmarks.FirstOrDefault(x => x.SpaceViewId == _navState.SpaceViewId);
 			_activeSavedUrl = saves.FirstOrDefault(x => x.Id == _navState.ActiveSaveId);
@@ -87,7 +83,7 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 		if (Data is null) return Task.CompletedTask;
 		try
 		{
-			var result = TfDatasetUIService.InsertRowInDataTable(Data);
+			var result = TfUIService.InsertRowInDataTable(Data);
 			TucSpaceViewPageContent.OnNewRow(result);
 			ToastService.ShowSuccess(LOC("Row added"));
 		}

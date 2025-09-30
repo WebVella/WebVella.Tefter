@@ -2,21 +2,19 @@
 public partial class TucSpaceViewPageContentNavigation : TfBaseComponent
 {
 	// Dependency Injection
-	[Inject] public IWvBlazorTraceService WvBlazorTraceService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
 
 	private List<TfMenuItem> _menu = new();
 	public TfNavigationState _navState = default!;
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -27,7 +25,7 @@ public partial class TucSpaceViewPageContentNavigation : TfBaseComponent
 
 	private async Task _init()
 	{
-		_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+		_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 
 		try
 		{

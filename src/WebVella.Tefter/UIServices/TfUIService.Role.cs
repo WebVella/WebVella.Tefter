@@ -1,7 +1,7 @@
 ﻿
 namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfRoleUIService
+public partial interface ITfUIService
 {
 	//Events
 	event EventHandler<TfRole> RoleUpdated;
@@ -15,28 +15,8 @@ public partial interface ITfRoleUIService
 	TfRole UpdateRole(TfRole role);
 	void DeleteRole(TfRole role);
 }
-public partial class TfRoleUIService : ITfRoleUIService
+public partial class TfUIService : ITfUIService
 {
-	#region << Ctor >>
-	private static readonly AsyncLock _asyncLock = new AsyncLock();
-	private readonly IJSRuntime _jsRuntime;
-	private readonly AuthenticationStateProvider _authStateProvider;
-	private readonly ITfService _tfService;
-	private readonly NavigationManager _navigationManager;
-	private TfUser? _currentUser = null;
-
-	public TfRoleUIService(IJSRuntime jsRuntime,
-		ITfService tfService,
-		NavigationManager navigationManager,
-		AuthenticationStateProvider authStateProvider)
-	{
-		_jsRuntime = jsRuntime;
-		_tfService = tfService;
-		_navigationManager = navigationManager;
-		_authStateProvider = authStateProvider;
-	}
-	#endregion
-
 	#region << Events >>
 	public event EventHandler<TfRole> RoleUpdated = default!;
 	public event EventHandler<TfRole> RoleCreated = default!;

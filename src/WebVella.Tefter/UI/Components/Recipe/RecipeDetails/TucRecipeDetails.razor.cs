@@ -4,7 +4,6 @@ using WebVella.Tefter.UI.Addons.RecipeSteps;
 namespace WebVella.Tefter.UI.Components;
 public partial class TucRecipeDetails : TfBaseComponent
 {
-	[Inject] private ITfRecipeUIService TfRecipeUIService { get; set; } = default!;
 	[Parameter] public Guid RecipeId { get; set; }
 
 	private ITfRecipeAddon _recipe;
@@ -16,11 +15,11 @@ public partial class TucRecipeDetails : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		var installData = await TfRecipeUIService.GetInstallDataAsync();
+		var installData = await TfUIService.GetInstallDataAsync();
 		if (installData is not null)
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
-		_recipe = TfRecipeUIService.GetRecipe(RecipeId);
+		_recipe = TfUIService.GetRecipe(RecipeId);
 		if (_recipe is null)
 			throw new Exception("Recipe Id not found");
 		var position = 1;
@@ -120,7 +119,7 @@ public partial class TucRecipeDetails : TfBaseComponent
 				_stepNext();
 				return;
 			}
-			_recipeResult = await TfRecipeUIService.ApplyRecipe(_recipe);
+			_recipeResult = await TfUIService.ApplyRecipe(_recipe);
 			_recipeResult.ApplyResultToSteps(_recipe.Steps);
 			var resultStepBase = _visibleSteps.Single(x => x.GetType() == typeof(TfResultRecipeStep));
 			var resultStep = (TfResultRecipeStep)resultStepBase;

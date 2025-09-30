@@ -1,23 +1,19 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-	[Inject] public ITfDataIdentityUIService TfDataIdentityUIService { get; set; } = default!;
-
 	private TfDataProvider? _provider = null;
 	private List<TfDataProvider> _connectedProviders = new();
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated -= On_DataProviderUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.DataProviderUpdated -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
 
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.DataProviderUpdated += On_DataProviderUpdated;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -33,7 +29,7 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 
 		try
 		{
@@ -43,10 +39,10 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 				await InvokeAsync(StateHasChanged);
 				return;
 			}
-			_provider = TfDataProviderUIService.GetDataProvider(navState.DataProviderId.Value);
+			_provider = TfUIService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
-			_connectedProviders = TfDataProviderUIService.GetDataProviderConnectedProviders(_provider.Id);
+			_connectedProviders = TfUIService.GetDataProviderConnectedProviders(_provider.Id);
 		}
 		finally
 		{
@@ -91,7 +87,7 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 			return;
 		try
 		{
-			var provider = TfDataProviderUIService.DeleteDataProviderIdentity(key.Id);
+			var provider = TfUIService.DeleteDataProviderIdentity(key.Id);
 			ToastService.ShowSuccess(LOC("The implementation is successfully deleted!"));
 
 		}

@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfMetaUIService
+public partial interface ITfUIService
 {
 	ReadOnlyCollection<ITfDataProviderAddon> GetDataProviderTypes();
 	ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfosList();
@@ -11,22 +11,10 @@ public partial interface ITfMetaUIService
 	ReadOnlyDictionary<Guid, TfSpaceViewColumnTypeAddonMeta> GetSpaceViewColumnTypeDict();
 
 	ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> GetSpaceViewColumnComponentDict();
-
+	ReadOnlyCollection<TfSpacePageAddonMeta> GetSpacePagesComponentsMeta();
 }
-public partial class TfMetaUIService : ITfMetaUIService
+public partial class TfUIService : ITfUIService
 {
-	private readonly ITfService _tfService;
-	private readonly ITfMetaService _metaService;
-	private readonly IStringLocalizer<TfMetaUIService> LOC;
-
-	public TfMetaUIService(IServiceProvider serviceProvider)
-	{
-		_tfService = serviceProvider.GetService<ITfService>() ?? default!;
-		_metaService = serviceProvider.GetService<ITfMetaService>() ?? default!;
-		LOC = serviceProvider.GetService<IStringLocalizer<TfMetaUIService>>() ?? default!;
-	}
-
-
 	public ReadOnlyCollection<ITfDataProviderAddon> GetDataProviderTypes() => _metaService.GetDataProviderTypes();
 
 	public ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfosList()
@@ -52,4 +40,8 @@ public partial class TfMetaUIService : ITfMetaUIService
 
 	public ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> GetSpaceViewColumnComponentDict()
 		=> _metaService.GetSpaceViewColumnComponentMetaDictionary();
+
+	public ReadOnlyCollection<TfSpacePageAddonMeta> GetSpacePagesComponentsMeta()
+			=> _metaService.GetSpacePagesComponentsMeta();
+
 }

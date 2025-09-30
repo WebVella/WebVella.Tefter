@@ -5,11 +5,13 @@ namespace WebVella.Tefter.Models;
 public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfSpaceViewColumnComponentAddon//, ITfAuxDataState
 {
 	#region << Injects >>
-	[Inject] protected IJSRuntime JSRuntime { get; set; }
-	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
-	[Inject] protected IToastService ToastService { get; set; }
-	[Inject] protected IDialogService DialogService { get; set; }
-	[Inject] protected IMessageService MessageService { get; set; }
+	[Inject] protected IJSRuntime JSRuntime { get; set; } = default!;
+	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = default!;
+	[Inject] protected IToastService ToastService { get; set; } = default!;
+	[Inject] protected IDialogService DialogService { get; set; } = default!;
+	[Inject] protected IMessageService MessageService { get; set; } = default!;
+	[Inject] public ITfUIService TfUIService { get; set; } = default!;
+
 	#endregion
 
 	#region << Properties >>

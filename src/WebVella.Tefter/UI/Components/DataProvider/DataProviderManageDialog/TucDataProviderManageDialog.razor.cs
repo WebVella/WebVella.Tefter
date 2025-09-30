@@ -2,10 +2,7 @@
 
 public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProvider?>
 {
-	[Inject] protected ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-	[Inject] protected ITfMetaUIService TfMetaUIService { get; set; } = default!;
 	[Parameter] public TfDataProvider? Content { get; set; }
-
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
 	private string _error = string.Empty;
@@ -24,7 +21,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_providerTypes = TfMetaUIService.GetDataProviderTypes();
+		_providerTypes = TfUIService.GetDataProviderTypes();
 		if (_providerTypes.Count == 0)
 			throw new Exception("No provider types are found");
 		_initForm();
@@ -100,7 +97,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 			TfDataProvider provider;
 			if (_isCreate)
 			{
-				provider = TfDataProviderUIService.CreateDataProvider(new TfCreateDataProvider
+				provider = TfUIService.CreateDataProvider(new TfCreateDataProvider
 				{
 					Id = _form.Id,
 					Index = -1,
@@ -115,7 +112,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 			}
 			else
 			{
-				provider = TfDataProviderUIService.UpdateDataProvider(new TfUpdateDataProvider
+				provider = TfUIService.UpdateDataProvider(new TfUpdateDataProvider
 				{
 					Id = _form.Id,
 					Name = _form.Name,

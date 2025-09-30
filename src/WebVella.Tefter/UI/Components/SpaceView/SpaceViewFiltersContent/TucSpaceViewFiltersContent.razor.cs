@@ -1,12 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewFiltersContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	private TfSpaceView _spaceView = default!;
 	private TfDataset _spaceData = default!;
 	private TfDataProvider _dataProvider = default!;
@@ -15,15 +9,15 @@ public partial class TucSpaceViewFiltersContent : TfBaseComponent, IDisposable
 	public TfNavigationState? _navState = null;
 	public void Dispose()
 	{
-		TfSpaceViewUIService.SpaceViewUpdated -= On_SpaceViewUpdated;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.SpaceViewUpdated -= On_SpaceViewUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfSpaceViewUIService.SpaceViewUpdated += On_SpaceViewUpdated;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.SpaceViewUpdated += On_SpaceViewUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
@@ -45,7 +39,7 @@ public partial class TucSpaceViewFiltersContent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null, TfSpaceView? spaceView = null)
 	{
 		if (navState == null)
-			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		else
 			_navState = navState;
 		try
@@ -58,13 +52,13 @@ public partial class TucSpaceViewFiltersContent : TfBaseComponent, IDisposable
 			{
 				var routeData = Navigator.GetRouteState();
 				if (routeData.SpaceViewId is not null)
-					_spaceView = TfSpaceViewUIService.GetSpaceView(routeData.SpaceViewId.Value);
+					_spaceView = TfUIService.GetSpaceView(routeData.SpaceViewId.Value);
 
 			}
 			if (_spaceView is null) return;
-			_space = TfSpaceUIService.GetSpace(_spaceView.SpaceId);
-			_spaceData = TfDatasetUIService.GetDataset(_spaceView.DatasetId);
-			_dataProvider = TfDataProviderUIService.GetDataProvider(_spaceData.DataProviderId);
+			_space = TfUIService.GetSpace(_spaceView.SpaceId);
+			_spaceData = TfUIService.GetDataset(_spaceView.DatasetId);
+			_dataProvider = TfUIService.GetDataProvider(_spaceData.DataProviderId);
 		}
 		finally
 		{
@@ -78,7 +72,7 @@ public partial class TucSpaceViewFiltersContent : TfBaseComponent, IDisposable
 		if (_submitting) return;
 		try
 		{
-			TfSpaceViewUIService.UpdateSpaceViewPresets(
+			TfUIService.UpdateSpaceViewPresets(
 				viewId: _spaceView.Id,
 				presets: presets);
 		}

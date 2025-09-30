@@ -1,23 +1,20 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-
 	private TfDataProvider? _provider = null;
 	private TfDataProviderDisplaySettingsScreenRegionContext? _dynamicComponentContext = null;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private bool _isDeleting = false;
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated -= On_DataProviderUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.DataProviderUpdated -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.DataProviderUpdated += On_DataProviderUpdated;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -33,7 +30,7 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			if (navState.DataProviderId is null)
@@ -42,7 +39,7 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 				await InvokeAsync(StateHasChanged);
 				return;
 			}
-			_provider = TfDataProviderUIService.GetDataProvider(navState.DataProviderId.Value);
+			_provider = TfUIService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
 			_dynamicComponentContext = new TfDataProviderDisplaySettingsScreenRegionContext()
@@ -86,8 +83,8 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 		{
 			_isDeleting = true;
 			await InvokeAsync(StateHasChanged);
-			TfDataProviderUIService.DeleteDataProvider(_provider.Id);
-			var providers = TfDataProviderUIService.GetDataProviders();
+			TfUIService.DeleteDataProvider(_provider.Id);
+			var providers = TfUIService.GetDataProviders();
 			_provider = null;
 			ToastService.ShowSuccess(LOC("Data provider was successfully deleted"));
 			if (providers.Count > 0)

@@ -2,7 +2,6 @@
 
 public partial class TucSortCard : TfBaseComponent
 {
-	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Parameter]
 	public TfDataset Dataset { get; set; } = default!;
 
@@ -21,7 +20,7 @@ public partial class TucSortCard : TfBaseComponent
 	{
 		if (Dataset is null) throw new Exception("Dataset is required");
 
-		foreach (TfDatasetColumn item in TfDatasetUIService.GetDatasetColumnOptions(Dataset.Id))
+		foreach (TfDatasetColumn item in TfUIService.GetDatasetColumnOptions(Dataset.Id))
 		{
 			if (String.IsNullOrWhiteSpace(item.ColumnName)) continue;
 			_allOptions.Add(item.ColumnName);

@@ -3,29 +3,25 @@ using WebVella.Tefter.Models;
 namespace WebVella.Tefter.UI.Components;
 public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
-	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 	private List<TfMenuItem> _menu = new();
 	private bool _isLoading = true;
 
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfSpaceUIService.SpaceCreated -= On_SpaceChange;
-		TfSpaceUIService.SpaceUpdated -= On_SpaceChange;
-		TfSpaceUIService.SpaceDeleted -= On_SpaceChange;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.SpaceCreated -= On_SpaceChange;
+		TfUIService.SpaceUpdated -= On_SpaceChange;
+		TfUIService.SpaceDeleted -= On_SpaceChange;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfSpaceUIService.SpaceCreated += On_SpaceChange;
-		TfSpaceUIService.SpaceUpdated += On_SpaceChange;
-		TfSpaceUIService.SpaceDeleted += On_SpaceChange;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.SpaceCreated += On_SpaceChange;
+		TfUIService.SpaceUpdated += On_SpaceChange;
+		TfUIService.SpaceDeleted += On_SpaceChange;
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -42,11 +38,11 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 
 		try
 		{
-			_menu = (await TfNavigationUIService.GetNavigationMenu(Navigator, CurrentUser)).Menu;
+			_menu = (await TfUIService.GetNavigationMenu(Navigator, CurrentUser)).Menu;
 		}
 		finally
 		{
@@ -97,7 +93,7 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 		if (args.Data?.SpaceId == null) return;
 		try
 		{
-			TfSpaceUIService.DeleteSpace(args.Data.SpaceId.Value);
+			TfUIService.DeleteSpace(args.Data.SpaceId.Value);
 			ToastService.ShowSuccess(LOC("Space deleted"));
 			await _init();
 		}

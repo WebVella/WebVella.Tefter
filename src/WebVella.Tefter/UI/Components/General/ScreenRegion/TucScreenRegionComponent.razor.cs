@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucScreenRegionComponent
 {
-	[Inject] private ITfMetaUIService TfMetaUIService { get; set; } = default!;
+	[Inject] public ITfUIService TfUIService { get; set; } = default!;
 	[Parameter] public TfScreenRegionScope? Scope { get; set; }
 	[Parameter] public TfBaseScreenRegionContext RegionContext { get; set; } = default!;
 	[Parameter] public string? Placeholder { get; set; } = null;
@@ -25,12 +25,12 @@ public partial class TucScreenRegionComponent
 
 			if (Count is not null)
 			{
-				return TfMetaUIService.GetRegionComponentsMetaForContext(
+				return TfUIService.GetRegionComponentsMetaForContext(
 					context: RegionContext.GetType(),
 					scope: Scope
 				).Take(Count.Value).ToList().AsReadOnly();
 			}
-			return TfMetaUIService.GetRegionComponentsMetaForContext(
+			return TfUIService.GetRegionComponentsMetaForContext(
 				context: RegionContext.GetType(),
 				scope: Scope
 			);

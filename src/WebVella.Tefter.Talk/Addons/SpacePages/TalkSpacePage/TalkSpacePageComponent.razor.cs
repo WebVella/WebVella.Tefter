@@ -14,7 +14,6 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	[Inject] protected ITalkService TalkService { get; set; }
 	[Inject] protected IJSRuntime JSRuntime { get; set; } = default!;
 	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Inject] protected NavigationManager Navigator { get; set; } = default!;
 	#endregion
 
@@ -70,14 +69,14 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	#region << Render Lifecycle >>
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		_currentUser = await TalkService.GetCurrentUser(JSRuntime, AuthenticationStateProvider);
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 		_isLoaded = true;
 	}
 	protected override void OnParametersSet()
@@ -105,7 +104,7 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			_options = null;
@@ -148,7 +147,7 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	private async Task<string> _getDataIdentityValue()
 	{
 		if (_options is null) return Guid.NewGuid().ToSha1();
-		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+		var navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		switch (_options.DataIdentityValueType)
 		{
 			case TalkChannelDataIdentityValueType.SpacePageId:

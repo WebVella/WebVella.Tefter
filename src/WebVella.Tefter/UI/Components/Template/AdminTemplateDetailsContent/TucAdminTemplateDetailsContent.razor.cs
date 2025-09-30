@@ -1,10 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfTemplateUIService TfTemplateUIService { get; set; } = default!;
-	[Inject] public ITfMetaUIService TfMetaUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	private TfTemplate? _template = null;
 	private List<TfDatasetAsOption> _spaceDataSelection = new();
 	public bool _submitting = false;
@@ -15,15 +11,15 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 	private TfNavigationState _navState = default!;
 	public void Dispose()
 	{
-		TfTemplateUIService.TemplateUpdated -= On_TemplateUpdated;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.TemplateUpdated -= On_TemplateUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfTemplateUIService.TemplateUpdated += On_TemplateUpdated;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.TemplateUpdated += On_TemplateUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_TemplateUpdated(object? caller, TfTemplate args)
@@ -40,7 +36,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 	private async Task _init(TfNavigationState? navState = null, TfTemplate? template = null)
 	{
 		if (navState == null)
-			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		else
 			_navState = navState;
 		try
@@ -54,11 +50,11 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 			else
 			{
 				if (_navState.TemplateId is not null)
-					_template = TfTemplateUIService.GetTemplate(_navState.TemplateId.Value);
+					_template = TfUIService.GetTemplate(_navState.TemplateId.Value);
 
 			}
 			if (_template is null) return;
-			_spaceDataSelection = TfTemplateUIService.GetSpaceDataOptionsForTemplate().Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
+			_spaceDataSelection = TfUIService.GetSpaceDataOptionsForTemplate().Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
 			if (_template.ContentProcessorType is not null && _template.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 			{
 				_processor = (ITfTemplateProcessorAddon?)Activator.CreateInstance(_template.ContentProcessorType);
@@ -102,8 +98,8 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 			return;
 		try
 		{
-			TfTemplateUIService.DeleteTemplate(_template.Id);
-			var templates = TfTemplateUIService.GetTemplates(type: _template.ResultType);
+			TfUIService.DeleteTemplate(_template.Id);
+			var templates = TfUIService.GetTemplates(type: _template.ResultType);
 			ToastService.ShowSuccess(LOC("Template removed"));
 			if (templates.Count > 0)
 			{
@@ -150,7 +146,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 		{
 			_template = (TfTemplate)result.Data;
 
-			_spaceDataSelection = TfTemplateUIService.GetSpaceDataOptionsForTemplate().Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
+			_spaceDataSelection = TfUIService.GetSpaceDataOptionsForTemplate().Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
 		}
 	}
 }

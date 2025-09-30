@@ -2,8 +2,6 @@
 
 public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpacePage?>
 {
-	[Inject] protected ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
-	[Inject] protected ITfMetaService TfMetaService { get; set; } = default!;
 	[Parameter] public TfSpacePage? Content { get; set; } = null;
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
@@ -39,8 +37,8 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 
-		var spaceDict = TfSpaceUIService.GetSpaces().ToDictionary(x => x.Id);
-		var allPages = TfSpaceUIService.GetAllSpacePages().Where(x => x.Type == TfSpacePageType.Page).ToList();
+		var spaceDict = TfUIService.GetSpaces().ToDictionary(x => x.Id);
+		var allPages = TfUIService.GetAllSpacePages().Where(x => x.Type == TfSpacePageType.Page).ToList();
 
 		foreach (var page in allPages)
 		{
@@ -69,7 +67,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		}
 		_copyOption = _copyOptions[0];
 
-		_pageComponents = TfMetaService.GetSpacePagesComponentsMeta();
+		_pageComponents = TfUIService.GetSpacePagesComponentsMeta();
 		_space = spaceDict[Content.SpaceId];
 		_parentNodeOptions = _getParents();
 		if (_isCreate)
@@ -173,14 +171,14 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 			TfSpacePage newPage = default!;
 			if (_isCreate)
 			{
-				newPage = TfSpaceUIService.CreateSpacePage(
+				newPage = TfUIService.CreateSpacePage(
 					page: submit
 					);
 				ToastService.ShowSuccess(LOC("Space page created!"));
 			}
 			else
 			{
-				newPage = TfSpaceUIService.UpdateSpacePage(submit);
+				newPage = TfUIService.UpdateSpacePage(submit);
 				ToastService.ShowSuccess(LOC("Space page updated!"));
 			}
 
@@ -203,7 +201,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 	private IEnumerable<TfSpacePage> _getParents()
 	{
 		var parents = new List<TfSpacePage>();
-		var spacePages = TfSpaceUIService.GetSpacePages(Content.SpaceId);
+		var spacePages = TfUIService.GetSpacePages(Content.SpaceId);
 		foreach (var item in spacePages)
 		{
 			_fillParents(parents, item, new List<Guid> { _form.Id });

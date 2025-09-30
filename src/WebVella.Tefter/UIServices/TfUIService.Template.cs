@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfTemplateUIService
+public partial interface ITfUIService
 {
 	//Events
 	event EventHandler<TfTemplate> TemplateCreated;
@@ -23,22 +23,8 @@ public partial interface ITfTemplateUIService
 	//Settings
 	TfTemplate UpdateTemplateSettings(Guid templateId, string settingsJson);
 }
-public partial class TfTemplateUIService : ITfTemplateUIService
+public partial class TfUIService : ITfUIService
 {
-	#region << Ctor >>
-	private static readonly AsyncLock _asyncLock = new AsyncLock();
-	private readonly ITfService _tfService;
-	private readonly ITfMetaService _metaService;
-	private readonly IStringLocalizer<TfSpaceUIService> LOC;
-
-	public TfTemplateUIService(IServiceProvider serviceProvider)
-	{
-		_tfService = serviceProvider.GetService<ITfService>() ?? default!;
-		_metaService = serviceProvider.GetService<ITfMetaService>() ?? default!;
-		LOC = serviceProvider.GetService<IStringLocalizer<TfSpaceUIService>>() ?? default!;
-	}
-	#endregion
-
 	#region << Events >>
 	public event EventHandler<TfTemplate> TemplateUpdated = default!;
 	public event EventHandler<TfTemplate> TemplateCreated = default!;

@@ -1,20 +1,19 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminTemplateDetailsAsideToolbar : TfBaseComponent
 {
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	private string? _search = null;
 	private TfNavigationState _navState = default!;
 
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		_search = NavigatorExt.GetStringFromQuery(Navigator,TfConstants.AsideSearchQueryName,null);
-		_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		_navState = await TfUIService.GetNavigationStateAsync(Navigator);
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)

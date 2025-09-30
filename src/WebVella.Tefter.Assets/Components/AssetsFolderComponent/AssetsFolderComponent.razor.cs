@@ -6,7 +6,6 @@ namespace WebVella.Tefter.Assets.Components;
 public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 {
 	[Inject] public IAssetsService AssetsService { get; set; }
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Parameter] public AssetsFolder? Folder { get; set; } = null;
 	[Parameter] public string DataIdentityValue { get; set; } = null;
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
@@ -30,7 +29,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		AssetsService.AssetCreated -= On_AssetChanged;
 		AssetsService.AssetUpdated -= On_AssetChanged;
 		AssetsService.AssetDeleted -= On_AssetChanged;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -41,7 +40,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		AssetsService.AssetCreated += On_AssetChanged;
 		AssetsService.AssetUpdated += On_AssetChanged;
 		AssetsService.AssetDeleted += On_AssetChanged;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -78,7 +77,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			_items = new();

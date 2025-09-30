@@ -1,28 +1,24 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] public ITfRoleUIService TfRoleUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
 	private string? _search = String.Empty;
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfRoleUIService.RoleCreated -= On_RoleCreated;
-		TfRoleUIService.RoleUpdated -= On_RoleUpdated;
-		TfRoleUIService.RoleDeleted -= On_RoleDeleted;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.RoleCreated -= On_RoleCreated;
+		TfUIService.RoleUpdated -= On_RoleUpdated;
+		TfUIService.RoleDeleted -= On_RoleDeleted;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfRoleUIService.RoleCreated += On_RoleCreated;
-		TfRoleUIService.RoleUpdated += On_RoleUpdated;
-		TfRoleUIService.RoleDeleted += On_RoleDeleted;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.RoleCreated += On_RoleCreated;
+		TfUIService.RoleUpdated += On_RoleUpdated;
+		TfUIService.RoleDeleted += On_RoleDeleted;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_RoleCreated(object? caller, TfRole user)
@@ -50,12 +46,12 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 
 		try
 		{
 			_search = navState.SearchAside;
-			var roles = TfRoleUIService.GetRoles(_search).ToList();
+			var roles = TfUIService.GetRoles(_search).ToList();
 
 			_items = new();
 			foreach (var role in roles)

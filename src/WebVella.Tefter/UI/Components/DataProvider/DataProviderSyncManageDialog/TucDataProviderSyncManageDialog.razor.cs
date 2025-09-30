@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucDataProviderSyncManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProvider?>
 {
-	[Inject] private ITfDataProviderUIService ITfDataProviderUIService { get; set; } = default!;
 	[Parameter] public TfDataProvider? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
@@ -45,7 +44,7 @@ public partial class TucDataProviderSyncManageDialog : TfFormBaseComponent, IDia
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var provider = ITfDataProviderUIService.UpdateDataProviderSunchronization(_form.Id,_form.SynchScheduleMinutes,_form.SynchScheduleEnabled);
+			var provider = TfUIService.UpdateDataProviderSunchronization(_form.Id,_form.SynchScheduleMinutes,_form.SynchScheduleEnabled);
 			ToastService.ShowSuccess(LOC("Provider synchronization is updated"));
 			await Dialog.CloseAsync(provider);
 		}

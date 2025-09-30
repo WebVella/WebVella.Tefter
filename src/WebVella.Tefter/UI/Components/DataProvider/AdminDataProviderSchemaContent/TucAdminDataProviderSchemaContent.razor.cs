@@ -1,21 +1,18 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-
 	private TfDataProvider? _provider = null;
 	private Guid? _deletedColumnId = null;
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated -= On_DataProviderUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.DataProviderUpdated -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.DataProviderUpdated += On_DataProviderUpdated;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -30,7 +27,7 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			if (navState.DataProviderId is null)
@@ -39,7 +36,7 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 				await InvokeAsync(StateHasChanged);
 				return;
 			}
-			_provider = TfDataProviderUIService.GetDataProvider(navState.DataProviderId.Value);
+			_provider = TfUIService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
 		}
@@ -81,7 +78,7 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			TfDataProvider provider = TfDataProviderUIService.DeleteDataProviderColumn(column.Id);
+			TfDataProvider provider = TfUIService.DeleteDataProviderColumn(column.Id);
 			ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
 		}
 		catch (Exception ex)

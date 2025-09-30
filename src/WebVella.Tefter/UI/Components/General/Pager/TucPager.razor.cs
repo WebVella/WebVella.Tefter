@@ -6,9 +6,6 @@ using System.Drawing.Printing;
 namespace WebVella.Tefter.UI.Components;
 public partial class TucPager : TfBaseComponent, IDisposable
 {
-	[Inject] private IKeyCodeService KeyCodeService { get; set; } = default!;
-	[Inject] private ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	[Parameter] public int? UserPageSize { get; set; } = null;
 
 	[Parameter] public string? Style { get; set; }
@@ -33,14 +30,14 @@ public partial class TucPager : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		KeyCodeService.UnregisterListener(HandleKeyDownAsync);
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(null);
 		KeyCodeService.RegisterListener(HandleKeyDownAsync);
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 		
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -52,7 +49,7 @@ public partial class TucPager : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			if (!EnableShortcuts)

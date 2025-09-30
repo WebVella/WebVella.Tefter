@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfSharedColumnUIService
+public partial interface ITfUIService
 {
 	//Events
 	event EventHandler<TfSharedColumn> SharedColumnCreated;
@@ -16,19 +16,8 @@ public partial interface ITfSharedColumnUIService
 	ReadOnlyCollection<TfDataProvider> GetSharedColumnConnectedDataProviders(Guid columnId);
 
 }
-public partial class TfSharedColumnUIService : ITfSharedColumnUIService
+public partial class TfUIService : ITfUIService
 {
-	private readonly ITfService _tfService;
-	private readonly ITfMetaService _metaService;
-	private readonly IStringLocalizer<TfSharedColumnUIService> LOC;
-
-	public TfSharedColumnUIService(IServiceProvider serviceProvider)
-	{
-		_tfService = serviceProvider.GetService<ITfService>() ?? default!;
-		_metaService = serviceProvider.GetService<ITfMetaService>() ?? default!;
-		LOC = serviceProvider.GetService<IStringLocalizer<TfSharedColumnUIService>>() ?? default!;
-	}
-
 	#region << Events >>
 	public event EventHandler<TfSharedColumn> SharedColumnCreated = default!;
 	public event EventHandler<TfSharedColumn> SharedColumnUpdated = default!;

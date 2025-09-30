@@ -4,13 +4,6 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucUserNavigation : TfBaseComponent, IDisposable
 {
-	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] private ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
-	[Inject] private IKeyCodeService KeyCodeService { get; set; } = default!;
-
-	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
-
 	private bool _visible = false;
 	private bool _helpVisible = false;
 	private bool _isAdmin = false;
@@ -18,8 +11,8 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUserUIService.CurrentUserChanged -= CurrentUser_Changed;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.CurrentUserChanged -= CurrentUser_Changed;
 		KeyCodeService.UnregisterListener(HandleKeyDownAsync);
 	}
 
@@ -28,8 +21,8 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		base.OnInitialized();
 		await initAdmin(null);
 		KeyCodeService.RegisterListener(HandleKeyDownAsync);
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUserUIService.CurrentUserChanged += CurrentUser_Changed;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.CurrentUserChanged += CurrentUser_Changed;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -53,7 +46,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 	private async Task initAdmin(TfNavigationState? navState = null)
 	{
 		if(navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 
 		_adminMenu = new();
 		if (CurrentUser!.IsAdmin)
@@ -96,7 +89,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		var uri = new Uri(Navigator.Uri);
 		try
 		{
-			var user = await TfUserUIService.SetStartUpUrl(
+			var user = await TfUIService.SetStartUpUrl(
 						userId: CurrentUser.Id,
 						url: uri.PathAndQuery
 					);
@@ -110,7 +103,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 
 	private async Task _logout()
 	{
-		await TfUserUIService.LogoutAsync();
+		await TfUIService.LogoutAsync();
 		Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
 	}

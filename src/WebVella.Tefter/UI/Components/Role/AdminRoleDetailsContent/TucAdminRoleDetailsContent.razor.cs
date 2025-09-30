@@ -1,11 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] public ITfRoleUIService TfRoleUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
-
 	private TfRole? _role = null;
 	private List<TfUser> _userOptions = new();
 	private TfUser? _selectedUser = null;
@@ -14,15 +9,15 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 	public Guid? _removingUserId = null;
 	public void Dispose()
 	{
-		TfRoleUIService.RoleUpdated -= On_RoleUpdated;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.RoleUpdated -= On_RoleUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfRoleUIService.RoleUpdated += On_RoleUpdated;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.RoleUpdated += On_RoleUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_RoleUpdated(object? caller, TfRole args)
@@ -39,7 +34,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null, TfRole? role = null)
 	{
 		if (navState == null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			if (role is not null && role.Id == _role?.Id)
@@ -50,12 +45,12 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 			{
 				var routeData = Navigator.GetRouteState();
 				if (routeData.RoleId is not null)
-					_role = TfRoleUIService.GetRole(routeData.RoleId.Value);
+					_role = TfUIService.GetRole(routeData.RoleId.Value);
 
 			}
 			if(_role is null) return;
-			_roleUsers = TfUserUIService.GetUsersForRole(_role.Id).ToList();
-			_userOptions = TfUserUIService.GetUsers().Where(x => !_roleUsers.Any(u => x.Id == u.Id)).ToList();
+			_roleUsers = TfUIService.GetUsersForRole(_role.Id).ToList();
+			_userOptions = TfUIService.GetUsers().Where(x => !_roleUsers.Any(u => x.Id == u.Id)).ToList();
 		}
 		finally
 		{
@@ -91,8 +86,8 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 			return;
 		try
 		{
-			TfRoleUIService.DeleteRole(_role);
-			var allRoles = TfRoleUIService.GetRoles();
+			TfUIService.DeleteRole(_role);
+			var allRoles = TfUIService.GetRoles();
 			ToastService.ShowSuccess(LOC("User removed from role"));
 			if (allRoles.Count > 0)
 			{
@@ -113,9 +108,9 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 		try
 		{
 			_submitting = true;
-			_ = await TfUserUIService.AddRoleToUserAsync(roleId: _role.Id, userId: _selectedUser.Id);
-			_roleUsers = TfUserUIService.GetUsersForRole(_role.Id).ToList();
-			_userOptions = TfUserUIService.GetUsers().Where(x => !_roleUsers.Any(u => x.Id == u.Id)).ToList();
+			_ = await TfUIService.AddRoleToUserAsync(roleId: _role.Id, userId: _selectedUser.Id);
+			_roleUsers = TfUIService.GetUsersForRole(_role.Id).ToList();
+			_userOptions = TfUIService.GetUsers().Where(x => !_roleUsers.Any(u => x.Id == u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User added to role"));
 		}
 		catch (Exception ex)
@@ -138,9 +133,9 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 		try
 		{
 			_removingUserId = user.Id;
-			_ = await TfUserUIService.RemoveRoleFromUserAsync(roleId: _role.Id, userId: user.Id);
-			_roleUsers = TfUserUIService.GetUsersForRole(_role.Id).ToList();
-			_userOptions = TfUserUIService.GetUsers().Where(x => !_roleUsers.Any(u => x.Id == u.Id)).ToList();
+			_ = await TfUIService.RemoveRoleFromUserAsync(roleId: _role.Id, userId: user.Id);
+			_roleUsers = TfUIService.GetUsersForRole(_role.Id).ToList();
+			_userOptions = TfUIService.GetUsers().Where(x => !_roleUsers.Any(u => x.Id == u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User removed from role"));
 		}
 		catch (Exception ex)

@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfFileRepositoryUIService
+public partial interface ITfUIService
 {
 	//Events
 	event EventHandler<TfRepositoryFile> FileRepositoryCreated;
@@ -14,21 +14,8 @@ public partial interface ITfFileRepositoryUIService
 	TfRepositoryFile UpdateRepositoryFile(TfFileForm role);
 	void DeleteRepositoryFile(string fileName);
 }
-public partial class TfFileRepositoryUIService : ITfFileRepositoryUIService
+public partial class TfUIService : ITfUIService
 {
-	#region << Ctor >>
-	private static readonly AsyncLock _asyncLock = new AsyncLock();
-	private readonly ITfService _tfService;
-	private readonly ITfMetaService _metaService;
-	private readonly IStringLocalizer<TfSpaceUIService> LOC;
-	public TfFileRepositoryUIService(IServiceProvider serviceProvider)
-	{
-		_tfService = serviceProvider.GetService<ITfService>() ?? default!;
-		_metaService = serviceProvider.GetService<ITfMetaService>() ?? default!;
-		LOC = serviceProvider.GetService<IStringLocalizer<TfSpaceUIService>>() ?? default!;
-	}
-	#endregion
-
 	#region << Events >>
 	public event EventHandler<TfRepositoryFile> FileRepositoryCreated = default!;
 	public event EventHandler<TfRepositoryFile> FileRepositoryUpdated = default!;

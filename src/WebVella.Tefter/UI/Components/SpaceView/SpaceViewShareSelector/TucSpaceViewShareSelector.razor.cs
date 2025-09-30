@@ -1,14 +1,11 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewShareSelector : TfBaseComponent
 {
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
 	[Parameter] public TfDataTable Data { get; set; } = default!;
 	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
 	[Parameter] public TfBookmark? ActiveBookmark { get; set; } = null;
 	[Parameter] public TfBookmark? ActiveSavedUrl { get; set; } = null;
-	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 	private bool _open = false;
 	private string _exportCSVUrl = "/api/export/export-view-to-csv";
 	private string _exportExcelUrl = "/api/export/export-view-to-excel";
@@ -83,7 +80,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 				Url = null
 			};
 
-			TfUserUIService.CreateBookmark(submit);
+			TfUIService.CreateBookmark(submit);
 			ToastService.ShowSuccess(LOC("View is now bookmarked"));
 		}
 		catch (Exception ex)
@@ -110,7 +107,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 				Name = SpaceView.Name + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
 				Url = new Uri(Navigator.Uri).PathAndQuery
 			};
-			TfUserUIService.CreateBookmark(submit);
+			TfUIService.CreateBookmark(submit);
 
 			ToastService.ShowSuccess(LOC("URL is now saved"));
 			await Navigator.ApplyChangeToUrlQuery(TfConstants.ActiveSaveQueryName, submit.Id);

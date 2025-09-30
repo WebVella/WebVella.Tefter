@@ -5,7 +5,6 @@ namespace WebVella.Tefter.Assets.Components;
 public partial class AssetsFolderAdminList : TfBaseComponent
 {
 	[Inject] public IAssetsService AssetsService { get; set; }
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private List<AssetsFolder> _folders = new();
 	private TfNavigationState _navState = new();
@@ -15,7 +14,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 		AssetsService.FolderCreated -= On_FolderChanged;
 		AssetsService.FolderUpdated -= On_FolderChanged;
 		AssetsService.FolderDeleted -= On_FolderChanged;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
@@ -23,7 +22,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 		AssetsService.FolderCreated += On_FolderChanged;
 		AssetsService.FolderUpdated += On_FolderChanged;
 		AssetsService.FolderDeleted += On_FolderChanged;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 	private async void On_FolderChanged(object? caller, AssetsFolder args)
 	{
@@ -38,7 +37,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		else
 			_navState = navState;
 		try

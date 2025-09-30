@@ -1,24 +1,21 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfDataIdentityUIService TfDataIdentityUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	private TfDataIdentity? _identity = null;
 	public bool _submitting = false;
 
 	public void Dispose()
 	{
-		TfDataIdentityUIService.DataIdentityUpdated -= On_DataIdentityUpdated;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.DataIdentityUpdated -= On_DataIdentityUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		await _init();
-		TfDataIdentityUIService.DataIdentityUpdated += On_DataIdentityUpdated;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.DataIdentityUpdated += On_DataIdentityUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_DataIdentityUpdated(object? caller, TfDataIdentity args)
@@ -35,7 +32,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 	private async Task _init(TfNavigationState? navState = null, TfDataIdentity? identity = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			if (identity is not null && identity.DataIdentity == _identity?.DataIdentity)
@@ -45,7 +42,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 			else
 			{
 				if (navState.DataIdentityId is not null)
-					_identity = TfDataIdentityUIService.GetDataIdentity(navState.DataIdentityId);
+					_identity = TfUIService.GetDataIdentity(navState.DataIdentityId);
 			}
 		}
 		finally
@@ -76,7 +73,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 			return;
 		try
 		{
-			TfDataIdentityUIService.DeleteDataIdentity(_identity.DataIdentity);
+			TfUIService.DeleteDataIdentity(_identity.DataIdentity);
 			ToastService.ShowSuccess(LOC("Data identity removed"));
 		}
 		catch (Exception ex)

@@ -1,7 +1,7 @@
 ﻿
 namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfUserUIService
+public partial interface ITfUIService
 {
 	//Events
 	event EventHandler<TfUser?> CurrentUserChanged;
@@ -32,7 +32,7 @@ public partial interface ITfUserUIService
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
 	Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, short? width);
-	List<TfSortQuery> CalculateViewPresetSortPersonalization(List<TfSortQuery> currentSorts,Guid spaceViewId, Guid spaceViewColumnId, bool hasShiftKey);
+	List<TfSortQuery> CalculateViewPresetSortPersonalization(List<TfSortQuery> currentSorts, Guid spaceViewId, Guid spaceViewColumnId, bool hasShiftKey);
 	Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId);
 
 
@@ -44,27 +44,8 @@ public partial interface ITfUserUIService
 	void UpdateBookmark(TfBookmark bookmark);
 	void DeleteBookmark(TfBookmark bookmark);
 }
-public partial class TfUserUIService : ITfUserUIService
+public partial class TfUIService : ITfUIService
 {
-	#region << Ctor >>
-	private static readonly AsyncLock _asyncLock = new AsyncLock();
-	private readonly IJSRuntime _jsRuntime;
-	private readonly AuthenticationStateProvider _authStateProvider;
-	private readonly ITfService _tfService;
-	private readonly NavigationManager _navigationManager;
-	private TfUser? _currentUser = null;
-
-	public TfUserUIService(IJSRuntime jsRuntime,
-		ITfService tfService,
-		NavigationManager navigationManager,
-		AuthenticationStateProvider authStateProvider)
-	{
-		_jsRuntime = jsRuntime;
-		_tfService = tfService;
-		_navigationManager = navigationManager;
-		_authStateProvider = authStateProvider;
-	}
-	#endregion
 
 	#region << Events >>
 	public event EventHandler<TfUser?> CurrentUserChanged = default!;
@@ -77,15 +58,7 @@ public partial class TfUserUIService : ITfUserUIService
 	public ReadOnlyCollection<TfUser> GetUsers(string? search = null) => _tfService.GetUsers(search);
 	public ReadOnlyCollection<TfUser> GetUsersForRole(Guid roleId) => _tfService.GetUsersForRole(roleId);
 	public async Task<TfUser?> GetCurrentUserAsync()
-	{
-		if (_currentUser is not null) return _currentUser;
-
-		using (await _asyncLock.LockAsync())
-		{
-			_currentUser = await _tfService.GetUserFromCookieAsync(_jsRuntime, _authStateProvider);
-			return _currentUser;
-		}
-	}
+	=> await _tfService.GetUserFromCookieAsync(_jsRuntime, _authStateProvider);
 
 	public async Task<TfUser> CreateUserWithFormAsync(TfUserManageForm form)
 	{
@@ -150,7 +123,6 @@ public partial class TfUserUIService : ITfUserUIService
 			email: form.Email,
 			password: form.Password,
 			rememberMe: form.RememberMe);
-		_currentUser = user;
 		CurrentUserChanged?.Invoke(this, user);
 		return user;
 	}
@@ -172,7 +144,6 @@ public partial class TfUserUIService : ITfUserUIService
 	public async Task<TfUser> SetStartUpUrl(Guid userId, string url)
 	{
 		var user = await _tfService.SetStartUpUrl(userId, url);
-		_currentUser = user;
 		UserUpdated?.Invoke(this, user);
 		return await _tfService.SetStartUpUrl(userId, url);
 	}
@@ -180,7 +151,6 @@ public partial class TfUserUIService : ITfUserUIService
 	public async Task<TfUser> SetUserCulture(Guid userId, string cultureCode)
 	{
 		var user = await _tfService.SetUserCulture(userId, cultureCode);
-		_currentUser = user;
 		UserUpdated?.Invoke(this, user);
 		return user;
 	}
@@ -188,7 +158,6 @@ public partial class TfUserUIService : ITfUserUIService
 	public async Task<TfUser> SetPageSize(Guid userId, int? pageSize)
 	{
 		var user = await _tfService.SetPageSize(userId, pageSize);
-		_currentUser = user;
 		UserUpdated?.Invoke(this, user);
 		return user;
 	}
@@ -196,7 +165,6 @@ public partial class TfUserUIService : ITfUserUIService
 	public async Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? preset, Guid spaceViewColumnId, short? width)
 	{
 		var user = await _tfService.SetViewPresetColumnPersonalization(userId, spaceViewId, preset, spaceViewColumnId, width);
-		_currentUser = user;
 		UserUpdated?.Invoke(this, user);
 		return user;
 	}
@@ -210,7 +178,6 @@ public partial class TfUserUIService : ITfUserUIService
 	public async Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId)
 	{
 		var user = await _tfService.RemoveSpaceViewPersonalizations(userId, spaceViewId, presetId);
-		_currentUser = user;
 		UserUpdated?.Invoke(this, user);
 		return user;
 	}

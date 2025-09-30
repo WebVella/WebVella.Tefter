@@ -1,8 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewActionSelector : TfBaseComponent
 {
-	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
 	[Parameter] public TfDataset SpaceData { get; set; } = default!;
 	[Parameter] public TfUser User { get; set; } = default!;

@@ -3,7 +3,6 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucLanguageSwitch : TfBaseComponent
 {
-	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Parameter] public TfUser User { get; set; } = default!;
 
 	private bool _visible = false;
@@ -13,7 +12,7 @@ public partial class TucLanguageSwitch : TfBaseComponent
 	{
 		try
 		{
-			 await TfUserUIService.SetUserCulture(
+			 await TfUIService.SetUserCulture(
 				userId: User.Id,
 				cultureCode: option.CultureCode);
 

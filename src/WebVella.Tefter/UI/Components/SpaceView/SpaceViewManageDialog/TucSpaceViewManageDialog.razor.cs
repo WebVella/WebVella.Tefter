@@ -2,10 +2,6 @@
 
 public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpaceView?>
 {
-	[Inject] protected ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
-	[Inject] protected ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-	[Inject] protected ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
-	[Inject] protected ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Parameter] public TfSpaceView? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 	private string _error = string.Empty;
@@ -29,7 +25,7 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 		_title = _isCreate ? LOC("Create view") : LOC("Manage view in");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
-		_spaceDataList = TfDatasetUIService.GetDatasets();
+		_spaceDataList = TfUIService.GetDatasets();
 		if (_isCreate)
 		{
 			_form = new TfCreateSpaceViewExtended()
@@ -79,9 +75,9 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 
 			TfSpaceView result = default!;
 			if (_isCreate)
-				result = TfSpaceViewUIService.CreateSpaceView(_form);
+				result = TfUIService.CreateSpaceView(_form);
 			else
-				result = TfSpaceViewUIService.UpdateSpaceView(_form);
+				result = TfUIService.UpdateSpaceView(_form);
 
 			await Dialog.CloseAsync(result);
 		}

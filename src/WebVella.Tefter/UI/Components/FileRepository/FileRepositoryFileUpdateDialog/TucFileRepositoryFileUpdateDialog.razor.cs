@@ -1,11 +1,8 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucFileRepositoryFileUpdateDialog : TfFormBaseComponent, IDialogContentComponent<TfRepositoryFile?>
 {
-	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] private ITfFileRepositoryUIService TfFileRepositoryUIService { get; set; } = default!;
 	[Parameter] public TfRepositoryFile? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
-	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 
 	private bool _isSubmitting = false;
 
@@ -70,7 +67,7 @@ public partial class TucFileRepositoryFileUpdateDialog : TfFormBaseComponent, ID
 			{
 				Id = _form.Id
 			};
-			var item = TfFileRepositoryUIService.UpdateRepositoryFile(submit);
+			var item = TfUIService.UpdateRepositoryFile(submit);
 			ToastService.ShowSuccess("File successfully updated");
 			await Dialog.CloseAsync(item);
 		}

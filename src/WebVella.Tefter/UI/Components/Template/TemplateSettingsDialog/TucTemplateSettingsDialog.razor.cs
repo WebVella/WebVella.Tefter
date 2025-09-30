@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucTemplateSettingsDialog : TfBaseComponent, IDialogContentComponent<TfTemplate?>
 {
-	[Inject] protected ITfTemplateUIService TfTemplateUIService { get; set; } = default!;
 	[Parameter] public TfTemplate? Content { get; set; }
 
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
@@ -44,7 +43,7 @@ public partial class TucTemplateSettingsDialog : TfBaseComponent, IDialogContent
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			var template = TfTemplateUIService.UpdateTemplateSettings(Content.Id, _form);
+			var template = TfUIService.UpdateTemplateSettings(Content.Id, _form);
 			ToastService.ShowSuccess(LOC("Template settings successfully updated"));
 			await Dialog.CloseAsync(template);
 		}

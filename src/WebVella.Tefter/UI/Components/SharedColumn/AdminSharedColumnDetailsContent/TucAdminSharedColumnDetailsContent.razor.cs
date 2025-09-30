@@ -1,24 +1,21 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfSharedColumnUIService TfSharedColumnUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	private TfSharedColumn? _column = null;
 	private bool _isDeleting = false;
 
 	internal ReadOnlyCollection<TfDataProvider> _dataProviders = default!;
 	public void Dispose()
 	{
-		TfSharedColumnUIService.SharedColumnUpdated -= On_SharedColumnUpdated;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.SharedColumnUpdated -= On_SharedColumnUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfSharedColumnUIService.SharedColumnUpdated += On_SharedColumnUpdated;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.SharedColumnUpdated += On_SharedColumnUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_SharedColumnUpdated(object? caller, TfSharedColumn column)
@@ -35,7 +32,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 	private async Task _init(TfNavigationState? navState = null, TfSharedColumn? column = null)
 	{
 		if (navState == null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 
 		try
 		{
@@ -47,10 +44,10 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 			{
 				var routeData = Navigator.GetRouteState();
 				if (routeData.SharedColumnId is not null)
-					_column = TfSharedColumnUIService.GetSharedColumn(routeData.SharedColumnId.Value);
+					_column = TfUIService.GetSharedColumn(routeData.SharedColumnId.Value);
 			}
 			if(_column is null) return;
-			_dataProviders = TfSharedColumnUIService.GetSharedColumnConnectedDataProviders(_column.Id);
+			_dataProviders = TfUIService.GetSharedColumnConnectedDataProviders(_column.Id);
 		}
 		finally
 		{
@@ -85,9 +82,9 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 		{
 			_isDeleting = true;
 			await InvokeAsync(StateHasChanged);
-			TfSharedColumnUIService.DeleteSharedColumn(_column.Id);
+			TfUIService.DeleteSharedColumn(_column.Id);
 			ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
-			var allColumns = TfSharedColumnUIService.GetSharedColumns();
+			var allColumns = TfUIService.GetSharedColumns();
 			if (allColumns.Count > 0)
 				Navigator.NavigateTo(String.Format(TfConstants.AdminSharedColumnDetailsPageUrl, allColumns[0].Id));
 			else

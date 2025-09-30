@@ -1,27 +1,24 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfTemplateUIService TfTemplateUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
 	private string? _search = String.Empty;
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfTemplateUIService.TemplateCreated -= On_TemplateCreated;
-		TfTemplateUIService.TemplateUpdated -= On_TemplateUpdated;
-		TfTemplateUIService.TemplateDeleted -= On_TemplateDeleted;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.TemplateCreated -= On_TemplateCreated;
+		TfUIService.TemplateUpdated -= On_TemplateUpdated;
+		TfUIService.TemplateDeleted -= On_TemplateDeleted;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfTemplateUIService.TemplateCreated += On_TemplateCreated;
-		TfTemplateUIService.TemplateUpdated += On_TemplateUpdated;
-		TfTemplateUIService.TemplateDeleted += On_TemplateDeleted;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.TemplateCreated += On_TemplateCreated;
+		TfUIService.TemplateUpdated += On_TemplateUpdated;
+		TfUIService.TemplateDeleted += On_TemplateDeleted;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_TemplateCreated(object? caller, TfTemplate args)
@@ -49,12 +46,12 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 
 		try
 		{
 			_search = navState.SearchAside;
-			var items = TfTemplateUIService.GetTemplates(_search,navState.TemplateResultType).ToList();
+			var items = TfUIService.GetTemplates(_search,navState.TemplateResultType).ToList();
 
 			_items = new();
 			foreach (var item in items)

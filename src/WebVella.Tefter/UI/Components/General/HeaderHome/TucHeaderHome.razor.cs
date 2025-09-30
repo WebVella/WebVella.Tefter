@@ -1,7 +1,6 @@
 namespace WebVella.Tefter.UI.Components;
 public partial class TucHeaderHome : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private IReadOnlyDictionary<string, object>? _attributes = null;
 
@@ -9,14 +8,14 @@ public partial class TucHeaderHome : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -28,7 +27,7 @@ public partial class TucHeaderHome : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 
 		_menu = new();
 		try

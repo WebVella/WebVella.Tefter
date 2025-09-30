@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewBookmarkSelector : TfBaseComponent
 {
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
 	[Parameter] public TfDataTable Data { get; set; } = default!;
 	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
@@ -41,7 +40,7 @@ public partial class TucSpaceViewBookmarkSelector : TfBaseComponent
 			if (ActiveBookmark is null) 
 				return;
 
-			TfUserUIService.DeleteBookmark(ActiveBookmark);
+			TfUIService.DeleteBookmark(ActiveBookmark);
 
 			ToastService.ShowSuccess(LOC("Bookmark removed"));
 		}

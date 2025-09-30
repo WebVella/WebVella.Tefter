@@ -1,22 +1,19 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
-
 	private bool _isLoading = true;
 	private List<TfMenuItem> _menu = new();
 
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfSpaceUIService.SpaceUpdated -= On_SpaceUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.SpaceUpdated -= On_SpaceUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfSpaceUIService.SpaceUpdated += On_SpaceUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.SpaceUpdated += On_SpaceUpdated;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -31,18 +28,18 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDis
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			_menu = new();
 			if (navState is null || navState.SpaceId is null)
 				return;
 
-			var space = TfSpaceUIService.GetSpace(navState.SpaceId.Value);
+			var space = TfUIService.GetSpace(navState.SpaceId.Value);
 			if (space is null)
 				return;
 
-			var spacePages = TfSpaceUIService.GetSpacePages(space.Id);
+			var spacePages = TfUIService.GetSpacePages(space.Id);
 			_menu.Add(new TfMenuItem
 			{
 				Url = string.Format(TfConstants.SpaceManagePageUrl, navState.SpaceId),

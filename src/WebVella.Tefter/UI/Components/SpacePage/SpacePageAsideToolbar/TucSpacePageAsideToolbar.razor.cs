@@ -4,9 +4,6 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	[CascadingParameter(Name = "CurrentUser")]
 	public TfUser CurrentUser { get; set; } = default!;
 
@@ -16,13 +13,13 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 	private bool _actionMenuOpened = false;
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -34,7 +31,7 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		else
 			_navState = navState;
 
@@ -87,7 +84,7 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 	private async Task _editSpaceAsync()
 	{
 		if (_navState.SpaceId is null) return;
-		var space = TfSpaceUIService.GetSpace(_navState.SpaceId.Value);
+		var space = TfUIService.GetSpace(_navState.SpaceId.Value);
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceManageDialog>(
 		space,
 		new DialogParameters()
@@ -108,7 +105,7 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 			return;
 		try
 		{
-			TfSpaceUIService.DeleteSpace(_navState.SpaceId.Value);
+			TfUIService.DeleteSpace(_navState.SpaceId.Value);
 			ToastService.ShowSuccess(LOC("Space deleted"));
 			Navigator.NavigateTo(TfConstants.HomePageUrl);
 		}

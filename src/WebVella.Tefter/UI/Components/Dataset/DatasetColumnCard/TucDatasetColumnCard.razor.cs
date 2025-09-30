@@ -4,8 +4,6 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucDatasetColumnCard : TfBaseComponent
 {
-	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
-
 	[Parameter]
 	public List<TfDatasetColumn> Items { get; set; } = new();
 

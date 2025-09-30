@@ -8,7 +8,6 @@ namespace WebVella.Tefter.Talk.Components;
 public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 {
 	[Inject] public ITalkService TalkService { get; set; }
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Parameter] public TalkChannel? Channel { get; set; } = null;
 	[Parameter] public string? DataIdentityValue { get; set; } = null;
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
@@ -47,7 +46,7 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 		TalkService.ThreadCreated -= On_ThreadChanged;
 		TalkService.ThreadUpdated -= On_ThreadChanged;
 		TalkService.ThreadDeleted -= On_ThreadChanged;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -58,7 +57,7 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 		TalkService.ThreadCreated += On_ThreadChanged;
 		TalkService.ThreadUpdated += On_ThreadChanged;
 		TalkService.ThreadDeleted += On_ThreadChanged;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 	protected override void OnAfterRender(bool firstRender)
 	{
@@ -93,7 +92,7 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			_threads = new();

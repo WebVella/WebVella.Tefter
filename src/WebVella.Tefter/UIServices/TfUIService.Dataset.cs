@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfDatasetUIService
+public partial interface ITfUIService
 {
 	//Events
 	event EventHandler<TfDataset> DatasetCreated;
@@ -53,21 +53,8 @@ public partial interface ITfDatasetUIService
 	TfDataTable InsertRowInDataTable(TfDataTable dt);
 
 }
-public partial class TfDatasetUIService : ITfDatasetUIService
+public partial class TfUIService : ITfUIService
 {
-	#region << Ctor >>
-	private static readonly AsyncLock _asyncLock = new AsyncLock();
-	private readonly ITfService _tfService;
-	private readonly ITfMetaService _metaService;
-	private readonly IStringLocalizer<TfDatasetUIService> LOC;
-
-	public TfDatasetUIService(IServiceProvider serviceProvider)
-	{
-		_tfService = serviceProvider.GetService<ITfService>() ?? default!;
-		_metaService = serviceProvider.GetService<ITfMetaService>() ?? default!;
-		LOC = serviceProvider.GetService<IStringLocalizer<TfDatasetUIService>>() ?? default!;
-	}
-	#endregion
 
 	#region << Events >>
 	public event EventHandler<TfDataset> DatasetCreated = default!;

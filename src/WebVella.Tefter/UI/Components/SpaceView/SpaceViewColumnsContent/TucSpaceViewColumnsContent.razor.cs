@@ -1,12 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
-	[Inject] public ITfMetaUIService TfMetaUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	private TfSpaceView _spaceView = new();
 	private TfDataset _spaceData = new();
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
@@ -17,17 +11,17 @@ public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 	private ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> _componentMetaDict = default!;
 	public void Dispose()
 	{
-		TfSpaceViewUIService.SpaceViewUpdated -= On_SpaceViewUpdated;
-		TfSpaceViewUIService.SpaceViewColumnsChanged -= On_SpaceViewColumnsUpdated;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.SpaceViewUpdated -= On_SpaceViewUpdated;
+		TfUIService.SpaceViewColumnsChanged -= On_SpaceViewColumnsUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfSpaceViewUIService.SpaceViewUpdated += On_SpaceViewUpdated;
-		TfSpaceViewUIService.SpaceViewColumnsChanged += On_SpaceViewColumnsUpdated;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.SpaceViewUpdated += On_SpaceViewUpdated;
+		TfUIService.SpaceViewColumnsChanged += On_SpaceViewColumnsUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
@@ -49,7 +43,7 @@ public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null, TfSpaceView? spaceView = null)
 	{
 		if (navState == null)
-			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		else
 			_navState = navState;
 		try
@@ -62,15 +56,15 @@ public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 			{
 				var routeData = Navigator.GetRouteState();
 				if (routeData.SpaceViewId is not null)
-					_spaceView = TfSpaceViewUIService.GetSpaceView(routeData.SpaceViewId.Value);
+					_spaceView = TfUIService.GetSpaceView(routeData.SpaceViewId.Value);
 
 			}
 			if (_spaceView is null) return;
-			_space = TfSpaceUIService.GetSpace(_spaceView.SpaceId);
-			_spaceViewColumns = TfSpaceViewUIService.GetViewColumns(_spaceView.Id);
-			_spaceData = TfDatasetUIService.GetDataset(_spaceView.DatasetId);
-			_typeMetaDict = TfMetaUIService.GetSpaceViewColumnTypeDict();
-			_componentMetaDict = TfMetaUIService.GetSpaceViewColumnComponentDict();
+			_space = TfUIService.GetSpace(_spaceView.SpaceId);
+			_spaceViewColumns = TfUIService.GetViewColumns(_spaceView.Id);
+			_spaceData = TfUIService.GetDataset(_spaceView.DatasetId);
+			_typeMetaDict = TfUIService.GetSpaceViewColumnTypeDict();
+			_componentMetaDict = TfUIService.GetSpaceViewColumnComponentDict();
 		}
 		finally
 		{
@@ -123,7 +117,7 @@ public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 		try
 		{
 			_submitting = true;
-			TfSpaceViewUIService.RemoveSpaceViewColumn(column.Id);
+			TfUIService.RemoveSpaceViewColumn(column.Id);
 			ToastService.ShowSuccess(LOC("Space View updated!"));
 		}
 		catch (Exception ex)
@@ -143,7 +137,7 @@ public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 		if (_submitting) return;
 		try
 		{
-			TfSpaceViewUIService.MoveSpaceViewColumn(viewId: _spaceView.Id, columnId: column.Id, isUp: isUp);
+			TfUIService.MoveSpaceViewColumn(viewId: _spaceView.Id, columnId: column.Id, isUp: isUp);
 			ToastService.ShowSuccess(LOC("Space View updated!"));
 		}
 		catch (Exception ex)

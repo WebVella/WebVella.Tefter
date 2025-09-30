@@ -2,23 +2,20 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 	private int _ellipsisCount = 30;
 	private List<TfMenuItem> _menu = new();
 	private bool _isLoading = true;
 	private string _styles = String.Empty;
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -28,8 +25,8 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
-		var navMenu = await TfNavigationUIService.GetNavigationMenu(Navigator, CurrentUser);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
+		var navMenu = await TfUIService.GetNavigationMenu(Navigator, CurrentUser);
 		try
 		{
 			_menu = new();

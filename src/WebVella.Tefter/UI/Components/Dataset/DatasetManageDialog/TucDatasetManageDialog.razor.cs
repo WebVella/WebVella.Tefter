@@ -2,8 +2,6 @@
 
 public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataset?>
 {
-	[Inject] protected ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-	[Inject] protected ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Parameter] public TfDataset? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 	private string _error = string.Empty;
@@ -22,7 +20,7 @@ public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogConten
 		if (Content.DataProviderId == Guid.Empty) throw new Exception("DataProviderId is required");
 		if (Content.Id == Guid.Empty) _isCreate = true;
 
-		_provider = TfDataProviderUIService.GetDataProvider(Content.DataProviderId);
+		_provider = TfUIService.GetDataProvider(Content.DataProviderId);
 		if(_provider is null) throw new Exception("DataProviderId not found");
 
 		_title = _isCreate ? LOC("Create dataset in {0}", _provider.Name) : LOC("Manage dataset in {0}", _provider.Name);
@@ -55,12 +53,12 @@ public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogConten
 			TfDataset result = default!;
 			if (_isCreate)
 			{
-				result = TfDatasetUIService.CreateDataset(_form);
+				result = TfUIService.CreateDataset(_form);
 				ToastService.ShowSuccess(LOC("Dataset successfully created!"));
 			}
 			else
 			{
-				result = TfDatasetUIService.UpdateDataset(_form);
+				result = TfUIService.UpdateDataset(_form);
 				ToastService.ShowSuccess(LOC("Dataset successfully updated!"));
 			}
 

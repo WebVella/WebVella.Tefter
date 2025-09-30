@@ -3,11 +3,7 @@
 namespace WebVella.Tefter.UI.Components;
 public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSharedColumn?>
 {
-	[Inject] protected ITfSharedColumnUIService TfSharedColumnUIService { get; set; } = default!;
-	[Inject] protected ITfDataIdentityUIService TfDataIdentityUIService { get; set; } = default!;
-	[Inject] protected ITfMetaUIService TfMetaUIService { get; set; } = default!;
 	[Parameter] public TfSharedColumn? Content { get; set; }
-
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
 	private bool _isSubmitting = false;
@@ -29,8 +25,8 @@ public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogC
 		_title = _isCreate ? LOC("Create shared column") : LOC("Manage shared column");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
-		_allDataIdentities = TfDataIdentityUIService.GetDataIdentities().Select(x=> x.DataIdentity).ToList();
-		_columnTypeOptions = TfMetaUIService.GetDatabaseColumnTypeInfosList();
+		_allDataIdentities = TfUIService.GetDataIdentities().Select(x=> x.DataIdentity).ToList();
+		_columnTypeOptions = TfUIService.GetDatabaseColumnTypeInfosList();
 		if (!_isCreate)
 		{
 			var dbName = Content.DbName;
@@ -79,12 +75,12 @@ public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogC
 			var submit = _form with { DbName = TfConstants.TF_SHARED_COLUMN_PREFIX + _form.DbName };
 			if (_isCreate)
 			{
-				sharedColumn = TfSharedColumnUIService.CreateSharedColumn(submit);
+				sharedColumn = TfUIService.CreateSharedColumn(submit);
 				ToastService.ShowSuccess(LOC("Shared column successfully created"));
 			}
 			else
 			{
-				sharedColumn = TfSharedColumnUIService.UpdateSharedColumn(submit);
+				sharedColumn = TfUIService.UpdateSharedColumn(submit);
 				ToastService.ShowSuccess(LOC("Shared column successfully updated"));
 			}
 			await Dialog.CloseAsync(sharedColumn);

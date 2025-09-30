@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfSpaceUIService
+public partial interface ITfUIService
 {
 	//Events
 	event EventHandler<TfSpace> SpaceCreated;
@@ -32,22 +32,8 @@ public partial interface ITfSpaceUIService
 	void CopySpacePage(Guid pageId);
 	TfSpacePage? GetSpacePageBySpaceViewId(Guid spaceViewId);
 }
-public partial class TfSpaceUIService : ITfSpaceUIService
+public partial class TfUIService : ITfUIService
 {
-	#region << Ctor >>
-	private static readonly AsyncLock _asyncLock = new AsyncLock();
-	private readonly ITfService _tfService;
-	private readonly ITfMetaService _metaService;
-	private readonly IStringLocalizer<TfSpaceUIService> LOC;
-
-	public TfSpaceUIService(IServiceProvider serviceProvider)
-	{
-		_tfService = serviceProvider.GetService<ITfService>() ?? default!;
-		_metaService = serviceProvider.GetService<ITfMetaService>() ?? default!;
-		LOC = serviceProvider.GetService<IStringLocalizer<TfSpaceUIService>>() ?? default!;
-	}
-	#endregion
-
 	#region << Events >>
 	public event EventHandler<TfSpace> SpaceCreated = default!;
 	public event EventHandler<TfSpace> SpaceUpdated = default!;

@@ -1,12 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDisposable
 {
-	[Inject] private ITfFileRepositoryUIService TfFileRepositoryUIService { get; set; } = default!;
-	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] private ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
-	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
-
 	private List<TfRepositoryFile>? _items = null;
 
 	FluentInputFile fileUploader = default!;
@@ -19,19 +13,19 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	private FluentSearch? _refSearch = null;
 	public void Dispose()
 	{
-		TfFileRepositoryUIService.FileRepositoryCreated -= On_RepositoryFileChanged;
-		TfFileRepositoryUIService.FileRepositoryUpdated -= On_RepositoryFileChanged;
-		TfFileRepositoryUIService.FileRepositoryDeleted -= On_RepositoryFileChanged;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.FileRepositoryCreated -= On_RepositoryFileChanged;
+		TfUIService.FileRepositoryUpdated -= On_RepositoryFileChanged;
+		TfUIService.FileRepositoryDeleted -= On_RepositoryFileChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
 		await _init();
-		TfFileRepositoryUIService.FileRepositoryCreated += On_RepositoryFileChanged;
-		TfFileRepositoryUIService.FileRepositoryUpdated += On_RepositoryFileChanged;
-		TfFileRepositoryUIService.FileRepositoryDeleted += On_RepositoryFileChanged;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.FileRepositoryCreated += On_RepositoryFileChanged;
+		TfUIService.FileRepositoryUpdated += On_RepositoryFileChanged;
+		TfUIService.FileRepositoryDeleted += On_RepositoryFileChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -61,9 +55,9 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 			if (navState is not null)
 				_navState = navState;
 			else
-				_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+				_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 
-			_items = TfFileRepositoryUIService.GetRepositoryFiles(search: _search);
+			_items = TfUIService.GetRepositoryFiles(search: _search);
 		}
 		finally
 		{
@@ -82,7 +76,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 			var file = Files[0];
 			try
 			{
-				var result = TfFileRepositoryUIService.CreateRepositoryFile(new TfFileForm
+				var result = TfUIService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
 					CreatedBy = CurrentUser?.Id,
@@ -134,7 +128,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 			return;
 		try
 		{
-			TfFileRepositoryUIService.DeleteRepositoryFile(file.Filename);
+			TfUIService.DeleteRepositoryFile(file.Filename);
 			ToastService.ShowSuccess(LOC("The file is successfully deleted!"));
 		}
 		catch (Exception ex)

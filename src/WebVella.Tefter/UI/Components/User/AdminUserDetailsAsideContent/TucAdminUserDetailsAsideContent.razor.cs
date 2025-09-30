@@ -1,25 +1,22 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
 	private string? _search = String.Empty;
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfUserUIService.UserCreated -= On_UserCreated;
-		TfUserUIService.UserUpdated -= On_UserUpdated;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.UserCreated -= On_UserCreated;
+		TfUIService.UserUpdated -= On_UserUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfUserUIService.UserCreated += On_UserCreated;
-		TfUserUIService.UserUpdated += On_UserUpdated;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.UserCreated += On_UserCreated;
+		TfUIService.UserUpdated += On_UserUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 
@@ -42,12 +39,12 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 
 		try
 		{
 			_search = navState.SearchAside;
-			var users = TfUserUIService.GetUsers(_search).ToList();
+			var users = TfUIService.GetUsers(_search).ToList();
 			_items = new();
 			foreach (var user in users)
 			{

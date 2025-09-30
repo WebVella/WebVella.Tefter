@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfDataIdentityUIService
+public partial interface ITfUIService
 {
 	//Events
 	event EventHandler<TfDataIdentity> DataIdentityCreated;
@@ -14,19 +14,8 @@ public partial interface ITfDataIdentityUIService
 	TfDataIdentity UpdateDataIdentity(TfDataIdentity identity);
 	void DeleteDataIdentity(string identity);
 }
-public partial class TfDataIdentityUIService : ITfDataIdentityUIService
+public partial class TfUIService : ITfUIService
 {
-	private readonly ITfService _tfService;
-	private readonly ITfMetaService _metaService;
-	private readonly IStringLocalizer<TfDataIdentityUIService> LOC;
-
-	public TfDataIdentityUIService(IServiceProvider serviceProvider)
-	{
-		_tfService = serviceProvider.GetService<ITfService>() ?? default!;
-		_metaService = serviceProvider.GetService<ITfMetaService>() ?? default!;
-		LOC = serviceProvider.GetService<IStringLocalizer<TfDataIdentityUIService>>() ?? default!;
-	}
-
 	#region << Events >>
 	public event EventHandler<TfDataIdentity> DataIdentityCreated = default!;
 	public event EventHandler<TfDataIdentity> DataIdentityUpdated = default!;

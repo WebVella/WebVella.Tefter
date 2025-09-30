@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucHomeToolbar : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 	[Parameter] public EventCallback<string> OnSearch { get; set; }
 	[Parameter] public EventCallback<string> OnFilterToggle { get; set; }
 
@@ -13,12 +12,12 @@ public partial class TucHomeToolbar : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -29,7 +28,7 @@ public partial class TucHomeToolbar : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		else 
 			_navState = navState;
 		try

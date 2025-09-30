@@ -2,12 +2,14 @@
 @if (_isLoaded)
 {
 	<CascadingValue TValue="TfUser" Name="CurrentUser" Value="_currentUser">
+	<CascadingValue TValue="TfNavigationState" Name="NavigationState" Value="_navState">
 		@Body
 		<FluentToastProvider MaxToastCount="5" Position="ToastPosition.BottomCenter" RemoveToastsOnNavigation=false />
 		<FluentDialogProvider />
 		<FluentTooltipProvider />
 		<FluentKeyCodeProvider />
 		<FluentMenuProvider />
+	</CascadingValue>
 	</CascadingValue>
 }
 

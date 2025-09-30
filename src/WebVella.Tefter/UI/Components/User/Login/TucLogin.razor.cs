@@ -1,16 +1,13 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucLogin : TfFormBaseComponent
 {
-	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] private ITfRecipeUIService TfRecipeUIService { get; set; } = default!;
-
 	private bool _isSubmitting = false;
 	private TfLoginForm _form = new();
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		var installData = await TfRecipeUIService.GetInstallDataAsync();
+		var installData = await TfUIService.GetInstallDataAsync();
 		if (installData is null)
 			Navigator.NavigateTo(TfConstants.InstallPage, true);
 		base.InitForm(_form);
@@ -28,7 +25,7 @@ public partial class TucLogin : TfFormBaseComponent
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = await TfUserUIService.AuthenticateAsync(_form);
+			var result = await TfUIService.AuthenticateAsync(_form);
 			if (result is not null)
 				Navigator.NavigateTo(TfConstants.HomePageUrl, true);
 		}

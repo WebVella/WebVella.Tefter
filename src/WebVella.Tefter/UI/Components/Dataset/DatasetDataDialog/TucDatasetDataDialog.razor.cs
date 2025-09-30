@@ -4,7 +4,6 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucDatasetDataDialog : TfBaseComponent, IDialogContentComponent<TfDataset?>
 {
-	[Inject] protected ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Parameter] public TfDataset? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 	private string _error = string.Empty;
@@ -36,7 +35,7 @@ public partial class TucDatasetDataDialog : TfBaseComponent, IDialogContentCompo
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
 
-			_data = TfDatasetUIService.QueryDataset(
+			_data = TfUIService.QueryDataset(
 				datasetId: Content!.Id,
 				page: 1,
 				pageSize: TfConstants.ItemsMaxLimit

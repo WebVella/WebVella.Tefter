@@ -2,20 +2,16 @@
 
 public partial class TucSpaceViewDetailsAsideToolbar : TfBaseComponent, IDisposable
 {
-
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
-
 	private string _backUrl = "#";
 	private TfNavigationState _navState = new();
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -27,7 +23,7 @@ public partial class TucSpaceViewDetailsAsideToolbar : TfBaseComponent, IDisposa
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		else
 			_navState = navState;
 
@@ -36,7 +32,7 @@ public partial class TucSpaceViewDetailsAsideToolbar : TfBaseComponent, IDisposa
 			_backUrl = "#";
 			if (_navState.SpaceId is null || _navState.SpaceViewId is null) return;
 
-			var spacePage = TfSpaceUIService.GetSpacePageBySpaceViewId(_navState.SpaceViewId.Value);
+			var spacePage = TfUIService.GetSpacePageBySpaceViewId(_navState.SpaceViewId.Value);
 			if (spacePage is not null)
 			{
 				_backUrl = String.Format(TfConstants.SpacePagePageUrl, spacePage.SpaceId, spacePage.Id);

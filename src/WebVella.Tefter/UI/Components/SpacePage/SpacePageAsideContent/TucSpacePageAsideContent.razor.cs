@@ -3,12 +3,6 @@ namespace WebVella.Tefter.UI.Components;
 public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 {
 	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; } = default!;
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
-	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
-
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
 	private string? _search = String.Empty;
@@ -18,16 +12,16 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 	private TfNavigationState _navState = new();
 	public void Dispose()
 	{
-		TfSpaceUIService.SpaceUpdated -= On_SpaceChanged;
-		TfUserUIService.UserUpdated -= On_UserChanged;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.SpaceUpdated -= On_SpaceChanged;
+		TfUIService.UserUpdated -= On_UserChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfSpaceUIService.SpaceUpdated += On_SpaceChanged;
-		TfUserUIService.UserUpdated += On_UserChanged;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.SpaceUpdated += On_SpaceChanged;
+		TfUIService.UserUpdated += On_UserChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_SpaceChanged(object? caller, TfSpace args)
@@ -49,7 +43,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		else
 			_navState = navState;
 
@@ -100,7 +94,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		var menuGroups = new List<string>();
 		if (_activeTab == TfSpaceNavigationActiveTab.Pages)
 		{
-			var spacePages = TfSpaceUIService.GetSpacePages(_navState.SpaceId!.Value);
+			var spacePages = TfUIService.GetSpacePages(_navState.SpaceId!.Value);
 			foreach (var spacePage in spacePages)
 			{
 				if (!_filterPage(spacePage))
@@ -116,8 +110,8 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		}
 		else if (_activeTab == TfSpaceNavigationActiveTab.Bookmarks)
 		{
-			var bookmarks = TfUserUIService.GetUserBookmarks(CurrentUser.Id);
-			var spaceViewDict = (TfSpaceViewUIService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
+			var bookmarks = TfUIService.GetUserBookmarks(CurrentUser.Id);
+			var spaceViewDict = (TfUIService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
 			foreach (var record in bookmarks
 				.Where(x => spaceViewDict.ContainsKey(x.SpaceViewId)).OrderBy(x => x.Name))
 			{
@@ -139,8 +133,8 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		}
 		else if (_activeTab == TfSpaceNavigationActiveTab.Saves)
 		{
-			var saves = TfUserUIService.GetUserSaves(CurrentUser.Id);
-			var spaceViewDict = (TfSpaceViewUIService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
+			var saves = TfUIService.GetUserSaves(CurrentUser.Id);
+			var spaceViewDict = (TfUIService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
 			foreach (var record in saves
 				.Where(x => spaceViewDict.ContainsKey(x.SpaceViewId)).OrderBy(x => x.Name))
 			{

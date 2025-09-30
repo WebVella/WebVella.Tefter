@@ -1,29 +1,26 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
 	private string? _search = String.Empty;
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfDataProviderUIService.DataProviderCreated -= On_DataProviderCreated;
-		TfDataProviderUIService.DataProviderUpdated -= On_DataProviderUpdated;
-		TfDataProviderUIService.DataProviderDeleted -= On_DataProviderDeleted;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.DataProviderCreated -= On_DataProviderCreated;
+		TfUIService.DataProviderUpdated -= On_DataProviderUpdated;
+		TfUIService.DataProviderDeleted -= On_DataProviderDeleted;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		await _init();
-		TfDataProviderUIService.DataProviderCreated += On_DataProviderCreated;
-		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
-		TfDataProviderUIService.DataProviderDeleted += On_DataProviderDeleted;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.DataProviderCreated += On_DataProviderCreated;
+		TfUIService.DataProviderUpdated += On_DataProviderUpdated;
+		TfUIService.DataProviderDeleted += On_DataProviderDeleted;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_DataProviderCreated(object? caller, TfDataProvider user)
@@ -51,11 +48,11 @@ public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, 
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			_search = navState.SearchAside;
-			var items = TfDataProviderUIService.GetDataProviders(_search).ToList();
+			var items = TfUIService.GetDataProviders(_search).ToList();
 			_items = new();
 			foreach (var item in items)
 			{

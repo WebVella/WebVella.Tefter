@@ -2,11 +2,8 @@
 
 public partial class TucFileRepositoryFileSelectDialog : TfBaseComponent, IDialogContentComponent<string?>
 {
-	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] private ITfFileRepositoryUIService TfFileRepositoryUIService { get; set; } = default!;
 	[Parameter] public string? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
-	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 
 	private bool _isSubmitting = false;
 
@@ -38,7 +35,7 @@ public partial class TucFileRepositoryFileSelectDialog : TfBaseComponent, IDialo
 	{
 		try
 		{
-			_items = TfFileRepositoryUIService.GetRepositoryFiles(search: _search);
+			_items = TfUIService.GetRepositoryFiles(search: _search);
 		}
 		catch (Exception ex)
 		{
@@ -61,7 +58,7 @@ public partial class TucFileRepositoryFileSelectDialog : TfBaseComponent, IDialo
 			var file = Files[0];
 			try
 			{
-				var result = TfFileRepositoryUIService.CreateRepositoryFile(new TfFileForm
+				var result = TfUIService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
 					CreatedBy = CurrentUser?.Id,

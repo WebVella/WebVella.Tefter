@@ -2,11 +2,8 @@
 namespace WebVella.Tefter.UI.Components;
 public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogContentComponent<TfTemplate?>
 {
-	[Inject] public ITfTemplateUIService TfTemplateUIService { get; set; } = default!;
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Parameter] public TfTemplate? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
-	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
@@ -30,7 +27,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 		_title = _isCreate ? LOC("Create template") : LOC("Manage template");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")!.WithColor(Color.Neutral) : TfConstants.GetIcon("Save")!.WithColor(Color.Neutral);
-		_processors = TfTemplateUIService.GetProcessors();
+		_processors = TfUIService.GetProcessors();
 		_form = new TfManageTemplateModel
 		{
 			Id = Content.Id,
@@ -69,7 +66,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 		{
 			_form.FluentIconName = _selectedProcessor.ResultType.GetFluentIcon();
 		}
-		_spaceDataAll = TfTemplateUIService.GetSpaceDataOptionsForTemplate();
+		_spaceDataAll = TfUIService.GetSpaceDataOptionsForTemplate();
 		_recalcSpaceDataOptions();
 		base.InitForm(_form);
 	}
@@ -97,12 +94,12 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 			TfTemplate template = default!;
 			if (_isCreate)
 			{
-				template = TfTemplateUIService.CreateTemplate(submit);
+				template = TfUIService.CreateTemplate(submit);
 				ToastService.ShowSuccess(LOC("Template successfully created"));
 			}
 			else
 			{
-				template = TfTemplateUIService.UpdateTemplate(submit);
+				template = TfUIService.UpdateTemplate(submit);
 				ToastService.ShowSuccess(LOC("Template successfully updated"));
 			}
 

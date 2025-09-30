@@ -1,24 +1,21 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	private TfSpace _space = default!;
 	private List<TfSpacePage> _spacePages = default!;
 	private TfNavigationState _navState = default!;
 	public bool _submitting = false;
 	public void Dispose()
 	{
-		TfSpaceUIService.SpaceUpdated -= On_SpaceUpdated;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.SpaceUpdated -= On_SpaceUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfSpaceUIService.SpaceUpdated += On_SpaceUpdated;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.SpaceUpdated += On_SpaceUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_SpaceUpdated(object? caller, TfSpace args)
@@ -35,7 +32,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null, TfSpace? space = null)
 	{
 		if (navState == null)
-			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		else
 			_navState = navState;
 
@@ -48,10 +45,10 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 			else
 			{
 				if (_navState.SpaceId is null) return;
-				_space = TfSpaceUIService.GetSpace(_navState.SpaceId.Value);
+				_space = TfUIService.GetSpace(_navState.SpaceId.Value);
 				if (_space is null) return;
 			}
-			_spacePages = TfSpaceUIService.GetSpacePages(_space.Id);
+			_spacePages = TfUIService.GetSpacePages(_space.Id);
 
 		}
 		finally
@@ -89,7 +86,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 
 		try
 		{
-			TfSpaceUIService.DeleteSpacePage(node);
+			TfUIService.DeleteSpacePage(node);
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
 		}
 		catch (Exception ex)
@@ -111,7 +108,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 
 		try
 		{
-			TfSpaceUIService.MoveSpacePage(args.Item1, args.Item2);
+			TfUIService.MoveSpacePage(args.Item1, args.Item2);
 
 			ToastService.ShowSuccess(LOC("Space page updated!"));
 		}
@@ -135,7 +132,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 
 		try
 		{
-			TfSpaceUIService.CopySpacePage(nodeId);
+			TfUIService.CopySpacePage(nodeId);
 
 			ToastService.ShowSuccess(LOC("Space page updated!"));
 		}

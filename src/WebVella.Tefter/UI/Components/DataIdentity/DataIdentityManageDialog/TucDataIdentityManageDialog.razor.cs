@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucDataIdentityManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataIdentity?>
 {
-	[Inject] private ITfDataIdentityUIService TfDataIdentityUIService { get; set; } = default!;
 	[Parameter] public TfDataIdentity? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
@@ -52,12 +51,12 @@ public partial class TucDataIdentityManageDialog : TfFormBaseComponent, IDialogC
 
 			if (_isCreate)
 			{
-				result = TfDataIdentityUIService.CreateDataIdentity(_form);
+				result = TfUIService.CreateDataIdentity(_form);
 				ToastService.ShowSuccess(LOC("Data identity created"));
 			}
 			else
 			{
-				result = TfDataIdentityUIService.UpdateDataIdentity(_form);
+				result = TfUIService.UpdateDataIdentity(_form);
 				ToastService.ShowSuccess(LOC("Data identity updated"));
 			}
 

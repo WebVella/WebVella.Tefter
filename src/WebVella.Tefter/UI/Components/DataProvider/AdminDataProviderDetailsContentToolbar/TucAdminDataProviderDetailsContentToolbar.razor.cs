@@ -1,22 +1,19 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-
 	private bool _isLoading = true;
 	private List<TfMenuItem> _menu = new();
 
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated -= On_DataProviderUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.DataProviderUpdated -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.DataProviderUpdated += On_DataProviderUpdated;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -32,12 +29,12 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			_menu = new();
 			if(navState is null || navState.DataProviderId is null) return;
-			var provider = TfDataProviderUIService.GetDataProvider(navState.DataProviderId.Value);
+			var provider = TfUIService.GetDataProvider(navState.DataProviderId.Value);
 			if (provider is null) return;
 			_menu.Add(new TfMenuItem
 			{

@@ -1,24 +1,21 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewDetailsContentToolbar : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-
 	private bool _isLoading = true;
 	private List<TfMenuItem> _menu = new();
 
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfSpaceViewUIService.SpaceViewUpdated -= On_SpaceViewUpdated;
-		TfSpaceViewUIService.SpaceViewColumnsChanged -= On_SpaceViewColumnsUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.SpaceViewUpdated -= On_SpaceViewUpdated;
+		TfUIService.SpaceViewColumnsChanged -= On_SpaceViewColumnsUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfSpaceViewUIService.SpaceViewUpdated += On_SpaceViewUpdated;
-		TfSpaceViewUIService.SpaceViewColumnsChanged += On_SpaceViewColumnsUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.SpaceViewUpdated += On_SpaceViewUpdated;
+		TfUIService.SpaceViewColumnsChanged += On_SpaceViewColumnsUpdated;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -38,17 +35,17 @@ public partial class TucSpaceViewDetailsContentToolbar : TfBaseComponent, IDispo
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			_menu = new();
 			if (navState is null || navState.SpaceId is null || navState.SpaceViewId is null)
 				return;
 
-			var spaceView = TfSpaceViewUIService.GetSpaceView(navState.SpaceViewId.Value);
+			var spaceView = TfUIService.GetSpaceView(navState.SpaceViewId.Value);
 			if (spaceView is null)
 				return;
-			var spaceViewColumns = TfSpaceViewUIService.GetViewColumns(spaceView.Id);
+			var spaceViewColumns = TfUIService.GetViewColumns(spaceView.Id);
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),

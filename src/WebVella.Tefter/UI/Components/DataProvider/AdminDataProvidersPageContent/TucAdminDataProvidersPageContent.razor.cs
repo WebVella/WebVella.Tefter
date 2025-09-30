@@ -2,12 +2,10 @@
 
 public partial class TucAdminDataProvidersPageContent : TfBaseComponent
 {
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		var dataProviders = TfDataProviderUIService.GetDataProviders();
+		var dataProviders = TfUIService.GetDataProviders();
 		if (dataProviders.Count > 0)
 		{
 			Navigator.NavigateTo(string.Format(TfConstants.AdminDataProviderDetailsPageUrl, dataProviders[0].Id));

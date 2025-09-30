@@ -2,60 +2,40 @@
 
 namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfNavigationUIService
+public partial interface ITfUIService
 {
 	event EventHandler<TfNavigationState> NavigationStateChanged;
+	void InvokeNavigationStateChanged(TfNavigationState newState);
 	Task<TfNavigationState> GetNavigationStateAsync(NavigationManager navigator);
 	Task<TfNavigationMenu> GetNavigationMenu(NavigationManager navigator, TfUser? currentUser);
 }
-public partial class TfNavigationUIService : ITfNavigationUIService
+public partial class TfUIService : ITfUIService
 {
-	#region << Ctor >>
-	private static readonly AsyncLock _asyncLock = new AsyncLock();
-	private readonly ITfService _tfService;
-	private readonly ITfMetaService _metaService;
-	private readonly IStringLocalizer<TfSpaceUIService> LOC;
-	private TfNavigationState _navState = new();
-	private TfNavigationMenu _navMenu = new();
-	public TfNavigationUIService(IServiceProvider serviceProvider)
-	{
-		_tfService = serviceProvider.GetService<ITfService>() ?? default!;
-		_metaService = serviceProvider.GetService<ITfMetaService>() ?? default!;
-		LOC = serviceProvider.GetService<IStringLocalizer<TfSpaceUIService>>() ?? default!;
-	}
-	#endregion
-
 	#region << Events >>
 	public event EventHandler<TfNavigationState> NavigationStateChanged = default!;
 	#endregion
 
 	#region << Navigation >>
+
+	public void InvokeNavigationStateChanged(TfNavigationState newState)
+		=> NavigationStateChanged?.Invoke(this, newState);
+
+
 	public async Task<TfNavigationState> GetNavigationStateAsync(NavigationManager navigator)
-	{
-		using (await _asyncLock.LockAsync())
-		{
-			if (_navState.Uri == navigator.Uri)
-			{
-				return _navState;
-			}
-			_navState = navigator.GetRouteState();
-			NavigationStateChanged?.Invoke(this, _navState);
-			return _navState;
-		}
-	}
+	=> navigator.GetRouteState();
 	public async Task<TfNavigationMenu> GetNavigationMenu(NavigationManager navigator, TfUser? currentUser)
 	{
 		if (currentUser is null) return new TfNavigationMenu();
 
 		using (await _asyncLock.LockAsync())
 		{
-			_navState = navigator.GetRouteState();
+			var navState = navigator.GetRouteState();
 			var navMenu = new TfNavigationMenu();
 			navMenu.Uri = navigator.Uri;
-			if (_navState.RouteNodes is null || _navState.RouteNodes.Count == 0)
+			if (navState.RouteNodes is null || navState.RouteNodes.Count == 0)
 			{
 			}
-			else if (_navState.RouteNodes[0] == RouteDataNode.Admin)
+			else if (navState.RouteNodes[0] == RouteDataNode.Admin)
 			{
 				if (!currentUser.IsAdmin)
 					throw new Exception("Current user is not admin");
@@ -73,7 +53,7 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 				var templates = _tfService.GetTemplates();
 
 				navMenu.Menu = generateAdminMenu(
-					routeState: _navState,
+					routeState: navState,
 					users: users,
 					roles: roles,
 					providers: providers,
@@ -82,18 +62,17 @@ public partial class TfNavigationUIService : ITfNavigationUIService
 					templates: templates,
 					addonPages: addonPages);
 			}
-			else if (_navState.RouteNodes[0] == RouteDataNode.Home
-				|| _navState.RouteNodes[0] == RouteDataNode.Space)
+			else if (navState.RouteNodes[0] == RouteDataNode.Home
+				|| navState.RouteNodes[0] == RouteDataNode.Space)
 			{
 				var spaces = _tfService.GetSpacesListForUser(currentUser.Id);
 				var pages = _tfService.GetAllSpacePages();
 				navMenu.Menu = generateSpaceMenu(
-					routeState: _navState,
+					routeState: navState,
 					spaces: spaces,
 					pages: pages,
 					currentUser: currentUser);
 			}
-			_navMenu = navMenu;
 			return navMenu;
 		}
 	}

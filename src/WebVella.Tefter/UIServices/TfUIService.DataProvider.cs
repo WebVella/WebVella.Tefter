@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfDataProviderUIService
+public partial interface ITfUIService
 {
 	//Events
 	event EventHandler<TfDataProvider> DataProviderCreated;
@@ -19,7 +19,6 @@ public partial interface ITfDataProviderUIService
 	List<TfDataProvider> GetDataProviderConnectedProviders(Guid id);
 
 	//Data provider column
-	ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfosList();
 	string? GetDatabaseColumnTypeInfo(TfDatabaseColumnType columnType);
 	TfDataProvider CreateDataProviderColumn(TfUpsertDataProviderColumn column);
 	TfDataProvider UpdateDataProviderColumn(TfUpsertDataProviderColumn column);
@@ -55,18 +54,8 @@ public partial interface ITfDataProviderUIService
 	TfDataTable AddNewRow(TfDataTable dt);
 
 }
-public partial class TfDataProviderUIService : ITfDataProviderUIService
+public partial class TfUIService : ITfUIService
 {
-	private readonly ITfService _tfService;
-	private readonly ITfMetaService _metaService;
-	private readonly IStringLocalizer<TfDataProviderUIService> LOC;
-
-	public TfDataProviderUIService(IServiceProvider serviceProvider)
-	{
-		_tfService = serviceProvider.GetService<ITfService>() ?? default!;
-		_metaService = serviceProvider.GetService<ITfMetaService>() ?? default!;
-		LOC = serviceProvider.GetService<IStringLocalizer<TfDataProviderUIService>>() ?? default!;
-	}
 
 	#region << Events >>
 	public event EventHandler<TfDataProvider> DataProviderCreated = default!;
@@ -103,9 +92,6 @@ public partial class TfDataProviderUIService : ITfDataProviderUIService
 	#endregion
 
 	#region << Data Provider Columns >>
-
-	public ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfosList()
-		=> TfService.GetDatabaseColumnTypeInfosList();
 	public string? GetDatabaseColumnTypeInfo(TfDatabaseColumnType columnType)
 	{
 		var columnTypes = _tfService.GetDatabaseColumnTypeInfos();

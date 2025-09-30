@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfRecipeUIService
+public partial interface ITfUIService
 {
 	Task<TfInstallData?> GetInstallDataAsync();
 	Task SaveInstallDataAsync(TfInstallData data);
@@ -8,19 +8,8 @@ public partial interface ITfRecipeUIService
 	ITfRecipeAddon GetRecipe(Guid id);
 	Task<TfRecipeResult> ApplyRecipe(ITfRecipeAddon recipeAddon);
 }
-public partial class TfRecipeUIService : ITfRecipeUIService
+public partial class TfUIService : ITfUIService
 {
-	private readonly ITfService _tfService;
-	private readonly ITfMetaService _metaService;
-	private readonly IStringLocalizer<TfRecipeUIService> LOC;
-
-	public TfRecipeUIService(IServiceProvider serviceProvider)
-	{
-		_tfService = serviceProvider.GetService<ITfService>() ?? default!;
-		_metaService = serviceProvider.GetService<ITfMetaService>() ?? default!;
-		LOC = serviceProvider.GetService<IStringLocalizer<TfRecipeUIService>>() ?? default!;
-	}
-
 	public async Task<TfInstallData?> GetInstallDataAsync()
 	{
 		return await _tfService.GetInstallDataAsync();

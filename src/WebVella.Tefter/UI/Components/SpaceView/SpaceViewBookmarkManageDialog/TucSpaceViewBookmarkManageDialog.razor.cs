@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDialogContentComponent<TfBookmark?>
 {
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Parameter] public TfBookmark? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 	private string _error = string.Empty;
@@ -46,12 +45,12 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 			if (_form.Id == Guid.Empty)
 			{
 				_form.Id = Guid.NewGuid();
-				TfUserUIService.CreateBookmark(_form);
+				TfUIService.CreateBookmark(_form);
 				ToastService.ShowSuccess(LOC($"{(_isBookmark ? "Bookmark" : "URL")} saved"));
 			}
 			else
 			{
-				TfUserUIService.UpdateBookmark(_form);
+				TfUIService.UpdateBookmark(_form);
 				ToastService.ShowSuccess(LOC($"{(_isBookmark ? "Bookmark" : "URL")} updated"));
 			}
 

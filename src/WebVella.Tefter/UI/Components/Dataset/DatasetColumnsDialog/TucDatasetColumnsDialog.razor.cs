@@ -2,8 +2,6 @@
 
 public partial class TucDatasetColumnsDialog : TfBaseComponent, IDialogContentComponent<TfDataset?>
 {
-	[Inject] protected ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-	[Inject] protected ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Parameter] public TfDataset? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 	private string _error = string.Empty;
@@ -23,7 +21,7 @@ public partial class TucDatasetColumnsDialog : TfBaseComponent, IDialogContentCo
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.DataProviderId == Guid.Empty) throw new Exception("DataProviderId is required");
 
-		_provider = TfDataProviderUIService.GetDataProvider(Content.DataProviderId);
+		_provider = TfUIService.GetDataProvider(Content.DataProviderId);
 		if (_provider is null) throw new Exception("DataProviderId not found");
 
 		_title = LOC("Manage columns");
@@ -32,7 +30,7 @@ public partial class TucDatasetColumnsDialog : TfBaseComponent, IDialogContentCo
 		_dataset = Content with { Id = Content.Id };
 
 		_items = new List<TfDatasetColumn>();
-		_allOptions = TfDatasetUIService.GetDatasetColumnOptions(_dataset.Id);
+		_allOptions = TfUIService.GetDatasetColumnOptions(_dataset.Id);
 		foreach (var column in _dataset.Columns)
 		{
 			var option = _allOptions.FirstOrDefault(x => x.ColumnName == column);
@@ -66,7 +64,7 @@ public partial class TucDatasetColumnsDialog : TfBaseComponent, IDialogContentCo
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			TfDatasetUIService.UpdateDatasetColumns(_dataset.Id, _items);
+			TfUIService.UpdateDatasetColumns(_dataset.Id, _items);
 			await Dialog.CloseAsync(_dataset);
 		}
 		catch (Exception ex)

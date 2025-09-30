@@ -4,8 +4,6 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentComponent<Guid>
 {
-	[Inject] private ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
-	[Inject] private ITfRoleUIService TfRoleUIService { get; set; } = default!;
 	[Parameter] public Guid Content { get; set; } = default!;
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
@@ -24,11 +22,11 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 	private void _init(TfSpace? space = null)
 	{
 		if (space is null)
-			_space = TfSpaceUIService.GetSpace(Content);
+			_space = TfUIService.GetSpace(Content);
 		else
 			_space = space;
 
-		_spacePages = TfSpaceUIService.GetSpacePages(_space.Id);
+		_spacePages = TfUIService.GetSpacePages(_space.Id);
 	}
 
 	private async Task _cancel()
@@ -64,7 +62,7 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 
 		try
 		{
-			TfSpaceUIService.DeleteSpacePage(node);
+			TfUIService.DeleteSpacePage(node);
 			_init();
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
 		}
@@ -87,7 +85,7 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 
 		try
 		{
-			TfSpaceUIService.MoveSpacePage(args.Item1, args.Item2);
+			TfUIService.MoveSpacePage(args.Item1, args.Item2);
 			_init();
 			ToastService.ShowSuccess(LOC("Space page updated!"));
 		}
@@ -111,7 +109,7 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 
 		try
 		{
-			TfSpaceUIService.CopySpacePage(nodeId);
+			TfUIService.CopySpacePage(nodeId);
 			_init();
 			ToastService.ShowSuccess(LOC("Space page updated!"));
 		}

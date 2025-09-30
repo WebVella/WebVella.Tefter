@@ -1,8 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentComponent<TfUser?>
 {
-	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
-
 	[Parameter] public TfUser? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
@@ -77,12 +75,12 @@ public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentCo
 			
 			if (_isCreate)
 			{
-				result = await TfUserUIService.CreateUserWithFormAsync(_form);
+				result = await TfUIService.CreateUserWithFormAsync(_form);
 				ToastService.ShowSuccess(LOC("User account was successfully created!"));
 			}
 			else
 			{
-				result = await TfUserUIService.UpdateUserWithFormAsync(_form);
+				result = await TfUIService.UpdateUserWithFormAsync(_form);
 				ToastService.ShowSuccess(LOC("User account was successfully updated!"));
 			}
 			await Dialog.CloseAsync(result);

@@ -5,7 +5,6 @@ namespace WebVella.Tefter.Talk.Components;
 public partial class TalkChannelAdminList : TfBaseComponent
 {
 	[Inject] public ITalkService TalkService { get; set; }
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	private List<TalkChannel> _channels = new();
 	private TfNavigationState _navState = new();
@@ -15,7 +14,7 @@ public partial class TalkChannelAdminList : TfBaseComponent
 		TalkService.ChannelCreated -= On_ChannelChanged;
 		TalkService.ChannelUpdated -= On_ChannelChanged;
 		TalkService.ChannelDeleted -= On_ChannelChanged;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
@@ -23,7 +22,7 @@ public partial class TalkChannelAdminList : TfBaseComponent
 		TalkService.ChannelCreated += On_ChannelChanged;
 		TalkService.ChannelUpdated += On_ChannelChanged;
 		TalkService.ChannelDeleted += On_ChannelChanged;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 	private async void On_ChannelChanged(object? caller, TalkChannel args)
 	{
@@ -38,7 +37,7 @@ public partial class TalkChannelAdminList : TfBaseComponent
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		else
 			_navState = navState;
 		try

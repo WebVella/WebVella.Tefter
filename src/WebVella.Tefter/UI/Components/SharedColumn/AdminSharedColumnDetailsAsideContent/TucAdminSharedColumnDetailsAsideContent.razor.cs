@@ -1,28 +1,25 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfSharedColumnUIService TfSharedColumnUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
 	private string? _search = String.Empty;
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfSharedColumnUIService.SharedColumnCreated -= On_SharedColumnCreated;
-		TfSharedColumnUIService.SharedColumnUpdated -= On_SharedColumnUpdated;
-		TfSharedColumnUIService.SharedColumnDeleted -= On_SharedColumnDeleted;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.SharedColumnCreated -= On_SharedColumnCreated;
+		TfUIService.SharedColumnUpdated -= On_SharedColumnUpdated;
+		TfUIService.SharedColumnDeleted -= On_SharedColumnDeleted;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfSharedColumnUIService.SharedColumnCreated += On_SharedColumnCreated;
-		TfSharedColumnUIService.SharedColumnUpdated += On_SharedColumnUpdated;
-		TfSharedColumnUIService.SharedColumnDeleted += On_SharedColumnDeleted;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.SharedColumnCreated += On_SharedColumnCreated;
+		TfUIService.SharedColumnUpdated += On_SharedColumnUpdated;
+		TfUIService.SharedColumnDeleted += On_SharedColumnDeleted;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_SharedColumnCreated(object? caller, TfSharedColumn item)
@@ -50,11 +47,11 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			_search = navState.SearchAside;
-			var items = TfSharedColumnUIService.GetSharedColumns(_search).ToList();
+			var items = TfUIService.GetSharedColumns(_search).ToList();
 			_items = new();
 			foreach (var item in items)
 			{

@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace WebVella.Tefter.UIServices;
 
-public partial interface ITfSpaceViewUIService
+public partial interface ITfUIService
 {
 	//Events
 	event EventHandler<TfSpaceView> SpaceViewCreated;
@@ -46,24 +46,8 @@ public partial interface ITfSpaceViewUIService
 	ValueTask<byte[]> ExportViewToExcel(TfExportViewData data);
 	ValueTask<byte[]> ExportViewToCSV(TfExportViewData data);
 }
-public partial class TfSpaceViewUIService : ITfSpaceViewUIService
+public partial class TfUIService : ITfUIService
 {
-	#region << Ctor >>
-	private static readonly AsyncLock _asyncLock = new AsyncLock();
-	private readonly IServiceProvider _serviceProvider;
-	private readonly ITfService _tfService;
-	private readonly ITfMetaService _metaService;
-	private readonly IStringLocalizer<TfSpaceViewUIService> LOC;
-
-	public TfSpaceViewUIService(IServiceProvider serviceProvider)
-	{
-		_serviceProvider = serviceProvider;
-		_tfService = serviceProvider.GetService<ITfService>() ?? default!;
-		_metaService = serviceProvider.GetService<ITfMetaService>() ?? default!;
-		LOC = serviceProvider.GetService<IStringLocalizer<TfSpaceViewUIService>>() ?? default!;
-	}
-	#endregion
-
 	#region << Events >>
 	public event EventHandler<TfSpaceView> SpaceViewCreated = default!;
 	public event EventHandler<TfSpaceView> SpaceViewUpdated = default!;

@@ -2,14 +2,6 @@
 
 public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 {
-	#region << Render Injects >>
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[Inject] protected NavigationManager Navigator { get; set; } = default!;
-	#endregion
-
 	#region << Base Overrides >>
 	public static string ID = "68afeecc-6ca9-4102-831d-ef4028057128";
 	public override Guid AddonId { get; init; } = new Guid(ID);
@@ -112,7 +104,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 	{
 		if (Context is null) throw new Exception("Context is required");
 
-		_allDatasets = TfDatasetUIService.GetDatasets();
+		_allDatasets = TfUIService.GetDatasets();
 
 		if (!String.IsNullOrWhiteSpace(Context?.ComponentOptionsJson) && Context!.ComponentOptionsJson != "{}")
 			_options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(Context!.ComponentOptionsJson) ?? new();

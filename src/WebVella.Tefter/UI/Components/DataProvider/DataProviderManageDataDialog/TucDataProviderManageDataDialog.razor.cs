@@ -2,8 +2,6 @@
 
 public partial class TucDataProviderManageDataDialog : TfBaseComponent, IDialogContentComponent<TfManageDataProviderRowContext?>
 {
-	[Inject] protected ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-	[Inject] protected ITfMetaUIService TfMetaUIService { get; set; } = default!;
 	[Parameter] public TfManageDataProviderRowContext? Content { get; set; }
 
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
@@ -26,7 +24,7 @@ public partial class TucDataProviderManageDataDialog : TfBaseComponent, IDialogC
 		if (Content is null) throw new Exception("Content is required");
 		if (Content.Provider is null) throw new Exception("Provider is required");
 		if (Content.Data is null) throw new Exception("Data is required");
-		_componentMetaDict = TfMetaUIService.GetSpaceViewColumnComponentDict();
+		_componentMetaDict = TfUIService.GetSpaceViewColumnComponentDict();
 
 		_errors = new();
 		_form = new();

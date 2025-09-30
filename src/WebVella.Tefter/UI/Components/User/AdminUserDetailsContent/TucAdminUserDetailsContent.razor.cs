@@ -1,11 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] public ITfRoleUIService TfRoleUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
-
 	private TfUser? _user = null;
 	private List<TfRole> _roleOptions = new();
 	private TfRole? _selectedRole = null;
@@ -13,15 +8,15 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 	public Guid? _removingRoleId = null;
 	public void Dispose()
 	{
-		TfUserUIService.UserUpdated -= On_UserUpdated;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.UserUpdated -= On_UserUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfUserUIService.UserUpdated += On_UserUpdated;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.UserUpdated += On_UserUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_UserUpdated(object? caller, TfUser user)
@@ -38,7 +33,7 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null, TfUser? user = null)
 	{
 		if (navState == null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			if (user is not null && user.Id == _user.Id)
@@ -48,10 +43,10 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 			else
 			{
 				if (navState.UserId is not null)
-					_user = TfUserUIService.GetUser(navState.UserId.Value);
+					_user = TfUIService.GetUser(navState.UserId.Value);
 			}
 			if(_user is null) return;
-			_roleOptions = TfRoleUIService.GetRoles().Where(x => !_user.Roles.Any(u => x.Id == u.Id)).ToList();
+			_roleOptions = TfUIService.GetRoles().Where(x => !_user.Roles.Any(u => x.Id == u.Id)).ToList();
 		}
 		finally
 		{
@@ -86,8 +81,8 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 		try
 		{
 			_submitting = true;
-			_user = await TfUserUIService.AddRoleToUserAsync(roleId: _selectedRole.Id, userId: _user.Id);
-			_roleOptions = TfRoleUIService.GetRoles().Where(x => !_user.Roles.Any(u => x.Id == u.Id)).ToList();
+			_user = await TfUIService.AddRoleToUserAsync(roleId: _selectedRole.Id, userId: _user.Id);
+			_roleOptions = TfUIService.GetRoles().Where(x => !_user.Roles.Any(u => x.Id == u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User role added"));
 		}
 		catch (Exception ex)
@@ -110,8 +105,8 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 		try
 		{
 			_removingRoleId = role.Id;
-			_user = await TfUserUIService.RemoveRoleFromUserAsync(roleId: role.Id, userId: _user.Id);
-			_roleOptions = TfRoleUIService.GetRoles().Where(x => !_user.Roles.Any(u => x.Id == u.Id)).ToList();
+			_user = await TfUIService.RemoveRoleFromUserAsync(roleId: role.Id, userId: _user.Id);
+			_roleOptions = TfUIService.GetRoles().Where(x => !_user.Roles.Any(u => x.Id == u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User role removed"));
 		}
 		catch (Exception ex)

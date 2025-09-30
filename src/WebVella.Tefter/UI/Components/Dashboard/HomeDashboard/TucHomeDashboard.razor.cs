@@ -3,9 +3,6 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucHomeDashboard : TfBaseComponent
 {
-	[Inject] protected ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] protected ITfDashboardUIService TfDashboardUIService { get; set; } = default!;
-	[Inject] protected ITfNavigationUIService ITfNavigationUIService { get; set; } = default!;
 
 	[CascadingParameter(Name = "CurrentUser")]
 	public TfUser CurrentUser { get; set; } = default!;
@@ -17,7 +14,7 @@ public partial class TucHomeDashboard : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_data = TfDashboardUIService.GetHomeDashboardData(CurrentUser.Id);
+		_data = TfUIService.GetHomeDashboardData(CurrentUser.Id);
 
 		_howToItems.Add(new TfHowToItem
 		{
@@ -63,7 +60,7 @@ public partial class TucHomeDashboard : TfBaseComponent
 
 	private async Task _onToggleFilter(string propName)
 	{
-		var navState = await ITfNavigationUIService.GetNavigationStateAsync(Navigator);
+		var navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		var queryDict = new Dictionary<string, object>();
 		if (propName == "HomeSearchInBookmarks")
 			queryDict[TfConstants.SearchInBookmarksQueryName] = navState!.SearchInBookmarks ? false : null;

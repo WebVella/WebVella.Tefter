@@ -1,11 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogContentComponent<Guid>
 {
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[Inject] public ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-	[Inject] public ITfSharedColumnUIService TfSharedColumnUIService { get; set; } = default!;
 	[Parameter] public Guid Content { get; set; } = default!;
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 	private List<TfDataProvider> _dataProviders = new();
@@ -22,16 +17,16 @@ public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogCon
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+		_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		if(_navState is null || Content == Guid.Empty)
 			throw new Exception("SpaceViewId not found");
-		_spaceview = TfSpaceViewUIService.GetSpaceView(Content);
+		_spaceview = TfUIService.GetSpaceView(Content);
 		if(_spaceview is null)
 			throw new Exception("spaceView not found");
-		_viewColumns = TfSpaceViewUIService.GetViewColumns(Content);
-		_spaceData = TfDatasetUIService.GetDataset(_spaceview.DatasetId);
-		_dataProviders = TfDataProviderUIService.GetDataProviders().ToList();
-		_sharedColumns = TfSharedColumnUIService.GetSharedColumns();
+		_viewColumns = TfUIService.GetViewColumns(Content);
+		_spaceData = TfUIService.GetDataset(_spaceview.DatasetId);
+		_dataProviders = TfUIService.GetDataProviders().ToList();
+		_sharedColumns = TfUIService.GetSharedColumns();
 		if (_spaceData is not null)
 		{
 			_dataProvider = _dataProviders.FirstOrDefault(x=> x.Id == _spaceData.DataProviderId);

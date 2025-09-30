@@ -2,10 +2,6 @@
 
 public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-
 	[CascadingParameter(Name = "CurrentUser")]
 	public TfUser CurrentUser { get; set; } = default!;
 
@@ -20,14 +16,14 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	private bool _syncRunning = false;
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated -= On_DataProviderUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.DataProviderUpdated -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.DataProviderUpdated += On_DataProviderUpdated;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -43,7 +39,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 
 		try
 		{
@@ -54,15 +50,15 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 				return;
 			}
 			_navState = navState;
-			_provider = TfDataProviderUIService.GetDataProvider(_navState.DataProviderId.Value);
+			_provider = TfUIService.GetDataProvider(_navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
-			_syncRunning = TfDataProviderUIService.IsSyncRunning(_provider.Id);
+			_syncRunning = TfUIService.IsSyncRunning(_provider.Id);
 
 			_isDataLoading = true;
 			await InvokeAsync(StateHasChanged);
-			_totalRows = TfDataProviderUIService.GetDataProviderRowsCount(_provider.Id);
-			_data = TfDataProviderUIService.QueryDataProvider(
+			_totalRows = TfUIService.GetDataProviderRowsCount(_provider.Id);
+			_data = TfUIService.QueryDataProvider(
 				providerId: _provider.Id,
 				search: _navState.Search ?? String.Empty,
 				page: 1,
@@ -103,7 +99,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need all data deleted? This operation can take minutes!")))
 			return;
-		TfDataProviderUIService.DeleteAllProviderRows(_provider!.Id);
+		TfUIService.DeleteAllProviderRows(_provider!.Id);
 		ToastService.ShowSuccess(LOC("Data provider data deletion is triggered!"));
 		Navigator.ReloadCurrentUrl();
 	}
@@ -200,7 +196,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		if (_navState.PageSize == pageSize) return;
 		try
 		{
-			var user = await TfUserUIService.SetPageSize(
+			var user = await TfUIService.SetPageSize(
 						userId: CurrentUser.Id,
 						pageSize: pageSize == TfConstants.PageSize ? null : pageSize
 					);

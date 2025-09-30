@@ -2,8 +2,6 @@
 
 public partial class TucDatasetFiltersDialog : TfBaseComponent, IDialogContentComponent<TfDataset?>
 {
-	[Inject] protected ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-	[Inject] protected ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
 	[Parameter] public TfDataset? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 	private string _error = string.Empty;
@@ -43,7 +41,7 @@ public partial class TucDatasetFiltersDialog : TfBaseComponent, IDialogContentCo
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			TfDatasetUIService.UpdateDatasetFilters(_dataset.Id, _dataset.Filters);
+			TfUIService.UpdateDatasetFilters(_dataset.Id, _dataset.Filters);
 			await Dialog.CloseAsync(_dataset);
 		}
 		catch (Exception ex)

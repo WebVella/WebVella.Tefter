@@ -1,10 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
-	[Inject] public ITfRoleUIService TfRoleUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	private TfSpace _space = default!;
 	private TfNavigationState _navState = default!;
 	public bool _submitting = false;
@@ -14,15 +10,15 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 	public Guid? _removingRoleId = null;
 	public void Dispose()
 	{
-		TfSpaceUIService.SpaceUpdated -= On_SpaceUpdated;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.SpaceUpdated -= On_SpaceUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfSpaceUIService.SpaceUpdated += On_SpaceUpdated;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.SpaceUpdated += On_SpaceUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 
@@ -40,7 +36,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState? navState = null, TfSpace? space = null)
 	{
 		if (navState == null)
-			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			_navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		else
 			_navState = navState;
 
@@ -53,10 +49,10 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 			else
 			{
 				if (_navState.SpaceId is null) return;
-				_space = TfSpaceUIService.GetSpace(_navState.SpaceId.Value);
+				_space = TfUIService.GetSpace(_navState.SpaceId.Value);
 			}
 			if (_space is null) return;
-			var allRoles = TfRoleUIService.GetRoles();
+			var allRoles = TfUIService.GetRoles();
 			_roleOptions =allRoles.Where(x => x.Id != TfConstants.ADMIN_ROLE_ID &&  !_space.Roles.Any(u => x.Id == u.Id)).ToList();
 			_adminRole = allRoles.Single(x => x.Id == TfConstants.ADMIN_ROLE_ID);
 		}
@@ -75,7 +71,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 		try
 		{
 			_submitting = true;
-			var result = TfSpaceUIService.AddSpacesRole(_space,_selectedRole);
+			var result = TfUIService.AddSpacesRole(_space,_selectedRole);
 			ToastService.ShowSuccess(LOC("Space role added"));
 		}
 		catch (Exception ex)
@@ -98,7 +94,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 		try
 		{
 			_removingRoleId = role.Id;
-			var result = TfSpaceUIService.RemoveSpacesRole(_space,role);
+			var result = TfUIService.RemoveSpacesRole(_space,role);
 			ToastService.ShowSuccess(LOC("Space role removed"));
 		}
 		catch (Exception ex)
@@ -116,7 +112,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 	{
 		try
 		{
-			var result = TfSpaceUIService.SetSpacePrivacy(_space.Id, newValue);
+			var result = TfUIService.SetSpacePrivacy(_space.Id, newValue);
 			ToastService.ShowSuccess(LOC("Space access changed"));
 		}
 		catch (Exception ex)

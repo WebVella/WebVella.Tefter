@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpace?>
 {
-	[Inject] private ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Parameter] public TfSpace? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
@@ -58,12 +57,12 @@ public partial class TucSpaceManageDialog : TfFormBaseComponent, IDialogContentC
 			var result = new TfSpace();
 			if (_isCreate)
 			{
-				result = TfSpaceUIService.CreateSpace(_form);
+				result = TfUIService.CreateSpace(_form);
 				ToastService.ShowSuccess(LOC("Space created successfully!"));
 			}
 			else
 			{
-				result = TfSpaceUIService.UpdateSpace(_form);
+				result = TfUIService.UpdateSpace(_form);
 				ToastService.ShowSuccess(LOC("Space updated successfully!"));
 			}
 

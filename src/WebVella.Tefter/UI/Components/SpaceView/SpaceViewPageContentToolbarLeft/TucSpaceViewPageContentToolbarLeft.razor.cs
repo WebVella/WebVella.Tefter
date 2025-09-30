@@ -2,9 +2,6 @@
 public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 {
 	// Dependency Injection
-	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
-	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
 	[CascadingParameter(Name = "TucSpaceViewPageContent")] 
 	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
@@ -19,8 +16,8 @@ public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 	private bool _hasViewPersonalization = false;
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUserUIService.UserUpdated -= On_UserChanged;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.UserUpdated -= On_UserChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -28,8 +25,8 @@ public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 		await base.OnInitializedAsync();
 		_navState = Navigator.GetRouteState();
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUserUIService.UserUpdated += On_UserChanged;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.UserUpdated += On_UserChanged;
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -45,7 +42,7 @@ public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 	}
 	private async Task _init()
 	{
-		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+		var navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		if (navState is null) return;
 		_navState = navState;
 		try
@@ -72,7 +69,7 @@ public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 		if (Data is null) return Task.CompletedTask;
 		try
 		{
-			var result = TfDatasetUIService.InsertRowInDataTable(Data);
+			var result = TfUIService.InsertRowInDataTable(Data);
 			TucSpaceViewPageContent.OnNewRow(result);
 			ToastService.ShowSuccess(LOC("Row added"));
 		}

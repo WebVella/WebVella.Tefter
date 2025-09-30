@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentComponent<TfUseTemplateContext?>
 {
-	[Inject] protected ITfTemplateUIService TfTemplateUIService { get; set; } = default!;
 	[Parameter] public TfUseTemplateContext? Content { get; set; } = null;
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
@@ -37,7 +36,7 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 
 	private void _getTemplates()
 	{
-		_templates = TfTemplateUIService.GetSpaceDataTemplates(Content.SpaceData?.Id ?? Guid.Empty, _search);
+		_templates = TfUIService.GetSpaceDataTemplates(Content.SpaceData?.Id ?? Guid.Empty, _search);
 	}
 
 	private async Task _cancel()

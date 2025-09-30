@@ -8,12 +8,6 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	public const string FLUENT_ICON_NAME = "";
 	public const string VALUE_ALIAS = "Value";
 
-	#region << Injects >>
-	[Inject] private ITfService TfService { get; set; } = default!;
-	[Inject] private ITfSpaceViewUIService TfSpaceViewUIService { get; set; } = default!;
-	[Inject] public ITfDatasetUIService TfDatasetUIService { get; set; } = default!;
-	#endregion
-
 	#region << Constructor >>
 
 	/// <summary>
@@ -163,12 +157,12 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	{
 		if (RegionContext.Mode == TfComponentPresentationMode.Options)
 		{
-			var spaceView = TfSpaceViewUIService.GetSpaceView(RegionContext.SpaceViewId);
-			_selectedSpaceData = TfDatasetUIService.GetDataset(spaceView.DatasetId);
+			var spaceView = TfUIService.GetSpaceView(RegionContext.SpaceViewId);
+			_selectedSpaceData = TfUIService.GetDataset(spaceView.DatasetId);
 
 			if (_selectedSpaceData is null)
 			{
-				var spaceDataList = TfDatasetUIService.GetDatasets();
+				var spaceDataList = TfUIService.GetDatasets();
 				if (spaceDataList is not null && spaceDataList.Count > 0)
 				{
 					_selectedSpaceData = spaceDataList[0];
@@ -221,7 +215,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 			{
 				if (componentOptions.SpaceDataId != Guid.Empty)
 				{
-					var optionsDT = TfService.QuerySpaceData(
+					var optionsDT = TfUIService.QueryDataset(
 						datasetId: componentOptions.SpaceDataId,
 						userFilters: null,
 						userSorts: null,

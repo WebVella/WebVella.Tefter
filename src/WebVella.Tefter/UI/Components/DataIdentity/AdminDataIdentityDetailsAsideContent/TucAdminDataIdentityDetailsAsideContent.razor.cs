@@ -1,29 +1,26 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataIdentityDetailsAsideContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfDataIdentityUIService TfDataIdentityUIService { get; set; } = default!;
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
 	private string? _search = String.Empty;
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfDataIdentityUIService.DataIdentityCreated -= On_DataIdentityCreated;
-		TfDataIdentityUIService.DataIdentityUpdated -= On_DataIdentityUpdated;
-		TfDataIdentityUIService.DataIdentityDeleted -= On_DataIdentityDeleted;
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.DataIdentityCreated -= On_DataIdentityCreated;
+		TfUIService.DataIdentityUpdated -= On_DataIdentityUpdated;
+		TfUIService.DataIdentityDeleted -= On_DataIdentityDeleted;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		await _init();
-		TfDataIdentityUIService.DataIdentityCreated += On_DataIdentityCreated;
-		TfDataIdentityUIService.DataIdentityUpdated += On_DataIdentityUpdated;
-		TfDataIdentityUIService.DataIdentityDeleted += On_DataIdentityDeleted;
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.DataIdentityCreated += On_DataIdentityCreated;
+		TfUIService.DataIdentityUpdated += On_DataIdentityUpdated;
+		TfUIService.DataIdentityDeleted += On_DataIdentityDeleted;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_DataIdentityCreated(object? caller, TfDataIdentity user)
@@ -50,11 +47,11 @@ public partial class TucAdminDataIdentityDetailsAsideContent : TfBaseComponent, 
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState is null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			_search = navState.SearchAside;
-			var roles = TfDataIdentityUIService.GetDataIdentities(_search).ToList();
+			var roles = TfUIService.GetDataIdentities(_search).ToList();
 			_items = new();
 			foreach (var role in roles)
 			{

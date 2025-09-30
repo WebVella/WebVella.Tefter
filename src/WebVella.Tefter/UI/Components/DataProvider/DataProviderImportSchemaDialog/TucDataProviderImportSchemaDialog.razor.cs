@@ -4,7 +4,6 @@ using WebVella.Tefter.Exceptions;
 namespace WebVella.Tefter.UI.Components;
 public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialogContentComponent<TfDataProvider?>
 {
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
 	[Parameter] public TfDataProvider? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
@@ -43,9 +42,9 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 		if (Content is null) return;
 		try
 		{
-			var dbTypeInfo = TfDataProviderUIService.GetDatabaseColumnTypeInfosList();
+			var dbTypeInfo = TfUIService.GetDatabaseColumnTypeInfosList();
 			_dbTypeInfoDict = dbTypeInfo.ToDictionary(x=> x.Type);
-			_schemaInfo = TfDataProviderUIService.GetDataProviderSourceSchemaInfo(Content);
+			_schemaInfo = TfUIService.GetDataProviderSourceSchemaInfo(Content);
 			if (_schemaInfo is null) 
 				throw new Exception("NO _schemaInfo");
 			var supportedSourceTypes = Content.SupportedSourceDataTypes;
@@ -103,7 +102,7 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 				matchColumn.FixPrefix(Content!.ColumnPrefix);
 			}
 
-			var provider = TfDataProviderUIService.CreateBulkDataProviderColumn(Content!.Id, _newColumns);
+			var provider = TfUIService.CreateBulkDataProviderColumn(Content!.Id, _newColumns);
 			await Dialog.CloseAsync(provider);
 		}
 		catch (TfValidationException ex)

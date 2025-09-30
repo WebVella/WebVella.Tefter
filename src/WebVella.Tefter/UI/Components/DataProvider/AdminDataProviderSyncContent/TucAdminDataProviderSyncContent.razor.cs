@@ -2,11 +2,6 @@
 
 public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	[Inject] public ITfDataProviderUIService TfDataProviderUIService { get; set; } = default!;
-	[Inject] private ITfUserUIService TfUserUIService { get; set; } = default!;
-	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
-
 	private TfDataProvider? _provider = null;
 	private TfNavigationState _navState = new();
 
@@ -15,14 +10,14 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 
 	public void Dispose()
 	{
-		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated -= On_DataProviderUpdated;
+		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfUIService.DataProviderUpdated -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfDataProviderUIService.DataProviderUpdated += On_DataProviderUpdated;
+		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfUIService.DataProviderUpdated += On_DataProviderUpdated;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -38,7 +33,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
-			navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+			navState = await TfUIService.GetNavigationStateAsync(Navigator);
 		try
 		{
 			if (navState.DataProviderId is null)
@@ -48,16 +43,16 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 				return;
 			}
 			_navState = navState;
-			_provider = TfDataProviderUIService.GetDataProvider(_navState.DataProviderId.Value);
+			_provider = TfUIService.GetDataProvider(_navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
 
 			_nextSyncronization = LOC("not scheduled");
-			var providerNextTaskCreatedOn = TfDataProviderUIService.GetDataProviderNextSynchronizationTime(_provider.Id);
+			var providerNextTaskCreatedOn = TfUIService.GetDataProviderNextSynchronizationTime(_provider.Id);
 			if (providerNextTaskCreatedOn is not null)
 				_nextSyncronization = providerNextTaskCreatedOn.Value.ToString(TfConstants.DateTimeFormat);
 
-			_syncTasks = TfDataProviderUIService.GetDataProviderSynchronizationTasks(_provider.Id, _navState.Page, _navState.PageSize ?? TfConstants.PageSize);
+			_syncTasks = TfUIService.GetDataProviderSynchronizationTasks(_provider.Id, _navState.Page, _navState.PageSize ?? TfConstants.PageSize);
 		}
 		finally
 		{
@@ -86,7 +81,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 			return;
 		}
 
-		TfDataProviderUIService.TriggerSynchronization(_provider!.Id);
+		TfUIService.TriggerSynchronization(_provider!.Id);
 		ToastService.ShowSuccess(LOC("Synchronization task created!"));
 	}
 	private async Task _editSchedule()
@@ -126,7 +121,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	{
 		try
 		{
-			_provider = TfDataProviderUIService.UpdateDataProviderSynchPrimaryKeyColumns(_provider!.Id, columns);
+			_provider = TfUIService.UpdateDataProviderSynchPrimaryKeyColumns(_provider!.Id, columns);
 			ToastService.ShowSuccess("Data provider updated!");
 		}
 		catch (Exception ex)
