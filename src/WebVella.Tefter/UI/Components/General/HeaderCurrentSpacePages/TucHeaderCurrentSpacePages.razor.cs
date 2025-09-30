@@ -1,3 +1,5 @@
+using WebVella.Tefter.Models;
+
 namespace WebVella.Tefter.UI.Components;
 public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 {
@@ -65,11 +67,9 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 		{
 			await _addSpacePageHandler(item);
 		}
-		else if (item.Data.MenuType == TfMenuItemType.CreateSpaceData){ 
-			await _addSpaceDataHandler(item);
-		}
-		else if (item.Data.MenuType == TfMenuItemType.CreateSpaceView){ 
-			await _addSpaceViewHandler(item);
+		else if (item.Data.MenuType == TfMenuItemType.DeleteSpace)
+		{
+			await _deleteSpaceHandler(item);
 		}
 	}
 
@@ -88,46 +88,22 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 		if (!result.Cancelled && result.Data != null)
 		{
 			var item = (TfSpace)result.Data;
-			Navigator.NavigateTo(string.Format(TfConstants.SpaceManagePageUrl, item.Id));
+			await _init();
 		}
 	}
-	private async Task _addSpaceDataHandler(TfMenuItem args)
+
+	private async Task _deleteSpaceHandler(TfMenuItem args)
 	{
 		if (args.Data?.SpaceId == null) return;
-		throw new NotImplementedException();
-		//var dialog = await DialogService.ShowDialogAsync<TucSpaceDataManageDialog>(
-		//new TfDataset() { SpaceId = args.Data.SpaceId.Value },
-		//new DialogParameters()
-		//{
-		//	PreventDismissOnOverlayClick = true,
-		//	PreventScroll = true,
-		//	Width = TfConstants.DialogWidthLarge,
-		//	TrapFocus = false
-		//});
-		//var result = await dialog.Result;
-		//if (!result.Cancelled && result.Data != null)
-		//{
-		//	var item = (TfDataset)result.Data;
-		//	Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, args.Data.SpaceId.Value, item.Id));
-		//}
-	}
-	private async Task _addSpaceViewHandler(TfMenuItem args)
-	{
-		if (args.Data?.SpaceId == null) return;
-		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewManageDialog>(
-		new TfSpaceView() { SpaceId = args.Data.SpaceId.Value },
-		new DialogParameters()
+		try
 		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
+			TfSpaceUIService.DeleteSpace(args.Data.SpaceId.Value);
+			ToastService.ShowSuccess(LOC("Space deleted"));
+			await _init();
+		}
+		catch (Exception ex)
 		{
-			var item = (TfSpaceView)result.Data;
-			Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, args.Data.SpaceId.Value, item.Id));
+			ProcessException(ex);
 		}
 	}
 	private async Task _addSpacePageHandler(TfMenuItem args)

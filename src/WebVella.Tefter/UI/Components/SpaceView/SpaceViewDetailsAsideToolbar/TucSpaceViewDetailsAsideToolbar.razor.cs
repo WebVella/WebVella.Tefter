@@ -1,40 +1,51 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceViewDetailsAsideToolbar : TfBaseComponent
+
+public partial class TucSpaceViewDetailsAsideToolbar : TfBaseComponent, IDisposable
 {
 
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
-	private string? _search = null;
+	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 
-	protected override void OnInitialized()
+	private string _backUrl = "#";
+	private TfNavigationState _navState = new();
+	public void Dispose()
 	{
-		_search = NavigatorExt.GetStringFromQuery(Navigator, TfConstants.AsideSearchQueryName, null);
+		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
+	}
+	protected override async Task OnInitializedAsync()
+	{
+		await _init();
+		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async Task onSearch(string search)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
-		_search = search;
-		await NavigatorExt.ApplyChangeToUrlQuery(Navigator, TfConstants.AsideSearchQueryName, search);
+		if (UriInitialized != args.Uri)
+			await _init(args);
 	}
 
-	private async Task addSpaceView()
+	private async Task _init(TfNavigationState? navState = null)
 	{
-		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
-		if(navState.SpaceId is null) return;
-		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewManageDialog>(
-		new TfSpaceView(){ SpaceId = navState.SpaceId.Value},
-		new DialogParameters()
+		if (navState is null)
+			_navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
+		else
+			_navState = navState;
+
+		try
 		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			var item = (TfSpaceView)result.Data;
-			Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, navState.SpaceId.Value, item.Id));
+			_backUrl = "#";
+			if (_navState.SpaceId is null || _navState.SpaceViewId is null) return;
+
+			var spacePage = TfSpaceUIService.GetSpacePageBySpaceViewId(_navState.SpaceViewId.Value);
+			if (spacePage is not null)
+			{
+				_backUrl = String.Format(TfConstants.SpacePagePageUrl, spacePage.SpaceId, spacePage.Id);
+			}
 		}
-
+		finally
+		{
+			UriInitialized = _navState.Uri;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 }

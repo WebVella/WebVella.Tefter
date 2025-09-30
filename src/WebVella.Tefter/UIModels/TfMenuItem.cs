@@ -97,7 +97,7 @@ public record TfMenuItemData
 {
 	public Guid? SpaceId { get; set; }
 	public TfMenuItemType MenuType { get; set; } = TfMenuItemType.None;
-	public TfSpacePageType SpacePageType { get; set; } = TfSpacePageType.None;
+	public TfSpacePageType SpacePageType { get; set; } = TfSpacePageType.Page;
 }
 
 public enum TfMenuItemType
@@ -105,6 +105,5 @@ public enum TfMenuItemType
 	None = 0,
 	CreateSpace = 1,
 	CreateSpacePage = 2,
-	CreateSpaceView = 3,
-	CreateSpaceData = 4
+	DeleteSpace = 3,
 }

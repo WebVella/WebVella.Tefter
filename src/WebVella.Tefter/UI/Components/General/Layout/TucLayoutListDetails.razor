@@ -12,7 +12,7 @@
 		</div>
 	}
 	<div class="@($"{_layoutClass}__wrapper")">
-		@if (AsideContent is not null)
+		@if (AsideContent is not null || AsideToolbar is not null)
 		{
 			<div class="@($"{_layoutClass}__aside {(AsideToolbar is not null ? $"{_layoutClass}__aside--with-toolbar" : "")}")">
 				@if (AsideToolbar is not null)

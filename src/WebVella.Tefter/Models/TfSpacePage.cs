@@ -14,7 +14,6 @@ public record TfSpacePage
 	public string ComponentOptionsJson { get; set; } = "{}";
 	public List<TfSpacePage> ChildPages { get; set; } = new();
 	public TfSpacePage? ParentPage { get; set; } = null;
-
 	internal List<TfSpacePage> GetChildPagesPlainList()
 	{
 		List<TfSpacePage> result = new List<TfSpacePage>();
@@ -43,18 +42,18 @@ public record TfSpacePage
 
 	public Guid? GetFirstNavigatedPageId()
 	{
-		if(Type != TfSpacePageType.Folder)
+		if (Type != TfSpacePageType.Folder)
 			return Id;
 		foreach (var child in ChildPages ?? new List<TfSpacePage>())
 		{
 			var childId = child.GetFirstNavigatedPageId();
-			if(childId is not null)
+			if (childId is not null)
 				return childId;
 		}
 		return null;
 	}
 
-	public TfMenuItem ToMenuItem(Action<TfMenuItem>? postProcess = null, Func<TfSpacePage,bool>? includeChildFunc = null)
+	public TfMenuItem ToMenuItem(Action<TfMenuItem>? postProcess = null, Func<TfSpacePage, bool>? includeChildFunc = null)
 	{
 		var item = new TfMenuItem
 		{
@@ -76,7 +75,7 @@ public record TfSpacePage
 
 		foreach (var childPage in ChildPages)
 		{
-			if(includeChildFunc is not null && !includeChildFunc(childPage))	
+			if (includeChildFunc is not null && !includeChildFunc(childPage))
 				continue;
 			var childItem = childPage.ToMenuItem(postProcess, includeChildFunc);
 			item.Items.Add(childItem);
@@ -89,6 +88,8 @@ public record TfSpacePage
 
 		return item;
 	}
+
+	public Guid? TemplateId { get; set; } = null;
 }
 
 

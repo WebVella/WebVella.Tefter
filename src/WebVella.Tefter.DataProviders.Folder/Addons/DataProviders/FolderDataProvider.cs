@@ -14,7 +14,7 @@ public class FolderDataProvider : ITfDataProviderAddon
     public const string ID = "e68ccfd5-46c2-4bcf-bb51-84d0bf66df81";
     public const string NAME = "Folder Data Provider";
     public const string DESCRIPTION = "Provide data from file system or network shares";
-    public const string FLUENT_ICON_NAME = "DocumentTable";
+    public const string FLUENT_ICON_NAME = "Folder";
 
     public Guid AddonId { get; init; } = new Guid(ID);
     public string AddonName { get; init; } = NAME;
@@ -96,20 +96,7 @@ public class FolderDataProvider : ITfDataProviderAddon
         try
         {
             synchLog.Log("start loading provider settings");
-#if DEBUG
-            settings = new FolderDataProviderSettings();
-            settings.Shares = new List<FolderDataProviderShareSettings>();
-            settings.Shares.Add(new FolderDataProviderShareSettings()
-            {
-                Path = @"\\192.168.0.190\Shared\folder_provider_root",
-                PathPrefix = string.Empty,
-                Domain = "",
-                Username = "tefter",
-                Password = "tefter"
-            });
-#else
             settings = JsonSerializer.Deserialize<FolderDataProviderSettings>(provider.SettingsJson) ?? new();
-#endif
             synchLog.Log("complete loading provider settings");
         }
         catch (Exception ex)

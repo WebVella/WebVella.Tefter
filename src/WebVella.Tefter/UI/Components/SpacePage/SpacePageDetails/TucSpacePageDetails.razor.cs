@@ -128,7 +128,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 		var spPage = TfSpaceUIService.GetSpacePage(_spacePage.Id);
 		if (spPage == null)
 		{
-			ToastService.ShowError(LOC("Space node not found"));
+			ToastService.ShowError(LOC("Space page not found"));
 			return;
 		}
 		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(

@@ -8,7 +8,7 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 	public const string ID = "0f86e009-1db4-497f-b10a-a55f4fad455d";
 	public const string NAME = "Microsoft Sql Data Provider";
 	public const string DESCRIPTION = "Provide data from Microsoft SQL server query";
-	public const string FLUENT_ICON_NAME = "DocumentTable";
+	public const string FLUENT_ICON_NAME = "Script";
 	public Guid AddonId { get; init;} =  new Guid(ID);
 	public string AddonName { get; init;} = NAME;
 	public string AddonDescription { get; init;} = DESCRIPTION;

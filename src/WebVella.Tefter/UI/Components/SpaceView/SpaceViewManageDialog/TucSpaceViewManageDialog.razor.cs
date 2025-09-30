@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpaceView?>
 {
 	[Inject] protected ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
@@ -14,9 +15,7 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 	private Icon _iconBtn = default!;
 	private bool _isCreate = false;
 
-	private TfDataProvider? _selectedDataProvider = null;
 	private TfDataset? _selectedDataset = null;
-	private TfSpace _space = default!;
 	private List<string> _generatedColumns = new();
 	private int _generatedColumnCountLimit = 20;
 	private TfCreateSpaceViewExtended _form = new();
@@ -26,42 +25,28 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
-		if (Content.SpaceId == Guid.Empty) throw new Exception("SpaceId is required");
 		if (Content.Id == Guid.Empty) _isCreate = true;
-		_space = TfSpaceUIService.GetSpace(Content.SpaceId);
-		if (_space is null) throw new Exception("Space is null");
-		_title = _isCreate ? LOC("Create view in {0}", _space.Name) : LOC("Manage view in {0}", _space.Name);
+		_title = _isCreate ? LOC("Create view") : LOC("Manage view in");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
-		_providers = TfDataProviderUIService.GetDataProviders();
 		_spaceDataList = TfDatasetUIService.GetDatasets();
 		if (_isCreate)
 		{
 			_form = new TfCreateSpaceViewExtended()
 			{
 				Id = Guid.NewGuid(),
-				SpaceId = Content.SpaceId,
 			};
-			if (_providers.Any())
-			{
-				_form.DataProviderId = _providers[0].Id;
-				_selectedDataProvider = _providers[0];
-			}
-			_generatedColumnsListInit();
 		}
 		else
 		{
-			_form = new TfCreateSpaceViewExtended() { 
-				Id = Content.Id, 
-				DatasetType = TfSpaceViewDatasetType.Existing,
+			_form = new TfCreateSpaceViewExtended()
+			{
+				Id = Content.Id,
 				SpaceDataId = Content.DatasetId,
 				Name = Content.Name,
-				Position = Content.Position,
-				SpaceId = Content.SpaceId,
-				Type = Content.Type,
-				SettingsJson = Content.SettingsJson,
-				Presets = Content.Presets
-				};
+				Presets = Content.Presets,
+				Settings = new()
+			};
 			if (!String.IsNullOrWhiteSpace(Content.SettingsJson) && Content.SettingsJson.StartsWith("{")
 			 && Content.SettingsJson.EndsWith("}"))
 			{
@@ -117,41 +102,41 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 
 	private void _dataSetTypeChangeHandler(TfSpaceViewDatasetType type)
 	{
-		_selectedDataProvider = null;
-		_form.DataProviderId = null;
-		_selectedDataset = null;
-		_form.SpaceDataId = null;
-		_form.DatasetType = TfSpaceViewDatasetType.New;
+		//_selectedDataProvider = null;
+		//_form.DataProviderId = null;
+		//_selectedDataset = null;
+		//_form.SpaceDataId = null;
+		//_form.DatasetType = TfSpaceViewDatasetType.New;
 
-		if (type == TfSpaceViewDatasetType.New)
-		{
-			if (_providers.Any())
-			{
-				_form.DataProviderId = _providers[0].Id;
-				_selectedDataProvider = _providers[0];
-			}
-			_form.DatasetType = type;
-		}
-		else if (type == TfSpaceViewDatasetType.Existing)
-		{
-			if (_spaceDataList.Any())
-			{
-				_form.SpaceDataId = _spaceDataList[0].Id;
-				_selectedDataset = _spaceDataList[0];
-			}
-			_form.DatasetType = type;
-		}
-		_generatedColumnsListInit();
+		//if (type == TfSpaceViewDatasetType.New)
+		//{
+		//	if (_providers.Any())
+		//	{
+		//		_form.DataProviderId = _providers[0].Id;
+		//		_selectedDataProvider = _providers[0];
+		//	}
+		//	_form.DatasetType = type;
+		//}
+		//else if (type == TfSpaceViewDatasetType.Existing)
+		//{
+		//	if (_spaceDataList.Any())
+		//	{
+		//		_form.SpaceDataId = _spaceDataList[0].Id;
+		//		_selectedDataset = _spaceDataList[0];
+		//	}
+		//	_form.DatasetType = type;
+		//}
+		//_generatedColumnsListInit();
 	}
 
 	private void _dataProviderSelectedHandler(TfDataProvider provider)
 	{
-		_selectedDataProvider = null;
-		_form.DataProviderId = null;
-		if (provider is null) return;
-		_selectedDataProvider = provider;
-		_form.DataProviderId = provider.Id;
-		_generatedColumnsListInit();
+		//_selectedDataProvider = null;
+		//_form.DataProviderId = null;
+		//if (provider is null) return;
+		//_selectedDataProvider = provider;
+		//_form.DataProviderId = provider.Id;
+		//_generatedColumnsListInit();
 	}
 
 	private void _datasetSelected(TfDataset dataset)
@@ -164,53 +149,53 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 	private void _columnGeneratorSettingChanged(bool value, string field)
 	{
 
-		if (field == nameof(_form.AddProviderColumns))
-		{
-			_form.AddProviderColumns = value;
-		}
-		else if (field == nameof(_form.AddSharedColumns))
-		{
-			_form.AddSharedColumns = value;
-		}
-		else if (field == nameof(_form.AddSystemColumns))
-		{
-			_form.AddSystemColumns = value;
-		}
-		else if (field == nameof(_form.AddDatasetColumns))
-		{
-			_form.AddDatasetColumns = value;
-		}
-		_generatedColumnsListInit();
+		//if (field == nameof(_form.AddProviderColumns))
+		//{
+		//	_form.AddProviderColumns = value;
+		//}
+		//else if (field == nameof(_form.AddSharedColumns))
+		//{
+		//	_form.AddSharedColumns = value;
+		//}
+		//else if (field == nameof(_form.AddSystemColumns))
+		//{
+		//	_form.AddSystemColumns = value;
+		//}
+		//else if (field == nameof(_form.AddDatasetColumns))
+		//{
+		//	_form.AddDatasetColumns = value;
+		//}
+		//_generatedColumnsListInit();
 	}
 
 	private void _generatedColumnsListInit()
 	{
-		_generatedColumns.Clear();
+		//_generatedColumns.Clear();
 
-		if (_selectedDataProvider is not null)
-		{
-			if (_form.AddProviderColumns)
-				_generatedColumns.AddRange(_selectedDataProvider.Columns.Select(x => x.DbName));
-			if (_form.AddSystemColumns)
-				_generatedColumns.AddRange(_selectedDataProvider.SystemColumns.Select(x => x.DbName));
-			if (_form.AddSharedColumns)
-				_generatedColumns.AddRange(_selectedDataProvider.SharedColumns.Select(x => x.DbName));
-		}
-		else if (_selectedDataset is not null)
-		{
-			if (_form.AddDatasetColumns)
-			{
-				if (_selectedDataset.Columns.Count > 0)
-				{
-					_generatedColumns.AddRange(_selectedDataset.Columns.Select(x => x));
-				}
-				else if (_providers.Any(x => x.Id == _selectedDataset.DataProviderId))
-				{
-					var dataProvider = _providers.Single(x => x.Id == _selectedDataset.DataProviderId);
-					_generatedColumns.AddRange(dataProvider.Columns.Select(x => x.DbName));
-				}
-			}
-		}
+		//if (_selectedDataProvider is not null)
+		//{
+		//	if (_form.AddProviderColumns)
+		//		_generatedColumns.AddRange(_selectedDataProvider.Columns.Select(x => x.DbName));
+		//	if (_form.AddSystemColumns)
+		//		_generatedColumns.AddRange(_selectedDataProvider.SystemColumns.Select(x => x.DbName));
+		//	if (_form.AddSharedColumns)
+		//		_generatedColumns.AddRange(_selectedDataProvider.SharedColumns.Select(x => x.DbName));
+		//}
+		//else if (_selectedDataset is not null)
+		//{
+		//	if (_form.AddDatasetColumns)
+		//	{
+		//		if (_selectedDataset.Columns.Count > 0)
+		//		{
+		//			_generatedColumns.AddRange(_selectedDataset.Columns.Select(x => x));
+		//		}
+		//		else if (_providers.Any(x => x.Id == _selectedDataset.DataProviderId))
+		//		{
+		//			var dataProvider = _providers.Single(x => x.Id == _selectedDataset.DataProviderId);
+		//			_generatedColumns.AddRange(dataProvider.Columns.Select(x => x.DbName));
+		//		}
+		//	}
+		//}
 	}
 
 }

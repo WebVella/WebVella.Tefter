@@ -67,6 +67,13 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 				search: _navState.Search ?? String.Empty,
 				page: 1,
 				pageSize: TfConstants.ItemsMaxLimit);
+
+			foreach (TfDataRow row in _data.Rows)
+			{
+				row.OnEdit = async () => await _editRow(row);
+				row.OnDelete = async () => await _deleteRow(row);
+			}
+
 		}
 		finally
 		{

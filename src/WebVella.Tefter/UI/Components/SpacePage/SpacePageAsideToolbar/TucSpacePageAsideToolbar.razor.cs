@@ -1,11 +1,19 @@
-﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpacePageAsideToolbar : TfBaseComponent,IDisposable
+﻿using WebVella.Tefter.Models;
+
+namespace WebVella.Tefter.UI.Components;
+
+public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 {
+	[Inject] public ITfSpaceUIService TfSpaceUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
+
+	[CascadingParameter(Name = "CurrentUser")]
+	public TfUser CurrentUser { get; set; } = default!;
+
 	private string? _search = null;
 	private TfNavigationState _navState = new();
 	private TfSpaceNavigationActiveTab _activeTab = TfSpaceNavigationActiveTab.Pages;
-
+	private bool _actionMenuOpened = false;
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
@@ -32,8 +40,9 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent,IDisposable
 
 		try
 		{
+			_actionMenuOpened = false;
 			_search = _navState.SearchAside;
-			_activeTab = NavigatorExt.GetEnumFromQuery<TfSpaceNavigationActiveTab>(Navigator,TfConstants.TabQueryName,TfSpaceNavigationActiveTab.Pages)!.Value;
+			_activeTab = NavigatorExt.GetEnumFromQuery<TfSpaceNavigationActiveTab>(Navigator, TfConstants.TabQueryName, TfSpaceNavigationActiveTab.Pages)!.Value;
 		}
 		finally
 		{
@@ -56,6 +65,89 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent,IDisposable
 		await NavigatorExt.ApplyChangeToUrlQuery(Navigator, TfConstants.TabQueryName, _activeTab);
 	}
 
+	private async Task _addPageAsync()
+	{
+		if(_navState.SpaceId is null) return;
+		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(
+		new TfSpacePage() { SpaceId = _navState.SpaceId.Value },
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null){
+			var newPage = (TfSpacePage)result.Data;
+			Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl, newPage.SpaceId, newPage.Id));
+		}
+	}
 
-	
+	private async Task _editSpaceAsync()
+	{
+		if (_navState.SpaceId is null) return;
+		var space = TfSpaceUIService.GetSpace(_navState.SpaceId.Value);
+		var dialog = await DialogService.ShowDialogAsync<TucSpaceManageDialog>(
+		space,
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null) { }
+	}
+
+	private async Task _deleteSpaceAsync()
+	{
+		if (_navState.SpaceId is null) return;
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this space deleted?")))
+			return;
+		try
+		{
+			TfSpaceUIService.DeleteSpace(_navState.SpaceId.Value);
+			ToastService.ShowSuccess(LOC("Space deleted"));
+			Navigator.NavigateTo(TfConstants.HomePageUrl);
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+	}
+
+	private async Task _editSpaceAccessAsync()
+	{
+		if (_navState.SpaceId is null) return;
+		var dialog = await DialogService.ShowDialogAsync<TucSpaceAccessDialog>(
+		_navState.SpaceId,
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null) { }
+	}
+
+	private async Task _managePagesAsync() {
+		if (_navState.SpaceId is null) return;
+		var dialog = await DialogService.ShowDialogAsync<TucSpacePagesDialog>(
+		_navState.SpaceId,
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null) { }
+		
+	}
+
 }

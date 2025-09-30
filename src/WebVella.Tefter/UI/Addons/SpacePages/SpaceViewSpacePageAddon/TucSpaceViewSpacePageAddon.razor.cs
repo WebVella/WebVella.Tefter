@@ -13,8 +13,8 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 	#region << Base Overrides >>
 	public static string ID = "68afeecc-6ca9-4102-831d-ef4028057128";
 	public override Guid AddonId { get; init; } = new Guid(ID);
-	public override string AddonName { get; init; } = "Space View";
-	public override string AddonDescription { get; init; } = "present data in a grid format";
+	public override string AddonName { get; init; } = "Data Grid";
+	public override string AddonDescription { get; init; } = "present the selected dataset in a grid";
 	public override string AddonFluentIconName { get; init; } = "Table";
 	[Parameter] public override TfSpacePageAddonContext Context { get; set; } = default!;
 
@@ -22,96 +22,86 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 	public override List<ValidationError> ValidateOptions()
 	{
 		ValidationErrors.Clear();
-		if (_options.SetType == TfSpaceViewSetType.New)
+		if (_options.DatasetId is null)
 		{
-			if (String.IsNullOrWhiteSpace(_options.Name))
-			{
-				ValidationErrors.Add(new ValidationError(nameof(_options.Name), "required"));
-			}
-			if (_options.DatasetType == TfSpaceViewDatasetType.New)
-			{
-				if (String.IsNullOrWhiteSpace(_options.NewSpaceDataName))
-				{
-					ValidationErrors.Add(new ValidationError(nameof(_options.NewSpaceDataName), "required"));
-				}
-				if (_options.DataProviderId is null)
-				{
-					ValidationErrors.Add(new ValidationError(nameof(_options.DataProviderId), "required"));
-				}
-			}
-			else
-			{
-				if (_options.SpaceDataId is null)
-				{
-					ValidationErrors.Add(new ValidationError(nameof(_options.SpaceDataId), "required"));
-				}
-			}
+			ValidationErrors.Add(new ValidationError(nameof(_options.DatasetId), "required"));
 		}
-		else
-		{
-			if (_options.SpaceViewId is null)
-			{
-				ValidationErrors.Add(new ValidationError(nameof(_options.SpaceViewId), "required"));
-			}
-		}
-
 		return ValidationErrors;
 	}
 
 	public override async Task<string> OnPageCreated(IServiceProvider serviceProvider, TfSpacePageAddonContext context)
 	{
-		await base.OnPageCreated(serviceProvider, context);
 		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("TfSpaceViewPageComponent error: ComponentOptionsJson is null");
 		var jsonOptions = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(context.ComponentOptionsJson);
 		if (jsonOptions is null) throw new Exception("TfSpaceViewPageComponent error: options cannot be deserialized");
 		if (context.Space is null) throw new Exception("TfSpaceViewPageComponent error: Space not provided");
-		Guid? originalSpaceViewId = jsonOptions.SpaceViewId;
 		var tfService = serviceProvider.GetService<ITfService>();
-		if (jsonOptions.SetType == TfSpaceViewSetType.New)
+		TfCreateSpaceViewExtended spaceView = new();
+		if (context.TemplateId is null)
 		{
 			//Create view if needed
-			var spaceView = new TfCreateSpaceViewExtended
+			spaceView = new TfCreateSpaceViewExtended
 			{
 				Id = Guid.NewGuid(),
-				AddDatasetColumns = jsonOptions.AddDatasetColumns,
-				AddProviderColumns = jsonOptions.AddProviderColumns,
-				SpaceDataId = jsonOptions.SpaceDataId,
-				AddSharedColumns = jsonOptions.AddConnectedColumns,
-				AddSystemColumns = jsonOptions.AddSystemColumns,
-				DataProviderId = jsonOptions.DataProviderId,
-				DatasetType = jsonOptions.DatasetType,
-				Name = jsonOptions.Name,
-				NewSpaceDataName = jsonOptions.NewSpaceDataName,
-				Position = 1,
+				SpaceDataId = jsonOptions.DatasetId,
+				Name = context.SpacePage.Name,
 				Presets = new List<TfSpaceViewPreset>(),
 				Settings = new TfSpaceViewSettings(),
-				SpaceId = context.Space.Id,
-				Type = jsonOptions.Type,
+			};
+		}
+		else
+		{
+			var templatePage = tfService.GetSpacePage(context.TemplateId.Value);
+			if (templatePage is null) throw new Exception($"Template page with id: {context.TemplateId.Value} not found");
+			if (templatePage.ComponentId != AddonId) throw new Exception($"The template page with id: {context.TemplateId.Value} is not from the required type {AddonName}");
+			var templateJsonOptions = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(templatePage.ComponentOptionsJson);
+			if (templateJsonOptions is null) throw new Exception("TfSpaceViewPageComponent error: template page options cannot be deserialized");
+			if (templateJsonOptions.SpaceViewId is null) throw new Exception($"Template page with id: {context.TemplateId.Value} does not have space view selected");
+			var templateView = tfService.GetSpaceView(templateJsonOptions.SpaceViewId.Value);
+			if (templateView is null) throw new Exception($"Template page with id: {context.TemplateId.Value} has view with id: {templateJsonOptions.SpaceViewId.Value} that does not exist");
+
+			spaceView = new TfCreateSpaceViewExtended
+			{
+				Id = Guid.NewGuid(),
+				SpaceDataId = templateView.DatasetId,
+				Name = context.SpacePage.Name,
+				Presets = templateView.Presets,
+				Settings = templateView.Settings,
 			};
 
-			var createdSpaceView = tfService.CreateSpaceView(spaceView);
-			jsonOptions.SpaceViewId = createdSpaceView.Id;
-			jsonOptions.SpaceDataId = createdSpaceView.DatasetId;
-			context.ComponentOptionsJson = JsonSerializer.Serialize(jsonOptions);
 		}
+		var createdSpaceView = tfService.CreateSpaceView(spaceView);
+		jsonOptions.SpaceViewId = createdSpaceView.Id;
+		jsonOptions.DatasetId = createdSpaceView.DatasetId;
+		context.ComponentOptionsJson = JsonSerializer.Serialize(jsonOptions);
 		return context.ComponentOptionsJson;
+	}
+
+	public override async Task<string> OnPageUpdated(IServiceProvider serviceProvider, TfSpacePageAddonContext context)
+	{
+		return context.ComponentOptionsJson;
+	}
+
+	public override async Task OnPageDeleted(IServiceProvider serviceProvider, TfSpacePageAddonContext context)
+	{
+		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("TfSpaceViewPageComponent error: ComponentOptionsJson is null");
+		var jsonOptions = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(context.ComponentOptionsJson);
+		if (jsonOptions is null) throw new Exception("TfSpaceViewPageComponent error: options cannot be deserialized");
+		var tfService = serviceProvider.GetService<ITfService>();
+		if (jsonOptions.SpaceViewId.HasValue)
+			tfService.DeleteSpaceView(jsonOptions.SpaceViewId.Value);
 	}
 
 	#endregion
 
 	#region << Private properties >>
 	//Edit
-	private string optionsJson = "{}";
 	private TfSpaceViewSpacePageAddonOptions _options { get; set; } = new();
-	private TfDataProvider? _optionsDataProvider = null;
-	private TfDataset? _optionsDataset = null;
-	private TfSpaceView? _optionsExistingSpaceView = null;
+	private TfDataset? _selectedDataset = null;
 	private List<string> _generatedColumns = new();
 	private int _generatedColumnCountLimit = 10;
 
-	private ReadOnlyCollection<TfDataProvider> _allDataProviders = default!;
-	private List<TfSpaceView> _allSpaceView = new();
-	private List<TfDataset> _allSpaceData = new();
+	private List<TfDataset> _allDatasets = new();
 
 	#endregion
 
@@ -120,229 +110,47 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 
 	protected override void OnInitialized()
 	{
-		if (Context.Space is not null)
-		{
-			_allSpaceView = TfSpaceViewUIService.GetSpaceViewsList(Context.Space.Id);
-			_allSpaceData = TfDatasetUIService.GetDatasets();
-		}
-		_allDataProviders = TfDataProviderUIService.GetDataProviders();
-	}
+		if (Context is null) throw new Exception("Context is required");
 
-	protected override void OnParametersSet()
-	{
-		base.OnParametersSet();
-		if (Context.Mode == TfComponentMode.Read) return;
-		if (Context.ComponentOptionsJson != optionsJson)
-		{
-			optionsJson = Context.ComponentOptionsJson;
-			_options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(optionsJson) ?? new TfSpaceViewSpacePageAddonOptions();
+		_allDatasets = TfDatasetUIService.GetDatasets();
 
-			if (_options.SpaceViewId is not null)
-				_optionsExistingSpaceView = _allSpaceView.FirstOrDefault(x => x.Id == _options.SpaceViewId.Value);
-			if (_optionsExistingSpaceView is not null)
-				_optionsDataset = _allSpaceData.FirstOrDefault(x => x.Id == _optionsExistingSpaceView.DatasetId);
-			if (_options.DataProviderId is not null)
-				_optionsDataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _options.DataProviderId.Value);
-			_generatedColumnsListInit();
+		if (!String.IsNullOrWhiteSpace(Context?.ComponentOptionsJson) && Context!.ComponentOptionsJson != "{}")
+			_options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(Context!.ComponentOptionsJson) ?? new();
+
+		if (_options.DatasetId != null && _options.DatasetId != Guid.Empty)
+		{
+			_selectedDataset = _allDatasets.FirstOrDefault(x=> x.Id == _options.DatasetId);
 		}
+		
 	}
 	#endregion
 
 	#region << Private methods >>
-	private void _optionsSetTypeChangeHandler(TfSpaceViewSetType type)
+
+	private async Task _valueChanged(string propName, object? payload)
 	{
-		_options.SetType = type;
-		if (type == TfSpaceViewSetType.Existing)
+		if (propName == nameof(_options.DatasetId))
 		{
-			if (_optionsExistingSpaceView is null && _allSpaceView.Any())
+			_selectedDataset = null;
+			_options.DatasetId = null;
+			if (payload is not null)
 			{
-				_optionsExistingSpaceView = _allSpaceView[0];
-				_options.SpaceViewId = _optionsExistingSpaceView.Id;
+				_selectedDataset = (TfDataset)payload;
+				_options.DatasetId = _selectedDataset.Id;
 			}
 		}
+		await Context.ComponentOptionsJsonChanged.InvokeAsync(JsonSerializer.Serialize(_options));
 	}
-	private void _optionsDatasetTypeChangeHandler(TfSpaceViewDatasetType type)
-	{
-		_optionsDataProvider = null;
-		_options.DataProviderId = null;
-		_optionsDataset = null;
-		_options.SpaceDataId = null;
-		_options.DatasetType = type;
-
-		if (type == TfSpaceViewDatasetType.New)
-		{
-			if (_allDataProviders.Any())
-			{
-				_options.DataProviderId = _allDataProviders[0].Id;
-				_optionsDataProvider = _allDataProviders[0];
-			}
-		}
-		else if (type == TfSpaceViewDatasetType.Existing)
-		{
-			var allSpaceData = TfDatasetUIService.GetDatasets();
-			if (allSpaceData.Any())
-			{
-				_options.SpaceDataId = allSpaceData[0].Id;
-				_optionsDataset = allSpaceData[0];
-			}
-		}
-		_generatedColumnsListInit();
-	}
-
-	private void _optionsDataProviderSelectedHandler(TfDataProvider provider)
-	{
-		_optionsDataProvider = null;
-		_options.DataProviderId = null;
-
-		if (provider is null) return;
-		_optionsDataProvider = provider;
-		_options.DataProviderId = provider.Id;
-		_generatedColumnsListInit();
-	}
-
-	private void _optionsDatasetSelected(TfDataset dataset)
-	{
-		_optionsDataset = dataset;
-		_options.SpaceDataId = dataset is null ? null : dataset.Id;
-		_generatedColumnsListInit();
-	}
-
-	private void _optionsSpaceViewSelected(TfSpaceView view)
-	{
-		_optionsExistingSpaceView = view;
-		_options.SpaceViewId = view.Id;
-	}
-
-	private void _columnGeneratorSettingChanged(bool value, string field)
-	{
-
-		if (field == nameof(_options.AddProviderColumns))
-		{
-			_options.AddProviderColumns = value;
-		}
-		else if (field == nameof(_options.AddConnectedColumns))
-		{
-			_options.AddConnectedColumns = value;
-		}
-		else if (field == nameof(_options.AddSystemColumns))
-		{
-			_options.AddSystemColumns = value;
-		}
-		else if (field == nameof(_options.AddDatasetColumns))
-		{
-			_options.AddDatasetColumns = value;
-		}
-		_generatedColumnsListInit();
-	}
-
-	private void _generatedColumnsListInit()
-	{
-		_generatedColumns.Clear();
-
-		if (_optionsDataProvider is not null)
-		{
-			if (_options.AddProviderColumns)
-				_generatedColumns.AddRange(_optionsDataProvider.Columns
-						.Where(x => !String.IsNullOrWhiteSpace(x.DbName))
-						.Select(x => x.DbName!));
-			if (_options.AddSystemColumns)
-				_generatedColumns.AddRange(_optionsDataProvider.SystemColumns.Select(x => x.DbName));
-			if (_options.AddConnectedColumns)
-			{
-				foreach (var identity in _optionsDataProvider.Identities)
-				{
-					foreach (var column in identity.Columns)
-					{
-						_generatedColumns.Add($"{identity.DataIdentity}.{column}");
-					}
-				}
-			}
-			//_generatedColumns.AddRange(_optionsDataProvider.SharedColumns.Select(x => x.DbName));
-		}
-		else if (_optionsDataset is not null)
-		{
-			if (_options.AddDatasetColumns)
-			{
-				if (_optionsDataset.Columns.Count > 0)
-				{
-					_generatedColumns.AddRange(_optionsDataset.Columns.Select(x => x));
-				}
-			}
-			if (_options.AddProviderColumns)
-			{
-				var dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _optionsDataset.DataProviderId);
-				if (dataProvider is not null)
-				{
-					foreach (var column in dataProvider.Columns)
-					{
-						if (String.IsNullOrWhiteSpace(column.DbName) || _generatedColumns.Contains(column.DbName)) continue;
-						_generatedColumns.Add(column.DbName);
-					}
-				}
-			}
-			if (_options.AddConnectedColumns)
-			{
-				if (_optionsDataset.Identities is not null)
-				{
-					foreach (var identity in _optionsDataset.Identities)
-					{
-						foreach (var dbName in identity.Columns)
-						{
-							_generatedColumns.Add($"{identity.DataIdentity}.{dbName}");
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private async Task _goToView()
-	{
-		var navState = await TfNavigationUIService.GetNavigationStateAsync(Navigator);
-		if (navState.SpaceId is null || _optionsExistingSpaceView is null || _optionsExistingSpaceView.Id == Guid.Empty) return;
-
-		Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, navState.SpaceId, _optionsExistingSpaceView.Id));
-	}
-
-	private async Task _onNodeEdit() => await Context.EditNode.InvokeAsync();
-	private async Task _onNodeDelete() => await Context.DeleteNode.InvokeAsync();
-
 	#endregion
 }
 
 public class TfSpaceViewSpacePageAddonOptions
 {
-	[JsonPropertyName("SetType")]
-	public TfSpaceViewSetType SetType { get; set; } = TfSpaceViewSetType.New;
+
+	[JsonPropertyName("DatasetId")]
+	public Guid? DatasetId { get; set; } = null;
 
 	[JsonPropertyName("SpaceViewId")]
 	public Guid? SpaceViewId { get; set; } = null;
-
-	[JsonPropertyName("Name")]
-	public string Name { get; set; } = "";
-
-	[JsonPropertyName("Type")]
-	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
-
-	[JsonPropertyName("DatasetType")]
-	public TfSpaceViewDatasetType DatasetType { get; set; } = TfSpaceViewDatasetType.New;
-
-	[JsonPropertyName("DataProviderId")]
-	public Guid? DataProviderId { get; set; } = null;
-
-	[JsonPropertyName("NewSpaceDataName")]
-	public string NewSpaceDataName { get; set; } = null;
-
-	[JsonPropertyName("SpaceDataId")]
-	public Guid? SpaceDataId { get; set; } = null;
-
-	[JsonPropertyName("AddSystemColumns")]
-	public bool AddSystemColumns { get; set; } = false;
-	[JsonPropertyName("AddProviderColumns")]
-	public bool AddProviderColumns { get; set; } = true;
-	[JsonPropertyName("AddConnectedColumns")]
-	public bool AddConnectedColumns { get; set; } = true;
-	[JsonPropertyName("AddDatasetColumns")]
-	public bool AddDatasetColumns { get; set; } = true;
 
 }

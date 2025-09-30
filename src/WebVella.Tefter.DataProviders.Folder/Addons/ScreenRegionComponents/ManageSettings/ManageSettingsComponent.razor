@@ -2,6 +2,70 @@
 @inherits TfFormBaseComponent
 
 <FluentEditForm EditContext="EditContext" FormName="dp-settings" class="tf-form" novalidate>
+	@if (_error is not null)
+	{
+		<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error" Style="margin-bottom:1rem;">@_error</FluentMessageBar>
+	}
+	@foreach (var share in _form.Shares)
+	{
+		<TucCard Title="Shared Folder">
+			<ToolbarTemplate>
+				@if (_form.Shares.Count == 1)
+				{
+					<FluentButton Appearance="@Appearance.Outline" Disabled IconStart="@TfConstants.GetIcon("Delete")" />
+				}
+				else
+				{
+					<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _removeShare(share))" IconStart="@TfConstants.GetIcon("Delete").WithColor(Color.Error)" />
+				}
+			</ToolbarTemplate>
+			<ChildContent>
+				<FluentGrid>
+					<FluentGridItem xs="9">
+						<FluentTextField Required="true"
+										 Label="@LOC("Path")"
+										 TextFieldType="@TextFieldType.Text"
+										 Placeholder="@LOC("local or network protocols are supported")"
+										 @bind-Value=@share.Path AutoComplete="off"
+										 @bind-Value:after=_valueChanged Style="width:100%" />
+					</FluentGridItem>
+					<FluentGridItem xs="3">
+						<FluentTextField Label="@LOC("File Id Prefix")"
+										 TextFieldType="@TextFieldType.Text"
+										 Placeholder="@LOC("if needed")"
+										 @bind-Value=@share.PathPrefix AutoComplete="off"
+										 @bind-Value:after=_valueChanged Style="width:100%" />
+					</FluentGridItem>
+				</FluentGrid>
+				<FluentGrid>
+					<FluentGridItem xs="4">
+						<FluentTextField Label="@LOC("Access Domain")"
+										 TextFieldType="@TextFieldType.Text"
+										 @bind-Value=@share.Domain AutoComplete="off"
+										 @bind-Value:after=_valueChanged Style="width:100%" />
+					</FluentGridItem>
+					<FluentGridItem xs="4">
+						<FluentTextField Label="@LOC("Access Username")"
+										 TextFieldType="@TextFieldType.Text"
+										 @bind-Value=@share.Username AutoComplete="off"
+										 @bind-Value:after=_valueChanged Style="width:100%" />
+					</FluentGridItem>
+					<FluentGridItem xs="4">
+						<FluentTextField Label="@LOC("Access Password")"
+										 TextFieldType="@TextFieldType.Password"
+										 @bind-Value=@share.Password AutoComplete="off"
+										 @bind-Value:after=_valueChanged Style="width:100%" />
+					</FluentGridItem>
+				</FluentGrid>
+			</ChildContent>
+		</TucCard>
+	}
 </FluentEditForm>
+
+<div style="margin-top:1rem;">
+	<FluentButton Appearance="@Appearance.Outline" OnClick="_addShare" IconStart="@TfConstants.GetIcon("Add")">
+		@LOC("Include New Share")
+	</FluentButton>
+</div>
 
 

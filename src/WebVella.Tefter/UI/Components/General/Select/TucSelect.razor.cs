@@ -104,12 +104,7 @@ public partial class TucSelect<TOption> : TfBaseComponent where TOption : notnul
 	/// <summary>
 	/// Hash of the items collection to track changes in the items list.
 	/// </summary>
-	string? _itemsHash = null;
-
-	/// <summary>
-	/// Hash of the selected option to track changes in the selection.
-	/// </summary>
-	string? _selectedHash = null;
+	int _itemsCount = 0;
 
 	/// <summary>
 	/// Flag to control rendering behavior during parameter updates to avoid race conditions.
@@ -127,20 +122,12 @@ public partial class TucSelect<TOption> : TfBaseComponent where TOption : notnul
 			OptionText = x => x.ToString();
 
 		// Generate hashes for items and selected option to detect changes
-		var itemsHash = Items is not null ? JsonSerializer.Serialize(Items) : null;
-		var selectedHash = SelectedOption is not null ? JsonSerializer.Serialize(SelectedOption) : null;
-
-		// Determine if items or selected option have changed
-		var itemsChanged = itemsHash != _itemsHash;
-		var selectedChanged = selectedHash != _selectedHash;
-
-		// Update the stored hashes
-		_itemsHash = itemsHash;
-		_selectedHash = selectedHash;
+		var itemsCount = Items is not null ? Items.Count() : 0;
 
 		// Handle a potential race condition when both items and selected option change at the same time
-		if (itemsChanged && selectedChanged)
+		if (itemsCount != _itemsCount)
 		{
+			_itemsCount = itemsCount;
 			_shouldRender = false;
 			await Task.Delay(1);
 			await InvokeAsync(StateHasChanged);
