@@ -1,26 +1,32 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 {
-	private TfSpace _space = default!;
-	private List<TfSpacePage> _spacePages = default!;
+	private TfSpace? _space = null;
+	private List<TfSpacePage> _spacePages = new();
 	private TfNavigationState _navState = default!;
 	public bool _submitting = false;
+
 	public void Dispose()
 	{
-		TfUIService.SpaceUpdated -= On_SpaceUpdated;
+		TfUIService.SpacePageCreated -= On_SpacePageChange;
+		TfUIService.SpacePageUpdated -= On_SpacePageChange;
+		TfUIService.SpacePageDeleted -= On_SpacePageChange;
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfUIService.SpaceUpdated += On_SpaceUpdated;
+		TfUIService.SpacePageCreated += On_SpacePageChange;
+		TfUIService.SpacePageUpdated += On_SpacePageChange;
+		TfUIService.SpacePageDeleted += On_SpacePageChange;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async void On_SpaceUpdated(object? caller, TfSpace args)
+	private async void On_SpacePageChange(object? caller, TfSpacePage args)
 	{
-		await _init(space: args);
+		await _init();
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -29,27 +35,21 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 			await _init(navState: args);
 	}
 
-	private async Task _init(TfNavigationState? navState = null, TfSpace? space = null)
+	private async Task _init(TfNavigationState? navState = null)
 	{
 		if (navState == null)
 			_navState = TfAuthLayout.NavigationState;
 		else
 			_navState = navState;
+		if (_navState.SpaceId is null)
+			throw new Exception("No space Id defined in the URL");
 
 		try
 		{
-			if (space is not null)
-			{
-				_space = space;
-			}
-			else
-			{
-				if (_navState.SpaceId is null) return;
+			if (_space is null)
 				_space = TfUIService.GetSpace(_navState.SpaceId.Value);
-				if (_space is null) return;
-			}
+			if (_space is null) throw new Exception("Space not found");
 			_spacePages = TfUIService.GetSpacePages(_space.Id);
-
 		}
 		finally
 		{
@@ -61,14 +61,14 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 	private async Task _addPage()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(
-		new TfSpacePage() { SpaceId = _space.Id},
-		new DialogParameters()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			new TfSpacePage() { SpaceId = _space.Id },
+			new DialogParameters()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
@@ -99,6 +99,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 			await InvokeAsync(StateHasChanged);
 		}
 	}
+
 	private async Task _movePage(Tuple<TfSpacePage, bool> args)
 	{
 		if (_submitting) return;
@@ -155,15 +156,16 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 			ToastService.ShowError(LOC("Space page not found"));
 			return;
 		}
+
 		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(
-		node,
-		new DialogParameters()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			node,
+			new DialogParameters()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{

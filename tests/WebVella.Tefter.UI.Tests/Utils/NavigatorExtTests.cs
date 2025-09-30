@@ -21,7 +21,7 @@ public class NavigatorExtTests
 		string identityId = Guid.NewGuid().ToString();
 		Guid viewId = Guid.NewGuid();
 		Guid dataId = Guid.NewGuid();
-		Guid nodeId = Guid.NewGuid();
+		Guid pageId = Guid.NewGuid();
 		Guid templateId = Guid.NewGuid();
 
 		//When
@@ -242,7 +242,6 @@ public class NavigatorExtTests
 		result.TemplateId.Should().Be(templateId);
 		#endregion
 
-
 		#region << Space >>
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceManagePageUrl, spaceId)}");
 		result = NavigatorExt.GetNodeData(uri);
@@ -271,7 +270,6 @@ public class NavigatorExtTests
 		result.RouteNodes[3].Should().Be(RouteDataNode.Access);
 		result.SpaceId.Should().Be(spaceId);
 		#endregion
-
 
 		#region << Space view >>
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceViewPageUrl, spaceId, viewId)}");
@@ -313,8 +311,8 @@ public class NavigatorExtTests
 
 		#endregion
 
-		#region << Space node >>
-		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpacePagePageUrl, spaceId, nodeId)}");
+		#region << Space page >>
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpacePagePageUrl, spaceId, pageId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
@@ -323,7 +321,32 @@ public class NavigatorExtTests
 		result.RouteNodes[2].Should().Be(RouteDataNode.SpacePage);
 		result.RouteNodes[3].Should().Be(RouteDataNode.SpacePageId);
 		result.SpaceId.Should().Be(spaceId);
-		result.SpacePageId.Should().Be(nodeId);
+		result.SpacePageId.Should().Be(pageId);
+		
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpacePagePageManageUrl, spaceId, pageId)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(5);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Space);
+		result.RouteNodes[1].Should().Be(RouteDataNode.SpaceId);
+		result.RouteNodes[2].Should().Be(RouteDataNode.SpacePage);
+		result.RouteNodes[3].Should().Be(RouteDataNode.SpacePageId);
+		result.RouteNodes[4].Should().Be(RouteDataNode.Manage);
+		result.SpaceId.Should().Be(spaceId);
+		result.SpacePageId.Should().Be(pageId);		
+		
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpacePagePageManageAddonUrl, spaceId, pageId)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(5);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Space);
+		result.RouteNodes[1].Should().Be(RouteDataNode.SpaceId);
+		result.RouteNodes[2].Should().Be(RouteDataNode.SpacePage);
+		result.RouteNodes[3].Should().Be(RouteDataNode.SpacePageId);
+		result.RouteNodes[4].Should().Be(RouteDataNode.Addon);
+		result.SpaceId.Should().Be(spaceId);
+		result.SpacePageId.Should().Be(pageId);				
+		
 		#endregion
 	}
 

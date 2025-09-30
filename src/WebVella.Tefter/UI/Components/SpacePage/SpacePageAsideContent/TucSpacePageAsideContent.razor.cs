@@ -12,19 +12,21 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 	private TfNavigationState _navState = new();
 	public void Dispose()
 	{
-		TfUIService.SpaceUpdated -= On_SpaceChanged;
-		TfUIService.UserUpdated -= On_UserChanged;
+		TfUIService.SpacePageCreated -= On_SpacePageChange;
+		TfUIService.SpacePageUpdated -= On_SpacePageChange;
+		TfUIService.SpacePageDeleted -= On_SpacePageChange;
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init();
-		TfUIService.SpaceUpdated += On_SpaceChanged;
-		TfUIService.UserUpdated += On_UserChanged;
+		TfUIService.SpacePageCreated += On_SpacePageChange;
+		TfUIService.SpacePageUpdated += On_SpacePageChange;
+		TfUIService.SpacePageDeleted += On_SpacePageChange;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async void On_SpaceChanged(object? caller, TfSpace args)
+	private async void On_SpacePageChange(object? caller, TfSpacePage args)
 	{
 		await _init();
 	}

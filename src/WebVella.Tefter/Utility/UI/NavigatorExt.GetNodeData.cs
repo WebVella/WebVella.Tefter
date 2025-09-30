@@ -199,6 +199,7 @@ public static partial class NavigatorExt
 			result = result.AddRouteNodes(RouteDataNode.SpacePageId);
 			result = result with { SpacePageId = outGuid };
 			result = result.Front_Space_SpaceId_Page_PageId_Manage_NodesProcess();
+			result = result.Front_Space_SpaceId_Page_PageId_Addon_NodesProcess();
 		}
 		return result;
 	}
@@ -222,6 +223,26 @@ public static partial class NavigatorExt
 		}
 		return result;
 	}	
+	
+	private static TfNavigationState Front_Space_SpaceId_Page_PageId_Addon_NodesProcess(this TfNavigationState result)
+	{
+		if (result.RouteNodes.Count < 2
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.SpacePage
+		    || result.RouteNodes[3] != RouteDataNode.SpacePageId
+		   )
+			return result;
+
+		if (result.NodesDict.Count < 5)
+			return result;
+
+		if (result.NodesDict[4] == TfConstants.RouteNameAddon)
+		{
+			result = result.AddRouteNodes(RouteDataNode.Addon);
+		}
+		return result;
+	}		
 	#endregion
 
 	
