@@ -140,12 +140,6 @@ public partial class TfService : ITfService
 
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
-				DbName = "tf_row_id",
-				DbType = TfDatabaseColumnType.ShortText
-			});
-
-			systemColumns.Add(new TfDataProviderSystemColumn
-			{
 				DbName = "tf_row_index",
 				DbType = TfDatabaseColumnType.Integer
 			});
@@ -170,9 +164,6 @@ public partial class TfService : ITfService
 
 			foreach (var providerDataIdentity in providerIdentities)
 			{
-				if (providerDataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-					continue;
-
 				systemColumns.Add(new TfDataProviderSystemColumn
 				{
 					DbName = $"tf_ide_{providerDataIdentity.DataIdentity}",

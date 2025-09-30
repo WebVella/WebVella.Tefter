@@ -243,7 +243,7 @@ public partial class TfService : ITfService
 					}
 
 					//add shared columns data
-					foreach (var identity in _spaceData.Identities )
+					foreach (var identity in _spaceData.Identities)
 					{
 						foreach (var columnName in identity.Columns.Distinct())
 						{
@@ -252,7 +252,7 @@ public partial class TfService : ITfService
 							{
 								continue;
 							}
-							
+
 							//if column is already processed, ignore duplicate
 							if (_sharedColumnsData.Any(x => x.DbName == identity.DataIdentity))
 							{
@@ -389,7 +389,7 @@ public partial class TfService : ITfService
 					_sorts = _userSorts.ToList();
 					foreach (var sortOrder in _userSorts)
 					{
-						var column = GetColumnObject(_availableColumns, sortOrder.ColumnName,checkJoinData:true);
+						var column = GetColumnObject(_availableColumns, sortOrder.ColumnName, checkJoinData: true);
 						if (column is not null)
 							_sortColumns.Add(column);
 					}
@@ -442,7 +442,7 @@ public partial class TfService : ITfService
 					DbType = dbType,
 					DataIdentity = dataIdentity,
 					IsSystem = isSystem,
-					Type =  SqlBuilderColumnType.Default
+					Type = SqlBuilderColumnType.Default
 				});
 			}
 			else
@@ -600,20 +600,11 @@ public partial class TfService : ITfService
 		{
 			if (column.Type == SqlBuilderColumnType.Shared)
 			{
-				if (column.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY)
-				{
-					return
-						$"LEFT OUTER JOIN {column.TableName} {column.TableAlias} ON " +
-						$"{column.TableAlias}.data_identity_value = {_tableAlias}.tf_ide_{column.DataIdentity} AND " +
-						$"{column.TableAlias}.shared_column_id = '{column.Id}'";
-				}
-				else
-				{
-					return
-						$"LEFT OUTER JOIN {column.TableName} {column.TableAlias} ON " +
-						$"{column.TableAlias}.data_identity_value = {_tableAlias}.tf_row_id AND " +
-						$"{column.TableAlias}.shared_column_id = '{column.Id}'";
-				}
+				return
+					$"LEFT OUTER JOIN {column.TableName} {column.TableAlias} ON " +
+					$"{column.TableAlias}.data_identity_value = {_tableAlias}.tf_ide_{column.DataIdentity} AND " +
+					$"{column.TableAlias}.shared_column_id = '{column.Id}'";
+
 			}
 			else if (column.Type == SqlBuilderColumnType.Joined)
 			{
@@ -621,18 +612,9 @@ public partial class TfService : ITfService
 				if (joinData is null)
 					throw new Exception("Join data not found for joined column");
 
-				if (column.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY)
-				{
-					return
-						$"LEFT OUTER JOIN {joinData.TableName} {joinData.TableAlias} ON " +
-						$"{joinData.TableAlias}.tf_ide_{joinData.DataIdentity} = {_tableAlias}.tf_ide_{joinData.DataIdentity} ";
-				}
-				else
-				{
-					return
-						$"LEFT OUTER JOIN {joinData.TableName} {joinData.TableAlias} ON " +
-						$"{joinData.TableAlias}.tf_row_id = {_tableAlias}.tf_row_id ";
-				}
+				return
+					$"LEFT OUTER JOIN {joinData.TableName} {joinData.TableAlias} ON " +
+					$"{joinData.TableAlias}.tf_ide_{joinData.DataIdentity} = {_tableAlias}.tf_ide_{joinData.DataIdentity} ";
 			}
 			else
 			{
@@ -668,7 +650,7 @@ public partial class TfService : ITfService
 						sortSb.Append($"{comma}{column.TableAlias}.{column.DbName} {direction}");
 					else
 						sortSb.Append($"{comma}{column.TableAlias}.{column.DbName} {direction}");
-						
+
 					first = false;
 				}
 				sb.Append(sortSb.ToString());
@@ -764,7 +746,7 @@ public partial class TfService : ITfService
 			}
 
 
-			SqlBuilderColumn? column = GetColumnObject(_filterColumns,filter.ColumnName);
+			SqlBuilderColumn? column = GetColumnObject(_filterColumns, filter.ColumnName);
 			if (column is null)
 				return string.Empty;
 
@@ -999,7 +981,7 @@ public partial class TfService : ITfService
 			return value;
 		}
 
-		private SqlBuilderColumn? GetColumnObject(List<SqlBuilderColumn> columns, string columnName, bool checkJoinData = false )
+		private SqlBuilderColumn? GetColumnObject(List<SqlBuilderColumn> columns, string columnName, bool checkJoinData = false)
 		{
 			if (columnName.Contains('.'))
 			{
@@ -1007,10 +989,10 @@ public partial class TfService : ITfService
 				if (parts.Length == 2)
 				{
 					var found = columns.FirstOrDefault(x => x.DbName == parts[1] && x.DataIdentity == parts[0]);
-					
-					if(found != null)
+
+					if (found != null)
 						return found;
-					
+
 					if (checkJoinData)
 					{
 						foreach (var join in _joinData)
@@ -1028,11 +1010,11 @@ public partial class TfService : ITfService
 			}
 			else
 			{
-				return columns.FirstOrDefault(x => x.DbName == columnName && string.IsNullOrWhiteSpace(x.DataIdentity) );
+				return columns.FirstOrDefault(x => x.DbName == columnName && string.IsNullOrWhiteSpace(x.DataIdentity));
 			}
 
 
-				
+
 		}
 	}
 }

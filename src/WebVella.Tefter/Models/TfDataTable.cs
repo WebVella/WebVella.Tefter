@@ -178,17 +178,6 @@ public sealed class TfDataTable
 			return columns;
 		}
 
-
-		columns.Add(new TfDataColumn(
-			this,
-			"tf_row_id",
-			TfDatabaseColumnType.ShortText,
-			isNullable: false,
-			isShared: false,
-			isSystem: true,
-			isJoinColumn: false,
-			isIdentityColumn: true));
-
 		columns.Add(new TfDataColumn(
 			this,
 			"tf_row_index",
@@ -231,9 +220,6 @@ public sealed class TfDataTable
 
 		foreach (var identity in dataProvider.Identities)
 		{
-			if (identity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-				continue;
-
 			string name = $"tf_ide_{identity.DataIdentity}";
 			columns.Add(new TfDataColumn(
 				this,

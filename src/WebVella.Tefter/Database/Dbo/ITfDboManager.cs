@@ -12,7 +12,7 @@ internal partial interface ITfDboManager
 	/// <param name="pageSize"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	List<T> GetList<T>(int? page = null, int? pageSize = null, TfOrderSettings order = null, string searchQuery = null) where T : class, new();
+	List<T> GetList<T>(int? page = null, int? pageSize = null, TfOrderSettings? order = null, string? searchQuery = null) where T : class, new();
 
 	/// <summary>
 	/// Returns list of records from database filtered by single property
@@ -22,12 +22,12 @@ internal partial interface ITfDboManager
 	/// <param name="pageSize"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	List<T> GetList<T>(object propertyValue, string propertyName, int? page = null, int? pageSize = null, TfOrderSettings order = null) where T : class, new();
+	List<T> GetList<T>(object propertyValue, string propertyName, int? page = null, int? pageSize = null, TfOrderSettings? order = null) where T : class, new();
 
 	/// <summary>
 	/// Returns record for specified parameters and where clause in database
 	/// </summary>
-	List<T> GetList<T>(string whereSql, TfOrderSettings order = null, params NpgsqlParameter[] parameters) where T : class, new();
+	List<T> GetList<T>(string whereSql, TfOrderSettings? order = null, params NpgsqlParameter[] parameters) where T : class, new();
 
 	/// <summary>
 	/// Returns records list for specified sql query
@@ -163,7 +163,7 @@ internal partial interface ITfDboManager
 	/// <param name="pageSize"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	Task<List<T>> GetListAsync<T>(int? page = null, int? pageSize = null, TfOrderSettings order = null, string searchQuery = null ) where T : class, new();
+	Task<List<T>> GetListAsync<T>(int? page = null, int? pageSize = null, TfOrderSettings? order = null, string? searchQuery = null ) where T : class, new();
 	
 	/// <summary>
 	/// Returns list of records from database async  filtered by single property
@@ -173,12 +173,12 @@ internal partial interface ITfDboManager
 	/// <param name="pageSize"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	Task<List<T>> GetListAsync<T>(object propertyValue, string propertyName, int? page = null, int? pageSize = null, TfOrderSettings order = null) where T : class, new();
+	Task<List<T>> GetListAsync<T>(object propertyValue, string propertyName, int? page = null, int? pageSize = null, TfOrderSettings? order = null) where T : class, new();
 
 	/// <summary>
 	/// Returns record for specified parameters and where clause in database async
 	/// </summary>
-	Task<List<T>> GetListAsync<T>(string whereSql, TfOrderSettings order = null, params NpgsqlParameter[] parameters) where T : class, new();
+	Task<List<T>> GetListAsync<T>(string whereSql, TfOrderSettings? order = null, params NpgsqlParameter[] parameters) where T : class, new();
 
 	/// <summary>
 	/// Gets record by id

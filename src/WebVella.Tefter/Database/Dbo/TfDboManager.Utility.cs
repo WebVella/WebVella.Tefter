@@ -32,7 +32,7 @@ internal partial class TfDboManager
         T obj = InstantiateType<T>();
         foreach (var prop in meta.Properties)
         {
-            object value = dr[prop.ColumnName] == DBNull.Value ? null : dr[prop.ColumnName];
+            object? value = dr[prop.ColumnName] == DBNull.Value ? null : dr[prop.ColumnName];
 
             if( prop.Converter != null )
                 prop.PropertyInfo.SetValue(obj, prop.Converter.ConvertFromDatabaseType(value)); 
@@ -153,7 +153,7 @@ internal partial class TfDboManager
 //) > 0 ";
 //    }
 
-	protected static (string, List<NpgsqlParameter>) GenerateSearchSql(TfDboModelMeta meta, string searchQuery )
+	protected static (string, List<NpgsqlParameter>) GenerateSearchSql(TfDboModelMeta meta, string? searchQuery )
     {
         StringBuilder sb = new StringBuilder();
         List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();

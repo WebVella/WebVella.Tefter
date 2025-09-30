@@ -29,7 +29,7 @@ public partial class TalkTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Test Channel",
-					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					DataIdentity = "id_identity",
 					CountSharedColumnName = "sc_int_row_id"
 				};
 
@@ -72,7 +72,7 @@ public partial class TalkTests : BaseTest
 
 				List<string> rowIdentityIds = new List<string>();
 				for (int i = 0; i < 5; i++)
-					rowIdentityIds.Add((string)dataTable.Rows[i]["tf_row_id"]);
+					rowIdentityIds.Add((string)dataTable.Rows[i]["tf_ide_id_identity"]);
 
 				var user = tfService.GetDefaultSystemUser();
 				if (user == null) throw new Exception("No default system user found");
@@ -81,7 +81,7 @@ public partial class TalkTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Test Channel",
-					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					DataIdentity = "id_identity",
 					CountSharedColumnName = "sc_int_row_id"
 				};
 				var channelCreated = talkService.CreateChannel(channel);
@@ -164,7 +164,7 @@ public partial class TalkTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Test Channel",
-					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					DataIdentity = "id_identity",
 					CountSharedColumnName = "sc_int_row_id"
 				};
 				var channelCreated = talkService.CreateChannel(channel);

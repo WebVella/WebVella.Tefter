@@ -269,14 +269,12 @@ public class TfDataRow : IEnumerable
 		return convertedValue;
 	}
 
-	public string GetDataIdentityValue(string dataIdentity)
+	public string? GetDataIdentityValue(string dataIdentity)
 	{
 		if (string.IsNullOrEmpty(dataIdentity))
 			return null;
 
 		var dataIdentityColumn = $"tf_ide_{dataIdentity}";
-		if (dataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-			dataIdentityColumn = "tf_row_id";
 
 		int index = DataTable.Columns.IndexOf(x => x.Name == dataIdentityColumn);
 		if (index == -1)

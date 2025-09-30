@@ -119,6 +119,29 @@ public class BaseTest
 		//get provider with new columns
 		provider = tfService.GetDataProvider(provider.Id);
 
+
+		//create id data identity
+		TfDataIdentity idIdentityModel = new TfDataIdentity
+		{
+			DataIdentity = "id_identity",
+			Label = "ID identity",
+		};
+		TfDataIdentity idDataIdentity = tfService.CreateDataIdentity(idIdentityModel);
+		idDataIdentity.Should().NotBeNull();
+
+		//create provider id data identity link
+		TfDataProviderIdentity providerIdDataIdentity =
+					new TfDataProviderIdentity
+					{
+						Id = Guid.NewGuid(),
+						DataProviderId = provider.Id,
+						DataIdentity = idDataIdentity.DataIdentity,
+						Columns = new() { $"tf_id" } //row id column
+					};
+
+		provider = tfService.CreateDataProviderIdentity(providerIdDataIdentity);
+
+
 		//create data identity
 		TfDataIdentity dataIdentityModel1 = new TfDataIdentity
 		{
@@ -186,7 +209,7 @@ public class BaseTest
 			DbName = "sc_int_row_id",
 			DbType = TfDatabaseColumnType.Integer,
 			IncludeInTableSearch = false,
-			DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY
+			DataIdentity = "id_identity"
 		};
 		tfService.CreateSharedColumn(sharedColumn3);
 

@@ -3,10 +3,10 @@
 public partial interface ITfService
 {
 	public List<TfDataIdentityConnection> GetDataIdentityConnections(
-		string? dataIndentity1 = null,
-		string? value1 = null,
-		string? dataIdentity2 = null,
-		string? value2 = null);
+		string? dataIdentity1 = "",
+		string value1 = "",
+		string? dataIdentity2 = "",
+		string value2 = "");
 
 	public bool DataIdentityConnectionExists(
 		TfDataIdentityConnection dataIdentityConnection);
@@ -32,31 +32,282 @@ public partial interface ITfService
 
 public partial class TfService : ITfService
 {
+
 	public List<TfDataIdentityConnection> GetDataIdentityConnections(
-		string? dataIndentity1 = null,
-		string? value1 = null,
-		string? dataIdentity2 = null,
-		string? value2 = null)
+		string? dataIdentity1 = "",
+		string value1 = "",
+		string? dataIdentity2 = "",
+		string value2 = "")
 	{
 		try
 		{
+
+			string? whereSQL = null;
+			List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
+
+			Action action = (dataIdentity1, dataIdentity2) switch
+			{
+				//////////////////////////////////////////////////////////////////////////////
+				("", "") => () =>
+				{
+					if (string.IsNullOrWhiteSpace(value1) && string.IsNullOrWhiteSpace(value2))
+					{
+					}
+					else if (string.IsNullOrWhiteSpace(value1))
+					{
+						whereSQL = " WHERE value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+					}
+					else if (string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE value_1 = @value_1 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+					}
+					else
+					{
+						whereSQL = " WHERE value_1 = @value_1 AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+					}
+				}
+				,
+				//////////////////////////////////////////////////////////////////////////////
+				(null, "") => () =>
+				{
+					if (string.IsNullOrWhiteSpace(value1) && string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_1 IS NULL ";
+					}
+					else if (string.IsNullOrWhiteSpace(value1))
+					{
+						whereSQL = " WHERE data_identity_1 IS NULL AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+					}
+					else if (string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_1 IS NULL AND value_1 = @value_1 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value2));
+					}
+					else
+					{
+						whereSQL = "data_identity_1 IS NULL AND value_1 = @value_1 AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+					}
+				}
+				,
+				//////////////////////////////////////////////////////////////////////////////
+				("", null) => () =>
+				{
+					if (string.IsNullOrWhiteSpace(value1) && string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_1 IS NULL ";
+					}
+					else if (string.IsNullOrWhiteSpace(value1))
+					{
+						whereSQL = " WHERE data_identity_2 IS NULL AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+					}
+					else if (string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_2 IS NULL AND value_1 = @value_1 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value2));
+					}
+					else
+					{
+						whereSQL = "data_identity_2 IS NULL AND value_1 = @value_1 AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+					}
+				}
+				,
+				//////////////////////////////////////////////////////////////////////////////
+				(null, null) => () =>
+				{
+					if (string.IsNullOrWhiteSpace(value1) && string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_1 IS NULL AND data_identity_2 IS NULL ";
+					}
+					else if (string.IsNullOrWhiteSpace(value1))
+					{
+						whereSQL = " WHERE data_identity_1 IS NULL AND data_identity_2 IS NULL AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+					}
+					else if (string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_1 IS NULL AND data_identity_2 IS NULL AND value_1 = @value_1 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value2));
+					}
+					else
+					{
+						whereSQL = "data_identity_1 IS NULL AND data_identity_2 IS NULL AND value_1 = @value_1 AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+					}
+				}
+				,
+				//////////////////////////////////////////////////////////////////////////////
+				("", _) => () =>
+				{
+					if (string.IsNullOrWhiteSpace(value1) && string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_2 = @data_identity_2 ";
+						parameters.Add(new NpgsqlParameter<string>("data_identity_2", dataIdentity2!));
+					}
+					else if (string.IsNullOrWhiteSpace(value1))
+					{
+						whereSQL = " WHERE data_identity_2 = @data_identity_2 AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_2", dataIdentity2!));
+					}
+					else if (string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_2 = @data_identity_2 AND value_1 = @value_1 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_2", dataIdentity2!));
+					}
+					else
+					{
+						whereSQL = " WHERE data_identity_2 = @data_identity_2 AND value_1 = @value_1 AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_2", dataIdentity2!));
+					}
+				}
+				,
+				//////////////////////////////////////////////////////////////////////////////
+				(null, _) => () =>
+				{
+					if (string.IsNullOrWhiteSpace(value1) && string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_1 IS NULL AND data_identity_2 = @data_identity_2 ";
+						parameters.Add(new NpgsqlParameter<string>("data_identity_2", dataIdentity2!));
+					}
+					else if (string.IsNullOrWhiteSpace(value1))
+					{
+						whereSQL = " WHERE data_identity_1 IS NULL AND data_identity_2 = @data_identity_2 AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_2", dataIdentity2!));
+					}
+					else if (string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_1 IS NULL AND data_identity_2 = @data_identity_2 AND value_1 = @value_1 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_2", dataIdentity2!));
+					}
+					else
+					{
+						whereSQL = " WHERE  data_identity_1 IS NULL AND data_identity_2 = @data_identity_2 AND value_1 = @value_1 AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_2", dataIdentity2!));
+					}
+				}
+				,
+				//////////////////////////////////////////////////////////////////////////////
+				(_, "") => () =>
+				{
+					if (string.IsNullOrWhiteSpace(value1) && string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_1 = @data_identity_1 ";
+						parameters.Add(new NpgsqlParameter<string>("data_identity_1", dataIdentity1!));
+					}
+					else if (string.IsNullOrWhiteSpace(value1))
+					{
+						whereSQL = " WHERE data_identity_1 = @data_identity_1 AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_1", dataIdentity1!));
+					}
+					else if (string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_1 = @data_identity_1 AND value_1 = @value_1 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_1", dataIdentity1!));
+					}
+					else
+					{
+						whereSQL = " WHERE data_identity_1 = @data_identity_1 AND value_1 = @value_1 AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_1", dataIdentity1!));
+					}
+				}
+				,
+				//////////////////////////////////////////////////////////////////////////////
+				(_, null) => () =>
+				{
+					if (string.IsNullOrWhiteSpace(value1) && string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_2 IS NULL AND data_identity_1 = @data_identity_1 ";
+						parameters.Add(new NpgsqlParameter<string>("data_identity_1", dataIdentity1!));
+					}
+					else if (string.IsNullOrWhiteSpace(value1))
+					{
+						whereSQL = " WHERE data_identity_2 IS NULL AND data_identity_1 = @data_identity_1 AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_1", dataIdentity1!));
+					}
+					else if (string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_2 IS NULL AND data_identity_1 = @data_identity_1 AND value_1 = @value_1 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_1", dataIdentity1!));
+					}
+					else
+					{
+						whereSQL = " WHERE  data_identity_2 IS NULL AND data_identity_1 = @data_identity_1 AND value_1 = @value_1 AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_1", dataIdentity1!));
+					}
+				}
+				,
+				//////////////////////////////////////////////////////////////////////////////
+				(_, _) => () =>
+				{
+					if (string.IsNullOrWhiteSpace(value1) && string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_1 = @data_identity_1 AND data_identity_2 = @data_identity_2 ";
+						parameters.Add(new NpgsqlParameter<string>("data_identity_1", dataIdentity1!));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_2", dataIdentity2!));
+					}
+					else if (string.IsNullOrWhiteSpace(value1))
+					{
+						whereSQL = " WHERE data_identity_1 = @data_identity_1 AND data_identity_2 = @data_identity_2 " +
+						" AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("data_identity_1", dataIdentity1!));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_2", dataIdentity2!));
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+					}
+					else if (string.IsNullOrWhiteSpace(value2))
+					{
+						whereSQL = " WHERE data_identity_1 = @data_identity_1 AND data_identity_2 = @data_identity_2 " +
+						" AND value_1 = @value_1 ";
+						parameters.Add(new NpgsqlParameter<string>("data_identity_1", dataIdentity1!));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_2", dataIdentity2!));
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+					}
+					else
+					{
+						whereSQL = " WHERE data_identity_1 = @data_identity_1 AND data_identity_2 = @data_identity_2 " +
+						" AND value_1 = @value_1  AND value_2 = @value_2 ";
+						parameters.Add(new NpgsqlParameter<string>("data_identity_1", dataIdentity1!));
+						parameters.Add(new NpgsqlParameter<string>("data_identity_2", dataIdentity2!));
+						parameters.Add(new NpgsqlParameter<string>("value_1", value1));
+						parameters.Add(new NpgsqlParameter<string>("value_2", value2));
+					}
+				}
+			};
+
+			action();
+
+			if (string.IsNullOrEmpty(whereSQL))
+				return _dboManager.GetList<TfDataIdentityConnection>();
+
 			return _dboManager.GetList<TfDataIdentityConnection>(
-				" WHERE" +
-				" ( ( @data_identity_1 IS NULL OR data_identity_1 = @data_identity_1) AND " +
-				" ( @value_1 IS NULL OR value_1 = @value_1 ) AND " +
-				" ( @data_identity_2 IS NULL OR data_identity_2 = @data_identity_2 ) AND " +
-				" ( @value_2 IS NULL OR value_2 = @value_2 ) ) " +
-				" OR " +
-				" ( ( @data_identity_2 IS NULL OR data_identity_1 = @data_identity_2) AND " +
-				" ( @value_2 IS NULL OR value_1 = @value_2 ) AND " +
-				" ( @data_identity_1 IS NULL OR data_identity_2 = @data_identity_1 ) AND " +
-				" ( @value_1 IS NULL OR value_2 = @value_1 ) )",
+				whereSql: whereSQL,
 				order: null,
-				new NpgsqlParameter<string?>("data_identity_1", dataIndentity1),
-				new NpgsqlParameter<string?>("value_1", value1),
-				new NpgsqlParameter<string?>("data_identity_2", dataIdentity2),
-				new NpgsqlParameter<string?>("value_2", value2)
-			);
+				parameters: parameters.ToArray());
 		}
 		catch (Exception ex)
 		{
@@ -76,11 +327,13 @@ public partial class TfService : ITfService
 					"The data identity connection object is null.");
 			}
 
+			var orderedDIC = OrderDataIndentityConnection(dataIdentityConnection);
+
 			var resultList = GetDataIdentityConnections(
-				dataIdentityConnection.DataIdentity1,
-				dataIdentityConnection.Value1,
-				dataIdentityConnection.DataIdentity2,
-				dataIdentityConnection.Value2);
+				orderedDIC.DataIdentity1,
+				orderedDIC.Value1,
+				orderedDIC.DataIdentity2,
+				orderedDIC.Value2);
 
 			return resultList.Count == 1;
 		}
@@ -100,39 +353,7 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
-			TfDataIdentityConnection dicToBeInserted = new TfDataIdentityConnection();
-
-			// Ensure that DataIdentity1 is always less than DataIdentity2
-			if (dataIdentityConnection.DataIdentity1.IsLessThan(dataIdentityConnection.DataIdentity2))
-			{
-				dicToBeInserted.DataIdentity1 = dataIdentityConnection.DataIdentity1;
-				dicToBeInserted.Value1 = dataIdentityConnection.Value1;
-				dicToBeInserted.DataIdentity2 = dataIdentityConnection.DataIdentity2;
-				dicToBeInserted.Value2 = dataIdentityConnection.Value2;
-			}
-			else if (dataIdentityConnection.DataIdentity1.IsGreaterThan(dataIdentityConnection.DataIdentity2))
-			{
-				dicToBeInserted.DataIdentity1 = dataIdentityConnection.DataIdentity2;
-				dicToBeInserted.Value1 = dataIdentityConnection.Value2;
-				dicToBeInserted.DataIdentity2 = dataIdentityConnection.DataIdentity1;
-				dicToBeInserted.Value2 = dataIdentityConnection.Value1;
-			}
-			else //when identity is same, compare values and ensure that Value1 is always less than Value2
-			{
-				dicToBeInserted.DataIdentity1 = dataIdentityConnection.DataIdentity1;
-				dicToBeInserted.DataIdentity2 = dataIdentityConnection.DataIdentity2;
-
-				if (dataIdentityConnection.Value1.IsLessThan(dataIdentityConnection.Value2))
-				{
-					dicToBeInserted.Value1 = dataIdentityConnection.Value1;
-					dicToBeInserted.Value2 = dataIdentityConnection.Value2;
-				}
-				else
-				{
-					dicToBeInserted.Value1 = dataIdentityConnection.Value2;
-					dicToBeInserted.Value2 = dataIdentityConnection.Value1;
-				}
-			}
+			var dicToBeInserted = OrderDataIndentityConnection(dataIdentityConnection);
 
 			var success = _dboManager.Insert<TfDataIdentityConnection>(dicToBeInserted);
 			if (!success)
@@ -144,6 +365,46 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 
+	}
+
+	private TfDataIdentityConnection OrderDataIndentityConnection(
+		TfDataIdentityConnection dataIdentityConnection)
+	{
+		TfDataIdentityConnection orderedDataIdentityConnection = new TfDataIdentityConnection();
+
+		// Ensure that DataIdentity1 is always less than DataIdentity2
+		if (dataIdentityConnection.DataIdentity1.IsLessThan(dataIdentityConnection.DataIdentity2))
+		{
+			orderedDataIdentityConnection.DataIdentity1 = dataIdentityConnection.DataIdentity1;
+			orderedDataIdentityConnection.Value1 = dataIdentityConnection.Value1;
+			orderedDataIdentityConnection.DataIdentity2 = dataIdentityConnection.DataIdentity2;
+			orderedDataIdentityConnection.Value2 = dataIdentityConnection.Value2;
+		}
+		else if (dataIdentityConnection.DataIdentity1.IsGreaterThan(dataIdentityConnection.DataIdentity2))
+		{
+			orderedDataIdentityConnection.DataIdentity1 = dataIdentityConnection.DataIdentity2;
+			orderedDataIdentityConnection.Value1 = dataIdentityConnection.Value2;
+			orderedDataIdentityConnection.DataIdentity2 = dataIdentityConnection.DataIdentity1;
+			orderedDataIdentityConnection.Value2 = dataIdentityConnection.Value1;
+		}
+		else //when identity is same, compare values and ensure that Value1 is always less than Value2
+		{
+			orderedDataIdentityConnection.DataIdentity1 = dataIdentityConnection.DataIdentity1;
+			orderedDataIdentityConnection.DataIdentity2 = dataIdentityConnection.DataIdentity2;
+
+			if (dataIdentityConnection.Value1.IsLessThan(dataIdentityConnection.Value2))
+			{
+				orderedDataIdentityConnection.Value1 = dataIdentityConnection.Value1;
+				orderedDataIdentityConnection.Value2 = dataIdentityConnection.Value2;
+			}
+			else
+			{
+				orderedDataIdentityConnection.Value1 = dataIdentityConnection.Value2;
+				orderedDataIdentityConnection.Value2 = dataIdentityConnection.Value1;
+			}
+		}
+
+		return orderedDataIdentityConnection;
 	}
 
 	public void DeleteDataIdentityConnection(
@@ -159,18 +420,18 @@ public partial class TfService : ITfService
 			var count =
 				_dbService.ExecuteSqlNonQueryCommand("DELETE FROM tf_data_identity_connection " +
 					" WHERE" +
-					" ( ( @data_identity_1 IS NULL OR data_identity_1 = @data_identity_1) AND " +
+					" ( ( ( @data_identity_1 IS NULL AND data_identity_1 IS NULL ) OR data_identity_1 = @data_identity_1) AND " +
 					" ( @value_1 IS NULL OR value_1 = @value_1 ) AND " +
-					" ( @data_identity_2 IS NULL OR data_identity_2 = @data_identity_2 ) AND " +
+					" ( ( data_identity_2 IS NULL AND @data_identity_2 IS NULL ) OR data_identity_2 = @data_identity_2 ) AND " +
 					" ( @value_2 IS NULL OR value_2 = @value_2 ) ) " +
 					" OR " +
-					" ( ( @data_identity_2 IS NULL OR data_identity_1 = @data_identity_2) AND " +
+					" ( ( ( data_identity_1 IS NULL AND @data_identity_2 IS NULL ) OR data_identity_1 = @data_identity_2) AND " +
 					" ( @value_2 IS NULL OR value_1 = @value_2 ) AND " +
-					" ( @data_identity_1 IS NULL OR data_identity_2 = @data_identity_1 ) AND " +
+					" ( ( data_identity_2 IS NULL AND @data_identity_1 IS NULL ) OR data_identity_2 = @data_identity_1 ) AND " +
 					" ( @value_1 IS NULL OR value_2 = @value_1 ) )",
-					new NpgsqlParameter<string>("data_identity_1", dataIdentityConnection.DataIdentity1),
+					new NpgsqlParameter<string?>("data_identity_1", dataIdentityConnection.DataIdentity1),
 					new NpgsqlParameter<string>("value_1", dataIdentityConnection.Value1),
-					new NpgsqlParameter<string>("data_identity_2", dataIdentityConnection.DataIdentity2),
+					new NpgsqlParameter<string?>("data_identity_2", dataIdentityConnection.DataIdentity2),
 					new NpgsqlParameter<string>("value_2", dataIdentityConnection.Value2));
 
 			if (count != 1)
@@ -195,9 +456,9 @@ public partial class TfService : ITfService
 
 			_dbService.ExecuteSqlNonQueryCommand("DELETE FROM tf_data_identity_connection " +
 					" WHERE" +
-					" ( data_identity_1 = @data_identity  AND value_1 = @value ) " +
+					" ( ( ( data_identity_1 IS NULL AND @data_identity IS NULL ) OR data_identity_1 = @data_identity ) AND value_1 = @value ) " +
 					" OR " +
-					" ( data_identity_2 = @data_identity  AND value_2 = @value ) ",
+					" ( ( ( data_identity_2 IS NULL AND @data_identity IS NULL ) OR  data_identity_2 = @data_identity )  AND value_2 = @value )",
 					new NpgsqlParameter<string>("data_identity", dataIdentity),
 					new NpgsqlParameter<string>("value", identityValue));
 
@@ -231,54 +492,22 @@ public partial class TfService : ITfService
 						if (dataIdentityConnection == null)
 							continue;
 
-						if (string.IsNullOrWhiteSpace(dataIdentityConnection.DataIdentity1)
-							|| string.IsNullOrWhiteSpace(dataIdentityConnection.Value1)
-							|| string.IsNullOrWhiteSpace(dataIdentityConnection.DataIdentity2)
-							|| string.IsNullOrWhiteSpace(dataIdentityConnection.Value2))
+						if (string.IsNullOrWhiteSpace(dataIdentityConnection.Value1) ||
+							string.IsNullOrWhiteSpace(dataIdentityConnection.Value2))
+						{
 							continue;
-
-						TfDataIdentityConnection dicToBeInserted = new TfDataIdentityConnection();
-
-						// Ensure that DataIdentity1 is always less than DataIdentity2
-						if (dataIdentityConnection.DataIdentity1.IsLessThan(dataIdentityConnection.DataIdentity2))
-						{
-							dicToBeInserted.DataIdentity1 = dataIdentityConnection.DataIdentity1;
-							dicToBeInserted.Value1 = dataIdentityConnection.Value1;
-							dicToBeInserted.DataIdentity2 = dataIdentityConnection.DataIdentity2;
-							dicToBeInserted.Value2 = dataIdentityConnection.Value2;
 						}
-						else if (dataIdentityConnection.DataIdentity1.IsGreaterThan(dataIdentityConnection.DataIdentity2))
-						{
-							dicToBeInserted.DataIdentity1 = dataIdentityConnection.DataIdentity2;
-							dicToBeInserted.Value1 = dataIdentityConnection.Value2;
-							dicToBeInserted.DataIdentity2 = dataIdentityConnection.DataIdentity1;
-							dicToBeInserted.Value2 = dataIdentityConnection.Value1;
-						}
-						else //when identity is same, compare values and ensure that Value1 is always less than Value2
-						{
-							dicToBeInserted.DataIdentity1 = dataIdentityConnection.DataIdentity1;
-							dicToBeInserted.DataIdentity2 = dataIdentityConnection.DataIdentity2;
 
-							if (dataIdentityConnection.Value1.IsLessThan(dataIdentityConnection.Value2))
-							{
-								dicToBeInserted.Value1 = dataIdentityConnection.Value1;
-								dicToBeInserted.Value2 = dataIdentityConnection.Value2;
-							}
-							else
-							{
-								dicToBeInserted.Value1 = dataIdentityConnection.Value2;
-								dicToBeInserted.Value2 = dataIdentityConnection.Value1;
-							}
-						}
+						var dicToBeInserted = OrderDataIndentityConnection(dataIdentityConnection);
 
 						sqlSb.AppendLine($@"INSERT INTO tf_data_identity_connection (data_identity_1,value_1,data_identity_2,value_2)
                             VALUES (@data_identity_1_{paramCounter}, @value_1_{paramCounter}, @data_identity_2_{paramCounter}, @value_2_{paramCounter})
                             ON CONFLICT DO NOTHING;");
 
-						parameters.Add(new NpgsqlParameter($"@data_identity_1_{paramCounter}", dicToBeInserted.DataIdentity1));
-						parameters.Add(new NpgsqlParameter($"@value_1_{paramCounter}", dicToBeInserted.Value1));
-						parameters.Add(new NpgsqlParameter($"@data_identity_2_{paramCounter}", dicToBeInserted.DataIdentity2));
-						parameters.Add(new NpgsqlParameter($"@value_2_{paramCounter}", dicToBeInserted.Value2));
+						parameters.Add(new NpgsqlParameter<string?>($"@data_identity_1_{paramCounter}", dicToBeInserted.DataIdentity1));
+						parameters.Add(new NpgsqlParameter<string>($"@value_1_{paramCounter}", dicToBeInserted.Value1));
+						parameters.Add(new NpgsqlParameter<string?>($"@data_identity_2_{paramCounter}", dicToBeInserted.DataIdentity2));
+						parameters.Add(new NpgsqlParameter<string>($"@value_2_{paramCounter}", dicToBeInserted.Value2));
 
 						paramCounter++;
 					}
@@ -326,39 +555,7 @@ public partial class TfService : ITfService
 						|| string.IsNullOrWhiteSpace(dataIdentityConnection.Value2))
 							continue;
 
-						TfDataIdentityConnection dicToDeleted = new TfDataIdentityConnection();
-
-						// Ensure that DataIdentity1 is always less than DataIdentity2
-						if (dataIdentityConnection.DataIdentity1.IsLessThan(dataIdentityConnection.DataIdentity2))
-						{
-							dicToDeleted.DataIdentity1 = dataIdentityConnection.DataIdentity1;
-							dicToDeleted.Value1 = dataIdentityConnection.Value1;
-							dicToDeleted.DataIdentity2 = dataIdentityConnection.DataIdentity2;
-							dicToDeleted.Value2 = dataIdentityConnection.Value2;
-						}
-						else if (dataIdentityConnection.DataIdentity1.IsGreaterThan(dataIdentityConnection.DataIdentity2))
-						{
-							dicToDeleted.DataIdentity1 = dataIdentityConnection.DataIdentity2;
-							dicToDeleted.Value1 = dataIdentityConnection.Value2;
-							dicToDeleted.DataIdentity2 = dataIdentityConnection.DataIdentity1;
-							dicToDeleted.Value2 = dataIdentityConnection.Value1;
-						}
-						else //when identity is same, compare values and ensure that Value1 is always less than Value2
-						{
-							dicToDeleted.DataIdentity1 = dataIdentityConnection.DataIdentity1;
-							dicToDeleted.DataIdentity2 = dataIdentityConnection.DataIdentity2;
-
-							if (dataIdentityConnection.Value1.IsLessThan(dataIdentityConnection.Value2))
-							{
-								dicToDeleted.Value1 = dataIdentityConnection.Value1;
-								dicToDeleted.Value2 = dataIdentityConnection.Value2;
-							}
-							else
-							{
-								dicToDeleted.Value1 = dataIdentityConnection.Value2;
-								dicToDeleted.Value2 = dataIdentityConnection.Value1;
-							}
-						}
+						var dicToDeleted = OrderDataIndentityConnection(dataIdentityConnection);
 
 						sqlSb.AppendLine($@"DELETE FROM tf_data_identity_connection 
 							WHERE data_identity_1 = @data_identity_1_{paramCounter} AND value_1 = @value_1_{paramCounter}
@@ -398,14 +595,6 @@ public partial class TfService : ITfService
 
 			RuleSet("general", () =>
 			{
-				RuleFor(dataIdentityConnection => dataIdentityConnection.DataIdentity1)
-					.NotEmpty()
-					.WithMessage("The source data identity is required.");
-
-				RuleFor(dataIdentityConnection => dataIdentityConnection.DataIdentity2)
-					.NotEmpty()
-					.WithMessage("The target data identity is required.");
-
 				RuleFor(dataIdentityConnection => dataIdentityConnection.Value1)
 					.NotEmpty()
 					.WithMessage("The source data value is required.");
@@ -509,10 +698,6 @@ public partial class TfService : ITfService
 			string dataIdentity,
 			string identityValue)
 		{
-			if (string.IsNullOrWhiteSpace(dataIdentity))
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The data identity is not specified.") });
-
 			if (string.IsNullOrWhiteSpace(identityValue))
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"The identity value is not specified.") });

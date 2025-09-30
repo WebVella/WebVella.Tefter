@@ -157,9 +157,6 @@ public partial class TfService : ITfService
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
 
-						if (dbName == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-							return true;
-
 						return !dbName.StartsWith("tf_");
 					})
 					.WithMessage("The identity name cannot start with 'tf_'.");
@@ -221,13 +218,6 @@ public partial class TfService : ITfService
 			RuleSet("update", () =>
 			{
 				RuleFor(dataIdentity => dataIdentity.DataIdentity)
-					.Must((dataIdentity, dataIdentityKey) =>
-					{
-						return dataIdentityKey != TfConstants.TF_ROW_ID_DATA_IDENTITY;
-					})
-					.WithMessage("System data identity cannot be modified.");
-
-				RuleFor(dataIdentity => dataIdentity.DataIdentity)
 						.Must((dataIdentity, dataIdentityKey) =>
 						{
 							return _tfService.GetDataIdentity(dataIdentityKey) != null;
@@ -238,13 +228,6 @@ public partial class TfService : ITfService
 
 			RuleSet("delete", () =>
 			{
-				RuleFor(dataIdentity => dataIdentity.DataIdentity)
-					.Must((dataIdentity, dataIdentityKey) =>
-					{
-						return dataIdentityKey != TfConstants.TF_ROW_ID_DATA_IDENTITY;
-					})
-					.WithMessage("System data identity cannot be deleted.");
-
 				RuleFor(dataIdentity => dataIdentity.DataIdentity)
 					.Must((dataIdentity, dataIdentityKey) =>
 					{

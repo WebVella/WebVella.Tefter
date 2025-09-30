@@ -103,7 +103,7 @@ public partial class TfService : ITfService
 			if (dataIdentity != null && dataIdentity.Id == Guid.Empty)
 				dataIdentity.Id = Guid.NewGuid();
 
-			new TfSpaceDataIdentityValidator(this)
+			new TfDatasetIdentityValidator(this)
 				.ValidateCreate(dataIdentity)
 				.ToValidationException()
 				.ThrowIfContainsErrors();
@@ -136,7 +136,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			new TfSpaceDataIdentityValidator(this)
+			new TfDatasetIdentityValidator(this)
 				.ValidateUpdate(dataIdentity)
 				.ToValidationException()
 				.ThrowIfContainsErrors();
@@ -171,7 +171,7 @@ public partial class TfService : ITfService
 		{
 			var dataIdentity = GetDatasetIdentity(id);
 
-			new TfSpaceDataIdentityValidator(this)
+			new TfDatasetIdentityValidator(this)
 				.ValidateDelete(dataIdentity)
 				.ToValidationException()
 				.ThrowIfContainsErrors();
@@ -234,12 +234,12 @@ public partial class TfService : ITfService
 
 	#region <--- validation --->
 
-	internal class TfSpaceDataIdentityValidator
+	internal class TfDatasetIdentityValidator
 		: AbstractValidator<TfDatasetIdentity>
 	{
 		private readonly ITfService _tfService;
 
-		public TfSpaceDataIdentityValidator(
+		public TfDatasetIdentityValidator(
 			ITfService tfService)
 		{
 
@@ -297,9 +297,6 @@ public partial class TfService : ITfService
 
 								return true;
 							}	
-
-							if (column == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-								continue;
 
 							var providerIndex = Int32.Parse(column.Split('_').First().Substring(2));
 							var provider = _tfService.GetDataProvider(providerIndex);

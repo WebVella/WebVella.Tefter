@@ -744,11 +744,7 @@ public partial class TfService : ITfService
 
 			Guid sharedColumnId = sharedColumn.Id;
 
-			string identityValue = null;
-			if (dataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-				identityValue = (string)insertedRow["tf_row_id"];
-			else
-				identityValue = (string)insertedRow[$"tf_ide_{dataIdentity.DataIdentity}"];
+			string identityValue = (string)insertedRow[$"tf_ide_{dataIdentity.DataIdentity}"];
 
 			UpsertSharedColumnValue(
 				value,
@@ -1090,8 +1086,6 @@ public partial class TfService : ITfService
 			Guid sharedColumnId = sharedColumn.Id;
 
 			var identityColumnName = $"tf_ide_{identity.DataIdentity}";
-			if (identity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-				identityColumnName = "tf_row_id";
 
 			string identityValue = (string)updatedRow[identityColumnName];
 
@@ -1504,12 +1498,6 @@ public partial class TfService : ITfService
 
 		foreach (var identity in provider.Identities)
 		{
-			if (identity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-			{
-				sql.AppendLine(TfConstants.TF_ROW_ID_DATA_IDENTITY);
-				sql.AppendLine(",");
-				continue;
-			}
 			sql.AppendLine($"tf_ide_{identity.DataIdentity}");
 			sql.AppendLine(",");
 		}
@@ -1548,8 +1536,6 @@ public partial class TfService : ITfService
 		sql.AppendLine(",");
 		sql.AppendLine("tf_row_index");
 		sql.AppendLine(",");
-
-		//note we do not set value for identity columns and tf_row_id
 
 		foreach (var column in provider.Columns)
 		{
@@ -1619,18 +1605,16 @@ public partial class TfService : ITfService
 		sql.Append("tf_row_index = @tf_row_index");
 		sql.AppendLine(",");
 
-		//note we do not set value for identity columns and tf_row_id
-
 		foreach (var column in provider.Columns)
 		{
 			var parameterType = GetDbTypeForDatabaseColumnType(column.DbType);
 
 			NpgsqlParameter parameter = new NpgsqlParameter($"@{column.DbName}", parameterType);
 
-			if (row[column.DbName] is null)
+			if (row[column.DbName!] is null)
 				parameter.Value = DBNull.Value;
 			else
-				parameter.Value = row[column.DbName];
+				parameter.Value = row[column.DbName!];
 
 			parameters.Add(parameter);
 
@@ -1747,8 +1731,7 @@ public partial class TfService : ITfService
 		if (rowIds is null || rowIds.Count == 0)
 			return result;
 
-		var identityColumnName = dataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY ?
-			TfConstants.TF_ROW_ID_DATA_IDENTITY : $"tf_ide_{dataIdentity.DataIdentity}";
+		var identityColumnName = $"tf_ide_{dataIdentity.DataIdentity}";
 
 		var sql = $"SELECT tf_id, {identityColumnName} FROM dp{provider.Index} WHERE tf_id = ANY(@ids)";
 

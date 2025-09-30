@@ -420,27 +420,38 @@ public partial class TfServiceTest : BaseTest
 				connections.Count.Should().Be(3);
 
 
-				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(dataIndentity1: dataIdentity1.DataIdentity); });
+				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(dataIdentity1: dataIdentity1.DataIdentity); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				connections.Should().NotBeNull();
 				connections.Count.Should().Be(2);
 
-				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(dataIndentity1: dataIdentity2.DataIdentity); });
+				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(dataIdentity1: dataIdentity2.DataIdentity); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				connections.Should().NotBeNull();
+				connections.Count.Should().Be(1);
+
+				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(dataIdentity1: dataIdentity3.DataIdentity); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				connections.Should().NotBeNull();
+				connections.Count.Should().Be(0);
+
+				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(dataIdentity2: dataIdentity3.DataIdentity); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				connections.Should().NotBeNull();
 				connections.Count.Should().Be(2);
 
-				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(dataIndentity1: dataIdentity3.DataIdentity); });
-				exception = Record.ExceptionAsync(async () => await task).Result;
-				exception.Should().BeNull();
-				connections.Should().NotBeNull();
-				connections.Count.Should().Be(2);
-
-			
 
 				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(value1: connectionModel1.Value2); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				connections.Should().NotBeNull();
+				connections.Count.Should().Be(0);
+
+				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(value2: connectionModel1.Value2); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				connections.Should().NotBeNull();
@@ -450,7 +461,7 @@ public partial class TfServiceTest : BaseTest
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				connections.Should().NotBeNull();
-				connections.Count.Should().Be(1);
+				connections.Count.Should().Be(0);
 
 				task = Task.Run(() => { connections = tfService.GetDataIdentityConnections(value1: connectionModel1.Value1); });
 				exception = Record.ExceptionAsync(async () => await task).Result;

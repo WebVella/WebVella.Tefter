@@ -37,13 +37,17 @@ public static class StringExtensions
 		}
 	}
 
-	public static bool IsGreaterThan(this string i, string value)
+	public static bool IsGreaterThan(this string? i, string? value)
 	{
+		if (i is null && value is null) return false;
+		if (i is null) return false;
 		return (i.CompareTo(value) > 0);
 	}
 
-	public static bool IsLessThan(this string i, string value)
+	public static bool IsLessThan(this string? i, string? value)
 	{
+		if( i is null && value is null) return false;
+		if (i is null) return true;
 		return (i.CompareTo(value) < 0);
 	}
 

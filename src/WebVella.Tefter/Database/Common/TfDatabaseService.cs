@@ -1,6 +1,4 @@
-﻿using DocumentFormat.OpenXml.InkML;
-
-namespace WebVella.Tefter.Database;
+﻿namespace WebVella.Tefter.Database;
 
 public interface ITfDatabaseService
 {
@@ -48,7 +46,14 @@ public class TfDatabaseService : ITfDatabaseService
 
 	public void ReleaseAllAdvisoryLocks()
 	{
-		CreateConnection().UnlockAllAdvisoryLocks();
+		using NpgsqlConnection connection = new NpgsqlConnection(Configuration.ConnectionString);
+		connection.Open();
+		using NpgsqlCommand command = new NpgsqlCommand("SELECT pg_terminate_backend(pid) FROM pg_locks WHERE locktype = 'advisory';", connection);
+		using (var reader = command.ExecuteReader())
+		{
+			try { reader.Read(); } finally { reader.Close(); }
+		}
+		connection.Close();
 	}
 
 

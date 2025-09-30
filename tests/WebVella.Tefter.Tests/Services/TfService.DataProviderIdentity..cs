@@ -17,7 +17,7 @@ public partial class TfServiceTest : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var provider = CreateDataProviderSampleStructureForIdentities(tfService, tfMetaService);
-				provider.Identities.Count().Should().Be(1); //system identity
+				provider.Identities.Count().Should().Be(0); 
 
 				TfDataIdentity dataIdentityModel = new TfDataIdentity
 				{
@@ -43,7 +43,7 @@ public partial class TfServiceTest : BaseTest
 				task = Task.Run(() => { provider = tfService.CreateDataProviderIdentity(dataProviderIdentityModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				provider.Identities.Count().Should().Be(2); //include system identity
+				provider.Identities.Count().Should().Be(1); 
 				provider.Identities.Single(x => x.DataIdentity == dataIdentity.DataIdentity).Columns.Count().Should().Be(provider.Columns.Count());
 
 				var tables = dbManager.GetDatabaseBuilder().Build();
@@ -55,14 +55,14 @@ public partial class TfServiceTest : BaseTest
 				task = Task.Run(() => { provider = tfService.UpdateDataProviderIdentity(dataProviderIdentityModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				provider.Identities.Count().Should().Be(2); //include system identity
+				provider.Identities.Count().Should().Be(1);
 				provider.Identities.Single(x => x.DataIdentity == dataIdentity.DataIdentity).Columns.Count().Should().Be(1);
 
 
 				task = Task.Run(() => { provider = tfService.DeleteDataProviderIdentity(dataProviderIdentityModel.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				provider.Identities.Count().Should().Be(1); //include system identity
+				provider.Identities.Count().Should().Be(0);
 
 				tables = dbManager.GetDatabaseBuilder().Build();
 				table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
@@ -86,7 +86,7 @@ public partial class TfServiceTest : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var provider = CreateDataProviderSampleStructureForIdentities(tfService, tfMetaService);
-				provider.Identities.Count().Should().Be(1); //system identity
+				provider.Identities.Count().Should().Be(0);
 
 				TfDataIdentity dataIdentityModel = new TfDataIdentity
 				{
@@ -124,7 +124,7 @@ public partial class TfServiceTest : BaseTest
 				task = Task.Run(() => { provider = tfService.CreateDataProviderIdentity(dataProviderIdentityModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				provider.Identities.Count().Should().Be(2); //include system identity
+				provider.Identities.Count().Should().Be(1);
 
 				dataProviderIdentityModel.DataIdentity = dataIdentity2.DataIdentity;
 				task = Task.Run(() => { provider = tfService.CreateDataProviderIdentity(dataProviderIdentityModel); });
@@ -150,7 +150,7 @@ public partial class TfServiceTest : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var provider = CreateDataProviderSampleStructureForIdentities(tfService, tfMetaService);
-				provider.Identities.Count().Should().Be(1); //system identity
+				provider.Identities.Count().Should().Be(0);
 
 				TfDataIdentity dataIdentityModel = new TfDataIdentity
 				{
@@ -176,7 +176,7 @@ public partial class TfServiceTest : BaseTest
 				task = Task.Run(() => { provider = tfService.CreateDataProviderIdentity(dataProviderIdentityModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				provider.Identities.Count().Should().Be(2); //include system identity
+				provider.Identities.Count().Should().Be(1);
 
 				dataProviderIdentityModel.Id = Guid.NewGuid();
 				task = Task.Run(() => { provider = tfService.CreateDataProviderIdentity(dataProviderIdentityModel); });
@@ -202,7 +202,7 @@ public partial class TfServiceTest : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var provider = CreateDataProviderSampleStructureForIdentities(tfService, tfMetaService);
-				provider.Identities.Count().Should().Be(1); //system identity
+				provider.Identities.Count().Should().Be(0);
 
 				TfDataIdentity dataIdentityModel = new TfDataIdentity
 				{
@@ -248,7 +248,7 @@ public partial class TfServiceTest : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var provider = CreateDataProviderSampleStructureForIdentities(tfService, tfMetaService);
-				provider.Identities.Count().Should().Be(1); //system identity
+				provider.Identities.Count().Should().Be(0);
 
 				TfDataIdentity dataIdentityModel = new TfDataIdentity
 				{

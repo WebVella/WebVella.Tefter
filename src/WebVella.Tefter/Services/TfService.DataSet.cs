@@ -396,7 +396,6 @@ public partial class TfService : ITfService
 
 		foreach (var implementedIdentity in auxDataSchema.DataIdentities)
 		{
-			if (implementedIdentity.DataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY) continue;
 			foreach (var schemaColumn in implementedIdentity.Columns)
 			{
 				var item = new TfDatasetColumn

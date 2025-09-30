@@ -8,8 +8,6 @@ public record TfDatasetIdentity
 
 	public string DataIdentity { get; set; }
 
-	public bool IsSystem { get { return DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY;  } }
-
 	public List<string> Columns { get; internal set; } = new();
 }
 

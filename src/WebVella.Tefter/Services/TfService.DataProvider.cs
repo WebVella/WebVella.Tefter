@@ -364,7 +364,6 @@ public partial class TfService : ITfService
 					{
 						columns
 							.AddGuidColumn("tf_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-							.AddShortTextColumn("tf_row_id", c => { c.AsGeneratedSHA1FromColumns("tf_id"); })
 							.AddDateTimeColumn("tf_created_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 							.AddDateTimeColumn("tf_updated_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 							.AddTextColumn("tf_search", c => { c.NotNullable().WithDefaultValue(string.Empty); })
@@ -374,21 +373,10 @@ public partial class TfService : ITfService
 					{
 						indexes
 							.AddBTreeIndex($"ix_{providerTableName}_tf_id", c => { c.WithColumns("tf_id"); })
-							.AddBTreeIndex($"ix_{providerTableName}_tf_row_id", c => { c.WithColumns("tf_row_id"); })
 							.AddGinIndex($"ix_{providerTableName}_tf_search", c => { c.WithColumns("tf_search"); });
 					});
 
 				_dbManager.SaveChanges(dbBuilder);
-
-				var dataProviderIdentityDbo = new TfDataProviderIdentityDbo
-				{
-					Id = Guid.NewGuid(),
-					DataProviderId = provider.Id,
-					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
-					ColumnNamesJson = JsonSerializer.Serialize(new List<string> { "tf_row_id" }),
-				};
-
-				success = _dboManager.Insert<TfDataProviderIdentityDbo>(dataProviderIdentityDbo);
 
 				if (!success)
 					throw new TfDboServiceException("Insert<TfDataProviderIdentityDbo> failed");
@@ -607,9 +595,9 @@ public partial class TfService : ITfService
 				continue;
 
 			var foundSimilarJoinKey = provider
-							.Identities.Where(x => x.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY)
+							.Identities
 							.Select(x => x.DataIdentity)
-							.Intersect(dataProvider.Identities.Where(x => x.DataIdentity != TfConstants.TF_ROW_ID_DATA_IDENTITY).Select(x => x.DataIdentity))
+							.Intersect(dataProvider.Identities.Select(x => x.DataIdentity))
 							.Any();
 
 			if (foundSimilarJoinKey)

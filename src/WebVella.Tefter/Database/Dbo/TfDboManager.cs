@@ -21,9 +21,9 @@ internal partial class TfDboManager : ITfDboManager
 	/// <param name="pageSize"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public List<T> GetList<T>(int? page = null, int? pageSize = null, TfOrderSettings order = null, string searchQuery = null) where T : class, new()
+	public List<T> GetList<T>(int? page = null, int? pageSize = null, TfOrderSettings? order = null, string? searchQuery = null) where T : class, new()
 	{
-		string cacheKey = null;
+		string? cacheKey = null;
 		var meta = GetModelMeta<T>();
 
 		if (meta.IsSqlModel)
@@ -62,7 +62,7 @@ internal partial class TfDboManager : ITfDboManager
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
 	public List<T> GetList<T>(object propertyValue, string propertyName,
-		int? page = null, int? pageSize = null, TfOrderSettings order = null) where T : class, new()
+		int? page = null, int? pageSize = null, TfOrderSettings? order = null) where T : class, new()
 	{
 		string cacheKey = null;
 		var meta = GetModelMeta<T>();
@@ -96,7 +96,7 @@ internal partial class TfDboManager : ITfDboManager
 	/// <summary>
 	/// Returns record for specified parameters and where clause in database
 	/// </summary>
-	public List<T> GetList<T>(string whereSql, TfOrderSettings order = null, params NpgsqlParameter[] parameters) where T : class, new()
+	public List<T> GetList<T>(string whereSql, TfOrderSettings? order = null, params NpgsqlParameter[] parameters) where T : class, new()
 	{
 		string cacheKey = null;
 		var meta = GetModelMeta<T>();
@@ -230,7 +230,7 @@ internal partial class TfDboManager : ITfDboManager
 		string sql = meta.GetSql + " " + whereSql;
 		var sqlParam = new NpgsqlParameter(columnName, propertyValue ?? DBNull.Value);
 
-		DataTable dt = null;
+		DataTable? dt = null;
 		if (meta.UseCache)
 		{
 			cacheKey = GetHashCode(sql, sqlParam);
@@ -585,9 +585,10 @@ internal partial class TfDboManager : ITfDboManager
 	/// <param name="pageSize"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public async Task<List<T>> GetListAsync<T>(int? page = null, int? pageSize = null, TfOrderSettings order = null, string searchQuery = null) where T : class, new()
+	public async Task<List<T>> GetListAsync<T>(int? page = null, int? pageSize = null, 
+		TfOrderSettings? order = null, string? searchQuery = null) where T : class, new()
 	{
-		string cacheKey = null;
+		string? cacheKey = null;
 		var meta = GetModelMeta<T>();
 
 		if (meta.IsSqlModel)
@@ -596,7 +597,7 @@ internal partial class TfDboManager : ITfDboManager
 		var (searchSql, searchParams) = GenerateSearchSql(meta, searchQuery);
 		string sql = $"{meta.GetSql} {searchSql} {GenerateOrderSql(meta, order)} {GeneratePagingSql(page, pageSize)} ";
 
-		DataTable dt = null;
+		DataTable? dt = null;
 
 		if (meta.UseCache && string.IsNullOrWhiteSpace(searchQuery))
 		{
@@ -626,9 +627,9 @@ internal partial class TfDboManager : ITfDboManager
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
 	public async Task<List<T>> GetListAsync<T>(object propertyValue, string propertyName,
-		int? page = null, int? pageSize = null, TfOrderSettings order = null) where T : class, new()
+		int? page = null, int? pageSize = null, TfOrderSettings? order = null) where T : class, new()
 	{
-		string cacheKey = null;
+		string? cacheKey = null;
 		var meta = GetModelMeta<T>();
 
 		if (meta.IsSqlModel)
@@ -660,9 +661,10 @@ internal partial class TfDboManager : ITfDboManager
 	/// <summary>
 	/// Returns record for specified parameters and where clause in database async
 	/// </summary>
-	public async Task<List<T>> GetListAsync<T>(string whereSql, TfOrderSettings order = null, params NpgsqlParameter[] parameters) where T : class, new()
+	public async Task<List<T>> GetListAsync<T>(string whereSql, TfOrderSettings? order = null, 
+		params NpgsqlParameter[] parameters) where T : class, new()
 	{
-		string cacheKey = null;
+		string? cacheKey = null;
 		var meta = GetModelMeta<T>();
 
 		if (meta.IsSqlModel)
@@ -670,7 +672,7 @@ internal partial class TfDboManager : ITfDboManager
 
 		string sql = meta.GetSql + " " + whereSql + " " + GenerateOrderSql(meta, order);
 
-		DataTable dt = null;
+		DataTable? dt = null;
 		if (meta.UseCache)
 		{
 			cacheKey = GetHashCode(sql, parameters);
@@ -698,7 +700,7 @@ internal partial class TfDboManager : ITfDboManager
 	/// <exception cref="Exception"></exception>
 	public async Task<T> GetAsync<T>(Guid id) where T : class, new()
 	{
-		string cacheKey = null;
+		string? cacheKey = null;
 		var meta = GetModelMeta<T>();
 
 		if (meta.IsSqlModel)
@@ -739,7 +741,7 @@ internal partial class TfDboManager : ITfDboManager
 	/// <exception cref="Exception"></exception>
 	public async Task<T> GetAsync<T>(Dictionary<string, Guid> compositeKey) where T : class, new()
 	{
-		string cacheKey = null;
+		string? cacheKey = null;
 		var meta = GetModelMeta<T>();
 
 		if (meta.IsSqlModel)
@@ -758,7 +760,7 @@ internal partial class TfDboManager : ITfDboManager
 
 		var whereClause = string.Join(" AND ", clauses);
 
-		DataTable dt = null;
+		DataTable? dt = null;
 		if (meta.UseCache)
 		{
 			cacheKey = GetHashCode(meta.GetRecordSql.Replace("$$$WHERE$$$", whereClause), parameters);
@@ -788,7 +790,7 @@ internal partial class TfDboManager : ITfDboManager
 	/// <exception cref="Exception"></exception>
 	public async Task<T> GetAsync<T>(object propertyValue, string propertyName) where T : class, new()
 	{
-		string cacheKey = null;
+		string? cacheKey = null;
 		var meta = GetModelMeta<T>();
 
 		if (meta.IsSqlModel)
@@ -798,7 +800,7 @@ internal partial class TfDboManager : ITfDboManager
 		string sql = meta.GetSql + " " + whereSql;
 		var sqlParam = new NpgsqlParameter(columnName, propertyValue ?? DBNull.Value);
 
-		DataTable dt = null;
+		DataTable? dt = null;
 		if (meta.UseCache)
 		{
 			cacheKey = GetHashCode(sql, sqlParam);
@@ -822,14 +824,14 @@ internal partial class TfDboManager : ITfDboManager
 	/// </summary>
 	public async Task<T> GetAsync<T>(string whereSql, params NpgsqlParameter[] parameters) where T : class, new()
 	{
-		string cacheKey = null;
+		string? cacheKey = null;
 		var meta = GetModelMeta<T>();
 
 		if (meta.IsSqlModel)
 			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
 
 		string sql = meta.GetSql + " " + whereSql;
-		DataTable dt = null;
+		DataTable? dt = null;
 		if (meta.UseCache)
 		{
 			cacheKey = GetHashCode(sql, parameters);

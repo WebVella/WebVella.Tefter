@@ -82,7 +82,7 @@ internal partial class AssetsService : IAssetsService
         Guid folderId = (Guid)dt.Rows[0]["folder_id"];
         var folder = GetFolder(folderId);
 
-        string folderDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
+        string? folderDataIdentity = null;
         if (!string.IsNullOrWhiteSpace(folder.DataIdentity))
             folderDataIdentity = folder.DataIdentity;
 
@@ -92,8 +92,8 @@ WITH sk_identity_info AS (
 	SELECT trs.id, count( dic.* ) AS count
 	FROM assets_asset trs
 		LEFT OUTER JOIN tf_data_identity_connection dic ON 
-			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_1 = '{folderDataIdentity}' ) OR
-			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_2 = '{folderDataIdentity}' ) 
+			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 IS NULL AND dic.data_identity_1 = '{folderDataIdentity}' ) OR
+			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 IS NULL AND dic.data_identity_2 = '{folderDataIdentity}' ) 
 	GROUP BY trs.id
 )
 SELECT 
@@ -133,7 +133,7 @@ WHERE aa.id = @id
         string dataIdentityValue = null,
         string search = null)
     {
-        string folderDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
+        string? folderDataIdentity = null;
         if (folderId is not null)
         {
             var folder = GetFolder(folderId.Value);
@@ -148,16 +148,16 @@ WITH sk_identity_info AS (
 	SELECT trs.id, count( dic.* ) AS count
 	FROM assets_asset trs
 		LEFT OUTER JOIN tf_data_identity_connection dic ON 
-			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_1 = '{folderDataIdentity}' ) OR
-			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_2 = '{folderDataIdentity}' ) 
+			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 IS NULL AND dic.data_identity_1 = '{folderDataIdentity}' ) OR
+			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 IS NULL AND dic.data_identity_2 = '{folderDataIdentity}' ) 
 	GROUP BY trs.id
 ),
 sk_identity_filter AS (
 	SELECT trf.id
 	FROM assets_asset trf
 		LEFT OUTER JOIN tf_data_identity_connection dic ON 
-			( dic.value_2 = trf.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_1 = '{folderDataIdentity}' ) OR
-			( dic.value_1 = trf.identity_row_id AND dic.data_identity_1 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_2 = '{folderDataIdentity}' ) 
+			( dic.value_2 = trf.identity_row_id AND dic.data_identity_2 IS NULL AND dic.data_identity_1 = '{folderDataIdentity}' ) OR
+			( dic.value_1 = trf.identity_row_id AND dic.data_identity_1 IS NULL AND dic.data_identity_2 = '{folderDataIdentity}' ) 
 	WHERE ( @data_identity_value IS NULL OR ( dic.value_1 = @data_identity_value OR dic.value_2 = @data_identity_value ) )
 	GROUP BY trf.id
 )
@@ -220,18 +220,18 @@ ORDER BY aa.created_on DESC;";
             AssetsFolder folder = GetFolder(asset.FolderId);
 
 			TfDataIdentity folderDataIdentity = null;
-			if (!string.IsNullOrWhiteSpace(folder.DataIdentity))
-			{
-				folderDataIdentity = _tfService.GetDataIdentity(folder.DataIdentity);
-				if (folderDataIdentity is null)
-					throw new Exception($"Failed to find data identity '{folder.DataIdentity}' for folder");
-			}
+            if (!string.IsNullOrWhiteSpace(folder.DataIdentity))
+            {
+                folderDataIdentity = _tfService.GetDataIdentity(folder.DataIdentity);
+                if (folderDataIdentity is null)
+                    throw new Exception($"Failed to find data identity '{folder.DataIdentity}' for folder");
+            }
+            else
+            {
+                throw new Exception($"Data identity for folder is not specified.");
+            }
 
-			if (folderDataIdentity is null)
-				folderDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
-
-
-			string filename = asset.FileName;
+            string filename = asset.FileName;
 			if (string.IsNullOrWhiteSpace(filename))
 				filename = Path.GetFileName(asset.LocalPath);
 
@@ -309,7 +309,7 @@ ORDER BY aa.created_on DESC;";
 					{
 						DataIdentity1 = folderDataIdentity.DataIdentity,
 						Value1 = dataIdentityValue,
-						DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+						DataIdentity2 = null,
 						Value2 = assetIdentityRowId
 					});
 				}
@@ -413,7 +413,7 @@ ORDER BY aa.created_on DESC;";
                 }
 
                 if (folderDataIdentity is null)
-                    folderDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
+                    throw new Exception($"Data identity for folder is not specified");
 
 
                 List<TfDataIdentityConnection> connectionsToCreate = new List<TfDataIdentityConnection>();
@@ -427,7 +427,7 @@ ORDER BY aa.created_on DESC;";
                     {
                         DataIdentity1 = folderDataIdentity.DataIdentity,
                         Value1 = dataIdentityValue,
-                        DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+                        DataIdentity2 = null,
                         Value2 = assetIdentityRowId
                     });
                 }
@@ -524,7 +524,7 @@ ORDER BY aa.created_on DESC;";
                 }
 
                 if (folderDataIdentity is null)
-                    folderDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
+                    throw new Exception($"Data identity for folder is not specified");
 
                 List<TfDataIdentityConnection> connectionsToCreate = new List<TfDataIdentityConnection>();
 
@@ -537,7 +537,7 @@ ORDER BY aa.created_on DESC;";
                     {
                         DataIdentity1 = folderDataIdentity.DataIdentity,
                         Value1 = dataIdentityValue,
-                        DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+                        DataIdentity2 = null,
                         Value2 = assetIdentityRowId
                     });
                 }
@@ -584,10 +584,10 @@ ORDER BY aa.created_on DESC;";
 					throw new Exception($"Failed to find data identity '{folder.DataIdentity}' for folder");
 			}
 
-			if (folderDataIdentity is null)
-				folderDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
+            if (folderDataIdentity is null)
+                throw new Exception($"Data identity for folder is not specified");
 
-			DateTime now = DateTime.Now;
+            DateTime now = DateTime.Now;
 
 			var SQL = @"INSERT INTO assets_asset
 						(id, folder_id, type, content_json, created_by,
@@ -660,7 +660,7 @@ ORDER BY aa.created_on DESC;";
 					{
 						DataIdentity1 = folderDataIdentity.DataIdentity,
 						Value1 = dataIdentityValue,
-						DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+						DataIdentity2 = null,
 						Value2 = assetIdentityRowId
 					});
 				}
@@ -917,8 +917,8 @@ ORDER BY aa.created_on DESC;";
 
             //delete all identity connection to this asset
             _tfService.DeleteDataIdentityConnection(
-                TfConstants.TF_ROW_ID_DATA_IDENTITY,
-                existingAsset.IdentityRowId);
+                dataIdentity: null,
+                identityValue: existingAsset.IdentityRowId); 
 
             scope.Complete();
 
@@ -1346,12 +1346,10 @@ ORDER BY aa.created_on DESC;";
             return;
 
         string folderDataIdentityName = folder.DataIdentity;
-
-        if (string.IsNullOrEmpty(folderDataIdentityName))
-            folderDataIdentityName = TfConstants.TF_ROW_ID_DATA_IDENTITY;
+        if (string.IsNullOrWhiteSpace(folderDataIdentityName))
+            return;
 
         var folderIdentity = _tfService.GetDataIdentity(folderDataIdentityName);
-
         if (folderIdentity is null)
             return;
 
@@ -1360,15 +1358,14 @@ ORDER BY aa.created_on DESC;";
         var assetIdentityValues = assets.Select(x => x.IdentityRowId).ToHashSet();
 
         var folderIdentityConnections = _tfService.GetDataIdentityConnections(
-            dataIndentity1: TfConstants.TF_ROW_ID_DATA_IDENTITY,
-            dataIdentity2: folderDataIdentityName);
+            dataIdentity1: null,
+            dataIdentity2: folderDataIdentityName); 
 
         var connectedObjectIdentityValuesDict = new Dictionary<string, object>();
 
         foreach (var idCon in folderIdentityConnections)
         {
-            if (idCon.DataIdentity1 == TfConstants.TF_ROW_ID_DATA_IDENTITY &&
-                assetIdentityValues.Contains(idCon.Value1))
+            if (idCon.DataIdentity1 == null && assetIdentityValues.Contains(idCon.Value1))
             {
                 if (!connectedObjectIdentityValuesDict.ContainsKey(idCon.Value2))
                     connectedObjectIdentityValuesDict[idCon.Value2] = 0;
@@ -1377,8 +1374,7 @@ ORDER BY aa.created_on DESC;";
 
             }
 
-            if (idCon.DataIdentity2 == TfConstants.TF_ROW_ID_DATA_IDENTITY &&
-               assetIdentityValues.Contains(idCon.Value2))
+            if (idCon.DataIdentity2 == null && assetIdentityValues.Contains(idCon.Value2))
             {
                 if (!connectedObjectIdentityValuesDict.ContainsKey(idCon.Value1))
                     connectedObjectIdentityValuesDict[idCon.Value1] = 0;
@@ -1514,17 +1510,17 @@ ORDER BY aa.created_on DESC;";
 
         foreach (DataRow dr in dt.Rows)
         {
-            var dataIdentity1 = dr.Field<string>("data_identity_1");
+            var dataIdentity1 = dr.Field<string?>("data_identity_1");
             var value1 = dr.Field<string>("value_1");
-            var dataIdentity2 = dr.Field<string>("data_identity_2");
+            var dataIdentity2 = dr.Field<string?>("data_identity_2");
             var value2 = dr.Field<string>("value_2");
 
-            if (value1 == asset.IdentityRowId && dataIdentity1 == TfConstants.TF_ROW_ID_DATA_IDENTITY && dataIdentity2 == folder.DataIdentity)
+            if (value1 == asset.IdentityRowId && dataIdentity1 == null && dataIdentity2 == folder.DataIdentity)
             {
                 if (!identityValues.Contains(value2))
                     identityValues.Add(value2);
             }
-            else if (value2 == asset.IdentityRowId && dataIdentity2 == TfConstants.TF_ROW_ID_DATA_IDENTITY && dataIdentity1 == folder.DataIdentity)
+            else if (value2 == asset.IdentityRowId && dataIdentity2 == null && dataIdentity1 == folder.DataIdentity)
             {
                 if (!identityValues.Contains(value1))
                     identityValues.Add(value1);

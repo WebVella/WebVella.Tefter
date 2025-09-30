@@ -79,12 +79,20 @@ internal partial class TalkService : ITalkService
 		string dataIdentityValue = null)
 	{
 
-		string channelDataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY;
+		
 		var channel = GetChannel(channelId);
+		
 		if( channel is null)
 			throw new Exception($"Failed to find channel with id '{channelId}'");
-		else if (!string.IsNullOrWhiteSpace(channel.DataIdentity))
-            channelDataIdentity = channel?.DataIdentity;
+		
+		if (string.IsNullOrWhiteSpace(channel.DataIdentity))
+            throw new Exception($"Channel identity is not specified");
+
+		var dataIdentity = _tfService.GetDataIdentity(channel.DataIdentity);
+		if(dataIdentity is null)
+			throw new Exception($"Failed to find data identity '{channel.DataIdentity}' for channel");
+
+        var channelDataIdentity = dataIdentity.DataIdentity;
 
         string SQL_WITHOUT_DATA_IDENTITY =
 $@"
@@ -92,8 +100,8 @@ WITH sk_identity_info AS (
 	SELECT trs.id, count( dic.* ) AS count
 	FROM talk_thread trs
 		LEFT OUTER JOIN tf_data_identity_connection dic ON 
-			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_1 = '{channelDataIdentity}' ) OR
-			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_2 = '{channelDataIdentity}' ) 
+			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 IS NULL AND dic.data_identity_1 = '{channelDataIdentity}' ) OR
+			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 IS NULL AND dic.data_identity_2 = '{channelDataIdentity}' ) 
 	GROUP BY trs.id
 ),
 root_threads AS (
@@ -126,20 +134,22 @@ WITH sk_identity_info AS (
 	SELECT trs.id, count( dic.* ) AS count
 	FROM talk_thread trs
 		LEFT OUTER JOIN tf_data_identity_connection dic ON 
-			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_1 = '{channelDataIdentity}' ) OR
-			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND dic.data_identity_2 = '{channelDataIdentity}' ) 
+			( dic.value_2 = trs.identity_row_id AND dic.data_identity_2 IS NULL AND dic.data_identity_1 = '{channelDataIdentity}' ) OR
+			( dic.value_1 = trs.identity_row_id AND dic.data_identity_1 IS NULL AND dic.data_identity_2 = '{channelDataIdentity}' ) 
 	GROUP BY trs.id
 ),
 root_threads AS (
 	SELECT id 
 	FROM talk_thread tt
 		LEFT OUTER JOIN tf_data_identity_connection dic ON 
-			  ( dic.value_2 = tt.identity_row_id AND dic.data_identity_2 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND 
+			  ( dic.value_2 = tt.identity_row_id AND dic.data_identity_2 IS NULL AND 
 				dic.data_identity_1 = '{channelDataIdentity}' AND dic.value_1 = @identity_value ) 
 			OR
-			  ( dic.value_1 = tt.identity_row_id AND dic.data_identity_1 = '{TfConstants.TF_ROW_ID_DATA_IDENTITY}' AND 
+			  ( dic.value_1 = tt.identity_row_id AND dic.data_identity_1 IS NULL AND 
 				dic.data_identity_2 = '{channelDataIdentity}' AND dic.value_2 = @identity_value ) 
-	WHERE channel_id = @channel_id AND thread_id IS NULL AND dic.data_identity_1 IS NOT NULL AND dic.data_identity_2 IS NOT NULL
+	WHERE channel_id = @channel_id AND thread_id IS NULL AND 
+		( ( dic.data_identity_1 IS NULL AND dic.data_identity_2 = '{channelDataIdentity}' ) OR
+		  ( dic.data_identity_2 IS NULL AND dic.data_identity_1 = '{channelDataIdentity}' ) )
 )
 SELECT 
 	tt.id,
@@ -213,22 +223,19 @@ ORDER BY tt.created_on DESC";
 
         var dataProvider = _tfService.GetDataProvider(thread.DataProviderId);
 
-        TalkChannel channel = null;
-        channel = GetChannel(thread.ChannelId);
+        var channel = GetChannel(thread.ChannelId); 
+
         if (channel is null)
             throw new Exception($"Failed to find channel with id '{thread.ChannelId}' for thread");
 
+        if (string.IsNullOrWhiteSpace(channel.DataIdentity))
+			throw new Exception($"Channel data identity is not specified");
 
-        TfDataIdentity channelDataIdentity = null;
-        if (!string.IsNullOrWhiteSpace(channel.DataIdentity))
-        {
-            channelDataIdentity = _tfService.GetDataIdentity(channel.DataIdentity);
-            if (channelDataIdentity is null)
-                throw new Exception($"Failed to find data identity '{channel.DataIdentity}' for channel");
-        }
+        var channelDataIdentity = _tfService.GetDataIdentity(channel.DataIdentity);
+        
+		if (channelDataIdentity is null)
+            throw new Exception($"Failed to find data identity '{channel.DataIdentity}' for channel");
 
-        if (channelDataIdentity is null)
-            channelDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
 
         var SQL = @"INSERT INTO talk_thread
 						(id, channel_id, thread_id, type, content, user_id,
@@ -323,7 +330,7 @@ ORDER BY tt.created_on DESC";
                     {
                         DataIdentity1 = channelDataIdentity.DataIdentity,
                         Value1 = dataIdentityValue,
-                        DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+                        DataIdentity2 = null,
                         Value2 = threadIdentityRowId
                     });
                 }
@@ -430,22 +437,18 @@ ORDER BY tt.created_on DESC";
 			if (thread.DataIdentityValues != null && thread.DataIdentityValues.Count > 0)
 			{
 				var threadIdentityRowId = id.ToSha1();
-				TalkChannel channel = null;
-				channel = GetChannel(thread.ChannelId);
+				
+				var channel = GetChannel(thread.ChannelId);
 				if (channel is null)
 					throw new Exception($"Failed to find channel with id '{thread.ChannelId}' for thread");
 				
+				if (string.IsNullOrWhiteSpace(channel.DataIdentity))
+					throw new Exception($"Data identity is not specified for channel");
 
-				TfDataIdentity channelDataIdentity = null;
-				if (!string.IsNullOrWhiteSpace(channel.DataIdentity))
-				{
-					channelDataIdentity = _tfService.GetDataIdentity(channel.DataIdentity);
-					if (channelDataIdentity is null)
-						throw new Exception($"Failed to find data identity '{channel.DataIdentity}' for channel");
-				}
-				
-				if(channelDataIdentity is null)
-					channelDataIdentity = _tfService.GetDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY);
+                var channelDataIdentity = _tfService.GetDataIdentity(channel.DataIdentity);
+
+                if (channelDataIdentity is null)
+					throw new Exception($"Failed to find data identity '{channel.DataIdentity}' for channel");
 
 
                 List<TfDataIdentityConnection> connectionsToCreate = new List<TfDataIdentityConnection>();
@@ -459,7 +462,7 @@ ORDER BY tt.created_on DESC";
 					{
 						DataIdentity1 = channelDataIdentity.DataIdentity,
 						Value1 = dataIdentityValue,
-						DataIdentity2 = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+						DataIdentity2 = null,
 						Value2 = threadIdentityRowId
                     });
 				}
@@ -1013,12 +1016,12 @@ ORDER BY tt.created_on DESC";
 			var dataIdentity2 = dr.Field<string>("data_identity_2");
 			var value2 = dr.Field<string>("value_2");
 
-			if (value1 == thread.IdentityRowId && dataIdentity1 == TfConstants.TF_ROW_ID_DATA_IDENTITY && dataIdentity2 == channel.DataIdentity)
+			if (value1 == thread.IdentityRowId && dataIdentity1 is null && dataIdentity2 == channel.DataIdentity)
 			{
 				if (!identityValues.Contains(value2))
 					identityValues.Add(value2);
 			}
-			else if (value2 == thread.IdentityRowId && dataIdentity2 == TfConstants.TF_ROW_ID_DATA_IDENTITY && dataIdentity1 == channel.DataIdentity)
+			else if (value2 == thread.IdentityRowId && dataIdentity2 is null && dataIdentity1 == channel.DataIdentity)
 			{
 				if (!identityValues.Contains(value1))
 					identityValues.Add(value1);

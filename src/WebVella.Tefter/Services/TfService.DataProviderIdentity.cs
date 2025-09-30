@@ -412,12 +412,13 @@ public partial class TfService : ITfService
 
 						foreach (var column in columns)
 						{
-							if (column == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-								continue;
-
-							var exists = provider.Columns.Any(x => x.DbName == column);
+							var exists = provider.SystemColumns.Any(x => x.DbName == column);
 							if (!exists)
-								return false;
+							{
+								exists = provider.Columns.Any(x => x.DbName == column);
+								if (!exists)
+									return false;
+							}
 						}
 
 						return true;
@@ -434,9 +435,6 @@ public partial class TfService : ITfService
 
 						foreach (var column in columns)
 						{
-							if (column == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-								continue;
-
 							var exists = columnNames.Contains(column);
 							if (exists)
 								return false;
@@ -538,10 +536,6 @@ public partial class TfService : ITfService
 			if (dataIdentity == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"The data provider identity is null.") });
-
-			if (dataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The system data provider identity cannot be deleted.") });
 
 			return new ValidationResult();
 		}

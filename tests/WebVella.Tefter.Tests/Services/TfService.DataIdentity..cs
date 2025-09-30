@@ -38,7 +38,7 @@ public partial class TfServiceTest : BaseTest
 				task = Task.Run(() => { dataIdentities = tfService.GetDataIdentities(); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				dataIdentities.Should().NotBeNull();
-				dataIdentities.Count.Should().Be(2);	
+				dataIdentities.Count.Should().Be(1);	
 
 				TfDataIdentity model2 = new TfDataIdentity
 				{
@@ -62,31 +62,12 @@ public partial class TfServiceTest : BaseTest
 				task = Task.Run(() => { dataIdentities = tfService.GetDataIdentities(); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				dataIdentities.Should().NotBeNull();
-				dataIdentities.Count.Should().Be(1);
+				dataIdentities.Count.Should().Be(0);
 
 			}
 		}
 	}
 
-	[Fact]
-	public async Task DataIdentity_TryDeleteRowIdSystemIdentity()
-	{
-		using (await locker.LockAsync())
-		{
-			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			ITfService tfService = ServiceProvider.GetService<ITfService>();
-
-			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
-			{
-				var task = Task.Run(() => { tfService.DeleteDataIdentity(TfConstants.TF_ROW_ID_DATA_IDENTITY); });
-				var exception = Record.ExceptionAsync(async () => await task).Result;
-				exception.Should().NotBeNull();
-				exception.Should().BeOfType<TfValidationException>();
-				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
-				((TfValidationException)exception).Data.Contains("DataIdentity").Should().BeTrue();
-			}
-		}
-	}
 
 	[Fact]
 	public async Task DataIdentity_TryCreateWithInvalidDataIdentityName()

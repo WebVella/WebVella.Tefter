@@ -1027,19 +1027,25 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithColumns(columns =>
 			{
 				columns
-					.AddShortTextColumn("data_identity_1", c => { c.NotNullable(); })
+					.AddShortTextColumn("data_identity_1", c => { c.Nullable(); })
 					.AddShortTextColumn("value_1", c => { c.NotNullable(); })
-					.AddShortTextColumn("data_identity_2", c => { c.NotNullable(); })
+					.AddShortTextColumn("data_identity_2", c => { c.Nullable(); })
 					.AddShortTextColumn("value_2", c => { c.NotNullable(); });
 			})
 			.WithConstraints(constraints =>
 			{
 				constraints
-					.AddPrimaryKeyConstraint("pk_data_identity_connection", c =>
+					.AddUniqueKeyConstraint("ux_data_identity_connection_all_columns", c =>
 					{
 						c.WithColumns("data_identity_1", "value_1",
 							"data_identity_2", "value_2");
 					})
+					// we cannot use primary key constraint here as data_identity_1 and data_identity_2 can be null
+					//.AddPrimaryKeyConstraint("pk_data_identity_connection", c =>
+					//{
+					//	c.WithColumns("data_identity_1", "value_1",
+					//		"data_identity_2", "value_2");
+					//})
 					.AddForeignKeyConstraint("fk_data_identity_connection_identity_1", c =>
 					{
 						c.WithColumns("data_identity_1")
@@ -1118,12 +1124,5 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 		.Build();
 
 		adminRole = await tfService.SaveRoleAsync(adminRole);
-
-		tfService.CreateDataIdentity(new TfDataIdentity
-		{
-			DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
-			Label = "System Row ID"
-		});
-
 	}
 }

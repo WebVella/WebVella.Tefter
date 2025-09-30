@@ -26,7 +26,7 @@ public partial class AssetsTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Test Folder",
-					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					DataIdentity = "id_identity",
 					CountSharedColumnName = "sc_int_row_id"
 				};
 
@@ -49,7 +49,7 @@ public partial class AssetsTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Test Folder",
-					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					DataIdentity = "id_identity",
 					CountSharedColumnName = "sc_int"
 				};
 
@@ -79,7 +79,7 @@ public partial class AssetsTests : BaseTest
 
 				List<string> rowIdentityIds = new List<string>();
 				for (int i = 0; i < 5; i++)
-					rowIdentityIds.Add((string)dataTable.Rows[i]["tf_row_id"]);
+					rowIdentityIds.Add((string)dataTable.Rows[i]["tf_ide_id_identity"]);
 
 				var user = tfService.GetDefaultSystemUser();
 				if (user == null) throw new Exception("No default system user found");
@@ -88,7 +88,7 @@ public partial class AssetsTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Test Folder",
-					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					DataIdentity = "id_identity",
 					CountSharedColumnName = "sc_int_row_id"
 				};
 
@@ -125,7 +125,7 @@ public partial class AssetsTests : BaseTest
 
 				List<string> rowIdentityIds2 = new List<string>();
 				for (int i = 5; i < 10; i++)
-					rowIdentityIds2.Add((string)dataTable.Rows[i]["tf_row_id"]);
+					rowIdentityIds2.Add((string)dataTable.Rows[i]["tf_ide_id_identity"]);
 
 				//using tmp file because local file is moved
 				var appSettingsFilePath = ToApplicationPath("appsettings.json");
@@ -151,8 +151,8 @@ public partial class AssetsTests : BaseTest
 				assets.Count.Should().Be(1);
 
 				List<string> rowIdentityIds3 = new List<string>();
-				rowIdentityIds3.Add((string)dataTable.Rows[0]["tf_row_id"]);
-				rowIdentityIds3.Add((string)dataTable.Rows[5]["tf_row_id"]);
+				rowIdentityIds3.Add((string)dataTable.Rows[0]["tf_ide_id_identity"]);
+				rowIdentityIds3.Add((string)dataTable.Rows[5]["tf_ide_id_identity"]);
 
 				CreateLinkAssetWithDataIdentityModel dupIdentityValueAsset = new CreateLinkAssetWithDataIdentityModel
 				{
@@ -175,23 +175,23 @@ public partial class AssetsTests : BaseTest
 
 
 				dataTable = tfService.QuerySpaceData(spaceData.Id);
-				dataTable.Rows[5]["tf_row_id.sc_int_row_id"].Should().Be(2);
+				dataTable.Rows[5]["id_identity.sc_int_row_id"].Should().Be(2);
 				for (int i = 6; i < 10; i++)
-					dataTable.Rows[i]["tf_row_id.sc_int_row_id"].Should().Be(1);
+					dataTable.Rows[i]["id_identity.sc_int_row_id"].Should().Be(1);
 
 				//test data identity connection removal on asset delete
-				var dataIdentityConnections = tfService.GetDataIdentityConnections(TfConstants.TF_ROW_ID_DATA_IDENTITY, fileAsset.IdentityRowId);
+				var dataIdentityConnections = tfService.GetDataIdentityConnections( value1: fileAsset.IdentityRowId);
 				dataIdentityConnections.Count.Should().Be(5);
 
 				assetService.DeleteAsset(fileAsset.Id);
 
-				dataIdentityConnections = tfService.GetDataIdentityConnections(TfConstants.TF_ROW_ID_DATA_IDENTITY, fileAsset.IdentityRowId);
+				dataIdentityConnections = tfService.GetDataIdentityConnections( value1: fileAsset.IdentityRowId);
 				dataIdentityConnections.Count.Should().Be(0);
 
 				dataTable = tfService.QuerySpaceData(spaceData.Id);
-				dataTable.Rows[5]["tf_row_id.sc_int_row_id"].Should().Be(1);
+				dataTable.Rows[5]["id_identity.sc_int_row_id"].Should().Be(1);
 				for (int i = 6; i < 10; i++)
-					dataTable.Rows[i]["tf_row_id.sc_int_row_id"].Should().Be(0);
+					dataTable.Rows[i]["id_identity.sc_int_row_id"].Should().Be(0);
 			}
 		}
 	}
@@ -221,7 +221,7 @@ public partial class AssetsTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Test Folder",
-					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					DataIdentity = "id_identity",
 					CountSharedColumnName = "sc_int_row_id"
 				};
 
@@ -268,22 +268,22 @@ public partial class AssetsTests : BaseTest
 				assets.Count.Should().Be(1);
 
 				//test data identity connection removal on asset delete
-				var dataIdentityConnections = tfService.GetDataIdentityConnections(TfConstants.TF_ROW_ID_DATA_IDENTITY, createdLinkAsset.IdentityRowId);
+				var dataIdentityConnections = tfService.GetDataIdentityConnections( value1: createdLinkAsset.IdentityRowId);
 				dataIdentityConnections.Count.Should().Be(5);
 
 				assetService.DeleteAsset(createdLinkAsset.Id);
 
-				dataIdentityConnections = tfService.GetDataIdentityConnections(TfConstants.TF_ROW_ID_DATA_IDENTITY, createdLinkAsset.IdentityRowId);
+				dataIdentityConnections = tfService.GetDataIdentityConnections( value1: createdLinkAsset.IdentityRowId);
 				dataIdentityConnections.Count.Should().Be(0);
 
 
 				//test data identity connection removal on asset delete
-				dataIdentityConnections = tfService.GetDataIdentityConnections(TfConstants.TF_ROW_ID_DATA_IDENTITY, createdFileAsset.IdentityRowId);
+				dataIdentityConnections = tfService.GetDataIdentityConnections( value1: createdFileAsset.IdentityRowId);
 				dataIdentityConnections.Count.Should().Be(5);
 
 				assetService.DeleteAsset(createdFileAsset.Id);
 
-				dataIdentityConnections = tfService.GetDataIdentityConnections(TfConstants.TF_ROW_ID_DATA_IDENTITY, createdFileAsset.IdentityRowId);
+				dataIdentityConnections = tfService.GetDataIdentityConnections( value1: createdFileAsset.IdentityRowId);
 				dataIdentityConnections.Count.Should().Be(0);
 			}
 		}
@@ -315,7 +315,7 @@ public partial class AssetsTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Test Folder",
-					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					DataIdentity = "id_identity",
 					CountSharedColumnName = "sc_int_row_id"
 				};
 
@@ -336,7 +336,7 @@ public partial class AssetsTests : BaseTest
 				assetService.GetAssetRelatedIdentityValues(createdLinkAsset).Count.Should().Be(1);
 
 				var result = tfService.QuerySpaceData(spaceData.Id);
-				result.Rows[0]["tf_row_id.sc_int_row_id"].Should().Be(1);
+				result.Rows[0]["id_identity.sc_int_row_id"].Should().Be(1);
 
 				//using tmp file because local file is moved
 				var appSettingsFilePath = ToApplicationPath("appsettings.json");
@@ -358,7 +358,7 @@ public partial class AssetsTests : BaseTest
 				assetService.GetAssetRelatedIdentityValues(createdFileAsset).Count.Should().Be(1);
 
 				result = tfService.QuerySpaceData(spaceData.Id);
-				result.Rows[0]["tf_row_id.sc_int_row_id"].Should().Be(2);
+				result.Rows[0]["id_identity.sc_int_row_id"].Should().Be(2);
 
 			}
 		}

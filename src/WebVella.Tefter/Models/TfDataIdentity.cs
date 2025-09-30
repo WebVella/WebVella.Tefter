@@ -10,7 +10,8 @@ public class TfDataIdentity
 	[TfDboModelProperty("label")]
 	public string Label { get; set; } = default!;
 
-	public bool IsSystem { get { return DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY; } }
+	[Obsolete("There are no system data identities anymore. To be removed.")]
+	public bool IsSystem { get { return false; } }
 
 	public override string ToString()
 	{
