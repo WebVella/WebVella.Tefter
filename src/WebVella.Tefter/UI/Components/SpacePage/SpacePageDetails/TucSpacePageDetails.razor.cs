@@ -64,7 +64,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 				Mode = TfComponentMode.Read,
 				SpacePage = _spacePage,
 				Space = _space,
-				CurrentUser = CurrentUser,
+				CurrentUser = TfAuthLayout.CurrentUser,
 				EditNode = EventCallback.Factory.Create(this, _onEdit),
 				DeleteNode = EventCallback.Factory.Create(this, _onRemove)
 			};

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
+using WebVella.Tefter.UI.Layout;
 
 namespace WebVella.Tefter.Models;
 
@@ -13,11 +14,9 @@ public class TfBaseComponent : ComponentBase
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = default!;
 	[Inject] protected IWvBlazorTraceService WvBlazorTraceService { get; set; } = default!;
 	[Inject] protected IHostEnvironment HostEnvironment { get; set; } = default!;
-	[Inject] protected ITfUIService TfUIService { get; set; } = default!;
 	[Inject] protected IKeyCodeService KeyCodeService { get; set; } = default!;
-	[CascadingParameter(Name = "CurrentUser")] public TfUser CurrentUser { get; set; } = default!;
-	[CascadingParameter(Name = "NavigationState")] public TfNavigationState NavigationState { get; set; } = default!;
-
+	[Inject] protected ITfUIService TfUIService { get; set; } = default!;
+	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = default!;
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
 	protected IStringLocalizer LC = default!;

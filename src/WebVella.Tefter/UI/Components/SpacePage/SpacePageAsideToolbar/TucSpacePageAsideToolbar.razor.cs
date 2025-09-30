@@ -4,9 +4,6 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 {
-	[CascadingParameter(Name = "CurrentUser")]
-	public TfUser CurrentUser { get; set; } = default!;
-
 	private string? _search = null;
 	private TfNavigationState _navState = new();
 	private TfSpaceNavigationActiveTab _activeTab = TfSpaceNavigationActiveTab.Pages;

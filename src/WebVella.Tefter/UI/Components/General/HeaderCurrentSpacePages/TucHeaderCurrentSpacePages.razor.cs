@@ -42,7 +42,7 @@ public partial class TucHeaderCurrentSpacePages : TfBaseComponent, IDisposable
 
 		try
 		{
-			_menu = (await TfUIService.GetNavigationMenu(Navigator, CurrentUser)).Menu;
+			_menu = (await TfUIService.GetNavigationMenu(Navigator, TfAuthLayout.CurrentUser)).Menu;
 		}
 		finally
 		{

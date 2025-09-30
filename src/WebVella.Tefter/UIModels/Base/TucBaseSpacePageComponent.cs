@@ -1,9 +1,12 @@
-﻿namespace WebVella.Tefter.Models;
+﻿using WebVella.Tefter.UI.Layout;
+
+namespace WebVella.Tefter.Models;
 
 public abstract class TucBaseSpacePageComponent : ComponentBase, ITfSpacePageAddon
 {
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } =  default!;
-	[Inject] public ITfUIService TfUIService { get; set; } = default!;
+	[Inject] protected ITfUIService TfUIService { get; set; } = default!;
+	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = default!;
 	public virtual Guid AddonId { get; init; } = Guid.NewGuid();
 	public virtual string AddonName { get; init; } = default!;
 	public virtual string AddonDescription { get; init; } =  default!;

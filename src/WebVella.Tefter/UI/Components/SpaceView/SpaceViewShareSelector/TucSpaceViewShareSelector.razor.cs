@@ -73,7 +73,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 			{
 				Id = Guid.NewGuid(),
 				SpaceViewId = SpaceView.Id,
-				UserId = CurrentUser!.Id,
+				UserId = TfAuthLayout.CurrentUser!.Id,
 				CreatedOn = DateTime.Now,
 				Description = String.Empty,//initially nothing is added for convenience
 				Name = SpaceView.Name + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
@@ -101,7 +101,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 			{
 				Id = Guid.NewGuid(),
 				SpaceViewId = SpaceView.Id,
-				UserId = CurrentUser.Id,
+				UserId = TfAuthLayout.CurrentUser.Id,
 				CreatedOn = DateTime.Now,
 				Description = String.Empty,//initially nothing is added for convenience
 				Name = SpaceView.Name + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),

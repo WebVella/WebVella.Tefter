@@ -26,7 +26,7 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 	{
 		if (navState is null)
 			navState = await TfUIService.GetNavigationStateAsync(Navigator);
-		var navMenu = await TfUIService.GetNavigationMenu(Navigator, CurrentUser);
+		var navMenu = await TfUIService.GetNavigationMenu(Navigator, TfAuthLayout.CurrentUser);
 		try
 		{
 			_menu = new();

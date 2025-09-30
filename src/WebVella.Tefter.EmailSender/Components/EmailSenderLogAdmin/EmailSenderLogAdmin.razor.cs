@@ -20,7 +20,7 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 	}
 	protected override async Task OnInitializedAsync()
 	{
-        _currentUser = await TfUIService.GetCurrentUserAsync();
+        _currentUser = TfAuthLayout.CurrentUser;
         await _init();
 		EmailService.EmailCreated += On_EmailChanged;
 		EmailService.EmailUpdated += On_EmailChanged;
