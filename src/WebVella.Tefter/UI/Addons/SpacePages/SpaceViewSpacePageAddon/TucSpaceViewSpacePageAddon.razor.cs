@@ -88,7 +88,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		var jsonOptions = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(context.ComponentOptionsJson);
 		if (jsonOptions is null) throw new Exception("TfSpaceViewPageComponent error: options cannot be deserialized");
 		var tfService = serviceProvider.GetService<ITfService>();
-		if(jsonOptions.SpaceViewId.HasValue)
+		if (jsonOptions.SpaceViewId.HasValue)
 			tfService.DeleteSpaceView(jsonOptions.SpaceViewId.Value);
 	}
 
@@ -96,7 +96,6 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 
 	#region << Private properties >>
 	//Edit
-	private string optionsJson = "{}";
 	private TfSpaceViewSpacePageAddonOptions _options { get; set; } = new();
 	private TfDataset? _selectedDataset = null;
 	private List<string> _generatedColumns = new();
@@ -111,32 +110,36 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 
 	protected override void OnInitialized()
 	{
-		if (Context.Space is not null)
-		{
-			_allDatasets = TfDatasetUIService.GetDatasets();
-			if (_allDatasets.Any())
-				_selectedDataset = _allDatasets[0];
-		}
-	}
+		if (Context is null) throw new Exception("Context is required");
 
-	protected override void OnParametersSet()
-	{
-		base.OnParametersSet();
-		if (Context.Mode == TfComponentMode.Read) return;
-		if (Context.ComponentOptionsJson != optionsJson)
+		_allDatasets = TfDatasetUIService.GetDatasets();
+
+		if (!String.IsNullOrWhiteSpace(Context?.ComponentOptionsJson) && Context!.ComponentOptionsJson != "{}")
+			_options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(Context!.ComponentOptionsJson) ?? new();
+
+		if (_options.DatasetId != null && _options.DatasetId != Guid.Empty)
 		{
-			optionsJson = Context.ComponentOptionsJson;
-			_options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(optionsJson) ?? new TfSpaceViewSpacePageAddonOptions();
+			_selectedDataset = _allDatasets.FirstOrDefault(x=> x.Id == _options.DatasetId);
 		}
+		
 	}
 	#endregion
 
 	#region << Private methods >>
 
-	private void _optionsDatasetSelected(TfDataset dataset)
+	private async Task _valueChanged(string propName, object? payload)
 	{
-		_selectedDataset = dataset;
-		_options.DatasetId = dataset is null ? null : dataset.Id;
+		if (propName == nameof(_options.DatasetId))
+		{
+			_selectedDataset = null;
+			_options.DatasetId = null;
+			if (payload is not null)
+			{
+				_selectedDataset = (TfDataset)payload;
+				_options.DatasetId = _selectedDataset.Id;
+			}
+		}
+		await Context.ComponentOptionsJsonChanged.InvokeAsync(JsonSerializer.Serialize(_options));
 	}
 	#endregion
 }

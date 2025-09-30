@@ -21,8 +21,6 @@ public partial class TfFileRepositoryUIService : ITfFileRepositoryUIService
 	private readonly ITfService _tfService;
 	private readonly ITfMetaService _metaService;
 	private readonly IStringLocalizer<TfSpaceUIService> LOC;
-	private TfNavigationState _navState = new();
-	private TfNavigationMenu _navMenu = new();
 	public TfFileRepositoryUIService(IServiceProvider serviceProvider)
 	{
 		_tfService = serviceProvider.GetService<ITfService>() ?? default!;

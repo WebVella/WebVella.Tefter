@@ -102,6 +102,7 @@ public partial class TucEditor : TfBaseComponent,IAsyncDisposable
 
 	public async Task Focus()
 	{
+		if(JSRuntime is null) return;
 		await JSRuntime.InvokeAsync<object>(
 			"Tefter.focusQuill", _componentId.ToString());
 	}

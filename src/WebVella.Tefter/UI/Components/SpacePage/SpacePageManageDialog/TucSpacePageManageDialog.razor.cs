@@ -51,7 +51,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 				Text = $"{spaceDict[page.SpaceId].Name} > {page.Name}"
 			});
 		}
-		
+
 		_copyOptions.Add(new Option<bool>
 		{
 			Value = false,
@@ -102,7 +102,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 				Position = Content.Position,
 			};
 		}
-		
+
 		if (_form.ComponentId.HasValue)
 		{
 			_selectedPageComponent = _pageComponents.FirstOrDefault(x => x.ComponentId == _form.ComponentId);
@@ -126,7 +126,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		List<ValidationError> settingsErrors = new();
 		ITfSpacePageAddon addonComponent = null;
 		TfSpacePage submit = _form with { Id = _form.Id };
-		if (_copyPage is null)
+		if (!_copyOption.Value)
 		{
 			if (submit.Type == TfSpacePageType.Folder)
 			{
@@ -149,7 +149,14 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		}
 		else
 		{
-			submit.TemplateId = _copyPage?.Value;
+			if (_copyPage is null)
+			{
+				MessageStore.Add(EditContext.Field(nameof(_form.Name)), LOC("no template page is selected"));
+			}
+			else
+			{
+				submit.TemplateId = _copyPage?.Value;
+			}
 		}
 		//Check form
 		var isValid = EditContext.Validate();
@@ -242,8 +249,15 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		context.Icon = _form.FluentIconName;
 		context.Space = _space;
 		context.ComponentOptionsJson = _form.ComponentOptionsJson;
+		context.ComponentOptionsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged);
 		context.Mode = _isCreate ? TfComponentMode.Create : TfComponentMode.Update;
 		dict["Context"] = context;
 		return dict;
+	}
+
+	private void _settingsChanged(string json)
+	{
+		_form.ComponentOptionsJson = json;
+		StateHasChanged();
 	}
 }

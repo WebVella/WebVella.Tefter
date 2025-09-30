@@ -30,6 +30,7 @@ public partial interface ITfSpaceUIService
 	void DeleteSpacePage(TfSpacePage page);
 	void MoveSpacePage(TfSpacePage page, bool isMoveUp);
 	void CopySpacePage(Guid pageId);
+	TfSpacePage? GetSpacePageBySpaceViewId(Guid spaceViewId);
 }
 public partial class TfSpaceUIService : ITfSpaceUIService
 {
@@ -147,6 +148,12 @@ public partial class TfSpaceUIService : ITfSpaceUIService
 	{
 		var (newNodeId, nodesList) = _tfService.CopySpacePage(pageId);
 		SpaceUpdated?.Invoke(this, GetSpace(nodesList[0].SpaceId));
+	}
+
+	public TfSpacePage? GetSpacePageBySpaceViewId(Guid spaceViewId)
+	{
+		var allPages = GetAllSpacePages();
+		return allPages.FirstOrDefault(x=> x.ComponentOptionsJson.Contains(spaceViewId.ToString()));
 	}
 
 	#endregion

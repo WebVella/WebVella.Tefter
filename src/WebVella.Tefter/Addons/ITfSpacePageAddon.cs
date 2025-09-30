@@ -30,6 +30,7 @@ public class TfSpacePageAddonContext
 	public TfUser CurrentUser { get; set; } = default!;
 	public string? Icon { get; set; }
 	public string? ComponentOptionsJson { get; set; }
+	public EventCallback<string> ComponentOptionsJsonChanged { get; set; }
 	public TfComponentMode Mode { get; set; }
 	public EventCallback EditNode { get; set; }
 	public EventCallback DeleteNode { get; set; }

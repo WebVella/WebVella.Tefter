@@ -53,13 +53,13 @@
 </FluentButton>
 @if (Context.CurrentUser.IsAdmin)
 {
-	<FluentButton Id="view-setting-selector" OnClick="OnSettingsClick" Appearance="@Appearance.Outline">
+	<FluentAnchor Href="@string.Format(TfConstants.SpaceViewPageUrl, Context.SpacePage.SpaceId, SpaceView.Id)" Appearance="@Appearance.Outline"
+				  AdditionalAttributes="@_settingsAttributes" Class="tf-button">
 		<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Accent" />
-	</FluentButton>
+	</FluentAnchor>
 }
 
 @* <TucSpaceViewPropertiesSelector @ref="_propertiesSelector" />  *@
-<TucSpaceViewSettingsSelector @ref="_settingSelector" SpaceView="SpaceView" Data="Data" SelectedRows="SelectedRows" />
 <TucSpaceViewActionSelector @ref="_actionSelector" SpaceView="SpaceView" SpaceData="SpaceData" User=Context.CurrentUser Data="Data" SelectedRows="SelectedRows" />
 <TucSpaceViewShareSelector @ref="_shareSelector" SpaceView="SpaceView" Data="Data" SelectedRows="SelectedRows" ActiveBookmark="_activeBookmark" ActiveSavedUrl="_activeSavedUrl" />
 <TucSpaceViewBookmarkSelector @ref="_bookmarkSelector" SpaceView="SpaceView" Data="Data" SelectedRows="SelectedRows" ActiveBookmark="_activeBookmark" ActiveSavedUrl="_activeSavedUrl" />

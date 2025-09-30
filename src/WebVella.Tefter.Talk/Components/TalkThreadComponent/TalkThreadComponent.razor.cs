@@ -141,7 +141,6 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 			var thread = TalkService.CreateThread(submit);
 			ToastService.ShowSuccess(LOC("Message is sent"));
 			_channelEditorContent = null;
-			_threads.Insert(0, thread);
 		}
 		catch (Exception ex)
 		{
@@ -172,16 +171,6 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 			ToastService.ShowSuccess(LOC("Message is sent"));
 			_threadEditorContent = null;
 			_activeThread = TalkService.GetThread(_activeThread.Id);
-			var threadIndex = _threads.FindIndex(x => x.Id == _activeThread.Id);
-			if (threadIndex > -1) _threads[threadIndex] = _activeThread;
-			if (_threadVisibleInChannel)
-			{
-				var subThreadIndex = _activeThread.SubThread.FindIndex(x => x.Id == thread.Id);
-				if (subThreadIndex > -1)
-				{
-					_threads.Insert(0, _activeThread.SubThread[subThreadIndex]);
-				}
-			}
 		}
 		catch (Exception ex)
 		{

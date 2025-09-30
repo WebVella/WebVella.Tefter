@@ -1,4 +1,7 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using DocumentFormat.OpenXml.Office.CustomUI;
+
+namespace WebVella.Tefter.UI.Components;
+
 public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 {
 	// Dependency Injection
@@ -6,7 +9,7 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 	[Inject] public ITfUserUIService TfUserUIService { get; set; } = default!;
 	[Inject] public ITfNavigationUIService TfNavigationUIService { get; set; } = default!;
 
-	[CascadingParameter(Name = "TucSpaceViewPageContent")] 
+	[CascadingParameter(Name = "TucSpaceViewPageContent")]
 	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
 	[Parameter] public TfSpacePageAddonContext Context { get; set; } = default!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
@@ -19,6 +22,9 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 
 	private TfNavigationState _navState = default!;
 	private bool _hasViewPersonalization = false;
+
+	private Dictionary<string, object>? _settingsAttributes = new();
+
 	public void Dispose()
 	{
 		TfNavigationUIService.NavigationStateChanged -= On_NavigationStateChanged;
@@ -30,6 +36,8 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 		await base.OnInitializedAsync();
 		_navState = Navigator.GetRouteState();
 		await _init();
+		_settingsAttributes!.Add("title",LOC("Manage Settings"));
+
 		TfNavigationUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfUserUIService.UserUpdated += On_UserChanged;
 	}
@@ -41,7 +49,7 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 	}
 	private async void On_UserChanged(object? caller, TfUser args)
 	{
-		if(Context is not null)
+		if (Context is not null)
 			Context.CurrentUser = args;
 		await _init();
 	}

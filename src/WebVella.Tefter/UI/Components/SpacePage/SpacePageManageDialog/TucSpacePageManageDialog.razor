@@ -78,7 +78,7 @@
 					<FluentValidationMessage For="@(() => _form.FluentIconName)" />
 				</FluentGridItem>
 			</FluentGrid>
-			@if (_isCreate)
+			@if (_isCreate && _form.Type == TfSpacePageType.Page)
 			{
 				<FluentGrid>
 					<FluentGridItem xs="6">
@@ -121,6 +121,7 @@
 						<DynamicComponent Type="_selectedPageComponent.Instance.GetType()" Parameters="@_getDynamicComponentParams()"
 										  @ref="typeSettingsComponent"></DynamicComponent>
 					</TucErrorBoundry>
+					<div>@_form.ComponentOptionsJson</div>
 				}
 			}
 		</FluentEditForm>

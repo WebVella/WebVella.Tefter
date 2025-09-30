@@ -1,4 +1,4 @@
-﻿html:root {
+html:root {
   --tf-black: #000;
   --tf-white: #fff;
   --tf-red-50: oklch(97.1% 0.013 17.38);
@@ -499,7 +499,8 @@ fluent-badge.input-badge::part(control) {
   padding: 7px 5px;
 }
 /*Button*/
-fluent-button {
+fluent-button,
+fluent-anchor.tf-button {
   --neutral-stroke-rest: var(--tf-stroke-button);
   --neutral-stroke-control-rest: var(--neutral-stroke-rest);
   --neutral-stroke-hover: var(--tf-stroke-button-hover);
@@ -510,19 +511,24 @@ fluent-button {
   border-radius: var(--tf-border-radius-xl);
   color: var(--tf-font-color-base);
 }
-fluent-button::part(control):focus-visible {
+fluent-button::part(control):focus-visible,
+fluent-anchor.tf-button::part(control):focus-visible {
   outline: none !important;
 }
-fluent-button::part(control).icon-only::part(start) {
+fluent-button::part(control).icon-only::part(start),
+fluent-anchor.tf-button::part(control).icon-only::part(start) {
   display: none;
 }
-fluent-button:hover {
+fluent-button:hover,
+fluent-anchor.tf-button:hover {
   background-color: var(--tf-fill-color-hover) !important;
 }
-fluent-button::part(start) {
+fluent-button::part(start),
+fluent-anchor.tf-button::part(start) {
   margin-inline-end: 0.25rem;
 }
-fluent-button::part(end) {
+fluent-button::part(end),
+fluent-anchor.tf-button::part(end) {
   margin-inline-start: 0.25rem;
 }
 fluent-anchor {
@@ -1413,7 +1419,7 @@ fluent-dialog .tf-divider,
   background: color-mix(in srgb, var(--tf-layout-color) 20%, var(--tf-fill-color-dark) 80%);
 }
 .tf-header .tf-menu.current-space .tf-menu__item {
-  width: 210px !important;
+  width: 170px !important;
 }
 .tf-header fluent-menu {
   background: var(--tf-fill-color-dark-1);
@@ -1621,7 +1627,7 @@ fluent-dialog .tf-divider,
   display: flex;
 }
 .tf-layout-list-details__aside {
-  flex: 0 0 260px;
+  flex: 0 0 220px;
   overflow: hidden;
   height: 100%;
   display: flex;
@@ -2360,6 +2366,13 @@ fluent-dialog .tf-divider,
 .tf-sidetoolbar__search .search::part(start) {
   display: none;
 }
+.tf-sidetoolbar__search .search::part(control) {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.tf-sidetoolbar__search .search::part(clear-button) {
+  display: none;
+}
 .tf-sidetoolbar__search fluent-button {
   border-radius: 0;
 }
@@ -2686,3 +2699,4 @@ fluent-dialog .tf-divider,
   padding: 5px 10px;
   border: 1px solid var(--neutral-stroke-rest);
 }
+/*# sourceMappingURL=_styles.css.map */

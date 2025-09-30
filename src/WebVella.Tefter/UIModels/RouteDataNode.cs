@@ -7,7 +7,7 @@ public enum RouteDataNode
 	Space,
 	[Description("Admin")]
 	Admin,
-	[Description("Pages")]
+	[Description("Page")]
 	Pages,
 	[Description("Users")]
 	Users,

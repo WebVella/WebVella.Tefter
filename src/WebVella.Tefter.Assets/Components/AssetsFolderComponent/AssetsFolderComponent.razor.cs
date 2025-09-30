@@ -132,10 +132,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 
 		var result = await dialog.Result;
 
-		if (!result.Cancelled && result.Data != null)
-		{
-			_items.Insert(0, (Asset)result.Data);
-		}
+		if (!result.Cancelled && result.Data != null){}
 	}
 
 	private async Task _addFile()
@@ -160,10 +157,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 
 		var result = await dialog.Result;
 
-		if (!result.Cancelled && result.Data != null)
-		{
-			_items.Insert(0, (Asset)result.Data);
-		}
+		if (!result.Cancelled && result.Data != null){}
 	}
 
 	private async Task _editAsset(Asset asset)
@@ -217,13 +211,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 			result = await dialog.Result;
 		}
 
-		if (result is not null && !result.Cancelled && result.Data != null)
-		{
-			var resultAsset = (Asset)result.Data;
-			var index = _items.FindIndex(x => x.Id == resultAsset.Id);
-			if (index > -1)
-				_items[index] = resultAsset;
-		}
+		if (result is not null && !result.Cancelled && result.Data != null){}
 	}
 
 	private async Task _deleteAsset(Asset asset)
@@ -235,8 +223,6 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		{
 			AssetsService.DeleteAsset(asset.Id);
 			ToastService.ShowSuccess(LOC("File deleted"));
-			int index = _items.FindIndex(x => x.Id == asset.Id);
-			if (index > -1) _items.RemoveAt(index);
 		}
 		catch (Exception ex)
 		{
