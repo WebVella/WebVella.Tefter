@@ -213,10 +213,10 @@ public static partial class NavigatorExt
 		    )
 			return result;
 
-		if (result.NodesDict.Count < 3)
+		if (result.NodesDict.Count < 5)
 			return result;
 
-		if (result.NodesDict[5] == TfConstants.RouteNameManage)
+		if (result.NodesDict[4] == TfConstants.RouteNameManage)
 		{
 			result = result.AddRouteNodes(RouteDataNode.Manage);
 		}
