@@ -10,7 +10,7 @@
 	@if (String.IsNullOrWhiteSpace(_error))
 	{
 		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
-					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
+		              Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
 	}
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
@@ -20,21 +20,20 @@
 	@if (!string.IsNullOrWhiteSpace(_error))
 	{
 		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
-
 	}
 	else
 	{
 		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
-						FormName="submit-form" class="tf-form" novalidate>
-			<DataAnnotationsValidator />
+		                FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator/>
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
-									 Label="@LOC("Name")" Style="width:100%" AutoComplete="off" />
-					<FluentValidationMessage For="@(() => _form.Name)" />
+					                 Label="@LOC("Name")" Style="width:100%" AutoComplete="off"/>
+					<FluentValidationMessage For="@(() => _form.Name)"/>
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentInputLabel Label="@LOC("Parent")" />
+					<FluentInputLabel Label="@LOC("Parent")"/>
 					@{
 						var parentItems = _getParents();
 					}
@@ -42,40 +41,41 @@
 					{
 						<FluentStack>
 							<TucSelect TOption="TfSpacePage" SelectedOption="@_parentNode"
-									   SelectedOptionChanged="_selectedParentChanged"
-									   Style="width:100%" Items="@parentItems" Placeholder="@LOC("select...")"
-									   OptionValue="@(x=> x.Id.ToString())">
+							           SelectedOptionChanged="_selectedParentChanged"
+							           Style="width:100%" Items="@parentItems" Placeholder="@LOC("select...")"
+							           OptionValue="@(x => x.Id.ToString())">
 								<OptionTemplate Context="option">
-									<FluentIcon Value="@TfConstants.GetIcon(option.FluentIconName)" Slot="start" />
+									<FluentIcon Value="@TfConstants.GetIcon(option.FluentIconName)" Slot="start"/>
 									<span>@option.Name</span>
 								</OptionTemplate>
 							</TucSelect>
 							@if (_form.ParentId is not null)
 							{
-								<FluentButton IconStart="@TfConstants.GetIcon("Dismiss").WithColor(Color.Error)" OnClick="@(_ => _form.ParentId = null)" />
+								<FluentButton IconStart="@TfConstants.GetIcon("Dismiss").WithColor(Color.Error)"
+								              OnClick="@(_ => _form.ParentId = null)"/>
 							}
 						</FluentStack>
 					}
 					else
 					{
 						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("no parent options found")
-										 Style="width:100%" ReadOnly="true" />
+						                 Style="width:100%" Disabled="true"/>
 					}
-					<FluentValidationMessage For="@(() => _form.Type)" />
+					<FluentValidationMessage For="@(() => _form.Type)"/>
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<TucSelect TOption="TfSpacePageType" SelectedOption=@_form.Type SelectedOptionChanged="_typeChanged"
-							   Label="@LOC("Type")" Style="width:100%" Items="@(Enum.GetValues<TfSpacePageType>())"
-							   OptionValue="@((p)=> ((int)p).ToString())"
-							   OptionText="@(x=> x.ToDescriptionString())" />
-					<FluentValidationMessage For="@(() => _form.Type)" />
-				</FluentGridItem>
+					<FluentInputLabel Label="@LOC("Icon")"/>
+					<TucSelectIcon @bind-Value="_form.FluentIconName" Required="true"/>
+					<FluentValidationMessage For="@(() => _form.FluentIconName)"/>
+				</FluentGridItem>				
 				<FluentGridItem xs="6">
-					<FluentInputLabel Label="@LOC("Icon")" />
-					<TucSelectIcon @bind-Value="_form.FluentIconName" Required="true" />
-					<FluentValidationMessage For="@(() => _form.FluentIconName)" />
+					<TucSelect TOption="TfSpacePageType" SelectedOption=@_form.Type SelectedOptionChanged="_typeChanged"
+					           Label="@LOC("Type")" Style="width:100%" Items="@(Enum.GetValues<TfSpacePageType>())"
+					           OptionValue="@((p) => ((int)p).ToString())"
+					           OptionText="@(x => x.ToDescriptionString())" Disabled="!_isCreate"/>
+					<FluentValidationMessage For="@(() => _form.Type)"/>
 				</FluentGridItem>
 			</FluentGrid>
 			@if (_isCreate && _form.Type == TfSpacePageType.Page)
@@ -83,47 +83,51 @@
 				<FluentGrid>
 					<FluentGridItem xs="6">
 						<TucSelect TOption="Option<bool>" @bind-SelectedOption=@_copyOption
-								   Label="@LOC("Creation Template")" Style="width:100%" Items="@_copyOptions"
-								   OptionValue="@((p)=> p.Value.ToString())"
-								   OptionText="@(x=> x.Text)" />
+						           Label="@LOC("Creation Template")" Style="width:100%" Items="@_copyOptions"
+						           OptionValue="@((p) => p.Value.ToString())"
+						           OptionText="@(x => x.Text)"/>
 					</FluentGridItem>
 					<FluentGridItem xs="6">
 						@if (_copyOption.Value)
 						{
 							<TucSelect TOption="Option<Guid>" @bind-SelectedOption=@_copyPage
-									   Label="@LOC("Copy page")" Style="width:100%" Items="@_allPageOptions"
-									   OptionValue="@((p)=> p.Value.ToString())"
-									   OptionText="@(x=> x.Text)" />
+							           Label="@LOC("Copy page")" Style="width:100%" Items="@_allPageOptions"
+							           OptionValue="@((p) => p.Value.ToString())"
+							           OptionText="@(x => x.Text)"/>
 						}
 					</FluentGridItem>
 				</FluentGrid>
-			}
-			@if (_form.Type == TfSpacePageType.Page && !_copyOption.Value)
-			{
-				<FluentDivider Style="margin:15px 0" />
-				<FluentGrid>
-					<FluentGridItem xs="12">
-						<FluentInputLabel Label="@LOC("Page type")" />
-						<TucSelectComponent TOption="TfSpacePageAddonMeta" Items="@_pageComponents"
-											Value="_selectedPageComponent" ValueChanged="_pageComponentChanged"
-											OptionText="@(x=> x.Instance.AddonName)" OptionIcon="@(x=> x.Instance.AddonFluentIconName)" OptionDescription="@(x=> x.Instance.AddonDescription)"
-											OptionMatch="@((x,y)=> x.Instance?.AddonId == y.Instance.AddonId)" Disabled="!_isCreate" />
-						<FluentValidationMessage For="@(() => _form.ComponentId)" />
-					</FluentGridItem>
-				</FluentGrid>
-				@if (_selectedPageComponent is null)
+				@if (!_copyOption.Value)
 				{
-					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("Select a page type")</FluentMessageBar>
-				}
-				else
-				{
-					<TucErrorBoundry>
-						<DynamicComponent Type="_selectedPageComponent.Instance.GetType()" Parameters="@_getDynamicComponentParams()"
-										  @ref="typeSettingsComponent"></DynamicComponent>
-					</TucErrorBoundry>
-					<div>@_form.ComponentOptionsJson</div>
+					<FluentDivider Style="margin:15px 0"/>
+					<FluentGrid>
+						<FluentGridItem xs="12">
+							<FluentInputLabel Label="@LOC("Page type")"/>
+							<TucSelectComponent TOption="TfSpacePageAddonMeta" Items="@_pageComponents"
+							                    Value="_selectedPageComponent" ValueChanged="_pageComponentChanged"
+							                    OptionText="@(x => x.Instance.AddonName)"
+							                    OptionIcon="@(x => x.Instance.AddonFluentIconName)"
+							                    OptionDescription="@(x => x.Instance.AddonDescription)"
+							                    OptionMatch="@((x, y) => x.Instance?.AddonId == y.Instance.AddonId)"/>
+							<FluentValidationMessage For="@(() => _form.ComponentId)"/>
+						</FluentGridItem>
+					</FluentGrid>
+					@if (_selectedPageComponent is null)
+					{
+						<FluentMessageBar AllowDismiss="false"
+						                  Intent="@MessageIntent.Warning">@LOC("Select a page type")</FluentMessageBar>
+					}
+					else
+					{
+						<TucErrorBoundry>
+							<DynamicComponent Type="_selectedPageComponent.Instance.GetType()"
+							                  Parameters="@_getDynamicComponentParams()"
+							                  @ref="typeSettingsComponent"></DynamicComponent>
+						</TucErrorBoundry>
+					}
 				}
 			}
+
 		</FluentEditForm>
 	}
 </FluentDialogBody>

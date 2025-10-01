@@ -19,8 +19,6 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 	private TfNavigationState _navState = default!;
 	private bool _hasViewPersonalization = false;
 
-	private Dictionary<string, object>? _settingsAttributes = new();
-
 	public void Dispose()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
@@ -32,7 +30,6 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 		await base.OnInitializedAsync();
 		_navState = Navigator.GetRouteState();
 		await _init();
-		_settingsAttributes!.Add("title",LOC("Manage Settings"));
 
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfUIService.UserUpdated += On_UserChanged;

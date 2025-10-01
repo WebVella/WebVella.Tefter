@@ -11,10 +11,11 @@ public partial class TucPageLayout : TfBaseComponent
 	[Parameter] public bool ShowToolbar { get; set; } = true;
 	[Parameter] public string? Title { get; set; } = null;
 	[Parameter] public string? Area { get; set; }
+	[Parameter] public string? SubArea { get; set; }
 	[Parameter] public string? SubTitle { get; set; }
 	[Parameter] public Icon? Icon { get; set; } = null;
 	[Parameter] public TfColor? Color { get; set; } = null;
-	private string? _returnUrl = null;
+
 	private string _cssClass
 	{
 		get

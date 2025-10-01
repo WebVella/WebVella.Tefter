@@ -2,54 +2,54 @@
 
 
 .fluent-grid {
-	flex-wrap: nowrap !important;
+  flex-wrap: nowrap !important;
 }
 
 
 /*Message*/
 .fluent-messagebar-message .title {
-	display: block;
+  display: block;
 }
 
 div[class ^='fluent-messagebar'],
 .fluent-messagebar-notification,
 .fluent-messagebar-message {
-	animation: none !important;
+  animation: none !important;
 }
 
 .fluent-messagebar {
-	&.intent-success {
-		--success: var(--tf-green-600);
-		background-color: var(--tf-green-200) !important;
-		border: 1px solid var(--tf-green-200) !important;
-	}
+  &.intent-success {
+    --success: var(--tf-green-600);
+    background-color: var(--tf-green-200) !important;
+    border: 1px solid var(--tf-green-200) !important;
+  }
 
-	&.intent-error {
-		--error: var(--tf-red-600);
-		background-color: var(--tf-red-200) !important;
-		border: 1px solid var(--tf-red-200) !important;
-	}
+  &.intent-error {
+    --error: var(--tf-red-600);
+    background-color: var(--tf-red-200) !important;
+    border: 1px solid var(--tf-red-200) !important;
+  }
 
-	&.intent-warning {
-		--warning: var(--tf-orange-600);
-		background-color: var(--tf-orange-200) !important;
-		border: 1px solid var(--tf-orange-200) !important;
-	}
+  &.intent-warning {
+    --warning: var(--tf-orange-600);
+    background-color: var(--tf-orange-200) !important;
+    border: 1px solid var(--tf-orange-200) !important;
+  }
 
-	&.intent-info {
-		--info: var(--tf-blue-500);
-		background-color: var(--tf-blue-200) !important;
-		border: 1px solid var(--tf-blue-200) !important;
-	}
+  &.intent-info {
+    --info: var(--tf-blue-500);
+    background-color: var(--tf-blue-200) !important;
+    border: 1px solid var(--tf-blue-200) !important;
+  }
 }
 
 /*Form*/
 .fluent-input-label {
-	color: var(--tf-font-color-mute) !important;
+  color: var(--tf-font-color-mute) !important;
 }
 
 fluent-select::part(listbox) {
-	max-height: 200px;
+  max-height: 200px;
 }
 
 fluent-text-field,
@@ -58,193 +58,193 @@ fluent-select,
 fluent-search,
 fluent-text-area,
 fluent-combobox {
-	min-width: unset;
+  min-width: unset;
 
-	&::part(root), &::part(control) {
-		border-color: var(--tf-stroke-input);
+  &::part(root), &::part(control) {
+    border-color: var(--tf-stroke-input);
 
-		&::placeholder {
-			color: var(--tf-font-color-mute) !important;
-		}
-	}
+    &::placeholder {
+      color: var(--tf-font-color-mute) !important;
+    }
+  }
 
-	&.disabled {
-		opacity: 1;
+  &.disabled {
+    opacity: 1;
 
-		&::part(control) {
-			opacity: 1;
-		}
+    &::part(control) {
+      opacity: 1;
+    }
 
-		&::part(root), &::part(control) {
-			border-color: var(--tf-stroke-base);
-		}
-	}
+    &::part(root), &::part(control) {
+      border-color: var(--tf-stroke-base);
+      background: var(--tf-fill-color-base-1);      
+    }
+  }
 
-	&.readonly {
-		opacity: 1;
+  &.readonly {
+    opacity: 1;
 
-		&::part(control) {
-			opacity: 1;
-		}
+    &::part(control) {
+      opacity: 1;
+    }
 
-		&::part(root), &::part(control) {
-			border-color: var(--tf-stroke-base);
-			background: var(--tf-fill-color-base-1);
-		}
-	}
+    &::part(root), &::part(control) {
+      border-color: var(--tf-stroke-base);
+    }
+  }
 
-	&.with-prefix {
-		&::part(start) {
-			color: var(--tf-font-color-mute);
-		}
+  &.with-prefix {
+    &::part(start) {
+      color: var(--tf-font-color-mute);
+    }
 
-		&::part(control) {
-			padding-left: 0;
-		}
-	}
+    &::part(control) {
+      padding-left: 0;
+    }
+  }
 
-	&::part(selected-value) {
-		overflow:hidden;
-		text-overflow:ellipsis;
-	}
-}
-
-
-
-.tf-select-btn {
-	border-radius: 4px;
+  &::part(selected-value) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 fluent-switch::part(label) {
-	margin-inline-end: 0;
+  margin-inline-end: 0;
 }
 
 /*Dialog*/
 .fluent-dialog-header {
-	--dialog-padding:1rem;
-	border: 1px dashed var(--tf-stroke-base);
-	border-radius: var(--tf-border-radius-base);
-	padding: 0.25rem 0.5rem !important;
-	column-gap: 0 !important;
-	margin-bottom: var(--dialog-padding);
-	font-size: var(--tf-font-size-md);
-	position:relative;
+  --dialog-padding: 1rem;
+  border: 1px dashed var(--tf-stroke-base);
+  border-radius: var(--tf-border-radius-base);
+  padding: 0.25rem 0.5rem !important;
+  column-gap: 0 !important;
+  margin-bottom: var(--dialog-padding);
+  font-size: var(--tf-font-size-md);
+  position: relative;
 
-	fluent-button {
-		position:absolute;
-		right:0.5rem;
-		top:50%;
-		margin-top:-16px;
-		
-	}
+  fluent-button {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    margin-top: -16px;
+
+  }
 }
 
 .fluent-dialog-header .fluent-typography {
-	font-size: var(--tf-font-size-md) !important;
-	color:var(--tf-font-color-mute);
-	color:var(--tf-gray-400);
-	text-align:center;
+  font-size: var(--tf-font-size-md) !important;
+  color: var(--tf-font-color-mute);
+  color: var(--tf-gray-400);
+  text-align: center;
 }
 
 .fluent-dialog-header fluent-button::part(control) {
-	background: transparent;
+  background: transparent;
 }
+
 .fluent-dialog-main::part(control) {
-	padding: 1rem !important;
+  padding: 1rem !important;
 }
 
 .fluent-dialog-main.right::part(control),
 .fluent-dialog-main.left::part(control) {
-	--dialog-padding: 0px;
+  --dialog-padding: 0px;
 }
 
 
 /*Badge*/
 fluent-badge::part(control) {
-	font-size: 14px;
-	padding: 3px 5px;
+  font-size: 14px;
+  padding: 3px 5px;
 
-	fluent-button & {
-		padding: 1px 3px;
-	}
+  fluent-button & {
+    padding: 1px 3px;
+  }
 }
 
 fluent-badge.input-badge::part(control) {
-	padding: 7px 5px;
+  padding: 7px 5px;
 }
 
 
 /*Button*/
 fluent-button, fluent-anchor.tf-button {
-	--neutral-stroke-rest: var(--tf-stroke-button);
-	--neutral-stroke-control-rest: var(--neutral-stroke-rest);
-	--neutral-stroke-hover: var(--tf-stroke-button-hover);
-	--neutral-stroke-control-hover: var(--neutral-stroke-hover);
-	--neutral-fill-rest: var(--tf-white);
-	--neutral-fill-hover: var(--neutral-fill-rest);
-	background-color: var(--tf-white) !important;
-	border-radius: var(--tf-border-radius-xl);
-	color: var(--tf-font-color-base);
+  --neutral-stroke-rest: var(--tf-stroke-button);
+  --neutral-stroke-control-rest: var(--neutral-stroke-rest);
+  --neutral-stroke-hover: var(--tf-stroke-button-hover);
+  --neutral-stroke-control-hover: var(--neutral-stroke-hover);
+  --neutral-fill-rest: var(--tf-white);
+  --neutral-fill-hover: var(--neutral-fill-rest);
+  background-color: var(--tf-white) !important;
+  border-radius: var(--tf-border-radius-xl);
+  color: var(--tf-font-color-base);
 
-	&::part(control) {
-		&:focus-visible {
-			outline: none !important;
-		}
+  &::part(control) {
+    &:focus-visible {
+      outline: none !important;
+    }
 
-		&.icon-only::part(start) {
-			display: none;
-		}
-	}
+    &.icon-only::part(start) {
+      display: none;
+    }
+  }
 
-	&:hover {
-		background-color: var(--tf-fill-color-hover) !important;
-	}
+  &:hover {
+    background-color: var(--tf-fill-color-hover) !important;
+  }
 
-	&::part(start) {
-		margin-inline-end: 0.25rem;
-	}
+  &::part(start) {
+    margin-inline-end: 0.25rem;
+  }
 
-	&::part(end) {
-		margin-inline-start: 0.25rem;
-	}
+  &::part(end) {
+    margin-inline-start: 0.25rem;
+  }
 }
 
 fluent-anchor {
-	border-radius: var(--tf-border-radius-xl);
-	/*&.accent {
-		svg {
-			fill: var(--tf-white) !important;
-		}
-	}*/
-}
+  border-radius: var(--tf-border-radius-xl);
+  --tf-accent-store: var(--accent-fill-rest);
 
+  &.tf-button-mute {
+    svg {
+      --accent-fill-rest: var(--tf-stroke-button);
+    }
+
+    &:hover svg{
+      --accent-fill-rest: var(--tf-accent-store);
+    }
+  }
+}
 
 
 fluent-skeleton {
-	& + & {
-		margin-top: 5px;
-	}
+  & + & {
+    margin-top: 5px;
+  }
 }
 
 fluent-menu {
-	h5.fluent-typography {
-		font-size: var(--tf-font-size-sm) !important;
-		margin: 0 calc(var(--design-unit) * 1px);
-		padding: 0 calc(var(--design-unit) * 2px);
-		background: var(--tf-fill-color-base);
-		border-radius: var(--tf-border-radius-base);
-		color: var(--tf-font-color-base);
-	}
+  h5.fluent-typography {
+    font-size: var(--tf-font-size-sm) !important;
+    margin: 0 calc(var(--design-unit) * 1px);
+    padding: 0 calc(var(--design-unit) * 2px);
+    background: var(--tf-fill-color-base);
+    border-radius: var(--tf-border-radius-base);
+    color: var(--tf-font-color-base);
+  }
 
-	fluent-badge::part(control){
-		padding:0 3px 2px 3px;
-		font-size:var(--tf-font-size-sm);
-		line-height:1em;
+  fluent-badge::part(control) {
+    padding: 0 3px 2px 3px;
+    font-size: var(--tf-font-size-sm);
+    line-height: 1em;
 
-	}
+  }
 }
 
 /*Divider*/
 fluent-divider {
-	--neutral-stroke-divider-rest: var(--tf-stroke-invert-base);
+  --neutral-stroke-divider-rest: var(--tf-stroke-invert-base);
 }

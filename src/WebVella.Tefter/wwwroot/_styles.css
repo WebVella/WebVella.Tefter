@@ -391,6 +391,7 @@ fluent-search.disabled::part(control),
 fluent-text-area.disabled::part(control),
 fluent-combobox.disabled::part(control) {
   border-color: var(--tf-stroke-base);
+  background: var(--tf-fill-color-base-1);
 }
 fluent-text-field.readonly,
 fluent-number-field.readonly,
@@ -421,7 +422,6 @@ fluent-search.readonly::part(control),
 fluent-text-area.readonly::part(control),
 fluent-combobox.readonly::part(control) {
   border-color: var(--tf-stroke-base);
-  background: var(--tf-fill-color-base-1);
 }
 fluent-text-field.with-prefix::part(start),
 fluent-number-field.with-prefix::part(start),
@@ -447,9 +447,6 @@ fluent-text-area::part(selected-value),
 fluent-combobox::part(selected-value) {
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.tf-select-btn {
-  border-radius: 4px;
 }
 fluent-switch::part(label) {
   margin-inline-end: 0;
@@ -533,11 +530,13 @@ fluent-anchor.tf-button::part(end) {
 }
 fluent-anchor {
   border-radius: var(--tf-border-radius-xl);
-  /*&.accent {
-		svg {
-			fill: var(--tf-white) !important;
-		}
-	}*/
+  --tf-accent-store: var(--accent-fill-rest);
+}
+fluent-anchor.tf-button-mute svg {
+  --accent-fill-rest: var(--tf-stroke-button);
+}
+fluent-anchor.tf-button-mute:hover svg {
+  --accent-fill-rest: var(--tf-accent-store);
 }
 fluent-skeleton + fluent-skeleton {
   margin-top: 5px;
@@ -2256,8 +2255,19 @@ fluent-dialog .tf-divider,
 .tf-select-component .tf-card__content {
   padding-top: 0;
 }
-.tf-select-component .tf-card:hover {
+.tf-select-component.disabled .tf-card {
+  background: var(--tf-fill-color-base-1);
+  border: 1px solid var(--tf-stroke-base);
+}
+.tf-select-component:not(.disabled):not(.readonly) .tf-card:hover {
   border: 1px solid var(--tf-stroke-input-hover);
+}
+.tf-select-component.readonly .tf-card {
+  border: 1px solid var(--tf-stroke-base);
+}
+.tf-select-component.readonly .tf-card:hover {
+  background: var(--tf-fill-color-base-1);
+  cursor: no-drop;
 }
 .tf-select-component .tf-component {
   display: flex;
@@ -2310,6 +2320,16 @@ fluent-dialog .tf-divider,
 }
 .tf-select-component fluent-menu-item::part(content) {
   flex: 1 1 auto;
+}
+.tf-select-btn {
+  border-radius: 4px;
+}
+.tf-select-btn.disabled {
+  --disabled-opacity: 1;
+  background: var(--tf-fill-color-base-1) !important;
+}
+.tf-select-btn.disabled::part(control) {
+  border-color: var(--tf-stroke-base) !important;
 }
 .tf-select-list {
   width: 100%;

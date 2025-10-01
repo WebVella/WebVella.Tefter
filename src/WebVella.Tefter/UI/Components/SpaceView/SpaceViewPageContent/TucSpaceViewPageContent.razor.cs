@@ -3,7 +3,6 @@
 public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 {
 	#region << Init >>
-	// Dependency Injection
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 
 	// State
@@ -11,7 +10,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private bool _isDataLoading = true;
 	private bool _selectAllLoading = false;
 	private ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> _componentMetaDict = default!;
-	public TfNavigationState _navState = default!;
+	private TfNavigationState _navState = default!;
 	private TfUser _currentUser = default!;
 	private TfSpace? _space = null;
 	private TfSpacePage? _spacePage = null;
@@ -33,7 +32,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private RenderFragment _caretUp = default!;
 	private RenderFragment _manageIcon = default!;
 	private StringBuilder _columnSortClass = new();
-
+	private string? _managePageUrl = null;
+	private Dictionary<string, object>? _manageBtnAttributes = new();
 	public async ValueTask DisposeAsync()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
@@ -50,6 +50,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		if (Context is null)
+			throw new Exception("Context cannot be null");		
 		_componentMetaDict = TfUIService.GetSpaceViewColumnComponentDict();
 		_objectRef = DotNetObjectReference.Create(this);
 		await _init();
@@ -78,6 +80,9 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			builder.CloseComponent();
 		};
 		_isDataLoading = false;
+		_manageBtnAttributes!.Add("title",LOC("Manage Page"));
+		_managePageUrl = string.Format(TfConstants.SpacePagePageManageUrl, Context.SpacePage.SpaceId,
+			Context.SpacePage.Id).GenerateWithLocalAsReturnUrl(Navigator.Uri);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -128,8 +133,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			else
 				_navState = navState;
 
-			if (Context is null)
-				throw new Exception("Context cannot be null");
 			Guid? oldViewId = _spaceView is not null ? _spaceView.Id : null;
 			_spaceView = null;
 			if (_navState.SpaceId is null || _navState.SpacePageId is null)

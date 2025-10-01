@@ -55,9 +55,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 			{
 				Url = TfConstants.AdminDashboardUrl,
 				Tooltip = LOC("Administration"),
-				IconCollapsed = TfConstants.GetIcon("Settings"),
-				IconExpanded = TfConstants.GetIcon("Settings"),
-				//Text = LOC("Admin"),
+				Text = LOC("ADMIN"),
 				Selected = navState.RouteNodes.Count > 0 && navState.RouteNodes[0] == RouteDataNode.Admin
 			});
 			_adminMenu.Add(new TfMenuItem

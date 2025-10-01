@@ -1,6 +1,12 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-@if (_isReadonly)
+@if (Disabled)
+{
+	<FluentTextField Disabled="true" Value="@Value?.ToString()" Style="width:100%">
+		<FluentIcon Value="(_icon is null ? null : IconsExtensions.GetInstance(_icon))" Slot="start" />
+	</FluentTextField>
+}
+else if (_isReadonly)
 {
 	<FluentTextField ReadOnly="true" Value="@Value?.ToString()" Style="width:100%">
 		<FluentIcon Value="(_icon is null ? null : IconsExtensions.GetInstance(_icon))" Slot="start" />
@@ -13,7 +19,7 @@ else
 			<FluentButton Id="@_elementId" Style="width:100%" Class="tf-select-btn"
 						  Appearance="@Appearance.Outline"
 						  IconStart="(_icon is null ? null : IconsExtensions.GetInstance(_icon))"
-						  OnClick="@(_=> _onOpenChanged(true))">
+						  OnClick="@(_=> _onOpenChanged(true))" Disabled="@(Disabled || Readonly)">
 				@if (!String.IsNullOrWhiteSpace(Value))
 				{
 					<span>@Value</span>
@@ -28,7 +34,7 @@ else
 				}
 				<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-fill-strong-focus)" Color="@Color.Custom" />
 			</FluentButton>
-			@if (!Required && !String.IsNullOrWhiteSpace(Value))
+			@if (!Required && !String.IsNullOrWhiteSpace(Value) && !Disabled && !Readonly)
 			{
 				<FluentButton IconStart="@TfConstants.GetIcon("Dismiss").WithColor(Color.Error)" OnClick="@(_ => _optionChanged(null))" />
 			}

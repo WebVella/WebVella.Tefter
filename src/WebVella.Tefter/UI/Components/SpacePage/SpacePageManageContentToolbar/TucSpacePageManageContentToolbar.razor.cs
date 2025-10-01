@@ -3,7 +3,7 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 {
 	private bool _isLoading = true;
 	private List<TfMenuItem> _menu = new();
-
+	private TfSpacePage? _spacePage = null;
 	public void Dispose()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
@@ -25,20 +25,31 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 		try
 		{
 			_menu = new();
+			if (navState.SpacePageId is null)
+				throw new Exception("Space page Id not found in URL");
+			_spacePage = TfUIService.GetSpacePage(navState.SpacePageId.Value);
+			var pageMeta = TfUIService.GetSpacePagesComponentsMeta();
+			var component = pageMeta.FirstOrDefault(x => x.Instance.AddonId == _spacePage.ComponentId);
+			if(_spacePage is null)
+				return;
+			var pageUrl = string.Format(TfConstants.SpacePagePageManageUrl, navState.SpaceId, navState.SpacePageId)
+				.GenerateWithLocalAsReturnUrl(navState.ReturnUrl);
+			var addonUrl = string.Format(TfConstants.SpacePagePageManageAddonUrl, navState.SpaceId, navState.SpacePageId)
+				.GenerateWithLocalAsReturnUrl(navState.ReturnUrl);			
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),
-				Url = string.Format(TfConstants.SpacePagePageManageUrl, navState.SpaceId, navState.SpacePageId),
+				Url = pageUrl,
 				Selected = navState.NodesDict.Keys.Count == 5 && navState.HasNode(RouteDataNode.Manage, 4),
-				Text = LOC("Details"),
-				IconCollapsed = TfConstants.GetIcon("Info")
+				Text = LOC("Page"),
+				IconCollapsed = TfConstants.GetIcon(_spacePage.FluentIconName)
 			});
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),
-				Url = string.Format(TfConstants.SpacePagePageManageAddonUrl, navState.SpaceId, navState.SpacePageId),
+				Url = addonUrl,
 				Selected = navState.NodesDict.Keys.Count == 5 && navState.HasNode(RouteDataNode.Addon, 4),
-				Text = LOC("Addon"),
+				Text = component is null ? LOC("Addon") : component.Instance.AddonName,
 				IconCollapsed = TfConstants.GetIcon("PlugConnected")
 			});
 		}

@@ -483,6 +483,21 @@ public static partial class NavigatorExt
 		return localUrl;
 	}
 
+	public static string? GenerateWithLocalAsReturnUrl(this string mainUrl, string? returnUrl)
+	{
+		if (String.IsNullOrWhiteSpace(mainUrl)) return null;
+		if (String.IsNullOrWhiteSpace(returnUrl)) return mainUrl;
+		mainUrl = !mainUrl.StartsWith("http") ? $"http://localhost{mainUrl}" : mainUrl;
+		returnUrl = !returnUrl.StartsWith("http") ? $"http://localhost{returnUrl}" : returnUrl;
+		
+		var returnUri = new Uri(returnUrl);
+		var mainUri = new Uri(mainUrl);
+		var queryDictionary = System.Web.HttpUtility.ParseQueryString(mainUri.Query);
+		queryDictionary[TfConstants.ReturnUrlQueryName] = ProcessQueryValueForUrl(returnUri.PathAndQuery);
+
+		return mainUri.LocalPath + "?" + queryDictionary.ToString();		
+	}
+
 	public static void ReloadCurrentUrl(this NavigationManager navigator)
 	{
 		navigator.NavigateTo(navigator.Uri, true);
