@@ -10,7 +10,7 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -18,10 +18,8 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 		if (UriInitialized != args.Uri)
 			await _init(args);
 	}
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_menu = new();
@@ -32,26 +30,30 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 			var component = pageMeta.FirstOrDefault(x => x.Instance.AddonId == _spacePage.ComponentId);
 			if(_spacePage is null)
 				return;
-			var pageUrl = string.Format(TfConstants.SpacePagePageManageUrl, navState.SpaceId, navState.SpacePageId)
-				.GenerateWithLocalAsReturnUrl(navState.ReturnUrl);
-			var addonUrl = string.Format(TfConstants.SpacePagePageManageAddonUrl, navState.SpaceId, navState.SpacePageId)
-				.GenerateWithLocalAsReturnUrl(navState.ReturnUrl);			
+
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),
-				Url = pageUrl,
+				Url = string.Format(TfConstants.SpacePagePageManageUrl, navState.SpaceId, navState.SpacePageId)
+					.GenerateWithLocalAsReturnUrl(navState.ReturnUrl),
 				Selected = navState.NodesDict.Keys.Count == 5 && navState.HasNode(RouteDataNode.Manage, 4),
 				Text = LOC("Page"),
 				IconCollapsed = TfConstants.GetIcon(_spacePage.FluentIconName)
 			});
-			_menu.Add(new TfMenuItem
+			var tabs = component.Instance.GetManagementTabs();
+			foreach (var tab in component.Instance.GetManagementTabs())
 			{
-				Id = Guid.NewGuid().ToString(),
-				Url = addonUrl,
-				Selected = navState.NodesDict.Keys.Count == 5 && navState.HasNode(RouteDataNode.Addon, 4),
-				Text = component is null ? LOC("Addon") : component.Instance.AddonName,
-				IconCollapsed = TfConstants.GetIcon("PlugConnected")
-			});
+				_menu.Add(new TfMenuItem
+				{
+					Id = Guid.NewGuid().ToString(),
+					Url = string.Format(TfConstants.SpacePagePageManageTabUrl, navState.SpaceId, navState.SpacePageId, tab.Slug)
+						.GenerateWithLocalAsReturnUrl(navState.ReturnUrl),
+					Selected = navState.NodesDict.Keys.Count == 5 && navState.HasNode(RouteDataNode.ManageTab, 4) && navState.ManageTab == tab.Slug,
+					Text = tab.Label,
+					IconCollapsed = TfConstants.GetIcon(String.IsNullOrWhiteSpace(tab.FluentIconName) ? "PlugConnected" : tab.FluentIconName)
+				});				
+			}
+
 		}
 		finally
 		{

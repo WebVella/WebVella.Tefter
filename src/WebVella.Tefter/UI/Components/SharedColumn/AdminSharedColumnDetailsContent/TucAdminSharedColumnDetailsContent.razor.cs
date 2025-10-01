@@ -13,14 +13,14 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 		TfUIService.SharedColumnUpdated += On_SharedColumnUpdated;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_SharedColumnUpdated(object? caller, TfSharedColumn column)
 	{
-		await _init(column: column);
+		await _init(navState:Navigator.GetRouteState(), column: column);
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -29,11 +29,8 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 			await _init(navState: args);
 	}
 
-	private async Task _init(TfNavigationState? navState = null, TfSharedColumn? column = null)
+	private async Task _init(TfNavigationState navState, TfSharedColumn? column = null)
 	{
-		if (navState == null)
-			navState = TfAuthLayout.NavigationState;
-
 		try
 		{
 			if (column is not null && column.Id == _column?.Id)

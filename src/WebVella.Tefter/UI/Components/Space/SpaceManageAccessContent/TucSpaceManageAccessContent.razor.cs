@@ -16,7 +16,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 		TfUIService.SpaceUpdated += On_SpaceUpdated;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
@@ -30,15 +30,12 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 
 	private async void On_SpaceUpdated(object? caller, TfSpace args)
 	{
-		await _init(space: args);
+		await _init(navState:Navigator.GetRouteState(), space: args);
 	}
 
-	private async Task _init(TfNavigationState? navState = null, TfSpace? space = null)
+	private async Task _init(TfNavigationState navState, TfSpace? space = null)
 	{
-		if (navState == null)
-			_navState = TfAuthLayout.NavigationState;
-		else
-			_navState = navState;
+		_navState = navState;
 
 		try
 		{

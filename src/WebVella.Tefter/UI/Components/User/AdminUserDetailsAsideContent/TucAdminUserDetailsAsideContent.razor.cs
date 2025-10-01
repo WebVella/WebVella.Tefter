@@ -13,7 +13,7 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 		TfUIService.UserCreated += On_UserCreated;
 		TfUIService.UserUpdated += On_UserUpdated;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
@@ -22,12 +22,12 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 
 	private async void On_UserCreated(object? caller, TfUser user)
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 	}
 
 	private async void On_UserUpdated(object? caller, TfUser user)
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -36,11 +36,8 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 			await _init(args);
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
-
 		try
 		{
 			_search = navState.SearchAside;

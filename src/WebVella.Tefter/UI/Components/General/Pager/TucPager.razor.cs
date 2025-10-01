@@ -35,7 +35,7 @@ public partial class TucPager : TfBaseComponent, IDisposable
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(null);
+		await _init(Navigator.GetRouteState());
 		KeyCodeService.RegisterListener(HandleKeyDownAsync);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
@@ -46,10 +46,8 @@ public partial class TucPager : TfBaseComponent, IDisposable
 			await _init(navState: args);
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			if (!EnableShortcuts)

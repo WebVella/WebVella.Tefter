@@ -15,7 +15,7 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 		TfUIService.SharedColumnCreated += On_SharedColumnCreated;
 		TfUIService.SharedColumnUpdated += On_SharedColumnUpdated;
 		TfUIService.SharedColumnDeleted += On_SharedColumnDeleted;
@@ -24,17 +24,17 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 
 	private async void On_SharedColumnCreated(object? caller, TfSharedColumn item)
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 	}
 
 	private async void On_SharedColumnUpdated(object? caller, TfSharedColumn item)
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 	}
 
 	private async void On_SharedColumnDeleted(object? caller, TfSharedColumn item)
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 	}
 
 
@@ -44,10 +44,8 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 			await _init(args);
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState == null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_search = navState.SearchAside;

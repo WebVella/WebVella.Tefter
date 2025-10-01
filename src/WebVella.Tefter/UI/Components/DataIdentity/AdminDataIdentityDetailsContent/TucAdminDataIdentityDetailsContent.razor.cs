@@ -13,14 +13,14 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init();
+		await _init(navState:Navigator.GetRouteState());
 		TfUIService.DataIdentityUpdated += On_DataIdentityUpdated;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_DataIdentityUpdated(object? caller, TfDataIdentity args)
 	{
-		await _init(identity: args);
+		await _init(navState:Navigator.GetRouteState(), identity: args);
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -29,10 +29,8 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 			await _init(navState: args);
 	}
 
-	private async Task _init(TfNavigationState? navState = null, TfDataIdentity? identity = null)
+	private async Task _init(TfNavigationState navState, TfDataIdentity? identity = null)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			if (identity is not null && identity.DataIdentity == _identity?.DataIdentity)

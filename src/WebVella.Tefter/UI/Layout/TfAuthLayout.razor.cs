@@ -9,6 +9,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	public ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= Navigator_LocationChanged;
+
 		TfUIService.CurrentUserChanged -= CurrentUser_Changed;
 		return ValueTask.CompletedTask;
 	}

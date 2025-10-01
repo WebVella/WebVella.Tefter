@@ -1894,7 +1894,6 @@ fluent-dialog .tf-divider,
   padding-right: 0.5rem;
   display: flex;
   align-items: center;
-  padding-top: 5px;
 }
 .tf-page-layout__navigation__left__back-btn fluent-anchor {
   background: var(--tf-white);

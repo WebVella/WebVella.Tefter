@@ -9,7 +9,7 @@ public partial class TucAdminPageDetailsContent : TfBaseComponent, IDisposable
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
@@ -19,10 +19,8 @@ public partial class TucAdminPageDetailsContent : TfBaseComponent, IDisposable
 			await _init(navState: args);
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState == null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_item = null;

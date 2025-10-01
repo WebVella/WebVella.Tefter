@@ -14,7 +14,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfUIService.DatasetCreated += On_DatasetChanged;
@@ -29,14 +29,11 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 
 	private async void On_DatasetChanged(object? caller, TfDataset args)
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState == null)
-			navState = TfAuthLayout.NavigationState;
-
 		try
 		{
 			if (navState.DataProviderId is null)

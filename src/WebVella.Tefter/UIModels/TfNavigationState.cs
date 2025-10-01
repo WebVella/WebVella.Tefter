@@ -16,6 +16,7 @@ public partial record TfNavigationState
 	public Guid? SpaceViewPresetId { get; init; }
 	public TfTemplateResultType? TemplateResultType { get; init; }
 	public Guid? TemplateId { get; init; }
+	public string? ManageTab { get; init; }
 	public List<RouteDataNode> RouteNodes { get; init; } = new List<RouteDataNode>();
 
 	public int? Page { get; init; } = null;

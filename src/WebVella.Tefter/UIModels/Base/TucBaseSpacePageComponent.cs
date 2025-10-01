@@ -24,7 +24,7 @@ public abstract class TucBaseSpacePageComponent : ComponentBase, ITfSpacePageAdd
 	public virtual Task<string> OnPageCreated(IServiceProvider serviceProvider, TfSpacePageAddonContext context) => Task.FromResult(context.ComponentOptionsJson);
 	public virtual Task<string> OnPageUpdated(IServiceProvider serviceProvider, TfSpacePageAddonContext context) => Task.FromResult(context.ComponentOptionsJson);
 	public virtual Task OnPageDeleted(IServiceProvider serviceProvider, TfSpacePageAddonContext context) => Task.CompletedTask;
-	public List<TfScreenRegionTab> GetManagementTabs() => new();
+	public virtual List<TfScreenRegionTab> GetManagementTabs() => new();
 
 	#region << Private properties >>
 	protected IStringLocalizer LC;

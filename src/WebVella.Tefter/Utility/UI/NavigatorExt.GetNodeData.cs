@@ -199,7 +199,7 @@ public static partial class NavigatorExt
 			result = result.AddRouteNodes(RouteDataNode.SpacePageId);
 			result = result with { SpacePageId = outGuid };
 			result = result.Front_Space_SpaceId_Page_PageId_Manage_NodesProcess();
-			result = result.Front_Space_SpaceId_Page_PageId_Addon_NodesProcess();
+			result = result.Front_Space_SpaceId_Page_PageId_ManageTab_NodesProcess();
 		}
 		return result;
 	}
@@ -224,7 +224,7 @@ public static partial class NavigatorExt
 		return result;
 	}	
 	
-	private static TfNavigationState Front_Space_SpaceId_Page_PageId_Addon_NodesProcess(this TfNavigationState result)
+	private static TfNavigationState Front_Space_SpaceId_Page_PageId_ManageTab_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
 		    || result.RouteNodes[0] != RouteDataNode.Space
@@ -237,9 +237,10 @@ public static partial class NavigatorExt
 		if (result.NodesDict.Count < 5)
 			return result;
 
-		if (result.NodesDict[4] == TfConstants.RouteNameAddon)
+		if (!String.IsNullOrWhiteSpace(result.NodesDict[4]) && result.NodesDict[4] != TfConstants.RouteNameManage)
 		{
-			result = result.AddRouteNodes(RouteDataNode.Addon);
+			result = result with { ManageTab = result.NodesDict[4] };
+			result = result.AddRouteNodes(RouteDataNode.ManageTab);
 		}
 		return result;
 	}		

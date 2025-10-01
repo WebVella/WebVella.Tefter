@@ -23,7 +23,7 @@ public class NavigatorExtTests
 		Guid dataId = Guid.NewGuid();
 		Guid pageId = Guid.NewGuid();
 		Guid templateId = Guid.NewGuid();
-
+		string manageOption = "addon-manage-option";
 		//When
 		uri = new Uri($"{baseUrl}");
 		result = NavigatorExt.GetNodeData(uri);
@@ -335,7 +335,7 @@ public class NavigatorExtTests
 		result.SpaceId.Should().Be(spaceId);
 		result.SpacePageId.Should().Be(pageId);		
 		
-		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpacePagePageManageAddonUrl, spaceId, pageId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpacePagePageManageTabUrl, spaceId, pageId,manageOption)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(5);
@@ -343,9 +343,10 @@ public class NavigatorExtTests
 		result.RouteNodes[1].Should().Be(RouteDataNode.SpaceId);
 		result.RouteNodes[2].Should().Be(RouteDataNode.SpacePage);
 		result.RouteNodes[3].Should().Be(RouteDataNode.SpacePageId);
-		result.RouteNodes[4].Should().Be(RouteDataNode.Addon);
+		result.RouteNodes[4].Should().Be(RouteDataNode.ManageTab);
 		result.SpaceId.Should().Be(spaceId);
 		result.SpacePageId.Should().Be(pageId);				
+		result.ManageTab.Should().Be(manageOption);				
 		
 		#endregion
 	}

@@ -1,25 +1,28 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucSpaceViewManagePageContent : TfBaseComponent, IDisposable
+public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDisposable
 {
 	#region << Init >>
+
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 
 	// State
 	private bool _isDataLoading = true;
 	private TfNavigationState _navState = null!;
 	private TfSpaceView? _spaceView = null;
+
 	public void Dispose()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 		TfUIService.SpaceViewColumnsChanged -= On_SpaceViewUpdated;
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Context is null)
-			throw new Exception("Context cannot be null");		
-		await _init();
+			throw new Exception("Context cannot be null");
+		await _init(Navigator.GetRouteState());
 		_isDataLoading = false;
 	}
 
@@ -32,36 +35,36 @@ public partial class TucSpaceViewManagePageContent : TfBaseComponent, IDisposabl
 			TfUIService.SpaceViewColumnsChanged += On_SpaceViewUpdated;
 		}
 	}
+
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
-		if (UriInitialized != args.Uri)
+		await InvokeAsync(async () =>
 		{
-			await _init(navState: args);
-		}
+			if (UriInitialized != args.Uri)
+			{
+				await _init(args);
+			}
+		});
 	}
+
 	private async void On_SpaceViewUpdated(object? caller, List<TfSpaceViewColumn> args)
 	{
 		await _init(null);
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-
 		try
 		{
 			_isDataLoading = true;
 			await InvokeAsync(StateHasChanged);
-
-			if (navState == null)
-				_navState = TfAuthLayout.NavigationState;
-			else
-				_navState = navState;
-
-			Guid? oldViewId = _spaceView is not null ? _spaceView.Id : null;
+			_navState = navState;
 			_spaceView = null;
-			if (_navState.SpaceId is null || _navState.SpacePageId is null)
+			var options =
+				JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(Context!.SpacePage.ComponentOptionsJson);
+			if (options is null || options.SpaceViewId is null)
 				return;
-
+			_spaceView = TfUIService.GetSpaceView(options.SpaceViewId.Value);
 		}
 		finally
 		{
@@ -72,5 +75,4 @@ public partial class TucSpaceViewManagePageContent : TfBaseComponent, IDisposabl
 	}
 
 	#endregion
-
 }

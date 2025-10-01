@@ -52,7 +52,7 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init();
+		await _init(Navigator.GetRouteState());
 		_isLoading = false;
 		TalkService.ThreadCreated += On_ThreadChanged;
 		TalkService.ThreadUpdated += On_ThreadChanged;
@@ -76,23 +76,21 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 		await base.OnParametersSetAsync();
 		if (_channelId == Channel?.Id && _dataIdentityValue == DataIdentityValue)
 			return;
-		await _init();
+		await _init(Navigator.GetRouteState());
 		await InvokeAsync(StateHasChanged);
 	}
 
 	private async void On_ThreadChanged(object? caller, TalkThread args)
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await _init(navState: args);
 	}
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_threads = new();

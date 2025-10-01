@@ -35,7 +35,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init();
+		await _init(Navigator.GetRouteState());
 		_isLoading = false;
 		AssetsService.AssetCreated += On_AssetChanged;
 		AssetsService.AssetUpdated += On_AssetChanged;
@@ -60,24 +60,22 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		await base.OnParametersSetAsync();
 		if (_folderId == Folder?.Id && _dataIdentityValue == DataIdentityValue)
 			return;
-		await _init();
+		await _init(Navigator.GetRouteState());
 		await InvokeAsync(StateHasChanged);
 
 	}
 
 	private async void On_AssetChanged(object? caller, Asset args)
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await _init(navState: args);
 	}
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_items = new();

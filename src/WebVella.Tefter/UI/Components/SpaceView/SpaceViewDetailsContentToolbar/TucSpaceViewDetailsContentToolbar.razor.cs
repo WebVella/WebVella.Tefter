@@ -12,7 +12,7 @@ public partial class TucSpaceViewDetailsContentToolbar : TfBaseComponent, IDispo
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfUIService.SpaceViewUpdated += On_SpaceViewUpdated;
 		TfUIService.SpaceViewColumnsChanged += On_SpaceViewColumnsUpdated;
@@ -24,22 +24,20 @@ public partial class TucSpaceViewDetailsContentToolbar : TfBaseComponent, IDispo
 	}
 	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
 	{
-		await _init(null);
+		await _init(Navigator.GetRouteState());
 	}
 
 	private async void On_SpaceViewColumnsUpdated(object? caller, List<TfSpaceViewColumn> args)
 	{
-		await _init(null);
+		await _init(Navigator.GetRouteState());
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_menu = new();
-			if (navState is null || navState.SpaceId is null || navState.SpaceViewId is null)
+			if (navState.SpaceId is null || navState.SpaceViewId is null)
 				return;
 
 			var spaceView = TfUIService.GetSpaceView(navState.SpaceViewId.Value);

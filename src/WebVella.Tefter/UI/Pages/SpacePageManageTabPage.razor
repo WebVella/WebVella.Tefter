@@ -1,4 +1,4 @@
-﻿@page "/space/{SpaceId:guid}/page/{PageId:guid}/addon"
+﻿@page "/space/{SpaceId:guid}/page/{PageId:guid}/{Tab}"
 @inherits TfBasePage
 
 <TucLayoutListDetails>
@@ -12,7 +12,7 @@
 		<TucSpacePageAsideContent/>
 	</AsideContent>
 	<Content>
-		<TucSpacePageManageAddonContent/>
+		<TucSpacePageManageTabContent/>
 	</Content>
 </TucLayoutListDetails>
 

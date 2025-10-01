@@ -76,7 +76,7 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 	protected override async Task OnInitializedAsync()
 	{
 		_currentUser = TfAuthLayout.CurrentUser;
-		await _init();
+		await _init(Navigator.GetRouteState());
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 		_isLoaded = true;
 	}
@@ -101,10 +101,8 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 		if (_uriInitialized != args.Uri)
 			await _init(navState: args);
 	}
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_options = null;

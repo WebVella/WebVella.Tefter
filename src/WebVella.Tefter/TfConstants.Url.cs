@@ -84,7 +84,7 @@ public partial class TfConstants
 	public static string SpacePageUrl = $"/{RouteNameSpace}/{{0}}";
 	public static string SpacePagePageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpacePage}/{{1}}";
 	public static string SpacePagePageManageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpacePage}/{{1}}/{RouteNameManage}";
-	public static string SpacePagePageManageAddonUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpacePage}/{{1}}/{RouteNameAddon}";
+	public static string SpacePagePageManageTabUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpacePage}/{{1}}/{{2}}";
 	public static string SpaceManagePageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}";
 	public static string SpaceManagePagesPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}/{RouteNamePages}";
 	public static string SpaceManageAccessPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}/{RouteNameAccess}";

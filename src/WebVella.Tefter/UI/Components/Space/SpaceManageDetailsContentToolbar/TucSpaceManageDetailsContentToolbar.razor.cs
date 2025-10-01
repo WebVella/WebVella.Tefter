@@ -11,7 +11,7 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDis
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfUIService.SpaceUpdated += On_SpaceUpdated;
 	}
@@ -22,17 +22,15 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDis
 	}
 	private async void On_SpaceUpdated(object? caller, TfSpace args)
 	{
-		await _init(null);
+		await _init(Navigator.GetRouteState());
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_menu = new();
-			if (navState is null || navState.SpaceId is null)
+			if (navState.SpaceId is null)
 				return;
 
 			var space = TfUIService.GetSpace(navState.SpaceId.Value);

@@ -1,0 +1,39 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@if (_spaceView is null && _isDataLoading)
+{
+}
+else if (_spaceView is null)
+{
+	<div style="@("padding:var(--tf-layout-content-padding)")">
+		<FluentMessageBar Title="No space view found"
+		                  Style="@("border: 1px solid var(--neutral-base-color)")"
+		                  Intent="MessageIntent.Info"
+		                  AllowDismiss="false">
+			Space view not found
+		</FluentMessageBar>
+	</div>
+}
+else if (_navState.ManageTab == "columns")
+{
+	<div style="@("padding:var(--tf-layout-content-padding)")">
+		<div>view manage COLUMNS</div>
+	</div>
+}
+else if (_navState.ManageTab == "presets")
+{
+	<div style="@("padding:var(--tf-layout-content-padding)")">
+		<div>view manage PRESETS</div>
+	</div>
+}
+else
+{
+	<div style="@("padding:var(--tf-layout-content-padding)")">
+		<FluentMessageBar Title="Tab Not found"
+		                  Style="@("border: 1px solid var(--neutral-base-color)")"
+		                  Intent="MessageIntent.Info"
+		                  AllowDismiss="false">
+			No content is found for this tab
+		</FluentMessageBar>
+	</div>
+}

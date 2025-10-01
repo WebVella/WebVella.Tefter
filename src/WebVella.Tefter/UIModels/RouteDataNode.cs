@@ -83,6 +83,6 @@ public enum RouteDataNode
 	Filters,
 	[Description("Sorts")]
 	Sorts,
-	[Description("Addon")]
-	Addon,	
+	[Description("ManageOption")]
+	ManageTab,	
 }

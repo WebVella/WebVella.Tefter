@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDisposable
 {
 	private List<TfRepositoryFile>? _items = null;
@@ -11,6 +12,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	private string _uploadId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 
 	private FluentSearch? _refSearch = null;
+
 	public void Dispose()
 	{
 		TfUIService.FileRepositoryCreated -= On_RepositoryFileChanged;
@@ -18,10 +20,11 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 		TfUIService.FileRepositoryDeleted -= On_RepositoryFileChanged;
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
-		await _init();
+		await _init(Navigator.GetRouteState());
 		TfUIService.FileRepositoryCreated += On_RepositoryFileChanged;
 		TfUIService.FileRepositoryUpdated += On_RepositoryFileChanged;
 		TfUIService.FileRepositoryDeleted += On_RepositoryFileChanged;
@@ -45,18 +48,14 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 
 	private async void On_RepositoryFileChanged(object? caller, TfRepositoryFile args)
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
 		try
 		{
-			if (navState is not null)
-				_navState = navState;
-			else
-				_navState = TfAuthLayout.NavigationState;
-
+			_navState = navState;
 			_items = TfUIService.GetRepositoryFiles(search: _search);
 		}
 		finally
@@ -104,17 +103,18 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	{
 		progressPercent = e.ProgressPercent;
 	}
+
 	private async Task _editFile(TfRepositoryFile file)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucFileRepositoryFileUpdateDialog>(
-		file,
-		new DialogParameters()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			file,
+			new DialogParameters()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
@@ -135,7 +135,6 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 		{
 			ProcessException(ex);
 		}
-
 	}
 
 	private async Task _searchValueChanged(string search)
@@ -143,9 +142,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 		search = search?.Trim();
 		if (_search == search) return;
 		_search = search;
-		var queryDict = new Dictionary<string, object>{
-			{ TfConstants.SearchQueryName, _search}
-		};
+		var queryDict = new Dictionary<string, object> { { TfConstants.SearchQueryName, _search } };
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
@@ -153,6 +150,5 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	{
 		await JSRuntime.InvokeVoidAsync("Tefter.copyToClipboard", file.Uri);
 		ToastService.ShowSuccess(LOC("Tefter Uri copied"));
-
 	}
 }

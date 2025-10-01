@@ -13,7 +13,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfUIService.SpacePageUpdated += On_SpacePageUpdated;
 	}
@@ -26,15 +26,12 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 
 	private async void On_SpacePageUpdated(object? caller, TfSpacePage args)
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState == null)
-			_navState = TfAuthLayout.NavigationState;
-		else
-			_navState = navState;
+		_navState = navState;
 		try
 		{
 			if (_navState.SpacePageId.HasValue && _spacePage?.Id != _navState.SpacePageId)

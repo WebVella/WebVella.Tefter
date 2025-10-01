@@ -19,7 +19,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
-		await initAdmin(null);
+		await initAdmin(Navigator.GetRouteState());
 		KeyCodeService.RegisterListener(HandleKeyDownAsync);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfUIService.CurrentUserChanged += CurrentUser_Changed;
@@ -43,11 +43,8 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		return Task.CompletedTask;
 	}
 
-	private async Task initAdmin(TfNavigationState? navState = null)
+	private async Task initAdmin(TfNavigationState navState)
 	{
-		if(navState is null)
-			navState = TfAuthLayout.NavigationState;
-
 		_adminMenu = new();
 		if (TfAuthLayout.CurrentUser!.IsAdmin)
 		{

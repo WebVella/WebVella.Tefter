@@ -15,7 +15,7 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
+		await _init(Navigator.GetRouteState());
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
@@ -25,12 +25,9 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 			await _init(args);
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			_navState = TfAuthLayout.NavigationState;
-		else
-			_navState = navState;
+		_navState = navState;
 
 		try
 		{
