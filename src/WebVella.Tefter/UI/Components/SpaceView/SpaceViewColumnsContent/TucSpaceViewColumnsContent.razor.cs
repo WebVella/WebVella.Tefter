@@ -1,10 +1,10 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 {
-	private TfSpaceView _spaceView = new();
-	private TfDataset _spaceData = new();
+	private TfSpaceView _spaceView = null!;
+	private TfDataset _spaceData = null!;
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
-	private TfSpace _space = new();
+	private TfSpace _space = null!;
 	public bool _submitting = false;
 	public TfNavigationState? _navState = null;
 	private ReadOnlyDictionary<Guid, TfSpaceViewColumnTypeAddonMeta> _typeMetaDict = null!;

@@ -26,13 +26,6 @@ public partial class TucDatasetFiltersDialog : TfBaseComponent, IDialogContentCo
 
 	}
 
-	private void _onFiltersChanged(List<TfFilterBase> filters)
-	{
-		_dataset.Filters = filters;
-		StateHasChanged();
-	}
-
-
 	private async Task _save()
 	{
 		if (_isSubmitting) return;

@@ -1,8 +1,9 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucPresetFiltersCard : TfBaseComponent
 {
+	
 	[Parameter]
-	public TfDataProvider DataProvider { get; set; } = null!;
+	public TfDataset Dataset { get; set; } = null!;	
 
 	[Parameter]
 	public List<TfSpaceViewPreset> Items { get; set; } = new();
@@ -113,7 +114,7 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 		{
 			Item = ModelHelpers.GetPresetById(Items, presetId),
 			Parents = _getParents().ToList(),
-			DataProvider = DataProvider
+			DateSet = Dataset
 		};
 		var dialog = await DialogService.ShowDialogAsync<TucPresetFilterManageDialog>(
 		context,

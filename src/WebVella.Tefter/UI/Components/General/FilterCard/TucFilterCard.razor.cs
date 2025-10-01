@@ -2,10 +2,9 @@
 
 public partial class TucFilterCard : TfBaseComponent
 {
-	[Parameter]
-	public TfDataset Dataset { get; set; } = null!;
-	[Parameter]
-	public EventCallback<List<TfFilterBase>> ItemsChanged { get; set; }
+	[Parameter] public Guid DatasetId { get; set; } = Guid.Empty;
+	[Parameter] public List<TfFilterBase> Items { get; set; } = new();
+	[Parameter] public EventCallback<List<TfFilterBase>> ItemsChanged { get; set; }
 
 	List<string> _allOptions = new();
 	Dictionary<string, TfDatasetColumn> _columnDict = new();
@@ -16,9 +15,9 @@ public partial class TucFilterCard : TfBaseComponent
 
 	protected override void OnInitialized()
 	{
-		if (Dataset is null) throw new Exception("Dataset is required");
+		if (DatasetId == Guid.Empty) throw new Exception("Dataset ID is required");
 
-		foreach (TfDatasetColumn item in TfUIService.GetDatasetColumnOptions(Dataset.Id))
+		foreach (TfDatasetColumn item in TfUIService.GetDatasetColumnOptions(DatasetId))
 		{
 			if (String.IsNullOrWhiteSpace(item.ColumnName)) continue;
 			_allOptions.Add(item.ColumnName);
@@ -34,7 +33,7 @@ public partial class TucFilterCard : TfBaseComponent
 
 	void _initOptions()
 	{
-		_items = Dataset.Filters.ToList();
+		_items = Items.ToList();
 	}
 
 	public async Task AddColumnFilter(string dbColumn, Guid? parentId)

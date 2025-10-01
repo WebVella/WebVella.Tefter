@@ -2,7 +2,7 @@
 
 public record TfPresetFilterManagementContext
 {
-	public TfDataProvider? DataProvider { get; init; }
+	public TfDataset? DateSet { get; init; }
 	public TfSpaceViewPreset? Item { get; init; }
 	public List<TfSpaceViewPreset> Parents { get; init; } = new();
 

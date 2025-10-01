@@ -28,12 +28,6 @@ public partial class TucDatasetSortOrderDialog : TfBaseComponent, IDialogContent
 
 	}
 
-	private void _onSortChanged(List<TfSort> sorts)
-	{
-		_dataset.SortOrders = sorts;
-	}
-
-
 	private async Task _save()
 	{
 		if (_isSubmitting) return;

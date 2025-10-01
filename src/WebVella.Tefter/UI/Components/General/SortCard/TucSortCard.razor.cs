@@ -3,8 +3,10 @@
 public partial class TucSortCard : TfBaseComponent
 {
 	[Parameter]
-	public TfDataset Dataset { get; set; } = null!;
+	public Guid DatasetId { get; set; } = Guid.Empty;
 
+	[Parameter] public List<TfSort> Items { get; set; } = new();
+	
 	[Parameter]
 	public EventCallback<List<TfSort>> ItemsChanged { get; set; }
 
@@ -18,9 +20,9 @@ public partial class TucSortCard : TfBaseComponent
 
 	protected override void OnInitialized()
 	{
-		if (Dataset is null) throw new Exception("Dataset is required");
+		if (DatasetId == Guid.Empty) throw new Exception("Dataset is required");
 
-		foreach (TfDatasetColumn item in TfUIService.GetDatasetColumnOptions(Dataset.Id))
+		foreach (TfDatasetColumn item in TfUIService.GetDatasetColumnOptions(DatasetId))
 		{
 			if (String.IsNullOrWhiteSpace(item.ColumnName)) continue;
 			_allOptions.Add(item.ColumnName);
@@ -36,7 +38,7 @@ public partial class TucSortCard : TfBaseComponent
 
 	void _initOptions()
 	{
-		_items = Dataset.SortOrders.ToList();
+		_items = Items.ToList();
 
 		var current = _items.Select(x => x.ColumnName).ToList();
 		_options = _allOptions.Where(x => !current.Contains(x)).ToList();
