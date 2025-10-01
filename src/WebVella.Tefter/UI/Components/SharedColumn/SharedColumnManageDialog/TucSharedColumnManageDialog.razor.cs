@@ -4,19 +4,19 @@ namespace WebVella.Tefter.UI.Components;
 public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSharedColumn?>
 {
 	[Parameter] public TfSharedColumn? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 
 	private bool _isCreate = false;
 
 	private TfSharedColumn _form = new();
 	private List<string> _allDataIdentities = new();
-	private ReadOnlyCollection<DatabaseColumnTypeInfo> _columnTypeOptions = default!;
-	private DatabaseColumnTypeInfo _selectedColumnType = default!;
+	private ReadOnlyCollection<DatabaseColumnTypeInfo> _columnTypeOptions = null!;
+	private DatabaseColumnTypeInfo _selectedColumnType = null!;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();

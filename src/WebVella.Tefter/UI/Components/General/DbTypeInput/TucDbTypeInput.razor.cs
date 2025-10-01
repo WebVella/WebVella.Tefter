@@ -4,7 +4,7 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucDbTypeInput : TfBaseComponent
 {
-	[Parameter] public TfDatabaseColumnType DbType { get; set; } = default!;
+	[Parameter] public TfDatabaseColumnType DbType { get; set; } = TfDatabaseColumnType.Text;
 	[Parameter] public object? Value { get; set; }
 	[Parameter] public string? Placeholder { get; set; }
 	[Parameter] public string? Class { get; set; }

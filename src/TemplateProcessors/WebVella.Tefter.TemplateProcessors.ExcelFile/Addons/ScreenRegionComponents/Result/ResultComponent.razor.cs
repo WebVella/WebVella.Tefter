@@ -5,7 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 public partial class ResultComponent : TfBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {
-	[Inject] public ITfService TfService { get; set; } = default!;
+	[Inject] public ITfService TfService { get; set; } = null!;
 	public const string ID = "8eed6b14-101b-4fb9-863c-6e520b0196d8";
 	public const string NAME = "Excel Template Result";
 	public const string DESCRIPTION = "";

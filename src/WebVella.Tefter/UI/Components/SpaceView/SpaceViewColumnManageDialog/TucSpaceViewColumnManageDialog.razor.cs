@@ -3,13 +3,13 @@
 public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpaceViewColumn?>
 {
 	[Parameter] public TfSpaceViewColumn? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 	private bool _isCreate = false;
 	//NOTE: this changes the Items of the component type select
 	//there is a bug and the component needs to be rerendered when both value and items ara changed
@@ -20,7 +20,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	private TfDataset _spaceData = new();
 	private TfDataProvider _provider = new();
 	private List<string> _options = new();
-	private ReadOnlyCollection<TfSpaceViewColumnTypeAddonMeta> _availableColumnTypes = default!;
+	private ReadOnlyCollection<TfSpaceViewColumnTypeAddonMeta> _availableColumnTypes = null!;
 	private TfSpaceViewColumnTypeAddonMeta? _selectedColumnType = null;
 	private List<ITfSpaceViewColumnComponentAddon> _selectedColumnTypeComponents = new();
 	private ITfSpaceViewColumnComponentAddon? _selectedColumnComponent = null;

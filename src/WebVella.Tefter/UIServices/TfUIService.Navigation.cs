@@ -12,7 +12,7 @@ public partial interface ITfUIService
 public partial class TfUIService : ITfUIService
 {
 	#region << Events >>
-	public event EventHandler<TfNavigationState> NavigationStateChanged = default!;
+	public event EventHandler<TfNavigationState> NavigationStateChanged = null!;
 	#endregion
 
 	#region << Navigation >>

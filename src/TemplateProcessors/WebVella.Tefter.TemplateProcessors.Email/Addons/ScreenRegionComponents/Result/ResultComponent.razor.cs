@@ -3,7 +3,7 @@
 public partial class ResultComponent : TfBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {
-	[Inject] public ITfService TfService { get; set; } = default!;
+	[Inject] public ITfService TfService { get; set; } = null!;
 	public const string ID = "b0ca06fa-4e26-49c4-a043-c0ec7960ab02";
 	public const string NAME = "Email Template Result";
 	public const string DESCRIPTION = "";

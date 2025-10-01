@@ -3,24 +3,24 @@
 public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpacePage?>
 {
 	[Parameter] public TfSpacePage? Content { get; set; } = null;
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 	private bool _isCreate = false;
 	private TfSpacePage _form = new();
 	private TfSpacePage? _parentNode = null;
 	private IEnumerable<TfSpacePage> _parentNodeOptions = Enumerable.Empty<TfSpacePage>();
-	private ReadOnlyCollection<TfSpacePageAddonMeta> _pageComponents = default!;
+	private ReadOnlyCollection<TfSpacePageAddonMeta> _pageComponents = null!;
 	private TfSpacePageAddonMeta? _selectedPageComponent = null;
-	private DynamicComponent typeSettingsComponent = default!;
+	private DynamicComponent typeSettingsComponent = null!;
 	private TfSpace? _space = null;
 	private List<Option<bool>> _copyOptions = new();
 	private List<Option<Guid>> _allPageOptions = new();
-	private Option<bool> _copyOption = default!;
+	private Option<bool> _copyOption = null!;
 	private Option<Guid>? _copyPage = null;
 	protected override async Task OnInitializedAsync()
 	{
@@ -168,7 +168,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		{
 			if (_parentNode is null) submit.ParentId = null;
 			else submit.ParentId = _parentNode.Id;
-			TfSpacePage newPage = default!;
+			TfSpacePage newPage = null!;
 			if (_isCreate)
 			{
 				newPage = TfUIService.CreateSpacePage(

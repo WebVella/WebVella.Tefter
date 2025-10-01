@@ -5,7 +5,7 @@ namespace WebVella.Tefter.UI.Components;
 public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialogContentComponent<TfDataProvider?>
 {
 	[Parameter] public TfDataProvider? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private bool _isBusy = true;
 	private string _error = string.Empty;

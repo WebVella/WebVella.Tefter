@@ -1,9 +1,9 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucScreenRegionComponent
 {
-	[Inject] public ITfUIService TfUIService { get; set; } = default!;
+	[Inject] public ITfUIService TfUIService { get; set; } = null!;
 	[Parameter] public TfScreenRegionScope? Scope { get; set; }
-	[Parameter] public TfBaseScreenRegionContext RegionContext { get; set; } = default!;
+	[Parameter] public TfBaseScreenRegionContext RegionContext { get; set; } = null!;
 	[Parameter] public string? Placeholder { get; set; } = null;
 	[Parameter] public int? Count { get; set; } = null;
 

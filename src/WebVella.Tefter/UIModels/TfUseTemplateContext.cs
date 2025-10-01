@@ -3,7 +3,7 @@
 public record TfUseTemplateContext
 {
 	public List<Guid> SelectedRowIds { get; init; } = new();
-	public TfDataset SpaceData { get; init; } = default!;
-	public TfUser User { get; init; } = default!;
+	public TfDataset SpaceData { get; init; } = null!;
+	public TfUser User { get; init; } = null!;
 	public ITfTemplatePreviewResult? Preview { get; init; } = null;
 }

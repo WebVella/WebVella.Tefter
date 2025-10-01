@@ -7,7 +7,7 @@ namespace WebVella.Tefter.TemplateProcessors.Email.Addons;
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorManageSettingsScreenRegionContext>
 {
-	[Inject] public ITfService TfService { get; set; } = default!;
+	[Inject] public ITfService TfService { get; set; } = null!;
 	public const string ID = "0a15ce68-12af-4fae-a464-10bf5c0a1c9b";
 	public const string NAME = "Email Template Settings Manage";
 	public const string DESCRIPTION = "";

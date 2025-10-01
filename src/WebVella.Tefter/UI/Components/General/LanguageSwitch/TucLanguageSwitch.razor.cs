@@ -3,7 +3,7 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucLanguageSwitch : TfBaseComponent
 {
-	[Parameter] public TfUser User { get; set; } = default!;
+	[Parameter] public TfUser User { get; set; } = null!;
 
 	private bool _visible = false;
 

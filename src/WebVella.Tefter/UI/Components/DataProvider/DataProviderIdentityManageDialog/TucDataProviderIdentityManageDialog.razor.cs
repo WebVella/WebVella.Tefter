@@ -2,16 +2,16 @@
 public partial class TucDataProviderIdentityManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProviderIdentity?>
 {
 	[Parameter] public TfDataProviderIdentity? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private bool _isCreate = false;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 
 	private List<string?> _providerColumns = new();
-	private TfDataProvider _provider = default!;
+	private TfDataProvider _provider = null!;
 	private TfDataProviderIdentity _form = new();
 
 	private List<string> _identityOptions = new();

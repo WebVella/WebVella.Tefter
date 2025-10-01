@@ -1,11 +1,23 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <TucPageLayout Icon="@TfConstants.GetIcon(_spacePage.FluentIconName)" Area="@_space.Name" SubArea="@LOC("Pages")"
-			   Title="@_spacePage.Name" SubTitle="@LOC("Manage")" Color="@_space.Color">
+               Title="@_spacePage.Name" SubTitle="@LOC("Manage")" Color="@_space.Color">
 	<NavigationLeft>
-		<TucSpacePageManageContentToolbar />
+		<TucSpacePageManageContentToolbar/>
 	</NavigationLeft>
 	<ChildContent>
-
+		<div style="padding:var(--tf-layout-content-padding)">
+			@if (_spacePage.ComponentType is not null)
+			{
+				<TucErrorBoundry>
+					<DynamicComponent Type="@_spacePage.ComponentType" Parameters="@_getDynamicComponentParams()"/>
+				</TucErrorBoundry>
+			}
+			else
+			{
+				<FluentMessageBar AllowDismiss="false"
+				                  Intent="@MessageIntent.Warning">@LOC("Page type is no longer related to an existing addon")</FluentMessageBar>
+			}
+		</div>
 	</ChildContent>
 </TucPageLayout>

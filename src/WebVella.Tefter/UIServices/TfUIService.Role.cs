@@ -18,9 +18,9 @@ public partial interface ITfUIService
 public partial class TfUIService : ITfUIService
 {
 	#region << Events >>
-	public event EventHandler<TfRole> RoleUpdated = default!;
-	public event EventHandler<TfRole> RoleCreated = default!;
-	public event EventHandler<TfRole> RoleDeleted = default!;
+	public event EventHandler<TfRole> RoleUpdated = null!;
+	public event EventHandler<TfRole> RoleCreated = null!;
+	public event EventHandler<TfRole> RoleDeleted = null!;
 	#endregion
 
 	#region << Roles >>

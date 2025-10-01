@@ -6,13 +6,13 @@ namespace WebVella.Tefter.Models;
 public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfSpaceViewColumnComponentAddon//, ITfAuxDataState
 {
 	#region << Injects >>
-	[Inject] protected IJSRuntime JSRuntime { get; set; } = default!;
-	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = default!;
-	[Inject] protected IToastService ToastService { get; set; } = default!;
-	[Inject] protected IDialogService DialogService { get; set; } = default!;
-	[Inject] protected IMessageService MessageService { get; set; } = default!;
-	[Inject] protected ITfUIService TfUIService { get; set; } = default!;
-	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = default!;
+	[Inject] protected IJSRuntime JSRuntime { get; set; } = null!;
+	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = null!;
+	[Inject] protected IToastService ToastService { get; set; } = null!;
+	[Inject] protected IDialogService DialogService { get; set; } = null!;
+	[Inject] protected IMessageService MessageService { get; set; } = null!;
+	[Inject] protected ITfUIService TfUIService { get; set; } = null!;
+	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = null!;
 
 	#endregion
 

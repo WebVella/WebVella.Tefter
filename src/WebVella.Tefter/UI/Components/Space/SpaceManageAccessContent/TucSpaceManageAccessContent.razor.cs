@@ -1,11 +1,11 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 {
-	private TfSpace _space = default!;
-	private TfNavigationState _navState = default!;
+	private TfSpace _space = null!;
+	private TfNavigationState _navState = null!;
 	public bool _submitting = false;
-	public TfRole _adminRole = default!;
-	public List<TfRole> _roleOptions = default!;
+	public TfRole _adminRole = null!;
+	public List<TfRole> _roleOptions = null!;
 	private TfRole? _selectedRole = null;
 	public Guid? _removingRoleId = null;
 	public void Dispose()

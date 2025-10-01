@@ -5,10 +5,10 @@
 /// </summary>
 public class TfTemplateProcessorResultScreenRegionContext : TfBaseScreenRegionContext
 {
-	public TfTemplate Template { get; set; } = default!;
+	public TfTemplate Template { get; set; } = null!;
 	public List<Guid> SelectedRowIds { get; set; } = new();
-	public TfDataset SpaceData { get; set; } = default!;
-	public TfUser User { get; set; } = default!;
+	public TfDataset SpaceData { get; set; } = null!;
+	public TfUser User { get; set; } = null!;
 	public string? CustomSettingsJson { get; set; } = null;
-	public ITfTemplatePreviewResult Preview { get; set; } = default!;
+	public ITfTemplatePreviewResult Preview { get; set; } = null!;
 }

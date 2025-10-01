@@ -3,9 +3,9 @@
 namespace WebVella.Tefter.UI.Addons.RecipeSteps;
 public partial class TfResultRecipeStepForm : TfRecipeStepFormBase
 {
-	[Parameter] public TfResultRecipeStep Addon { get; set; } = default!;
+	[Parameter] public TfResultRecipeStep Addon { get; set; } = null!;
 
-	private TfResultRecipeStepData _form = default!;
+	private TfResultRecipeStepData _form = null!;
 
 	public List<TfRecipeStepResultError> _errors = new();
 

@@ -3,10 +3,10 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 {
 	private List<TfRepositoryFile>? _items = null;
 
-	FluentInputFile fileUploader = default!;
+	FluentInputFile fileUploader = null!;
 	int progressPercent = 0;
 	List<FluentInputFileEventArgs> Files = new();
-	private TfNavigationState _navState = default!;
+	private TfNavigationState _navState = null!;
 	private string? _search = null;
 	private string _uploadId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 

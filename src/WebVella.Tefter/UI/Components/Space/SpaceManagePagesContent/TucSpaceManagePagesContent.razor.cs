@@ -4,7 +4,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 {
 	private TfSpace? _space = null;
 	private List<TfSpacePage> _spacePages = new();
-	private TfNavigationState _navState = default!;
+	private TfNavigationState _navState = null!;
 	public bool _submitting = false;
 
 	public void Dispose()

@@ -5,7 +5,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	private TfDataProvider? _provider = null;
 	private TfNavigationState _navState = new();
 
-	private string _nextSyncronization = default!;
+	private string _nextSyncronization = null!;
 	private List<TfDataProviderSynchronizeTask> _syncTasks = new();
 
 	public void Dispose()

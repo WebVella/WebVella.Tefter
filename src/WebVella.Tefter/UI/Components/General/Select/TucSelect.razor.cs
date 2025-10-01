@@ -26,13 +26,13 @@ public partial class TucSelect<TOption> : TfBaseComponent where TOption : notnul
 	public IEnumerable<TOption> Items { get; set; } = Enumerable.Empty<TOption>();
 
 	[Parameter]
-	public Func<TOption, bool> OptionSelected { get; set; } = default!;
+	public Func<TOption, bool> OptionSelected { get; set; } = null!;
 
 	/// <summary>
 	/// Function that defines how to display each option's text. If not provided, ToString() is used by default.
 	/// </summary>
 	[Parameter]
-	public Func<TOption, string?> OptionText { get; set; } = default!;
+	public Func<TOption, string?> OptionText { get; set; } = null!;
 
 	/// <summary>
 	/// Optional function that defines how to extract the value from each option. If not provided, no value extraction is performed.

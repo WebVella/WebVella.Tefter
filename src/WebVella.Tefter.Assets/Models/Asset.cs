@@ -49,7 +49,7 @@ public class CreateFileAssetWithRowIdModel
 	public string LocalPath { get; set; }
 	public Guid CreatedBy { get; set; }
 	public List<Guid> RowIds { get; set; } = new();
-	public Guid DataProviderId { get; set; } = default!;
+	public Guid DataProviderId { get; set; } = Guid.Empty;
 }
 
 public class CreateFileAssetWithDataIdentityModel
@@ -70,7 +70,7 @@ public class CreateLinkAssetWithRowIdModel
 	public string IconUrl { get; set; }
 	public Guid CreatedBy { get; set; }
 	public List<Guid> RowIds { get; set; } = new();
-	public Guid DataProviderId { get; set; } = default!;
+	public Guid DataProviderId { get; set; } = Guid.Empty;
 }
 
 public class CreateLinkAssetWithDataIdentityModel

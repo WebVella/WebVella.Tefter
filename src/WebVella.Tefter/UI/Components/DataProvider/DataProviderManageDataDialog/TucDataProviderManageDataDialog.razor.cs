@@ -4,7 +4,7 @@ public partial class TucDataProviderManageDataDialog : TfBaseComponent, IDialogC
 {
 	[Parameter] public TfManageDataProviderRowContext? Content { get; set; }
 
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
@@ -12,7 +12,7 @@ public partial class TucDataProviderManageDataDialog : TfBaseComponent, IDialogC
 	private Dictionary<string, object?> _form = new();
 	private Dictionary<string, string?> _errors = new();
 	private Dictionary<string, string?> _placeholders = new();
-	private ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> _componentMetaDict = default!;
+	private ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> _componentMetaDict = null!;
 
 	protected override async Task OnInitializedAsync()
 	{

@@ -5,7 +5,7 @@
 /// </summary>
 public class TfTemplateProcessorManageSettingsScreenRegionContext : TfBaseScreenRegionContext
 {
-	public TfTemplate Template { get; set; } = default!;
+	public TfTemplate Template { get; set; } = null!;
 	public EventCallback<string> SettingsJsonChanged { get; set; }
-	public Func<List<ValidationError>> Validate { get; set; } = default!;
+	public Func<List<ValidationError>> Validate { get; set; } = null!;
 }

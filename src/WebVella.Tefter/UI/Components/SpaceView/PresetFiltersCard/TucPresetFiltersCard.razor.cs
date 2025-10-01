@@ -2,7 +2,7 @@
 public partial class TucPresetFiltersCard : TfBaseComponent
 {
 	[Parameter]
-	public TfDataProvider DataProvider { get; set; } = default!;
+	public TfDataProvider DataProvider { get; set; } = null!;
 
 	[Parameter]
 	public List<TfSpaceViewPreset> Items { get; set; } = new();

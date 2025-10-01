@@ -8,8 +8,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 	public override string AddonName { get; init; } = "Data Grid";
 	public override string AddonDescription { get; init; } = "present the selected dataset in a grid";
 	public override string AddonFluentIconName { get; init; } = "Table";
-	[Parameter] public override TfSpacePageAddonContext Context { get; set; } = default!;
-
+	[Parameter] public override TfSpacePageAddonContext Context { get; set; } = null!;
 	public override string GetOptions() => JsonSerializer.Serialize(_options);
 	public override List<ValidationError> ValidateOptions()
 	{
@@ -20,7 +19,6 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		}
 		return ValidationErrors;
 	}
-
 	public override async Task<string> OnPageCreated(IServiceProvider serviceProvider, TfSpacePageAddonContext context)
 	{
 		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("TfSpaceViewPageComponent error: ComponentOptionsJson is null");
@@ -68,12 +66,10 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		context.ComponentOptionsJson = JsonSerializer.Serialize(jsonOptions);
 		return context.ComponentOptionsJson;
 	}
-
 	public override async Task<string> OnPageUpdated(IServiceProvider serviceProvider, TfSpacePageAddonContext context)
 	{
 		return context.ComponentOptionsJson;
 	}
-
 	public override async Task OnPageDeleted(IServiceProvider serviceProvider, TfSpacePageAddonContext context)
 	{
 		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("TfSpaceViewPageComponent error: ComponentOptionsJson is null");
@@ -83,7 +79,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		if (jsonOptions.SpaceViewId.HasValue)
 			tfService.DeleteSpaceView(jsonOptions.SpaceViewId.Value);
 	}
-
+	public List<TfScreenRegionTab> GetManagementTabs() => new List<TfScreenRegionTab>();
 	#endregion
 
 	#region << Private properties >>

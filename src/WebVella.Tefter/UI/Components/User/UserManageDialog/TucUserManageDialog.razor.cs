@@ -2,13 +2,13 @@
 public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentComponent<TfUser?>
 {
 	[Parameter] public TfUser? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 	private bool _isCreate = false;
 	private TfUserManageForm _form = new();
 

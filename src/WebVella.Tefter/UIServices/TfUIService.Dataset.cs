@@ -57,9 +57,9 @@ public partial class TfUIService : ITfUIService
 {
 
 	#region << Events >>
-	public event EventHandler<TfDataset> DatasetCreated = default!;
-	public event EventHandler<TfDataset> DatasetUpdated = default!;
-	public event EventHandler<TfDataset> DatasetDeleted = default!;
+	public event EventHandler<TfDataset> DatasetCreated = null!;
+	public event EventHandler<TfDataset> DatasetUpdated = null!;
+	public event EventHandler<TfDataset> DatasetDeleted = null!;
 	#endregion
 
 	#region << Data set>>

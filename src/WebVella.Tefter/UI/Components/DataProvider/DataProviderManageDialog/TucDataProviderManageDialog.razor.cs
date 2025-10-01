@@ -3,20 +3,20 @@
 public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProvider?>
 {
 	[Parameter] public TfDataProvider? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 
 	private bool _isCreate = false;
 	private TfCreateDataProvider _form = new();
 
-	private TfDataProviderManageSettingsScreenRegionContext _dynamicComponentContext = default!;
+	private TfDataProviderManageSettingsScreenRegionContext _dynamicComponentContext = null!;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
-	private ReadOnlyCollection<ITfDataProviderAddon> _providerTypes = default!;
+	private ReadOnlyCollection<ITfDataProviderAddon> _providerTypes = null!;
 
 	protected override async Task OnInitializedAsync()
 	{

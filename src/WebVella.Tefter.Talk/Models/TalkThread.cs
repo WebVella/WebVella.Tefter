@@ -25,7 +25,7 @@ public class CreateTalkThreadWithRowIdModel
 	public string Content { get; set; }
 	public Guid UserId { get; set; }
 	public List<Guid> RowIds { get; set; } = new();
-	public Guid DataProviderId { get; set; } = default!;
+	public Guid DataProviderId { get; set; } = Guid.Empty;
 }
 
 public class CreateTalkThreadWithDataIdentityModel

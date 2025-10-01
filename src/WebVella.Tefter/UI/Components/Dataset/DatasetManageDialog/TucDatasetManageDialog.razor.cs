@@ -3,16 +3,16 @@
 public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataset?>
 {
 	[Parameter] public TfDataset? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 	private bool _isCreate = false;
 
 	private TfDataset _form = new();
-	private TfDataProvider _provider = default!;
+	private TfDataProvider _provider = null!;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -50,7 +50,7 @@ public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogConten
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			TfDataset result = default!;
+			TfDataset result = null!;
 			if (_isCreate)
 			{
 				result = TfUIService.CreateDataset(_form);

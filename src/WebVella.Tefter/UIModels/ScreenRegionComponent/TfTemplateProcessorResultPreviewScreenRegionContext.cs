@@ -5,12 +5,12 @@
 /// </summary>
 public class TfTemplateProcessorResultPreviewScreenRegionContext : TfBaseScreenRegionContext
 {
-	public TfTemplate Template { get; set; } = default!;
+	public TfTemplate Template { get; set; } = null!;
 	public List<Guid> SelectedRowIds { get; set; } = new();
-	public TfDataset SpaceData { get; set; } = default!;
-	public TfUser User { get; set; } = default!;
+	public TfDataset SpaceData { get; set; } = null!;
+	public TfUser User { get; set; } = null!;
 	public string? CustomSettingsJson { get; set; } = null;
 	public EventCallback<string> CustomSettingsJsonChanged { get; set; }
 	public EventCallback<ITfTemplatePreviewResult> PreviewResultChanged { get; set; }
-	public Func<List<ValidationError>> ValidatePreviewResult { get; set; } = default!;
+	public Func<List<ValidationError>> ValidatePreviewResult { get; set; } = null!;
 }

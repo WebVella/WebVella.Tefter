@@ -14,7 +14,7 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 	#region << Injects >>
 	[Inject] protected IAssetsService AssetsService { get; set; }
     [CascadingParameter(Name = "TucSpaceViewPageContent")]
-    public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
+    public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;
     #endregion
 
     #region << Constructor >>

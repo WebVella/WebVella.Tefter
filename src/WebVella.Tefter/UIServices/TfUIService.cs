@@ -32,7 +32,7 @@ public partial class TfUIService : ITfUIService
 		_navigationManager = navigationManager;
 		_authStateProvider = authStateProvider;
 		_serviceProvider = serviceProvider;
-		LOC = serviceProvider.GetService<IStringLocalizer<TfUIService>>() ?? default!;
+		LOC = serviceProvider.GetService<IStringLocalizer<TfUIService>>() ?? null!;
 	}
 	#endregion
 }

@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucPresetFilterManageDialog : TfFormBaseComponent, IDialogContentComponent<TfPresetFilterManagementContext>
 {
-	[Parameter] public TfPresetFilterManagementContext Content { get; set; } = default!;
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[Parameter] public TfPresetFilterManagementContext Content { get; set; } = null!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 	private TfSpaceViewPreset _form = new();
 	private TfSpaceViewPreset? _selectedParent = null;
 	private bool _isSubmitting = false;

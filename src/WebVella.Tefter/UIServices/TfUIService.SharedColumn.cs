@@ -19,9 +19,9 @@ public partial interface ITfUIService
 public partial class TfUIService : ITfUIService
 {
 	#region << Events >>
-	public event EventHandler<TfSharedColumn> SharedColumnCreated = default!;
-	public event EventHandler<TfSharedColumn> SharedColumnUpdated = default!;
-	public event EventHandler<TfSharedColumn> SharedColumnDeleted = default!;
+	public event EventHandler<TfSharedColumn> SharedColumnCreated = null!;
+	public event EventHandler<TfSharedColumn> SharedColumnUpdated = null!;
+	public event EventHandler<TfSharedColumn> SharedColumnDeleted = null!;
 	#endregion
 
 	#region << Shared Column >>

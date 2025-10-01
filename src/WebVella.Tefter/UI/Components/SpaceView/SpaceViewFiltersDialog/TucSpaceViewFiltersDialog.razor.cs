@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogContentComponent<Guid>
 {
-	[Parameter] public Guid Content { get; set; } = default!;
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[Parameter] public Guid Content { get; set; } = Guid.Empty;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 	private List<TfDataProvider> _dataProviders = new();
 	private List<TfSharedColumn> _sharedColumns = new();
 	private TfDataProvider? _dataProvider = null;
@@ -13,7 +13,7 @@ public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogCon
 	private string _activeTab = "current";
 	internal string? _selectedFilterColumn = null;
 	public bool _submitting = false;
-	private TfNavigationState _navState = default!;
+	private TfNavigationState _navState = null!;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();

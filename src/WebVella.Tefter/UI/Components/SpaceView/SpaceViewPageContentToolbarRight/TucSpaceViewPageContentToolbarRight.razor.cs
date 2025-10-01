@@ -6,17 +6,17 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 {
 	// Dependency Injection
 	[CascadingParameter(Name = "TucSpaceViewPageContent")]
-	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
-	[Parameter] public TfSpacePageAddonContext Context { get; set; } = default!;
-	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
-	[Parameter] public TfDataset SpaceData { get; set; } = default!;
+	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;
+	[Parameter] public TfSpacePageAddonContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
+	[Parameter] public TfDataset SpaceData { get; set; } = null!;
 	[Parameter] public TfSpaceViewPreset? SpaceViewPreset { get; set; } = null;
-	[Parameter] public TfDataTable Data { get; set; } = default!;
+	[Parameter] public TfDataTable Data { get; set; } = null!;
 	[Parameter] public EventCallback<TfDataTable> DataChanged { get; set; }
 	[Parameter] public bool SelectAllLoading { get; set; } = false;
 	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
 
-	private TfNavigationState _navState = default!;
+	private TfNavigationState _navState = null!;
 	private bool _hasViewPersonalization = false;
 
 	public void Dispose()

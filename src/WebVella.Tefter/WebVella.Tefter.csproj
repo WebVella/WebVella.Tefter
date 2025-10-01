@@ -91,4 +91,8 @@
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <AdditionalFiles Include="UI\Components\SpaceView\SpaceViewManagePageContent\TucSpaceViewPageContent.razor" />
+	</ItemGroup>
+
 </Project>

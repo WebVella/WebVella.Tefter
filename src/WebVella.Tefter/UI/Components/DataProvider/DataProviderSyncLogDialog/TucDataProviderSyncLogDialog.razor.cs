@@ -3,7 +3,7 @@ public partial class TucDataProviderSyncLogDialog : TfFormBaseComponent, IDialog
 {
 	[Parameter] public TfDataProviderSynchronizeTask? Content { get; set; }
 
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _title = "";
 	private bool _isBusy = true;

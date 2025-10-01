@@ -8,7 +8,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private ITfTemplateProcessorAddon? _processor = null;
 	private List<ITfTemplateProcessorAddon> _allProcessors = new();
-	private TfNavigationState _navState = default!;
+	private TfNavigationState _navState = null!;
 	public void Dispose()
 	{
 		TfUIService.TemplateUpdated -= On_TemplateUpdated;

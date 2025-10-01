@@ -17,9 +17,9 @@ public partial interface ITfUIService
 public partial class TfUIService : ITfUIService
 {
 	#region << Events >>
-	public event EventHandler<TfRepositoryFile> FileRepositoryCreated = default!;
-	public event EventHandler<TfRepositoryFile> FileRepositoryUpdated = default!;
-	public event EventHandler<TfRepositoryFile> FileRepositoryDeleted = default!;
+	public event EventHandler<TfRepositoryFile> FileRepositoryCreated = null!;
+	public event EventHandler<TfRepositoryFile> FileRepositoryUpdated = null!;
+	public event EventHandler<TfRepositoryFile> FileRepositoryDeleted = null!;
 	#endregion
 
 	#region << File Repository >>

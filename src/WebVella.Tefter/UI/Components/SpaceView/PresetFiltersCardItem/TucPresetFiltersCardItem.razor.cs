@@ -8,7 +8,7 @@ public partial class TucPresetFiltersCardItem : TfBaseComponent
 	public bool IsLast { get; set; } = false;
 
 	[Parameter]
-	public TfSpaceViewPreset Item { get; set; } = default!;
+	public TfSpaceViewPreset Item { get; set; } = null!;
 
 	[Parameter]
 	public int Level { get; set; } = 0;

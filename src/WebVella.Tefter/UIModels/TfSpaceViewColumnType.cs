@@ -3,16 +3,16 @@
 public record TfSpaceViewColumnType
 {
 	public Guid Id { get; set; }
-	public string Name { get; set; } = default!;
-	public string Description { get; set; } = default!;
-	public Icon FluentIcon { get; set; } = default!;
+	public string Name { get; set; } = null!;
+	public string Description { get; set; } = null!;
+	public Icon FluentIcon { get; set; } = null!;
 	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; set; } = new();
 	public List<string> FilterAliases { get; set; } = new();
 	public List<string> SortAliases { get; set; } = new();
 	public Guid? DefaultDisplayComponentId { get; set; } = null;
 	public List<Guid> SupportedDisplayComponents { get; set; } = new();
 	public Guid? DefaultEditComponentId { get; init; }
-	public Type Type { get; set; } = default!;
+	public Type Type { get; set; } = null!;
 
 	public TfSpaceViewColumnType() { }
 	public TfSpaceViewColumnType(ITfSpaceViewColumnTypeAddon model)

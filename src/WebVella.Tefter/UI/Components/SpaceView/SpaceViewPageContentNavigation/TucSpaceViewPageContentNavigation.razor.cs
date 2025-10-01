@@ -2,10 +2,10 @@
 public partial class TucSpaceViewPageContentNavigation : TfBaseComponent
 {
 	// Dependency Injection
-	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
+	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
 
 	private List<TfMenuItem> _menu = new();
-	public TfNavigationState _navState = default!;
+	public TfNavigationState _navState = null!;
 	public void Dispose()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;

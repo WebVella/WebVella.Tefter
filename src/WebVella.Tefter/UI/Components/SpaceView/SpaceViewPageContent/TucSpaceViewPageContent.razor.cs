@@ -9,9 +9,9 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private DotNetObjectReference<TucSpaceViewPageContent> _objectRef;
 	private bool _isDataLoading = true;
 	private bool _selectAllLoading = false;
-	private ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> _componentMetaDict = default!;
-	private TfNavigationState _navState = default!;
-	private TfUser _currentUser = default!;
+	private ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> _componentMetaDict = null!;
+	private TfNavigationState _navState = null!;
+	private TfUser _currentUser = null!;
 	private TfSpace? _space = null;
 	private TfSpacePage? _spacePage = null;
 	private TfSpaceView? _spaceView = null;
@@ -27,10 +27,10 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private bool _editAll = false;
 	private Dictionary<string, object> _contextData = new();
 	private string _tableId = "space-view-table";
-	private RenderFragment _caretDownInactive = default!;
-	private RenderFragment _caretDown = default!;
-	private RenderFragment _caretUp = default!;
-	private RenderFragment _manageIcon = default!;
+	private RenderFragment _caretDownInactive = null!;
+	private RenderFragment _caretDown = null!;
+	private RenderFragment _caretUp = null!;
+	private RenderFragment _manageIcon = null!;
 	private StringBuilder _columnSortClass = new();
 	private string? _managePageUrl = null;
 	private Dictionary<string, object>? _manageBtnAttributes = new();

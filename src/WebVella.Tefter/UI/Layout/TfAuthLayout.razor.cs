@@ -2,9 +2,9 @@
 
 public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 {
-	[Inject] public ITfUIService TfUIService { get; set; } = default!;
-	[Inject] protected ITfConfigurationService TfConfigurationService { get; set; } = default!;
-	[Inject] protected NavigationManager Navigator { get; set; } = default!;
+	[Inject] public ITfUIService TfUIService { get; set; } = null!;
+	[Inject] protected ITfConfigurationService TfConfigurationService { get; set; } = null!;
+	[Inject] protected NavigationManager Navigator { get; set; } = null!;
 
 	public ValueTask DisposeAsync()
 	{
@@ -13,9 +13,9 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		return ValueTask.CompletedTask;
 	}
 
-	public TfUser CurrentUser = default!;
-	public TfNavigationState NavigationState = default!;
-	public TfNavigationMenu NavigationMenu = default!;
+	public TfUser CurrentUser = null!;
+	public TfNavigationState NavigationState = null!;
+	public TfNavigationMenu NavigationMenu = null!;
 
 	private bool _isLoaded = false;
 

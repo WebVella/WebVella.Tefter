@@ -48,9 +48,9 @@ public partial class TfUIService : ITfUIService
 {
 
 	#region << Events >>
-	public event EventHandler<TfUser?> CurrentUserChanged = default!;
-	public event EventHandler<TfUser> UserUpdated = default!;
-	public event EventHandler<TfUser> UserCreated = default!;
+	public event EventHandler<TfUser?> CurrentUserChanged = null!;
+	public event EventHandler<TfUser> UserUpdated = null!;
+	public event EventHandler<TfUser> UserCreated = null!;
 	#endregion
 
 	#region << User >>

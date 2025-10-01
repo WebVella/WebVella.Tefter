@@ -3,20 +3,20 @@
 public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpaceView?>
 {
 	[Parameter] public TfSpaceView? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 	private bool _isCreate = false;
 
 	private TfDataset? _selectedDataset = null;
 	private List<string> _generatedColumns = new();
 	private int _generatedColumnCountLimit = 20;
 	private TfCreateSpaceViewExtended _form = new();
-	private ReadOnlyCollection<TfDataProvider> _providers = default!;
-	private List<TfDataset> _spaceDataList = default!;
+	private ReadOnlyCollection<TfDataProvider> _providers = null!;
+	private List<TfDataset> _spaceDataList = null!;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -73,7 +73,7 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			TfSpaceView result = default!;
+			TfSpaceView result = null!;
 			if (_isCreate)
 				result = TfUIService.CreateSpaceView(_form);
 			else

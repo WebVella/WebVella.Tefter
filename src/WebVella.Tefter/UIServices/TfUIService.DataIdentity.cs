@@ -17,9 +17,9 @@ public partial interface ITfUIService
 public partial class TfUIService : ITfUIService
 {
 	#region << Events >>
-	public event EventHandler<TfDataIdentity> DataIdentityCreated = default!;
-	public event EventHandler<TfDataIdentity> DataIdentityUpdated = default!;
-	public event EventHandler<TfDataIdentity> DataIdentityDeleted = default!;
+	public event EventHandler<TfDataIdentity> DataIdentityCreated = null!;
+	public event EventHandler<TfDataIdentity> DataIdentityUpdated = null!;
+	public event EventHandler<TfDataIdentity> DataIdentityDeleted = null!;
 	#endregion
 
 	#region << Data Provider>>

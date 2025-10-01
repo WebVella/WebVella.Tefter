@@ -24,9 +24,9 @@ public partial interface ITfUIService
 public partial class TfUIService : ITfUIService
 {
 	#region << Events >>
-	public event EventHandler<TfSpace> SpaceCreated = default!;
-	public event EventHandler<TfSpace> SpaceUpdated = default!;
-	public event EventHandler<TfSpace> SpaceDeleted = default!;
+	public event EventHandler<TfSpace> SpaceCreated = null!;
+	public event EventHandler<TfSpace> SpaceUpdated = null!;
+	public event EventHandler<TfSpace> SpaceDeleted = null!;
 	#endregion
 
 	#region << Space >>

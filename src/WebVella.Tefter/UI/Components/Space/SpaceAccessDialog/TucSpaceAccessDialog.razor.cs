@@ -4,15 +4,15 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentComponent<Guid>
 {
-	[Parameter] public Guid Content { get; set; } = default!;
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[Parameter] public Guid Content { get; set; } = Guid.Empty;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
-	private TfNavigationState _navState = default!;
-	private TfSpace _space = default!;
+	private TfNavigationState _navState = null!;
+	private TfSpace _space = null!;
 	public bool _submitting = false;
-	public TfRole _adminRole = default!;
-	public List<TfRole> _roleOptions = default!;
+	public TfRole _adminRole = null!;
+	public List<TfRole> _roleOptions = null!;
 	private TfRole? _selectedRole = null;
 	public Guid? _removingRoleId = null;
 

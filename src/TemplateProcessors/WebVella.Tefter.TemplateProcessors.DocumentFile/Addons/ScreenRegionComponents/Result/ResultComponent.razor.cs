@@ -5,7 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Addons;
 public partial class ResultComponent : TfBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {
-	[Inject] public ITfService TfService { get; set; } = default!;
+	[Inject] public ITfService TfService { get; set; } = null!;
 	public const string ID = "f6bf4193-027d-40da-8364-7c698f269550";
 	public const string NAME = "Document Template Result";
 	public const string DESCRIPTION = "";

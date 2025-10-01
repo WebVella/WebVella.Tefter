@@ -12,9 +12,9 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 
 	#region << Injects >>
 	[Inject] protected ITalkService TalkService { get; set; }
-	[Inject] protected IJSRuntime JSRuntime { get; set; } = default!;
-	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-	[Inject] protected NavigationManager Navigator { get; set; } = default!;
+	[Inject] protected IJSRuntime JSRuntime { get; set; } = null!;
+	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
+	[Inject] protected NavigationManager Navigator { get; set; } = null!;
 	#endregion
 
 	#region << Base Overrides >>

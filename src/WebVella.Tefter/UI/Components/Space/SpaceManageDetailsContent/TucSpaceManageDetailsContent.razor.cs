@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 {
-	private TfSpace _space = default!;
-	private TfNavigationState _navState = default!;
+	private TfSpace _space = null!;
+	private TfNavigationState _navState = null!;
 	private string? _menu = null;
 	public bool _submitting = false;
 	public void Dispose()

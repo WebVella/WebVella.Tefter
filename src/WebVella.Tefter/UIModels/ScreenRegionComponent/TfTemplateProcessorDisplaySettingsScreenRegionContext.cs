@@ -5,5 +5,5 @@
 /// </summary>
 public class TfTemplateProcessorDisplaySettingsScreenRegionContext : TfBaseScreenRegionContext
 {
-	public TfTemplate Template { get; set; } = default!;
+	public TfTemplate Template { get; set; } = null!;
 }

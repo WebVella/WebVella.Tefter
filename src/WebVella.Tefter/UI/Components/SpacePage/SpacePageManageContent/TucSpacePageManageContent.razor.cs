@@ -2,8 +2,8 @@
 public partial class TucSpacePageManageContent : TfBaseComponent, IDisposable
 {
 	private bool _isDeleting = false;
-	private TfSpace _space = default!;
-	private TfSpacePage _spacePage = default!;
+	private TfSpace _space = null!;
+	private TfSpacePage _spacePage = null!;
 	private TfSpacePageAddonMeta? _component = null;
 	public void Dispose()
 	{

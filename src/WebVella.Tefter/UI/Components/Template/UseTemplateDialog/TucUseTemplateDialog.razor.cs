@@ -2,7 +2,7 @@
 public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentComponent<TfUseTemplateContext?>
 {
 	[Parameter] public TfUseTemplateContext? Content { get; set; } = null;
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private string? _search = null;

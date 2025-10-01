@@ -2,7 +2,7 @@
 public partial class TucAdminTemplateDetailsAsideToolbar : TfBaseComponent
 {
 	private string? _search = null;
-	private TfNavigationState _navState = default!;
+	private TfNavigationState _navState = null!;
 
 	public void Dispose()
 	{

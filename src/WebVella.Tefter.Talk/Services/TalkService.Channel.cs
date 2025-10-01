@@ -26,9 +26,9 @@ public partial interface ITalkService
 internal partial class TalkService : ITalkService
 {
     #region << Events >>
-    public event EventHandler<TalkChannel> ChannelCreated = default!;
-    public event EventHandler<TalkChannel> ChannelUpdated = default!;
-    public event EventHandler<TalkChannel> ChannelDeleted = default!;
+    public event EventHandler<TalkChannel> ChannelCreated = null!;
+    public event EventHandler<TalkChannel> ChannelUpdated = null!;
+    public event EventHandler<TalkChannel> ChannelDeleted = null!;
     #endregion
 
     public TalkChannel GetChannel(

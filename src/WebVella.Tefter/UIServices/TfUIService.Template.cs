@@ -26,9 +26,9 @@ public partial interface ITfUIService
 public partial class TfUIService : ITfUIService
 {
 	#region << Events >>
-	public event EventHandler<TfTemplate> TemplateUpdated = default!;
-	public event EventHandler<TfTemplate> TemplateCreated = default!;
-	public event EventHandler<TfTemplate> TemplateDeleted = default!;
+	public event EventHandler<TfTemplate> TemplateUpdated = null!;
+	public event EventHandler<TfTemplate> TemplateCreated = null!;
+	public event EventHandler<TfTemplate> TemplateDeleted = null!;
 	#endregion
 
 	#region << Template >>

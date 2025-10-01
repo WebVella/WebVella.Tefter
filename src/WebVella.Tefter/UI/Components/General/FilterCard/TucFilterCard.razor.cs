@@ -3,7 +3,7 @@
 public partial class TucFilterCard : TfBaseComponent
 {
 	[Parameter]
-	public TfDataset Dataset { get; set; } = default!;
+	public TfDataset Dataset { get; set; } = null!;
 	[Parameter]
 	public EventCallback<List<TfFilterBase>> ItemsChanged { get; set; }
 
@@ -12,7 +12,7 @@ public partial class TucFilterCard : TfBaseComponent
 
 	internal string? _selectedColumn = null;
 	public bool _submitting = false;
-	List<TfFilterBase> _items = default!;
+	List<TfFilterBase> _items = null!;
 
 	protected override void OnInitialized()
 	{

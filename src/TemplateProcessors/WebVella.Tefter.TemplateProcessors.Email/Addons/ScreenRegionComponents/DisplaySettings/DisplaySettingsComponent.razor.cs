@@ -3,7 +3,7 @@
 public partial class DisplaySettingsComponent : TfBaseComponent,
 	ITfScreenRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegionContext>
 {
-	[Inject] public ITfService TfService { get; set; } = default!;
+	[Inject] public ITfService TfService { get; set; } = null!;
 	public const string ID = "a52465b2-6e8c-48b3-a903-7fb2d43c55fa";
 	public const string NAME = "Email Template View Settings";
 	public const string DESCRIPTION = "";

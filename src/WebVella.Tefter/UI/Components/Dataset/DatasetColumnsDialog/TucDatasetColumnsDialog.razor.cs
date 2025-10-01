@@ -3,15 +3,15 @@
 public partial class TucDatasetColumnsDialog : TfBaseComponent, IDialogContentComponent<TfDataset?>
 {
 	[Parameter] public TfDataset? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 
 	private TfDataset _dataset = new();
-	private TfDataProvider _provider = default!;
+	private TfDataProvider _provider = null!;
 	private List<TfDatasetColumn> _items = new();
 	List<TfDatasetColumn> _allOptions = new();
 

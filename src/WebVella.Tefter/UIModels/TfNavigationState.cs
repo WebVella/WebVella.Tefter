@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Models;
 public partial record TfNavigationState
 {
-	public string Uri { get; init; } = default!;
+	public string Uri { get; init; } = null!;
 	public Dictionary<int, string> NodesDict { get; init; } = new();
 	public Guid? SpaceId { get; init; }
 	public Guid? SpaceDataId { get; init; }

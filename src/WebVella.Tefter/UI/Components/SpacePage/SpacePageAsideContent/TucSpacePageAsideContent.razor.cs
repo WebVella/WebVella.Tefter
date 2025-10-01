@@ -2,7 +2,7 @@
 namespace WebVella.Tefter.UI.Components;
 public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 {
-	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; } = default!;
+	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
 	private string? _search = String.Empty;

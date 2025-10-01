@@ -3,7 +3,7 @@ namespace WebVella.Tefter.UI.Components;
 public partial class TucTemplateHelpDialog : TfBaseComponent, IDialogContentComponent<TfTemplate?>
 {
 	[Parameter] public TfTemplate? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 

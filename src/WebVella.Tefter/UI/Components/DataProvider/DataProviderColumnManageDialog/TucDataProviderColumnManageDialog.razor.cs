@@ -3,7 +3,7 @@
 public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProviderColumn?>
 {
 	[Parameter] public TfDataProviderColumn? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private bool _isCreate = false;
 	private bool _isBusy = true;
@@ -12,7 +12,7 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 	private string _title = "";
 	private string _btnText = "";
 	private bool _isConnected = false;
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 	private TfDataProvider _provider = new();
 	private TfUpsertDataProviderColumn _form = new();
 	private Dictionary<TfDatabaseColumnType, List<string>> _providerColumnTypeToSourceTypes = new();

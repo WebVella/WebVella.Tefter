@@ -3,7 +3,7 @@
 public partial class TucSortCard : TfBaseComponent
 {
 	[Parameter]
-	public TfDataset Dataset { get; set; } = default!;
+	public TfDataset Dataset { get; set; } = null!;
 
 	[Parameter]
 	public EventCallback<List<TfSort>> ItemsChanged { get; set; }
@@ -11,10 +11,10 @@ public partial class TucSortCard : TfBaseComponent
 	List<string> _allOptions = new();
 	Dictionary<string, TfDatasetColumn> _columnDict = new();
 	List<string> _options = new();
-	string _selectedColumn = default!;
+	string _selectedColumn = null!;
 	TfSortDirection _selectedDirection = TfSortDirection.ASC;
 	bool _submitting = false;
-	List<TfSort> _items = default!;
+	List<TfSort> _items = null!;
 
 	protected override void OnInitialized()
 	{

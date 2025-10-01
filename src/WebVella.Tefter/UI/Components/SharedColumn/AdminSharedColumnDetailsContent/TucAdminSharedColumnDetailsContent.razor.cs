@@ -4,7 +4,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 	private TfSharedColumn? _column = null;
 	private bool _isDeleting = false;
 
-	internal ReadOnlyCollection<TfDataProvider> _dataProviders = default!;
+	internal ReadOnlyCollection<TfDataProvider> _dataProviders = null!;
 	public void Dispose()
 	{
 		TfUIService.SharedColumnUpdated -= On_SharedColumnUpdated;

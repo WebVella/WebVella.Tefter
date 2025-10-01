@@ -7,8 +7,8 @@ public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 	private TfSpace _space = new();
 	public bool _submitting = false;
 	public TfNavigationState? _navState = null;
-	private ReadOnlyDictionary<Guid, TfSpaceViewColumnTypeAddonMeta> _typeMetaDict = default!;
-	private ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> _componentMetaDict = default!;
+	private ReadOnlyDictionary<Guid, TfSpaceViewColumnTypeAddonMeta> _typeMetaDict = null!;
+	private ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> _componentMetaDict = null!;
 	public void Dispose()
 	{
 		TfUIService.SpaceViewUpdated -= On_SpaceViewUpdated;

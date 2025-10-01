@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewSortsDialog : TfFormBaseComponent, IDialogContentComponent<Guid>
 {
-	[Parameter] public Guid Content { get; set; } = default!;
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[Parameter] public Guid Content { get; set; } = Guid.Empty;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private TfDataset _spaceData = null;
 	private List<TfSpaceViewColumn> _viewColumns = new();

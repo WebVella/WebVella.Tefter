@@ -7,12 +7,12 @@ public class TfFormBaseComponent : TfBaseComponent, IDisposable
 	/// <summary>
 	/// Edit context for the derivative forms
 	/// </summary>
-	protected EditContext EditContext = default!;
+	protected EditContext EditContext = null!;
 
 	/// <summary>
 	/// Message store for adding server response validation errors to edit context
 	/// </summary>
-	protected ValidationMessageStore MessageStore = default!;
+	protected ValidationMessageStore MessageStore = null!;
 
 	public virtual void Dispose()
 	{

@@ -49,11 +49,11 @@ public partial interface ITfUIService
 public partial class TfUIService : ITfUIService
 {
 	#region << Events >>
-	public event EventHandler<TfSpaceView> SpaceViewCreated = default!;
-	public event EventHandler<TfSpaceView> SpaceViewUpdated = default!;
-	public event EventHandler<TfSpaceView> SpaceViewDeleted = default!;
+	public event EventHandler<TfSpaceView> SpaceViewCreated = null!;
+	public event EventHandler<TfSpaceView> SpaceViewUpdated = null!;
+	public event EventHandler<TfSpaceView> SpaceViewDeleted = null!;
 
-	public event EventHandler<List<TfSpaceViewColumn>> SpaceViewColumnsChanged = default!;
+	public event EventHandler<List<TfSpaceViewColumn>> SpaceViewColumnsChanged = null!;
 	#endregion
 
 	#region << Space View>>

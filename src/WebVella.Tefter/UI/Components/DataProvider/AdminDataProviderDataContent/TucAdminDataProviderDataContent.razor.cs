@@ -3,7 +3,7 @@
 public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposable
 {
 	private TfDataProvider? _provider = null;
-	private TfNavigationState _navState = default!;
+	private TfNavigationState _navState = null!;
 	private bool _isDataLoading = false;
 	private bool _showSystemColumns = false;
 	private bool _showJoinKeyColumns = false;

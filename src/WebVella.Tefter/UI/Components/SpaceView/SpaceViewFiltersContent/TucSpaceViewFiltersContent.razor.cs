@@ -1,10 +1,10 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewFiltersContent : TfBaseComponent, IDisposable
 {
-	private TfSpaceView _spaceView = default!;
-	private TfDataset _spaceData = default!;
-	private TfDataProvider _dataProvider = default!;
-	private TfSpace _space = default!;
+	private TfSpaceView _spaceView = null!;
+	private TfDataset _spaceData = null!;
+	private TfDataProvider _dataProvider = null!;
+	private TfSpace _space = null!;
 	public bool _submitting = false;
 	public TfNavigationState? _navState = null;
 	public void Dispose()

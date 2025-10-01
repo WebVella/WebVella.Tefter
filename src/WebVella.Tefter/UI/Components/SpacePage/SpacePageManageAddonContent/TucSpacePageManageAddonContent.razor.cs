@@ -2,8 +2,8 @@
 public partial class TucSpacePageManageAddonContent : TfBaseComponent, IDisposable
 {
 	private bool _isDeleting = false;
-	private TfSpace _space = default!;
-	private TfSpacePage _spacePage = default!;
+	private TfSpace _space = null!;
+	private TfSpacePage _spacePage = null!;
 	public void Dispose()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
@@ -45,57 +45,23 @@ public partial class TucSpacePageManageAddonContent : TfBaseComponent, IDisposab
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-
-	private async Task _editProvider()
+	private Dictionary<string, object> _getDynamicComponentParams()
 	{
-		// if (_provider is null) return;
-		// var dialog = await DialogService.ShowDialogAsync<TucDataProviderManageDialog>(
-		// _provider,
-		// new DialogParameters()
-		// {
-		// 	PreventDismissOnOverlayClick = true,
-		// 	PreventScroll = true,
-		// 	Width = TfConstants.DialogWidthLarge,
-		// 	TrapFocus = false
-		// });
-		// var result = await dialog.Result;
-		// if (!result.Cancelled && result.Data != null)
-		// {
-		// }
-	}
+		var dict = new Dictionary<string, object>();
+		if (_spacePage is not null)
+		{
+			dict["Context"] = new TfSpacePageAddonContext
+			{
+				ComponentOptionsJson = _spacePage.ComponentOptionsJson,
+				Icon = _spacePage.FluentIconName,
+				Mode = TfComponentMode.Manage,
+				SpacePage = _spacePage,
+				Space = _space,
+				CurrentUser = TfAuthLayout.CurrentUser,
+			};
+		}
 
-	private async Task _deleteProvider()
-	{
-		// if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this data provider deleted?") + "\r\n" + LOC("Will proceeed only if there are not existing columns attached")))
-		// 	return;
-		//
-		// if (_provider is null) return;
-		// try
-		// {
-		// 	_isDeleting = true;
-		// 	await InvokeAsync(StateHasChanged);
-		// 	TfUIService.DeleteDataProvider(_provider.Id);
-		// 	var providers = TfUIService.GetDataProviders();
-		// 	_provider = null;
-		// 	ToastService.ShowSuccess(LOC("Data provider was successfully deleted"));
-		// 	if (providers.Count > 0)
-		// 	{
-		// 		Navigator.NavigateTo(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, providers[0].Id));
-		// 	}
-		// 	else
-		// 	{
-		// 		Navigator.NavigateTo(TfConstants.AdminDataProvidersPageUrl, true);
-		// 	}
-		// }
-		// catch (Exception ex)
-		// {
-		// 	ProcessException(ex);
-		// }
-		// finally
-		// {
-		// 	_isDeleting = false;
-		// 	await InvokeAsync(StateHasChanged);
-		// }
 
+		return dict;
 	}
 }

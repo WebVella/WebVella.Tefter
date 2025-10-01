@@ -23,9 +23,9 @@ public partial interface IAssetsService
 internal partial class AssetsService : IAssetsService
 {
     #region << Events >>
-    public event EventHandler<AssetsFolder> FolderCreated = default!;
-    public event EventHandler<AssetsFolder> FolderUpdated = default!;
-    public event EventHandler<AssetsFolder> FolderDeleted = default!;
+    public event EventHandler<AssetsFolder> FolderCreated = null!;
+    public event EventHandler<AssetsFolder> FolderUpdated = null!;
+    public event EventHandler<AssetsFolder> FolderDeleted = null!;
     #endregion
 
 

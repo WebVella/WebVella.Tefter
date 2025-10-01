@@ -15,7 +15,7 @@ public partial class TalkCommentsCountComponent : TucBaseViewColumn<TfTalkCommen
     [Inject] protected ITalkService TalkService { get; set; }
 
     [CascadingParameter(Name = "TucSpaceViewPageContent")]
-    public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
+    public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;
     #endregion
 
     #region << Constructor >>

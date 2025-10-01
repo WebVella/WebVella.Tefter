@@ -13,9 +13,9 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 
 	#region << Injects >>
 	[Inject] protected IAssetsService AssetsService { get; set; }
-	[Inject] protected IJSRuntime JSRuntime { get; set; } = default!;
-	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-    [Inject] protected NavigationManager Navigator { get; set; } = default!;
+	[Inject] protected IJSRuntime JSRuntime { get; set; } = null!;
+	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
+    [Inject] protected NavigationManager Navigator { get; set; } = null!;
 	#endregion
 
 	#region << Base Overrides >>

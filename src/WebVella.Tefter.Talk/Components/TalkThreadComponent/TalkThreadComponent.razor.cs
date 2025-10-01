@@ -13,7 +13,7 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 	[Parameter] public string Style { get; set; } = "";
 	[Parameter] public RenderFragment HeaderActions { get; set; }
-	[Inject] protected NavigationManager Navigator { get; set; } = default!;
+	[Inject] protected NavigationManager Navigator { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private bool _isLoading = true;

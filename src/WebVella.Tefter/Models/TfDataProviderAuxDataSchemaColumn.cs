@@ -4,8 +4,8 @@ namespace WebVella.Tefter.Models;
 
 public class TfDataProviderAuxDataSchemaColumn
 {
-	public TfDataIdentity? DataIdentity { get; set; } = default!;
-	public string DbName { get; set; } = default!;
+	public TfDataIdentity? DataIdentity { get; set; } = null!;
+	public string DbName { get; set; } = null!;
 
 	//Filled when it is a shared column
 	public TfSharedColumn? SharedColumn { get; set; } = null;

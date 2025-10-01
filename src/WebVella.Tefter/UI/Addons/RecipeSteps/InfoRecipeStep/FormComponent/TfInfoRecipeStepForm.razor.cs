@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.UI.Addons.RecipeSteps;
 public partial class TfInfoRecipeStepForm : TfRecipeStepFormBase
 {
-	[Parameter] public TfInfoRecipeStep Addon { get; set; } = default!;
-	private TfInfoRecipeStepData _form = default!;
+	[Parameter] public TfInfoRecipeStep Addon { get; set; } = null!;
+	private TfInfoRecipeStepData _form = null!;
 
 	protected override void OnInitialized()
 	{

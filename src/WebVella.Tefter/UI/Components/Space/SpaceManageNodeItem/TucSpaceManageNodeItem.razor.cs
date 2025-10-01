@@ -8,7 +8,7 @@ public partial class TucSpaceManageNodeItem : TfBaseComponent
 	public bool IsLast { get; set; } = false;
 
 	[Parameter]
-	public TfSpacePage Item { get; set; } = default!;
+	public TfSpacePage Item { get; set; } = null!;
 
 	[Parameter]
 	public int Level { get; set; } = 0;

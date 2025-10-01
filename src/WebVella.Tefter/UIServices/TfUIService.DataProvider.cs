@@ -58,9 +58,9 @@ public partial class TfUIService : ITfUIService
 {
 
 	#region << Events >>
-	public event EventHandler<TfDataProvider> DataProviderCreated = default!;
-	public event EventHandler<TfDataProvider> DataProviderUpdated = default!;
-	public event EventHandler<TfDataProvider> DataProviderDeleted = default!;
+	public event EventHandler<TfDataProvider> DataProviderCreated = null!;
+	public event EventHandler<TfDataProvider> DataProviderUpdated = null!;
+	public event EventHandler<TfDataProvider> DataProviderDeleted = null!;
 	#endregion
 
 	#region << Data Provider>>
