@@ -25,8 +25,8 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 			_menu = new();
 			if (navState.SpacePageId is null)
 				throw new Exception("Space page Id not found in URL");
-			_spacePage = TfUIService.GetSpacePage(navState.SpacePageId.Value);
-			var pageMeta = TfUIService.GetSpacePagesComponentsMeta();
+			_spacePage = TfService.GetSpacePage(navState.SpacePageId.Value);
+			var pageMeta = TfMetaService.GetSpacePagesComponentsMeta();
 			var component = pageMeta.FirstOrDefault(x => x.Instance.AddonId == _spacePage.ComponentId);
 			if(_spacePage is null)
 				return;

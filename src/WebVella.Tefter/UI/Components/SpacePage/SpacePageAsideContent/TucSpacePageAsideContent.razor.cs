@@ -12,21 +12,21 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 	private TfNavigationState _navState = new();
 	public void Dispose()
 	{
-		TfUIService.SpacePageCreated -= On_SpacePageChange;
-		TfUIService.SpacePageUpdated -= On_SpacePageChange;
-		TfUIService.SpacePageDeleted -= On_SpacePageChange;
+		TfEventProvider.SpacePageCreatedEvent -= On_SpacePageChanged;
+		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
+		TfEventProvider.SpacePageDeletedEvent -= On_SpacePageChanged;
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.SpacePageCreated += On_SpacePageChange;
-		TfUIService.SpacePageUpdated += On_SpacePageChange;
-		TfUIService.SpacePageDeleted += On_SpacePageChange;
+		TfEventProvider.SpacePageCreatedEvent += On_SpacePageChanged;
+		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
+		TfEventProvider.SpacePageDeletedEvent += On_SpacePageChanged;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async void On_SpacePageChange(object? caller, TfSpacePage args)
+	private async void On_SpacePageChanged(object args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
@@ -90,7 +90,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		var menuGroups = new List<string>();
 		if (_activeTab == TfSpaceNavigationActiveTab.Pages)
 		{
-			var spacePages = TfUIService.GetSpacePages(_navState.SpaceId!.Value);
+			var spacePages = TfService.GetSpacePages(_navState.SpaceId!.Value);
 			foreach (var spacePage in spacePages)
 			{
 				if (!_filterPage(spacePage))

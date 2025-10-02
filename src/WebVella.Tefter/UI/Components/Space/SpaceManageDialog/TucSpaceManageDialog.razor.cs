@@ -57,12 +57,12 @@ public partial class TucSpaceManageDialog : TfFormBaseComponent, IDialogContentC
 			var result = new TfSpace();
 			if (_isCreate)
 			{
-				result = TfUIService.CreateSpace(_form);
+				result = TfService.CreateSpace(_form);
 				ToastService.ShowSuccess(LOC("Space created successfully!"));
 			}
 			else
 			{
-				result = TfUIService.UpdateSpace(_form);
+				result = TfService.UpdateSpace(_form);
 				ToastService.ShowSuccess(LOC("Space updated successfully!"));
 			}
 

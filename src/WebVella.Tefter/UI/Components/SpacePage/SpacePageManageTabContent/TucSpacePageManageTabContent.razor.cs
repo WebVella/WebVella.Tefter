@@ -7,13 +7,13 @@ public partial class TucSpacePageManageTabContent : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.SpacePageUpdated -= On_SpacePageUpdated;
+		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.SpacePageUpdated += On_SpacePageUpdated;
+		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -21,7 +21,7 @@ public partial class TucSpacePageManageTabContent : TfBaseComponent, IDisposable
 			await _init(args);
 	}
 
-	private async void On_SpacePageUpdated(object? caller, TfSpacePage args)
+	private async void On_SpacePageChanged(object args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
@@ -32,10 +32,10 @@ public partial class TucSpacePageManageTabContent : TfBaseComponent, IDisposable
 		{
 			if (navState.SpaceId is null)
 				throw new Exception("Space Id not found in URL");
-			_space = TfUIService.GetSpace(navState.SpaceId.Value);
+			_space = TfService.GetSpace(navState.SpaceId.Value);
 			if (navState.SpacePageId is null)
 				throw new Exception("Page Id not found in URL");
-			_spacePage = TfUIService.GetSpacePage(navState.SpacePageId.Value);
+			_spacePage = TfService.GetSpacePage(navState.SpacePageId.Value);
 		}
 		finally
 		{

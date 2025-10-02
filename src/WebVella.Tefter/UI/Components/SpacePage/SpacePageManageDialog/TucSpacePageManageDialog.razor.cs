@@ -37,8 +37,8 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 
-		var spaceDict = TfUIService.GetSpaces().ToDictionary(x => x.Id);
-		var allPages = TfUIService.GetAllSpacePages().Where(x => x.Type == TfSpacePageType.Page).ToList();
+		var spaceDict = TfService.GetSpacesList().ToDictionary(x => x.Id);
+		var allPages = TfService.GetAllSpacePages().Where(x => x.Type == TfSpacePageType.Page).ToList();
 
 		foreach (var page in allPages)
 		{
@@ -171,14 +171,16 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 			TfSpacePage newPage = null!;
 			if (_isCreate)
 			{
-				newPage = TfUIService.CreateSpacePage(
-					page: submit
-					);
+				var(pageId,pageList) = TfService.CreateSpacePage(
+					spacePage: submit
+				);
+				newPage = pageList.Single(x => x.Id == pageId); 
 				ToastService.ShowSuccess(LOC("Space page created!"));
 			}
 			else
 			{
-				newPage = TfUIService.UpdateSpacePage(submit);
+				var pageList = TfService.UpdateSpacePage(spacePage:submit);
+				newPage = pageList.Single(x => x.Id == submit.Id); 
 				ToastService.ShowSuccess(LOC("Space page updated!"));
 			}
 
@@ -201,7 +203,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 	private IEnumerable<TfSpacePage> _getParents()
 	{
 		var parents = new List<TfSpacePage>();
-		var spacePages = TfUIService.GetSpacePages(Content.SpaceId);
+		var spacePages = TfService.GetSpacePages(Content.SpaceId);
 		foreach (var item in spacePages)
 		{
 			_fillParents(parents, item, new List<Guid> { _form.Id });

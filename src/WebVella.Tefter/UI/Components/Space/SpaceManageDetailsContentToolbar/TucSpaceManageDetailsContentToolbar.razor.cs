@@ -7,20 +7,20 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDis
 	public void Dispose()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.SpaceUpdated -= On_SpaceUpdated;
+		TfEventProvider.SpaceUpdatedEvent -= On_SpaceUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.SpaceUpdated += On_SpaceUpdated;
+		TfEventProvider.SpaceUpdatedEvent += On_SpaceUpdated;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await _init(args);
 	}
-	private async void On_SpaceUpdated(object? caller, TfSpace args)
+	private async void On_SpaceUpdated(TfSpaceUpdatedEvent args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
@@ -33,11 +33,11 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDis
 			if (navState.SpaceId is null)
 				return;
 
-			var space = TfUIService.GetSpace(navState.SpaceId.Value);
+			var space = TfService.GetSpace(navState.SpaceId.Value);
 			if (space is null)
 				return;
 
-			var spacePages = TfUIService.GetSpacePages(space.Id);
+			var spacePages = TfService.GetSpacePages(space.Id);
 			_menu.Add(new TfMenuItem
 			{
 				Url = string.Format(TfConstants.SpaceManagePageUrl, navState.SpaceId),

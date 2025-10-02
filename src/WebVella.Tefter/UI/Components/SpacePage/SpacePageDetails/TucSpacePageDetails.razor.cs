@@ -8,14 +8,14 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.SpacePageUpdated -= On_SpacePageUpdated;
+		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.SpacePageUpdated += On_SpacePageUpdated;
+		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -24,7 +24,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 			await _init(navState: args);
 	}
 
-	private async void On_SpacePageUpdated(object? caller, TfSpacePage args)
+	private async void On_SpacePageChanged(object args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
@@ -36,10 +36,10 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 		{
 			if (_navState.SpacePageId.HasValue && _spacePage?.Id != _navState.SpacePageId)
 			{
-				_spacePage = TfUIService.GetSpacePage(_navState.SpacePageId.Value);
+				_spacePage = TfService.GetSpacePage(_navState.SpacePageId.Value);
 				_space = null;
 				if (_spacePage is not null)
-					_space = TfUIService.GetSpace(_spacePage.SpaceId);
+					_space = TfService.GetSpace(_spacePage.SpaceId);
 			}
 		}
 		finally
@@ -84,9 +84,9 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 
 		try
 		{
-			TfUIService.DeleteSpacePage(_spacePage);
+			TfService.DeleteSpacePage(_spacePage);
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
-			var spacePages = TfUIService.GetSpacePages(_spacePage.SpaceId);
+			var spacePages = TfService.GetSpacePages(_spacePage.SpaceId);
 			Guid? firstPageId = null;
 			foreach (var page in spacePages)
 			{
@@ -117,7 +117,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 	{
 		if (_spacePage is null) return;
 
-		var spPage = TfUIService.GetSpacePage(_spacePage.Id);
+		var spPage = TfService.GetSpacePage(_spacePage.Id);
 		if (spPage == null)
 		{
 			ToastService.ShowError(LOC("Space page not found"));

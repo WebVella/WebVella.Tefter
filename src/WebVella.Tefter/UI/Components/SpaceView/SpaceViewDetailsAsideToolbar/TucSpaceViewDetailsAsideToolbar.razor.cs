@@ -29,7 +29,7 @@ public partial class TucSpaceViewDetailsAsideToolbar : TfBaseComponent, IDisposa
 			_backUrl = "#";
 			if (_navState.SpaceId is null || _navState.SpaceViewId is null) return;
 
-			var spacePage = TfUIService.GetSpacePageBySpaceViewId(_navState.SpaceViewId.Value);
+			var spacePage = TfService.GetSpacePageBySpaceViewId(_navState.SpaceViewId.Value);
 			if (spacePage is not null)
 			{
 				_backUrl = String.Format(TfConstants.SpacePagePageUrl, spacePage.SpaceId, spacePage.Id);

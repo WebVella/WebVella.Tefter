@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Services;
+﻿using Nito.AsyncEx.Synchronous;
+
+namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -60,6 +62,10 @@ public partial interface ITfService
 	/// <param name="id">The unique identifier of the space to move down.</param>
 	public void MoveSpaceDown(
 		Guid id);
+
+	public TfSpace SetSpacePrivacy(
+		Guid spaceId,
+		bool isPrivate);	
 
 	/// <summary>
 	/// Removes a role from a list of spaces.
@@ -222,8 +228,15 @@ public partial class TfService : ITfService
 				}
 
 				scope.Complete();
-
-				return GetSpace(space.Id);
+				
+				var result = GetSpace(space.Id);
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfSpaceCreatedEvent(result));
+				});
+				task.WaitAndUnwrapException();
+				
+				return result;
 			}
 		}
 		catch (Exception ex)
@@ -283,8 +296,15 @@ public partial class TfService : ITfService
 				}
 
 				scope.Complete();
-
-				return GetSpace(space.Id);
+				
+				var result = GetSpace(space.Id);
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfSpaceUpdatedEvent(result));
+				});
+				task.WaitAndUnwrapException();
+				
+				return result;
 			}
 		}
 		catch (Exception ex)
@@ -331,6 +351,14 @@ public partial class TfService : ITfService
 				}
 
 				scope.Complete();
+				
+				var result = GetSpace(id);
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfSpaceUpdatedEvent(result));
+				});
+				task.WaitAndUnwrapException();
+
 			}
 		}
 		catch (Exception ex)
@@ -378,6 +406,13 @@ public partial class TfService : ITfService
 				}
 
 				scope.Complete();
+				
+				var result = GetSpace(id);
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfSpaceUpdatedEvent(result));
+				});
+				task.WaitAndUnwrapException();				
 			}
 		}
 		catch (Exception ex)
@@ -446,6 +481,12 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfSpaceDbo> failed");
 
 				scope.Complete();
+				
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfSpaceUpdatedEvent(space));
+				});
+				task.WaitAndUnwrapException();				
 			}
 		}
 		catch (Exception ex)
@@ -453,6 +494,22 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 	}
+	public TfSpace SetSpacePrivacy(
+		Guid spaceId,
+		bool isPrivate)
+	{
+		var space = GetSpace(spaceId);
+		if (space is null)
+			throw new Exception("Space not found");
+		space.IsPrivate = isPrivate;
+		var result = UpdateSpace(space);
+		var task = Task.Run(async () =>
+		{
+			await _eventProvider.PublishEventAsync(new TfSpaceUpdatedEvent(space));
+		});
+		task.WaitAndUnwrapException();	
+		return result;
+	}	
 
 	public void AddSpacesRole(
 		List<TfSpace> spaces,

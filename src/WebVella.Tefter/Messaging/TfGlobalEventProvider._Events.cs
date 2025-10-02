@@ -5,6 +5,16 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 {
 	public event Action<SampleGlobalEvent> SampleGlobalEvent;
 	
+	//space
+	public event Action<TfSpaceCreatedEvent> SpaceCreatedEvent;
+	public event Action<TfSpaceUpdatedEvent> SpaceUpdatedEvent;
+	public event Action<TfSpaceDeletedEvent> SpaceDeletedEvent;		
+	
+	//space page
+	public event Action<TfSpacePageCreatedEvent> SpacePageCreatedEvent;
+	public event Action<TfSpacePageUpdatedEvent> SpacePageUpdatedEvent;
+	public event Action<TfSpacePageDeletedEvent> SpacePageDeletedEvent;	
+	
 	//space view column
 	public event Action<TfSpaceViewColumnsChangedEvent> SpaceViewColumnsChangedEvent;
 	
@@ -26,6 +36,26 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 	{
 		if (obj is SampleGlobalEvent)
 			SampleGlobalEvent?.Invoke((SampleGlobalEvent)obj);
+		
+		//space
+		if (obj is TfSpaceCreatedEvent)
+			SpaceCreatedEvent?.Invoke((TfSpaceCreatedEvent)obj);		
+		
+		if (obj is TfSpaceUpdatedEvent)
+			SpaceUpdatedEvent?.Invoke((TfSpaceUpdatedEvent)obj);
+	
+		if (obj is TfSpaceDeletedEvent)
+			SpaceDeletedEvent?.Invoke((TfSpaceDeletedEvent)obj);				
+		
+		//space page
+		if (obj is TfSpacePageCreatedEvent)
+			SpacePageCreatedEvent?.Invoke((TfSpacePageCreatedEvent)obj);		
+		
+		if (obj is TfSpacePageUpdatedEvent)
+			SpacePageUpdatedEvent?.Invoke((TfSpacePageUpdatedEvent)obj);
+	
+		if (obj is TfSpacePageDeletedEvent)
+			SpacePageDeletedEvent?.Invoke((TfSpacePageDeletedEvent)obj);			
 		
 		//space view column
 		if (obj is TfSpaceViewColumnsChangedEvent)

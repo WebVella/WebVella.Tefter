@@ -8,18 +8,18 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.SpaceCreated -= On_SpaceChange;
-		TfUIService.SpaceUpdated -= On_SpaceChange;
-		TfUIService.SpaceDeleted -= On_SpaceChange;
+		TfEventProvider.SpaceCreatedEvent -= On_SpaceChange;
+		TfEventProvider.SpaceUpdatedEvent -= On_SpaceChange;
+		TfEventProvider.SpaceDeletedEvent -= On_SpaceChange;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.SpaceCreated += On_SpaceChange;
-		TfUIService.SpaceUpdated += On_SpaceChange;
-		TfUIService.SpaceDeleted += On_SpaceChange;
+		TfEventProvider.SpaceCreatedEvent += On_SpaceChange;
+		TfEventProvider.SpaceUpdatedEvent += On_SpaceChange;
+		TfEventProvider.SpaceDeletedEvent += On_SpaceChange;
 	}
 
 
@@ -29,7 +29,7 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 			await _init(navState: args);
 	}
 
-	private async void On_SpaceChange(object? caller, TfSpace args)
+	private async void On_SpaceChange(object args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
@@ -41,7 +41,7 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 		try
 		{
 			if (_navState.SpaceId is null) return;
-			_space = TfUIService.GetSpace(_navState.SpaceId.Value);
+			_space = TfService.GetSpace(_navState.SpaceId.Value);
 			if (_space is null) return;
 
 			_menu = null;
@@ -77,7 +77,7 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 			return;
 		try
 		{
-			TfUIService.DeleteSpace(_space.Id);
+			TfService.DeleteSpace(_space.Id);
 			ToastService.ShowSuccess(LOC("Space deleted"));
 			Navigator.NavigateTo(TfConstants.HomePageUrl);
 		}

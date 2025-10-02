@@ -22,11 +22,11 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 	private void _init(TfSpace? space = null)
 	{
 		if (space is null)
-			_space = TfUIService.GetSpace(Content);
+			_space = TfService.GetSpace(Content);
 		else
 			_space = space;
 
-		_spacePages = TfUIService.GetSpacePages(_space.Id);
+		_spacePages = TfService.GetSpacePages(_space.Id);
 	}
 
 	private async Task _cancel()
@@ -62,7 +62,7 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 
 		try
 		{
-			TfUIService.DeleteSpacePage(node);
+			TfService.DeleteSpacePage(node);
 			_init();
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
 		}
@@ -85,7 +85,7 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 
 		try
 		{
-			TfUIService.MoveSpacePage(args.Item1, args.Item2);
+			TfService.MoveSpacePage(args.Item1, args.Item2);
 			_init();
 			ToastService.ShowSuccess(LOC("Space page updated!"));
 		}
@@ -109,7 +109,7 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 
 		try
 		{
-			TfUIService.CopySpacePage(nodeId);
+			TfService.CopySpacePage(nodeId);
 			_init();
 			ToastService.ShowSuccess(LOC("Space page updated!"));
 		}

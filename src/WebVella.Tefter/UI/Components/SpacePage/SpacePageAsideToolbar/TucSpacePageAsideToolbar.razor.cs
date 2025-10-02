@@ -78,7 +78,7 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 	private async Task _editSpaceAsync()
 	{
 		if (_navState.SpaceId is null) return;
-		var space = TfUIService.GetSpace(_navState.SpaceId.Value);
+		var space = TfService.GetSpace(_navState.SpaceId.Value);
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceManageDialog>(
 		space,
 		new DialogParameters()
@@ -99,7 +99,7 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 			return;
 		try
 		{
-			TfUIService.DeleteSpace(_navState.SpaceId.Value);
+			TfService.DeleteSpace(_navState.SpaceId.Value);
 			ToastService.ShowSuccess(LOC("Space deleted"));
 			Navigator.NavigateTo(TfConstants.HomePageUrl);
 		}
