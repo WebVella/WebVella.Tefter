@@ -15,14 +15,14 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.RoleUpdated += On_RoleUpdated;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_RoleUpdated(object? caller, TfRole args)
 	{
-		await _init(navState:Navigator.GetRouteState(), role: args);
+		await _init(navState:TfAuthLayout.NavigationState, role: args);
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -41,7 +41,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 			}
 			else
 			{
-				var routeData = Navigator.GetRouteState();
+				var routeData = TfAuthLayout.NavigationState;
 				if (routeData.RoleId is not null)
 					_role = TfUIService.GetRole(routeData.RoleId.Value);
 

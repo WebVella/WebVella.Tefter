@@ -39,15 +39,14 @@ public partial class TfService : ITfService
 				.Where(x => x.ParentId is null)
 				.OrderBy(x => x.Position)
 				.ToList();
-
+			ReadOnlyCollection<TfSpacePageAddonMeta> components = _metaService.GetSpacePagesComponentsMeta();
 			foreach (var rootPage in rootPages)
 			{
 				rootPage.ParentPage = null;
-				rootPage.ComponentType = _metaService
-					.GetSpacePagesComponentsMeta()
+				rootPage.ComponentType = components
 					.SingleOrDefault(x => x.ComponentId == rootPage.ComponentId)
 					?.Instance.GetType();
-				InitSpacePageChildPages(rootPage, spacePagesList);
+				InitSpacePageChildPages(rootPage, spacePagesList, components);
 			}
 			return rootPages;
 		}
@@ -72,15 +71,15 @@ public partial class TfService : ITfService
 				.Where(x => x.ParentId is null)
 				.OrderBy(x => x.Position)
 				.ToList();
-
+			var components = _metaService
+				.GetSpacePagesComponentsMeta();
 			foreach (var rootPage in rootPages)
 			{
 				rootPage.ParentPage = null;
-				rootPage.ComponentType = _metaService
-					.GetSpacePagesComponentsMeta()
+				rootPage.ComponentType = components
 					.SingleOrDefault(x => x.ComponentId == rootPage.ComponentId)
 					?.Instance.GetType();
-				InitSpacePageChildPages(rootPage, spacePagesList);
+				InitSpacePageChildPages(rootPage, spacePagesList, components);
 			}
 
 			return rootPages;
@@ -106,7 +105,8 @@ public partial class TfService : ITfService
 
 	private void InitSpacePageChildPages(
 		TfSpacePage page,
-		List<TfSpacePage> allPages)
+		List<TfSpacePage> allPages,
+		ReadOnlyCollection<TfSpacePageAddonMeta> components)
 	{
 		var childPages = allPages
 			.Where(x => x.ParentId == page.Id)
@@ -118,7 +118,10 @@ public partial class TfService : ITfService
 		foreach (var childPage in childPages)
 		{
 			childPage.ParentPage = page;
-			InitSpacePageChildPages(childPage, allPages);
+			childPage.ComponentType = components
+				.SingleOrDefault(x => x.ComponentId == childPage.ComponentId)
+				?.Instance.GetType();;
+			InitSpacePageChildPages(childPage, allPages, components);
 		}
 	}
 

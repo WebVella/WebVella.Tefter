@@ -24,7 +24,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.FileRepositoryCreated += On_RepositoryFileChanged;
 		TfUIService.FileRepositoryUpdated += On_RepositoryFileChanged;
 		TfUIService.FileRepositoryDeleted += On_RepositoryFileChanged;
@@ -48,7 +48,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 
 	private async void On_RepositoryFileChanged(object? caller, TfRepositoryFile args)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async Task _init(TfNavigationState navState)

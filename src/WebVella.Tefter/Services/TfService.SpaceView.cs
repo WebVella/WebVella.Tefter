@@ -13,7 +13,7 @@ public partial interface ITfService
 		Guid id);
 
 	public TfSpaceView CreateSpaceView(
-		TfCreateSpaceViewExtended spaceViewExt);
+		TfSpaceViewCreateModel spaceViewExt);
 
 	public TfSpaceView CreateSpaceView(
 		TfSpaceView spaceView);
@@ -21,8 +21,9 @@ public partial interface ITfService
 	public TfSpaceView UpdateSpaceView(
 		TfSpaceView spaceView);
 
-	public TfSpaceView UpdateSpaceView(
-		TfCreateSpaceViewExtended spaceViewExt);
+	public void UpdateSpaceViewSettings(
+		Guid spaceViewId,
+		TfSpaceViewSettings settings);
 
 	public void UpdateSpaceViewPresets(
 		Guid spaceViewId,
@@ -31,14 +32,6 @@ public partial interface ITfService
 	public void DeleteSpaceView(
 		Guid id);
 
-	public TfSpaceView CopySpaceView(
-		Guid id);
-
-	public void MoveSpaceViewUp(
-		Guid id);
-
-	public void MoveSpaceViewDown(
-		Guid id);
 }
 
 public partial class TfService : ITfService
@@ -120,7 +113,7 @@ public partial class TfService : ITfService
 	}
 
 	public TfSpaceView CreateSpaceView(
-		TfCreateSpaceViewExtended spaceViewExt)
+		TfSpaceViewCreateModel spaceViewExt)
 	{
 		try
 		{
@@ -139,13 +132,13 @@ public partial class TfService : ITfService
 			if (String.IsNullOrWhiteSpace(spaceViewExt.Name))
 				valEx.AddValidationError(nameof(spaceViewExt.Name), "required");
 
-			if (spaceViewExt.SpaceDataId is null)
-				valEx.AddValidationError(nameof(spaceViewExt.SpaceDataId), "required");
+			if (spaceViewExt.DatasetId is null)
+				valEx.AddValidationError(nameof(spaceViewExt.DatasetId), "required");
 			else
 			{
-				dataset = GetDataset(spaceViewExt.SpaceDataId.Value);
+				dataset = GetDataset(spaceViewExt.DatasetId.Value);
 				if (dataset is null)
-					valEx.AddValidationError(nameof(spaceViewExt.SpaceDataId), "dataset is not found");
+					valEx.AddValidationError(nameof(spaceViewExt.DatasetId), "dataset is not found");
 			}
 			valEx.ThrowIfContainsErrors();
 
@@ -313,6 +306,34 @@ public partial class TfService : ITfService
 		}
 	}
 
+	public void UpdateSpaceViewSettings(
+		Guid spaceViewId,
+		TfSpaceViewSettings settings)
+	{
+		try
+		{
+			var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceViewId);
+			if (existingSpaceView == null)
+			{
+				throw new TfValidationException("spaceViewId", "SpaceView not found.");
+			}
+
+			existingSpaceView.SettingsJson = JsonSerializer.Serialize(settings);
+
+			var success = _dboManager.Update<TfSpaceViewDbo>(
+				existingSpaceView,
+				nameof(TfSpaceViewDbo.SettingsJson));
+
+			if (!success)
+				throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+	
+	
 	public void UpdateSpaceViewPresets(
 		Guid spaceViewId,
 		List<TfSpaceViewPreset> presets)
@@ -376,221 +397,6 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfSpaceView UpdateSpaceView(
-		TfCreateSpaceViewExtended spaceViewExt)
-	{
-		try
-		{
-			throw new NotImplementedException();
-			//TfSpace space = null;
-			//TfDataset spaceData = null;
-			//TfSpaceView spaceView = null;
-			//TfDataProvider dataprovider = null;
-			//var createNewDataset = spaceViewExt.DatasetType == TfSpaceViewDatasetType.New;
-			//#region << Validate>>
-
-			//var valEx = new TfValidationException();
-
-			////args
-			//if (String.IsNullOrWhiteSpace(spaceViewExt.Name))
-			//	valEx.AddValidationError(nameof(spaceViewExt.Name), "required");
-
-			//if (spaceViewExt.SpaceId == Guid.Empty)
-			//	valEx.AddValidationError(nameof(spaceViewExt.SpaceId), "required");
-
-			//if (createNewDataset)
-			//{
-			//	if (String.IsNullOrWhiteSpace(spaceViewExt.NewSpaceDataName))
-			//		valEx.AddValidationError(nameof(spaceViewExt.NewSpaceDataName), "required");
-
-			//	if (spaceViewExt.DataProviderId is null)
-			//		valEx.AddValidationError(nameof(spaceViewExt.DataProviderId), "required");
-			//}
-			//else
-			//{
-			//	if (spaceViewExt.SpaceDataId is null)
-			//		valEx.AddValidationError(nameof(spaceViewExt.SpaceDataId), "required");
-			//}
-
-			////Space
-			//space = GetSpace(spaceViewExt.SpaceId);
-			//if (space is null)
-			//	valEx.AddValidationError(nameof(spaceViewExt.SpaceId), "space is not found");
-
-			////DataProvider
-			//if (spaceViewExt.DataProviderId is not null)
-			//{
-			//	dataprovider = GetDataProvider(spaceViewExt.DataProviderId.Value);
-			//	if (dataprovider is null)
-			//		valEx.AddValidationError(nameof(spaceViewExt.DataProviderId), "data provider is not found");
-			//}
-
-			////SpaceData
-			//if (spaceViewExt.SpaceDataId is not null)
-			//{
-			//	spaceData = GetDataset(spaceViewExt.SpaceDataId.Value);
-			//	if (spaceData is null)
-			//		valEx.AddValidationError(nameof(spaceViewExt.SpaceDataId), "dataset is not found");
-			//}
-
-			//valEx.ThrowIfContainsErrors();
-
-			//#endregion
-
-			//using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
-			//{
-			//	#region << create space data if needed >>
-			//	if (spaceData is null)
-			//	{
-			//		List<string> selectedColumns = new();
-			//		//system columns are always selected so we should not add them in the space data
-			//		if (spaceViewExt.AddProviderColumns && spaceViewExt.AddSharedColumns)
-			//		{
-			//			//all columns are requested from the provider, so send empty column list, which will apply newly added columns
-			//			//to the provider dynamically
-			//		}
-			//		else if (spaceViewExt.AddProviderColumns)
-			//		{
-			//			selectedColumns.AddRange(dataprovider.Columns.Select(x => x.DbName).ToList());
-			//		}
-			//		else if (spaceViewExt.AddSharedColumns)
-			//		{
-			//			selectedColumns.AddRange(dataprovider.SharedColumns.Select(x => x.DbName).ToList());
-			//		}
-
-			//		var spaceDataObj = new TfCreateDataset()
-			//		{
-			//			Id = Guid.NewGuid(),
-			//			Name = spaceViewExt.NewSpaceDataName,
-			//			Filters = new(),//filters will not be added at this point
-			//			Columns = selectedColumns,
-			//			DataProviderId = dataprovider.Id,
-			//		};
-
-			//		spaceData = CreateDataset(spaceDataObj);
-			//	}
-			//	#endregion
-
-			//	#region << update view>>
-			//	{
-			//		var spaceViewObj = new TfSpaceView()
-			//		{
-			//			Id = spaceViewExt.Id,
-			//			Name = spaceViewExt.Name,
-			//			Position = 1,//will be updated later
-			//			DatasetId = spaceData.Id,
-			//			SpaceId = space.Id,
-			//			Type = spaceViewExt.Type,
-			//			SettingsJson = spaceViewExt.SettingsJson,
-			//			Presets = spaceViewExt.Presets,
-			//		};
-			//		spaceView = UpdateSpaceView(spaceViewObj);
-			//	}
-			//	#endregion
-
-			//	scope.Complete();
-
-			//	return GetSpaceView(spaceView.Id);
-			//}
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
-	public void MoveSpaceViewUp(
-		Guid id)
-	{
-		try
-		{
-			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
-			{
-				var spaceView = GetSpaceView(id);
-
-				if (spaceView == null)
-				{
-					throw new TfValidationException(nameof(id),
-						"Found no space view for specified identifier.");
-				}
-
-				if (spaceView.Position == 1)
-					return;
-
-				var spaceViews = GetSpaceViewsList(spaceView.SpaceId);
-
-				var prevSpace = spaceViews.SingleOrDefault(x => x.Position == (spaceView.Position - 1));
-				spaceView.Position = (short)(spaceView.Position - 1);
-
-				if (prevSpace != null)
-					prevSpace.Position = (short)(prevSpace.Position + 1);
-
-				var success = _dboManager.Update<TfSpaceViewDbo>(ConvertModelToDbo(spaceView));
-				if (!success)
-					throw new TfDboServiceException("Update<TfSpaceViewDbo> failed");
-
-				if (prevSpace != null)
-				{
-					success = _dboManager.Update<TfSpaceViewDbo>(ConvertModelToDbo(prevSpace));
-					if (!success)
-						throw new TfDboServiceException("Update<TfSpaceViewDbo> failed");
-				}
-
-				scope.Complete();
-			}
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
-	public void MoveSpaceViewDown(
-		Guid id)
-	{
-		try
-		{
-			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
-			{
-				var spaceView = GetSpaceView(id);
-
-				if (spaceView == null)
-				{
-					throw new TfValidationException(nameof(id),
-						"Found no space view for specified identifier.");
-				}
-
-				var spaceViews = GetSpaceViewsList(spaceView.SpaceId);
-
-				if (spaceView.Position == spaceViews.Count)
-					return;
-
-				var nextSpaceView = spaceViews.SingleOrDefault(x => x.Position == (spaceView.Position + 1));
-				spaceView.Position = (short)(spaceView.Position + 1);
-
-				if (nextSpaceView != null)
-					nextSpaceView.Position = (short)(nextSpaceView.Position - 1);
-
-				var success = _dboManager.Update<TfSpaceViewDbo>(ConvertModelToDbo(spaceView));
-				if (!success)
-					throw new TfDboServiceException("Update<TfSpaceViewDbo> failed");
-
-				if (nextSpaceView != null)
-				{
-					success = _dboManager.Update<TfSpaceViewDbo>(ConvertModelToDbo(nextSpaceView));
-					if (!success)
-						throw new TfDboServiceException("Update<TfSpaceViewDbo> failed");
-				}
-
-				scope.Complete();
-			}
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
 	public void DeleteSpaceView(
 		Guid id)
 	{
@@ -644,71 +450,6 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 	}
-
-	public TfSpaceView CopySpaceView(
-			Guid originalId)
-	{
-		TfSpaceView originalSV = GetSpaceView(originalId);
-		if (originalSV is null)
-			throw new Exception("Space view not found");
-
-		try
-		{
-			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
-			{
-				var spaceViewList = GetSpaceViewsList(originalSV.SpaceId);
-
-				var copyName = getSpaceViewCopyName(originalSV.Name, spaceViewList);
-				if (String.IsNullOrWhiteSpace(copyName))
-					throw new Exception("Space data copy name could not be generated");
-
-				TfSpaceView spaceView = new()
-				{
-					Id = Guid.NewGuid(),
-					Name = copyName,
-					SpaceId = originalSV.SpaceId,
-					Position = 0,
-					Presets = originalSV.Presets,
-					SettingsJson = originalSV.SettingsJson,
-					DatasetId = originalSV.DatasetId,
-					SpaceDataName = originalSV.SpaceDataName,
-					Type = originalSV.Type,
-				};
-				spaceView = CreateSpaceView(spaceView);
-
-				var originalColumns = GetSpaceViewColumnsList(originalSV.Id);
-
-				foreach (var orColumn in originalColumns)
-				{
-					_ = CreateSpaceViewColumn(new TfSpaceViewColumn
-					{
-						Id = Guid.NewGuid(),
-						ComponentId = orColumn.ComponentId,
-						ComponentOptionsJson = orColumn.ComponentOptionsJson,
-						EditComponentOptionsJson = orColumn.EditComponentOptionsJson,
-						DataMapping = orColumn.DataMapping,
-						Icon = orColumn.Icon,
-						OnlyIcon = orColumn.OnlyIcon,
-						Position = orColumn.Position,
-						QueryName = orColumn.QueryName,
-						Settings = orColumn.Settings,
-						SpaceViewId = spaceView.Id,
-						Title = orColumn.Title,
-						TypeId = orColumn.TypeId,
-					});
-				}
-
-				scope.Complete();
-
-				return spaceView;
-			}
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
 
 	private TfSpaceView ConvertDboToModel(
 		TfSpaceViewDbo dbo)
@@ -862,24 +603,4 @@ public partial class TfService : ITfService
 
 	#endregion
 
-	#region << Private >>
-	private string? getSpaceViewCopyName(string originalName, List<TfSpaceView> spaceiewList)
-	{
-		var index = 1;
-		var presentNamesHS = spaceiewList.Select(x => x.Name).ToHashSet();
-
-		while (true)
-		{
-			var suggestion = $"{originalName} {index}";
-			if (!presentNamesHS.Contains(suggestion))
-				return suggestion;
-
-			index++;
-
-			if (index > 100000) break;
-		}
-
-		return null;
-	}
-	#endregion
 }

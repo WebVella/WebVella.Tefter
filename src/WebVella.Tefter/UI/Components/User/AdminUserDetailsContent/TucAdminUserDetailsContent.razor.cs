@@ -14,14 +14,14 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.UserUpdated += On_UserUpdated;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_UserUpdated(object? caller, TfUser user)
 	{
-		await _init(navState:Navigator.GetRouteState(), user: user);
+		await _init(navState:TfAuthLayout.NavigationState, user: user);
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)

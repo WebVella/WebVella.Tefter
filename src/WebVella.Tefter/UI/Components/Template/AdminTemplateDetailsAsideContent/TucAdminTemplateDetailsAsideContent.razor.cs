@@ -14,7 +14,7 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.TemplateCreated += On_TemplateCreated;
 		TfUIService.TemplateUpdated += On_TemplateUpdated;
 		TfUIService.TemplateDeleted += On_TemplateDeleted;
@@ -23,17 +23,17 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 
 	private async void On_TemplateCreated(object? caller, TfTemplate args)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async void On_TemplateUpdated(object? caller, TfTemplate args)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async void On_TemplateDeleted(object? caller, TfTemplate args)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 

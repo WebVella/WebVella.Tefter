@@ -19,7 +19,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
-		await initAdmin(Navigator.GetRouteState());
+		await initAdmin(TfAuthLayout.NavigationState);
 		KeyCodeService.RegisterListener(HandleKeyDownAsync);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfUIService.CurrentUserChanged += CurrentUser_Changed;

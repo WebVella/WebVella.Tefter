@@ -65,11 +65,11 @@ public class TfSpaceViewDbo
 }
 
 
-public class TfCreateSpaceViewExtended
+public class TfSpaceViewCreateModel
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; }
-	public Guid? SpaceDataId { get; set; } = null;
+	public Guid? DatasetId { get; set; } = null;
 	public List<TfSpaceViewPreset> Presets { get; set; } = new();
 	public TfSpaceViewSettings Settings { get; set; } = new TfSpaceViewSettings();
 }

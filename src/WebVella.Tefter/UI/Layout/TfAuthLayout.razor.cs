@@ -15,8 +15,8 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	}
 
 	public TfUser CurrentUser = null!;
-	public TfNavigationState NavigationState = null!;
-	public TfNavigationMenu NavigationMenu = null!;
+	public TfNavigationState NavigationState => Navigator.GetRouteState(); 
+	public TfNavigationMenu NavigationMenu => TfUIService.GetNavigationMenu(Navigator, CurrentUser);
 
 	private bool _isLoaded = false;
 
@@ -31,6 +31,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 			return;
 		}
+
 		CurrentUser = user;
 		var uri = new Uri(Navigator.Uri);
 		var queryDictionary = System.Web.HttpUtility.ParseQueryString(uri.Query);
@@ -45,7 +46,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 
 		if (uri.LocalPath == "/" && startupUri is not null && uri.LocalPath != startupUri.LocalPath
-			&& queryDictionary[TfConstants.NoDefaultRedirectQueryName] is null)
+		    && queryDictionary[TfConstants.NoDefaultRedirectQueryName] is null)
 		{
 			Navigator.NavigateTo(CurrentUser.Settings.StartUpUrl ?? "/", true);
 		}
@@ -53,10 +54,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		{
 			_checkAccess();
 			_isLoaded = true;
-			NavigationState = await TfUIService.GetNavigationStateAsync(Navigator);
-			NavigationMenu = await TfUIService.GetNavigationMenu(Navigator, CurrentUser);
 		}
-
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -76,6 +74,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 			return;
 		}
+
 		CurrentUser = user;
 		await InvokeAsync(() => _checkAccess());
 	}
@@ -85,15 +84,8 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		await InvokeAsync(async () =>
 		{
 			_checkAccess();
-			var navState = await TfUIService.GetNavigationStateAsync(Navigator);
-			if (NavigationState?.Uri != navState.Uri)
-			{
-				NavigationState = navState;
-				NavigationMenu = await TfUIService.GetNavigationMenu(Navigator, CurrentUser);
-				TfUIService.InvokeNavigationStateChanged(NavigationState);
-			}
+			TfUIService.InvokeNavigationStateChanged(NavigationState);
 		});
-
 	}
 
 	private void _checkAccess()

@@ -31,7 +31,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 		return JsonSerializer.Serialize(new TfExportViewData()
 		{
 			SelectedRows = SelectedRows,
-			RouteState = Navigator.GetRouteState()
+			RouteState = TfAuthLayout.NavigationState
 		});
 	}
 
@@ -41,7 +41,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 		return JsonSerializer.Serialize(new TfExportViewData()
 		{
 			SelectedRows = new(),
-			RouteState = Navigator.GetRouteState()
+			RouteState = TfAuthLayout.NavigationState
 		});
 	}
 

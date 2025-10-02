@@ -22,7 +22,7 @@ else
 		<TucPageLayout Title="@_spacePage!.Name" Icon="@TfConstants.GetIcon(_spacePage.FluentIconName)"
 		               Area="@_space!.Name" SubArea="@LOC("Pages")" Color="@_space!.Color">
 			<NavigationLeft>
-				<TucSpaceViewPageContentNavigation SpaceView="_spaceView"/>
+				<TucSpaceViewPageContentNavigation SpaceView="_spaceView" SpacePage="_spacePage"/>
 			</NavigationLeft>
 			<NavigationRight>
 				@if (Context.CurrentUser.IsAdmin)

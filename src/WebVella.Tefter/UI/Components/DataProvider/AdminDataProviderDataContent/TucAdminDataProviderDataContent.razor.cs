@@ -18,7 +18,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfUIService.DataProviderUpdated += On_DataProviderUpdated;
 	}
@@ -30,7 +30,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 
 	private async void On_DataProviderUpdated(object? caller, TfDataProvider args)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async Task _init(TfNavigationState navState)

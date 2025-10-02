@@ -11,6 +11,7 @@ public partial class TfUIService : ITfUIService
 {
 	#region << Ctor >>
 	private static readonly AsyncLock _asyncLock = new AsyncLock();
+	private static readonly Lock _lockObject = new();
 	private readonly IJSRuntime _jsRuntime;
 	private readonly AuthenticationStateProvider _authStateProvider;
 	private readonly IServiceProvider _serviceProvider;

@@ -19,11 +19,8 @@ public partial interface ITfUIService
 	List<TfSpaceView> GetAllSpaceViews(string? search = null);
 	List<TfSpaceView> GetSpaceViewsList(Guid spaceId, string? search = null);
 	TfSpaceView GetSpaceView(Guid itemId);
-	TfSpaceView CreateSpaceView(TfCreateSpaceViewExtended item);
-	TfSpaceView UpdateSpaceView(TfCreateSpaceViewExtended item);
-	void DeleteSpaceView(Guid itemId);
-	void CopySpaceView(Guid itemId);
-
+	TfSpaceView UpdateSpaceViewSetting(Guid spaceViewId, TfSpaceViewSettings settings);
+	
 	//Space View Column
 	TfSpaceViewColumnTypeAddonMeta GetSpaceViewColumnTypeById(Guid typeId);
 	List<ITfSpaceViewColumnComponentAddon> GetSpaceViewColumnTypeSupportedComponents(Guid typeId);
@@ -37,7 +34,6 @@ public partial interface ITfUIService
 		Guid viewId,
 		Guid columnId,
 		bool isUp);
-
 
 	//Presets
 	void UpdateSpaceViewPresets(Guid viewId, List<TfSpaceViewPreset> presets);
@@ -62,40 +58,12 @@ public partial class TfUIService : ITfUIService
 	public List<TfSpaceView> GetSpaceViewsList(Guid spaceId, string? search = null)
 		=> _tfService.GetSpaceViewsList(spaceId, search);
 	public TfSpaceView GetSpaceView(Guid itemId) => _tfService.GetSpaceView(itemId);
-	public TfSpaceView CreateSpaceView(TfCreateSpaceViewExtended submit)
+	public TfSpaceView UpdateSpaceViewSetting(Guid spaceViewId, TfSpaceViewSettings settings)
 	{
-		var spaceView = _tfService.CreateSpaceView(submit);
-		SpaceViewCreated?.Invoke(this, spaceView);
-		return spaceView;
-	}
-	public TfSpaceView UpdateSpaceView(TfCreateSpaceViewExtended submit)
-	{
-		if (submit.SpaceDataId is null)
-			throw new Exception("SpaceDataId is required");
-
-		var form = new TfSpaceView
-		{
-			Id = submit.Id,
-			Name = submit.Name,
-			DatasetId = submit.SpaceDataId ?? Guid.Empty,
-			SettingsJson = JsonSerializer.Serialize(submit.Settings),
-			Presets = submit.Presets,
-		};
-		var spaceView = _tfService.UpdateSpaceView(form);
+		_tfService.UpdateSpaceViewSettings(spaceViewId,settings);
+		var spaceView = GetSpaceView(spaceViewId);
 		SpaceViewUpdated?.Invoke(this, spaceView);
 		return spaceView;
-	}
-	public void DeleteSpaceView(Guid itemId)
-	{
-		var spaceView = _tfService.GetSpaceView(itemId);
-		_tfService.DeleteSpaceView(itemId);
-		SpaceViewDeleted?.Invoke(this, spaceView);
-	}
-
-	public void CopySpaceView(Guid itemId)
-	{
-		var spaceView = _tfService.CopySpaceView(itemId);
-		SpaceViewCreated?.Invoke(this, spaceView);
 	}
 
 	#endregion

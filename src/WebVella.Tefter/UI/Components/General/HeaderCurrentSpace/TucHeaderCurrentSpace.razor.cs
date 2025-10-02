@@ -29,9 +29,6 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 	}
 	private void _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
-		var navMenu = TfAuthLayout.NavigationMenu;
 		try
 		{
 			_menu = new();
@@ -71,7 +68,7 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 				Text = String.Join(" : ", menuText),
 				Disabled = true,
 			});
-
+			var navMenu = TfAuthLayout.NavigationMenu;
 			var colorName = navMenu.SpaceColor.GetColor().Name;
 			var colorVariable = navMenu.SpaceColor.GetColor().Variable;
 			var sb = new StringBuilder();

@@ -18,7 +18,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	public void Dispose()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.SpaceViewColumnsChanged -= On_SpaceViewUpdated;
+		TfUIService.SpaceViewUpdated -= On_SpaceViewUpdated;
+		TfUIService.SpaceViewColumnsChanged -= On_SpaceViewColumnUpdated;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -26,7 +27,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		await base.OnInitializedAsync();
 		if (Context is null)
 			throw new Exception("Context cannot be null");
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		_isDataLoading = false;
 	}
 
@@ -36,7 +37,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		if (firstRender)
 		{
 			TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-			TfUIService.SpaceViewColumnsChanged += On_SpaceViewUpdated;
+			TfUIService.SpaceViewUpdated += On_SpaceViewUpdated;
+			TfUIService.SpaceViewColumnsChanged += On_SpaceViewColumnUpdated;
 		}
 	}
 
@@ -51,9 +53,13 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		});
 	}
 
-	private async void On_SpaceViewUpdated(object? caller, List<TfSpaceViewColumn> args)
+	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
+	}	
+	private async void On_SpaceViewColumnUpdated(object? caller, List<TfSpaceViewColumn> args)
+	{
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async Task _init(TfNavigationState navState)
@@ -98,6 +104,22 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		if (!result.Cancelled && result.Data != null) { }
 	}	
 
+	private async Task _editMainTab()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewManageMainTabDialog>(
+			_spaceView,
+			new DialogParameters()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null) { }
+	}		
+		
+	
 	private async Task _addColumn()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewColumnManageDialog>(

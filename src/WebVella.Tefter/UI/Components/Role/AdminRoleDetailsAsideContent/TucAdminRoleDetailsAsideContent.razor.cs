@@ -14,7 +14,7 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.RoleCreated += On_RoleCreated;
 		TfUIService.RoleUpdated += On_RoleUpdated;
 		TfUIService.RoleDeleted += On_RoleDeleted;
@@ -23,17 +23,17 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 
 	private async void On_RoleCreated(object? caller, TfRole user)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async void On_RoleUpdated(object? caller, TfRole user)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async void On_RoleDeleted(object? caller, TfRole user)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 

@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpaceView?>
+public partial class TucSpaceViewManageMainTabDialog : TfFormBaseComponent, IDialogContentComponent<TfSpaceView?>
 {
 	[Parameter] public TfSpaceView? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;

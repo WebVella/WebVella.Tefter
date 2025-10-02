@@ -15,7 +15,7 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.SharedColumnCreated += On_SharedColumnCreated;
 		TfUIService.SharedColumnUpdated += On_SharedColumnUpdated;
 		TfUIService.SharedColumnDeleted += On_SharedColumnDeleted;
@@ -24,17 +24,17 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 
 	private async void On_SharedColumnCreated(object? caller, TfSharedColumn item)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async void On_SharedColumnUpdated(object? caller, TfSharedColumn item)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async void On_SharedColumnDeleted(object? caller, TfSharedColumn item)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 

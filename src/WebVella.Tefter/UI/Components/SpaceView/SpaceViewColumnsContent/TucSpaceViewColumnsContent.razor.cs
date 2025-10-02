@@ -18,7 +18,7 @@ public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.SpaceViewUpdated += On_SpaceViewUpdated;
 		TfUIService.SpaceViewColumnsChanged += On_SpaceViewColumnsUpdated;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
@@ -26,12 +26,12 @@ public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 
 	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
 	{
-		await _init(navState:Navigator.GetRouteState(), spaceView: args);
+		await _init(navState:TfAuthLayout.NavigationState, spaceView: args);
 	}
 
 	private async void On_SpaceViewColumnsUpdated(object? caller, List<TfSpaceViewColumn> args)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -51,7 +51,7 @@ public partial class TucSpaceViewColumnsContent : TfBaseComponent, IDisposable
 			}
 			else
 			{
-				var routeData = Navigator.GetRouteState();
+				var routeData = TfAuthLayout.NavigationState;
 				if (routeData.SpaceViewId is not null)
 					_spaceView = TfUIService.GetSpaceView(routeData.SpaceViewId.Value);
 

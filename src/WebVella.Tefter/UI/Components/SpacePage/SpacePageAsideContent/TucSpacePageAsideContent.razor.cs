@@ -19,7 +19,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.SpacePageCreated += On_SpacePageChange;
 		TfUIService.SpacePageUpdated += On_SpacePageChange;
 		TfUIService.SpacePageDeleted += On_SpacePageChange;
@@ -28,16 +28,12 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 
 	private async void On_SpacePageChange(object? caller, TfSpacePage args)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
-
-	private async void On_UserChanged(object? caller, TfUser args)
-	{
-		await _init(Navigator.GetRouteState());
-	}
-
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
+		Console.WriteLine("Aside");
+		Console.WriteLine(args.Uri);		
 		if (UriInitialized != args.Uri)
 			await _init(args);
 	}
@@ -45,7 +41,8 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 	private async Task _init(TfNavigationState navState)
 	{
 		_navState = navState;
-
+		Console.WriteLine("Aside Init");
+		Console.WriteLine(navState.Uri);		
 		try
 		{
 			_items = new();

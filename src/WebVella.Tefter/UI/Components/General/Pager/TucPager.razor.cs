@@ -35,7 +35,7 @@ public partial class TucPager : TfBaseComponent, IDisposable
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		KeyCodeService.RegisterListener(HandleKeyDownAsync);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}

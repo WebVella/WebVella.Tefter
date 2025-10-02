@@ -54,7 +54,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			throw new Exception("Context cannot be null");		
 		_componentMetaDict = TfUIService.GetSpaceViewColumnComponentDict();
 		_objectRef = DotNetObjectReference.Create(this);
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		_caretDownInactive = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
@@ -111,13 +111,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		if (Context is not null)
 			Context.CurrentUser = args;
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async void On_SpaceViewUpdated(object? caller, List<TfSpaceViewColumn> args)
 	{
 		_spaceViewColumns = args;
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async Task _init(TfNavigationState navState)

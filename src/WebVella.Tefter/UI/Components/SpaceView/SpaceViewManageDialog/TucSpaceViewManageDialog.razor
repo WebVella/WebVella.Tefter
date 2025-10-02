@@ -2,15 +2,15 @@
 @inherits TfFormBaseComponent
 @* Header *@
 <FluentDialogHeader ShowDismiss="true">
-	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Manage view settings")</FluentLabel>
 </FluentDialogHeader>
 
 @* Footer *@
 <FluentDialogFooter>
 	@if (String.IsNullOrWhiteSpace(_error))
 	{
-		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
-					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
+		              Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
 	}
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
@@ -20,171 +20,47 @@
 	@if (!string.IsNullOrWhiteSpace(_error))
 	{
 		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
-
 	}
 	else
 	{
 		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
-						FormName="submit-form" class="tf-form" novalidate>
-			<DataAnnotationsValidator />
-			@* <FluentGrid>
-				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
-									 Label="@LOC("Name")" Style="width:100%" AutoComplete="off" />
-					<FluentValidationMessage For="@(() => _form.Name)" />
-				</FluentGridItem>
-				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_form.Type.ToDescriptionString()
-									 Label="@LOC("Type")" Style="width:100%" Disabled="true" />
-				</FluentGridItem>
-			</FluentGrid>
-			<FluentGrid>
-				<FluentGridItem xs="6">
-					<FluentNumberField TValue="int?" @bind-Value=@_form.Settings.FreezeStartingNColumns
-									   Label="@LOC("Freeze Starting Columns")" Style="width:100%" />
-					<div class="tf-input-description">@LOC("how many columns from the start to freeze, not counting the checkbox column")</div>
-					<FluentValidationMessage For="@(() => _form.Settings.FreezeStartingNColumns)" />
-				</FluentGridItem>
-				<FluentGridItem xs="6">
-					<FluentNumberField TValue="int?" @bind-Value=@_form.Settings.FreezeFinalNColumns
-									   Label="@LOC("Freeze Final Columns")" Style="width:100%" />
-					<div class="tf-input-description">@LOC("how many columns from the end to freeze")</div>
-					<FluentValidationMessage For="@(() => _form.Settings.FreezeFinalNColumns)" />
-				</FluentGridItem>
-			</FluentGrid>
+		                FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator/>
 			<FluentGrid>
 				<FluentGridItem xs="4">
-					<FluentInputLabel Label="@LOC("New Rows")" />
-					<FluentCheckbox @bind-Value="@_form.Settings.CanCreateRows" Style="height:32px;"
-									Label="@LOC("can create data")" />
-					<FluentValidationMessage For="@(() => _form.Settings.CanCreateRows)" />
+					<FluentInputLabel Label="@LOC("New Rows")"/>
+					<FluentCheckbox @bind-Value="@_form.CanCreateRows" Style="height:32px;"
+					                Label="@LOC("can create data")"/>
+					<FluentValidationMessage For="@(() => _form.CanCreateRows)"/>
 				</FluentGridItem>
 				<FluentGridItem xs="4">
-					<FluentInputLabel Label="@LOC("Update Rows")" />
-					<FluentCheckbox @bind-Value="@_form.Settings.CanUpdateRows" Style="height:32px;"
-									Label="@LOC("can update data")" />
-					<FluentValidationMessage For="@(() => _form.Settings.CanUpdateRows)" />
+					<FluentInputLabel Label="@LOC("Update Rows")"/>
+					<FluentCheckbox @bind-Value="@_form.CanUpdateRows" Style="height:32px;"
+					                Label="@LOC("can update data")"/>
+					<FluentValidationMessage For="@(() => _form.CanUpdateRows)"/>
 				</FluentGridItem>
 				<FluentGridItem xs="4">
-					<FluentInputLabel Label="@LOC("Delete Rows")" />
-					<FluentCheckbox @bind-Value="@_form.Settings.CanDeleteRows" Style="height:32px;"
-									Label="@LOC("can delete data")" />
-					<FluentValidationMessage For="@(() => _form.Settings.CanDeleteRows)" />
+					<FluentInputLabel Label="@LOC("Delete Rows")"/>
+					<FluentCheckbox @bind-Value="@_form.CanDeleteRows" Style="height:32px;"
+					                Label="@LOC("can delete data")"/>
+					<FluentValidationMessage For="@(() => _form.CanDeleteRows)"/>
 				</FluentGridItem>
-			</FluentGrid>
-			<FluentDivider Style="margin:1rem 0" />
+			</FluentGrid>	
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<TucSelect SelectedOption="@_form.DatasetType"
-								  SelectedOptionChanged="_dataSetTypeChangeHandler"
-								  TOption="TfSpaceViewDatasetType"
-								  Items="@(Enum.GetValues<TfSpaceViewDatasetType>())" Style="width:100%"
-								  OptionValue="@((p)=> ((int)p).ToString())"
-								  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Dataset")" />
-					<FluentValidationMessage For="@(() => _form.DatasetType)" />
+					<FluentNumberField TValue="int?" @bind-Value=@_form.FreezeStartingNColumns
+					                   Label="@LOC("Freeze Starting Columns")" Style="width:100%"/>
+					<div
+						class="tf-input-description">@LOC("freezed columns count, not including the checkbox column")</div>
+					<FluentValidationMessage For="@(() => _form.FreezeStartingNColumns)"/>
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentNumberField TValue="int?" @bind-Value=@_form.FreezeFinalNColumns
+					                   Label="@LOC("Freeze Final Columns")" Style="width:100%"/>
+					<div class="tf-input-description">@LOC("freezed columns count")</div>
+					<FluentValidationMessage For="@(() => _form.FreezeFinalNColumns)"/>
 				</FluentGridItem>
 			</FluentGrid>
-			<FluentGrid>
-				@if (_form.DatasetType == TfSpaceViewDatasetType.New)
-				{
-					<FluentGridItem xs="6">
-						<TucSelect SelectedOption="@_selectedDataProvider"
-									  SelectedOptionChanged="_dataProviderSelectedHandler"
-									  TOption="TfDataProvider" Required="false" Placeholder="@LOC("select...")"
-									  Items="@_providers" Style="width:100%"
-									  OptionValue="@(p => p.Id.ToString())"
-									  OptionText="@(p => p.Name)" Label="@LOC("Data provider")" />
-						<FluentValidationMessage For="@(() => _form.DataProviderId)" />
-					</FluentGridItem>
-					<FluentGridItem xs="6">
-						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.NewSpaceDataName
-										 Label="@LOC("Dataset name")" Style="width:100%" AutoComplete="off" />
-						<FluentValidationMessage For="@(() => _form.NewSpaceDataName)" />
-					</FluentGridItem>
-				}
-				else
-				{
-					<FluentGridItem xs="6">
-						@if (_spaceDataList.Count == 0)
-						{
-							<FluentTextField Disabled="true" TextFieldType="@TextFieldType.Text"
-											 Label="@LOC("Dataset")" Style="width:100%" Placeholder="@LOC("No dataset create in this space yet")" />
-						}
-						else
-						{
-							<TucSelect SelectedOption="@_selectedDataset"
-										  SelectedOptionChanged="_datasetSelected"
-										  TOption="TfDataset" Placeholder="@LOC("select...")"
-										  Items="@_spaceDataList" Style="width:100%"
-										  OptionValue="@((p)=> p.Id.ToString())"
-										  OptionText="@(p => p.Name)" Label="@LOC("Dataset")" />
-							<FluentValidationMessage For="@(() => _form.SpaceDataId)" />
-						}
-					</FluentGridItem>
-				}
-
-			</FluentGrid>
-			@if ((_selectedDataProvider is not null || _selectedDataset is not null) && _isCreate)
-			{
-				<FluentGrid>
-					<FluentGridItem xs="12">
-						<FluentInputLabel Label="@LOC("Automatic column generation")" />
-						<FluentStack>
-							@if (_selectedDataProvider is not null)
-							{
-								<FluentCheckbox Value="@_form.AddProviderColumns"
-												ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_form.AddProviderColumns)))"
-												Label="@LOC("data provided columns")" />
-								<FluentCheckbox Value="@_form.AddSharedColumns"
-												ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_form.AddSharedColumns)))"
-												Label="@LOC("shared columns")" />
-								<FluentCheckbox Value="@_form.AddSystemColumns"
-												ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_form.AddSystemColumns)))"
-												Label="@LOC("system columns")" />
-							}
-							else if (_selectedDataset is not null)
-							{
-								<FluentCheckbox Value="@_form.AddDatasetColumns"
-												ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(_form.AddDatasetColumns)))"
-												Label="@LOC("add dateset columns")" />
-							}
-						</FluentStack>
-					</FluentGridItem>
-				</FluentGrid>
-				<FluentDivider Style="margin:1rem 0" />
-				<FluentGrid>
-					<FluentGridItem xs="12">
-						<FluentInputLabel>
-							<FluentStack>
-								<span>@LOC("Generated Culumns")</span>
-								<FluentBadge Appearance="Appearance.Neutral">
-									@_generatedColumns.Count
-								</FluentBadge>
-							</FluentStack>
-						</FluentInputLabel>
-						@if (_generatedColumns.Count == 0)
-						{
-							<div>@LOC("No columns will be generated")</div>
-						}
-						else if (_generatedColumns.Count > 0)
-						{
-							foreach (var item in _generatedColumns.Take(_generatedColumnCountLimit))
-							{
-								<FluentBadge Appearance="Appearance.Neutral" Style="margin-right:0.5rem;margin-bottom:0.5rem">@item</FluentBadge>
-							}
-							@if (_generatedColumns.Count > _generatedColumnCountLimit)
-							{
-								<FluentTooltip Anchor="tf-columns-more" Position="@TooltipPosition.Bottom">@(String.Join(", ", _generatedColumns.Skip(_generatedColumnCountLimit)))</FluentTooltip>
-								<FluentBadge Id="tf-columns-more" Appearance="Appearance.Neutral">@LOC("+ {0} more", _generatedColumns.Count - _generatedColumnCountLimit)</FluentBadge>
-							}
-						}
-						else
-						{
-							<div>@LOC("No columns found in data provider")</div>
-						}
-					</FluentGridItem>
-				</FluentGrid> 
-			}*@
 		</FluentEditForm>
 	}
 </FluentDialogBody>

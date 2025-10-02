@@ -14,7 +14,7 @@ public partial class TucHeaderHome : TfBaseComponent, IDisposable
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 

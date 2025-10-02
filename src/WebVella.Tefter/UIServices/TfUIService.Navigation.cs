@@ -6,8 +6,7 @@ public partial interface ITfUIService
 {
 	event EventHandler<TfNavigationState> NavigationStateChanged;
 	void InvokeNavigationStateChanged(TfNavigationState newState);
-	Task<TfNavigationState> GetNavigationStateAsync(NavigationManager navigator);
-	Task<TfNavigationMenu> GetNavigationMenu(NavigationManager navigator, TfUser? currentUser);
+	TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? currentUser);
 }
 public partial class TfUIService : ITfUIService
 {
@@ -21,13 +20,12 @@ public partial class TfUIService : ITfUIService
 		=> NavigationStateChanged?.Invoke(this, newState);
 
 
-	public async Task<TfNavigationState> GetNavigationStateAsync(NavigationManager navigator)
-	=> navigator.GetRouteState();
-	public async Task<TfNavigationMenu> GetNavigationMenu(NavigationManager navigator, TfUser? currentUser)
+
+	public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? currentUser)
 	{
 		if (currentUser is null) return new TfNavigationMenu();
 
-		using (await _asyncLock.LockAsync())
+		lock (_lockObject)
 		{
 			var navState = navigator.GetRouteState();
 			var navMenu = new TfNavigationMenu();

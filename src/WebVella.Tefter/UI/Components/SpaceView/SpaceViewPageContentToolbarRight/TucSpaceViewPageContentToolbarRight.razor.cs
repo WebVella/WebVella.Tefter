@@ -28,8 +28,8 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_navState = Navigator.GetRouteState();
-		await _init();
+		_navState = TfAuthLayout.NavigationState;
+		await _init(_navState);
 
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 		TfUIService.UserUpdated += On_UserChanged;
@@ -38,18 +38,16 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
-			await _init();
+			await _init(args);
 	}
 	private async void On_UserChanged(object? caller, TfUser args)
 	{
 		if (Context is not null)
 			Context.CurrentUser = args;
-		await _init();
+		await _init(TfAuthLayout.NavigationState);
 	}
-	private async Task _init()
+	private async Task _init(TfNavigationState navState)
 	{
-		var navState = TfAuthLayout.NavigationState;
-		if (navState is null) return;
 		_navState = navState;
 		try
 		{

@@ -20,7 +20,7 @@ public partial class TalkChannelAdminList : TfBaseComponent
 
     protected override async Task OnInitializedAsync()
     {
-        await _init(Navigator.GetRouteState());
+        await _init(TfAuthLayout.NavigationState);
         TalkService.ChannelCreated += On_ChannelChanged;
         TalkService.ChannelUpdated += On_ChannelChanged;
         TalkService.ChannelDeleted += On_ChannelChanged;
@@ -29,7 +29,7 @@ public partial class TalkChannelAdminList : TfBaseComponent
 
     private async void On_ChannelChanged(object? caller, TalkChannel args)
     {
-        await _init(Navigator.GetRouteState());
+        await _init(TfAuthLayout.NavigationState);
     }
 
     private async void On_NavigationStateChanged(object? caller, TfNavigationState args)

@@ -451,6 +451,10 @@ fluent-combobox::part(selected-value) {
 fluent-switch::part(label) {
   margin-inline-end: 0;
 }
+.tf-input-description {
+  font-size: var(--tf-font-size-sm);
+  color: var(--tf-font-color-mute);
+}
 /*Dialog*/
 .fluent-dialog-header {
   --dialog-padding: 1rem;
@@ -1418,7 +1422,7 @@ fluent-dialog .tf-divider,
   background: color-mix(in srgb, var(--tf-layout-color) 20%, var(--tf-fill-color-dark) 80%);
 }
 .tf-header .tf-menu.current-space .tf-menu__item {
-  width: 170px !important;
+  width: 173px !important;
 }
 .tf-header fluent-menu {
   background: var(--tf-fill-color-dark-1);
@@ -1633,7 +1637,7 @@ fluent-dialog .tf-divider,
   flex-flow: column;
   position: relative;
   --asidecontent-top: 0;
-  border-right: 5px solid var(--tf-white);
+  border-right: 1px solid var(--tf-stroke-base);
 }
 .tf-layout-list-details__aside--with-toolbar {
   --asidecontent-top: var(--tf-layout-header-height);
@@ -2572,13 +2576,14 @@ fluent-dialog .tf-divider,
   flex: 0 0 24px;
   /*pointer-events: none;*/
   border-radius: 50%;
-  background: var(--tf-white);
+  background: var(--tf-fill-color-invert);
   width: 24px;
   height: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  --accent-fill-rest: var(--tf-font-color-base);
 }
 .tf-active .tf-treemenu__item__expander {
   background: var(--tf-fill-color-invert);
@@ -2589,7 +2594,7 @@ fluent-dialog .tf-divider,
 }
 .tf-treemenu__item.tf-active {
   position: relative;
-  background: var(--tf-white);
+  background: var(--tf-fill-color-invert);
 }
 .tf-treemenu__item.tf-active::before {
   display: none !important;

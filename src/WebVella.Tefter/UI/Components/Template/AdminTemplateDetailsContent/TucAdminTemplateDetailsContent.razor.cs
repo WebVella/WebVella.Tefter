@@ -17,14 +17,14 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.TemplateUpdated += On_TemplateUpdated;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_TemplateUpdated(object? caller, TfTemplate args)
 	{
-		await _init(navState:Navigator.GetRouteState(), template: args);
+		await _init(navState:TfAuthLayout.NavigationState, template: args);
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)

@@ -16,7 +16,7 @@ public partial class TucHomeToolbar : TfBaseComponent, IDisposable
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)

@@ -74,7 +74,7 @@
 								  OptionValue="@((p)=> p.Id.ToString())"
 								  Items="_spaceDataOptions">
 						<OptionTemplate Context="option">
-							<span>@option.SpaceName <span class="text-muted">></span> @option.Name</span>
+							<span>@option.SpaceName <span style="color:var(--tf-font-color-mute)">></span> @option.Name</span>
 						</OptionTemplate>
 					</TucSelect>
 					<FluentValidationMessage For="@(() => _form.SpaceDataList)" />

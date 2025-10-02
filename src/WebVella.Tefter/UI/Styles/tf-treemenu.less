@@ -87,14 +87,14 @@
 		flex: 0 0 24px;
 		/*pointer-events: none;*/
 		border-radius: 50%;
-		background: var(--tf-white);
+		background: var(--tf-fill-color-invert);
 		width: 24px;
 		height: 24px;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		cursor: pointer;
-
+      --accent-fill-rest: var(--tf-font-color-base);
 		.tf-active & {
 			background: var(--tf-fill-color-invert);
 		}
@@ -107,7 +107,7 @@
 
 	&.tf-active {
 		position: relative;
-		background: var(--tf-white);
+		background: var(--tf-fill-color-invert);
 
 		&::before {
 			display: none !important;

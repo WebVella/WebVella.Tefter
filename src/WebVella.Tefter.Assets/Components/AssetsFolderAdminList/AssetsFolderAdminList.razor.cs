@@ -18,7 +18,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		AssetsService.FolderCreated += On_FolderChanged;
 		AssetsService.FolderUpdated += On_FolderChanged;
 		AssetsService.FolderDeleted += On_FolderChanged;
@@ -26,7 +26,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 	}
 	private async void On_FolderChanged(object? caller, AssetsFolder args)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{

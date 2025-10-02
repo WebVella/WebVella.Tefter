@@ -16,14 +16,14 @@ public partial class TucSpaceViewDetailsContent : TfBaseComponent, IDisposable
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.SpaceViewUpdated += On_SpaceViewUpdated;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
 	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
 	{
-		await _init(navState:Navigator.GetRouteState(),spaceView: args);
+		await _init(navState:TfAuthLayout.NavigationState,spaceView: args);
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -43,7 +43,7 @@ public partial class TucSpaceViewDetailsContent : TfBaseComponent, IDisposable
 			}
 			else
 			{
-				var routeData = Navigator.GetRouteState();
+				var routeData = TfAuthLayout.NavigationState;
 				if (routeData.SpaceViewId is not null)
 					_spaceView = TfUIService.GetSpaceView(routeData.SpaceViewId.Value);
 
@@ -81,7 +81,7 @@ public partial class TucSpaceViewDetailsContent : TfBaseComponent, IDisposable
 			return;
 		try
 		{
-			TfUIService.DeleteSpaceView(_spaceView.Id);
+			//TfUIService.DeleteSpaceView(_spaceView.Id);
 			var allSpaceView = TfUIService.GetSpaceViewsList(_navState!.SpaceId!.Value);
 			ToastService.ShowSuccess(LOC("Space view deleted"));
 			if (allSpaceView.Count > 0)
@@ -102,7 +102,7 @@ public partial class TucSpaceViewDetailsContent : TfBaseComponent, IDisposable
 	{
 		try
 		{
-			TfUIService.CopySpaceView(_spaceView.Id);
+			//TfUIService.CopySpaceView(_spaceView.Id);
 			ToastService.ShowSuccess(LOC("Space view copied"));
 		}
 		catch (Exception ex)

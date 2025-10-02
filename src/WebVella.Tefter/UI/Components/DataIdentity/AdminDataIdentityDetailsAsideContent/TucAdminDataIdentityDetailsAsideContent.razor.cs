@@ -16,7 +16,7 @@ public partial class TucAdminDataIdentityDetailsAsideContent : TfBaseComponent, 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 		TfUIService.DataIdentityCreated += On_DataIdentityCreated;
 		TfUIService.DataIdentityUpdated += On_DataIdentityUpdated;
 		TfUIService.DataIdentityDeleted += On_DataIdentityDeleted;
@@ -25,17 +25,17 @@ public partial class TucAdminDataIdentityDetailsAsideContent : TfBaseComponent, 
 
 	private async void On_DataIdentityCreated(object? caller, TfDataIdentity user)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async void On_DataIdentityUpdated(object? caller, TfDataIdentity user)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async void On_DataIdentityDeleted(object? caller, TfDataIdentity user)
 	{
-		await _init(Navigator.GetRouteState());
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
