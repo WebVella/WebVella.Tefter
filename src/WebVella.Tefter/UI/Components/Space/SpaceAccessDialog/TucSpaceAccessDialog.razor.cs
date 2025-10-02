@@ -29,7 +29,7 @@ public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentCompo
 		else
 			_space = space;
 
-		var allRoles = TfUIService.GetRoles();
+		var allRoles = TfService.GetRoles();
 		_roleOptions = allRoles.Where(x => x.Id != TfConstants.ADMIN_ROLE_ID && !_space.Roles.Any(u => x.Id == u.Id)).ToList();
 		_adminRole = allRoles.Single(x => x.Id == TfConstants.ADMIN_ROLE_ID);
 	}

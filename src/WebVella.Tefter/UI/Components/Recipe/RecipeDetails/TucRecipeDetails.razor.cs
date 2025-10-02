@@ -15,11 +15,11 @@ public partial class TucRecipeDetails : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		var installData = await TfUIService.GetInstallDataAsync();
+		var installData = await TfService.GetInstallDataAsync();
 		if (installData is not null)
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
-		_recipe = TfUIService.GetRecipe(RecipeId);
+		_recipe = TfMetaService.GetRecipe(RecipeId);
 		if (_recipe is null)
 			throw new Exception("Recipe Id not found");
 		var position = 1;
@@ -119,7 +119,7 @@ public partial class TucRecipeDetails : TfBaseComponent
 				_stepNext();
 				return;
 			}
-			_recipeResult = await TfUIService.ApplyRecipe(_recipe);
+			_recipeResult = await TfService.ApplyRecipeAsync(_recipe);
 			_recipeResult.ApplyResultToSteps(_recipe.Steps);
 			var resultStepBase = _visibleSteps.Single(x => x.GetType() == typeof(TfResultRecipeStep));
 			var resultStep = (TfResultRecipeStep)resultStepBase;

@@ -21,7 +21,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_providerTypes = TfUIService.GetDataProviderTypes();
+		_providerTypes = TfMetaService.GetDataProviderTypes();
 		if (_providerTypes.Count == 0)
 			throw new Exception("No provider types are found");
 		_initForm();

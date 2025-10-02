@@ -67,7 +67,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		}
 		_copyOption = _copyOptions[0];
 
-		_pageComponents = TfUIService.GetSpacePagesComponentsMeta();
+		_pageComponents = TfMetaService.GetSpacePagesComponentsMeta();
 		_space = spaceDict[Content.SpaceId];
 		_parentNodeOptions = _getParents();
 		if (_isCreate)

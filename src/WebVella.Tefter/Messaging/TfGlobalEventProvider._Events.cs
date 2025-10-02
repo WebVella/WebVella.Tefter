@@ -5,6 +5,21 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 {
 	public event Action<SampleGlobalEvent> SampleGlobalEvent;
 	
+	//repository file
+	public event Action<TfRepositoryFileCreatedEvent> RepositoryFileCreatedEvent;
+	public event Action<TfRepositoryFileUpdatedEvent> RepositoryFileUpdatedEvent;
+	public event Action<TfRepositoryFileDeletedEvent> RepositoryFileDeletedEvent;		
+	
+	//role
+	public event Action<TfRoleCreatedEvent> RoleCreatedEvent;
+	public event Action<TfRoleUpdatedEvent> RoleUpdatedEvent;
+	public event Action<TfRoleDeletedEvent> RoleDeletedEvent;		
+	
+	//shared column
+	public event Action<TfSharedColumnCreatedEvent> SharedColumnCreatedEvent;
+	public event Action<TfSharedColumnUpdatedEvent> SharedColumnUpdatedEvent;
+	public event Action<TfSharedColumnDeletedEvent> SharedColumnDeletedEvent;			
+	
 	//space
 	public event Action<TfSpaceCreatedEvent> SpaceCreatedEvent;
 	public event Action<TfSpaceUpdatedEvent> SpaceUpdatedEvent;
@@ -36,6 +51,47 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 	{
 		if (obj is SampleGlobalEvent)
 			SampleGlobalEvent?.Invoke((SampleGlobalEvent)obj);
+		
+		//repository file
+		if (obj is TfRepositoryFileCreatedEvent)
+			RepositoryFileCreatedEvent?.Invoke((TfRepositoryFileCreatedEvent)obj);		
+		
+		if (obj is TfRepositoryFileUpdatedEvent)
+			RepositoryFileUpdatedEvent?.Invoke((TfRepositoryFileUpdatedEvent)obj);
+	
+		if (obj is TfRepositoryFileDeletedEvent)
+			RepositoryFileDeletedEvent?.Invoke((TfRepositoryFileDeletedEvent)obj);				
+		
+		//role
+		if (obj is TfRoleCreatedEvent)
+			RoleCreatedEvent?.Invoke((TfRoleCreatedEvent)obj);		
+		
+		if (obj is TfRoleUpdatedEvent)
+			RoleUpdatedEvent?.Invoke((TfRoleUpdatedEvent)obj);
+	
+		if (obj is TfRoleDeletedEvent)
+			RoleDeletedEvent?.Invoke((TfRoleDeletedEvent)obj);			
+		
+		
+		//role
+		if (obj is TfRoleCreatedEvent)
+			RoleCreatedEvent?.Invoke((TfRoleCreatedEvent)obj);		
+		
+		if (obj is TfRoleUpdatedEvent)
+			RoleUpdatedEvent?.Invoke((TfRoleUpdatedEvent)obj);
+	
+		if (obj is TfRoleDeletedEvent)
+			RoleDeletedEvent?.Invoke((TfRoleDeletedEvent)obj);			
+		
+		//shared column
+		if (obj is TfSharedColumnCreatedEvent)
+			SharedColumnCreatedEvent?.Invoke((TfSharedColumnCreatedEvent)obj);		
+		
+		if (obj is TfSharedColumnUpdatedEvent)
+			SharedColumnUpdatedEvent?.Invoke((TfSharedColumnUpdatedEvent)obj);
+	
+		if (obj is TfSharedColumnDeletedEvent)
+			SharedColumnDeletedEvent?.Invoke((TfSharedColumnDeletedEvent)obj);			
 		
 		//space
 		if (obj is TfSpaceCreatedEvent)

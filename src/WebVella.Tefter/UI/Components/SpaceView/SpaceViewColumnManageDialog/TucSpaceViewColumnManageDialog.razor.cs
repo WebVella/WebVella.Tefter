@@ -52,7 +52,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		if (_form.ComponentId == Guid.Empty)
 			_form.ComponentId = new Guid(TucTextDisplayColumnComponent.ID);
 
-		_availableColumnTypes = TfUIService.GetSpaceViewColumnTypes();
+		_availableColumnTypes = TfMetaService.GetSpaceViewColumnTypesMeta();
 
 		_selectComponentType(_form.TypeId);
 

@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Services;
+﻿using Nito.AsyncEx.Synchronous;
+
+namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -257,8 +259,14 @@ public partial class TfService : ITfService
 			bool success = _dboManager.Insert<RoleDbo>(roleDbo);
 			if (!success)
 				throw new TfDboServiceException("Insert<RoleDbo> failed");
-
-			return GetRole(roleDbo.Id);
+			var result = GetRole(roleDbo.Id);
+			var task = Task.Run(async () =>
+			{
+				await _eventProvider.PublishEventAsync(new TfRoleCreatedEvent(result));
+			});
+			task.WaitAndUnwrapException();			
+			
+			return result;
 		}
 		catch (Exception ex)
 		{
@@ -286,7 +294,14 @@ public partial class TfService : ITfService
 			if (!success)
 				throw new TfDboServiceException("Update<RoleDbo> failed");
 
-			return GetRole(roleDbo.Id);
+			var result = GetRole(roleDbo.Id);
+			var task = Task.Run(async () =>
+			{
+				await _eventProvider.PublishEventAsync(new TfRoleUpdatedEvent(result));
+			});
+			task.WaitAndUnwrapException();			
+			
+			return result;
 		}
 		catch (Exception ex)
 		{
@@ -309,6 +324,12 @@ public partial class TfService : ITfService
 			var success = _dboManager.Delete<RoleDbo>(role.Id);
 			if (!success)
 				throw new TfDboServiceException("Delete<RoleDbo> failed");
+			
+			var task = Task.Run(async () =>
+			{
+				await _eventProvider.PublishEventAsync(new TfRoleDeletedEvent(role));
+			});
+			task.WaitAndUnwrapException();			
 		}
 		catch (Exception ex)
 		{

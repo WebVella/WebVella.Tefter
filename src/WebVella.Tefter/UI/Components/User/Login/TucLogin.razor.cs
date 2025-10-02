@@ -7,7 +7,7 @@ public partial class TucLogin : TfFormBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		var installData = await TfUIService.GetInstallDataAsync();
+		var installData = await TfService.GetInstallDataAsync();
 		if (installData is null)
 			Navigator.NavigateTo(TfConstants.InstallPage, true);
 		base.InitForm(_form);

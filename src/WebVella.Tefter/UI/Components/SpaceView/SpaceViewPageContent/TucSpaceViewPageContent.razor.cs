@@ -52,7 +52,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		await base.OnInitializedAsync();
 		if (Context is null)
 			throw new Exception("Context cannot be null");		
-		_componentMetaDict = TfUIService.GetSpaceViewColumnComponentDict();
+		_componentMetaDict = TfMetaService.GetSpaceViewColumnComponentMetaDictionary();
 		_objectRef = DotNetObjectReference.Create(this);
 		await _init(TfAuthLayout.NavigationState);
 		_caretDownInactive = builder =>
@@ -152,14 +152,14 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				return;
 
 			if (_allDataProviders is null)
-				_allDataProviders = TfUIService.GetDataProviders().ToList();
+				_allDataProviders = TfService.GetDataProviders().ToList();
 			if (_allSharedColumns is null)
-				_allSharedColumns = TfUIService.GetSharedColumns();
+				_allSharedColumns = TfService.GetSharedColumns();
 
 			if (oldViewId != options.SpaceViewId.Value)
 			{
 				_contextData = new();
-				_spaceData = TfUIService.GetDataset(_spaceView.DatasetId);
+				_spaceData = TfService.GetDataset(_spaceView.DatasetId);
 				_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _spaceData.DataProviderId);
 				_selectedDataRows = new();
 				_editedDataRows = new();

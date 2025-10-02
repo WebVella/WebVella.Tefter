@@ -24,9 +24,9 @@ public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogCon
 		if(_spaceview is null)
 			throw new Exception("spaceView not found");
 		_viewColumns = TfService.GetSpaceViewColumnsList(Content);
-		_spaceData = TfUIService.GetDataset(_spaceview.DatasetId);
-		_dataProviders = TfUIService.GetDataProviders().ToList();
-		_sharedColumns = TfUIService.GetSharedColumns();
+		_spaceData = TfService.GetDataset(_spaceview.DatasetId);
+		_dataProviders = TfService.GetDataProviders().ToList();
+		_sharedColumns = TfService.GetSharedColumns();
 		if (_spaceData is not null)
 		{
 			_dataProvider = _dataProviders.FirstOrDefault(x=> x.Id == _spaceData.DataProviderId);

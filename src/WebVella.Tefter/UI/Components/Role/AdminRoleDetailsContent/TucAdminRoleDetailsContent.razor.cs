@@ -9,20 +9,20 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 	public Guid? _removingUserId = null;
 	public void Dispose()
 	{
-		TfUIService.RoleUpdated -= On_RoleUpdated;
+		TfEventProvider.RoleUpdatedEvent -= On_RoleUpdated;
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.RoleUpdated += On_RoleUpdated;
+		TfEventProvider.RoleUpdatedEvent += On_RoleUpdated;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async void On_RoleUpdated(object? caller, TfRole args)
+	private async void On_RoleUpdated(TfRoleUpdatedEvent args)
 	{
-		await _init(navState:TfAuthLayout.NavigationState, role: args);
+		await _init(navState:TfAuthLayout.NavigationState, role: args.Payload);
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -43,7 +43,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 			{
 				var routeData = TfAuthLayout.NavigationState;
 				if (routeData.RoleId is not null)
-					_role = TfUIService.GetRole(routeData.RoleId.Value);
+					_role = TfService.GetRole(routeData.RoleId.Value);
 
 			}
 			if(_role is null) return;
@@ -84,8 +84,8 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 			return;
 		try
 		{
-			TfUIService.DeleteRole(_role);
-			var allRoles = TfUIService.GetRoles();
+			TfService.DeleteRole(_role);
+			var allRoles = TfService.GetRoles();
 			ToastService.ShowSuccess(LOC("User removed from role"));
 			if (allRoles.Count > 0)
 			{

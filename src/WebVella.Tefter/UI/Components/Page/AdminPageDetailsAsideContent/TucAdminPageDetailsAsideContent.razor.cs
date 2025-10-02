@@ -26,7 +26,7 @@ public partial class TucAdminPageDetailsAsideContent : TfBaseComponent, IDisposa
 		try
 		{
 			_search = navState.SearchAside;
-			var pages = TfUIService.GetAddonAdminPages(_search);
+			var pages = TfMetaService.GetAdminAddonPages(_search);
 
 			_items = new();
 			foreach (var page in pages)

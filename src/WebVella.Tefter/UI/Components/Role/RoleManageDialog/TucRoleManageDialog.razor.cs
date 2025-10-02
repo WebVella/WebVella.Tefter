@@ -52,12 +52,12 @@ public partial class TucRoleManageDialog : TfFormBaseComponent, IDialogContentCo
 
 			if (_isCreate)
 			{
-				result = TfUIService.CreateRole(_form);
+				result = TfService.CreateRole(_form);
 				ToastService.ShowSuccess(LOC("Access role was successfully created!"));
 			}
 			else
 			{
-				result = TfUIService.UpdateRole(_form);
+				result = TfService.UpdateRole(_form);
 				ToastService.ShowSuccess(LOC("Access role was successfully created!"));
 			}
 

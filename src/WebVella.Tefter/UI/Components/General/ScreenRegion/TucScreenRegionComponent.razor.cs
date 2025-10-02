@@ -2,6 +2,7 @@
 public partial class TucScreenRegionComponent
 {
 	[Inject] public ITfUIService TfUIService { get; set; } = null!;
+	[Inject] public ITfMetaService TfMetaService { get; set; } = null!;
 	[Parameter] public TfScreenRegionScope? Scope { get; set; }
 	[Parameter] public TfBaseScreenRegionContext RegionContext { get; set; } = null!;
 	[Parameter] public string? Placeholder { get; set; } = null;
@@ -25,12 +26,12 @@ public partial class TucScreenRegionComponent
 
 			if (Count is not null)
 			{
-				return TfUIService.GetRegionComponentsMetaForContext(
+				return TfMetaService.GetRegionComponentsMeta(
 					context: RegionContext.GetType(),
 					scope: Scope
 				).Take(Count.Value).ToList().AsReadOnly();
 			}
-			return TfUIService.GetRegionComponentsMetaForContext(
+			return TfMetaService.GetRegionComponentsMeta(
 				context: RegionContext.GetType(),
 				scope: Scope
 			);

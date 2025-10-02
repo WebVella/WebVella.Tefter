@@ -80,7 +80,7 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 		{
 			_submitting = true;
 			_user = await TfService.AddUserToRoleAsync(userId: _user.Id, roleId: _selectedRole.Id);
-			_roleOptions = TfUIService.GetRoles().Where(x => !_user.Roles.Any(u => x.Id == u.Id)).ToList();
+			_roleOptions = TfService.GetRoles().Where(x => !_user.Roles.Any(u => x.Id == u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User role added"));
 		}
 		catch (Exception ex)
@@ -104,7 +104,7 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 		{
 			_removingRoleId = role.Id;
 			_user = await TfService.RemoveUserFromRoleAsync( userId: _user.Id, roleId: role.Id);
-			_roleOptions = TfUIService.GetRoles().Where(x => !_user.Roles.Any(u => x.Id == u.Id)).ToList();
+			_roleOptions = TfService.GetRoles().Where(x => !_user.Roles.Any(u => x.Id == u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User role removed"));
 		}
 		catch (Exception ex)

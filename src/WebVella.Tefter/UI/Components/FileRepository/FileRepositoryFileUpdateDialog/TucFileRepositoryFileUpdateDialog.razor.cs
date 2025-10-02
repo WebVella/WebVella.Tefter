@@ -67,7 +67,7 @@ public partial class TucFileRepositoryFileUpdateDialog : TfFormBaseComponent, ID
 			{
 				Id = _form.Id
 			};
-			var item = TfUIService.UpdateRepositoryFile(submit);
+			var item = TfService.UpdateRepositoryFile(submit);
 			ToastService.ShowSuccess("File successfully updated");
 			await Dialog.CloseAsync(item);
 		}

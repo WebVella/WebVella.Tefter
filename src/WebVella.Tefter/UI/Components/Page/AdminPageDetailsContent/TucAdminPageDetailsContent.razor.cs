@@ -26,7 +26,7 @@ public partial class TucAdminPageDetailsContent : TfBaseComponent, IDisposable
 			_item = null;
 			if (navState.PageId is not null)
 			{
-				var pages = TfUIService.GetAddonAdminPages();
+				var pages = TfMetaService.GetAdminAddonPages();
 				_item = pages.FirstOrDefault(x => x.Id == navState.PageId);
 			}
 		}

@@ -37,7 +37,7 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 			_isCreate = true;
 		}
 
-		_providerColumnTypeOptions = TfUIService.GetDatabaseColumnTypeInfosList().ToList();
+		_providerColumnTypeOptions = WebVella.Tefter.Services.TfService.GetDatabaseColumnTypeInfosList().ToList();
 		_providerColumnTypeToSourceTypes = new();
 		foreach (var sourceType in _provider.ProviderType.GetSupportedSourceDataTypes())
 		{

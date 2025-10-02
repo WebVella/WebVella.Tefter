@@ -7,20 +7,20 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 	internal ReadOnlyCollection<TfDataProvider> _dataProviders = null!;
 	public void Dispose()
 	{
-		TfUIService.SharedColumnUpdated -= On_SharedColumnUpdated;
+		TfEventProvider.SharedColumnUpdatedEvent -= On_SharedColumnUpdated;
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.SharedColumnUpdated += On_SharedColumnUpdated;
+		TfEventProvider.SharedColumnUpdatedEvent += On_SharedColumnUpdated;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async void On_SharedColumnUpdated(object? caller, TfSharedColumn column)
+	private async void On_SharedColumnUpdated(TfSharedColumnUpdatedEvent args)
 	{
-		await _init(navState:TfAuthLayout.NavigationState, column: column);
+		await _init(navState:TfAuthLayout.NavigationState, column: args.Payload);
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -41,10 +41,10 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 			{
 				var routeData = TfAuthLayout.NavigationState;
 				if (routeData.SharedColumnId is not null)
-					_column = TfUIService.GetSharedColumn(routeData.SharedColumnId.Value);
+					_column = TfService.GetSharedColumn(routeData.SharedColumnId.Value);
 			}
 			if(_column is null) return;
-			_dataProviders = TfUIService.GetSharedColumnConnectedDataProviders(_column.Id);
+			_dataProviders = TfService.GetSharedColumnConnectedDataProviders(_column.Id);
 		}
 		finally
 		{
@@ -79,9 +79,9 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 		{
 			_isDeleting = true;
 			await InvokeAsync(StateHasChanged);
-			TfUIService.DeleteSharedColumn(_column.Id);
+			TfService.DeleteSharedColumn(_column.Id);
 			ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
-			var allColumns = TfUIService.GetSharedColumns();
+			var allColumns = TfService.GetSharedColumns();
 			if (allColumns.Count > 0)
 				Navigator.NavigateTo(String.Format(TfConstants.AdminSharedColumnDetailsPageUrl, allColumns[0].Id));
 			else

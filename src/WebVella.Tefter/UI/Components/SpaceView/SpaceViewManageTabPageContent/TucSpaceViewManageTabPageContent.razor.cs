@@ -78,10 +78,10 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 				return;
 			_spaceView = TfService.GetSpaceView(options.SpaceViewId.Value);
 			_spaceViewColumns = TfService.GetSpaceViewColumnsList(_spaceView.Id);
-			_spaceData = TfUIService.GetDataset(_spaceView.DatasetId);
+			_spaceData = TfService.GetDataset(_spaceView.DatasetId);
 			if (_spaceData is null) throw new Exception("Dataset no longer exists");
-			_typeMetaDict = TfUIService.GetSpaceViewColumnTypeDict();
-			_componentMetaDict = TfUIService.GetSpaceViewColumnComponentDict();			
+			_typeMetaDict = TfMetaService.GetSpaceViewColumnTypeMetaDictionary();
+			_componentMetaDict = TfMetaService.GetSpaceViewColumnComponentMetaDictionary();			
 		}
 		finally
 		{

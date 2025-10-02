@@ -7,32 +7,22 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfUIService.SharedColumnCreated -= On_SharedColumnCreated;
-		TfUIService.SharedColumnUpdated -= On_SharedColumnUpdated;
-		TfUIService.SharedColumnDeleted -= On_SharedColumnDeleted;
+		TfEventProvider.SharedColumnCreatedEvent -= On_SharedColumnChanged;
+		TfEventProvider.SharedColumnUpdatedEvent -= On_SharedColumnChanged;
+		TfEventProvider.SharedColumnDeletedEvent -= On_SharedColumnChanged;
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.SharedColumnCreated += On_SharedColumnCreated;
-		TfUIService.SharedColumnUpdated += On_SharedColumnUpdated;
-		TfUIService.SharedColumnDeleted += On_SharedColumnDeleted;
+		TfEventProvider.SharedColumnCreatedEvent += On_SharedColumnChanged;
+		TfEventProvider.SharedColumnUpdatedEvent += On_SharedColumnChanged;
+		TfEventProvider.SharedColumnDeletedEvent += On_SharedColumnChanged;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async void On_SharedColumnCreated(object? caller, TfSharedColumn item)
-	{
-		await _init(TfAuthLayout.NavigationState);
-	}
-
-	private async void On_SharedColumnUpdated(object? caller, TfSharedColumn item)
-	{
-		await _init(TfAuthLayout.NavigationState);
-	}
-
-	private async void On_SharedColumnDeleted(object? caller, TfSharedColumn item)
+	private async void On_SharedColumnChanged(object args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
@@ -49,7 +39,7 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 		try
 		{
 			_search = navState.SearchAside;
-			var items = TfUIService.GetSharedColumns(_search).ToList();
+			var items = TfService.GetSharedColumns(_search).ToList();
 			_items = new();
 			foreach (var item in items)
 			{

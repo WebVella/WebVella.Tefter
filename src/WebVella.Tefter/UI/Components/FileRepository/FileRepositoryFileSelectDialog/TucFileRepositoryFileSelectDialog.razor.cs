@@ -35,7 +35,7 @@ public partial class TucFileRepositoryFileSelectDialog : TfBaseComponent, IDialo
 	{
 		try
 		{
-			_items = TfUIService.GetRepositoryFiles(search: _search);
+			_items = TfService.GetRepositoryFiles(filenameContains: _search);
 		}
 		catch (Exception ex)
 		{
@@ -58,7 +58,7 @@ public partial class TucFileRepositoryFileSelectDialog : TfBaseComponent, IDialo
 			var file = Files[0];
 			try
 			{
-				var result = TfUIService.CreateRepositoryFile(new TfFileForm
+				var result = TfService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
 					CreatedBy = TfAuthLayout.CurrentUser?.Id,

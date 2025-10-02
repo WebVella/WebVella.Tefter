@@ -42,7 +42,7 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 		if (Content is null) return;
 		try
 		{
-			var dbTypeInfo = TfUIService.GetDatabaseColumnTypeInfosList();
+			var dbTypeInfo = WebVella.Tefter.Services.TfService.GetDatabaseColumnTypeInfosList();
 			_dbTypeInfoDict = dbTypeInfo.ToDictionary(x=> x.Type);
 			_schemaInfo = TfUIService.GetDataProviderSourceSchemaInfo(Content);
 			if (_schemaInfo is null) 

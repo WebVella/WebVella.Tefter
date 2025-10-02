@@ -24,7 +24,7 @@ public partial class TucDataProviderManageDataDialog : TfBaseComponent, IDialogC
 		if (Content is null) throw new Exception("Content is required");
 		if (Content.Provider is null) throw new Exception("Provider is required");
 		if (Content.Data is null) throw new Exception("Data is required");
-		_componentMetaDict = TfUIService.GetSpaceViewColumnComponentDict();
+		_componentMetaDict = TfMetaService.GetSpaceViewColumnComponentMetaDictionary();
 
 		_errors = new();
 		_form = new();

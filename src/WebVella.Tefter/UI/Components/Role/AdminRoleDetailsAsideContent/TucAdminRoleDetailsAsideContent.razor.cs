@@ -7,35 +7,24 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfUIService.RoleCreated -= On_RoleCreated;
-		TfUIService.RoleUpdated -= On_RoleUpdated;
-		TfUIService.RoleDeleted -= On_RoleDeleted;
+		TfEventProvider.RoleCreatedEvent -= On_RoleChanged;
+		TfEventProvider.RoleUpdatedEvent -= On_RoleChanged;
+		TfEventProvider.RoleDeletedEvent -= On_RoleChanged;
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.RoleCreated += On_RoleCreated;
-		TfUIService.RoleUpdated += On_RoleUpdated;
-		TfUIService.RoleDeleted += On_RoleDeleted;
+		TfEventProvider.RoleCreatedEvent += On_RoleChanged;
+		TfEventProvider.RoleUpdatedEvent += On_RoleChanged;
+		TfEventProvider.RoleDeletedEvent += On_RoleChanged;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async void On_RoleCreated(object? caller, TfRole user)
+	private async void On_RoleChanged(object args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
-
-	private async void On_RoleUpdated(object? caller, TfRole user)
-	{
-		await _init(TfAuthLayout.NavigationState);
-	}
-
-	private async void On_RoleDeleted(object? caller, TfRole user)
-	{
-		await _init(TfAuthLayout.NavigationState);
-	}
-
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
@@ -48,7 +37,7 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 		try
 		{
 			_search = navState.SearchAside;
-			var roles = TfUIService.GetRoles(_search).ToList();
+			var roles = TfService.GetRoles(_search).ToList();
 
 			_items = new();
 			foreach (var role in roles)

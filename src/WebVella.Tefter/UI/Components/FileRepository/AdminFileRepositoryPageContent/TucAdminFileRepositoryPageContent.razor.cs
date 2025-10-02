@@ -15,9 +15,9 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 
 	public void Dispose()
 	{
-		TfUIService.FileRepositoryCreated -= On_RepositoryFileChanged;
-		TfUIService.FileRepositoryUpdated -= On_RepositoryFileChanged;
-		TfUIService.FileRepositoryDeleted -= On_RepositoryFileChanged;
+		TfEventProvider.RepositoryFileCreatedEvent -= On_RepositoryFileChanged;
+		TfEventProvider.RepositoryFileUpdatedEvent -= On_RepositoryFileChanged;
+		TfEventProvider.RepositoryFileDeletedEvent -= On_RepositoryFileChanged;
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
@@ -25,9 +25,9 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	{
 		base.OnInitialized();
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.FileRepositoryCreated += On_RepositoryFileChanged;
-		TfUIService.FileRepositoryUpdated += On_RepositoryFileChanged;
-		TfUIService.FileRepositoryDeleted += On_RepositoryFileChanged;
+		TfEventProvider.RepositoryFileCreatedEvent += On_RepositoryFileChanged;
+		TfEventProvider.RepositoryFileUpdatedEvent += On_RepositoryFileChanged;
+		TfEventProvider.RepositoryFileDeletedEvent += On_RepositoryFileChanged;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
@@ -46,7 +46,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	}
 
 
-	private async void On_RepositoryFileChanged(object? caller, TfRepositoryFile args)
+	private async void On_RepositoryFileChanged(object args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
@@ -56,7 +56,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 		try
 		{
 			_navState = navState;
-			_items = TfUIService.GetRepositoryFiles(search: _search);
+			_items = TfService.GetRepositoryFiles(filenameContains: _search);
 		}
 		finally
 		{
@@ -75,7 +75,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 			var file = Files[0];
 			try
 			{
-				var result = TfUIService.CreateRepositoryFile(new TfFileForm
+				var result = TfService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
 					CreatedBy = TfAuthLayout.CurrentUser?.Id,
@@ -128,7 +128,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 			return;
 		try
 		{
-			TfUIService.DeleteRepositoryFile(file.Filename);
+			TfService.DeleteRepositoryFile(file.Filename);
 			ToastService.ShowSuccess(LOC("The file is successfully deleted!"));
 		}
 		catch (Exception ex)
