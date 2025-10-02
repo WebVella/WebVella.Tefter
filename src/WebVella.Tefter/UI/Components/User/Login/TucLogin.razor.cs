@@ -25,7 +25,11 @@ public partial class TucLogin : TfFormBaseComponent
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = await TfUIService.AuthenticateAsync(_form);
+			var result = await TfService.AuthenticateAsync(
+				jsRuntime: JSRuntime,
+				email: _form.Email,
+				password: _form.Password,
+				rememberMe: _form.RememberMe);
 			if (result is not null)
 				Navigator.NavigateTo(TfConstants.HomePageUrl, true);
 		}

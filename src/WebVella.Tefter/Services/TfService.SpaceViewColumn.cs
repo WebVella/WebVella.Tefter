@@ -10,19 +10,19 @@ public partial interface ITfService
 	public TfSpaceViewColumn GetSpaceViewColumn(
 		Guid id);
 
-	public TfSpaceViewColumn CreateSpaceViewColumn(
+	public Task<TfSpaceViewColumn> CreateSpaceViewColumn(
 		TfSpaceViewColumn spaceViewColumn);
 
-	public TfSpaceViewColumn UpdateSpaceViewColumn(
+	public Task<TfSpaceViewColumn> UpdateSpaceViewColumn(
 		TfSpaceViewColumn spaceViewColumn);
 
-	public void DeleteSpaceViewColumn(
+	public Task DeleteSpaceViewColumn(
 		Guid id);
 
-	public void MoveSpaceViewColumnUp(
+	public Task MoveSpaceViewColumnUp(
 		Guid id);
 
-	public void MoveSpaceViewColumnDown(
+	public Task MoveSpaceViewColumnDown(
 		Guid id);
 }
 
@@ -79,7 +79,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfSpaceViewColumn CreateSpaceViewColumn(
+	public async Task<TfSpaceViewColumn> CreateSpaceViewColumn(
 		TfSpaceViewColumn spaceViewColumn)
 	{
 		try
@@ -128,8 +128,10 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Insert<TfSpaceViewColumnDbo> failed");
 
 				scope.Complete();
-
-				return GetSpaceViewColumn(spaceViewColumn.Id);
+				
+				var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
+				await _eventProvider.PublishEventAsync(new TfSpaceViewColumnsChangedEvent(viewColumns));
+				return viewColumns.Single(x=> x.Id == spaceViewColumn.Id);
 			}
 		}
 		catch (Exception ex)
@@ -138,7 +140,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfSpaceViewColumn UpdateSpaceViewColumn(
+	public async Task<TfSpaceViewColumn> UpdateSpaceViewColumn(
 		TfSpaceViewColumn spaceViewColumn)
 	{
 		try
@@ -199,8 +201,9 @@ public partial class TfService : ITfService
 			var success = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(spaceViewColumn));
 			if (!success)
 				throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
-
-			return GetSpaceViewColumn(spaceViewColumn.Id);
+			var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
+			await _eventProvider.PublishEventAsync(new TfSpaceViewColumnsChangedEvent(viewColumns));
+			return viewColumns.Single(x=> x.Id == spaceViewColumn.Id);
 		}
 		catch (Exception ex)
 		{
@@ -208,7 +211,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void MoveSpaceViewColumnUp(
+	public async Task MoveSpaceViewColumnUp(
 		Guid id)
 	{
 		try
@@ -248,6 +251,8 @@ public partial class TfService : ITfService
 				}
 
 				scope.Complete();
+				var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
+				await _eventProvider.PublishEventAsync(new TfSpaceViewColumnsChangedEvent(viewColumns));
 			}
 		}
 		catch (Exception ex)
@@ -256,7 +261,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void MoveSpaceViewColumnDown(
+	public async Task MoveSpaceViewColumnDown(
 		Guid id)
 	{
 		try
@@ -296,6 +301,9 @@ public partial class TfService : ITfService
 				}
 
 				scope.Complete();
+				
+				var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
+				await _eventProvider.PublishEventAsync(new TfSpaceViewColumnsChangedEvent(viewColumns));				
 			}
 		}
 		catch (Exception ex)
@@ -304,7 +312,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void DeleteSpaceViewColumn(
+	public async Task DeleteSpaceViewColumn(
 		Guid id)
 	{
 		try
@@ -337,6 +345,9 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfSpaceViewColumnDbo> failed");
 
 				scope.Complete();
+				
+				var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
+				await _eventProvider.PublishEventAsync(new TfSpaceViewColumnsChangedEvent(viewColumns));				
 			}
 		}
 		catch (Exception ex)

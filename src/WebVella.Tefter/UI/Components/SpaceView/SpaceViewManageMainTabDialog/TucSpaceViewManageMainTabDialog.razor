@@ -27,13 +27,13 @@
 		                FormName="submit-form" class="tf-form" novalidate>
 			<DataAnnotationsValidator/>
 			<FluentGrid>
-				<FluentGridItem xs="4">
+				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Main tab label")"/>
 					<FluentTextField @bind-Value="@_form.MainTabLabel" Style="width: 100%"
 					                 Placeholder="@LOC("defaults to 'Main'")"/>
 					<FluentValidationMessage For="@(() => _form.MainTabLabel)"/>
 				</FluentGridItem>
-				<FluentGridItem xs="4">
+				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Main tab Icon")"/>
 					<TucSelectIcon @bind-Value="@_form.MainTabFluentIcon" 
 					               Placeholder="@LOC("defaults to page icon")"/>

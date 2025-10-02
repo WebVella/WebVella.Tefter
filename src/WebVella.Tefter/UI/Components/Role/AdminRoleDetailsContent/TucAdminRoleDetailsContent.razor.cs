@@ -47,8 +47,8 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 
 			}
 			if(_role is null) return;
-			_roleUsers = TfUIService.GetUsersForRole(_role.Id).ToList();
-			_userOptions = TfUIService.GetUsers().Where(x => !_roleUsers.Any(u => x.Id == u.Id)).ToList();
+			_roleUsers = TfService.GetUsersForRole(_role.Id).ToList();
+			_userOptions = TfService.GetUsers().Where(x => !_roleUsers.Any(u => x.Id == u.Id)).ToList();
 		}
 		finally
 		{
@@ -106,9 +106,9 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 		try
 		{
 			_submitting = true;
-			_ = await TfUIService.AddRoleToUserAsync(roleId: _role.Id, userId: _selectedUser.Id);
-			_roleUsers = TfUIService.GetUsersForRole(_role.Id).ToList();
-			_userOptions = TfUIService.GetUsers().Where(x => !_roleUsers.Any(u => x.Id == u.Id)).ToList();
+			_ = await TfService.AddUserToRoleAsync(userId: _selectedUser.Id, roleId: _role.Id);
+			_roleUsers = TfService.GetUsersForRole(_role.Id).ToList();
+			_userOptions = TfService.GetUsers().Where(x => !_roleUsers.Any(u => x.Id == u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User added to role"));
 		}
 		catch (Exception ex)
@@ -131,9 +131,9 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 		try
 		{
 			_removingUserId = user.Id;
-			_ = await TfUIService.RemoveRoleFromUserAsync(roleId: _role.Id, userId: user.Id);
-			_roleUsers = TfUIService.GetUsersForRole(_role.Id).ToList();
-			_userOptions = TfUIService.GetUsers().Where(x => !_roleUsers.Any(u => x.Id == u.Id)).ToList();
+			_ = await TfService.RemoveUserFromRoleAsync(userId: user.Id, roleId: _role.Id);
+			_roleUsers = TfService.GetUsersForRole(_role.Id).ToList();
+			_userOptions = TfService.GetUsers().Where(x => !_roleUsers.Any(u => x.Id == u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User removed from role"));
 		}
 		catch (Exception ex)

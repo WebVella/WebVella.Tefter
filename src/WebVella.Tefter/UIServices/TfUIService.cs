@@ -17,22 +17,23 @@ public partial class TfUIService : ITfUIService
 	private readonly IServiceProvider _serviceProvider;
 	private readonly ITfService _tfService;
 	private readonly ITfMetaService _metaService;
-	private readonly NavigationManager _navigationManager;
 	private readonly IStringLocalizer<TfUIService> LOC;
+	private readonly TfGlobalEventProvider _eventProvider;
 
 	public TfUIService(IServiceProvider serviceProvider,
 		IJSRuntime jsRuntime,
 		ITfService tfService,
 		ITfMetaService metaService,
 		NavigationManager navigationManager,
-		AuthenticationStateProvider authStateProvider)
+		AuthenticationStateProvider authStateProvider,
+		TfGlobalEventProvider globalEventProvider)
 	{
 		_jsRuntime = jsRuntime;
 		_tfService = tfService;
 		_metaService = metaService;
-		_navigationManager = navigationManager;
 		_authStateProvider = authStateProvider;
 		_serviceProvider = serviceProvider;
+		_eventProvider = globalEventProvider;
 		LOC = serviceProvider.GetService<IStringLocalizer<TfUIService>>() ?? null!;
 	}
 	#endregion

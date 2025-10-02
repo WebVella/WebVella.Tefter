@@ -12,7 +12,7 @@ public partial class TucLanguageSwitch : TfBaseComponent
 	{
 		try
 		{
-			 await TfUIService.SetUserCulture(
+			 await TfService.SetUserCulture(
 				userId: User.Id,
 				cultureCode: option.CultureCode);
 

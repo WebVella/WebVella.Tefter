@@ -17,7 +17,7 @@ public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 	public void Dispose()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.UserUpdated -= On_UserChanged;
+		TfEventProvider.UserUpdatedGlobalEvent -= On_UserChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -26,7 +26,7 @@ public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 		_navState = TfAuthLayout.NavigationState;
 		await _init(_navState);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.UserUpdated += On_UserChanged;
+		TfEventProvider.UserUpdatedGlobalEvent += On_UserChanged;
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -34,10 +34,10 @@ public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 		if (UriInitialized != args.Uri)
 			await _init(args);
 	}
-	private async void On_UserChanged(object? caller, TfUser args)
+	private async void On_UserChanged(TfUserUpdatedEvent args)
 	{
 		if(Context is not null)
-			Context.CurrentUser = args;
+			Context.CurrentUser = args.Payload;
 		await _init(TfAuthLayout.NavigationState);
 	}
 	private async Task _init(TfNavigationState navState)

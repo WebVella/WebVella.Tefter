@@ -7,31 +7,31 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfUIService.TemplateCreated -= On_TemplateCreated;
-		TfUIService.TemplateUpdated -= On_TemplateUpdated;
-		TfUIService.TemplateDeleted -= On_TemplateDeleted;
+		TfEventProvider.TemplateCreatedEvent -= On_TemplateCreated;
+		TfEventProvider.TemplateUpdatedEvent -= On_TemplateUpdated;
+		TfEventProvider.TemplateDeletedEvent -= On_TemplateDeleted;
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.TemplateCreated += On_TemplateCreated;
-		TfUIService.TemplateUpdated += On_TemplateUpdated;
-		TfUIService.TemplateDeleted += On_TemplateDeleted;
+		TfEventProvider.TemplateCreatedEvent += On_TemplateCreated;
+		TfEventProvider.TemplateUpdatedEvent += On_TemplateUpdated;
+		TfEventProvider.TemplateDeletedEvent += On_TemplateDeleted;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async void On_TemplateCreated(object? caller, TfTemplate args)
+	private async void On_TemplateCreated(TfTemplateCreatedEvent args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async void On_TemplateUpdated(object? caller, TfTemplate args)
+	private async void On_TemplateUpdated(TfTemplateUpdatedEvent args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async void On_TemplateDeleted(object? caller, TfTemplate args)
+	private async void On_TemplateDeleted(TfTemplateDeletedEvent args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
@@ -48,7 +48,7 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 		try
 		{
 			_search = navState.SearchAside;
-			var items = TfUIService.GetTemplates(_search,navState.TemplateResultType).ToList();
+			var items = TfService.GetTemplates(_search,navState.TemplateResultType).ToList();
 
 			_items = new();
 			foreach (var item in items)

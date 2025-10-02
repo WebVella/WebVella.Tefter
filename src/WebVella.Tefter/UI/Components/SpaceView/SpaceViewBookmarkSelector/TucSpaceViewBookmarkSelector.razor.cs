@@ -40,7 +40,7 @@ public partial class TucSpaceViewBookmarkSelector : TfBaseComponent
 			if (ActiveBookmark is null) 
 				return;
 
-			TfUIService.DeleteBookmark(ActiveBookmark);
+			TfService.DeleteBookmark(ActiveBookmark.Id);
 
 			ToastService.ShowSuccess(LOC("Bookmark removed"));
 		}

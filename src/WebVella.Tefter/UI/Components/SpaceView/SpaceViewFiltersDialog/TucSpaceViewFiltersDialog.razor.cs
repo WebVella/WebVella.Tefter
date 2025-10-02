@@ -20,10 +20,10 @@ public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogCon
 		_navState = TfAuthLayout.NavigationState;
 		if(_navState is null || Content == Guid.Empty)
 			throw new Exception("SpaceViewId not found");
-		_spaceview = TfUIService.GetSpaceView(Content);
+		_spaceview = TfService.GetSpaceView(Content);
 		if(_spaceview is null)
 			throw new Exception("spaceView not found");
-		_viewColumns = TfUIService.GetViewColumns(Content);
+		_viewColumns = TfService.GetSpaceViewColumnsList(Content);
 		_spaceData = TfUIService.GetDataset(_spaceview.DatasetId);
 		_dataProviders = TfUIService.GetDataProviders().ToList();
 		_sharedColumns = TfUIService.GetSharedColumns();

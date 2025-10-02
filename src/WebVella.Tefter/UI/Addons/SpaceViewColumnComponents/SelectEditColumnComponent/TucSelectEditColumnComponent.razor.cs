@@ -157,7 +157,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	{
 		if (RegionContext.Mode == TfComponentPresentationMode.Options)
 		{
-			var spaceView = TfUIService.GetSpaceView(RegionContext.SpaceViewId);
+			var spaceView = TfService.GetSpaceView(RegionContext.SpaceViewId);
 			_selectedSpaceData = TfUIService.GetDataset(spaceView.DatasetId);
 
 			if (_selectedSpaceData is null)

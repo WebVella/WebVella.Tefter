@@ -45,12 +45,12 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 			if (_form.Id == Guid.Empty)
 			{
 				_form.Id = Guid.NewGuid();
-				TfUIService.CreateBookmark(_form);
+				TfService.CreateBookmark(_form);
 				ToastService.ShowSuccess(LOC($"{(_isBookmark ? "Bookmark" : "URL")} saved"));
 			}
 			else
 			{
-				TfUIService.UpdateBookmark(_form);
+				TfService.UpdateBookmark(_form);
 				ToastService.ShowSuccess(LOC($"{(_isBookmark ? "Bookmark" : "URL")} updated"));
 			}
 

@@ -11,14 +11,11 @@ using Microsoft.Extensions.Primitives;
 public class ApiExcelController : ControllerBase
 {
 	private readonly ITfService _tfService;
-	private readonly ITfUIService _tfUIService;
 
 	public ApiExcelController(
-	ITfService tfService,
-	ITfUIService tfUIService)
+	ITfService tfService)
 	{
 		_tfService = tfService;
-		_tfUIService = tfUIService;
 	}
 
 	[Route("export/{exportType}")]
@@ -41,7 +38,7 @@ public class ApiExcelController : ControllerBase
 				case "export-view-to-excel":
 					{
 						var data = JsonSerializer.Deserialize<TfExportViewData>(Request.Form["data"]);
-						bytes = await _tfUIService.ExportViewToExcel(data);
+						bytes = await _tfService.ExportViewToExcel(data);
 						if (bytes == null)
 							throw new Exception("No bytes were generated during the export");
 						var random = new Random().Next(10, 99);
@@ -63,7 +60,7 @@ public class ApiExcelController : ControllerBase
 				case "export-view-to-csv":
 					{
 						var data = JsonSerializer.Deserialize<TfExportViewData>(Request.Form["data"]);
-						bytes = await _tfUIService.ExportViewToCSV(data);
+						bytes = await _tfService.ExportViewToCSV(data);
 						if (bytes == null)
 							throw new Exception("No bytes were generated during the export");
 						var random = new Random().Next(10, 99);

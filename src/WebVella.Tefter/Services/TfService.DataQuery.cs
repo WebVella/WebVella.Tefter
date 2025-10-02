@@ -223,12 +223,12 @@ public partial class TfService : ITfService
 	}
 
 	public TfDataTable QuerySpaceData(
-		Guid spaceDataId,
+		Guid datasetId,
 		List<Guid> tfIds)
 	{
 		try
 		{
-			var spaceData = GetDataset(spaceDataId);
+			var spaceData = GetDataset(datasetId);
 			if (spaceData is null)
 			{
 				throw new TfException("Found no existing space data for specified id.");
@@ -267,7 +267,7 @@ public partial class TfService : ITfService
 					Page = null,
 					PageSize = null,
 					DataProviderId = provider.Id,
-					SpaceDataId = spaceDataId,
+					SpaceDataId = datasetId,
 				},
 				dataTable
 			);
@@ -279,7 +279,7 @@ public partial class TfService : ITfService
 	}
 
 	public TfDataTable QuerySpaceData(
-		Guid spaceDataId,
+		Guid datasetId,
 		List<TfFilterBase> userFilters = null,
 		List<TfSort> userSorts = null,
 		List<TfFilterBase> presetFilters = null,
@@ -292,7 +292,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			var spaceData = GetDataset(spaceDataId);
+			var spaceData = GetDataset(datasetId);
 			if (spaceData is null)
 			{
 				throw new TfException("Found no existing space data for specified id.");

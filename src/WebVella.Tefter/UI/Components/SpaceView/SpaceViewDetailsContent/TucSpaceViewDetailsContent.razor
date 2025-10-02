@@ -1,125 +1,125 @@
-﻿@namespace WebVella.Tefter.UI.Components
-@inherits TfBaseComponent
-<TucPageLayout Icon="@TfConstants.GetIcon("Table")" Color="@(_space?.Color ?? TfConstants.DefaultThemeColor)"
-			   Area="@($"{_space?.Name} : {LOC("Space View")}")" Title="@_spaceView?.Name" SubTitle="@LOC("Details")">
-	<NavigationLeft>
-		<TucSpaceViewDetailsContentToolbar />
-	</NavigationLeft>
-	<ChildContent>
-		<TucErrorBoundry>
-			<div style="padding:var(--tf-layout-content-padding)">
-				@if (String.IsNullOrWhiteSpace(UriInitialized))
-				{
-					<TucSkeletonPageHeader />
-				}
-				else if (_spaceView is null)
-				{
-					<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-				}
-				else
-				{
-					<TucCard Title="@LOC("Details")">
-						<ToolbarTemplate>
-							<FluentButton Appearance="@Appearance.Outline" OnClick="_copySpaceView">
-								@LOC("Copy")
-								<FluentIcon Value="@TfConstants.GetIcon("Copy")" Slot="start" />
-							</FluentButton>
-							<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceView">
-								@LOC("Edit")
-								<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
-							</FluentButton>
-						</ToolbarTemplate>
-						<ChildContent>
-							<FluentGrid>
-								<FluentGridItem xs="6">
-									<FluentInputLabel Label="@LOC("Name")" />
-									<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_spaceView.Name
-													 ReadOnly="true" />
-								</FluentGridItem>
-								<FluentGridItem xs="6">
-									<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_spaceView.Type.ToDescriptionString()
-													 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" />
-								</FluentGridItem>
-							</FluentGrid>
-
-							<FluentGrid>
-								<FluentGridItem xs="6">
-									<FluentInputLabel Label="@LOC("Dataset")" />
-									@if (_spaceData is not null)
-									{
-										<FluentStack>
-											<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_spaceData.Name
-															 ReadOnly="true" Style="flex:1 1 auto" />
-											<TucAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" Title="@LOC("open dataset")"
-													   Href="@(String.Format(TfConstants.SpaceDataPageUrl, _space!.Id, _spaceData.Id))"
-													   Target="_blank">
-												<FluentIcon Value="@TfConstants.GetIcon("Eye")" />
-											</TucAnchor>
-										</FluentStack>
-									}
-									else
-									{
-										<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("the dataset no longer exists")</FluentMessageBar>
-									}
-								</FluentGridItem>
-								<FluentGridItem xs="6">
-									<FluentInputLabel Label="@LOC("Data provider")" />
-									@if (_provider is not null)
-									{
-										<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_provider.Name
-														 Style="width:100%" ReadOnly="true" />
-									}
-									else
-									{
-										<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("The data provider no longer exists")</FluentMessageBar>
-									}
-								</FluentGridItem>
-							</FluentGrid>
-							<FluentGrid>
-								<FluentGridItem xs="3">
-									<FluentInputLabel Label="@LOC("Freeze Starting Columns")" />
-									<FluentNumberField TValue="int?" Value=@_spaceView.Settings.FreezeStartingNColumns
-													   ReadOnly="true" Style="width:100%" />
-								</FluentGridItem>
-								<FluentGridItem xs="3">
-									<FluentInputLabel Label="@LOC("Freeze Final Columns")" />
-									<FluentNumberField TValue="int?" Value=@_spaceView.Settings.FreezeFinalNColumns
-													   ReadOnly="true" Style="width:100%" />
-								</FluentGridItem>
-								<FluentGridItem xs="6">
-									<FluentInputLabel Label="@LOC("Allowed Data manipulation")" />
-									<FluentStack Orientation="@Orientation.Horizontal">
-										@if (_spaceView.Settings.CanCreateRows)
-										{
-											<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">@LOC("Create")</FluentBadge>
-										}
-										@if (_spaceView.Settings.CanUpdateRows)
-										{
-											<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">@LOC("Update")</FluentBadge>
-										}
-										@if (_spaceView.Settings.CanDeleteRows)
-										{
-											<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">@LOC("Delete")</FluentBadge>
-										}
-									</FluentStack>
-								</FluentGridItem>
-							</FluentGrid>
-						</ChildContent>
-					</TucCard>
-
-					<TucCard>
-						<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
-							<div>@LOC("Any related pages to this space view will not be deleted and will show a message. Any related space data will not be deleted or changed.")</div>
-							<div>
-								<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteSpaceView">
-									@LOC("Delete this Space View")
-									<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
-								</FluentButton>
-							</div>
-						</FluentStack>
-					</TucCard>
-				}
-			</div>
-		</TucErrorBoundry>
-	</ChildContent>
-</TucPageLayout>
+﻿@* @namespace WebVella.Tefter.UI.Components *@
+@* @inherits TfBaseComponent *@
+@* <TucPageLayout Icon="@TfConstants.GetIcon("Table")" Color="@(_space?.Color ?? TfConstants.DefaultThemeColor)" *@
+@* 			   Area="@($"{_space?.Name} : {LOC("Space View")}")" Title="@_spaceView?.Name" SubTitle="@LOC("Details")"> *@
+@* 	<NavigationLeft> *@
+@* 		<TucSpaceViewDetailsContentToolbar /> *@
+@* 	</NavigationLeft> *@
+@* 	<ChildContent> *@
+@* 		<TucErrorBoundry> *@
+@* 			<div style="padding:var(--tf-layout-content-padding)"> *@
+@* 				@if (String.IsNullOrWhiteSpace(UriInitialized)) *@
+@* 				{ *@
+@* 					<TucSkeletonPageHeader /> *@
+@* 				} *@
+@* 				else if (_spaceView is null) *@
+@* 				{ *@
+@* 					<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar> *@
+@* 				} *@
+@* 				else *@
+@* 				{ *@
+@* 					<TucCard Title="@LOC("Details")"> *@
+@* 						<ToolbarTemplate> *@
+@* 							<FluentButton Appearance="@Appearance.Outline" OnClick="_copySpaceView"> *@
+@* 								@LOC("Copy") *@
+@* 								<FluentIcon Value="@TfConstants.GetIcon("Copy")" Slot="start" /> *@
+@* 							</FluentButton> *@
+@* 							<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceView"> *@
+@* 								@LOC("Edit") *@
+@* 								<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" /> *@
+@* 							</FluentButton> *@
+@* 						</ToolbarTemplate> *@
+@* 						<ChildContent> *@
+@* 							<FluentGrid> *@
+@* 								<FluentGridItem xs="6"> *@
+@* 									<FluentInputLabel Label="@LOC("Name")" /> *@
+@* 									<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_spaceView.Name *@
+@* 													 ReadOnly="true" /> *@
+@* 								</FluentGridItem> *@
+@* 								<FluentGridItem xs="6"> *@
+@* 									<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_spaceView.Type.ToDescriptionString() *@
+@* 													 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" /> *@
+@* 								</FluentGridItem> *@
+@* 							</FluentGrid> *@
+@* *@
+@* 							<FluentGrid> *@
+@* 								<FluentGridItem xs="6"> *@
+@* 									<FluentInputLabel Label="@LOC("Dataset")" /> *@
+@* 									@if (_spaceData is not null) *@
+@* 									{ *@
+@* 										<FluentStack> *@
+@* 											<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_spaceData.Name *@
+@* 															 ReadOnly="true" Style="flex:1 1 auto" /> *@
+@* 											<TucAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" Title="@LOC("open dataset")" *@
+@* 													   Href="@(String.Format(TfConstants.SpaceDataPageUrl, _space!.Id, _spaceData.Id))" *@
+@* 													   Target="_blank"> *@
+@* 												<FluentIcon Value="@TfConstants.GetIcon("Eye")" /> *@
+@* 											</TucAnchor> *@
+@* 										</FluentStack> *@
+@* 									} *@
+@* 									else *@
+@* 									{ *@
+@* 										<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("the dataset no longer exists")</FluentMessageBar> *@
+@* 									} *@
+@* 								</FluentGridItem> *@
+@* 								<FluentGridItem xs="6"> *@
+@* 									<FluentInputLabel Label="@LOC("Data provider")" /> *@
+@* 									@if (_provider is not null) *@
+@* 									{ *@
+@* 										<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_provider.Name *@
+@* 														 Style="width:100%" ReadOnly="true" /> *@
+@* 									} *@
+@* 									else *@
+@* 									{ *@
+@* 										<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("The data provider no longer exists")</FluentMessageBar> *@
+@* 									} *@
+@* 								</FluentGridItem> *@
+@* 							</FluentGrid> *@
+@* 							<FluentGrid> *@
+@* 								<FluentGridItem xs="3"> *@
+@* 									<FluentInputLabel Label="@LOC("Freeze Starting Columns")" /> *@
+@* 									<FluentNumberField TValue="int?" Value=@_spaceView.Settings.FreezeStartingNColumns *@
+@* 													   ReadOnly="true" Style="width:100%" /> *@
+@* 								</FluentGridItem> *@
+@* 								<FluentGridItem xs="3"> *@
+@* 									<FluentInputLabel Label="@LOC("Freeze Final Columns")" /> *@
+@* 									<FluentNumberField TValue="int?" Value=@_spaceView.Settings.FreezeFinalNColumns *@
+@* 													   ReadOnly="true" Style="width:100%" /> *@
+@* 								</FluentGridItem> *@
+@* 								<FluentGridItem xs="6"> *@
+@* 									<FluentInputLabel Label="@LOC("Allowed Data manipulation")" /> *@
+@* 									<FluentStack Orientation="@Orientation.Horizontal"> *@
+@* 										@if (_spaceView.Settings.CanCreateRows) *@
+@* 										{ *@
+@* 											<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">@LOC("Create")</FluentBadge> *@
+@* 										} *@
+@* 										@if (_spaceView.Settings.CanUpdateRows) *@
+@* 										{ *@
+@* 											<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">@LOC("Update")</FluentBadge> *@
+@* 										} *@
+@* 										@if (_spaceView.Settings.CanDeleteRows) *@
+@* 										{ *@
+@* 											<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">@LOC("Delete")</FluentBadge> *@
+@* 										} *@
+@* 									</FluentStack> *@
+@* 								</FluentGridItem> *@
+@* 							</FluentGrid> *@
+@* 						</ChildContent> *@
+@* 					</TucCard> *@
+@* *@
+@* 					<TucCard> *@
+@* 						<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center"> *@
+@* 							<div>@LOC("Any related pages to this space view will not be deleted and will show a message. Any related space data will not be deleted or changed.")</div> *@
+@* 							<div> *@
+@* 								<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteSpaceView"> *@
+@* 									@LOC("Delete this Space View") *@
+@* 									<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" /> *@
+@* 								</FluentButton> *@
+@* 							</div> *@
+@* 						</FluentStack> *@
+@* 					</TucCard> *@
+@* 				} *@
+@* 			</div> *@
+@* 		</TucErrorBoundry> *@
+@* 	</ChildContent> *@
+@* </TucPageLayout> *@

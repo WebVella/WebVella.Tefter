@@ -18,8 +18,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	public void Dispose()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.SpaceViewUpdated -= On_SpaceViewUpdated;
-		TfUIService.SpaceViewColumnsChanged -= On_SpaceViewColumnUpdated;
+		TfEventProvider.SpaceViewUpdatedEvent -= On_SpaceViewUpdated;
+		TfEventProvider.SpaceViewColumnsChangedEvent -= On_SpaceViewColumnUpdated;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -37,8 +37,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		if (firstRender)
 		{
 			TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-			TfUIService.SpaceViewUpdated += On_SpaceViewUpdated;
-			TfUIService.SpaceViewColumnsChanged += On_SpaceViewColumnUpdated;
+			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewUpdated;
+			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewColumnUpdated;
 		}
 	}
 
@@ -53,12 +53,14 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		});
 	}
 
-	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
+	private async void On_SpaceViewUpdated(TfSpaceViewUpdatedEvent args)
 	{
+		if(args.UserId != TfAuthLayout.CurrentUser.Id) return;
 		await _init(TfAuthLayout.NavigationState);
 	}	
-	private async void On_SpaceViewColumnUpdated(object? caller, List<TfSpaceViewColumn> args)
+	private async void On_SpaceViewColumnUpdated(TfSpaceViewColumnsChangedEvent args)
 	{
+		if(args.UserId != TfAuthLayout.CurrentUser.Id) return;
 		await _init(TfAuthLayout.NavigationState);
 	}
 
@@ -74,8 +76,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 				JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(Context!.SpacePage.ComponentOptionsJson);
 			if (options is null || options.SpaceViewId is null)
 				return;
-			_spaceView = TfUIService.GetSpaceView(options.SpaceViewId.Value);
-			_spaceViewColumns = TfUIService.GetViewColumns(_spaceView.Id);
+			_spaceView = TfService.GetSpaceView(options.SpaceViewId.Value);
+			_spaceViewColumns = TfService.GetSpaceViewColumnsList(_spaceView.Id);
 			_spaceData = TfUIService.GetDataset(_spaceView.DatasetId);
 			if (_spaceData is null) throw new Exception("Dataset no longer exists");
 			_typeMetaDict = TfUIService.GetSpaceViewColumnTypeDict();
@@ -164,7 +166,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		try
 		{
 			_submitting = true;
-			TfUIService.RemoveSpaceViewColumn(column.Id);
+			await TfService.DeleteSpaceViewColumn(column.Id);
 			ToastService.ShowSuccess(LOC("Space View updated!"));
 		}
 		catch (Exception ex)
@@ -184,7 +186,10 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		if (_submitting) return;
 		try
 		{
-			TfUIService.MoveSpaceViewColumn(viewId: _spaceView.Id, columnId: column.Id, isUp: isUp);
+			if(isUp)
+				await TfService.MoveSpaceViewColumnUp(column.Id);
+			else
+				await TfService.MoveSpaceViewColumnDown(column.Id);
 			ToastService.ShowSuccess(LOC("Space View updated!"));
 		}
 		catch (Exception ex)
@@ -204,8 +209,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		if (_submitting) return;
 		try
 		{
-			TfUIService.UpdateSpaceViewPresets(
-				viewId: _spaceView.Id,
+			await TfService.UpdateSpaceViewPresets(
+				spaceViewId: _spaceView.Id,
 				presets: presets);
 		}
 		catch (Exception ex)

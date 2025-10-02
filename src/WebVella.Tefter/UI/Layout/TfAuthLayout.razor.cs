@@ -3,14 +3,16 @@
 public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 {
 	[Inject] public ITfUIService TfUIService { get; set; } = null!;
+	[Inject] public ITfService TfService { get; set; } = null!;
 	[Inject] protected ITfConfigurationService TfConfigurationService { get; set; } = null!;
 	[Inject] protected NavigationManager Navigator { get; set; } = null!;
+	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
+	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 
 	public ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= Navigator_LocationChanged;
 
-		TfUIService.CurrentUserChanged -= CurrentUser_Changed;
 		return ValueTask.CompletedTask;
 	}
 
@@ -24,7 +26,9 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	{
 		await base.OnInitializedAsync();
 
-		var user = await TfUIService.GetCurrentUserAsync();
+		var user = await TfService.GetUserFromCookieAsync(
+				jsRuntime:JsRuntime,
+				authStateProvider: AuthenticationStateProvider);
 
 		if (user is null)
 		{
@@ -63,20 +67,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		if (firstRender)
 		{
 			Navigator.LocationChanged += Navigator_LocationChanged;
-			TfUIService.CurrentUserChanged += CurrentUser_Changed;
 		}
-	}
-
-	private async void CurrentUser_Changed(object? sender, TfUser? user)
-	{
-		if (user is null)
-		{
-			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
-			return;
-		}
-
-		CurrentUser = user;
-		await InvokeAsync(() => _checkAccess());
 	}
 
 	private async void Navigator_LocationChanged(object? sender, LocationChangedEventArgs e)
@@ -90,7 +81,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	private void _checkAccess()
 	{
-		if (CurrentUser is not null && TfUIService.UserHasAccess(CurrentUser, Navigator))
+		if (CurrentUser is not null && TfService.UserHasAccess(CurrentUser, Navigator))
 			return;
 
 		Navigator.NavigateTo(string.Format(TfConstants.NoAccessPage));

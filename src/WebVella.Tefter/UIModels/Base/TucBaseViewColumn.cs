@@ -12,6 +12,8 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	[Inject] protected IDialogService DialogService { get; set; } = null!;
 	[Inject] protected IMessageService MessageService { get; set; } = null!;
 	[Inject] protected ITfUIService TfUIService { get; set; } = null!;
+	[Inject] protected ITfService TfService { get; set; } = null!;
+	[Inject] protected ITfMetaService TfMetaService { get; set; } = null!;
 	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = null!;
 
 	#endregion

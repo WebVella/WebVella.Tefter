@@ -46,7 +46,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		}
 		else
 		{
-			Content = TfUIService.GetViewColumn(Content.Id);
+			Content = TfService.GetSpaceViewColumn(Content.Id);
 			_form = Content with { Id = Content.Id };
 		}
 		if (_form.ComponentId == Guid.Empty)
@@ -58,7 +58,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 
 		base.InitForm(_form);
 		_renderComponentTypeSelect = true;
-		_spaceView = TfUIService.GetSpaceView(_form.SpaceViewId);
+		_spaceView = TfService.GetSpaceView(_form.SpaceViewId);
 		_spaceData = TfUIService.GetDataset(_spaceView.DatasetId);
 		_options = new();
 		if (_spaceData is not null)
@@ -92,11 +92,11 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 
 	private void _selectComponentType(Guid typeId)
 	{
-		_selectedColumnType = TfUIService.GetSpaceViewColumnTypeById(typeId);
+		_selectedColumnType = TfMetaService.GetSpaceViewColumnType(typeId);
 		_selectedColumnTypeComponents = new();
 
 		if (_selectedColumnType is not null)
-			_selectedColumnTypeComponents = TfUIService.GetSpaceViewColumnTypeSupportedComponents(_selectedColumnType.Instance.AddonId);
+			_selectedColumnTypeComponents = TfMetaService.GetSpaceViewColumnTypeSupportedComponents(_selectedColumnType.Instance.AddonId);
 
 		if (_selectedColumnTypeComponents.Count > 0)
 		{
@@ -157,11 +157,11 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			var result = new List<TfSpaceViewColumn>();
 			if (_isCreate)
 			{
-				TfUIService.CreateSpaceViewColumn(_form);
+				await TfService.CreateSpaceViewColumn(_form);
 			}
 			else
 			{
-				TfUIService.UpdateSpaceViewColumn(_form);
+				await TfService.UpdateSpaceViewColumn(_form);
 			}
 
 			await Dialog.CloseAsync(result);
@@ -195,7 +195,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 
 		if (_selectedColumnType is null)
 		{
-			_selectedColumnType = TfUIService.GetSpaceViewColumnTypeById(new Guid(TfTextViewColumnType.ID));
+			_selectedColumnType = TfMetaService.GetSpaceViewColumnType(new Guid(TfTextViewColumnType.ID));
 			_form.TypeId = _selectedColumnType.Instance.AddonId;
 		}
 		_selectComponentType(_form.TypeId);
@@ -220,7 +220,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			{
 				Guid defaultCompId = _selectedColumnType.Instance.DefaultDisplayComponentId is not null ? _selectedColumnType.Instance.DefaultDisplayComponentId.Value
 					: new Guid(TucTextDisplayColumnComponent.ID);
-				_selectedColumnComponent = TfUIService.GetSpaceViewColumnComponentById(defaultCompId);
+				_selectedColumnComponent = TfMetaService.GetSpaceViewColumnComponent(defaultCompId);
 				_form.ComponentId = _selectedColumnComponent.AddonId;
 			}
 
@@ -243,7 +243,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			{
 				Guid defaultCompId = _selectedColumnType.Instance.DefaultEditComponentId is not null ? _selectedColumnType.Instance.DefaultEditComponentId.Value
 					: new Guid(TucTextDisplayColumnComponent.ID);
-				_selectedEditColumnComponent = TfUIService.GetSpaceViewColumnComponentById(defaultCompId);
+				_selectedEditColumnComponent = TfMetaService.GetSpaceViewColumnComponent(defaultCompId);
 				_form.EditComponentId = _selectedColumnComponent.AddonId;
 			}
 

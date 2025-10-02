@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Services;
+﻿using Nito.AsyncEx.Synchronous;
+
+namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -6,6 +8,8 @@ public partial interface ITfService
 		Guid id);
 
 	public List<TfTemplate> GetTemplates(string? search = null, TfTemplateResultType? type = null);
+
+	public List<TfTemplate> GetSpaceDataTemplates(Guid spaceDataId, string? search = null);
 
 	public TfTemplate CreateTemplate(
 		TfManageTemplateModel template);
@@ -81,6 +85,30 @@ public partial class TfService : ITfService
 		}
 	}
 
+	public List<TfTemplate> GetSpaceDataTemplates(Guid spaceDataId, string? search = null)
+	{
+		var templates = GetTemplates();
+		var result = new List<TfTemplate>();
+		foreach (var item in templates)
+		{
+			if (!item.IsEnabled)
+				continue;
+
+			if (!item.IsSelectable)
+				continue;
+
+			if (!item.SpaceDataList.Contains(spaceDataId))
+				continue;
+
+			if (!TemplateMatchSearch(item, search, null))
+				continue;
+
+			result.Add(item);
+		}
+
+		return result.OrderBy(x => x.Name).ToList();
+	}
+
 	public TfTemplate CreateTemplate(
 		TfManageTemplateModel template)
 	{
@@ -110,6 +138,7 @@ public partial class TfService : ITfService
 					{
 						exception.UpsertDataList(error.PropertyName, error.Message);
 					}
+
 					throw exception;
 				}
 
@@ -140,7 +169,8 @@ public partial class TfService : ITfService
 
 				var settingsJsonPar = CreateParameter("@settings_json", template.SettingsJson, DbType.String);
 
-				var cptPar = CreateParameter("@content_processor_type", template.ContentProcessorType.AssemblyQualifiedName, DbType.String);
+				var cptPar = CreateParameter("@content_processor_type",
+					template.ContentProcessorType.AssemblyQualifiedName, DbType.String);
 
 				var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
 
@@ -179,6 +209,12 @@ public partial class TfService : ITfService
 
 			contentProcessor.OnCreated(resultTemplate, _serviceProvider);
 
+			var task = Task.Run(async () =>
+			{
+				await _eventProvider.PublishEventAsync(new TfTemplateCreatedEvent(resultTemplate));
+			});
+			task.WaitAndUnwrapException();
+
 			return resultTemplate;
 		}
 		catch (Exception ex)
@@ -210,6 +246,7 @@ public partial class TfService : ITfService
 					{
 						exception.UpsertDataList(error.PropertyName, error.Message);
 					}
+
 					throw exception;
 				}
 
@@ -238,7 +275,8 @@ public partial class TfService : ITfService
 
 				var settingsJsonPar = CreateParameter("@settings_json", template.SettingsJson, DbType.String);
 
-				var cptPar = CreateParameter("@content_processor_type", template.ContentProcessorType.AssemblyQualifiedName, DbType.String);
+				var cptPar = CreateParameter("@content_processor_type",
+					template.ContentProcessorType.AssemblyQualifiedName, DbType.String);
 
 				var modifiedOnPar = CreateParameter("@modified_on", DateTime.Now, DbType.DateTime2);
 
@@ -279,6 +317,11 @@ public partial class TfService : ITfService
 
 			contentProcessor.OnUpdated(resultTemplate, _serviceProvider);
 
+			var task = Task.Run(async () =>
+			{
+				await _eventProvider.PublishEventAsync(new TfTemplateUpdatedEvent(resultTemplate));
+			});
+			task.WaitAndUnwrapException();			
 			return resultTemplate;
 		}
 		catch (Exception ex)
@@ -308,6 +351,7 @@ public partial class TfService : ITfService
 					{
 						exception.UpsertDataList(error.PropertyName, error.Message);
 					}
+
 					throw exception;
 				}
 
@@ -331,6 +375,11 @@ public partial class TfService : ITfService
 			}
 
 			contentProcessor.OnDeleted(existingTemplate, _serviceProvider);
+			
+			var task = Task.Run(async () =>
+			{
+				await _eventProvider.PublishEventAsync(new TfTemplateDeletedEvent(existingTemplate));
+			});			
 		}
 		catch (Exception ex)
 		{
@@ -431,11 +480,7 @@ public partial class TfService : ITfService
 		var spaceDict = GetSpacesList().ToDictionary(x => x.Id);
 		foreach (var item in spaceData)
 		{
-			result.Add(new TfDatasetAsOption
-			{
-				Id = item.Id,
-				Name = item.Name,
-			});
+			result.Add(new TfDatasetAsOption { Id = item.Id, Name = item.Name, });
 		}
 
 		result = result.OrderBy(x => x.SpaceName).ThenBy(x => x.Name).ToList();
@@ -460,7 +505,13 @@ public partial class TfService : ITfService
 				SpaceDataList = template.SpaceDataList,
 				UserId = template.CreatedBy?.Id
 			};
-			return UpdateTemplate(form);
+			var result = UpdateTemplate(form);
+			var task = Task.Run(async () =>
+			{
+				await _eventProvider.PublishEventAsync(new TfTemplateUpdatedEvent(result));
+			});
+			task.WaitAndUnwrapException();
+			return result;
 		}
 		catch (Exception ex)
 		{
@@ -485,33 +536,48 @@ public partial class TfService : ITfService
 		{
 			if (template == null)
 			{
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The template object is null.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The template object is null.")
+				});
 			}
 
 			if (template.Id == Guid.Empty)
 			{
-				return new ValidationResult(new[] { new ValidationFailure("Id",
-					"Id is not specified.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("Id",
+						"Id is not specified.")
+				});
 			}
 
 			if (string.IsNullOrWhiteSpace(template.Name))
 			{
-				return new ValidationResult(new[] { new ValidationFailure("Name",
-					"Name is not specified.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("Name",
+						"Name is not specified.")
+				});
 			}
 
 			if (template.ContentProcessorType == null)
 			{
-				return new ValidationResult(new[] { new ValidationFailure("ContentProcessorType",
-					"Content processor type is not specified.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("ContentProcessorType",
+						"Content processor type is not specified.")
+				});
 			}
 
 			var contentProcessor = _service.GetTemplateProcessor(template.ContentProcessorType);
 			if (contentProcessor is null)
 			{
-				return new ValidationResult(new[] { new ValidationFailure("ContentProcessorType",
-					"Content processor type is not found.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("ContentProcessorType",
+						"Content processor type is not found.")
+				});
 			}
 
 			return new ValidationResult();
@@ -522,27 +588,39 @@ public partial class TfService : ITfService
 		{
 			if (template == null)
 			{
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The template object is null.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The template object is null.")
+				});
 			}
 
 			if (string.IsNullOrWhiteSpace(template.Name))
 			{
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"Name is not specified.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"Name is not specified.")
+				});
 			}
 
 			if (template.ContentProcessorType == null)
 			{
-				return new ValidationResult(new[] { new ValidationFailure("ContentProcessorType",
-					"Content processor type is not specified.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("ContentProcessorType",
+						"Content processor type is not specified.")
+				});
 			}
 
 			var contentProcessor = _service.GetTemplateProcessor(template.ContentProcessorType);
 			if (contentProcessor is null)
 			{
-				return new ValidationResult(new[] { new ValidationFailure("ContentProcessorType",
-					"Content processor type is not found.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("ContentProcessorType",
+						"Content processor type is not found.")
+				});
 			}
 
 			return new ValidationResult();
@@ -553,8 +631,11 @@ public partial class TfService : ITfService
 		{
 			if (template == null)
 			{
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The template object is null.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The template object is null.")
+				});
 			}
 
 			return new ValidationResult();
@@ -564,6 +645,28 @@ public partial class TfService : ITfService
 	#endregion
 
 	#region <--- Utility ---->
+
+	private static bool TemplateMatchSearch(
+		TfTemplate template,
+		string search = null,
+		TfTemplateResultType? resultType = null)
+	{
+		if (resultType is not null && template.ResultType != resultType.Value)
+			return false;
+
+		var stringProcessed = search?.Trim().ToLowerInvariant();
+		if (String.IsNullOrWhiteSpace(stringProcessed)) return true;
+		else if (template.Name.ToLowerInvariant().Contains(stringProcessed))
+		{
+			return true;
+		}
+		else if ((template.Description ?? string.Empty).ToLowerInvariant().Contains(stringProcessed))
+		{
+			return true;
+		}
+
+		return false;
+	}
 
 	private List<TfTemplate> ToTemplateList(DataTable dt)
 	{
@@ -630,7 +733,4 @@ public partial class TfService : ITfService
 	}
 
 	#endregion
-
-
-
 }

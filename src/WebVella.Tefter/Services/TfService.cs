@@ -10,7 +10,7 @@ public partial interface ITfService
 public partial class TfService : ITfService
 {
 	private static AsyncLock _lock = new AsyncLock();
-	
+	private static readonly Lock _lockObject = new();
 	private readonly ITfConfigurationService _config;
 	private readonly IServiceProvider _serviceProvider;
 	private readonly ITfDboManager _dboManager;
@@ -18,15 +18,18 @@ public partial class TfService : ITfService
 	private readonly ITfMetaService _metaService;
 	private readonly ITfDatabaseService _dbService;
 	private readonly ILogger<TfService> _logger;
+	private readonly TfGlobalEventProvider _eventProvider;
 	private readonly IMemoryCache _cache;
-
+	private readonly IStringLocalizer<TfUIService> LOC;
+	
 	public TfService(
 		IServiceProvider serviceProvider,
 		ITfConfigurationService config,
 		ITfMetaService metaService,
 		ITfDatabaseService dbService,
 		ITfDatabaseManager dbManager,
-		ILogger<TfService> logger)
+		ILogger<TfService> logger,
+		TfGlobalEventProvider globalEventProvider)
 	{
 		_serviceProvider = serviceProvider;
 		_dbService = dbService;
@@ -43,6 +46,8 @@ public partial class TfService : ITfService
 		var tefterInstanceId = GetSetting(TfConstants.TEFTER_INSTANCE_SETTING_KEY).Value;
 		var blobStoragePath = Path.Combine( _config.BlobStoragePath, tefterInstanceId);
 
+		_eventProvider = globalEventProvider;
+		LOC = serviceProvider.GetService<IStringLocalizer<TfUIService>>() ?? null!;		
 		InitBlobStorageFolder(blobStoragePath);
 	}
 }

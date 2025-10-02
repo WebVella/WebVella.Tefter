@@ -559,7 +559,7 @@ public partial class TfServiceTest : BaseTest
 						DataMapping = new Dictionary<string, string> { { "Value", "test" } }
 					};
 
-					var createdSpaceViewColumn = tfService.CreateSpaceViewColumn(column);
+					var createdSpaceViewColumn = await tfService.CreateSpaceViewColumn(column);
 					createdSpaceViewColumn.Should().NotBeNull();
 					createdColums.Add(createdSpaceViewColumn);
 				}
@@ -572,7 +572,7 @@ public partial class TfServiceTest : BaseTest
 
 				first.Position = (short)createdColums.Count;
 
-				var updateResult = tfService.UpdateSpaceViewColumn(first);
+				var updateResult = await tfService.UpdateSpaceViewColumn(first);
 				updateResult.Should().NotBeNull();
 
 				columns = tfService.GetSpaceViewColumnsList(view.Id);

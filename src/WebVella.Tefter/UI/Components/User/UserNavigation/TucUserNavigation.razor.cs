@@ -12,7 +12,6 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.CurrentUserChanged -= CurrentUser_Changed;
 		KeyCodeService.UnregisterListener(HandleKeyDownAsync);
 	}
 
@@ -22,17 +21,11 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		await initAdmin(TfAuthLayout.NavigationState);
 		KeyCodeService.RegisterListener(HandleKeyDownAsync);
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.CurrentUserChanged += CurrentUser_Changed;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await initAdmin(args);
-		StateHasChanged();
-	}
-
-	private void CurrentUser_Changed(object? sender, TfUser? user)
-	{
 		StateHasChanged();
 	}
 
@@ -84,7 +77,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		var uri = new Uri(Navigator.Uri);
 		try
 		{
-			var user = await TfUIService.SetStartUpUrl(
+			var user = await TfService.SetStartUpUrl(
 						userId: TfAuthLayout.CurrentUser.Id,
 						url: uri.PathAndQuery
 					);
@@ -98,7 +91,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 
 	private async Task _logout()
 	{
-		await TfUIService.LogoutAsync();
+		await TfService.LogoutAsync(JSRuntime);
 		Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
 	}

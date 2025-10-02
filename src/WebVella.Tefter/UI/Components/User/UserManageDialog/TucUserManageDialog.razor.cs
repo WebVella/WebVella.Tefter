@@ -75,12 +75,12 @@ public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentCo
 			
 			if (_isCreate)
 			{
-				result = await TfUIService.CreateUserWithFormAsync(_form);
+				result = await TfService.CreateUserWithFormAsync(_form);
 				ToastService.ShowSuccess(LOC("User account was successfully created!"));
 			}
 			else
 			{
-				result = await TfUIService.UpdateUserWithFormAsync(_form);
+				result = await TfService.UpdateUserWithFormAsync(_form);
 				ToastService.ShowSuccess(LOC("User account was successfully updated!"));
 			}
 			await Dialog.CloseAsync(result);

@@ -80,7 +80,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 				Url = null
 			};
 
-			TfUIService.CreateBookmark(submit);
+			TfService.CreateBookmark(submit);
 			ToastService.ShowSuccess(LOC("View is now bookmarked"));
 		}
 		catch (Exception ex)
@@ -107,7 +107,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 				Name = SpaceView.Name + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
 				Url = new Uri(Navigator.Uri).PathAndQuery
 			};
-			TfUIService.CreateBookmark(submit);
+			TfService.CreateBookmark(submit);
 
 			ToastService.ShowSuccess(LOC("URL is now saved"));
 			await Navigator.ApplyChangeToUrlQuery(TfConstants.ActiveSaveQueryName, submit.Id);

@@ -22,7 +22,7 @@ public partial class TucSpaceViewLinkSaveSelector : TfBaseComponent
 				Url = new Uri(Navigator.Uri).PathAndQuery
 			};
 
-			TfUIService.UpdateBookmark(submit);
+			TfService.UpdateBookmark(submit);
 
 			ToastService.ShowSuccess(LOC("URL updated"));
 		}
@@ -77,7 +77,7 @@ public partial class TucSpaceViewLinkSaveSelector : TfBaseComponent
 			if (ActiveSavedUrl is null)
 				return;
 
-			TfUIService.DeleteBookmark(ActiveSavedUrl);
+			TfService.DeleteBookmark(ActiveSavedUrl.Id);
 
 			ToastService.ShowSuccess(LOC("Saved URL removed"));
 

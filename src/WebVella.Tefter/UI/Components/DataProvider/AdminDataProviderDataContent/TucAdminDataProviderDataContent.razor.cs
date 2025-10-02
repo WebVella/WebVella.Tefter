@@ -190,7 +190,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		if (_navState.PageSize == pageSize) return;
 		try
 		{
-			var user = await TfUIService.SetPageSize(
+			var user = await TfService.SetPageSize(
 						userId: TfAuthLayout.CurrentUser.Id,
 						pageSize: pageSize == TfConstants.PageSize ? null : pageSize
 					);

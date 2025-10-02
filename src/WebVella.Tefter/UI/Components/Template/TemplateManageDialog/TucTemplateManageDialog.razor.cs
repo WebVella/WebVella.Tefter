@@ -27,7 +27,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 		_title = _isCreate ? LOC("Create template") : LOC("Manage template");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")!.WithColor(Color.Neutral) : TfConstants.GetIcon("Save")!.WithColor(Color.Neutral);
-		_processors = TfUIService.GetProcessors();
+		_processors = TfService.GetTemplateProcessors();
 		_form = new TfManageTemplateModel
 		{
 			Id = Content.Id,
@@ -66,7 +66,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 		{
 			_form.FluentIconName = _selectedProcessor.ResultType.GetFluentIcon();
 		}
-		_spaceDataAll = TfUIService.GetSpaceDataOptionsForTemplate();
+		_spaceDataAll = TfService.GetSpaceDataOptionsForTemplate();
 		_recalcSpaceDataOptions();
 		base.InitForm(_form);
 	}
@@ -94,12 +94,12 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 			TfTemplate template = null!;
 			if (_isCreate)
 			{
-				template = TfUIService.CreateTemplate(submit);
+				template = TfService.CreateTemplate(submit);
 				ToastService.ShowSuccess(LOC("Template successfully created"));
 			}
 			else
 			{
-				template = TfUIService.UpdateTemplate(submit);
+				template = TfService.UpdateTemplate(submit);
 				ToastService.ShowSuccess(LOC("Template successfully updated"));
 			}
 

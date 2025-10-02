@@ -35,9 +35,9 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			TfSpaceView result = TfUIService.UpdateSpaceViewSetting(Content!.Id, _form);
+			await TfService.UpdateSpaceViewSettings(Content!.Id, _form);
 
-			await Dialog.CloseAsync(result);
+			await Dialog.CloseAsync();
 		}
 		catch (Exception ex)
 		{

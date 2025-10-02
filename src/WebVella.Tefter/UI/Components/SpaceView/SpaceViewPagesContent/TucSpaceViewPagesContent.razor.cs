@@ -41,7 +41,7 @@ public partial class TucSpaceViewPagesContent : TfBaseComponent, IDisposable
 			{
 				var routeData = TfAuthLayout.NavigationState;
 				if (routeData.SpaceViewId is not null)
-					_spaceView = TfUIService.GetSpaceView(routeData.SpaceViewId.Value);
+					_spaceView = TfService.GetSpaceView(routeData.SpaceViewId.Value);
 
 			}
 			if (_spaceView is null) return;

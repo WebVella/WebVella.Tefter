@@ -11,20 +11,20 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 	private TfNavigationState _navState = null!;
 	public void Dispose()
 	{
-		TfUIService.TemplateUpdated -= On_TemplateUpdated;
+		TfEventProvider.TemplateUpdatedEvent -= On_TemplateUpdated;
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.TemplateUpdated += On_TemplateUpdated;
+		TfEventProvider.TemplateUpdatedEvent += On_TemplateUpdated;
 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
 	}
 
-	private async void On_TemplateUpdated(object? caller, TfTemplate args)
+	private async void On_TemplateUpdated(TfTemplateUpdatedEvent args)
 	{
-		await _init(navState:TfAuthLayout.NavigationState, template: args);
+		await _init(navState:TfAuthLayout.NavigationState, template: args.Payload);
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -47,11 +47,11 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 			else
 			{
 				if (_navState.TemplateId is not null)
-					_template = TfUIService.GetTemplate(_navState.TemplateId.Value);
+					_template = TfService.GetTemplate(_navState.TemplateId.Value);
 
 			}
 			if (_template is null) return;
-			_spaceDataSelection = TfUIService.GetSpaceDataOptionsForTemplate().Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
+			_spaceDataSelection = TfService.GetSpaceDataOptionsForTemplate().Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
 			if (_template.ContentProcessorType is not null && _template.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 			{
 				_processor = (ITfTemplateProcessorAddon?)Activator.CreateInstance(_template.ContentProcessorType);
@@ -95,8 +95,8 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 			return;
 		try
 		{
-			TfUIService.DeleteTemplate(_template.Id);
-			var templates = TfUIService.GetTemplates(type: _template.ResultType);
+			TfService.DeleteTemplate(_template.Id);
+			var templates = TfService.GetTemplates(type: _template.ResultType);
 			ToastService.ShowSuccess(LOC("Template removed"));
 			if (templates.Count > 0)
 			{
@@ -143,7 +143,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 		{
 			_template = (TfTemplate)result.Data;
 
-			_spaceDataSelection = TfUIService.GetSpaceDataOptionsForTemplate().Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
+			_spaceDataSelection = TfService.GetSpaceDataOptionsForTemplate().Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
 		}
 	}
 }

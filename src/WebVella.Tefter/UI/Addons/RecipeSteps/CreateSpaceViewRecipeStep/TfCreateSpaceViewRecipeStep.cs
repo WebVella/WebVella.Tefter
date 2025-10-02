@@ -9,7 +9,7 @@ public class TfCreateSpaceViewRecipeStep : ITfRecipeStepAddon
 	public Type FormComponent { get; set; } = typeof(TfCreateSpaceViewRecipeStepForm);
 	public TfRecipeStepInstance Instance { get; set; }
 	public ITfRecipeStepAddonData Data { get; set; }
-	public Task ApplyStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult stepResult)
+	public async Task ApplyStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult stepResult)
 	{
 		ITfService tfService = serviceProvider.GetService<ITfService>();
 
@@ -45,10 +45,8 @@ public class TfCreateSpaceViewRecipeStep : ITfRecipeStepAddon
 		;
 		foreach (var column in step.Columns)
 		{
-			_ = tfService.CreateSpaceViewColumn(column);
+			await tfService.CreateSpaceViewColumn(column);
 		}
-
-		return Task.CompletedTask;
 	}
 	public Task ReverseStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult? stepResult)
 	{

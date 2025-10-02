@@ -37,8 +37,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	public async ValueTask DisposeAsync()
 	{
 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.UserUpdated -= On_UserChanged;
-		TfUIService.SpaceViewColumnsChanged -= On_SpaceViewUpdated;
+		TfEventProvider.UserUpdatedGlobalEvent -= On_UserChanged;
+		TfEventProvider.SpaceViewColumnsChangedEvent -= On_SpaceViewUpdated;
 		_objectRef?.Dispose();
 		try
 		{
@@ -91,8 +91,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		if (firstRender)
 		{
 			TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-			TfUIService.UserUpdated += On_UserChanged;
-			TfUIService.SpaceViewColumnsChanged += On_SpaceViewUpdated;
+			TfEventProvider.UserUpdatedGlobalEvent += On_UserChanged;
+			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewUpdated;
 			await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable", _tableId);
 			await JSRuntime.InvokeAsync<bool>("Tefter.addColumnResizeListener",
 								 _objectRef, ComponentId, "OnColumnResized");
@@ -107,16 +107,17 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			await _init(navState: args);
 		}
 	}
-	private async void On_UserChanged(object? caller, TfUser args)
+	private async void On_UserChanged(TfUserUpdatedEvent args)
 	{
 		if (Context is not null)
-			Context.CurrentUser = args;
+			Context.CurrentUser = args.Payload;
 		await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async void On_SpaceViewUpdated(object? caller, List<TfSpaceViewColumn> args)
+	private async void On_SpaceViewUpdated(TfSpaceViewColumnsChangedEvent args)
 	{
-		_spaceViewColumns = args;
+		if(args.UserId != TfAuthLayout.CurrentUser.Id) return;
+		_spaceViewColumns = args.Payload;
 		await _init(TfAuthLayout.NavigationState);
 	}
 
@@ -146,7 +147,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(_spacePage.ComponentOptionsJson);
 			if (options is null || options.SpaceViewId is null)
 				return;
-			_spaceView = TfUIService.GetSpaceView(options.SpaceViewId.Value);
+			_spaceView = TfService.GetSpaceView(options.SpaceViewId.Value);
 			if (_spaceView is null)
 				return;
 
@@ -168,7 +169,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			if (_navState.SpaceViewPresetId is not null)
 				_preset = _spaceView!.Presets.GetPresetById(_navState.SpaceViewPresetId.Value);
 
-			_spaceViewColumns = TfUIService.GetViewColumns(_spaceView.Id);
+			_spaceViewColumns = TfService.GetSpaceViewColumnsList(_spaceView.Id);
 
 			_data = TfUIService.QueryDataset(
 							datasetId: _spaceView!.DatasetId,
@@ -250,7 +251,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		try
 		{
-			_ = await TfUIService.RemoveSpaceViewPersonalizations(
+			_ = await TfService.RemoveSpaceViewPersonalizations(
 							userId: _currentUser.Id,
 							spaceViewId: _spaceView.Id,
 							presetId: _preset?.Id
@@ -486,7 +487,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		if (_isDataLoading == true) return;
 		var column = _spaceViewColumns.SingleOrDefault(x => x.Position == position);
 		if (column is null) return;
-		var sorts = TfUIService.CalculateViewPresetSortPersonalization(
+		var sorts = TfService.CalculateViewPresetSortPersonalization(
 		 currentSorts: _navState.Sorts ?? new(),
 		 spaceViewId: _spaceView.Id,
 		 spaceViewColumnId: column.Id,
@@ -500,10 +501,10 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		var column = _spaceViewColumns.SingleOrDefault(x => x.Position == position);
 		if (column is null) return;
-		await TfUIService.SetViewPresetColumnPersonalization(
+		await TfService.SetViewPresetColumnPersonalization(
 		 userId: _currentUser.Id,
 		 spaceViewId: _spaceView.Id,
-		 preset: _preset?.Id,
+		 presetId: _preset?.Id,
 		 spaceViewColumnId: column.Id,
 		 width: width);
 	}
