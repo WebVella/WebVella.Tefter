@@ -57,7 +57,7 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 		List<TfFilterBase> filters = data.RouteState.Filters.ConvertQueryFilterToList(viewColumns, allDataProviders, allSharedColumns);
 		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns); ;
 
-		var viewData = QuerySpaceData(
+		var viewData = QueryDataset(
 			datasetId: view.DatasetId,
 			userFilters: filters,
 			userSorts: sorts,
@@ -179,7 +179,7 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 		List<TfFilterBase> filters = data.RouteState.Filters.ConvertQueryFilterToList(viewColumns, allDataProviders, allSharedColumns);
 		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns); ;
 
-		var viewData = QuerySpaceData(
+		var viewData = QueryDataset(
 			datasetId: view.DatasetId,
 			userFilters: filters,
 			userSorts: sorts,

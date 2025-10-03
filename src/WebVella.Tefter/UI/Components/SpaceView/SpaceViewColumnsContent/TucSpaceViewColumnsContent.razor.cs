@@ -13,7 +13,7 @@
 // 	{
 // 		TfUIService.SpaceViewUpdated -= On_SpaceViewUpdated;
 // 		TfUIService.SpaceViewColumnsChanged -= On_SpaceViewColumnsUpdated;
-// 		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+// 		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 // 	}
 //
 // 	protected override async Task OnInitializedAsync()
@@ -21,7 +21,7 @@
 // 		await _init(TfAuthLayout.NavigationState);
 // 		TfUIService.SpaceViewUpdated += On_SpaceViewUpdated;
 // 		TfUIService.SpaceViewColumnsChanged += On_SpaceViewColumnsUpdated;
-// 		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+// 		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 // 	}
 //
 // 	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
@@ -34,10 +34,10 @@
 // 		await _init(TfAuthLayout.NavigationState);
 // 	}
 //
-// 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+// 	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 // 	{
-// 		if (UriInitialized != args.Uri)
-// 			await _init(navState: args);
+// 		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+// 			await _init(navState: args.Payload);
 // 	}
 //
 // 	private async Task _init(TfNavigationState navState, TfSpaceView? spaceView = null)

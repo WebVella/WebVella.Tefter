@@ -2,9 +2,18 @@
 
 namespace WebVella.Tefter.Messaging;
 
-public interface IGlobalEvent : ITfEvent 
+public interface IGlobalEvent : ITfEvent
 {
 	Guid? UserId { get; set; }
+}
+
+public class TfGlobalEvent : IGlobalEvent
+{
+	public Guid Id { get; init; }
+	public Guid? UserId { get; set; } = null;
+
+	public bool IsUserApplicable(TfUser? user)
+		=> UserId is not null && user is not null && UserId.Value == user.Id;
 }
 
 public partial class TfGlobalEventProvider : IAsyncDisposable

@@ -1,7 +1,4 @@
-﻿using Microsoft.JSInterop;
-using WebVella.Tefter.UIServices;
-
-namespace WebVella.Tefter.Talk.Components;
+﻿namespace WebVella.Tefter.Talk.Components;
 
 public partial class TalkChannelAdminList : TfBaseComponent
 {
@@ -15,7 +12,7 @@ public partial class TalkChannelAdminList : TfBaseComponent
         TalkService.ChannelCreated -= On_ChannelChanged;
         TalkService.ChannelUpdated -= On_ChannelChanged;
         TalkService.ChannelDeleted -= On_ChannelChanged;
-        TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+        TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
     }
 
     protected override async Task OnInitializedAsync()
@@ -24,7 +21,7 @@ public partial class TalkChannelAdminList : TfBaseComponent
         TalkService.ChannelCreated += On_ChannelChanged;
         TalkService.ChannelUpdated += On_ChannelChanged;
         TalkService.ChannelDeleted += On_ChannelChanged;
-        TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+        TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
     }
 
     private async void On_ChannelChanged(object? caller, TalkChannel args)
@@ -32,10 +29,10 @@ public partial class TalkChannelAdminList : TfBaseComponent
         await _init(TfAuthLayout.NavigationState);
     }
 
-    private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+    private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
     {
-        if (UriInitialized != args.Uri)
-            await _init(args);
+        if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+            await _init(args.Payload);
     }
 
     private async Task _init(TfNavigationState navState)

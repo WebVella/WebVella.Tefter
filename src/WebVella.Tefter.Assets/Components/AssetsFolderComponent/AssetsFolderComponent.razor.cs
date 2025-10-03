@@ -1,8 +1,4 @@
-﻿
-
-using WebVella.Tefter.UIServices;
-
-namespace WebVella.Tefter.Assets.Components;
+﻿namespace WebVella.Tefter.Assets.Components;
 public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 {
 	[Inject] public IAssetsService AssetsService { get; set; }
@@ -29,7 +25,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		AssetsService.AssetCreated -= On_AssetChanged;
 		AssetsService.AssetUpdated -= On_AssetChanged;
 		AssetsService.AssetDeleted -= On_AssetChanged;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -40,7 +36,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		AssetsService.AssetCreated += On_AssetChanged;
 		AssetsService.AssetUpdated += On_AssetChanged;
 		AssetsService.AssetDeleted += On_AssetChanged;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -69,10 +65,10 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(navState: args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(navState: args.Payload);
 	}
 	private async Task _init(TfNavigationState navState)
 	{

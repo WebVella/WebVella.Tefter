@@ -8,7 +8,7 @@ public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		TfEventProvider.SpacePageCreatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent -= On_SpacePageChanged;
@@ -18,16 +18,16 @@ public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 	{
 		await base.OnInitializedAsync();
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 		TfEventProvider.SpacePageCreatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent += On_SpacePageChanged;
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
 	private async void On_SpacePageChanged(object args)

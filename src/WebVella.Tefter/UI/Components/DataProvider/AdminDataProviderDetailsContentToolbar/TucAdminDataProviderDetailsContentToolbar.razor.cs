@@ -6,22 +6,22 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.DataProviderUpdated -= On_DataProviderUpdated;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfEventProvider.DataProviderUpdatedEvent -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.DataProviderUpdated += On_DataProviderUpdated;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
-	private async void On_DataProviderUpdated(object? caller, TfDataProvider args)
+	private async void On_DataProviderUpdated(TfDataProviderUpdatedEvent args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
@@ -32,7 +32,7 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 		{
 			_menu = new();
 			if(navState is null || navState.DataProviderId is null) return;
-			var provider = TfUIService.GetDataProvider(navState.DataProviderId.Value);
+			var provider = TfService.GetDataProvider(navState.DataProviderId.Value);
 			if (provider is null) return;
 			_menu.Add(new TfMenuItem
 			{

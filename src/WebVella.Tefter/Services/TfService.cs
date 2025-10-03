@@ -20,7 +20,7 @@ public partial class TfService : ITfService
 	private readonly ILogger<TfService> _logger;
 	private readonly TfGlobalEventProvider _eventProvider;
 	private readonly IMemoryCache _cache;
-	private readonly IStringLocalizer<TfUIService> LOC;
+	private readonly IStringLocalizer<TfService> LOC;
 	
 	public TfService(
 		IServiceProvider serviceProvider,
@@ -47,7 +47,7 @@ public partial class TfService : ITfService
 		var blobStoragePath = Path.Combine( _config.BlobStoragePath, tefterInstanceId);
 
 		_eventProvider = globalEventProvider;
-		LOC = serviceProvider.GetService<IStringLocalizer<TfUIService>>() ?? null!;		
+		LOC = serviceProvider.GetService<IStringLocalizer<TfService>>() ?? null!;		
 		InitBlobStorageFolder(blobStoragePath);
 	}
 }

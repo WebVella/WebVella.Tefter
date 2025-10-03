@@ -10,7 +10,7 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 		TfEventProvider.TemplateCreatedEvent -= On_TemplateCreated;
 		TfEventProvider.TemplateUpdatedEvent -= On_TemplateUpdated;
 		TfEventProvider.TemplateDeletedEvent -= On_TemplateDeleted;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
@@ -18,7 +18,7 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 		TfEventProvider.TemplateCreatedEvent += On_TemplateCreated;
 		TfEventProvider.TemplateUpdatedEvent += On_TemplateUpdated;
 		TfEventProvider.TemplateDeletedEvent += On_TemplateDeleted;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_TemplateCreated(TfTemplateCreatedEvent args)
@@ -37,10 +37,10 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 	}
 
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
 	private async Task _init(TfNavigationState navState)

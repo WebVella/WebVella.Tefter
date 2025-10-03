@@ -5,21 +5,21 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 	private Guid? _deletedColumnId = null;
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.DataProviderUpdated -= On_DataProviderUpdated;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfEventProvider.DataProviderUpdatedEvent -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.DataProviderUpdated += On_DataProviderUpdated;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
-	private async void On_DataProviderUpdated(object? caller, TfDataProvider args)
+	private async void On_DataProviderUpdated(TfDataProviderUpdatedEvent args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
@@ -34,7 +34,7 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 				await InvokeAsync(StateHasChanged);
 				return;
 			}
-			_provider = TfUIService.GetDataProvider(navState.DataProviderId.Value);
+			_provider = TfService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
 		}
@@ -76,7 +76,7 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			TfDataProvider provider = TfUIService.DeleteDataProviderColumn(column.Id);
+			TfDataProvider provider = TfService.DeleteDataProviderColumn(column.Id);
 			ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
 		}
 		catch (Exception ex)

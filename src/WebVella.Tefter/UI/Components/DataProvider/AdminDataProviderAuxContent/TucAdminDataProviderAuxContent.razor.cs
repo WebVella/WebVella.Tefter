@@ -5,23 +5,23 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 	private List<TfDataProvider> _connectedProviders = new();
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.DataProviderUpdated -= On_DataProviderUpdated;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfEventProvider.DataProviderUpdatedEvent -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
 
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.DataProviderUpdated += On_DataProviderUpdated;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
-	private async void On_DataProviderUpdated(object? caller, TfDataProvider args)
+	private async void On_DataProviderUpdated(TfDataProviderUpdatedEvent args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
@@ -36,10 +36,10 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 				await InvokeAsync(StateHasChanged);
 				return;
 			}
-			_provider = TfUIService.GetDataProvider(navState.DataProviderId.Value);
+			_provider = TfService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
-			_connectedProviders = TfUIService.GetDataProviderConnectedProviders(_provider.Id);
+			_connectedProviders = TfService.GetDataProviderConnectedProviders(_provider.Id);
 		}
 		finally
 		{
@@ -84,7 +84,7 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 			return;
 		try
 		{
-			var provider = TfUIService.DeleteDataProviderIdentity(key.Id);
+			var provider = TfService.DeleteDataProviderIdentity(key.Id);
 			ToastService.ShowSuccess(LOC("The implementation is successfully deleted!"));
 
 		}

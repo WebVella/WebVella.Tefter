@@ -35,7 +35,7 @@ public partial class TucDatasetDataDialog : TfBaseComponent, IDialogContentCompo
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
 
-			_data = TfUIService.QueryDataset(
+			_data = TfService.QueryDataset(
 				datasetId: Content!.Id,
 				page: 1,
 				pageSize: TfConstants.ItemsMaxLimit

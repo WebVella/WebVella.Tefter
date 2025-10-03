@@ -1,14 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.FluentUI.AspNetCore.Components;
-using System.Globalization;
-using System.Threading.Tasks;
-using WebVella.Tefter.Exceptions;
-using WebVella.Tefter.Models;
-using WebVella.Tefter.UI.Components;
-using WebVella.Tefter.UIServices;
-using WebVella.Tefter.Utility;
-
-namespace WebVella.Tefter.DataProviders.Blank.Addons;
+﻿namespace WebVella.Tefter.DataProviders.Blank.Addons;
 
 public partial class ManageSettingsComponent : TfFormBaseComponent,
     ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>

@@ -44,7 +44,7 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 		{
 			var dbTypeInfo = WebVella.Tefter.Services.TfService.GetDatabaseColumnTypeInfosList();
 			_dbTypeInfoDict = dbTypeInfo.ToDictionary(x=> x.Type);
-			_schemaInfo = TfUIService.GetDataProviderSourceSchemaInfo(Content);
+			_schemaInfo = TfService.GetDataProviderSourceSchemaInfo(Content.Id);
 			if (_schemaInfo is null) 
 				throw new Exception("NO _schemaInfo");
 			var supportedSourceTypes = Content.SupportedSourceDataTypes;
@@ -102,7 +102,7 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 				matchColumn.FixPrefix(Content!.ColumnPrefix);
 			}
 
-			var provider = TfUIService.CreateBulkDataProviderColumn(Content!.Id, _newColumns);
+			var provider = TfService.CreateBulkDataProviderColumn(Content!.Id, _newColumns);
 			await Dialog.CloseAsync(provider);
 		}
 		catch (TfValidationException ex)

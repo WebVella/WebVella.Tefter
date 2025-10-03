@@ -42,7 +42,7 @@ public partial class TfServiceTest : BaseTest
 			var provider = tfService.GetDataProvider(providerId);
 			var spaceData = tfService.GetDataset(spaceDataId);
 
-			//var result = tfService.QuerySpaceData(spaceData.Id);
+			//var result = tfService.QueryDataset(spaceData.Id);
 			var result = tfService.QueryDataProvider(provider);
 
 			tfService.DeleteAllProviderRows(provider);
@@ -137,7 +137,7 @@ public partial class TfServiceTest : BaseTest
 			};
 
 			var newSpaceData = tfService.CreateDataset(newSpaceDataModel);
-			var newSpaceDataTable = tfService.QuerySpaceData(newSpaceData.Id);
+			var newSpaceDataTable = tfService.QueryDataset(newSpaceData.Id);
 
 			newTable = newSpaceDataTable.NewTable();
 			
@@ -165,7 +165,7 @@ public partial class TfServiceTest : BaseTest
 			var provider = tfService.GetDataProvider(providerId);
 			var spaceData = tfService.GetDataset(spaceDataId);
 
-			var result = tfService.QuerySpaceData(spaceData.Id,
+			var result = tfService.QueryDataset(spaceData.Id,
 				page: 1,
 				pageSize: 5,
 				userFilters: new List<TfFilterBase>
@@ -190,7 +190,7 @@ public partial class TfServiceTest : BaseTest
 
 			result.Rows.Count.Should().Be(1);
 
-			result = tfService.QuerySpaceData(spaceData.Id,
+			result = tfService.QueryDataset(spaceData.Id,
 				//noRows: true,
 				//search: "10",
 				page: 1,
@@ -231,7 +231,7 @@ public partial class TfServiceTest : BaseTest
 			var provider = tfService.GetDataProvider(providerId);
 			var spaceData = tfService.GetDataset(spaceDataId);
 
-			var result = tfService.QuerySpaceData(spaceData.Id,
+			var result = tfService.QueryDataset(spaceData.Id,
 				noRows: false,
 				returnOnlyTfIds: true,
 				userSorts: new List<TfSort> {

@@ -1,4 +1,5 @@
-﻿using NpgsqlTypes;
+﻿using Nito.AsyncEx.Synchronous;
+using NpgsqlTypes;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WebVella.Tefter.Services;
@@ -153,6 +154,13 @@ public partial class TfService : ITfService
 		if (!success)
 			throw new TfDatabaseException("Failed to insert synchronization task.");
 
+		var result = GetDataProvider(providerId);
+		var task2 = Task.Run(async () =>
+		{
+			await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
+		});
+		task2.WaitAndUnwrapException();						
+		
 		return task.Id;
 	}
 
@@ -174,6 +182,13 @@ public partial class TfService : ITfService
 			SynchScheduleEnabled = syncScheduleEnabled,
 			SynchScheduleMinutes = syncScheduleMinutes
 		});
+		
+		var result = GetDataProvider(providerId);
+		var task = Task.Run(async () =>
+		{
+			await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
+		});
+		task.WaitAndUnwrapException();				
 	}
 	public void UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns)
 	{
@@ -189,6 +204,13 @@ public partial class TfService : ITfService
 			SynchScheduleEnabled = provider.SynchScheduleEnabled,
 			SynchScheduleMinutes = provider.SynchScheduleMinutes
 		});
+		
+		var result = GetDataProvider(providerId);
+		var task = Task.Run(async () =>
+		{
+			await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
+		});
+		task.WaitAndUnwrapException();			
 	}
 	public void UpdateSychronizationTask(
 		Guid taskId,

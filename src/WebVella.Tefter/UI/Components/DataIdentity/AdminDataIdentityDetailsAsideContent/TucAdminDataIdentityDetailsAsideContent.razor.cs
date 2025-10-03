@@ -7,41 +7,32 @@ public partial class TucAdminDataIdentityDetailsAsideContent : TfBaseComponent, 
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfUIService.DataIdentityCreated -= On_DataIdentityCreated;
-		TfUIService.DataIdentityUpdated -= On_DataIdentityUpdated;
-		TfUIService.DataIdentityDeleted -= On_DataIdentityDeleted;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.DataIdentityCreatedEvent -= On_DataIdentityChanged;
+		TfEventProvider.DataIdentityUpdatedEvent -= On_DataIdentityChanged;
+		TfEventProvider.DataIdentityDeletedEvent -= On_DataIdentityChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.DataIdentityCreated += On_DataIdentityCreated;
-		TfUIService.DataIdentityUpdated += On_DataIdentityUpdated;
-		TfUIService.DataIdentityDeleted += On_DataIdentityDeleted;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.DataIdentityCreatedEvent += On_DataIdentityChanged;
+		TfEventProvider.DataIdentityUpdatedEvent += On_DataIdentityChanged;
+		TfEventProvider.DataIdentityDeletedEvent += On_DataIdentityChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_DataIdentityCreated(object? caller, TfDataIdentity user)
+	private async void On_DataIdentityChanged(object args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async void On_DataIdentityUpdated(object? caller, TfDataIdentity user)
-	{
-		await _init(TfAuthLayout.NavigationState);
-	}
 
-	private async void On_DataIdentityDeleted(object? caller, TfDataIdentity user)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		await _init(TfAuthLayout.NavigationState);
-	}
-
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
-	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
 	private async Task _init(TfNavigationState navState)
@@ -49,7 +40,7 @@ public partial class TucAdminDataIdentityDetailsAsideContent : TfBaseComponent, 
 		try
 		{
 			_search = navState.SearchAside;
-			var roles = TfUIService.GetDataIdentities(_search).ToList();
+			var roles = TfService.GetDataIdentities(_search).ToList();
 			_items = new();
 			foreach (var role in roles)
 			{

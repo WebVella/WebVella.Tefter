@@ -1,11 +1,7 @@
 ﻿namespace WebVella.Tefter.Messaging;
 
-public class TfSpaceCreatedEvent : IGlobalEvent
+public class TfSpaceCreatedEvent : TfGlobalEvent
 {
-	public Guid Id { get; init; }
-
-	public Guid? UserId { get; set; } = null;
-
 	public TfSpace Payload { get; set; } = null!;
 
 	public TfSpaceCreatedEvent() { }

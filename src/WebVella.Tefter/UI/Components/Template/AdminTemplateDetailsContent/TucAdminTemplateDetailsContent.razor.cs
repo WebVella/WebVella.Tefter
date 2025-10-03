@@ -12,14 +12,14 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 	public void Dispose()
 	{
 		TfEventProvider.TemplateUpdatedEvent -= On_TemplateUpdated;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
 		TfEventProvider.TemplateUpdatedEvent += On_TemplateUpdated;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_TemplateUpdated(TfTemplateUpdatedEvent args)
@@ -27,10 +27,10 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 		await _init(navState:TfAuthLayout.NavigationState, template: args.Payload);
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(navState: args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(navState: args.Payload);
 	}
 
 	private async Task _init(TfNavigationState navState, TfTemplate? template = null)

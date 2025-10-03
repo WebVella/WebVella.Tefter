@@ -398,7 +398,7 @@ public partial class TfService : ITfService
 			var spaceData = GetDataset(spaceDataId);
 			var processor = GetTemplateProcessor(template.ContentProcessorType);
 
-			var dataTable = QuerySpaceData(spaceData.Id, tfRecordIds);
+			var dataTable = QueryDataset(spaceData.Id, tfRecordIds);
 
 			return processor.GenerateTemplatePreviewResult(template, dataTable, _serviceProvider);
 		}
@@ -426,7 +426,7 @@ public partial class TfService : ITfService
 
 			var spaceData = GetDataset(spaceDataId);
 			var processor = GetTemplateProcessor(template.ContentProcessorType);
-			var dataTable = QuerySpaceData(spaceData.Id, tfRecordIds);
+			var dataTable = QueryDataset(spaceData.Id, tfRecordIds);
 
 
 			return processor.ProcessTemplate(template, dataTable, preview, _serviceProvider);

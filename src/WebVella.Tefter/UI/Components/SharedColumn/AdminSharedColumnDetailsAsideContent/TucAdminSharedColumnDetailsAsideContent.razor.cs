@@ -10,7 +10,7 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 		TfEventProvider.SharedColumnCreatedEvent -= On_SharedColumnChanged;
 		TfEventProvider.SharedColumnUpdatedEvent -= On_SharedColumnChanged;
 		TfEventProvider.SharedColumnDeletedEvent -= On_SharedColumnChanged;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -19,7 +19,7 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 		TfEventProvider.SharedColumnCreatedEvent += On_SharedColumnChanged;
 		TfEventProvider.SharedColumnUpdatedEvent += On_SharedColumnChanged;
 		TfEventProvider.SharedColumnDeletedEvent += On_SharedColumnChanged;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_SharedColumnChanged(object args)
@@ -28,10 +28,10 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 	}
 
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
 	private async Task _init(TfNavigationState navState)

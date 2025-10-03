@@ -20,7 +20,7 @@ public partial class TucSpaceViewSortsDialog : TfFormBaseComponent, IDialogConte
 			throw new Exception("SpaceView not found");
 
 		_viewColumns = TfService.GetSpaceViewColumnsList(Content);
-		_spaceData = TfUIService.GetDataset(view.DatasetId);
+		_spaceData = TfService.GetDataset(view.DatasetId);
 		await _init();
 	}
 

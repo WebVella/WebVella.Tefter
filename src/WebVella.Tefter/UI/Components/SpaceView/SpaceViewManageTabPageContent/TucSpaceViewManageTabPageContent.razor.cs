@@ -17,7 +17,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	public bool _submitting = false;
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		TfEventProvider.SpaceViewUpdatedEvent -= On_SpaceViewUpdated;
 		TfEventProvider.SpaceViewColumnsChangedEvent -= On_SpaceViewColumnUpdated;
 	}
@@ -36,19 +36,19 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+			TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewUpdated;
 			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewColumnUpdated;
 		}
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
+			if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
 			{
-				await _init(args);
+				await _init(args.Payload);
 			}
 		});
 	}

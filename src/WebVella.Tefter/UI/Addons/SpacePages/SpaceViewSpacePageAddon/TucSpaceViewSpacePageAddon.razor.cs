@@ -128,7 +128,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 	{
 		if (Context is null) throw new Exception("Context is required");
 
-		_allDatasets = TfUIService.GetDatasets();
+		_allDatasets = TfService.GetDatasets();
 
 		if (!String.IsNullOrWhiteSpace(Context?.ComponentOptionsJson) && Context!.ComponentOptionsJson != "{}")
 			_options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(Context!.ComponentOptionsJson) ??

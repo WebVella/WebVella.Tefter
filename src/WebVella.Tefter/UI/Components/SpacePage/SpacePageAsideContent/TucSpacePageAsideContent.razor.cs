@@ -15,7 +15,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		TfEventProvider.SpacePageCreatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent -= On_SpacePageChanged;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
@@ -23,26 +23,22 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		TfEventProvider.SpacePageCreatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent += On_SpacePageChanged;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_SpacePageChanged(object args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		Console.WriteLine("Aside");
-		Console.WriteLine(args.Uri);		
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
 	private async Task _init(TfNavigationState navState)
 	{
 		_navState = navState;
-		Console.WriteLine("Aside Init");
-		Console.WriteLine(navState.Uri);		
 		try
 		{
 			_items = new();

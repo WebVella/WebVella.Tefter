@@ -1,7 +1,4 @@
-﻿using Microsoft.JSInterop;
-using WebVella.Tefter.UIServices;
-
-namespace WebVella.Tefter.EmailSender.Components;
+﻿namespace WebVella.Tefter.EmailSender.Components;
 
 public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 {
@@ -18,7 +15,7 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
     {
         EmailService.EmailCreated -= On_EmailChanged;
         EmailService.EmailUpdated -= On_EmailChanged;
-        TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+        TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
     }
 
     protected override async Task OnInitializedAsync()
@@ -27,7 +24,7 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
         await _init(TfAuthLayout.NavigationState);
         EmailService.EmailCreated += On_EmailChanged;
         EmailService.EmailUpdated += On_EmailChanged;
-        TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+        TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -43,10 +40,10 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
         await _init(TfAuthLayout.NavigationState);
     }
 
-    private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+    private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
     {
-        if (UriInitialized != args.Uri)
-            await _init(args);
+        if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+            await _init(args.Payload);
     }
 
     private async Task _init(TfNavigationState navState)

@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Services;
+﻿using Nito.AsyncEx.Synchronous;
+
+namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -30,7 +32,7 @@ public partial interface ITfService
 	/// <param name="column"></param>
 	/// <returns></returns>
 	public TfDataProvider CreateDataProviderColumn(
-		TfDataProviderColumn column);
+		TfDataProviderColumn column, bool sendEvent = false);
 
 	public TfDataProvider CreateDataProviderColumn(
 		TfUpsertDataProviderColumn column);
@@ -66,6 +68,7 @@ public partial interface ITfService
 		Guid id);
 
 	ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfos();
+	string? GetDatabaseColumnTypeInfo(TfDatabaseColumnType columnType);
 }
 
 public partial class TfService : ITfService
@@ -132,42 +135,33 @@ public partial class TfService : ITfService
 		{
 			var systemColumns = new List<TfDataProviderSystemColumn>();
 
+			systemColumns.Add(new TfDataProviderSystemColumn { DbName = "tf_id", DbType = TfDatabaseColumnType.Guid });
+
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
-				DbName = "tf_id",
-				DbType = TfDatabaseColumnType.Guid
+				DbName = "tf_row_index", DbType = TfDatabaseColumnType.Integer
 			});
 
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
-				DbName = "tf_row_index",
-				DbType = TfDatabaseColumnType.Integer
+				DbName = "tf_created_on", DbType = TfDatabaseColumnType.DateTime
 			});
 
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
-				DbName = "tf_created_on",
-				DbType = TfDatabaseColumnType.DateTime
+				DbName = "tf_updated_on", DbType = TfDatabaseColumnType.DateTime
 			});
 
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
-				DbName = "tf_updated_on",
-				DbType = TfDatabaseColumnType.DateTime
-			});
-
-			systemColumns.Add(new TfDataProviderSystemColumn
-			{
-				DbName = "tf_search",
-				DbType = TfDatabaseColumnType.Text
+				DbName = "tf_search", DbType = TfDatabaseColumnType.Text
 			});
 
 			foreach (var providerDataIdentity in providerIdentities)
 			{
 				systemColumns.Add(new TfDataProviderSystemColumn
 				{
-					DbName = $"tf_ide_{providerDataIdentity.DataIdentity}",
-					DbType = TfDatabaseColumnType.ShortText
+					DbName = $"tf_ide_{providerDataIdentity.DataIdentity}", DbType = TfDatabaseColumnType.ShortText
 				});
 			}
 
@@ -185,7 +179,7 @@ public partial class TfService : ITfService
 	/// <param name="column"></param>
 	/// <returns></returns>
 	public TfDataProvider CreateDataProviderColumn(
-		TfDataProviderColumn column)
+		TfDataProviderColumn column, bool sendEvent = false)
 	{
 		try
 		{
@@ -218,6 +212,15 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
+				if (!sendEvent)
+				{
+					var task = Task.Run(async () =>
+					{
+						await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(provider));
+					});
+					task.WaitAndUnwrapException();
+				}
+
 				return provider;
 			}
 		}
@@ -230,8 +233,8 @@ public partial class TfService : ITfService
 
 	public TfDataProvider CreateDataProviderColumn(
 		TfUpsertDataProviderColumn column)
-	 => CreateDataProviderColumn(
-		 column: column.ToModel());
+		=> CreateDataProviderColumn(
+			column: column.ToModel());
 
 	/// <summary>
 	/// Creates new data provider columns in bulk
@@ -267,7 +270,7 @@ public partial class TfService : ITfService
 					if (!validationResult.IsValid)
 						continue;
 
-					CreateDataProviderColumn(column);
+					CreateDataProviderColumn(column, sendEvent: true);
 				}
 
 				validationResults
@@ -279,6 +282,12 @@ public partial class TfService : ITfService
 				provider = GetDataProvider(columns[0].DataProviderId);
 				if (provider is null)
 					throw new TfException("Failed to create new data provider column");
+
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(provider));
+				});
+				task.WaitAndUnwrapException();
 
 				return provider;
 			}
@@ -329,7 +338,14 @@ public partial class TfService : ITfService
 
 			UpdateDatabaseColumn(provider, column, existingColumn);
 
-			return GetDataProvider(column.DataProviderId);
+			var result = GetDataProvider(column.DataProviderId);
+			var task = Task.Run(async () =>
+			{
+				await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
+			});
+			task.WaitAndUnwrapException();
+
+			return result;
 		}
 		catch (Exception ex)
 		{
@@ -338,9 +354,9 @@ public partial class TfService : ITfService
 	}
 
 	public TfDataProvider UpdateDataProviderColumn(
-			TfUpsertDataProviderColumn column)
-	 => UpdateDataProviderColumn(
-		 column: column.ToModel());
+		TfUpsertDataProviderColumn column)
+		=> UpdateDataProviderColumn(
+			column: column.ToModel());
 
 	/// <summary>
 	/// Deletes existing data provider column
@@ -384,7 +400,14 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				return GetDataProvider(column.DataProviderId);
+				var result = GetDataProvider(column.DataProviderId);
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
+				});
+				task.WaitAndUnwrapException();
+
+				return result;
 			}
 		}
 		catch (Exception ex)
@@ -411,7 +434,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.AddBooleanColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 
 						if (column.DefaultValue is not null)
 							c.WithDefaultValue(Convert.ToBoolean(column.DefaultValue));
@@ -421,17 +445,18 @@ public partial class TfService : ITfService
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+								c => { c.WithColumns(column.DbName); });
 						});
 					}
-
 				}
 				break;
 			case TfDatabaseColumnType.Text:
 				{
 					columnsBuilder.AddTextColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						c.WithDefaultValue(column.DefaultValue);
 					});
 
@@ -439,7 +464,8 @@ public partial class TfService : ITfService
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
-							indexes.AddGinIndexBuilder($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							indexes.AddGinIndexBuilder($"ix_{providerTableName}_{column.DbName}",
+								c => { c.WithColumns(column.DbName); });
 						});
 					}
 				}
@@ -448,7 +474,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.AddShortTextColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						c.WithDefaultValue(column.DefaultValue);
 					});
 
@@ -456,7 +483,8 @@ public partial class TfService : ITfService
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
-							indexes.AddBTreeIndexBuilder($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							indexes.AddBTreeIndexBuilder($"ix_{providerTableName}_{column.DbName}",
+								c => { c.WithColumns(column.DbName); });
 						});
 					}
 				}
@@ -465,7 +493,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.AddGuidColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.AutoDefaultValue)
 							c.WithAutoDefaultValue();
 						else
@@ -479,7 +508,8 @@ public partial class TfService : ITfService
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+								c => { c.WithColumns(column.DbName); });
 						});
 					}
 				}
@@ -488,7 +518,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.AddDateColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.AutoDefaultValue)
 							c.WithAutoDefaultValue();
 						else
@@ -506,7 +537,8 @@ public partial class TfService : ITfService
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+								c => { c.WithColumns(column.DbName); });
 						});
 					}
 				}
@@ -515,7 +547,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.AddDateTimeColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.AutoDefaultValue)
 							c.WithAutoDefaultValue();
 						else
@@ -532,7 +565,8 @@ public partial class TfService : ITfService
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+								c => { c.WithColumns(column.DbName); });
 						});
 					}
 				}
@@ -541,7 +575,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.AddNumberColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.DefaultValue is not null)
 						{
 							var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
@@ -552,7 +587,8 @@ public partial class TfService : ITfService
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+								c => { c.WithColumns(column.DbName); });
 						});
 					}
 				}
@@ -561,7 +597,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.AddShortIntegerColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.DefaultValue is not null)
 						{
 							var number = short.Parse(column.DefaultValue);
@@ -572,7 +609,8 @@ public partial class TfService : ITfService
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+								c => { c.WithColumns(column.DbName); });
 						});
 					}
 				}
@@ -581,7 +619,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.AddIntegerColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.DefaultValue is not null)
 						{
 							var number = int.Parse(column.DefaultValue);
@@ -592,7 +631,8 @@ public partial class TfService : ITfService
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+								c => { c.WithColumns(column.DbName); });
 						});
 					}
 				}
@@ -601,7 +641,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.AddLongIntegerColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.DefaultValue is not null)
 						{
 							var number = long.Parse(column.DefaultValue);
@@ -612,7 +653,8 @@ public partial class TfService : ITfService
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+								c => { c.WithColumns(column.DbName); });
 						});
 					}
 				}
@@ -652,7 +694,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.WithBooleanColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 
 						if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
 						{
@@ -663,7 +706,7 @@ public partial class TfService : ITfService
 					string indexName = $"ix_{providerTableName}_{column.DbName}";
 
 					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-						(column.IsSearchable || column.IsSortable))
+					    (column.IsSearchable || column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
@@ -672,18 +715,18 @@ public partial class TfService : ITfService
 					}
 
 					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-						(!column.IsSearchable && !column.IsSortable))
+					    (!column.IsSearchable && !column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
 					}
-
 				}
 				break;
 			case TfDatabaseColumnType.Text:
 				{
 					columnsBuilder.WithTextColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 
 						if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
 						{
@@ -695,7 +738,7 @@ public partial class TfService : ITfService
 					string indexName = $"ix_{providerTableName}_{column.DbName}";
 
 					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-						(column.IsSearchable || column.IsSortable))
+					    (column.IsSearchable || column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
@@ -704,18 +747,18 @@ public partial class TfService : ITfService
 					}
 
 					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-						(!column.IsSearchable && !column.IsSortable))
+					    (!column.IsSearchable && !column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
 					}
-
 				}
 				break;
 			case TfDatabaseColumnType.ShortText:
 				{
 					columnsBuilder.WithShortTextColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 
 						if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
 						{
@@ -726,7 +769,7 @@ public partial class TfService : ITfService
 					string indexName = $"ix_{providerTableName}_{column.DbName}";
 
 					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-						(column.IsSearchable || column.IsSortable))
+					    (column.IsSearchable || column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
@@ -735,18 +778,18 @@ public partial class TfService : ITfService
 					}
 
 					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-						(!column.IsSearchable && !column.IsSortable))
+					    (!column.IsSearchable && !column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
 					}
-
 				}
 				break;
 			case TfDatabaseColumnType.Guid:
 				{
 					columnsBuilder.WithGuidColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.AutoDefaultValue)
 							c.WithAutoDefaultValue();
 						else
@@ -759,7 +802,7 @@ public partial class TfService : ITfService
 					string indexName = $"ix_{providerTableName}_{column.DbName}";
 
 					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-						(column.IsSearchable || column.IsSortable))
+					    (column.IsSearchable || column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
@@ -768,7 +811,7 @@ public partial class TfService : ITfService
 					}
 
 					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-						(!column.IsSearchable && !column.IsSortable))
+					    (!column.IsSearchable && !column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
 					}
@@ -778,7 +821,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.WithDateColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.AutoDefaultValue)
 							c.WithAutoDefaultValue();
 						else
@@ -795,7 +839,7 @@ public partial class TfService : ITfService
 					string indexName = $"ix_{providerTableName}_{column.DbName}";
 
 					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-						(column.IsSearchable || column.IsSortable))
+					    (column.IsSearchable || column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
@@ -804,7 +848,7 @@ public partial class TfService : ITfService
 					}
 
 					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-						(!column.IsSearchable && !column.IsSortable))
+					    (!column.IsSearchable && !column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
 					}
@@ -814,7 +858,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.WithDateTimeColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.AutoDefaultValue)
 							c.WithAutoDefaultValue();
 						else
@@ -830,7 +875,7 @@ public partial class TfService : ITfService
 					string indexName = $"ix_{providerTableName}_{column.DbName}";
 
 					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-						(column.IsSearchable || column.IsSortable))
+					    (column.IsSearchable || column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
@@ -839,7 +884,7 @@ public partial class TfService : ITfService
 					}
 
 					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-						(!column.IsSearchable && !column.IsSortable))
+					    (!column.IsSearchable && !column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
 					}
@@ -849,7 +894,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.WithNumberColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.DefaultValue is not null)
 						{
 							var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
@@ -860,7 +906,7 @@ public partial class TfService : ITfService
 					string indexName = $"ix_{providerTableName}_{column.DbName}";
 
 					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-						(column.IsSearchable || column.IsSortable))
+					    (column.IsSearchable || column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
@@ -869,7 +915,7 @@ public partial class TfService : ITfService
 					}
 
 					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-						(!column.IsSearchable && !column.IsSortable))
+					    (!column.IsSearchable && !column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
 					}
@@ -879,7 +925,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.WithShortIntegerColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.DefaultValue is not null)
 						{
 							var number = short.Parse(column.DefaultValue);
@@ -890,7 +937,7 @@ public partial class TfService : ITfService
 					string indexName = $"ix_{providerTableName}_{column.DbName}";
 
 					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-						(column.IsSearchable || column.IsSortable))
+					    (column.IsSearchable || column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
@@ -899,7 +946,7 @@ public partial class TfService : ITfService
 					}
 
 					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-						(!column.IsSearchable && !column.IsSortable))
+					    (!column.IsSearchable && !column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
 					}
@@ -909,7 +956,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.WithIntegerColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.DefaultValue is not null)
 						{
 							var number = int.Parse(column.DefaultValue);
@@ -920,7 +968,7 @@ public partial class TfService : ITfService
 					string indexName = $"ix_{providerTableName}_{column.DbName}";
 
 					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-						(column.IsSearchable || column.IsSortable))
+					    (column.IsSearchable || column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
@@ -929,7 +977,7 @@ public partial class TfService : ITfService
 					}
 
 					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-						(!column.IsSearchable && !column.IsSortable))
+					    (!column.IsSearchable && !column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
 					}
@@ -939,7 +987,8 @@ public partial class TfService : ITfService
 				{
 					columnsBuilder.WithLongIntegerColumn(column.DbName, c =>
 					{
-						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.IsNullable) c.Nullable();
+						else c.NotNullable();
 						if (column.DefaultValue is not null)
 						{
 							var number = long.Parse(column.DefaultValue);
@@ -950,7 +999,7 @@ public partial class TfService : ITfService
 					string indexName = $"ix_{providerTableName}_{column.DbName}";
 
 					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-						(column.IsSearchable || column.IsSortable))
+					    (column.IsSearchable || column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes =>
 						{
@@ -959,7 +1008,7 @@ public partial class TfService : ITfService
 					}
 
 					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-						(!column.IsSearchable && !column.IsSortable))
+					    (!column.IsSearchable && !column.IsSortable))
 					{
 						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
 					}
@@ -990,11 +1039,11 @@ public partial class TfService : ITfService
 		if (!result.IsSuccess)
 			throw new TfException("Failed to save changes to database schema");
 	}
+
 	#endregion
 
 	public static ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfosList()
 	{
-
 		List<DatabaseColumnTypeInfo> databaseColumnTypeInfos =
 			new List<DatabaseColumnTypeInfo>();
 
@@ -1091,6 +1140,7 @@ public partial class TfService : ITfService
 
 		return databaseColumnTypeInfos.AsReadOnly();
 	}
+
 	public ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfos()
 	{
 		try
@@ -1103,12 +1153,19 @@ public partial class TfService : ITfService
 		}
 	}
 
+	public string? GetDatabaseColumnTypeInfo(TfDatabaseColumnType columnType)
+	{
+		var columnTypes = GetDatabaseColumnTypeInfos();
+		return columnTypes.FirstOrDefault(x => x.Type == columnType)?.Name;
+	}
+
 	#region <--- validation --->
 
 	internal class TfDataProviderColumnValidator
-	: AbstractValidator<TfDataProviderColumn>
+		: AbstractValidator<TfDataProviderColumn>
 	{
 		private readonly string _requiredColumnNamePrefix = string.Empty;
+
 		public TfDataProviderColumnValidator(
 			ITfService tfService,
 			TfDataProvider provider)
@@ -1157,7 +1214,6 @@ public partial class TfService : ITfService
 						var supportedSourceTypes = provider.ProviderType.GetSupportedSourceDataTypes();
 
 						return supportedSourceTypes.Any(x => x == sourceType);
-
 					})
 					.WithMessage($"Selected source type is not in the list of provider supported source types.");
 
@@ -1175,7 +1231,6 @@ public partial class TfService : ITfService
 							provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(sourceType);
 
 						return supportedDatabaseColumnTypes.Any();
-
 					})
 					.WithMessage($"Selected source type does not provide any supported provider data type.");
 
@@ -1193,9 +1248,9 @@ public partial class TfService : ITfService
 							provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(sourceType);
 
 						return supportedDatabaseColumnTypes.Any(x => x == column.DbType);
-
 					})
-					.WithMessage($"The selected source type is not supported for use with selected provider data type.");
+					.WithMessage(
+						$"The selected source type is not supported for use with selected provider data type.");
 
 				RuleFor(column => column.DbName)
 					.NotEmpty()
@@ -1236,7 +1291,8 @@ public partial class TfService : ITfService
 
 						return customNamePart.Length >= TfConstants.DB_MIN_OBJECT_NAME_LENGTH;
 					})
-					.WithMessage($"The database name must be at least {TfConstants.DB_MIN_OBJECT_NAME_LENGTH + _requiredColumnNamePrefix.Length} characters long.");
+					.WithMessage(
+						$"The database name must be at least {TfConstants.DB_MIN_OBJECT_NAME_LENGTH + _requiredColumnNamePrefix.Length} characters long.");
 
 				RuleFor(column => column.DbName)
 					.Must((column, dbName) =>
@@ -1246,7 +1302,8 @@ public partial class TfService : ITfService
 
 						return dbName.Length <= TfConstants.DB_MAX_OBJECT_NAME_LENGTH;
 					})
-					.WithMessage($"The length of database name must be less or equal than {TfConstants.DB_MAX_OBJECT_NAME_LENGTH} characters");
+					.WithMessage(
+						$"The length of database name must be less or equal than {TfConstants.DB_MAX_OBJECT_NAME_LENGTH} characters");
 
 				RuleFor(column => column.DbName)
 					.Must((column, dbName) =>
@@ -1265,7 +1322,8 @@ public partial class TfService : ITfService
 						Match match = Regex.Match(dbName, TfConstants.DB_OBJECT_NAME_VALIDATION_PATTERN);
 						return match.Success && match.Value == dbName.Trim();
 					})
-					.WithMessage($"Name can only contains underscores and lowercase alphanumeric characters. It must begin with a letter, " +
+					.WithMessage(
+						$"Name can only contains underscores and lowercase alphanumeric characters. It must begin with a letter, " +
 						$"not include spaces, not end with an underscore, and not contain two consecutive underscores");
 
 				RuleFor(column => column.DefaultValue)
@@ -1275,17 +1333,18 @@ public partial class TfService : ITfService
 							return true;
 
 						if ((column.DefaultValue is not null || column.AutoDefaultValue)
-							&&
-							(column.DbType == TfDatabaseColumnType.Guid ||
-							 column.DbType == TfDatabaseColumnType.DateOnly ||
-							 column.DbType == TfDatabaseColumnType.DateTime))
+						    &&
+						    (column.DbType == TfDatabaseColumnType.Guid ||
+						     column.DbType == TfDatabaseColumnType.DateOnly ||
+						     column.DbType == TfDatabaseColumnType.DateTime))
 						{
 							return true;
 						}
 
 						if ((string.IsNullOrWhiteSpace(column.DefaultValue) && !column.AutoDefaultValue)
-							&&
-							(column.DbType != TfDatabaseColumnType.Text && column.DbType != TfDatabaseColumnType.ShortText))
+						    &&
+						    (column.DbType != TfDatabaseColumnType.Text &&
+						     column.DbType != TfDatabaseColumnType.ShortText))
 							return false;
 
 						if (column.DefaultValue == null && !column.AutoDefaultValue)
@@ -1325,12 +1384,14 @@ public partial class TfService : ITfService
 									break;
 								case TfDatabaseColumnType.DateTime:
 									{
-										var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+										var datetime = DateTime.Parse(column.DefaultValue,
+											CultureInfo.InvariantCulture);
 									}
 									break;
 								case TfDatabaseColumnType.Number:
 									{
-										var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
+										var number = Convert.ToDecimal(column.DefaultValue,
+											CultureInfo.InvariantCulture);
 									}
 									break;
 								case TfDatabaseColumnType.ShortInteger:
@@ -1349,8 +1410,10 @@ public partial class TfService : ITfService
 									}
 									break;
 								default:
-									throw new Exception("Not supported database column type while validate default value.");
+									throw new Exception(
+										"Not supported database column type while validate default value.");
 							}
+
 							return true;
 						}
 						catch
@@ -1358,65 +1421,63 @@ public partial class TfService : ITfService
 							return false;
 						}
 					})
-					.WithMessage($"Column is marked not nullable. Default value is required. Specified default value is empty or not correct for selected provider data type.");
-
+					.WithMessage(
+						$"Column is marked not nullable. Default value is required. Specified default value is empty or not correct for selected provider data type.");
 			});
 
 			RuleSet("create", () =>
 			{
 				RuleFor(column => column.Id)
-						.Must((column, id) => { return tfService.GetDataProviderColumn(id) == null; })
-						.WithMessage("There is already existing data provider column with specified identifier.");
+					.Must((column, id) => { return tfService.GetDataProviderColumn(id) == null; })
+					.WithMessage("There is already existing data provider column with specified identifier.");
 
 				RuleFor(column => column.DbName)
-						.Must((column, dbName) =>
-						{
-							if (string.IsNullOrEmpty(dbName))
-								return true;
+					.Must((column, dbName) =>
+					{
+						if (string.IsNullOrEmpty(dbName))
+							return true;
 
-							var columns = tfService.GetDataProviderColumns(column.DataProviderId);
-							return !columns.Any(x => x.DbName.ToLowerInvariant().Trim() == dbName.ToLowerInvariant().Trim());
-						})
-						.WithMessage("There is already existing data provider column with specified database name.");
+						var columns = tfService.GetDataProviderColumns(column.DataProviderId);
+						return !columns.Any(x =>
+							x.DbName.ToLowerInvariant().Trim() == dbName.ToLowerInvariant().Trim());
+					})
+					.WithMessage("There is already existing data provider column with specified database name.");
 			});
 
 			RuleSet("update", () =>
 			{
 				RuleFor(column => column.Id)
-						.Must((column, id) =>
-						{
-							return tfService.GetDataProviderColumn(id) != null;
-						})
-						.WithMessage("There is not existing data provider column with specified identifier.");
+					.Must((column, id) =>
+					{
+						return tfService.GetDataProviderColumn(id) != null;
+					})
+					.WithMessage("There is not existing data provider column with specified identifier.");
 
 				RuleFor(column => column.DataProviderId)
-						.Must((column, providerId) =>
-						{
+					.Must((column, providerId) =>
+					{
+						var existingColumn = tfService.GetDataProviderColumn(column.Id);
+						if (existingColumn is null)
+							return true;
 
-							var existingColumn = tfService.GetDataProviderColumn(column.Id);
-							if (existingColumn is null)
-								return true;
-
-							return existingColumn.DataProviderId == providerId;
-						})
-						.WithMessage("There data provider cannot be changed for data provider column.");
+						return existingColumn.DataProviderId == providerId;
+					})
+					.WithMessage("There data provider cannot be changed for data provider column.");
 
 				RuleFor(column => column.DbName)
-						.Must((column, dbName) =>
-						{
+					.Must((column, dbName) =>
+					{
+						var existingColumn = tfService.GetDataProviderColumn(column.Id);
+						if (existingColumn is null)
+							return true;
 
-							var existingColumn = tfService.GetDataProviderColumn(column.Id);
-							if (existingColumn is null)
-								return true;
-
-							return existingColumn.DbName == dbName;
-						})
-						.WithMessage("There database name of column cannot be changed.");
+						return existingColumn.DbName == dbName;
+					})
+					.WithMessage("There database name of column cannot be changed.");
 
 				RuleFor(column => column.DbType)
 					.Must((column, dbType) =>
 					{
-
 						var existingColumn = tfService.GetDataProviderColumn(column.Id);
 						if (existingColumn is null)
 							return true;
@@ -1424,21 +1485,22 @@ public partial class TfService : ITfService
 						return existingColumn.DbType == dbType;
 					})
 					.WithMessage("There database type of column cannot be changed.");
-
 			});
 
 			RuleSet("delete", () =>
 			{
 			});
-
 		}
 
 		public ValidationResult ValidateCreate(
 			TfDataProviderColumn column)
 		{
 			if (column == null)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The data provider column is null.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The data provider column is null.")
+				});
 
 			return this.Validate(column, options =>
 			{
@@ -1450,8 +1512,11 @@ public partial class TfService : ITfService
 			TfDataProviderColumn column)
 		{
 			if (column == null)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The data provider column is null.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The data provider column is null.")
+				});
 
 			return this.Validate(column, options =>
 			{
@@ -1463,8 +1528,11 @@ public partial class TfService : ITfService
 			TfDataProviderColumn column)
 		{
 			if (column == null)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The data provider column with specified identifier is not found.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The data provider column with specified identifier is not found.")
+				});
 
 			return this.Validate(column, options =>
 			{

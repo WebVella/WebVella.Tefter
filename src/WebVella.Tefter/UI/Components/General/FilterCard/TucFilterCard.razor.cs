@@ -17,7 +17,7 @@ public partial class TucFilterCard : TfBaseComponent
 	{
 		if (DatasetId == Guid.Empty) throw new Exception("Dataset ID is required");
 
-		foreach (TfDatasetColumn item in TfUIService.GetDatasetColumnOptions(DatasetId))
+		foreach (TfDatasetColumn item in TfService.GetDatasetColumnOptions(DatasetId))
 		{
 			if (String.IsNullOrWhiteSpace(item.ColumnName)) continue;
 			_allOptions.Add(item.ColumnName);

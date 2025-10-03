@@ -2,7 +2,6 @@
 
 public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 {
-	[Inject] public ITfUIService TfUIService { get; set; } = null!;
 	[Inject] public ITfService TfService { get; set; } = null!;
 	[Inject] protected ITfConfigurationService TfConfigurationService { get; set; } = null!;
 	[Inject] protected NavigationManager Navigator { get; set; } = null!;
@@ -18,7 +17,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	public TfUser CurrentUser = null!;
 	public TfNavigationState NavigationState => Navigator.GetRouteState(); 
-	public TfNavigationMenu NavigationMenu => TfUIService.GetNavigationMenu(Navigator, CurrentUser);
+	public TfNavigationMenu NavigationMenu => TfService.GetNavigationMenu(Navigator, CurrentUser);
 
 	private bool _isLoaded = false;
 
@@ -75,7 +74,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		await InvokeAsync(async () =>
 		{
 			_checkAccess();
-			TfUIService.InvokeNavigationStateChanged(NavigationState);
+			TfService.InvokeNavigationStateChanged(NavigationState);
 		});
 	}
 

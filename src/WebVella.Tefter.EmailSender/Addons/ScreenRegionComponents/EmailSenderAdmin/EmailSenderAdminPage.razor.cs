@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.UIServices;
-
-namespace WebVella.Tefter.EmailSender.Addons;
+﻿namespace WebVella.Tefter.EmailSender.Addons;
 
 public partial class EmailSenderAdminPage : TfBaseComponent, ITfScreenRegionComponent<TfAdminPageScreenRegionContext>
 {

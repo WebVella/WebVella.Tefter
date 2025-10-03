@@ -9,14 +9,14 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 	{
 		TfEventProvider.UserCreatedGlobalEvent -= On_UserCreated;
 		TfEventProvider.UserUpdatedGlobalEvent -= On_UserUpdated;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
 		TfEventProvider.UserCreatedGlobalEvent += On_UserCreated;
 		TfEventProvider.UserUpdatedGlobalEvent += On_UserUpdated;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 
@@ -30,10 +30,10 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 		await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
 	private async Task _init(TfNavigationState navState)

@@ -1,7 +1,4 @@
-﻿
-
-using WebVella.Tefter.UI.Components;
-using WebVella.Tefter.UIServices;
+﻿using WebVella.Tefter.UI.Components;
 
 namespace WebVella.Tefter.Talk.Components;
 
@@ -46,7 +43,7 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 		TalkService.ThreadCreated -= On_ThreadChanged;
 		TalkService.ThreadUpdated -= On_ThreadChanged;
 		TalkService.ThreadDeleted -= On_ThreadChanged;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -57,7 +54,7 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 		TalkService.ThreadCreated += On_ThreadChanged;
 		TalkService.ThreadUpdated += On_ThreadChanged;
 		TalkService.ThreadDeleted += On_ThreadChanged;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 	protected override void OnAfterRender(bool firstRender)
 	{
@@ -84,10 +81,10 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(navState: args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(navState: args.Payload);
 	}
 	private async Task _init(TfNavigationState navState)
 	{

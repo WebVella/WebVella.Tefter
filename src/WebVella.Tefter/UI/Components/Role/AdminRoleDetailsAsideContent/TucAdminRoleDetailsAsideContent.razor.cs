@@ -10,7 +10,7 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 		TfEventProvider.RoleCreatedEvent -= On_RoleChanged;
 		TfEventProvider.RoleUpdatedEvent -= On_RoleChanged;
 		TfEventProvider.RoleDeletedEvent -= On_RoleChanged;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
@@ -18,7 +18,7 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 		TfEventProvider.RoleCreatedEvent += On_RoleChanged;
 		TfEventProvider.RoleUpdatedEvent += On_RoleChanged;
 		TfEventProvider.RoleDeletedEvent += On_RoleChanged;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_RoleChanged(object args)
@@ -26,10 +26,10 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 		await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
 	private async Task _init(TfNavigationState navState)

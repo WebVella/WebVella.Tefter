@@ -25,7 +25,7 @@ public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogC
 		_title = _isCreate ? LOC("Create shared column") : LOC("Manage shared column");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
-		_allDataIdentities = TfUIService.GetDataIdentities().Select(x=> x.DataIdentity).ToList();
+		_allDataIdentities = TfService.GetDataIdentities().Select(x=> x.DataIdentity).ToList();
 		_columnTypeOptions = WebVella.Tefter.Services.TfService.GetDatabaseColumnTypeInfosList();
 		if (!_isCreate)
 		{

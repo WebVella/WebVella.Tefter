@@ -97,7 +97,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 			TfDataProvider provider;
 			if (_isCreate)
 			{
-				provider = TfUIService.CreateDataProvider(new TfCreateDataProvider
+				provider = TfService.CreateDataProvider(new TfCreateDataProvider
 				{
 					Id = _form.Id,
 					Index = -1,
@@ -112,7 +112,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 			}
 			else
 			{
-				provider = TfUIService.UpdateDataProvider(new TfUpdateDataProvider
+				provider = TfService.UpdateDataProvider(new TfUpdateDataProvider
 				{
 					Id = _form.Id,
 					Name = _form.Name,

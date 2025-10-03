@@ -59,7 +59,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		base.InitForm(_form);
 		_renderComponentTypeSelect = true;
 		_spaceView = TfService.GetSpaceView(_form.SpaceViewId);
-		_spaceData = TfUIService.GetDataset(_spaceView.DatasetId);
+		_spaceData = TfService.GetDataset(_spaceView.DatasetId);
 		_options = new();
 		if (_spaceData is not null)
 		{
@@ -80,7 +80,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			else
 			{
 				//This space dataset uses all the columns from the data provider
-				var dataProvider = TfUIService.GetDataProvider(_spaceData.DataProviderId);
+				var dataProvider = TfService.GetDataProvider(_spaceData.DataProviderId);
 				if (dataProvider is not null)
 				{
 					_options.AddRange(dataProvider.Columns.Select(x => (x.DbName ?? String.Empty)));

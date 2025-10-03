@@ -6,27 +6,27 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 
 	public void Dispose()
 	{
-		TfUIService.DataIdentityUpdated -= On_DataIdentityUpdated;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.DataIdentityUpdatedEvent -= On_DataIdentityUpdated;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		await _init(navState:TfAuthLayout.NavigationState);
-		TfUIService.DataIdentityUpdated += On_DataIdentityUpdated;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.DataIdentityUpdatedEvent += On_DataIdentityUpdated;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_DataIdentityUpdated(object? caller, TfDataIdentity args)
+	private async void On_DataIdentityUpdated(TfDataIdentityUpdatedEvent args)
 	{
-		await _init(navState:TfAuthLayout.NavigationState, identity: args);
+		await _init(navState:TfAuthLayout.NavigationState, identity: args.Payload);
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(navState: args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(navState: args.Payload);
 	}
 
 	private async Task _init(TfNavigationState navState, TfDataIdentity? identity = null)
@@ -40,7 +40,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 			else
 			{
 				if (navState.DataIdentityId is not null)
-					_identity = TfUIService.GetDataIdentity(navState.DataIdentityId);
+					_identity = TfService.GetDataIdentity(navState.DataIdentityId);
 			}
 		}
 		finally
@@ -71,7 +71,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 			return;
 		try
 		{
-			TfUIService.DeleteDataIdentity(_identity.DataIdentity);
+			TfService.DeleteDataIdentity(_identity.DataIdentity);
 			ToastService.ShowSuccess(LOC("Data identity removed"));
 		}
 		catch (Exception ex)

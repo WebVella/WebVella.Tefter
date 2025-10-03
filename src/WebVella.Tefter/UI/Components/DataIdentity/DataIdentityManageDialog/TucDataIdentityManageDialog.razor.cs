@@ -51,12 +51,12 @@ public partial class TucDataIdentityManageDialog : TfFormBaseComponent, IDialogC
 
 			if (_isCreate)
 			{
-				result = TfUIService.CreateDataIdentity(_form);
+				result = TfService.CreateDataIdentity(_form);
 				ToastService.ShowSuccess(LOC("Data identity created"));
 			}
 			else
 			{
-				result = TfUIService.UpdateDataIdentity(_form);
+				result = TfService.UpdateDataIdentity(_form);
 				ToastService.ShowSuccess(LOC("Data identity updated"));
 			}
 

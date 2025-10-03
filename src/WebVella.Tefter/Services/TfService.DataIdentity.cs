@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Services;
+﻿using Nito.AsyncEx.Synchronous;
+
+namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -67,7 +69,13 @@ public partial class TfService : ITfService
 			if (!success)
 				throw new TfDboServiceException("Insert<TfDataIdentity> failed.");
 
-			return GetDataIdentity(dataIdentity.DataIdentity);
+			var result = GetDataIdentity(dataIdentity.DataIdentity);
+			var task = Task.Run(async () =>
+			{
+				await _eventProvider.PublishEventAsync(new TfDataIdentityCreatedEvent(result));
+			});
+			task.WaitAndUnwrapException();
+			return result;
 
 		}
 		catch (Exception ex)
@@ -93,7 +101,13 @@ public partial class TfService : ITfService
 				throw new TfDboServiceException("Update<TfDataIdentity> failed.");
 
 
-			return GetDataIdentity(dataIdentity.DataIdentity);
+			var result = GetDataIdentity(dataIdentity.DataIdentity);
+			var task = Task.Run(async () =>
+			{
+				await _eventProvider.PublishEventAsync(new TfDataIdentityUpdatedEvent(result));
+			});
+			task.WaitAndUnwrapException();
+			return result;
 
 		}
 		catch (Exception ex)
@@ -113,7 +127,7 @@ public partial class TfService : ITfService
 					.ValidateDelete(dataIdentity)
 					.ToValidationException()
 					.ThrowIfContainsErrors();
-
+				var existingIdentity = GetDataIdentity(dataIdentity);
 
 				bool success = _dboManager.Delete<TfDataIdentity,string>(nameof(TfDataIdentity.DataIdentity), dataIdentity);
 
@@ -121,6 +135,13 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfBookmark> failed.");
 
 				scope.Complete();
+				
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfDataIdentityDeletedEvent(existingIdentity));
+				});
+				task.WaitAndUnwrapException();
+				
 			}
 		}
 		catch (Exception ex)

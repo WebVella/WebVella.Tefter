@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using WebVella.Tefter.Exceptions;
-using WebVella.Tefter.UIServices;
 
 namespace WebVella.Tefter.Assets.Addons;
 public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisposable
@@ -71,13 +70,13 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 	#region << Render Lifecycle >>
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		_currentUser = TfAuthLayout.CurrentUser;
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 		_isLoaded = true;
 	}
 
@@ -96,10 +95,10 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 	#endregion
 
 	#region << Private methods >>
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (_uriInitialized != args.Uri)
-			await _init(navState: args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && _uriInitialized != args.Payload.Uri)
+			await _init(navState: args.Payload);
 	}
 	private async Task _init(TfNavigationState navState)
 	{

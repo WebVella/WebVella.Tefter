@@ -14,7 +14,6 @@ public class TfBaseComponent : ComponentBase
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = null!;
 	[Inject] protected IWvBlazorTraceService WvBlazorTraceService { get; set; } = null!;
 	[Inject] protected IKeyCodeService KeyCodeService { get; set; } = null!;
-	[Inject] protected ITfUIService TfUIService { get; set; } = null!;
 	[Inject] protected ITfService TfService { get; set; } = null!;
 	[Inject] protected ITfMetaService TfMetaService { get; set; } = null!;
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;

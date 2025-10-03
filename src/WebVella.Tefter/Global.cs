@@ -49,7 +49,6 @@ global using WebVella.Tefter.Migrations;
 global using WebVella.Tefter.Addons;
 global using WebVella.Tefter.Models;
 global using WebVella.Tefter.Services;
-global using WebVella.Tefter.UIServices;
 global using WebVella.Tefter.Exceptions;
 global using WebVella.BlazorTrace;
 global using WebVella.Tefter.Utility;

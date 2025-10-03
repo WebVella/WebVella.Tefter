@@ -13,22 +13,22 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	private bool _syncRunning = false;
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.DataProviderUpdated -= On_DataProviderUpdated;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfEventProvider.DataProviderUpdatedEvent -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.DataProviderUpdated += On_DataProviderUpdated;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
-	private async void On_DataProviderUpdated(object? caller, TfDataProvider args)
+	private async void On_DataProviderUpdated(TfDataProviderUpdatedEvent args)
 	{
 		await _init(TfAuthLayout.NavigationState);
 	}
@@ -44,15 +44,15 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 				return;
 			}
 			_navState = navState;
-			_provider = TfUIService.GetDataProvider(_navState.DataProviderId.Value);
+			_provider = TfService.GetDataProvider(_navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
-			_syncRunning = TfUIService.IsSyncRunning(_provider.Id);
+			_syncRunning = TfService.GetDataProviderSynchronizationTasks(_provider.Id, status: TfSynchronizationStatus.InProgress).Count > 0;
 
 			_isDataLoading = true;
 			await InvokeAsync(StateHasChanged);
-			_totalRows = TfUIService.GetDataProviderRowsCount(_provider.Id);
-			_data = TfUIService.QueryDataProvider(
+			_totalRows = TfService.GetDataProviderRowsCount(_provider.Id);
+			_data = TfService.QueryDataProvider(
 				providerId: _provider.Id,
 				search: _navState.Search ?? String.Empty,
 				page: 1,
@@ -93,7 +93,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need all data deleted? This operation can take minutes!")))
 			return;
-		TfUIService.DeleteAllProviderRows(_provider!.Id);
+		TfService.DeleteAllProviderRows(_provider!.Id);
 		ToastService.ShowSuccess(LOC("Data provider data deletion is triggered!"));
 		Navigator.ReloadCurrentUrl();
 	}

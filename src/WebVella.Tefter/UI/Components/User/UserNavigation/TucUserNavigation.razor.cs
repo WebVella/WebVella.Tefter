@@ -11,7 +11,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		KeyCodeService.UnregisterListener(HandleKeyDownAsync);
 	}
 
@@ -20,12 +20,12 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		base.OnInitialized();
 		await initAdmin(TfAuthLayout.NavigationState);
 		KeyCodeService.RegisterListener(HandleKeyDownAsync);
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await initAdmin(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await initAdmin(args.Payload);
 		StateHasChanged();
 	}
 
@@ -68,7 +68,6 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 	Task _openGlobalSearch()
 	{
 		ToastService.ShowSuccess("Global search");
-		Console.WriteLine("Clicked");
 		return Task.CompletedTask;
 	}
 

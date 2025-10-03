@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.Models;
+﻿using Nito.AsyncEx.Synchronous;
+using WebVella.Tefter.Models;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WebVella.Tefter.Services;
@@ -183,7 +184,13 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				return GetDataProvider(dataIdentity.DataProviderId);
+				var result = GetDataProvider(dataIdentity.DataProviderId);
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
+				});
+				task.WaitAndUnwrapException();						
+				return result;
 			}
 		}
 		catch (Exception ex)
@@ -256,7 +263,13 @@ public partial class TfService : ITfService
 				_dbManager.SaveChanges(dbBuilder);
 
 				scope.Complete();
-				return GetDataProvider(dataIdentity.DataProviderId);
+				var result = GetDataProvider(dataIdentity.DataProviderId);
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
+				});
+				task.WaitAndUnwrapException();						
+				return result;				
 			}
 		}
 		catch (Exception ex)
@@ -305,8 +318,14 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfDataProviderIdentityDbo> failed.");
 
 				scope.Complete();
-
-				return GetDataProvider(dataIdentity.DataProviderId);
+				
+				var result = GetDataProvider(dataIdentity.DataProviderId);
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
+				});
+				task.WaitAndUnwrapException();						
+				return result;
 			}
 		}
 		catch (Exception ex)

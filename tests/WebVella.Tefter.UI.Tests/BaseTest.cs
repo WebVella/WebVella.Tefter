@@ -19,7 +19,6 @@ using WebVella.Tefter.Utility;
 using WebVella.Tefter.Services;
 using WebVella.BlazorTrace;
 using System.Threading;
-using WebVella.Tefter.UIServices;
 
 
 namespace WebVella.Tefter.UI.Tests;
@@ -48,10 +47,8 @@ public class BaseTest
 	public Mock<IWvBlazorTraceService> WvBlazorTraceServiceMock;
 	//localization
 	public Mock<IStringLocalizerFactory> StringLocalizerFactoryMock;
-	public Mock<ITfUIService> TfUIServiceMock;
 
 	//use cases
-	internal Mock<ITfUIService> TfUIService;
 	
 	public Dictionary<string, object> ViewData = new Dictionary<string, object>();
 	
@@ -158,9 +155,6 @@ public class BaseTest
 		StringLocalizerFactoryMock = new Mock<IStringLocalizerFactory>();
 		Context.Services.AddSingleton(typeof(IStringLocalizerFactory), Services => StringLocalizerFactoryMock.Object);
 
-		//use cases
-		TfUIServiceMock = new Mock<ITfUIService>();
-		Context.Services.AddScoped(typeof(ITfUIService), Services => TfUIServiceMock.Object);
 		return Context;
 	}
 }

@@ -65,9 +65,6 @@ public static class TfDependencyInjection
 		services.AddSingleton<ITfMetaService, TfMetaService>();
 		services.AddSingleton<ITfService, TfService>();
 
-		//UI
-		services.AddScoped<ITfUIService, TfUIService>();
-
 		//hosted services
 		services.AddHostedService<TfDataProviderSynchronizeJob>();
 		services.AddHostedService<TfBlobMaintenanceJob>();

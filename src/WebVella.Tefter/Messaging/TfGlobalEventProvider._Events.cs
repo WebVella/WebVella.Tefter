@@ -5,6 +5,24 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 {
 	public event Action<SampleGlobalEvent> SampleGlobalEvent;
 	
+	//data identity
+	public event Action<TfDataIdentityCreatedEvent> DataIdentityCreatedEvent;
+	public event Action<TfDataIdentityUpdatedEvent> DataIdentityUpdatedEvent;
+	public event Action<TfDataIdentityDeletedEvent> DataIdentityDeletedEvent;		
+	
+	//data provider
+	public event Action<TfDataProviderCreatedEvent> DataProviderCreatedEvent;
+	public event Action<TfDataProviderUpdatedEvent> DataProviderUpdatedEvent;
+	public event Action<TfDataProviderDeletedEvent> DataProviderDeletedEvent;			
+	
+	//dataset
+	public event Action<TfDatasetCreatedEvent> DatasetCreatedEvent;
+	public event Action<TfDatasetUpdatedEvent> DatasetUpdatedEvent;
+	public event Action<TfDatasetDeletedEvent> DatasetDeletedEvent;		
+	
+	//navigation state
+	public event Action<TfNavigationStateChangedEvent> NavigationStateChangedEvent;
+	
 	//repository file
 	public event Action<TfRepositoryFileCreatedEvent> RepositoryFileCreatedEvent;
 	public event Action<TfRepositoryFileUpdatedEvent> RepositoryFileUpdatedEvent;
@@ -51,6 +69,41 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 	{
 		if (obj is SampleGlobalEvent)
 			SampleGlobalEvent?.Invoke((SampleGlobalEvent)obj);
+		
+		//data identity
+		if (obj is TfDataIdentityCreatedEvent)
+			DataIdentityCreatedEvent?.Invoke((TfDataIdentityCreatedEvent)obj);		
+		
+		if (obj is TfDataIdentityUpdatedEvent)
+			DataIdentityUpdatedEvent?.Invoke((TfDataIdentityUpdatedEvent)obj);
+	
+		if (obj is TfDataIdentityDeletedEvent)
+			DataIdentityDeletedEvent?.Invoke((TfDataIdentityDeletedEvent)obj);				
+		
+		//data provider
+		if (obj is TfDataProviderCreatedEvent)
+			DataProviderCreatedEvent?.Invoke((TfDataProviderCreatedEvent)obj);		
+		
+		if (obj is TfDataProviderUpdatedEvent)
+			DataProviderUpdatedEvent?.Invoke((TfDataProviderUpdatedEvent)obj);
+	
+		if (obj is TfDataProviderDeletedEvent)
+			DataProviderDeletedEvent?.Invoke((TfDataProviderDeletedEvent)obj);			
+		
+		
+		//dataset
+		if (obj is TfDatasetCreatedEvent)
+			DatasetCreatedEvent?.Invoke((TfDatasetCreatedEvent)obj);		
+		
+		if (obj is TfDatasetUpdatedEvent)
+			DatasetUpdatedEvent?.Invoke((TfDatasetUpdatedEvent)obj);
+	
+		if (obj is TfDatasetDeletedEvent)
+			DatasetDeletedEvent?.Invoke((TfDatasetDeletedEvent)obj);				
+
+		//navigataion state
+		if (obj is TfNavigationStateChangedEvent)
+			NavigationStateChangedEvent?.Invoke((TfNavigationStateChangedEvent)obj);		
 		
 		//repository file
 		if (obj is TfRepositoryFileCreatedEvent)

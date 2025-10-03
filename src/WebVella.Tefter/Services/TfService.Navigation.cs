@@ -1,27 +1,25 @@
-﻿using DocumentFormat.OpenXml.Office.CustomUI;
+﻿using Nito.AsyncEx.Synchronous;
 
-namespace WebVella.Tefter.UIServices;
+namespace WebVella.Tefter.Services;
 
-public partial interface ITfUIService
+public partial interface ITfService
 {
-	event EventHandler<TfNavigationState> NavigationStateChanged;
 	void InvokeNavigationStateChanged(TfNavigationState newState);
 	TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? currentUser);
 }
-public partial class TfUIService : ITfUIService
+
+public partial class TfService : ITfService
 {
-	#region << Events >>
-	public event EventHandler<TfNavigationState> NavigationStateChanged = null!;
-	#endregion
-
-	#region << Navigation >>
-
 	public void InvokeNavigationStateChanged(TfNavigationState newState)
-		=> NavigationStateChanged?.Invoke(this, newState);
+	{
+		var task = Task.Run(async () =>
+		{
+			await _eventProvider.PublishEventAsync(new TfNavigationStateChangedEvent(newState));
+		});
+		task.WaitAndUnwrapException();	
+	}
 
-
-
-	public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? currentUser)
+public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? currentUser)
 	{
 		if (currentUser is null) return new TfNavigationMenu();
 
@@ -42,13 +40,13 @@ public partial class TfUIService : ITfUIService
 				navMenu.SpaceIcon = TfConstants.GetIcon("Settings")!;
 
 
-				var users = _tfService.GetUsers();
-				var roles = _tfService.GetRoles();
-				var providers = _tfService.GetDataProviders();
-				var sharedColumns = _tfService.GetSharedColumns();
-				var dataIdentities = _tfService.GetDataIdentities();
+				var users = GetUsers();
+				var roles = GetRoles();
+				var providers = GetDataProviders();
+				var sharedColumns = GetSharedColumns();
+				var dataIdentities = GetDataIdentities();
 				var addonPages = _metaService.GetAdminAddonPages();
-				var templates = _tfService.GetTemplates();
+				var templates = GetTemplates();
 
 				navMenu.Menu = generateAdminMenu(
 					routeState: navState,
@@ -63,8 +61,8 @@ public partial class TfUIService : ITfUIService
 			else if (navState.RouteNodes[0] == RouteDataNode.Home
 				|| navState.RouteNodes[0] == RouteDataNode.Space)
 			{
-				var spaces = _tfService.GetSpacesListForUser(currentUser.Id);
-				var pages = _tfService.GetAllSpacePages();
+				var spaces = GetSpacesListForUser(currentUser.Id);
+				var pages = GetAllSpacePages();
 				navMenu.Menu = generateSpaceMenu(
 					routeState: navState,
 					spaces: spaces,
@@ -362,7 +360,6 @@ public partial class TfUIService : ITfUIService
 		}
 		#endregion
 		return menuItems;
-	}
-
-	#endregion
+	}	
+	
 }
