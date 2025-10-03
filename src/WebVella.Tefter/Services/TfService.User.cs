@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Services;
+﻿using Nito.AsyncEx.Synchronous;
+
+namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -70,7 +72,7 @@ public partial interface ITfService
 	/// <param name="user"></param>
 	/// <returns></returns>
 	public TfUser CreateUser(
-			TfUser user);
+		TfUser user);
 
 	/// <summary>
 	/// Updates existing user
@@ -126,7 +128,9 @@ public partial interface ITfService
 	/// <param name="user"></param>
 	/// <returns></returns>
 	Task<TfUser> CreateUserAsync(
-			TfUser user);
+		TfUser user);
+
+	public Task<TfUser> CreateUserWithFormAsync(TfUserManageForm form);
 
 	/// <summary>
 	/// Updates user
@@ -134,7 +138,9 @@ public partial interface ITfService
 	/// <param name="user"></param>
 	/// <returns></returns>
 	Task<TfUser> UpdateUserAsync(
-			TfUser user);
+		TfUser user);
+
+	Task<TfUser> UpdateUserWithFormAsync(TfUserManageForm form);
 
 	//Gets the authenticated user from cookie
 	Task<TfUser?> GetUserFromCookieAsync(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider);
@@ -155,6 +161,7 @@ public partial interface ITfService
 	Task<TfUser> RemoveUserFromRoleAsync(
 		Guid userId,
 		Guid roleId);
+
 	/// <summary>
 	/// Asynchronously removes a role from a list of users.
 	/// </summary>
@@ -193,8 +200,13 @@ public partial interface ITfService
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
 
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
-	Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? presetId, Guid spaceViewColumnId, short? width);
-	List<TfSortQuery> CalculateViewPresetSortPersonalization(List<TfSortQuery> currentSorts, Guid spaceViewId, Guid spaceViewColumnId, bool hasShiftKey);
+
+	Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? presetId,
+		Guid spaceViewColumnId, short? width);
+
+	List<TfSortQuery> CalculateViewPresetSortPersonalization(List<TfSortQuery> currentSorts, Guid spaceViewId,
+		Guid spaceViewColumnId, bool hasShiftKey);
+
 	Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId);
 }
 
@@ -427,8 +439,8 @@ public partial class TfService : ITfService
 						.WithCultureCode(userDbo.Settings.CultureName)
 						.WithStartUpUrl(userDbo.Settings.StartUpUrl)
 						.WithPageSize(userDbo.Settings.PageSize)
-					.WithViewPresetColumnPersonalizations(userDbo.Settings.ViewPresetColumnPersonalizations)
-					.WithViewPresetSortPersonalizations(userDbo.Settings.ViewPresetSortPersonalizations);
+						.WithViewPresetColumnPersonalizations(userDbo.Settings.ViewPresetColumnPersonalizations)
+						.WithViewPresetSortPersonalizations(userDbo.Settings.ViewPresetSortPersonalizations);
 				}
 
 				if (userRolesDict.ContainsKey(userDbo.Id))
@@ -458,7 +470,7 @@ public partial class TfService : ITfService
 				x.Email.ToLowerInvariant().Contains(search)
 				|| x.FirstName.ToLowerInvariant().Contains(search)
 				|| x.LastName.ToLowerInvariant().Contains(search)
-				).ToList().AsReadOnly();
+			).ToList().AsReadOnly();
 		}
 		catch (Exception ex)
 		{
@@ -538,11 +550,7 @@ public partial class TfService : ITfService
 
 			foreach (var role in user.Roles)
 			{
-				var dbo = new UserRoleDbo
-				{
-					RoleId = role.Id,
-					UserId = userDbo.Id
-				};
+				var dbo = new UserRoleDbo { RoleId = role.Id, UserId = userDbo.Id };
 
 				success = _dboManager.Insert<UserRoleDbo>(dbo);
 				if (!success)
@@ -550,6 +558,12 @@ public partial class TfService : ITfService
 			}
 
 			scope.Complete();
+
+			var task = Task.Run(async () =>
+			{
+				await _eventProvider.PublishEventAsync(new TfUserCreatedEvent(GetUser(userDbo.Id)));
+			});
+			task.WaitAndUnwrapException();
 		}
 
 		return GetUser(userDbo.Id);
@@ -593,9 +607,10 @@ public partial class TfService : ITfService
 			//remove old roles
 			foreach (var role in existingUser.Roles)
 			{
-				var dbId = new Dictionary<string, Guid> {
-						{ nameof(UserRoleDbo.UserId), user.Id },
-						{ nameof(UserRoleDbo.RoleId), role.Id }};
+				var dbId = new Dictionary<string, Guid>
+				{
+					{ nameof(UserRoleDbo.UserId), user.Id }, { nameof(UserRoleDbo.RoleId), role.Id }
+				};
 
 				success = _dboManager.Delete<UserRoleDbo>(dbId);
 
@@ -606,11 +621,7 @@ public partial class TfService : ITfService
 			//add new roles
 			foreach (var role in user.Roles)
 			{
-				var dbo = new UserRoleDbo
-				{
-					RoleId = role.Id,
-					UserId = userDbo.Id
-				};
+				var dbo = new UserRoleDbo { RoleId = role.Id, UserId = userDbo.Id };
 
 				success = _dboManager.Insert<UserRoleDbo>(dbo);
 
@@ -619,6 +630,12 @@ public partial class TfService : ITfService
 			}
 
 			scope.Complete();
+
+			var task = Task.Run(async () =>
+			{
+				await _eventProvider.PublishEventAsync(new TfUserCreatedEvent(GetUser(userDbo.Id)));
+			});
+			task.WaitAndUnwrapException();
 		}
 
 		return GetUser(userDbo.Id);
@@ -647,15 +664,10 @@ public partial class TfService : ITfService
 						continue;
 
 					var success = _dboManager.Insert<UserRoleDbo>(
-						new UserRoleDbo
-						{
-							RoleId = role.Id,
-							UserId = user.Id
-						});
+						new UserRoleDbo { RoleId = role.Id, UserId = user.Id });
 
 					if (!success)
 						throw new TfDboServiceException("Insert<UserRoleDbo> failed");
-
 				}
 
 				scope.Complete();
@@ -689,9 +701,10 @@ public partial class TfService : ITfService
 					if (!existingUser.Roles.Any(x => x.Id == role.Id))
 						continue;
 
-					var dbId = new Dictionary<string, Guid> {
-						{ nameof(UserRoleDbo.UserId), user.Id },
-						{ nameof(UserRoleDbo.RoleId), role.Id }};
+					var dbId = new Dictionary<string, Guid>
+					{
+						{ nameof(UserRoleDbo.UserId), user.Id }, { nameof(UserRoleDbo.RoleId), role.Id }
+					};
 
 					var success = _dboManager.Delete<UserRoleDbo>(dbId);
 
@@ -719,7 +732,8 @@ public partial class TfService : ITfService
 
 			var roles = await GetRolesAsync();
 			var userRoles = new List<TfRole>();
-			foreach (var userRoleRelation in await _dboManager.GetListAsync<UserRoleDbo>(id, nameof(UserRoleDbo.UserId)))
+			foreach (var userRoleRelation in
+			         await _dboManager.GetListAsync<UserRoleDbo>(id, nameof(UserRoleDbo.UserId)))
 				userRoles.Add(roles.Single(x => x.Id == userRoleRelation.RoleId));
 
 			var userBuilder = new TfUserBuilder(this, userDbo.Id)
@@ -770,7 +784,8 @@ public partial class TfService : ITfService
 
 			var roles = await GetRolesAsync();
 			var userRoles = new List<TfRole>();
-			foreach (var userRoleRelation in await _dboManager.GetListAsync<UserRoleDbo>(userDbo.Id, nameof(UserRoleDbo.UserId)))
+			foreach (var userRoleRelation in await _dboManager.GetListAsync<UserRoleDbo>(userDbo.Id,
+				         nameof(UserRoleDbo.UserId)))
 				userRoles.Add(roles.Single(x => x.Id == userRoleRelation.RoleId));
 
 			var userBuilder = new TfUserBuilder(this, userDbo.Id)
@@ -827,10 +842,10 @@ public partial class TfService : ITfService
 				return null;
 
 
-
 			var roles = await GetRolesAsync();
 			var userRoles = new List<TfRole>();
-			foreach (var userRoleRelation in await _dboManager.GetListAsync<UserRoleDbo>(userDbo.Id, nameof(UserRoleDbo.UserId)))
+			foreach (var userRoleRelation in await _dboManager.GetListAsync<UserRoleDbo>(userDbo.Id,
+				         nameof(UserRoleDbo.UserId)))
 				userRoles.Add(roles.Single(x => x.Id == userRoleRelation.RoleId));
 
 			var userBuilder = new TfUserBuilder(this, userDbo.Id)
@@ -903,7 +918,7 @@ public partial class TfService : ITfService
 						.WithStartUpUrl(userDbo.Settings.StartUpUrl)
 						.WithPageSize(userDbo.Settings.PageSize)
 						.WithViewPresetColumnPersonalizations(userDbo.Settings.ViewPresetColumnPersonalizations)
-					.WithViewPresetSortPersonalizations(userDbo.Settings.ViewPresetSortPersonalizations);
+						.WithViewPresetSortPersonalizations(userDbo.Settings.ViewPresetSortPersonalizations);
 				}
 
 				if (userRolesDict.ContainsKey(userDbo.Id))
@@ -974,11 +989,7 @@ public partial class TfService : ITfService
 
 			foreach (var role in user.Roles)
 			{
-				var dbo = new UserRoleDbo
-				{
-					RoleId = role.Id,
-					UserId = userDbo.Id
-				};
+				var dbo = new UserRoleDbo { RoleId = role.Id, UserId = userDbo.Id };
 
 				success = await _dboManager.InsertAsync<UserRoleDbo>(dbo);
 				if (!success)
@@ -986,9 +997,35 @@ public partial class TfService : ITfService
 			}
 
 			scope.Complete();
+
+			await _eventProvider.PublishEventAsync(new TfUserCreatedEvent(await GetUserAsync(userDbo.Id)));
 		}
 
 		return await GetUserAsync(userDbo.Id);
+	}
+
+	public async Task<TfUser> CreateUserWithFormAsync(TfUserManageForm form)
+	{
+		var user = new TfUser
+		{
+			Id = form.Id,
+			CreatedOn = DateTime.Now,
+			Email = form.Email,
+			FirstName = form.FirstName,
+			LastName = form.LastName,
+			Enabled = form.Enabled,
+			Password = form.Password ?? String.Empty,
+			Roles = new List<TfRole>().AsReadOnly(),
+			Settings = new TfUserSettings
+			{
+				ThemeColor = form.ThemeColor,
+				ThemeMode = form.ThemeMode,
+				IsSidebarOpen = form.IsSidebarOpen,
+				CultureName = form.Culture?.CultureInfo.Name ?? TfConstants.DefaultCulture.Name,
+			}
+		};
+		user = await CreateUserAsync(user);
+		return user;
 	}
 
 	public async Task<TfUser> UpdateUserAsync(
@@ -1028,9 +1065,10 @@ public partial class TfService : ITfService
 			//remove old roles
 			foreach (var role in existingUser.Roles)
 			{
-				var dbId = new Dictionary<string, Guid> {
-						{ nameof(UserRoleDbo.UserId), user.Id },
-						{ nameof(UserRoleDbo.RoleId), role.Id }};
+				var dbId = new Dictionary<string, Guid>
+				{
+					{ nameof(UserRoleDbo.UserId), user.Id }, { nameof(UserRoleDbo.RoleId), role.Id }
+				};
 
 				success = await _dboManager.DeleteAsync<UserRoleDbo>(dbId);
 
@@ -1041,11 +1079,7 @@ public partial class TfService : ITfService
 			//add new roles
 			foreach (var role in user.Roles)
 			{
-				var dbo = new UserRoleDbo
-				{
-					RoleId = role.Id,
-					UserId = userDbo.Id
-				};
+				var dbo = new UserRoleDbo { RoleId = role.Id, UserId = userDbo.Id };
 
 				success = await _dboManager.InsertAsync<UserRoleDbo>(dbo);
 
@@ -1054,23 +1088,50 @@ public partial class TfService : ITfService
 			}
 
 			scope.Complete();
+
+			await _eventProvider.PublishEventAsync(new TfUserUpdatedEvent(await GetUserAsync(userDbo.Id)));
 		}
 
 		return await GetUserAsync(userDbo.Id);
 	}
 
-	public async Task<TfUser?> GetUserFromCookieAsync(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider)
+	public async Task<TfUser> UpdateUserWithFormAsync(TfUserManageForm form)
+	{
+		var user = await GetUserAsync(form.Id);
+		if (user is null)
+			throw new Exception("user not found");
+		TfUserBuilder userBuilder = CreateUserBuilder(user);
+		userBuilder
+			.WithEmail(form.Email)
+			.WithFirstName(form.FirstName)
+			.WithLastName(form.LastName)
+			.Enabled(form.Enabled)
+			.WithThemeMode(form.ThemeMode)
+			.WithThemeColor(form.ThemeColor)
+			.WithCultureCode(form.Culture?.CultureInfo.Name ?? TfConstants.DefaultCulture.Name)
+			.WithRoles(user.Roles.ToArray());
+		if (!String.IsNullOrWhiteSpace(form.Password))
+			userBuilder.WithPassword(form.Password);
+
+		user = userBuilder.Build();
+		user = await SaveUserAsync(user);
+		return user;
+	}
+
+	public async Task<TfUser?> GetUserFromCookieAsync(IJSRuntime jsRuntime,
+		AuthenticationStateProvider authStateProvider)
 	{
 		var user = (await authStateProvider.GetAuthenticationStateAsync())?.User;
 		if (user is null) return null;
 		//Temporary fix for multitab logout- we check the cookie as well
 		var cookie = await new CookieService(jsRuntime).GetAsync(TfConstants.TEFTER_AUTH_COOKIE_NAME);
 		if (cookie is null || user.Identity is null || !user.Identity.IsAuthenticated ||
-			(user.Identity as TfIdentity) is null ||
-			(user.Identity as TfIdentity)!.User is null)
+		    (user.Identity as TfIdentity) is null ||
+		    (user.Identity as TfIdentity)!.User is null)
 		{
 			return null;
 		}
+
 		var tfUser = ((TfIdentity)user.Identity).User;
 		if (tfUser is null) return null;
 
@@ -1090,9 +1151,9 @@ public partial class TfService : ITfService
 			if (!space.IsPrivate) return true;
 
 			if (space.Roles
-			.Select(x => x.Id)
-			.Intersect(user.Roles.Select(x => x.Id))
-			.Any())
+			    .Select(x => x.Id)
+			    .Intersect(user.Roles.Select(x => x.Id))
+			    .Any())
 				return true;
 			return false;
 		}
@@ -1140,11 +1201,13 @@ public partial class TfService : ITfService
 		{
 			throw ProcessException(ex);
 		}
+
 		return Task.CompletedTask;
 	}
+
 	public async Task<TfUser> RemoveUserFromRoleAsync(
-			Guid userId,
-			Guid roleId)
+		Guid userId,
+		Guid roleId)
 	{
 		try
 		{
@@ -1166,6 +1229,7 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 	}
+
 	public Task RemoveUsersRoleAsync(
 		List<TfUser> users,
 		TfRole role)
@@ -1178,19 +1242,22 @@ public partial class TfService : ITfService
 		{
 			throw ProcessException(ex);
 		}
+
 		return Task.CompletedTask;
 	}
 
 	public async Task<TfUser> SetStartUpUrl(Guid userId,
-			string url)
+		string url)
 	{
 		var user = GetUser(userId);
 		var userBld = CreateUserBuilder(user);
 		userBld
-		.WithStartUpUrl(url);
+			.WithStartUpUrl(url);
 
 		await SaveUserAsync(userBld.Build());
-		return GetUser(userId);
+		var result = GetUser(userId);
+		await _eventProvider.PublishEventAsync(new TfUserUpdatedEvent(result));
+		return result;
 	}
 
 	public virtual async Task<TfUser> SetUserCulture(Guid userId, string cultureCode)
@@ -1199,7 +1266,9 @@ public partial class TfService : ITfService
 		var userBld = CreateUserBuilder(user);
 		userBld.WithCultureCode(cultureCode);
 		await SaveUserAsync(userBld.Build());
-		return GetUser(userId);
+		var result = GetUser(userId);
+		await _eventProvider.PublishEventAsync(new TfUserUpdatedEvent(result));
+		return result;
 	}
 
 	public virtual async Task<TfUser> SetPageSize(Guid userId, int? pageSize)
@@ -1208,14 +1277,17 @@ public partial class TfService : ITfService
 		var userBld = CreateUserBuilder(user);
 		userBld.WithPageSize(pageSize);
 		await SaveUserAsync(userBld.Build());
-		return GetUser(userId);
+		var result = GetUser(userId);
+		await _eventProvider.PublishEventAsync(new TfUserUpdatedEvent(result));
+		return result;
 	}
 
-	public virtual async Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? presetId, Guid spaceViewColumnId, short? width)
+	public virtual async Task<TfUser> SetViewPresetColumnPersonalization(Guid userId, Guid spaceViewId, Guid? presetId,
+		Guid spaceViewColumnId, short? width)
 	{
 		if (width is null)
 		{
-			return await RemoveSpaceViewPersonalizations(userId,spaceViewId,presetId);
+			return await RemoveSpaceViewPersonalizations(userId, spaceViewId, presetId);
 		}
 
 		TfUser user = GetUser(userId);
@@ -1231,23 +1303,20 @@ public partial class TfService : ITfService
 		{
 			allPersonalization.Add(new TfViewPresetColumnPersonalization
 			{
-				SpaceViewColumnId = spaceViewColumnId,
-				SpaceViewId = spaceViewId,
-				PresetId = presetId,
-				Width = width
+				SpaceViewColumnId = spaceViewColumnId, SpaceViewId = spaceViewId, PresetId = presetId, Width = width
 			});
 		}
 		else
 		{
-			allPersonalization[personalizationIndex] = allPersonalization[personalizationIndex] with
-			{
-				Width = width
-			};
+			allPersonalization[personalizationIndex] = allPersonalization[personalizationIndex] with { Width = width };
 		}
+
 		var userBld = CreateUserBuilder(user);
 		userBld.WithViewPresetColumnPersonalizations(allPersonalization);
 		await SaveUserAsync(userBld.Build());
-		return GetUser(userId);
+		var result = GetUser(userId);
+		await _eventProvider.PublishEventAsync(new TfUserUpdatedEvent(result));
+		return result;
 	}
 
 	public virtual List<TfSortQuery> CalculateViewPresetSortPersonalization(List<TfSortQuery> currentSorts,
@@ -1279,11 +1348,10 @@ public partial class TfService : ITfService
 			}
 			else
 			{
-				currentSorts = new List<TfSortQuery>{new TfSortQuery
+				currentSorts = new List<TfSortQuery>
 				{
-					Name = column.QueryName,
-					Direction = (int)TfSortDirection.ASC
-				}};
+					new TfSortQuery { Name = column.QueryName, Direction = (int)TfSortDirection.ASC }
+				};
 			}
 		}
 		else
@@ -1301,17 +1369,12 @@ public partial class TfService : ITfService
 			}
 			else
 			{
-				var columnSort = new TfSortQuery
-				{
-					Name = column.QueryName,
-					Direction = (int)TfSortDirection.ASC
-				};
+				var columnSort = new TfSortQuery { Name = column.QueryName, Direction = (int)TfSortDirection.ASC };
 				currentSorts.Add(columnSort);
 			}
 		}
 
 		return currentSorts;
-
 	}
 
 	public virtual async Task<TfUser> RemoveSpaceViewPersonalizations(Guid userId, Guid spaceViewId, Guid? presetId)
@@ -1325,7 +1388,9 @@ public partial class TfService : ITfService
 		userBld.WithViewPresetColumnPersonalizations(otherPersonalization);
 		userBld.WithViewPresetSortPersonalizations(otherSorts);
 		await SaveUserAsync(userBld.Build());
-		return GetUser(userId);
+		var result = GetUser(userId);
+		await _eventProvider.PublishEventAsync(new TfUserUpdatedEvent(result));
+		return result;
 	}
 
 	#region <--- validation --->
@@ -1356,7 +1421,6 @@ public partial class TfService : ITfService
 				RuleFor(user => user.Password)
 					.NotEmpty()
 					.WithMessage("The password is required.");
-
 			});
 
 			RuleSet("create", () =>

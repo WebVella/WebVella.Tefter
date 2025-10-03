@@ -24,6 +24,6 @@
 	}
 	else
 	{
-		<TucSortCard Dataset="_dataset" ItemsChanged="_onSortChanged" />
+		<TucSortCard DatasetId="_dataset.Id" @bind-Items="_dataset.SortOrders" />
 	}
 </FluentDialogBody>

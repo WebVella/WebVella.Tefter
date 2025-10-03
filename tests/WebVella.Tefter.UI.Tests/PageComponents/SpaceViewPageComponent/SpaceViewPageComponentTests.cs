@@ -14,7 +14,6 @@ public class SpaceViewPageComponentTests : BaseTest
 		var Context = GetTestContext();
 		// Act
 		var authLayout = new TfAuthLayout();
-		authLayout.NavigationState = new();
 		var cut = Context.RenderComponent<TucSpaceViewSpacePageAddon>(args => args
 		.Add(x => x.Context, new TfSpacePageAddonContext()
 		{

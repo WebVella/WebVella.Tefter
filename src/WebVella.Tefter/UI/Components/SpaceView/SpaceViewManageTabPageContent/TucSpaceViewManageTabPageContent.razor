@@ -1,0 +1,207 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@if (_spaceView is null && _isDataLoading)
+{
+}
+else if (_spaceView is null)
+{
+	<FluentMessageBar Title="No space view found"
+	                  Style="@("border: 1px solid var(--neutral-base-color)")"
+	                  Intent="MessageIntent.Info"
+	                  AllowDismiss="false">
+		Space view not found
+	</FluentMessageBar>
+}
+else if (_navState.ManageTab == "columns")
+{
+	<TucCard Title="@LOC("Settings")">
+		<ToolbarTemplate>
+			<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceView">
+				@LOC("Edit")
+				<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start"/>
+			</FluentButton>
+		</ToolbarTemplate>
+		<ChildContent>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField Label="@LOC("Dataset")" ReadOnly="true" Value="@_spaceData.Name"
+					                 Style="width:100%"></FluentTextField>
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Allowed Data manipulation")"/>
+					<FluentStack Orientation="@Orientation.Horizontal">
+						@if (_spaceView.Settings.CanCreateRows)
+						{
+							<FluentBadge Appearance="Appearance.Neutral"
+							             Class="input-badge">@LOC("Create")</FluentBadge>
+						}
+						@if (_spaceView.Settings.CanUpdateRows)
+						{
+							<FluentBadge Appearance="Appearance.Neutral"
+							             Class="input-badge">@LOC("Update")</FluentBadge>
+						}
+						@if (_spaceView.Settings.CanDeleteRows)
+						{
+							<FluentBadge Appearance="Appearance.Neutral"
+							             Class="input-badge">@LOC("Delete")</FluentBadge>
+						}
+					</FluentStack>
+					@if (_spaceView.Settings is { CanCreateRows: false, CanUpdateRows: false, CanDeleteRows: false })
+					{
+						<FluentTextField ReadOnly="true" Value="@LOC("no data manipulation is allowed")"
+						                 Style="width:100%"/>
+					}
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Freeze Starting Columns")"/>
+					<FluentNumberField TValue="int?" Value=@_spaceView.Settings.FreezeStartingNColumns
+					                   ReadOnly="true" Style="width:100%"/>
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Freeze Final Columns")"/>
+					<FluentNumberField TValue="int?" Value=@_spaceView.Settings.FreezeFinalNColumns
+					                   ReadOnly="true" Style="width:100%"/>
+				</FluentGridItem>
+			</FluentGrid>
+		</ChildContent>
+	</TucCard>
+	<TucCard Title="@LOC("Presented Columns")">
+		<ToolbarTemplate>
+			<FluentButton OnClick="_addColumn" Appearance="@Appearance.Outline">
+				<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start"/>
+				@LOC("Add new")
+			</FluentButton>
+		</ToolbarTemplate>
+		<ChildContent>
+
+			@if (_spaceViewColumns.Count == 0)
+			{
+				@LOC("This view has no columns yet.")
+			}
+			else
+			{
+				<table class="tf-grid">
+					<tbody class="tf-grid-tbody">
+					@foreach (var context in _spaceViewColumns.OrderBy(x => x.Position))
+					{
+						<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+							<td class="tf-grid-td" style="width:1%;">
+								<div>
+									<FluentStack Wrap="false">
+										<FluentButton Appearance="@Appearance.Outline"
+										              OnClick="@(() => _editColumn(context))"
+										              Title="@LOC("Edit column")"
+										              Disabled="_submitting"
+										              IconStart="@TfConstants.GetIcon("Edit")"/>
+										<FluentButton Appearance="@Appearance.Outline"
+										              OnClick="@(() => _deleteColumn(context))"
+										              Title="@LOC("Delete column")"
+										              Disabled="_submitting">
+											<FluentIcon Color="@Color.Error"
+											            Value="@TfConstants.GetIcon("Delete")"/>
+										</FluentButton>
+										<FluentButton Appearance="@Appearance.Outline"
+										              OnClick="@(() => _moveColumn(context, true))"
+										              Title="@LOC("Move up")"
+										              Disabled="@(_submitting || context.Position == 1)"
+										              IconStart="@TfConstants.GetIcon("ArrowUp")"/>
+										<FluentButton Appearance="@Appearance.Outline"
+										              OnClick="@(() => _moveColumn(context, false))"
+										              Title="@LOC("Move down")"
+										              Disabled="@(_submitting || context.Position == _spaceViewColumns.Count)"
+										              IconStart="@TfConstants.GetIcon("ArrowDown")"/>
+									</FluentStack>
+								</div>
+							</td>
+							<td class="tf-grid-td" style="width:20px;">
+								<div>@context.Position</div>
+							</td>
+							<td class="tf-grid-td" style="width:100px;">
+								<div>
+									<div>@context.Title</div>
+									<div class="td-description">@context.QueryName</div>
+								</div>
+							</td>
+							<td class="tf-grid-td">
+								@if (_typeMetaDict.ContainsKey(context.TypeId))
+								{
+									<div>
+										<div>
+											<FluentStack>
+												<FluentIcon
+													Value="@TfConstants.GetIcon(_typeMetaDict[context.TypeId].Instance.AddonFluentIconName)"
+													Color="@Color.Accent"/>
+												<div>@_typeMetaDict[context.TypeId].Instance.AddonName</div>
+											</FluentStack>
+										</div>
+										<div
+											class="td-description">@_typeMetaDict[context.TypeId].Instance.AddonDescription</div>
+									</div>
+								}
+								else
+								{
+									<div style="color:var(--error)">@LOC("unknown")</div>
+								}
+							</td>
+							<td class="tf-grid-td">
+								@if (_componentMetaDict.ContainsKey(context.ComponentId))
+								{
+									<div>
+										<div>@_componentMetaDict[context.ComponentId].Instance.AddonName</div>
+										<div
+											class="td-description">@_componentMetaDict[context.ComponentId].Instance.AddonDescription</div>
+									</div>
+								}
+								else
+								{
+									<div style="color:red">@LOC("unknown")</div>
+								}
+							</td>
+						</tr>
+					}
+					</tbody>
+				</table>
+			}
+		</ChildContent>
+	</TucCard>
+}
+else if (_navState.ManageTab == "presets")
+{
+	<TucCard>
+		<ToolbarTemplate>
+			<FluentButton Appearance="@Appearance.Outline" OnClick="_editMainTab">
+				@LOC("Edit")
+				<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start"/>
+			</FluentButton>
+		</ToolbarTemplate>
+		<ChildContent>
+			<FluentGrid>
+				<FluentGridItem xs="4">
+					<FluentInputLabel Label="@LOC("Main tab label")"/>
+					<FluentTextField Value=@_spaceView.Settings.MainTabLabel
+					                 Placeholder="@LOC("defaults to 'Main'")"
+					                 ReadOnly="true" Style="width:100%"/>
+				</FluentGridItem>
+				<FluentGridItem xs="4">
+					<FluentInputLabel Label="@LOC("Main tab Icon")"/>
+					<TucSelectIcon Value=@_spaceView.Settings.MainTabFluentIcon
+					               Placeholder="@LOC("defaults to page icon")"
+					                 ReadOnly="true"/>
+				</FluentGridItem>				
+			</FluentGrid>
+		</ChildContent>
+	</TucCard>
+	<TucPresetFiltersCard Title="@LOC("Preset Filters Navigation")" Dataset="_spaceData" Items="_spaceView.Presets"
+	                      ItemsChanged="_onPresetsChanged"/>
+}
+else
+{
+	<FluentMessageBar Title="Tab Not found"
+	                  Style="@("border: 1px solid var(--neutral-base-color)")"
+	                  Intent="MessageIntent.Info"
+	                  AllowDismiss="false">
+		No content is found for this tab
+	</FluentMessageBar>
+}

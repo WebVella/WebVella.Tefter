@@ -26,7 +26,7 @@ public partial class TfServiceTest : BaseTest
 	//			//var spaceData = spaceManager.GetSpaceData(spaceDataId).Value;
 	//			//var template = tfService.GetTemplate(templateId).Value;
 
-	//			var dataTable = tfService.QuerySpaceData(spaceDataId, returnOnlyTfIds: true);
+	//			var dataTable = tfService.QueryDataset(spaceDataId, returnOnlyTfIds: true);
 	//			List<Guid> ids = new List<Guid>();
 	//			foreach (TfDataRow row in dataTable.Rows)
 	//				ids.Add((Guid)row["tf_id"]);

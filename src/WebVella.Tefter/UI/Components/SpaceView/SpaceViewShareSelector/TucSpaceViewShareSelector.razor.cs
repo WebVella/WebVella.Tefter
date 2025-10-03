@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewShareSelector : TfBaseComponent
 {
-	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
-	[Parameter] public TfDataTable Data { get; set; } = default!;
+	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
+	[Parameter] public TfDataTable Data { get; set; } = null!;
 	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
 	[Parameter] public TfBookmark? ActiveBookmark { get; set; } = null;
 	[Parameter] public TfBookmark? ActiveSavedUrl { get; set; } = null;
@@ -31,7 +31,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 		return JsonSerializer.Serialize(new TfExportViewData()
 		{
 			SelectedRows = SelectedRows,
-			RouteState = Navigator.GetRouteState()
+			RouteState = TfAuthLayout.NavigationState
 		});
 	}
 
@@ -41,7 +41,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 		return JsonSerializer.Serialize(new TfExportViewData()
 		{
 			SelectedRows = new(),
-			RouteState = Navigator.GetRouteState()
+			RouteState = TfAuthLayout.NavigationState
 		});
 	}
 
@@ -80,7 +80,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 				Url = null
 			};
 
-			TfUIService.CreateBookmark(submit);
+			TfService.CreateBookmark(submit);
 			ToastService.ShowSuccess(LOC("View is now bookmarked"));
 		}
 		catch (Exception ex)
@@ -107,7 +107,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 				Name = SpaceView.Name + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
 				Url = new Uri(Navigator.Uri).PathAndQuery
 			};
-			TfUIService.CreateBookmark(submit);
+			TfService.CreateBookmark(submit);
 
 			ToastService.ShowSuccess(LOC("URL is now saved"));
 			await Navigator.ApplyChangeToUrlQuery(TfConstants.ActiveSaveQueryName, submit.Id);

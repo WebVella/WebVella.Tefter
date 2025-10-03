@@ -6,40 +6,38 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDis
 
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.SpaceUpdated -= On_SpaceUpdated;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfEventProvider.SpaceUpdatedEvent -= On_SpaceUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.SpaceUpdated += On_SpaceUpdated;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfEventProvider.SpaceUpdatedEvent += On_SpaceUpdated;
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
-	private async void On_SpaceUpdated(object? caller, TfSpace args)
+	private async void On_SpaceUpdated(TfSpaceUpdatedEvent args)
 	{
-		await _init(null);
+		await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_menu = new();
-			if (navState is null || navState.SpaceId is null)
+			if (navState.SpaceId is null)
 				return;
 
-			var space = TfUIService.GetSpace(navState.SpaceId.Value);
+			var space = TfService.GetSpace(navState.SpaceId.Value);
 			if (space is null)
 				return;
 
-			var spacePages = TfUIService.GetSpacePages(space.Id);
+			var spacePages = TfService.GetSpacePages(space.Id);
 			_menu.Add(new TfMenuItem
 			{
 				Url = string.Format(TfConstants.SpaceManagePageUrl, navState.SpaceId),

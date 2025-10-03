@@ -23,6 +23,9 @@ public partial interface ITfService
 
 	public (Guid, List<TfSpacePage>) CopySpacePage(
 		Guid pageId);
+
+	public void MoveSpacePage(TfSpacePage page, bool isMoveUp);
+	TfSpacePage? GetSpacePageBySpaceViewId(Guid spaceViewId);
 }
 
 public partial class TfService : ITfService
@@ -39,15 +42,14 @@ public partial class TfService : ITfService
 				.Where(x => x.ParentId is null)
 				.OrderBy(x => x.Position)
 				.ToList();
-
+			ReadOnlyCollection<TfSpacePageAddonMeta> components = _metaService.GetSpacePagesComponentsMeta();
 			foreach (var rootPage in rootPages)
 			{
 				rootPage.ParentPage = null;
-				rootPage.ComponentType = _metaService
-					.GetSpacePagesComponentsMeta()
+				rootPage.ComponentType = components
 					.SingleOrDefault(x => x.ComponentId == rootPage.ComponentId)
 					?.Instance.GetType();
-				InitSpacePageChildPages(rootPage, spacePagesList);
+				InitSpacePageChildPages(rootPage, spacePagesList, components);
 			}
 			return rootPages;
 		}
@@ -72,15 +74,15 @@ public partial class TfService : ITfService
 				.Where(x => x.ParentId is null)
 				.OrderBy(x => x.Position)
 				.ToList();
-
+			var components = _metaService
+				.GetSpacePagesComponentsMeta();
 			foreach (var rootPage in rootPages)
 			{
 				rootPage.ParentPage = null;
-				rootPage.ComponentType = _metaService
-					.GetSpacePagesComponentsMeta()
+				rootPage.ComponentType = components
 					.SingleOrDefault(x => x.ComponentId == rootPage.ComponentId)
 					?.Instance.GetType();
-				InitSpacePageChildPages(rootPage, spacePagesList);
+				InitSpacePageChildPages(rootPage, spacePagesList, components);
 			}
 
 			return rootPages;
@@ -106,7 +108,8 @@ public partial class TfService : ITfService
 
 	private void InitSpacePageChildPages(
 		TfSpacePage page,
-		List<TfSpacePage> allPages)
+		List<TfSpacePage> allPages,
+		ReadOnlyCollection<TfSpacePageAddonMeta> components)
 	{
 		var childPages = allPages
 			.Where(x => x.ParentId == page.Id)
@@ -118,7 +121,10 @@ public partial class TfService : ITfService
 		foreach (var childPage in childPages)
 		{
 			childPage.ParentPage = page;
-			InitSpacePageChildPages(childPage, allPages);
+			childPage.ComponentType = components
+				.SingleOrDefault(x => x.ComponentId == childPage.ComponentId)
+				?.Instance.GetType();;
+			InitSpacePageChildPages(childPage, allPages, components);
 		}
 	}
 
@@ -271,7 +277,11 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				allPages = GetSpacePages(spacePage.SpaceId);
-
+				var task2 = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfSpacePageCreatedEvent(allPages.Single(x=> x.Id == spacePage.Id)));
+				});
+				task2.WaitAndUnwrapException();
 				return (spacePage.Id, allPages);
 			}
 		}
@@ -546,7 +556,11 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				allPages = GetSpacePages(spacePage.SpaceId);
-
+				var task2 = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfSpacePageUpdatedEvent(allPages.Single(x=> x.Id == spacePage.Id)));
+				});
+				task2.WaitAndUnwrapException();
 				return allPages;
 			}
 		}
@@ -650,7 +664,10 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				allPages = GetSpacePages(spacePage.SpaceId);
-
+				var task2 = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfSpacePageDeletedEvent(spacePage));
+				});
 				return allPages;
 			}
 		}
@@ -713,7 +730,21 @@ public partial class TfService : ITfService
 		}
 	}
 
+	public void MoveSpacePage(TfSpacePage page, bool isMoveUp)
+	{
+		if (isMoveUp)
+			page.Position--;
+		else
+			page.Position++;
+		var pageList = UpdateSpacePage(page);
+	}	
 
+	public TfSpacePage? GetSpacePageBySpaceViewId(Guid spaceViewId)
+	{
+		var allPages = GetAllSpacePages();
+		return allPages.FirstOrDefault(x => x.ComponentOptionsJson.Contains(spaceViewId.ToString()));
+	}	
+	
 	private TfSpacePage ConvertDboToModel(
 		TfSpacePageDbo dbo)
 	{

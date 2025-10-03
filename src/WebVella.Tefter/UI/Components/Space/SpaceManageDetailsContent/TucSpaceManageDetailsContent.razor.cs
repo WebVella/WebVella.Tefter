@@ -1,50 +1,47 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 {
-	private TfSpace _space = default!;
-	private TfNavigationState _navState = default!;
+	private TfSpace _space = null!;
+	private TfNavigationState _navState = null!;
 	private string? _menu = null;
 	public bool _submitting = false;
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.SpaceCreated -= On_SpaceChange;
-		TfUIService.SpaceUpdated -= On_SpaceChange;
-		TfUIService.SpaceDeleted -= On_SpaceChange;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfEventProvider.SpaceCreatedEvent -= On_SpaceChange;
+		TfEventProvider.SpaceUpdatedEvent -= On_SpaceChange;
+		TfEventProvider.SpaceDeletedEvent -= On_SpaceChange;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.SpaceCreated += On_SpaceChange;
-		TfUIService.SpaceUpdated += On_SpaceChange;
-		TfUIService.SpaceDeleted += On_SpaceChange;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfEventProvider.SpaceCreatedEvent += On_SpaceChange;
+		TfEventProvider.SpaceUpdatedEvent += On_SpaceChange;
+		TfEventProvider.SpaceDeletedEvent += On_SpaceChange;
 	}
 
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(navState: args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(navState: args.Payload);
 	}
 
-	private async void On_SpaceChange(object? caller, TfSpace args)
+	private async void On_SpaceChange(object args)
 	{
-		await _init();
+		await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async Task _init(TfNavigationState? navState = null, TfSpace? role = null)
+	private async Task _init(TfNavigationState navState, TfSpace? role = null)
 	{
-		if (navState == null)
-			_navState = TfAuthLayout.NavigationState;
-		else
-			_navState = navState;
+		_navState = navState;
 
 		try
 		{
 			if (_navState.SpaceId is null) return;
-			_space = TfUIService.GetSpace(_navState.SpaceId.Value);
+			_space = TfService.GetSpace(_navState.SpaceId.Value);
 			if (_space is null) return;
 
 			_menu = null;
@@ -80,7 +77,7 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 			return;
 		try
 		{
-			TfUIService.DeleteSpace(_space.Id);
+			TfService.DeleteSpace(_space.Id);
 			ToastService.ShowSuccess(LOC("Space deleted"));
 			Navigator.NavigateTo(TfConstants.HomePageUrl);
 		}

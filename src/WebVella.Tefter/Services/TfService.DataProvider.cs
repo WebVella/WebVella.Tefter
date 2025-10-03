@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Office2010.Excel;
 using FluentValidation;
+using Nito.AsyncEx.Synchronous;
 using WebVella.Tefter.Models;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -451,6 +452,12 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfDataProviderCreatedEvent(provider));
+				});
+				task.WaitAndUnwrapException();				
+				
 				return provider;
 			}
 		}
@@ -491,7 +498,14 @@ public partial class TfService : ITfService
 			if (!success)
 				throw new TfDboServiceException("Update<TfDataProviderDbo> failed.");
 
-			return GetDataProvider(updateModel.Id);
+			var result = GetDataProvider(updateModel.Id);
+			var task = Task.Run(async () =>
+			{
+				await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
+			});
+			task.WaitAndUnwrapException();				
+			
+			return result;
 		}
 		catch (Exception ex)
 		{
@@ -551,8 +565,14 @@ public partial class TfService : ITfService
 				dbBuilder.Remove(providerTableName);
 
 				_dbManager.SaveChanges(dbBuilder);
-
 				scope.Complete();
+				
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfDataProviderDeletedEvent(provider));
+				});
+				task.WaitAndUnwrapException();								
+				
 			}
 		}
 		catch (Exception ex)

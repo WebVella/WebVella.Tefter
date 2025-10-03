@@ -5,20 +5,22 @@ namespace WebVella.Tefter.Models;
 
 public class TfBaseComponent : ComponentBase
 {
-	[Inject] protected IJSRuntime JSRuntime { get; set; } = default!;
-	[Inject] protected NavigationManager Navigator { get; set; } = default!;
-	[Inject] protected IToastService ToastService { get; set; } = default!;
-	[Inject] protected IDialogService DialogService { get; set; } = default!;
-	[Inject] protected IMessageService MessageService { get; set; } = default!;
-	[Inject] protected ITfConfigurationService ConfigurationService { get; set; } = default!;
-	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = default!;
-	[Inject] protected IWvBlazorTraceService WvBlazorTraceService { get; set; } = default!;
-	[Inject] protected IKeyCodeService KeyCodeService { get; set; } = default!;
-	[Inject] protected ITfUIService TfUIService { get; set; } = default!;
-	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = default!;
+	[Inject] protected IJSRuntime JSRuntime { get; set; } = null!;
+	[Inject] protected NavigationManager Navigator { get; set; } = null!;
+	[Inject] protected IToastService ToastService { get; set; } = null!;
+	[Inject] protected IDialogService DialogService { get; set; } = null!;
+	[Inject] protected IMessageService MessageService { get; set; } = null!;
+	[Inject] protected ITfConfigurationService ConfigurationService { get; set; } = null!;
+	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = null!;
+	[Inject] protected IWvBlazorTraceService WvBlazorTraceService { get; set; } = null!;
+	[Inject] protected IKeyCodeService KeyCodeService { get; set; } = null!;
+	[Inject] protected ITfService TfService { get; set; } = null!;
+	[Inject] protected ITfMetaService TfMetaService { get; set; } = null!;
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = null!;
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
-	protected IStringLocalizer LC = default!;
+	protected IStringLocalizer LC = null!;
 	protected static IStringLocalizer? GL = null;
 	protected string UriInitialized = String.Empty;
 	private static AsyncLock _lock = new();

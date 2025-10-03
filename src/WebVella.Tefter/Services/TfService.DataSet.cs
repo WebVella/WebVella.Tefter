@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization.Metadata;
+﻿using Nito.AsyncEx.Synchronous;
+using System.Text.Json.Serialization.Metadata;
 using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Services;
@@ -32,6 +33,7 @@ public partial interface ITfService
 	void AddDatasetColumn(
 		Guid datasetId,
 		TfDatasetColumn column);
+
 	void UpdataDatasetColumns(Guid datasetId, List<TfDatasetColumn> columns);
 
 	void RemoveDatasetColumn(
@@ -55,7 +57,8 @@ public partial class TfService : ITfService
 		try
 		{
 			var dbos = _dboManager.GetList<TfDatasetDbo>();
-			var datasets = dbos.Where(x => x is not null).Select(x => ConvertDboToModel(x)).OrderBy(x => x.Name).ToList();
+			var datasets = dbos.Where(x => x is not null).Select(x => ConvertDboToModel(x)).OrderBy(x => x.Name)
+				.ToList();
 			var result = new List<TfDataset>();
 			foreach (var dataset in datasets)
 			{
@@ -65,7 +68,7 @@ public partial class TfService : ITfService
 				if (providerId is not null && dataset.DataProviderId != providerId.Value)
 					continue;
 				if (!String.IsNullOrWhiteSpace(search)
-					&& !dataset.Name.ToLowerInvariant().Contains(search.Trim().ToLowerInvariant()))
+				    && !dataset.Name.ToLowerInvariant().Contains(search.Trim().ToLowerInvariant()))
 					continue;
 
 				dataset.Identities = new ReadOnlyCollection<TfDatasetIdentity>(
@@ -73,6 +76,7 @@ public partial class TfService : ITfService
 
 				result.Add(dataset);
 			}
+
 			return result;
 		}
 		catch (Exception ex)
@@ -96,7 +100,7 @@ public partial class TfService : ITfService
 				return null;
 
 			dataset.Identities = new ReadOnlyCollection<TfDatasetIdentity>(
-					GetDatasetIdentities(dataset.Id).ToList());
+				GetDatasetIdentities(dataset.Id).ToList());
 			return dataset;
 		}
 		catch (Exception ex)
@@ -145,7 +149,8 @@ public partial class TfService : ITfService
 					{
 						foreach (var column in sdIdentity.Columns)
 						{
-							var columnProvider = allProviders.FirstOrDefault(x => x.Columns.Any(y => y.DbName == column));
+							var columnProvider =
+								allProviders.FirstOrDefault(x => x.Columns.Any(y => y.DbName == column));
 							var sharedColumn = sharedColumns.FirstOrDefault(x => x.DbName == column);
 							if (columnProvider is null && sharedColumn is null) continue;
 
@@ -158,8 +163,6 @@ public partial class TfService : ITfService
 								SourceColumnName = null,
 								SourceType = TfAuxDataSourceType.NotFound,
 								DbType = TfDatabaseColumnType.Text
-
-
 							};
 							if (columnProvider is not null)
 							{
@@ -186,7 +189,15 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				return GetDataset(newDataset.Id) ?? throw new Exception($"GetDataset failed for id: {newDataset.Id}");
+				var result = GetDataset(newDataset.Id) ??
+				             throw new Exception($"GetDataset failed for id: {newDataset.Id}");
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfDatasetCreatedEvent(result));
+				});
+				task.WaitAndUnwrapException();
+
+				return result;
 			}
 		}
 		catch (Exception ex)
@@ -225,8 +236,15 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Update<TfDatasetDbo> failed.");
 
 				scope.Complete();
+				var result = GetDataset(dbo.Id) ??
+				             throw new Exception($"UpdateDataset failed for id: {updateDataset.Id}");
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfDatasetUpdatedEvent(result));
+				});
+				task.WaitAndUnwrapException();
 
-				return GetDataset(dbo.Id) ?? throw new Exception($"UpdateDataset failed for id: {updateDataset.Id}");
+				return result;
 			}
 		}
 		catch (Exception ex)
@@ -256,7 +274,8 @@ public partial class TfService : ITfService
 				{
 					var successDeleteIdentity = _dboManager.Delete<TfDatasetIdentityDbo>(identity.Id);
 					if (!successDeleteIdentity)
-						throw new TfDboServiceException("Delete<TfDatasetIdentityDbo> failed during delete dataset process.");
+						throw new TfDboServiceException(
+							"Delete<TfDatasetIdentityDbo> failed during delete dataset process.");
 				}
 
 				var success = _dboManager.Delete<TfDatasetDbo>(id);
@@ -265,6 +284,12 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfDatasetDbo> failed.");
 
 				scope.Complete();
+
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfDatasetDeletedEvent(dataset));
+				});
+				task.WaitAndUnwrapException();
 			}
 		}
 		catch (Exception ex)
@@ -313,7 +338,14 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				return GetDataset(dataset.Id) ?? throw new Exception($"CopyDataset failed for id: {originalId}");
+				var result = GetDataset(dataset.Id) ?? throw new Exception($"CopyDataset failed for id: {originalId}");
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfDatasetCreatedEvent(result));
+				});
+				task.WaitAndUnwrapException();
+
+				return result;
 			}
 		}
 		catch (Exception ex)
@@ -400,12 +432,12 @@ public partial class TfService : ITfService
 			{
 				var item = new TfDatasetColumn
 				{
-					DataIdentity = schemaColumn.DataIdentity?.DataIdentity,
-					ColumnName = schemaColumn.DbName,
+					DataIdentity = schemaColumn.DataIdentity?.DataIdentity, ColumnName = schemaColumn.DbName,
 				};
 				if (schemaColumn.SharedColumn is not null)
 				{
-					item.ColumnName = $"{implementedIdentity.DataIdentity.DataIdentity}.{schemaColumn.SharedColumn.DbName}";
+					item.ColumnName =
+						$"{implementedIdentity.DataIdentity.DataIdentity}.{schemaColumn.SharedColumn.DbName}";
 					item.SourceName = implementedIdentity.DataIdentity.DataIdentity;
 					item.SourceColumnName = schemaColumn.SharedColumn.DbName;
 					item.SourceCode = null;
@@ -422,7 +454,6 @@ public partial class TfService : ITfService
 				}
 
 				result.Add(item);
-
 			}
 		}
 
@@ -461,7 +492,7 @@ public partial class TfService : ITfService
 			}
 		}
 		else if (column.SourceType == TfAuxDataSourceType.AuxDataProvider
-		|| column.SourceType == TfAuxDataSourceType.SharedColumn)
+		         || column.SourceType == TfAuxDataSourceType.SharedColumn)
 		{
 			if (String.IsNullOrWhiteSpace(column.DataIdentity))
 				throw new Exception("Column Data Identity is required");
@@ -489,6 +520,7 @@ public partial class TfService : ITfService
 				{
 					dataIdentity.Columns.Add(column.SourceColumnName);
 				}
+
 				UpdateDatasetIdentity(new TfDatasetIdentity
 				{
 					Id = dataIdentity.Id,
@@ -501,7 +533,7 @@ public partial class TfService : ITfService
 	}
 
 	public void UpdataDatasetColumns(
-		Guid datasetId, 
+		Guid datasetId,
 		List<TfDatasetColumn> newColumns)
 	{
 		//TODO RUMEN: check implementation and create unit test
@@ -532,11 +564,13 @@ public partial class TfService : ITfService
 						});
 				}
 			}
+
 			foreach (var identity in dataset.Identities)
 			{
 				foreach (var column in identity.Columns)
 				{
-					var newColumn = newColumns.FirstOrDefault(x => x.DataIdentity == identity.DataIdentity && x.SourceColumnName == column);
+					var newColumn = newColumns.FirstOrDefault(x =>
+						x.DataIdentity == identity.DataIdentity && x.SourceColumnName == column);
 					if (newColumn is null)
 					{
 						RemoveDatasetColumn(
@@ -546,7 +580,9 @@ public partial class TfService : ITfService
 								SourceColumnName = column,
 								ColumnName = $"{identity.DataIdentity}.{column}",
 								DataIdentity = identity.DataIdentity,
-								SourceType = column.StartsWith("dp_") ? TfAuxDataSourceType.AuxDataProvider : TfAuxDataSourceType.SharedColumn
+								SourceType = column.StartsWith("dp_")
+									? TfAuxDataSourceType.AuxDataProvider
+									: TfAuxDataSourceType.SharedColumn
 							});
 					}
 				}
@@ -581,6 +617,7 @@ public partial class TfService : ITfService
 					}
 				}
 			}
+
 			scope.Complete();
 		}
 	}
@@ -612,12 +649,13 @@ public partial class TfService : ITfService
 					Name = dataset.Name,
 					SortOrders = dataset.SortOrders,
 				};
-				submit.Columns = dataset.Columns.Where(x => x.ToLowerInvariant() != column!.ColumnName!.ToLowerInvariant()).ToList();
+				submit.Columns = dataset.Columns
+					.Where(x => x.ToLowerInvariant() != column!.ColumnName!.ToLowerInvariant()).ToList();
 				var updatedSpaceData = UpdateDataset(submit);
 			}
 		}
 		else if (column.SourceType == TfAuxDataSourceType.AuxDataProvider
-			|| column.SourceType == TfAuxDataSourceType.SharedColumn)
+		         || column.SourceType == TfAuxDataSourceType.SharedColumn)
 		{
 			if (String.IsNullOrWhiteSpace(column.DataIdentity))
 				throw new Exception("Column Data Identity is required");
@@ -635,6 +673,7 @@ public partial class TfService : ITfService
 				{
 					dataIdentity.Columns.Remove(column.SourceColumnName);
 				}
+
 				if (dataIdentity.Columns.Count > 0)
 				{
 					UpdateDatasetIdentity(new TfDatasetIdentity
@@ -651,7 +690,6 @@ public partial class TfService : ITfService
 				}
 			}
 		}
-
 	}
 
 	public void UpdateDatasetFilters(
@@ -685,12 +723,11 @@ public partial class TfService : ITfService
 	#region <--- validation --->
 
 	internal class TfDatasetValidator
-	: AbstractValidator<TfDataset>
+		: AbstractValidator<TfDataset>
 	{
 		public TfDatasetValidator(
 			ITfService tfService)
 		{
-
 			RuleSet("general", () =>
 			{
 				RuleFor(dataset => dataset.Id)
@@ -732,55 +769,57 @@ public partial class TfService : ITfService
 			RuleSet("create", () =>
 			{
 				RuleFor(dataset => dataset.Id)
-						.Must((dataset, id) => { return tfService.GetDataset(id) == null; })
-						.WithMessage("There is already existing dataset with specified identifier.");
+					.Must((dataset, id) => { return tfService.GetDataset(id) == null; })
+					.WithMessage("There is already existing dataset with specified identifier.");
 
 				RuleFor(dataset => dataset.Name)
-						.Must((dataset, name) =>
-						{
-							if (string.IsNullOrEmpty(name))
-								return true;
+					.Must((dataset, name) =>
+					{
+						if (string.IsNullOrEmpty(name))
+							return true;
 
-							var datasets = tfService.GetDatasets();
-							return !datasets.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
-						})
-						.WithMessage("There is already existing dataset with specified name.");
-
+						var datasets = tfService.GetDatasets();
+						return !datasets.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
+					})
+					.WithMessage("There is already existing dataset with specified name.");
 			});
 
 			RuleSet("update", () =>
 			{
 				RuleFor(dataset => dataset.Id)
-						.Must((dataset, id) =>
-						{
-							return tfService.GetDataset(id) != null;
-						})
-						.WithMessage("There is not existing dataset with specified identifier.");
+					.Must((dataset, id) =>
+					{
+						return tfService.GetDataset(id) != null;
+					})
+					.WithMessage("There is not existing dataset with specified identifier.");
 
 				RuleFor(dataset => dataset.Name)
-						.Must((dataset, name) =>
-						{
-							if (string.IsNullOrEmpty(name))
-								return true;
+					.Must((dataset, name) =>
+					{
+						if (string.IsNullOrEmpty(name))
+							return true;
 
-							var datasets = tfService.GetDatasets();
-							return !datasets.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim() && x.Id != dataset.Id);
-						})
-						.WithMessage("There is already existing dataset with specified name.");
+						var datasets = tfService.GetDatasets();
+						return !datasets.Any(x =>
+							x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim() && x.Id != dataset.Id);
+					})
+					.WithMessage("There is already existing dataset with specified name.");
 			});
 
 			RuleSet("delete", () =>
 			{
 			});
-
 		}
 
 		public ValidationResult ValidateCreate(
 			TfDataset? dataset)
 		{
 			if (dataset == null)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The dataset is null.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The dataset is null.")
+				});
 
 			return this.Validate(dataset, options =>
 			{
@@ -792,8 +831,11 @@ public partial class TfService : ITfService
 			TfDataset? dataset)
 		{
 			if (dataset == null)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The dataset is null.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The dataset is null.")
+				});
 
 			return this.Validate(dataset, options =>
 			{
@@ -805,8 +847,11 @@ public partial class TfService : ITfService
 			TfDataset? dataset)
 		{
 			if (dataset == null)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The dataset with specified identifier is not found.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The dataset with specified identifier is not found.")
+				});
 
 			return this.Validate(dataset, options =>
 			{
@@ -846,7 +891,6 @@ public partial class TfService : ITfService
 			Columns = columns ?? new(),
 			SortOrders = sortOrders ?? new()
 		};
-
 	}
 
 	private TfDatasetDbo? ConvertModelToDbo(

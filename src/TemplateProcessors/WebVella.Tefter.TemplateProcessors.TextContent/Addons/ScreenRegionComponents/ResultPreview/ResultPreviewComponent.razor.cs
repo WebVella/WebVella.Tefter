@@ -5,7 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.TextContent.Addons;
 public partial class ResultPreviewComponent : TfBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
 {
-	[Inject] public ITfService TfService { get; set; } = default!;
+	[Inject] public ITfService TfService { get; set; } = null!;
 	public const string ID = "b276ed6b-5125-4a05-a5ef-0e47b432920c";
 	public const string NAME = "Text Content Result Preview";
 	public const string DESCRIPTION = "";

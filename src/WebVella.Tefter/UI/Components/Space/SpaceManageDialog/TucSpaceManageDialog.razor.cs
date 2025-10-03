@@ -2,7 +2,7 @@
 public partial class TucSpaceManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpace?>
 {
 	[Parameter] public TfSpace? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
@@ -57,12 +57,12 @@ public partial class TucSpaceManageDialog : TfFormBaseComponent, IDialogContentC
 			var result = new TfSpace();
 			if (_isCreate)
 			{
-				result = TfUIService.CreateSpace(_form);
+				result = TfService.CreateSpace(_form);
 				ToastService.ShowSuccess(LOC("Space created successfully!"));
 			}
 			else
 			{
-				result = TfUIService.UpdateSpace(_form);
+				result = TfService.UpdateSpace(_form);
 				ToastService.ShowSuccess(LOC("Space updated successfully!"));
 			}
 

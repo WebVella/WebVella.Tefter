@@ -20,7 +20,7 @@ public partial class TalkSpaceViewSelectorAction : TfBaseComponent,
 	public TfSpaceViewSelectorActionScreenRegionContext RegionContext { get; set; }
 
 	[CascadingParameter(Name = "TucSpaceViewPageContent")]
-	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
+	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;
 
 	private IDialogReference _dialog;
 	private async Task _onClick()

@@ -6,58 +6,53 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 {
 	// Dependency Injection
 	[CascadingParameter(Name = "TucSpaceViewPageContent")]
-	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = default!;
-	[Parameter] public TfSpacePageAddonContext Context { get; set; } = default!;
-	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
-	[Parameter] public TfDataset SpaceData { get; set; } = default!;
+	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;
+	[Parameter] public TfSpacePageAddonContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
+	[Parameter] public TfDataset SpaceData { get; set; } = null!;
 	[Parameter] public TfSpaceViewPreset? SpaceViewPreset { get; set; } = null;
-	[Parameter] public TfDataTable Data { get; set; } = default!;
+	[Parameter] public TfDataTable Data { get; set; } = null!;
 	[Parameter] public EventCallback<TfDataTable> DataChanged { get; set; }
 	[Parameter] public bool SelectAllLoading { get; set; } = false;
 	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
 
-	private TfNavigationState _navState = default!;
+	private TfNavigationState _navState = null!;
 	private bool _hasViewPersonalization = false;
-
-	private Dictionary<string, object>? _settingsAttributes = new();
 
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.UserUpdated -= On_UserChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfEventProvider.UserUpdatedGlobalEvent -= On_UserChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_navState = Navigator.GetRouteState();
-		await _init();
-		_settingsAttributes!.Add("title",LOC("Manage Settings"));
+		_navState = TfAuthLayout.NavigationState;
+		await _init(_navState);
 
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.UserUpdated += On_UserChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfEventProvider.UserUpdatedGlobalEvent += On_UserChanged;
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init();
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
-	private async void On_UserChanged(object? caller, TfUser args)
+	private async void On_UserChanged(TfUserUpdatedEvent args)
 	{
 		if (Context is not null)
-			Context.CurrentUser = args;
-		await _init();
+			Context.CurrentUser = args.Payload;
+		await _init(TfAuthLayout.NavigationState);
 	}
-	private async Task _init()
+	private async Task _init(TfNavigationState navState)
 	{
-		var navState = TfAuthLayout.NavigationState;
-		if (navState is null) return;
 		_navState = navState;
 		try
 		{
-			var bookmarks = TfUIService.GetUserBookmarks(Context.CurrentUser.Id);
-			var saves = TfUIService.GetUserSaves(Context.CurrentUser.Id);
+			var bookmarks = TfService.GetBookmarksListForUser(Context.CurrentUser.Id);
+			var saves = TfService.GetSavesListForUser(Context.CurrentUser.Id);
 
 			_activeBookmark = bookmarks.FirstOrDefault(x => x.SpaceViewId == _navState.SpaceViewId);
 			_activeSavedUrl = saves.FirstOrDefault(x => x.Id == _navState.ActiveSaveId);
@@ -83,7 +78,7 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 		if (Data is null) return Task.CompletedTask;
 		try
 		{
-			var result = TfUIService.InsertRowInDataTable(Data);
+			var result = TfService.InsertRowInDataTable(Data);
 			TucSpaceViewPageContent.OnNewRow(result);
 			ToastService.ShowSuccess(LOC("Row added"));
 		}

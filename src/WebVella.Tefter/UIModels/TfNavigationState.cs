@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Models;
 public partial record TfNavigationState
 {
-	public string Uri { get; init; } = default!;
+	public string Uri { get; init; } = null!;
 	public Dictionary<int, string> NodesDict { get; init; } = new();
 	public Guid? SpaceId { get; init; }
 	public Guid? SpaceDataId { get; init; }
@@ -16,6 +16,7 @@ public partial record TfNavigationState
 	public Guid? SpaceViewPresetId { get; init; }
 	public TfTemplateResultType? TemplateResultType { get; init; }
 	public Guid? TemplateId { get; init; }
+	public string? ManageTab { get; init; }
 	public List<RouteDataNode> RouteNodes { get; init; } = new List<RouteDataNode>();
 
 	public int? Page { get; init; } = null;

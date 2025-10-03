@@ -2,86 +2,100 @@
 
 
 .tf-select-component {
-	width: 100%;
+  width: 100%;
 
-	.tf-card {
-		border: 1px solid var(--tf-stroke-input);
-		padding:5px;
-		border-radius:var(--tf-border-radius-sm);
-		&__content{
-			padding-top:0;
-		}
+  .tf-card {
+    border: 1px solid var(--tf-stroke-input);
+    padding: 5px;
+    border-radius: var(--tf-border-radius-sm);
 
-		&:hover {
-			border: 1px solid var(--tf-stroke-input-hover);
-		}
-	}
+    &__content {
+      padding-top: 0;
+    }
+  }
 
-	.tf-component {
-		display: flex;
-		width: 100%;
-	}
+  &.disabled .tf-card{
+    background: var(--tf-fill-color-base-1);
+    border: 1px solid var(--tf-stroke-base);
+  }
+  
+  &:not(.disabled):not(.readonly) .tf-card:hover {
+    border: 1px solid var(--tf-stroke-input-hover);
+  }
 
-	.tf-component-icon {
-		flex: 0 0 40px;
-		display: flex;
-		align-items: center;
-		justify-content: start;
+  &.readonly .tf-card{
+    border: 1px solid var(--tf-stroke-base);
+    &:hover{
+      background: var(--tf-fill-color-base-1);
+      cursor: no-drop;
+    }
+  }
 
-		svg {
-			width: 32px !important;
-		}
-	}
+  .tf-component {
+    display: flex;
+    width: 100%;
+  }
 
-	.tf-component-meta {
-		flex: 1 1 auto;
-	}
+  .tf-component-icon {
+    flex: 0 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
 
-	.tf-component-title {
-		font-size: 1.15em;
-	}
+    svg {
+      width: 32px !important;
+    }
+  }
 
-	.tf-component-description {
-		color: var(--neutral-base-color);
-	}
+  .tf-component-meta {
+    flex: 1 1 auto;
+  }
 
-	.tf-component-caret {
-		flex: 0 0 20px;
-		display: flex;
-		align-items: center;
-	}
+  .tf-component-title {
+    font-size: 1.15em;
+  }
 
-	.tf-component--small .tf-component-icon {
-		flex-basis: 24px;
-	}
+  .tf-component-description {
+    color: var(--neutral-base-color);
+  }
 
-	.tf-component--small .tf-component-icon svg {
-		width: 18px !important;
-	}
+  .tf-component-caret {
+    flex: 0 0 20px;
+    display: flex;
+    align-items: center;
+  }
 
-	.tf-component--small .tf-component-title {
-		font-size: 1em;
-	}
+  .tf-component--small .tf-component-icon {
+    flex-basis: 24px;
+  }
 
-	.tf-component--small .tf-component-description {
-		font-size: 0.85em;
-	}
+  .tf-component--small .tf-component-icon svg {
+    width: 18px !important;
+  }
 
-	fluent-menu-item {
-		padding-top: 2px;
-		padding-bottom: 2px;
-		padding-left: 1rem;
-		height: auto;
-		display: flex !important;
-	}
+  .tf-component--small .tf-component-title {
+    font-size: 1em;
+  }
 
-	fluent-menu-item::part(start) {
-		display: none;
-	}
+  .tf-component--small .tf-component-description {
+    font-size: 0.85em;
+  }
 
-	fluent-menu-item::part(content) {
-		flex: 1 1 auto;
-	}
+  fluent-menu-item {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 1rem;
+    height: auto;
+    display: flex !important;
+  }
+
+  fluent-menu-item::part(start) {
+    display: none;
+  }
+
+  fluent-menu-item::part(content) {
+    flex: 1 1 auto;
+  }
 }
 
 

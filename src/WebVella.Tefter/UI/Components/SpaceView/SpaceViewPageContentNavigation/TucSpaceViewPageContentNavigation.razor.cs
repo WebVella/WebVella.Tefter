@@ -1,44 +1,65 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucSpaceViewPageContentNavigation : TfBaseComponent
 {
 	// Dependency Injection
-	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
+	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
+	[Parameter] public TfSpacePage SpacePage { get; set; } = null!;
 
 	private List<TfMenuItem> _menu = new();
-	public TfNavigationState _navState = default!;
+	private TfNavigationState? _navState = null!;
+	private Guid _initedViewId = Guid.Empty;
+
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init();
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	protected override async Task OnParametersSetAsync()
 	{
-		if (UriInitialized != args.Uri)
-			await _init();
+		if (_initedViewId != SpaceView.Id)
+			await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async Task _init()
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		_navState = TfAuthLayout.NavigationState;
+		await InvokeAsync(async () =>
+		{
+			if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			{
+				await _init(args.Payload);
+				await InvokeAsync(StateHasChanged);
+			}
+		});
+	}
 
+	private async Task _init(TfNavigationState navState)
+	{
+		_navState = navState;
 		try
 		{
 			_menu = new();
 			Guid? currentPresetId = Navigator.GetGuidFromQuery(TfConstants.PresetIdQueryName);
+			var mainIcon = String.IsNullOrWhiteSpace(SpaceView.Settings.MainTabFluentIcon)
+				? TfConstants.GetIcon(SpacePage.FluentIconName)
+				: TfConstants.GetIcon(SpaceView.Settings.MainTabFluentIcon);
 			if (SpaceView.Presets.Count > 0)
 			{
 				_menu.Add(new TfMenuItem
 				{
 					Id = "tf-main",
-					Text = "Main",
+					Text = String.IsNullOrWhiteSpace(SpaceView.Settings.MainTabLabel) ?  "Main" : SpaceView.Settings.MainTabLabel,
 					Url = NavigatorExt.AddQueryValueToUri(Navigator.Uri, TfConstants.PresetIdQueryName, null),
-					Selected = currentPresetId is null
+					Selected = currentPresetId is null,
+					IconCollapsed = mainIcon,
+					IconExpanded = mainIcon
 				});
 
 				foreach (var prItem in SpaceView.Presets)
@@ -56,7 +77,7 @@ public partial class TucSpaceViewPageContentNavigation : TfBaseComponent
 		finally
 		{
 			UriInitialized = _navState.Uri;
-			await InvokeAsync(StateHasChanged);
+			_initedViewId = SpaceView.Id;
 		}
 	}
 
@@ -85,7 +106,7 @@ public partial class TucSpaceViewPageContentNavigation : TfBaseComponent
 	private void _setSelection(TfMenuItem menuItem, Guid? currrentPresetId)
 	{
 		menuItem.Selected = currrentPresetId is not null
-			&& menuItem.IdTree.Contains(currrentPresetId.Value.ToString());
+		                    && menuItem.IdTree.Contains(currrentPresetId.Value.ToString());
 
 		foreach (var child in menuItem.Items)
 		{

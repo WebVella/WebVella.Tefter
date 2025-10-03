@@ -4,14 +4,16 @@ namespace WebVella.Tefter.Models;
 
 public abstract class TucBaseSpacePageComponent : ComponentBase, ITfSpacePageAddon
 {
-	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } =  default!;
-	[Inject] protected ITfUIService TfUIService { get; set; } = default!;
-	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = default!;
+	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } =  null!;
+	[Inject] protected ITfService TfService { get; set; } = null!;
+	[Inject] protected ITfMetaService TfMetaService { get; set; } = null!;
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = null!;
 	public virtual Guid AddonId { get; init; } = Guid.NewGuid();
-	public virtual string AddonName { get; init; } = default!;
-	public virtual string AddonDescription { get; init; } =  default!;
-	public virtual string AddonFluentIconName { get; init; } =  default!;
-	public virtual TfSpacePageAddonContext Context { get; set; } =  default!;
+	public virtual string AddonName { get; init; } = null!;
+	public virtual string AddonDescription { get; init; } =  null!;
+	public virtual string AddonFluentIconName { get; init; } =  null!;
+	public virtual TfSpacePageAddonContext Context { get; set; } =  null!;
 	public virtual string GetOptions() => "{}";
 	public virtual List<ValidationError> ValidateOptions() => new List<ValidationError>();
 	public virtual List<ValidationError> ValidationErrors { get; set; } = new();
@@ -24,7 +26,7 @@ public abstract class TucBaseSpacePageComponent : ComponentBase, ITfSpacePageAdd
 	public virtual Task<string> OnPageCreated(IServiceProvider serviceProvider, TfSpacePageAddonContext context) => Task.FromResult(context.ComponentOptionsJson);
 	public virtual Task<string> OnPageUpdated(IServiceProvider serviceProvider, TfSpacePageAddonContext context) => Task.FromResult(context.ComponentOptionsJson);
 	public virtual Task OnPageDeleted(IServiceProvider serviceProvider, TfSpacePageAddonContext context) => Task.CompletedTask;
-	
+	public virtual List<TfScreenRegionTab> GetManagementTabs() => new();
 
 	#region << Private properties >>
 	protected IStringLocalizer LC;

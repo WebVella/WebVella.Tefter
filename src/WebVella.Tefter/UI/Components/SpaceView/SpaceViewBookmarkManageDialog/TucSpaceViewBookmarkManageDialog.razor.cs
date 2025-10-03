@@ -2,7 +2,7 @@
 public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDialogContentComponent<TfBookmark?>
 {
 	[Parameter] public TfBookmark? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
@@ -45,12 +45,12 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 			if (_form.Id == Guid.Empty)
 			{
 				_form.Id = Guid.NewGuid();
-				TfUIService.CreateBookmark(_form);
+				TfService.CreateBookmark(_form);
 				ToastService.ShowSuccess(LOC($"{(_isBookmark ? "Bookmark" : "URL")} saved"));
 			}
 			else
 			{
-				TfUIService.UpdateBookmark(_form);
+				TfService.UpdateBookmark(_form);
 				ToastService.ShowSuccess(LOC($"{(_isBookmark ? "Bookmark" : "URL")} updated"));
 			}
 

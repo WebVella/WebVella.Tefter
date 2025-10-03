@@ -3,8 +3,8 @@ public partial class TucSpaceViewPropertiesSelector : TfBaseComponent
 {
 	//[Parameter]
 	//public EventCallback<GridPropertiesChangedEventArgs> ColumnChanged { get; set; }
-	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
-	[Parameter] public TfDataTable Data { get; set; } = default!;
+	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
+	[Parameter] public TfDataTable Data { get; set; } = null!;
 	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
 
 	private bool _open = false;

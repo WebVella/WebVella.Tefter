@@ -23,7 +23,7 @@ public partial interface ITfService
 		List<Guid> tfIds);
 
 
-	public TfDataTable QuerySpaceData(
+	public TfDataTable QueryDataset(
 		Guid datasetId,
 		List<TfFilterBase>? userFilters = null,
 		List<TfSort>? userSorts = null,
@@ -35,10 +35,20 @@ public partial interface ITfService
 		bool noRows = false,
 		bool returnOnlyTfIds = false);
 
-	public TfDataTable QuerySpaceData(
+	public TfDataTable QueryDataset(
 		Guid datasetId,
 		List<Guid> tfIds);
 
+	public List<Guid> QueryDatasetIdList(
+		Guid datasetId,
+		List<TfFilterBase>? userFilters = null,
+		List<TfSort>? userSorts = null,
+		List<TfFilterBase>? presetFilters = null,
+		List<TfSort>? presetSorts = null,
+		string? search = null
+	);
+	TfDataTable InsertRowInDataTable(TfDataTable dt);
+	
 	public TfDataTable SaveDataTable(
 		TfDataTable table);
 
@@ -222,13 +232,13 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfDataTable QuerySpaceData(
-		Guid spaceDataId,
+	public TfDataTable QueryDataset(
+		Guid datasetId,
 		List<Guid> tfIds)
 	{
 		try
 		{
-			var spaceData = GetDataset(spaceDataId);
+			var spaceData = GetDataset(datasetId);
 			if (spaceData is null)
 			{
 				throw new TfException("Found no existing space data for specified id.");
@@ -267,7 +277,7 @@ public partial class TfService : ITfService
 					Page = null,
 					PageSize = null,
 					DataProviderId = provider.Id,
-					SpaceDataId = spaceDataId,
+					SpaceDataId = datasetId,
 				},
 				dataTable
 			);
@@ -278,8 +288,8 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfDataTable QuerySpaceData(
-		Guid spaceDataId,
+	public TfDataTable QueryDataset(
+		Guid datasetId,
 		List<TfFilterBase> userFilters = null,
 		List<TfSort> userSorts = null,
 		List<TfFilterBase> presetFilters = null,
@@ -292,7 +302,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			var spaceData = GetDataset(spaceDataId);
+			var spaceData = GetDataset(datasetId);
 			if (spaceData is null)
 			{
 				throw new TfException("Found no existing space data for specified id.");
@@ -550,6 +560,34 @@ public partial class TfService : ITfService
 		}
 	}
 
+	public List<Guid> QueryDatasetIdList(
+		Guid datasetId,
+		List<TfFilterBase>? userFilters = null,
+		List<TfSort>? userSorts = null,
+		List<TfFilterBase>? presetFilters = null,
+		List<TfSort>? presetSorts = null,
+		string? search = null)
+	{
+		var result = new List<Guid>();
+		var dt = QueryDataset(
+			datasetId: datasetId,
+			userFilters: userFilters,
+			userSorts: userSorts,
+			presetFilters: presetFilters,
+			presetSorts: presetSorts,
+			search: search,
+			page: null,
+			pageSize: null,
+			noRows: false,
+			returnOnlyTfIds: true);
+
+		for (int i = 0; i < dt.Rows.Count; i++)
+		{
+			result.Add((Guid)dt.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME]);
+		}
+		return result;
+	}	
+	
 	public TfDataTable SaveDataTable(
 		TfDataTable table)
 	{
@@ -592,7 +630,7 @@ public partial class TfService : ITfService
 						}
 						else
 						{
-							var dt = QuerySpaceData(
+							var dt = QueryDataset(
 								table.QueryInfo.SpaceDataId.Value,
 								new List<Guid> { (Guid)row["tf_id"] });
 
@@ -619,7 +657,7 @@ public partial class TfService : ITfService
 				if (table.QueryInfo.SpaceDataId is null)
 					return QueryDataProvider(provider, rowIds);
 				else
-					return QuerySpaceData(table.QueryInfo.SpaceDataId.Value, rowIds);
+					return QueryDataset(table.QueryInfo.SpaceDataId.Value, rowIds);
 			}
 		}
 		catch (Exception ex)
@@ -627,6 +665,13 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 	}
+	public TfDataTable InsertRowInDataTable(TfDataTable dt)
+	{
+		var newDt = dt.NewTable();
+		var newRow = newDt.NewRow();
+		newDt.Rows.Add(newRow);
+		return SaveDataTable(newDt);
+	}	
 
 	#region <--- insert / update row --->
 

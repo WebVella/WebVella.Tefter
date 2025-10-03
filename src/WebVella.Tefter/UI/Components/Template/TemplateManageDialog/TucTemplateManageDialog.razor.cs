@@ -3,16 +3,16 @@ namespace WebVella.Tefter.UI.Components;
 public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogContentComponent<TfTemplate?>
 {
 	[Parameter] public TfTemplate? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 	private bool _isCreate = false;
 	private TfManageTemplateModel _form = new();
-	private ReadOnlyCollection<ITfTemplateProcessorAddon> _processors = default!;
+	private ReadOnlyCollection<ITfTemplateProcessorAddon> _processors = null!;
 	private ITfTemplateProcessorAddon? _selectedProcessor = null;
 
 	private List<TfDatasetAsOption> _spaceDataAll = new();
@@ -27,7 +27,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 		_title = _isCreate ? LOC("Create template") : LOC("Manage template");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")!.WithColor(Color.Neutral) : TfConstants.GetIcon("Save")!.WithColor(Color.Neutral);
-		_processors = TfUIService.GetProcessors();
+		_processors = TfService.GetTemplateProcessors();
 		_form = new TfManageTemplateModel
 		{
 			Id = Content.Id,
@@ -66,7 +66,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 		{
 			_form.FluentIconName = _selectedProcessor.ResultType.GetFluentIcon();
 		}
-		_spaceDataAll = TfUIService.GetSpaceDataOptionsForTemplate();
+		_spaceDataAll = TfService.GetSpaceDataOptionsForTemplate();
 		_recalcSpaceDataOptions();
 		base.InitForm(_form);
 	}
@@ -91,15 +91,15 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 			if (_isCreate)
 				submit = submit with { Id = Guid.NewGuid() };
 
-			TfTemplate template = default!;
+			TfTemplate template = null!;
 			if (_isCreate)
 			{
-				template = TfUIService.CreateTemplate(submit);
+				template = TfService.CreateTemplate(submit);
 				ToastService.ShowSuccess(LOC("Template successfully created"));
 			}
 			else
 			{
-				template = TfUIService.UpdateTemplate(submit);
+				template = TfService.UpdateTemplate(submit);
 				ToastService.ShowSuccess(LOC("Template successfully updated"));
 			}
 

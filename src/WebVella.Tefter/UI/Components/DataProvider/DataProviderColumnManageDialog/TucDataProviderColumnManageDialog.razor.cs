@@ -3,7 +3,7 @@
 public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProviderColumn?>
 {
 	[Parameter] public TfDataProviderColumn? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private bool _isCreate = false;
 	private bool _isBusy = true;
@@ -12,7 +12,7 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 	private string _title = "";
 	private string _btnText = "";
 	private bool _isConnected = false;
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 	private TfDataProvider _provider = new();
 	private TfUpsertDataProviderColumn _form = new();
 	private Dictionary<TfDatabaseColumnType, List<string>> _providerColumnTypeToSourceTypes = new();
@@ -27,7 +27,7 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 		if (Content.DataProviderId == Guid.Empty) throw new Exception("DataProvider not provided");
 
 		//Init provider
-		_provider = TfUIService.GetDataProvider(Content.DataProviderId);
+		_provider = TfService.GetDataProvider(Content.DataProviderId);
 		if (_provider is null || _provider.SupportedSourceDataTypes is null
 		|| !_provider.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
 
@@ -37,7 +37,7 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 			_isCreate = true;
 		}
 
-		_providerColumnTypeOptions = TfUIService.GetDatabaseColumnTypeInfosList().ToList();
+		_providerColumnTypeOptions = WebVella.Tefter.Services.TfService.GetDatabaseColumnTypeInfosList().ToList();
 		_providerColumnTypeToSourceTypes = new();
 		foreach (var sourceType in _provider.ProviderType.GetSupportedSourceDataTypes())
 		{
@@ -161,12 +161,12 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 			submit.FixPrefix(_provider.ColumnPrefix);
 			if (_isCreate)
 			{
-				_provider = TfUIService.CreateDataProviderColumn(submit);
+				_provider = TfService.CreateDataProviderColumn(submit);
 				ToastService.ShowSuccess(LOC("Data provider column was created successfully"));
 			}
 			else
 			{
-				_provider = TfUIService.UpdateDataProviderColumn(submit);
+				_provider = TfService.UpdateDataProviderColumn(submit);
 				ToastService.ShowSuccess(LOC("Data provider column was updated successfully"));
 			}
 

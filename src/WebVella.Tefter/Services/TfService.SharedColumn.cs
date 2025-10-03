@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Services;
+﻿using Nito.AsyncEx.Synchronous;
+
+namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -91,7 +93,15 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Insert<TfSharedColumn> failed");
 
 				scope.Complete();
-				return GetSharedColumn(column.Id);
+				var result = GetSharedColumn(column.Id);
+				
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfSharedColumnCreatedEvent(result));
+				});
+				task.WaitAndUnwrapException();
+
+				return result;
 			}
 		}
 		catch (Exception ex)
@@ -121,7 +131,15 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Update<TfSharedColumn> failed");
 
 				scope.Complete();
-				return GetSharedColumn(column.Id);
+				var result = GetSharedColumn(column.Id);
+				
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfSharedColumnUpdatedEvent(result));
+				});
+				task.WaitAndUnwrapException();
+
+				return result;
 			}
 		}
 		catch (Exception ex)
@@ -152,6 +170,14 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfSharedColumn> failed");
 
 				scope.Complete();
+				
+				var result = GetSharedColumn(column.Id);
+				
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfSharedColumnDeletedEvent(column));
+				});
+				task.WaitAndUnwrapException();
 			}
 		}
 		catch (Exception ex)

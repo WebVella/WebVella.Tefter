@@ -6,33 +6,30 @@ public partial class TucSpaceViewDetailsAsideToolbar : TfBaseComponent, IDisposa
 	private TfNavigationState _navState = new();
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			_navState = TfAuthLayout.NavigationState;
-		else
-			_navState = navState;
+		_navState = navState;
 
 		try
 		{
 			_backUrl = "#";
 			if (_navState.SpaceId is null || _navState.SpaceViewId is null) return;
 
-			var spacePage = TfUIService.GetSpacePageBySpaceViewId(_navState.SpaceViewId.Value);
+			var spacePage = TfService.GetSpacePageBySpaceViewId(_navState.SpaceViewId.Value);
 			if (spacePage is not null)
 			{
 				_backUrl = String.Format(TfConstants.SpacePagePageUrl, spacePage.SpaceId, spacePage.Id);

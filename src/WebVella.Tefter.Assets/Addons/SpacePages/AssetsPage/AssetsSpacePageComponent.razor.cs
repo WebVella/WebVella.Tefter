@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using WebVella.Tefter.Exceptions;
-using WebVella.Tefter.UIServices;
 
 namespace WebVella.Tefter.Assets.Addons;
 public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisposable
@@ -13,9 +12,9 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 
 	#region << Injects >>
 	[Inject] protected IAssetsService AssetsService { get; set; }
-	[Inject] protected IJSRuntime JSRuntime { get; set; } = default!;
-	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-    [Inject] protected NavigationManager Navigator { get; set; } = default!;
+	[Inject] protected IJSRuntime JSRuntime { get; set; } = null!;
+	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
+    [Inject] protected NavigationManager Navigator { get; set; } = null!;
 	#endregion
 
 	#region << Base Overrides >>
@@ -71,13 +70,13 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 	#region << Render Lifecycle >>
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		_currentUser = TfAuthLayout.CurrentUser;
-		await _init();
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 		_isLoaded = true;
 	}
 
@@ -96,15 +95,13 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 	#endregion
 
 	#region << Private methods >>
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (_uriInitialized != args.Uri)
-			await _init(navState: args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && _uriInitialized != args.Payload.Uri)
+			await _init(navState: args.Payload);
 	}
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_options = null;

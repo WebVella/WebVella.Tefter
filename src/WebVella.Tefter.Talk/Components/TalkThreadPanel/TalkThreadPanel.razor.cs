@@ -5,7 +5,7 @@ namespace WebVella.Tefter.Talk.Components;
 
 public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentComponent<TalkThreadPanelContext>
 {
-	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 	[Inject] public ITalkService TalkService { get; set; }
 	[Parameter] public TalkThreadPanelContext Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }

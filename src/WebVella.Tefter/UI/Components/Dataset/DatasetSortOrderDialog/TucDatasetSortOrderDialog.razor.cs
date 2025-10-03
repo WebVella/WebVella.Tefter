@@ -3,22 +3,22 @@
 public partial class TucDatasetSortOrderDialog : TfBaseComponent, IDialogContentComponent<TfDataset?>
 {
 	[Parameter] public TfDataset? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 
 	private TfDataset _dataset = new();
-	private TfDataProvider _provider = default!;
+	private TfDataProvider _provider = null!;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.DataProviderId == Guid.Empty) throw new Exception("DataProviderId is required");
 
-		_provider = TfUIService.GetDataProvider(Content.DataProviderId);
+		_provider = TfService.GetDataProvider(Content.DataProviderId);
 		if (_provider is null) throw new Exception("DataProviderId not found");
 
 		_title = LOC("Manage primary sort order");
@@ -28,12 +28,6 @@ public partial class TucDatasetSortOrderDialog : TfBaseComponent, IDialogContent
 
 	}
 
-	private void _onSortChanged(List<TfSort> sorts)
-	{
-		_dataset.SortOrders = sorts;
-	}
-
-
 	private async Task _save()
 	{
 		if (_isSubmitting) return;
@@ -42,7 +36,7 @@ public partial class TucDatasetSortOrderDialog : TfBaseComponent, IDialogContent
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			TfUIService.UpdateDatasetSorts(_dataset.Id, _dataset.SortOrders);
+			TfService.UpdateDatasetSorts(_dataset.Id, _dataset.SortOrders);
 			await Dialog.CloseAsync(_dataset);
 		}
 		catch (Exception ex)

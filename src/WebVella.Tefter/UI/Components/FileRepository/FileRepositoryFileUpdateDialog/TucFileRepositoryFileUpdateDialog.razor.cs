@@ -2,7 +2,7 @@
 public partial class TucFileRepositoryFileUpdateDialog : TfFormBaseComponent, IDialogContentComponent<TfRepositoryFile?>
 {
 	[Parameter] public TfRepositoryFile? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private bool _isSubmitting = false;
 
@@ -10,7 +10,7 @@ public partial class TucFileRepositoryFileUpdateDialog : TfFormBaseComponent, ID
 	private FluentInputFileEventArgs? _upload = null;
 	private string _uploadId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 
-	FluentInputFile fileUploader = default!;
+	FluentInputFile fileUploader = null!;
 	int progressPercent = 0;
 	List<FluentInputFileEventArgs> Files = new();
 
@@ -67,7 +67,7 @@ public partial class TucFileRepositoryFileUpdateDialog : TfFormBaseComponent, ID
 			{
 				Id = _form.Id
 			};
-			var item = TfUIService.UpdateRepositoryFile(submit);
+			var item = TfService.UpdateRepositoryFile(submit);
 			ToastService.ShowSuccess("File successfully updated");
 			await Dialog.CloseAsync(item);
 		}

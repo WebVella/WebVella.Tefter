@@ -2,7 +2,7 @@
 public partial class TucDataProviderSyncManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProvider?>
 {
 	[Parameter] public TfDataProvider? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
@@ -44,7 +44,8 @@ public partial class TucDataProviderSyncManageDialog : TfFormBaseComponent, IDia
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var provider = TfUIService.UpdateDataProviderSunchronization(_form.Id,_form.SynchScheduleMinutes,_form.SynchScheduleEnabled);
+			TfService.UpdateDataProviderSunchronization(_form.Id,_form.SynchScheduleMinutes,_form.SynchScheduleEnabled);
+			var provider = TfService.GetDataProvider(_form.Id);
 			ToastService.ShowSuccess(LOC("Provider synchronization is updated"));
 			await Dialog.CloseAsync(provider);
 		}

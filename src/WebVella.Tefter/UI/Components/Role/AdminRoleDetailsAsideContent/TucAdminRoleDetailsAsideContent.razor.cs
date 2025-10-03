@@ -7,51 +7,37 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfUIService.RoleCreated -= On_RoleCreated;
-		TfUIService.RoleUpdated -= On_RoleUpdated;
-		TfUIService.RoleDeleted -= On_RoleDeleted;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.RoleCreatedEvent -= On_RoleChanged;
+		TfEventProvider.RoleUpdatedEvent -= On_RoleChanged;
+		TfEventProvider.RoleDeletedEvent -= On_RoleChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
-		TfUIService.RoleCreated += On_RoleCreated;
-		TfUIService.RoleUpdated += On_RoleUpdated;
-		TfUIService.RoleDeleted += On_RoleDeleted;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.RoleCreatedEvent += On_RoleChanged;
+		TfEventProvider.RoleUpdatedEvent += On_RoleChanged;
+		TfEventProvider.RoleDeletedEvent += On_RoleChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_RoleCreated(object? caller, TfRole user)
+	private async void On_RoleChanged(object args)
 	{
-		await _init();
+		await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async void On_RoleUpdated(object? caller, TfRole user)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		await _init();
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
-	private async void On_RoleDeleted(object? caller, TfRole user)
+	private async Task _init(TfNavigationState navState)
 	{
-		await _init();
-	}
-
-
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
-	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
-	}
-
-	private async Task _init(TfNavigationState? navState = null)
-	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
-
 		try
 		{
 			_search = navState.SearchAside;
-			var roles = TfUIService.GetRoles(_search).ToList();
+			var roles = TfService.GetRoles(_search).ToList();
 
 			_items = new();
 			foreach (var role in roles)

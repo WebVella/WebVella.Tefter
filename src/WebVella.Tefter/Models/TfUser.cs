@@ -9,14 +9,14 @@ namespace WebVella.Tefter.Models;
 public class TfUser
 {
 	public Guid Id { get; init; }
-	public string Email { get; init; } = default!;
-	public string FirstName { get; init; } = default!;
-	public string LastName { get; init; } = default!;
-	internal string Password { get; init; } = default!;
+	public string Email { get; init; } = null!;
+	public string FirstName { get; init; } = null!;
+	public string LastName { get; init; } = null!;
+	internal string Password { get; init; } = null!;
 	public bool Enabled { get; init; }
 	public DateTime CreatedOn { get; init; }
 	public TfUserSettings Settings { get; init; } = new();
-	public ReadOnlyCollection<TfRole> Roles { get; init; } = default!;
+	public ReadOnlyCollection<TfRole> Roles { get; init; } = null!;
 
 	public string Names
 	{

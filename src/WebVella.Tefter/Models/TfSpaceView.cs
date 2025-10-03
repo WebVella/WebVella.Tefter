@@ -4,14 +4,14 @@ public class TfSpaceView
 {
 	public Guid Id { get; set; }
 	public Guid DatasetId { get; set; }
-	public string SpaceDataName { get; set; } = default!;
+	public string SpaceDataName { get; set; } = null!;
 
 	[Obsolete("Will be removed")]
 	public Guid SpaceId { get; set; }
 
 	[Obsolete("Will be removed")]
 	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
-	public string Name { get; set; } = default!;
+	public string Name { get; set; } = null!;
 	[Obsolete("Will be removed")]
 	public short Position { get; set; }
 	public string SettingsJson { get; set; } = "{}";
@@ -65,11 +65,11 @@ public class TfSpaceViewDbo
 }
 
 
-public class TfCreateSpaceViewExtended
+public class TfSpaceViewCreateModel
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; }
-	public Guid? SpaceDataId { get; set; } = null;
+	public Guid? DatasetId { get; set; } = null;
 	public List<TfSpaceViewPreset> Presets { get; set; } = new();
 	public TfSpaceViewSettings Settings { get; set; } = new TfSpaceViewSettings();
 }

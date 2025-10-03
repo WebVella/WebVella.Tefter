@@ -1,8 +1,4 @@
-﻿
-
-using WebVella.Tefter.UIServices;
-
-namespace WebVella.Tefter.Assets.Components;
+﻿namespace WebVella.Tefter.Assets.Components;
 public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 {
 	[Inject] public IAssetsService AssetsService { get; set; }
@@ -11,7 +7,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 	[Parameter] public string Style { get; set; } = "";
 	[Parameter] public RenderFragment HeaderActions { get; set; }
-	[Inject] protected NavigationManager Navigator { get; set; } = default!;
+	[Inject] protected NavigationManager Navigator { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private bool _isLoading = true;
@@ -29,18 +25,18 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		AssetsService.AssetCreated -= On_AssetChanged;
 		AssetsService.AssetUpdated -= On_AssetChanged;
 		AssetsService.AssetDeleted -= On_AssetChanged;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init();
+		await _init(TfAuthLayout.NavigationState);
 		_isLoading = false;
 		AssetsService.AssetCreated += On_AssetChanged;
 		AssetsService.AssetUpdated += On_AssetChanged;
 		AssetsService.AssetDeleted += On_AssetChanged;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -60,24 +56,22 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		await base.OnParametersSetAsync();
 		if (_folderId == Folder?.Id && _dataIdentityValue == DataIdentityValue)
 			return;
-		await _init();
+		await _init(TfAuthLayout.NavigationState);
 		await InvokeAsync(StateHasChanged);
 
 	}
 
 	private async void On_AssetChanged(object? caller, Asset args)
 	{
-		await _init();
+		await _init(TfAuthLayout.NavigationState);
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(navState: args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(navState: args.Payload);
 	}
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_items = new();

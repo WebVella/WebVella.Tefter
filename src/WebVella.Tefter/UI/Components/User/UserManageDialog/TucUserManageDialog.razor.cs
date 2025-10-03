@@ -2,13 +2,13 @@
 public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentComponent<TfUser?>
 {
 	[Parameter] public TfUser? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 	private bool _isCreate = false;
 	private TfUserManageForm _form = new();
 
@@ -75,12 +75,12 @@ public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentCo
 			
 			if (_isCreate)
 			{
-				result = await TfUIService.CreateUserWithFormAsync(_form);
+				result = await TfService.CreateUserWithFormAsync(_form);
 				ToastService.ShowSuccess(LOC("User account was successfully created!"));
 			}
 			else
 			{
-				result = await TfUIService.UpdateUserWithFormAsync(_form);
+				result = await TfService.UpdateUserWithFormAsync(_form);
 				ToastService.ShowSuccess(LOC("User account was successfully updated!"));
 			}
 			await Dialog.CloseAsync(result);

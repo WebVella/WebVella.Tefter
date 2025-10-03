@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.UI.Addons.RecipeSteps;
 public partial class TfCreateRoleRecipeStepForm : TfRecipeStepFormBase
 {
-	[Parameter] public TfCreateRoleRecipeStep Addon { get; set; } = default!;
-	private TfCreateRoleRecipeStepData _form = default!;
+	[Parameter] public TfCreateRoleRecipeStep Addon { get; set; } = null!;
+	private TfCreateRoleRecipeStepData _form = null!;
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();

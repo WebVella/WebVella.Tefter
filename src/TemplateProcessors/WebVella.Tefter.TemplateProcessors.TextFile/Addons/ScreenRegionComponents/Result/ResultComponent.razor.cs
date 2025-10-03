@@ -3,7 +3,7 @@
 public partial class ResultComponent : TfBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {
-	[Inject] public ITfService TfService { get; set; } = default!;
+	[Inject] public ITfService TfService { get; set; } = null!;
 	public const string ID = "e74d6c12-7d1d-4723-be9b-2e1bd1d982e1";
 	public const string NAME = "Text File Template Result";
 	public const string DESCRIPTION = "";

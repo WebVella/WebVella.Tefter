@@ -4,19 +4,19 @@ namespace WebVella.Tefter.UI.Components;
 public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSharedColumn?>
 {
 	[Parameter] public TfSharedColumn? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 
 	private bool _isCreate = false;
 
 	private TfSharedColumn _form = new();
 	private List<string> _allDataIdentities = new();
-	private ReadOnlyCollection<DatabaseColumnTypeInfo> _columnTypeOptions = default!;
-	private DatabaseColumnTypeInfo _selectedColumnType = default!;
+	private ReadOnlyCollection<DatabaseColumnTypeInfo> _columnTypeOptions = null!;
+	private DatabaseColumnTypeInfo _selectedColumnType = null!;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -25,8 +25,8 @@ public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogC
 		_title = _isCreate ? LOC("Create shared column") : LOC("Manage shared column");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
-		_allDataIdentities = TfUIService.GetDataIdentities().Select(x=> x.DataIdentity).ToList();
-		_columnTypeOptions = TfUIService.GetDatabaseColumnTypeInfosList();
+		_allDataIdentities = TfService.GetDataIdentities().Select(x=> x.DataIdentity).ToList();
+		_columnTypeOptions = WebVella.Tefter.Services.TfService.GetDatabaseColumnTypeInfosList();
 		if (!_isCreate)
 		{
 			var dbName = Content.DbName;
@@ -75,12 +75,12 @@ public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogC
 			var submit = _form with { DbName = TfConstants.TF_SHARED_COLUMN_PREFIX + _form.DbName };
 			if (_isCreate)
 			{
-				sharedColumn = TfUIService.CreateSharedColumn(submit);
+				sharedColumn = TfService.CreateSharedColumn(submit);
 				ToastService.ShowSuccess(LOC("Shared column successfully created"));
 			}
 			else
 			{
-				sharedColumn = TfUIService.UpdateSharedColumn(submit);
+				sharedColumn = TfService.UpdateSharedColumn(submit);
 				ToastService.ShowSuccess(LOC("Shared column successfully updated"));
 			}
 			await Dialog.CloseAsync(sharedColumn);

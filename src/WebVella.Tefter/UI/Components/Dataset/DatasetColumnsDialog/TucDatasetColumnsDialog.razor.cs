@@ -3,15 +3,15 @@
 public partial class TucDatasetColumnsDialog : TfBaseComponent, IDialogContentComponent<TfDataset?>
 {
 	[Parameter] public TfDataset? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 
 	private TfDataset _dataset = new();
-	private TfDataProvider _provider = default!;
+	private TfDataProvider _provider = null!;
 	private List<TfDatasetColumn> _items = new();
 	List<TfDatasetColumn> _allOptions = new();
 
@@ -21,7 +21,7 @@ public partial class TucDatasetColumnsDialog : TfBaseComponent, IDialogContentCo
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.DataProviderId == Guid.Empty) throw new Exception("DataProviderId is required");
 
-		_provider = TfUIService.GetDataProvider(Content.DataProviderId);
+		_provider = TfService.GetDataProvider(Content.DataProviderId);
 		if (_provider is null) throw new Exception("DataProviderId not found");
 
 		_title = LOC("Manage columns");
@@ -30,7 +30,7 @@ public partial class TucDatasetColumnsDialog : TfBaseComponent, IDialogContentCo
 		_dataset = Content with { Id = Content.Id };
 
 		_items = new List<TfDatasetColumn>();
-		_allOptions = TfUIService.GetDatasetColumnOptions(_dataset.Id);
+		_allOptions = TfService.GetDatasetColumnOptions(_dataset.Id);
 		foreach (var column in _dataset.Columns)
 		{
 			var option = _allOptions.FirstOrDefault(x => x.ColumnName == column);
@@ -64,7 +64,7 @@ public partial class TucDatasetColumnsDialog : TfBaseComponent, IDialogContentCo
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			TfUIService.UpdateDatasetColumns(_dataset.Id, _items);
+			TfService.UpdataDatasetColumns(_dataset.Id, _items);
 			await Dialog.CloseAsync(_dataset);
 		}
 		catch (Exception ex)

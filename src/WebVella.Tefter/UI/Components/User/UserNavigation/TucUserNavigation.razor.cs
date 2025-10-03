@@ -11,28 +11,21 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.CurrentUserChanged -= CurrentUser_Changed;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		KeyCodeService.UnregisterListener(HandleKeyDownAsync);
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
-		await initAdmin(null);
+		await initAdmin(TfAuthLayout.NavigationState);
 		KeyCodeService.RegisterListener(HandleKeyDownAsync);
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.CurrentUserChanged += CurrentUser_Changed;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await initAdmin(args);
-		StateHasChanged();
-	}
-
-	private void CurrentUser_Changed(object? sender, TfUser? user)
-	{
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await initAdmin(args.Payload);
 		StateHasChanged();
 	}
 
@@ -43,11 +36,8 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		return Task.CompletedTask;
 	}
 
-	private async Task initAdmin(TfNavigationState? navState = null)
+	private async Task initAdmin(TfNavigationState navState)
 	{
-		if(navState is null)
-			navState = TfAuthLayout.NavigationState;
-
 		_adminMenu = new();
 		if (TfAuthLayout.CurrentUser!.IsAdmin)
 		{
@@ -55,9 +45,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 			{
 				Url = TfConstants.AdminDashboardUrl,
 				Tooltip = LOC("Administration"),
-				IconCollapsed = TfConstants.GetIcon("Settings"),
-				IconExpanded = TfConstants.GetIcon("Settings"),
-				//Text = LOC("Admin"),
+				Text = LOC("ADMIN"),
 				Selected = navState.RouteNodes.Count > 0 && navState.RouteNodes[0] == RouteDataNode.Admin
 			});
 			_adminMenu.Add(new TfMenuItem
@@ -80,7 +68,6 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 	Task _openGlobalSearch()
 	{
 		ToastService.ShowSuccess("Global search");
-		Console.WriteLine("Clicked");
 		return Task.CompletedTask;
 	}
 
@@ -89,7 +76,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		var uri = new Uri(Navigator.Uri);
 		try
 		{
-			var user = await TfUIService.SetStartUpUrl(
+			var user = await TfService.SetStartUpUrl(
 						userId: TfAuthLayout.CurrentUser.Id,
 						url: uri.PathAndQuery
 					);
@@ -103,7 +90,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 
 	private async Task _logout()
 	{
-		await TfUIService.LogoutAsync();
+		await TfService.LogoutAsync(JSRuntime);
 		Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
 	}

@@ -2,7 +2,7 @@
 public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentComponent<TfUseTemplateContext?>
 {
 	[Parameter] public TfUseTemplateContext? Content { get; set; } = null;
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private string? _search = null;
@@ -36,7 +36,7 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 
 	private void _getTemplates()
 	{
-		_templates = TfUIService.GetSpaceDataTemplates(Content.SpaceData?.Id ?? Guid.Empty, _search);
+		_templates = TfService.GetSpaceDataTemplates(Content.SpaceData?.Id ?? Guid.Empty, _search);
 	}
 
 	private async Task _cancel()

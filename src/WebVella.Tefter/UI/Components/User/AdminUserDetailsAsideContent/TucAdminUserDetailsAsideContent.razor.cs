@@ -7,44 +7,41 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfUIService.UserCreated -= On_UserCreated;
-		TfUIService.UserUpdated -= On_UserUpdated;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.UserCreatedGlobalEvent -= On_UserCreated;
+		TfEventProvider.UserUpdatedGlobalEvent -= On_UserUpdated;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
-		TfUIService.UserCreated += On_UserCreated;
-		TfUIService.UserUpdated += On_UserUpdated;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.UserCreatedGlobalEvent += On_UserCreated;
+		TfEventProvider.UserUpdatedGlobalEvent += On_UserUpdated;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 
-	private async void On_UserCreated(object? caller, TfUser user)
+	private async void On_UserCreated(TfUserCreatedEvent args)
 	{
-		await _init();
+		await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async void On_UserUpdated(object? caller, TfUser user)
+	private async void On_UserUpdated(TfUserUpdatedEvent args)
 	{
-		await _init();
+		await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
-
 		try
 		{
 			_search = navState.SearchAside;
-			var users = TfUIService.GetUsers(_search).ToList();
+			var users = TfService.GetUsers(_search).ToList();
 			_items = new();
 			foreach (var user in users)
 			{

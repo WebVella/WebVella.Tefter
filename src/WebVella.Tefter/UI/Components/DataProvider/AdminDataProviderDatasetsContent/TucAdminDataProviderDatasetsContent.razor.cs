@@ -7,36 +7,33 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.DatasetCreated -= On_DatasetChanged;
-		TfUIService.DatasetUpdated -= On_DatasetChanged;
-		TfUIService.DatasetDeleted -= On_DatasetChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfEventProvider.DatasetCreatedEvent -= On_DatasetChanged;
+		TfEventProvider.DatasetUpdatedEvent -= On_DatasetChanged;
+		TfEventProvider.DatasetDeletedEvent -= On_DatasetChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
+		await _init(TfAuthLayout.NavigationState);
 
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.DatasetCreated += On_DatasetChanged;
-		TfUIService.DatasetUpdated += On_DatasetChanged;
-		TfUIService.DatasetDeleted += On_DatasetChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfEventProvider.DatasetCreatedEvent += On_DatasetChanged;
+		TfEventProvider.DatasetUpdatedEvent += On_DatasetChanged;
+		TfEventProvider.DatasetDeletedEvent += On_DatasetChanged;
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
-	}
-
-	private async void On_DatasetChanged(object? caller, TfDataset args)
-	{
-		await _init();
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async void On_DatasetChanged(object  args)
 	{
-		if (navState == null)
-			navState = TfAuthLayout.NavigationState;
+		await _init(TfAuthLayout.NavigationState);
+	}
 
+	private async Task _init(TfNavigationState navState)
+	{
 		try
 		{
 			if (navState.DataProviderId is null)
@@ -45,10 +42,10 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 				await InvokeAsync(StateHasChanged);
 				return;
 			}
-			_provider = TfUIService.GetDataProvider(navState.DataProviderId.Value);
+			_provider = TfService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
-			_items = TfUIService.GetDatasets(providerId:_provider.Id);
+			_items = TfService.GetDatasets(providerId:_provider.Id);
 		}
 		finally
 		{
@@ -93,7 +90,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 			return;
 		try
 		{
-			TfUIService.DeleteDataset(dataset.Id);
+			TfService.DeleteDataset(dataset.Id);
 			ToastService.ShowSuccess(LOC("The implementation is successfully deleted!"));
 
 		}

@@ -5,16 +5,16 @@ namespace WebVella.Tefter.Models;
 
 public class TfBasePage : ComponentBase
 {
-	[Inject] protected IJSRuntime JSRuntimeSrv { get; set; } = default!;
-	[Inject] protected NavigationManager Navigator { get; set; } = default!;
-	[Inject] protected IToastService ToastService { get; set; } = default!;
-	[Inject] protected IDialogService DialogService { get; set; } = default!;
-	[Inject] protected IMessageService MessageService { get; set; } = default!;
-	[Inject] protected ITfConfigurationService ConfigurationService { get; set; } = default!;
-	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = default!;
+	[Inject] protected IJSRuntime JSRuntimeSrv { get; set; } = null!;
+	[Inject] protected NavigationManager Navigator { get; set; } = null!;
+	[Inject] protected IToastService ToastService { get; set; } = null!;
+	[Inject] protected IDialogService DialogService { get; set; } = null!;
+	[Inject] protected IMessageService MessageService { get; set; } = null!;
+	[Inject] protected ITfConfigurationService ConfigurationService { get; set; } = null!;
+	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = null!;
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
-	protected IStringLocalizer LC  = default!;
+	protected IStringLocalizer LC  = null!;
 	protected static IStringLocalizer? GL = null;
 	private static AsyncLock _lock = new();
 

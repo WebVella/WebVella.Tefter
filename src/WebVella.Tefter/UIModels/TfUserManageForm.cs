@@ -8,11 +8,11 @@ public record TfUserManageForm
 	public Guid Id { get; set; }
 	[Required]
 	[EmailAddress]
-	public string Email { get; set; } = default!;
+	public string Email { get; set; } = null!;
 	[Required]
-	public string FirstName { get; set; } = default!;
+	public string FirstName { get; set; } = null!;
 	[Required]
-	public string LastName { get; set; } = default!;
+	public string LastName { get; set; } = null!;
 	internal string? Password { get; set; }
 	internal string? ConfirmPassword { get; set; }
 	[Required]

@@ -61,8 +61,8 @@ internal partial class EmailService : IEmailService
 	}
 
 	#region << Events >>
-	public event EventHandler<EmailMessage> EmailCreated = default!;
-	public event EventHandler<EmailMessage> EmailUpdated = default!;
+	public event EventHandler<EmailMessage> EmailCreated = null!;
+	public event EventHandler<EmailMessage> EmailUpdated = null!;
 	#endregion
 
 	public EmailMessage GetEmailMessageById(

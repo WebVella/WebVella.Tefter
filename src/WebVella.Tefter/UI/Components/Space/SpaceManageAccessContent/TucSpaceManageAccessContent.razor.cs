@@ -1,44 +1,43 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 {
-	private TfSpace _space = default!;
-	private TfNavigationState _navState = default!;
+	private TfSpace _space = null!;
+	private TfNavigationState _navState = null!;
 	public bool _submitting = false;
-	public TfRole _adminRole = default!;
-	public List<TfRole> _roleOptions = default!;
+	public TfRole _adminRole = null!;
+	public List<TfRole> _roleOptions = null!;
 	private TfRole? _selectedRole = null;
 	public Guid? _removingRoleId = null;
+
 	public void Dispose()
 	{
-		TfUIService.SpaceUpdated -= On_SpaceUpdated;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.SpaceUpdatedEvent -= On_SpaceUpdated;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
-		TfUIService.SpaceUpdated += On_SpaceUpdated;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.SpaceUpdatedEvent += On_SpaceUpdated;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(navState: args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(navState: args.Payload);
 	}
 
-	private async void On_SpaceUpdated(object? caller, TfSpace args)
+	private async void On_SpaceUpdated(TfSpaceUpdatedEvent args)
 	{
-		await _init(space: args);
+		await _init(navState: TfAuthLayout.NavigationState, space: args.Payload);
 	}
 
-	private async Task _init(TfNavigationState? navState = null, TfSpace? space = null)
+	private async Task _init(TfNavigationState navState, TfSpace? space = null)
 	{
-		if (navState == null)
-			_navState = TfAuthLayout.NavigationState;
-		else
-			_navState = navState;
+		_navState = navState;
 
 		try
 		{
@@ -49,11 +48,13 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 			else
 			{
 				if (_navState.SpaceId is null) return;
-				_space = TfUIService.GetSpace(_navState.SpaceId.Value);
+				_space = TfService.GetSpace(_navState.SpaceId.Value);
 			}
+
 			if (_space is null) return;
-			var allRoles = TfUIService.GetRoles();
-			_roleOptions =allRoles.Where(x => x.Id != TfConstants.ADMIN_ROLE_ID &&  !_space.Roles.Any(u => x.Id == u.Id)).ToList();
+			var allRoles = TfService.GetRoles();
+			_roleOptions = allRoles
+				.Where(x => x.Id != TfConstants.ADMIN_ROLE_ID && !_space.Roles.Any(u => x.Id == u.Id)).ToList();
 			_adminRole = allRoles.Single(x => x.Id == TfConstants.ADMIN_ROLE_ID);
 		}
 		finally
@@ -71,7 +72,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 		try
 		{
 			_submitting = true;
-			var result = TfUIService.AddSpacesRole(_space,_selectedRole);
+			TfService.AddSpacesRole(new List<TfSpace> { _space }, _selectedRole);
 			ToastService.ShowSuccess(LOC("Space role added"));
 		}
 		catch (Exception ex)
@@ -85,6 +86,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 			await InvokeAsync(StateHasChanged);
 		}
 	}
+
 	private async Task _removeRole(TfRole role)
 	{
 		if (_removingRoleId is not null) return;
@@ -94,7 +96,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 		try
 		{
 			_removingRoleId = role.Id;
-			var result = TfUIService.RemoveSpacesRole(_space,role);
+			TfService.RemoveSpacesRole(new List<TfSpace> {_space }, role);
 			ToastService.ShowSuccess(LOC("Space role removed"));
 		}
 		catch (Exception ex)
@@ -112,7 +114,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 	{
 		try
 		{
-			var result = TfUIService.SetSpacePrivacy(_space.Id, newValue);
+			var result = TfService.SetSpacePrivacy(_space.Id, newValue);
 			ToastService.ShowSuccess(LOC("Space access changed"));
 		}
 		catch (Exception ex)

@@ -10,7 +10,7 @@ public partial class TucUseTemplateSelectorAction : TfBaseComponent, ITfScreenRe
 	public List<TfScreenRegionScope> Scopes { get; init; } = new ();
 
 	[Parameter] 
-	public TfSpaceViewSelectorActionScreenRegionContext RegionContext { get; set; } = default!;
+	public TfSpaceViewSelectorActionScreenRegionContext RegionContext { get; set; } = null!;
 	private async Task _clickHandler()
 	{
 		if (RegionContext.SelectedDataRows.Count == 0

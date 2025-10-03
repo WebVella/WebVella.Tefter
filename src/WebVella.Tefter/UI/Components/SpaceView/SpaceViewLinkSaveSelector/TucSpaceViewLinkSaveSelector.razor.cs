@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewLinkSaveSelector : TfBaseComponent
 {
-	[Parameter] public TfSpaceView SpaceView { get; set; } = default!;
-	[Parameter] public TfDataTable Data { get; set; } = default!;
+	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
+	[Parameter] public TfDataTable Data { get; set; } = null!;
 	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
 	[Parameter] public TfBookmark? ActiveBookmark { get; set; } = null;
 	[Parameter] public TfBookmark? ActiveSavedUrl { get; set; } = null;
@@ -22,7 +22,7 @@ public partial class TucSpaceViewLinkSaveSelector : TfBaseComponent
 				Url = new Uri(Navigator.Uri).PathAndQuery
 			};
 
-			TfUIService.UpdateBookmark(submit);
+			TfService.UpdateBookmark(submit);
 
 			ToastService.ShowSuccess(LOC("URL updated"));
 		}
@@ -77,7 +77,7 @@ public partial class TucSpaceViewLinkSaveSelector : TfBaseComponent
 			if (ActiveSavedUrl is null)
 				return;
 
-			TfUIService.DeleteBookmark(ActiveSavedUrl);
+			TfService.DeleteBookmark(ActiveSavedUrl.Id);
 
 			ToastService.ShowSuccess(LOC("Saved URL removed"));
 

@@ -174,7 +174,7 @@ public partial class AssetsTests : BaseTest
 				assets.Count.Should().Be(2);
 
 
-				dataTable = tfService.QuerySpaceData(spaceData.Id);
+				dataTable = tfService.QueryDataset(spaceData.Id);
 				dataTable.Rows[5]["id_identity.sc_int_row_id"].Should().Be(2);
 				for (int i = 6; i < 10; i++)
 					dataTable.Rows[i]["id_identity.sc_int_row_id"].Should().Be(1);
@@ -188,7 +188,7 @@ public partial class AssetsTests : BaseTest
 				dataIdentityConnections = tfService.GetDataIdentityConnections( value1: fileAsset.IdentityRowId);
 				dataIdentityConnections.Count.Should().Be(0);
 
-				dataTable = tfService.QuerySpaceData(spaceData.Id);
+				dataTable = tfService.QueryDataset(spaceData.Id);
 				dataTable.Rows[5]["id_identity.sc_int_row_id"].Should().Be(1);
 				for (int i = 6; i < 10; i++)
 					dataTable.Rows[i]["id_identity.sc_int_row_id"].Should().Be(0);
@@ -335,7 +335,7 @@ public partial class AssetsTests : BaseTest
 				createdLinkAsset.Should().NotBeNull();
 				assetService.GetAssetRelatedIdentityValues(createdLinkAsset).Count.Should().Be(1);
 
-				var result = tfService.QuerySpaceData(spaceData.Id);
+				var result = tfService.QueryDataset(spaceData.Id);
 				result.Rows[0]["id_identity.sc_int_row_id"].Should().Be(1);
 
 				//using tmp file because local file is moved
@@ -357,7 +357,7 @@ public partial class AssetsTests : BaseTest
 				var createdFileAsset = assetService.CreateFileAsset(fileAssetModel);
 				assetService.GetAssetRelatedIdentityValues(createdFileAsset).Count.Should().Be(1);
 
-				result = tfService.QuerySpaceData(spaceData.Id);
+				result = tfService.QueryDataset(spaceData.Id);
 				result.Rows[0]["id_identity.sc_int_row_id"].Should().Be(2);
 
 			}

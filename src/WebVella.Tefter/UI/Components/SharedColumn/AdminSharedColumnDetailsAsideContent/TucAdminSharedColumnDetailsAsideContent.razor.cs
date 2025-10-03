@@ -7,51 +7,39 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfUIService.SharedColumnCreated -= On_SharedColumnCreated;
-		TfUIService.SharedColumnUpdated -= On_SharedColumnUpdated;
-		TfUIService.SharedColumnDeleted -= On_SharedColumnDeleted;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.SharedColumnCreatedEvent -= On_SharedColumnChanged;
+		TfEventProvider.SharedColumnUpdatedEvent -= On_SharedColumnChanged;
+		TfEventProvider.SharedColumnDeletedEvent -= On_SharedColumnChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
-		TfUIService.SharedColumnCreated += On_SharedColumnCreated;
-		TfUIService.SharedColumnUpdated += On_SharedColumnUpdated;
-		TfUIService.SharedColumnDeleted += On_SharedColumnDeleted;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.SharedColumnCreatedEvent += On_SharedColumnChanged;
+		TfEventProvider.SharedColumnUpdatedEvent += On_SharedColumnChanged;
+		TfEventProvider.SharedColumnDeletedEvent += On_SharedColumnChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_SharedColumnCreated(object? caller, TfSharedColumn item)
+	private async void On_SharedColumnChanged(object args)
 	{
-		await _init();
-	}
-
-	private async void On_SharedColumnUpdated(object? caller, TfSharedColumn item)
-	{
-		await _init();
-	}
-
-	private async void On_SharedColumnDeleted(object? caller, TfSharedColumn item)
-	{
-		await _init();
+		await _init(TfAuthLayout.NavigationState);
 	}
 
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState == null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_search = navState.SearchAside;
-			var items = TfUIService.GetSharedColumns(_search).ToList();
+			var items = TfService.GetSharedColumns(_search).ToList();
 			_items = new();
 			foreach (var item in items)
 			{

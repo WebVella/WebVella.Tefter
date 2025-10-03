@@ -4,15 +4,15 @@ namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentComponent<Guid>
 {
-	[Parameter] public Guid Content { get; set; } = default!;
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[Parameter] public Guid Content { get; set; } = Guid.Empty;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
-	private TfNavigationState _navState = default!;
-	private TfSpace _space = default!;
+	private TfNavigationState _navState = null!;
+	private TfSpace _space = null!;
 	public bool _submitting = false;
-	public TfRole _adminRole = default!;
-	public List<TfRole> _roleOptions = default!;
+	public TfRole _adminRole = null!;
+	public List<TfRole> _roleOptions = null!;
 	private TfRole? _selectedRole = null;
 	public Guid? _removingRoleId = null;
 
@@ -25,11 +25,11 @@ public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentCompo
 	private void _init(TfSpace? space = null)
 	{
 		if (space is null)
-			_space = TfUIService.GetSpace(Content);
+			_space = TfService.GetSpace(Content);
 		else
 			_space = space;
 
-		var allRoles = TfUIService.GetRoles();
+		var allRoles = TfService.GetRoles();
 		_roleOptions = allRoles.Where(x => x.Id != TfConstants.ADMIN_ROLE_ID && !_space.Roles.Any(u => x.Id == u.Id)).ToList();
 		_adminRole = allRoles.Single(x => x.Id == TfConstants.ADMIN_ROLE_ID);
 	}
@@ -47,9 +47,9 @@ public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentCompo
 		try
 		{
 			_submitting = true;
-			var space = TfUIService.AddSpacesRole(_space, _selectedRole);
+			TfService.AddSpacesRole(new List<TfSpace> { _space }, _selectedRole);
 			ToastService.ShowSuccess(LOC("Space role added"));
-			_init(space);
+			_init(TfService.GetSpace(_space.Id));
 		}
 		catch (Exception ex)
 		{
@@ -70,9 +70,9 @@ public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentCompo
 		try
 		{
 			_removingRoleId = role.Id;
-			var space = TfUIService.RemoveSpacesRole(_space, role);
+			TfService.RemoveSpacesRole(new List<TfSpace> {_space }, role);
 			ToastService.ShowSuccess(LOC("Space role removed"));
-			_init(space);
+			_init(TfService.GetSpace(_space.Id));
 		}
 		catch (Exception ex)
 		{
@@ -89,7 +89,7 @@ public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentCompo
 	{
 		try
 		{
-			var space = TfUIService.SetSpacePrivacy(_space.Id, newValue);
+			var space = TfService.SetSpacePrivacy(_space.Id, newValue);
 			ToastService.ShowSuccess(LOC("Space access changed"));
 			_init(space);
 		}

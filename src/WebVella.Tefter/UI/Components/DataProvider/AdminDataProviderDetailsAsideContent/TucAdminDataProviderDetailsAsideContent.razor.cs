@@ -7,52 +7,39 @@ public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, 
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfUIService.DataProviderCreated -= On_DataProviderCreated;
-		TfUIService.DataProviderUpdated -= On_DataProviderUpdated;
-		TfUIService.DataProviderDeleted -= On_DataProviderDeleted;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.DataProviderCreatedEvent -= On_DataProviderChanged;
+		TfEventProvider.DataProviderUpdatedEvent -= On_DataProviderChanged;
+		TfEventProvider.DataProviderDeletedEvent -= On_DataProviderChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init();
-		TfUIService.DataProviderCreated += On_DataProviderCreated;
-		TfUIService.DataProviderUpdated += On_DataProviderUpdated;
-		TfUIService.DataProviderDeleted += On_DataProviderDeleted;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.DataProviderCreatedEvent += On_DataProviderChanged;
+		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderChanged;
+		TfEventProvider.DataProviderDeletedEvent += On_DataProviderChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_DataProviderCreated(object? caller, TfDataProvider user)
+	private async void On_DataProviderChanged(object  user)
 	{
-		await _init();
+		await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async void On_DataProviderUpdated(object? caller, TfDataProvider user)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		await _init();
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
-	private async void On_DataProviderDeleted(object? caller, TfDataProvider user)
+	private async Task _init(TfNavigationState navState)
 	{
-		await _init();
-	}
-
-
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
-	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
-	}
-
-	private async Task _init(TfNavigationState? navState = null)
-	{
-		if (navState is null)
-			navState = TfAuthLayout.NavigationState;
 		try
 		{
 			_search = navState.SearchAside;
-			var items = TfUIService.GetDataProviders(_search).ToList();
+			var items = TfService.GetDataProviders(_search).ToList();
 			_items = new();
 			foreach (var item in items)
 			{

@@ -2,13 +2,13 @@
 public partial class TucRoleManageDialog : TfFormBaseComponent, IDialogContentComponent<TfRole?>
 {
 	[Parameter] public TfRole? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 	private bool _isCreate = false;
 	private TfRole _form = new();
 
@@ -52,12 +52,12 @@ public partial class TucRoleManageDialog : TfFormBaseComponent, IDialogContentCo
 
 			if (_isCreate)
 			{
-				result = TfUIService.CreateRole(_form);
+				result = TfService.CreateRole(_form);
 				ToastService.ShowSuccess(LOC("Access role was successfully created!"));
 			}
 			else
 			{
-				result = TfUIService.UpdateRole(_form);
+				result = TfService.UpdateRole(_form);
 				ToastService.ShowSuccess(LOC("Access role was successfully created!"));
 			}
 

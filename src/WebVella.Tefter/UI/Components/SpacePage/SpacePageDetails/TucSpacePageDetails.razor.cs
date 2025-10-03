@@ -7,42 +7,39 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 	public TfNavigationState? _navState = null;
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
-		TfUIService.SpaceUpdated -= On_SpaceUpdated;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
-		TfUIService.SpaceUpdated += On_SpaceUpdated;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(navState: args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(navState: args.Payload);
 	}
 
-	private async void On_SpaceUpdated(object? caller, TfSpace args)
+	private async void On_SpacePageChanged(object args)
 	{
-		await _init();
+		await _init(TfAuthLayout.NavigationState);
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState == null)
-			_navState = TfAuthLayout.NavigationState;
-		else
-			_navState = navState;
+		_navState = navState;
 		try
 		{
 			if (_navState.SpacePageId.HasValue && _spacePage?.Id != _navState.SpacePageId)
 			{
-				_spacePage = TfUIService.GetSpacePage(_navState.SpacePageId.Value);
+				_spacePage = TfService.GetSpacePage(_navState.SpacePageId.Value);
 				_space = null;
 				if (_spacePage is not null)
-					_space = TfUIService.GetSpace(_spacePage.SpaceId);
+					_space = TfService.GetSpace(_spacePage.SpaceId);
 			}
 		}
 		finally
@@ -87,9 +84,9 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 
 		try
 		{
-			TfUIService.DeleteSpacePage(_spacePage);
+			TfService.DeleteSpacePage(_spacePage);
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
-			var spacePages = TfUIService.GetSpacePages(_spacePage.SpaceId);
+			var spacePages = TfService.GetSpacePages(_spacePage.SpaceId);
 			Guid? firstPageId = null;
 			foreach (var page in spacePages)
 			{
@@ -120,7 +117,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 	{
 		if (_spacePage is null) return;
 
-		var spPage = TfUIService.GetSpacePage(_spacePage.Id);
+		var spPage = TfService.GetSpacePage(_spacePage.Id);
 		if (spPage == null)
 		{
 			ToastService.ShowError(LOC("Space page not found"));

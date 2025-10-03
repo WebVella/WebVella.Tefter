@@ -3,24 +3,24 @@
 public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSpacePage?>
 {
 	[Parameter] public TfSpacePage? Content { get; set; } = null;
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 	private bool _isCreate = false;
 	private TfSpacePage _form = new();
 	private TfSpacePage? _parentNode = null;
 	private IEnumerable<TfSpacePage> _parentNodeOptions = Enumerable.Empty<TfSpacePage>();
-	private ReadOnlyCollection<TfSpacePageAddonMeta> _pageComponents = default!;
+	private ReadOnlyCollection<TfSpacePageAddonMeta> _pageComponents = null!;
 	private TfSpacePageAddonMeta? _selectedPageComponent = null;
-	private DynamicComponent typeSettingsComponent = default!;
+	private DynamicComponent typeSettingsComponent = null!;
 	private TfSpace? _space = null;
 	private List<Option<bool>> _copyOptions = new();
 	private List<Option<Guid>> _allPageOptions = new();
-	private Option<bool> _copyOption = default!;
+	private Option<bool> _copyOption = null!;
 	private Option<Guid>? _copyPage = null;
 	protected override async Task OnInitializedAsync()
 	{
@@ -37,8 +37,8 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 
-		var spaceDict = TfUIService.GetSpaces().ToDictionary(x => x.Id);
-		var allPages = TfUIService.GetAllSpacePages().Where(x => x.Type == TfSpacePageType.Page).ToList();
+		var spaceDict = TfService.GetSpacesList().ToDictionary(x => x.Id);
+		var allPages = TfService.GetAllSpacePages().Where(x => x.Type == TfSpacePageType.Page).ToList();
 
 		foreach (var page in allPages)
 		{
@@ -67,7 +67,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		}
 		_copyOption = _copyOptions[0];
 
-		_pageComponents = TfUIService.GetSpacePagesComponentsMeta();
+		_pageComponents = TfMetaService.GetSpacePagesComponentsMeta();
 		_space = spaceDict[Content.SpaceId];
 		_parentNodeOptions = _getParents();
 		if (_isCreate)
@@ -168,17 +168,19 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		{
 			if (_parentNode is null) submit.ParentId = null;
 			else submit.ParentId = _parentNode.Id;
-			TfSpacePage newPage = default!;
+			TfSpacePage newPage = null!;
 			if (_isCreate)
 			{
-				newPage = TfUIService.CreateSpacePage(
-					page: submit
-					);
+				var(pageId,pageList) = TfService.CreateSpacePage(
+					spacePage: submit
+				);
+				newPage = pageList.Single(x => x.Id == pageId); 
 				ToastService.ShowSuccess(LOC("Space page created!"));
 			}
 			else
 			{
-				newPage = TfUIService.UpdateSpacePage(submit);
+				var pageList = TfService.UpdateSpacePage(spacePage:submit);
+				newPage = pageList.Single(x => x.Id == submit.Id); 
 				ToastService.ShowSuccess(LOC("Space page updated!"));
 			}
 
@@ -201,7 +203,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 	private IEnumerable<TfSpacePage> _getParents()
 	{
 		var parents = new List<TfSpacePage>();
-		var spacePages = TfUIService.GetSpacePages(Content.SpaceId);
+		var spacePages = TfService.GetSpacePages(Content.SpaceId);
 		foreach (var item in spacePages)
 		{
 			_fillParents(parents, item, new List<Guid> { _form.Id });

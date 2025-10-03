@@ -20,7 +20,7 @@ public partial class TucDatasetColumnCard : TfBaseComponent
 	private TfDatasetColumn? _selectedColumn = null;
 	public bool _submitting = false;
 
-	List<TfDatasetColumn> _items = default!;
+	List<TfDatasetColumn> _items = null!;
 
 	protected override void OnInitialized()
 	{

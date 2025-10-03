@@ -1,9 +1,9 @@
 ﻿namespace WebVella.Tefter.UI.Addons.RecipeSteps;
 public partial class TfGroupRecipeStepForm : TfRecipeStepFormBase
 {
-	[Parameter] public TfGroupRecipeStep Addon { get; set; } = default!;
+	[Parameter] public TfGroupRecipeStep Addon { get; set; } = null!;
 
-	private TfGroupRecipeStepData _form	= default!;
+	private TfGroupRecipeStepData _form	= null!;
 
 	protected override void OnInitialized()
 	{

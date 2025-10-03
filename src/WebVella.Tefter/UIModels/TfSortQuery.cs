@@ -3,7 +3,7 @@
 public record TfSortQuery
 {
 	[JsonPropertyName("n")]
-	public string Name { get; set; } = default!;
+	public string Name { get; set; } = null!;
 
 	[JsonPropertyName("d")]
 	public int Direction { get; set; } = (int)TfSortDirection.ASC;

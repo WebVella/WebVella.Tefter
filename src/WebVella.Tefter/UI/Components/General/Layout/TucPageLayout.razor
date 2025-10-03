@@ -6,17 +6,18 @@
 	{
 		<div class="tf-page-layout__navigation">
 			<div class="tf-page-layout__navigation__left">
-				@if (!String.IsNullOrWhiteSpace(_returnUrl))
+				@if (!String.IsNullOrWhiteSpace(TfAuthLayout.NavigationState.ReturnUrl))
 				{
 					<div class="tf-page-layout__navigation__left__back-btn">
-						<TucAnchor Appearance="@Appearance.Outline" Href="@_returnUrl" IconStart="@TfConstants.GetIcon("ChevronLeft")">@LOC("Back")</TucAnchor>
+						<TucAnchor Appearance="@Appearance.Outline" Href="@TfAuthLayout.NavigationState.ReturnUrl"
+						           IconStart="@TfConstants.GetIcon("ChevronLeft")">@LOC("Back")</TucAnchor>
 					</div>
 				}
 				@if (Icon is not null)
 				{
 					<div class="tf-page-layout__navigation__left__icon-wrapper">
 						<div class="tf-page-layout__navigation__left__icon" style="@_iconStyle">
-							<FluentIcon Value="@Icon.WithColor(Icon is null ? "var(--tf-font-color-base)" : "#fff")" />
+							<FluentIcon Value="@Icon.WithColor(Icon is null ? "var(--tf-font-color-base)" : "#fff")"/>
 						</div>
 					</div>
 				}
@@ -24,7 +25,16 @@
 					@if (!String.IsNullOrWhiteSpace(Area))
 					{
 						<div class="tf-page-layout__navigation__left__meta__area">
-							@Area
+							@if (!String.IsNullOrWhiteSpace(SubArea))
+							{
+								<span>@Area</span>
+								<span class="tf-page-header__divider">:</span>
+								<span>@SubArea</span>
+							}
+							else
+							{
+								<span>@Area</span>
+							}
 						</div>
 					}
 					<div class="tf-page-layout__navigation__left__meta__title">
@@ -36,24 +46,10 @@
 						}
 						else
 						{
-							@Title
+							<span>@Title</span>
 						}
 					</div>
 				</div>
-
-				@* 				@if (!String.IsNullOrWhiteSpace(Title))
-				{
-
-					@if (Icon is not null)
-					{
-						<div class="tf-page-layout__navigation__left__icon-wrapper">
-							<div class="tf-page-layout__navigation__left__icon">
-								<FluentIcon Value="@Icon.WithColor("var(--tf-font-color-base)")" />
-							</div>
-						</div>
-					}
-					<div class="tf-page-layout__navigation__left__title" title="@Title">@TfConverters.StringOverflow(Title, 23)</div>
-				} *@
 			</div>
 
 			<div class="tf-page-layout__navigation__right">

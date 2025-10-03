@@ -5,10 +5,10 @@
 public class TfDataIdentity
 {
 	[TfDboModelProperty("data_identity")]
-	public string DataIdentity { get; set; } = default!;
+	public string DataIdentity { get; set; } = null!;
 
 	[TfDboModelProperty("label")]
-	public string Label { get; set; } = default!;
+	public string Label { get; set; } = null!;
 
 	[Obsolete("There are no system data identities anymore. To be removed.")]
 	public bool IsSystem { get { return false; } }

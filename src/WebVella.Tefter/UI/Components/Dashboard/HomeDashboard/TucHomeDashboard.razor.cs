@@ -10,7 +10,7 @@ public partial class TucHomeDashboard : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_data = TfUIService.GetHomeDashboardData(TfAuthLayout.CurrentUser.Id);
+		_data = TfService.GetHomeDashboardData(TfAuthLayout.CurrentUser.Id);
 
 		_howToItems.Add(new TfHowToItem
 		{

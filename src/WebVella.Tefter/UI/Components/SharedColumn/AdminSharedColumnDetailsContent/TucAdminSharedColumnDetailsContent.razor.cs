@@ -4,36 +4,33 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 	private TfSharedColumn? _column = null;
 	private bool _isDeleting = false;
 
-	internal ReadOnlyCollection<TfDataProvider> _dataProviders = default!;
+	internal ReadOnlyCollection<TfDataProvider> _dataProviders = null!;
 	public void Dispose()
 	{
-		TfUIService.SharedColumnUpdated -= On_SharedColumnUpdated;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.SharedColumnUpdatedEvent -= On_SharedColumnUpdated;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
-		TfUIService.SharedColumnUpdated += On_SharedColumnUpdated;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.SharedColumnUpdatedEvent += On_SharedColumnUpdated;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_SharedColumnUpdated(object? caller, TfSharedColumn column)
+	private async void On_SharedColumnUpdated(TfSharedColumnUpdatedEvent args)
 	{
-		await _init(column: column);
+		await _init(navState:TfAuthLayout.NavigationState, column: args.Payload);
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(navState: args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(navState: args.Payload);
 	}
 
-	private async Task _init(TfNavigationState? navState = null, TfSharedColumn? column = null)
+	private async Task _init(TfNavigationState navState, TfSharedColumn? column = null)
 	{
-		if (navState == null)
-			navState = TfAuthLayout.NavigationState;
-
 		try
 		{
 			if (column is not null && column.Id == _column?.Id)
@@ -42,12 +39,12 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 			}
 			else
 			{
-				var routeData = Navigator.GetRouteState();
+				var routeData = TfAuthLayout.NavigationState;
 				if (routeData.SharedColumnId is not null)
-					_column = TfUIService.GetSharedColumn(routeData.SharedColumnId.Value);
+					_column = TfService.GetSharedColumn(routeData.SharedColumnId.Value);
 			}
 			if(_column is null) return;
-			_dataProviders = TfUIService.GetSharedColumnConnectedDataProviders(_column.Id);
+			_dataProviders = TfService.GetSharedColumnConnectedDataProviders(_column.Id);
 		}
 		finally
 		{
@@ -82,9 +79,9 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 		{
 			_isDeleting = true;
 			await InvokeAsync(StateHasChanged);
-			TfUIService.DeleteSharedColumn(_column.Id);
+			TfService.DeleteSharedColumn(_column.Id);
 			ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
-			var allColumns = TfUIService.GetSharedColumns();
+			var allColumns = TfService.GetSharedColumns();
 			if (allColumns.Count > 0)
 				Navigator.NavigateTo(String.Format(TfConstants.AdminSharedColumnDetailsPageUrl, allColumns[0].Id));
 			else

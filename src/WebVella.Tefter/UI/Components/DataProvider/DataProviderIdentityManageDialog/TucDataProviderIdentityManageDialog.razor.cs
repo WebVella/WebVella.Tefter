@@ -2,16 +2,16 @@
 public partial class TucDataProviderIdentityManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProviderIdentity?>
 {
 	[Parameter] public TfDataProviderIdentity? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private bool _isCreate = false;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 
 	private List<string?> _providerColumns = new();
-	private TfDataProvider _provider = default!;
+	private TfDataProvider _provider = null!;
 	private TfDataProviderIdentity _form = new();
 
 	private List<string> _identityOptions = new();
@@ -23,7 +23,7 @@ public partial class TucDataProviderIdentityManageDialog : TfFormBaseComponent, 
 
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.DataProviderId == Guid.Empty) throw new Exception("DataProvider not provided");
-		_provider = TfUIService.GetDataProvider(Content.DataProviderId);
+		_provider = TfService.GetDataProvider(Content.DataProviderId);
 		if(_provider == null) throw new Exception("DataProvider not found");
 		if (Content.Id == Guid.Empty)
 		{
@@ -32,7 +32,7 @@ public partial class TucDataProviderIdentityManageDialog : TfFormBaseComponent, 
 		_title = _isCreate ? LOC("Create identity implementation") : LOC("Manage identity implementation");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
-		_allDataIdentities = TfUIService.GetDataIdentities();
+		_allDataIdentities = TfService.GetDataIdentities();
 
 		_providerColumns = _provider.Columns.OrderBy(x => x.DbName).Select(x => x.DbName).ToList();
 		_identityOptions = _allDataIdentities
@@ -108,12 +108,12 @@ public partial class TucDataProviderIdentityManageDialog : TfFormBaseComponent, 
 			};
 			if (_isCreate)
 			{
-				provider = TfUIService.CreateDataProviderIdentity(submit);
+				provider = TfService.CreateDataProviderIdentity(submit);
 				ToastService.ShowSuccess(LOC("Data identity is implemented"));
 			}
 			else
 			{
-				provider = TfUIService.UpdateDataProviderIdentity(submit);
+				provider = TfService.UpdateDataProviderIdentity(submit);
 				ToastService.ShowSuccess(LOC("Data identity implementation is updated"));
 			}
 

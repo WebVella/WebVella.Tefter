@@ -38,9 +38,9 @@ public partial interface ITalkService
 internal partial class TalkService : ITalkService
 {
 	#region << Events >>
-	public event EventHandler<TalkThread> ThreadCreated = default!;
-	public event EventHandler<TalkThread> ThreadUpdated = default!;
-	public event EventHandler<TalkThread> ThreadDeleted = default!;
+	public event EventHandler<TalkThread> ThreadCreated = null!;
+	public event EventHandler<TalkThread> ThreadUpdated = null!;
+	public event EventHandler<TalkThread> ThreadDeleted = null!;
 	#endregion
 
 	public TalkThread GetThread(

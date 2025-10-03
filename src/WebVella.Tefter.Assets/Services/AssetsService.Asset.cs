@@ -59,9 +59,9 @@ internal partial class AssetsService : IAssetsService
 {
 
     #region << Events >>
-    public event EventHandler<Asset> AssetCreated = default!;
-    public event EventHandler<Asset> AssetUpdated = default!;
-    public event EventHandler<Asset> AssetDeleted = default!;
+    public event EventHandler<Asset> AssetCreated = null!;
+    public event EventHandler<Asset> AssetUpdated = null!;
+    public event EventHandler<Asset> AssetDeleted = null!;
     #endregion
 
     public Asset GetAsset(

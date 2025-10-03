@@ -4,7 +4,7 @@ namespace WebVella.Tefter.Assets.Components;
 
 public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComponent<AssetsFolderPanelContext>
 {
-	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 	[Inject] public IAssetsService AssetsService { get; set; }
 	[Parameter] public AssetsFolderPanelContext Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }

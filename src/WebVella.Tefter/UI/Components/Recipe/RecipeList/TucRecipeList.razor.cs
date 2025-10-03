@@ -7,11 +7,11 @@ public partial class TucRecipeList : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		var installData = await TfUIService.GetInstallDataAsync();
+		var installData = await TfService.GetInstallDataAsync();
 		if (installData is not null)
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
-		_items = TfUIService.GetRecipes();
+		_items = TfMetaService.GetRecipes();
 	}
 
 	private void _select(ITfRecipeAddon recipe)

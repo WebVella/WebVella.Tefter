@@ -77,11 +77,14 @@ public partial class TfConstants
 	public static string RouteNameSpaceView = "view";
 	public static string RouteNameSpaceData = "data";
 	public static string RouteNameManage = "manage";
+	public static string RouteNameAddon = "addon";
 	public static string RouteNameViews = "views";
 	public static string PagesPageUrl = $"/{RouteNamePages}";
 	public static string PagesSinglePageUrl = $"/{RouteNamePages}/{{0}}";
 	public static string SpacePageUrl = $"/{RouteNameSpace}/{{0}}";
 	public static string SpacePagePageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpacePage}/{{1}}";
+	public static string SpacePagePageManageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpacePage}/{{1}}/{RouteNameManage}";
+	public static string SpacePagePageManageTabUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpacePage}/{{1}}/{{2}}";
 	public static string SpaceManagePageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}";
 	public static string SpaceManagePagesPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}/{RouteNamePages}";
 	public static string SpaceManageAccessPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}/{RouteNameAccess}";

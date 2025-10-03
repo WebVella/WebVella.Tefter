@@ -1,0 +1,78 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<TucPageLayout Icon="@TfConstants.GetIcon(_spacePage.FluentIconName)" Area="@_space.Name" SubArea="@LOC("Pages")"
+               Title="@_spacePage.Name" SubTitle="@LOC("Manage")" Color="@_space.Color">
+	<NavigationLeft>
+		<TucSpacePageManageContentToolbar/>
+	</NavigationLeft>
+	<ChildContent>
+		<div style="padding:var(--tf-layout-content-padding)">
+			<TucCard Title="@LOC("Details")">
+				<ToolbarTemplate>
+					<FluentButton Appearance="@Appearance.Outline" OnClick="_editPage">
+						@LOC("Edit")
+						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start"/>
+					</FluentButton>
+				</ToolbarTemplate>
+				<ChildContent>
+					<FluentGrid>
+						<FluentGridItem xs="6">
+							<FluentTextField Value="@(_spacePage.Name)"
+							                 Label="@LOC("Name")" Style="width:100%" ReadOnly="true"/>
+						</FluentGridItem>
+						<FluentGridItem xs="6">
+							<FluentTextField
+								Value="@(_spacePage.ParentPage is null ? "no parent" : _spacePage.ParentPage!.Name)"
+								Label="@LOC("Parent")" Style="width:100%" ReadOnly="true"/>
+						</FluentGridItem>
+					</FluentGrid>
+					<FluentGrid>
+						<FluentGridItem xs="6">
+							<FluentTextField Value="@(_spacePage.Type.ToDescriptionString())"
+							                 Label="@LOC("Type")" Style="width:100%" ReadOnly="true"/>
+						</FluentGridItem>
+						<FluentGridItem xs="6">
+							<FluentInputLabel Label="@LOC("Icon")"/>
+							<TucSelectIcon @bind-Value="_spacePage.FluentIconName" ReadOnly="true"/>
+						</FluentGridItem>
+					</FluentGrid>
+					<FluentGrid>
+						<FluentGridItem xs="12">
+							<FluentInputLabel Label="@LOC("Page type")"/>
+							@if (_component is not null)
+							{
+								<TucSelectComponent TOption="TfSpacePageAddonMeta"
+								                    Items="@(new List<TfSpacePageAddonMeta>() { _component })"
+								                    Value="_component"
+								                    OptionText="@(x => x.Instance.AddonName)"
+								                    OptionIcon="@(x => x.Instance.AddonFluentIconName)"
+								                    OptionDescription="@(x => x.Instance.AddonDescription)"
+								                    OptionMatch="@((x, y) => x.Instance?.AddonId == y.Instance.AddonId)"
+								                    ReadOnly="true"/>
+							}
+							else
+							{
+								<FluentMessageBar AllowDismiss="false"
+								                  Intent="MessageIntent.Info">@LOC("Page Component is not longer found")</FluentMessageBar>
+							}
+						</FluentGridItem>
+					</FluentGrid>
+
+				</ChildContent>
+			</TucCard>
+			<TucCard>
+				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween"
+				             VerticalAlignment="@VerticalAlignment.Center">
+					<div>@LOC("When a page is deleted it will delete any data provider data. Only presentation configuration will be removed.")</div>
+					<div>
+						<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white"
+						              OnClick="_deletePage">
+							@LOC("Delete this Page")
+							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start"/>
+						</FluentButton>
+					</div>
+				</FluentStack>
+			</TucCard>
+		</div>
+	</ChildContent>
+</TucPageLayout>

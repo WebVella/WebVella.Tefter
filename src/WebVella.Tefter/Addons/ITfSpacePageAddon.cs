@@ -6,14 +6,9 @@ public interface ITfSpacePageAddon : ITfAddon
 	public Task<string> OnPageCreated(IServiceProvider serviceProvider, TfSpacePageAddonContext context);
 	public Task<string> OnPageUpdated(IServiceProvider serviceProvider, TfSpacePageAddonContext context);
 	public Task OnPageDeleted(IServiceProvider serviceProvider, TfSpacePageAddonContext context);
-	//public Task<(TfAppState,TfAuxDataState)> InitState(
-	//	IServiceProvider serviceProvider,
-	//	TucUser currentUser,
-	//	TfAppState newAppState, TfAppState oldAppState,
-	//	TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState, 
-	//	TfSpacePageAddonContext context);
 	public string GetOptions();
 	public List<ValidationError> ValidateOptions();
+	public List<TfScreenRegionTab> GetManagementTabs();
 }
 
 public class TfSpacePageAddonMeta
@@ -24,10 +19,10 @@ public class TfSpacePageAddonMeta
 
 public class TfSpacePageAddonContext
 {
-	public TfSpacePage SpacePage { get; set; } = default!;
+	public TfSpacePage SpacePage { get; set; } = null!;
 	public Guid? TemplateId { get; set; } = null;
 	public TfSpace? Space { get; set; }
-	public TfUser CurrentUser { get; set; } = default!;
+	public TfUser CurrentUser { get; set; } = null!;
 	public string? Icon { get; set; }
 	public string? ComponentOptionsJson { get; set; }
 	public EventCallback<string> ComponentOptionsJsonChanged { get; set; }

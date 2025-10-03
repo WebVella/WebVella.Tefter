@@ -3,24 +3,26 @@
 public partial class TucSortCard : TfBaseComponent
 {
 	[Parameter]
-	public TfDataset Dataset { get; set; } = default!;
+	public Guid DatasetId { get; set; } = Guid.Empty;
 
+	[Parameter] public List<TfSort> Items { get; set; } = new();
+	
 	[Parameter]
 	public EventCallback<List<TfSort>> ItemsChanged { get; set; }
 
 	List<string> _allOptions = new();
 	Dictionary<string, TfDatasetColumn> _columnDict = new();
 	List<string> _options = new();
-	string _selectedColumn = default!;
+	string _selectedColumn = null!;
 	TfSortDirection _selectedDirection = TfSortDirection.ASC;
 	bool _submitting = false;
-	List<TfSort> _items = default!;
+	List<TfSort> _items = null!;
 
 	protected override void OnInitialized()
 	{
-		if (Dataset is null) throw new Exception("Dataset is required");
+		if (DatasetId == Guid.Empty) throw new Exception("Dataset is required");
 
-		foreach (TfDatasetColumn item in TfUIService.GetDatasetColumnOptions(Dataset.Id))
+		foreach (TfDatasetColumn item in TfService.GetDatasetColumnOptions(DatasetId))
 		{
 			if (String.IsNullOrWhiteSpace(item.ColumnName)) continue;
 			_allOptions.Add(item.ColumnName);
@@ -36,7 +38,7 @@ public partial class TucSortCard : TfBaseComponent
 
 	void _initOptions()
 	{
-		_items = Dataset.SortOrders.ToList();
+		_items = Items.ToList();
 
 		var current = _items.Select(x => x.ColumnName).ToList();
 		_options = _allOptions.Where(x => !current.Contains(x)).ToList();

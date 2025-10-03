@@ -7,5 +7,7 @@ public enum TfComponentMode
 	[Description("Create")]
 	Create = 1,
 	[Description("Update")]
-	Update = 2
+	Update = 2,
+	[Description("Manage")]
+	Manage = 3	
 }

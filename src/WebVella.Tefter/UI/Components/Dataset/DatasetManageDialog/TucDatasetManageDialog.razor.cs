@@ -3,16 +3,16 @@
 public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataset?>
 {
 	[Parameter] public TfDataset? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn = default!;
+	private Icon _iconBtn = null!;
 	private bool _isCreate = false;
 
 	private TfDataset _form = new();
-	private TfDataProvider _provider = default!;
+	private TfDataProvider _provider = null!;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -20,7 +20,7 @@ public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogConten
 		if (Content.DataProviderId == Guid.Empty) throw new Exception("DataProviderId is required");
 		if (Content.Id == Guid.Empty) _isCreate = true;
 
-		_provider = TfUIService.GetDataProvider(Content.DataProviderId);
+		_provider = TfService.GetDataProvider(Content.DataProviderId);
 		if(_provider is null) throw new Exception("DataProviderId not found");
 
 		_title = _isCreate ? LOC("Create dataset in {0}", _provider.Name) : LOC("Manage dataset in {0}", _provider.Name);
@@ -50,15 +50,33 @@ public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogConten
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			TfDataset result = default!;
+			TfDataset result = null!;
 			if (_isCreate)
 			{
-				result = TfUIService.CreateDataset(_form);
+				var submit = new TfCreateDataset
+				{
+					Columns = _form.Columns,
+					DataProviderId = _form.DataProviderId,
+					Filters = _form.Filters,
+					Id = _form.Id,
+					Name = _form.Name,
+					SortOrders = _form.SortOrders
+				};				
+				result = TfService.CreateDataset(submit);
 				ToastService.ShowSuccess(LOC("Dataset successfully created!"));
 			}
 			else
 			{
-				result = TfUIService.UpdateDataset(_form);
+				var submit = new TfUpdateDataset
+				{
+					Columns = _form.Columns,
+					DataProviderId = _form.DataProviderId,
+					Filters = _form.Filters,
+					Id = _form.Id,
+					Name = _form.Name,
+					SortOrders = _form.SortOrders
+				};				
+				result = TfService.UpdateDataset(submit);
 				ToastService.ShowSuccess(LOC("Dataset successfully updated!"));
 			}
 

@@ -157,12 +157,12 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 	{
 		if (RegionContext.Mode == TfComponentPresentationMode.Options)
 		{
-			var spaceView = TfUIService.GetSpaceView(RegionContext.SpaceViewId);
-			_selectedSpaceData = TfUIService.GetDataset(spaceView.DatasetId);
+			var spaceView = TfService.GetSpaceView(RegionContext.SpaceViewId);
+			_selectedSpaceData = TfService.GetDataset(spaceView.DatasetId);
 
 			if (_selectedSpaceData is null)
 			{
-				var spaceDataList = TfUIService.GetDatasets();
+				var spaceDataList = TfService.GetDatasets();
 				if (spaceDataList is not null && spaceDataList.Count > 0)
 				{
 					_selectedSpaceData = spaceDataList[0];
@@ -215,7 +215,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 			{
 				if (componentOptions.SpaceDataId != Guid.Empty)
 				{
-					var optionsDT = TfUIService.QueryDataset(
+					var optionsDT = TfService.QueryDataset(
 						datasetId: componentOptions.SpaceDataId,
 						userFilters: null,
 						userSorts: null,

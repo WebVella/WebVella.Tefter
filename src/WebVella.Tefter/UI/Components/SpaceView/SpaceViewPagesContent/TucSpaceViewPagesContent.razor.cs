@@ -8,32 +8,29 @@ public partial class TucSpaceViewPagesContent : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
 	{
-		await _init(spaceView: args);
+		await _init(navState:TfAuthLayout.NavigationState,spaceView: args);
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(navState: args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(navState: args.Payload);
 	}
 
-	private async Task _init(TfNavigationState? navState = null, TfSpaceView? spaceView = null)
+	private async Task _init(TfNavigationState navState, TfSpaceView? spaceView = null)
 	{
-		if (navState == null)
-			_navState = TfAuthLayout.NavigationState;
-		else
-			_navState = navState;
+		_navState = navState;
 		try
 		{
 			if (spaceView is not null && spaceView.Id == _spaceView?.Id)
@@ -42,14 +39,14 @@ public partial class TucSpaceViewPagesContent : TfBaseComponent, IDisposable
 			}
 			else
 			{
-				var routeData = Navigator.GetRouteState();
+				var routeData = TfAuthLayout.NavigationState;
 				if (routeData.SpaceViewId is not null)
-					_spaceView = TfUIService.GetSpaceView(routeData.SpaceViewId.Value);
+					_spaceView = TfService.GetSpaceView(routeData.SpaceViewId.Value);
 
 			}
 			if (_spaceView is null) return;
-			_space = TfUIService.GetSpace(_spaceView.SpaceId);
-			_items = (TfUIService.GetSpacePages(_space.Id) ?? new List<TfSpacePage>())
+			_space = TfService.GetSpace(_spaceView.SpaceId);
+			_items = (TfService.GetSpacePages(_space.Id) ?? new List<TfSpacePage>())
 				.Where(x => x.ComponentOptionsJson.Contains(_spaceView.Id.ToString())).ToList();;
 
 		}

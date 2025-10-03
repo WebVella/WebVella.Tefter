@@ -10,27 +10,24 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 	private bool _actionMenuOpened = false;
 	public void Dispose()
 	{
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
-	private async Task _init(TfNavigationState? navState = null)
+	private async Task _init(TfNavigationState navState)
 	{
-		if (navState is null)
-			_navState = TfAuthLayout.NavigationState;
-		else
-			_navState = navState;
+		_navState = navState;
 
 		try
 		{
@@ -81,7 +78,7 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 	private async Task _editSpaceAsync()
 	{
 		if (_navState.SpaceId is null) return;
-		var space = TfUIService.GetSpace(_navState.SpaceId.Value);
+		var space = TfService.GetSpace(_navState.SpaceId.Value);
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceManageDialog>(
 		space,
 		new DialogParameters()
@@ -102,7 +99,7 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 			return;
 		try
 		{
-			TfUIService.DeleteSpace(_navState.SpaceId.Value);
+			TfService.DeleteSpace(_navState.SpaceId.Value);
 			ToastService.ShowSuccess(LOC("Space deleted"));
 			Navigator.NavigateTo(TfConstants.HomePageUrl);
 		}

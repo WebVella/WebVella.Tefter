@@ -2,7 +2,7 @@
 namespace WebVella.Tefter.UI.Components;
 public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 {
-	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; } = default!;
+	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
 	private string? _search = String.Empty;
@@ -12,41 +12,33 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 	private TfNavigationState _navState = new();
 	public void Dispose()
 	{
-		TfUIService.SpaceUpdated -= On_SpaceChanged;
-		TfUIService.UserUpdated -= On_UserChanged;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.SpacePageCreatedEvent -= On_SpacePageChanged;
+		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
+		TfEventProvider.SpacePageDeletedEvent -= On_SpacePageChanged;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
-		TfUIService.SpaceUpdated += On_SpaceChanged;
-		TfUIService.UserUpdated += On_UserChanged;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.SpacePageCreatedEvent += On_SpacePageChanged;
+		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
+		TfEventProvider.SpacePageDeletedEvent += On_SpacePageChanged;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_SpaceChanged(object? caller, TfSpace args)
+	private async void On_SpacePageChanged(object args)
 	{
-		await _init();
+		await _init(TfAuthLayout.NavigationState);
+	}
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
+	{
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(args.Payload);
 	}
 
-	private async void On_UserChanged(object? caller, TfUser args)
+	private async Task _init(TfNavigationState navState)
 	{
-		await _init();
-	}
-
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
-	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
-	}
-
-	private async Task _init(TfNavigationState? navState = null)
-	{
-		if (navState is null)
-			_navState = TfAuthLayout.NavigationState;
-		else
-			_navState = navState;
-
+		_navState = navState;
 		try
 		{
 			_items = new();
@@ -94,7 +86,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		var menuGroups = new List<string>();
 		if (_activeTab == TfSpaceNavigationActiveTab.Pages)
 		{
-			var spacePages = TfUIService.GetSpacePages(_navState.SpaceId!.Value);
+			var spacePages = TfService.GetSpacePages(_navState.SpaceId!.Value);
 			foreach (var spacePage in spacePages)
 			{
 				if (!_filterPage(spacePage))
@@ -110,8 +102,8 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		}
 		else if (_activeTab == TfSpaceNavigationActiveTab.Bookmarks)
 		{
-			var bookmarks = TfUIService.GetUserBookmarks(TfAuthLayout.CurrentUser.Id);
-			var spaceViewDict = (TfUIService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
+			var bookmarks = TfService.GetBookmarksListForUser(TfAuthLayout.CurrentUser.Id);
+			var spaceViewDict = (TfService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
 			foreach (var record in bookmarks
 				.Where(x => spaceViewDict.ContainsKey(x.SpaceViewId)).OrderBy(x => x.Name))
 			{
@@ -133,8 +125,8 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		}
 		else if (_activeTab == TfSpaceNavigationActiveTab.Saves)
 		{
-			var saves = TfUIService.GetUserSaves(TfAuthLayout.CurrentUser.Id);
-			var spaceViewDict = (TfUIService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
+			var saves = TfService.GetSavesListForUser(TfAuthLayout.CurrentUser.Id);
+			var spaceViewDict = (TfService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
 			foreach (var record in saves
 				.Where(x => spaceViewDict.ContainsKey(x.SpaceViewId)).OrderBy(x => x.Name))
 			{

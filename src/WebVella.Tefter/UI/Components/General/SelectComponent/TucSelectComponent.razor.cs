@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucSelectComponent<TOption> : TfBaseComponent where TOption : notnull
 {
 	[Parameter] public TOption Value { get; set; }
@@ -10,10 +11,21 @@ public partial class TucSelectComponent<TOption> : TfBaseComponent where TOption
 	[Parameter] public Func<TOption, string> OptionDescription { get; set; }
 	[Parameter] public Func<TOption, TOption, bool> OptionMatch { get; set; }
 	[Parameter] public bool Disabled { get; set; } = false;
-	private bool _isReadonly { get => Disabled || !ValueChanged.HasDelegate; }
+	[Parameter] public bool ReadOnly { get; set; } = false;
+	private bool _isReadonly { get => ReadOnly || !ValueChanged.HasDelegate; }
 
 	private string _elementId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 	private bool _open = false;
+
+	private string _cssClass
+	{
+		get
+		{
+			if (Disabled) return "disabled";
+			if (_isReadonly) return "readonly";
+			return String.Empty;
+		}
+	}
 
 	private void _onOpenChanged(bool isOpened)
 	{
@@ -69,5 +81,4 @@ public partial class TucSelectComponent<TOption> : TfBaseComponent where TOption
 
 		return false;
 	}
-
 }

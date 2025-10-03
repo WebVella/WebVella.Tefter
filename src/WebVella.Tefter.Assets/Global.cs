@@ -18,6 +18,7 @@ global using WebVella.Tefter.Models;
 //global using WebVella.Tefter.Web.Utils;
 global using WebVella.Tefter.Migrations;
 global using WebVella.Tefter.Utility;
+global using WebVella.Tefter.Messaging;
 
 
 global using WebVella.Tefter.Assets;

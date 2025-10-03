@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Services;
+﻿using Nito.AsyncEx.Synchronous;
+
+namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -19,12 +21,13 @@ public partial interface ITfService
 		string filename,
 		string localPath,
 		Guid? createdBy = null);
-
+	TfRepositoryFile CreateRepositoryFile(TfFileForm form);
 	public TfRepositoryFile UpdateRepositoryFile(
 		string filename,
 		string localPath,
 		Guid? updatedBy = null);
 
+	public TfRepositoryFile UpdateRepositoryFile(TfFileForm form);
 	public void DeleteRepositoryFile(
 		string filename);
 
@@ -201,7 +204,11 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Insert repository file record into database failed");
 
 				scope.Complete();
-
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfRepositoryFileCreatedEvent(file));
+				});
+				task.WaitAndUnwrapException();
 				return file;
 			}
 		}
@@ -211,6 +218,14 @@ public partial class TfService : ITfService
 		}
 	}
 
+	public TfRepositoryFile CreateRepositoryFile(TfFileForm form)
+	{
+		return CreateRepositoryFile(
+			filename: Path.GetFileName(form.Filename),
+			localPath: form.LocalFilePath,
+			createdBy: form.CreatedBy);
+	}	
+	
 	public TfRepositoryFile UpdateRepositoryFile(
 		string filename,
 		string localPath,
@@ -241,7 +256,15 @@ public partial class TfService : ITfService
 				UpdateBlob(repFile.Id, localPath);
 
 				scope.Complete();
-				return GetRepositoryFile(filename);
+				var result = GetRepositoryFile(filename);
+				
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfRepositoryFileUpdatedEvent(result));
+				});
+				task.WaitAndUnwrapException();			
+				
+				return result;
 			}
 		}
 		catch (Exception ex)
@@ -250,7 +273,14 @@ public partial class TfService : ITfService
 		}
 	}
 
-
+	public TfRepositoryFile UpdateRepositoryFile(TfFileForm form)
+	{
+		return UpdateRepositoryFile(
+			filename: Path.GetFileName(form.Filename),
+			localPath: form.LocalFilePath,
+			updatedBy: form.CreatedBy);
+	}
+	
 	public void DeleteRepositoryFile(
 		string filename)
 	{
@@ -271,8 +301,12 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Failed to delete file from database.");
 
 				DeleteBlob(existingFile.Id);
-
 				scope.Complete();
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfRepositoryFileUpdatedEvent(existingFile));
+				});
+				task.WaitAndUnwrapException();									
 			}
 		}
 		catch (Exception ex)

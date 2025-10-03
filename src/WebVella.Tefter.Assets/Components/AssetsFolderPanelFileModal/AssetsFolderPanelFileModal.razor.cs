@@ -17,7 +17,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 	private AssetsFolderPanelFileModalForm _form = new();
 	private FluentInputFileEventArgs _upload = null;
 	private string _uploadId = "tf-" + Guid.NewGuid();
-	FluentInputFile fileUploader = default!;
+	FluentInputFile fileUploader = null!;
 	int progressPercent = 0;
 	List<FluentInputFileEventArgs> Files = new();
 	string fakeLocalPath = "uploaded";

@@ -8,6 +8,6 @@ public partial class TucAdminDashboard : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_data = await TfUIService.GetAdminDashboardData();
+		_data = await TfService.GetAdminDashboardData();
 	}
 }

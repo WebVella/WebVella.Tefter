@@ -8,6 +8,6 @@ public class TfDataProviderManageSettingsScreenRegionContext : TfBaseScreenRegio
 {
 	public string SettingsJson { get; set; } = "{}";
 	public EventCallback<string> SettingsJsonChanged { get; init; }
-	public Func<List<ValidationError>> Validate { get; private set; } = default!;
+	public Func<List<ValidationError>> Validate { get; private set; } = null!;
 	public void SetValidate(Func<List<ValidationError>> validateFunc) => Validate = validateFunc;
 }

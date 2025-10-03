@@ -3,13 +3,13 @@
 public partial class TucFileRepositoryFileSelectDialog : TfBaseComponent, IDialogContentComponent<string?>
 {
 	[Parameter] public string? Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private bool _isSubmitting = false;
 
 	private FluentInputFileEventArgs? _upload = null;
 	private string _uploadId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
-	FluentInputFile fileUploader = default!;
+	FluentInputFile fileUploader = null!;
 	int progressPercent = 0;
 	List<FluentInputFileEventArgs> Files = new();
 	private string? _search = null;
@@ -35,7 +35,7 @@ public partial class TucFileRepositoryFileSelectDialog : TfBaseComponent, IDialo
 	{
 		try
 		{
-			_items = TfUIService.GetRepositoryFiles(search: _search);
+			_items = TfService.GetRepositoryFiles(filenameContains: _search);
 		}
 		catch (Exception ex)
 		{
@@ -58,7 +58,7 @@ public partial class TucFileRepositoryFileSelectDialog : TfBaseComponent, IDialo
 			var file = Files[0];
 			try
 			{
-				var result = TfUIService.CreateRepositoryFile(new TfFileForm
+				var result = TfService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
 					CreatedBy = TfAuthLayout.CurrentUser?.Id,

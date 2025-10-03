@@ -1,9 +1,14 @@
-﻿namespace WebVella.Tefter.Services;
+﻿using Nito.AsyncEx.Synchronous;
+
+namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
 	public List<TfBookmark> GetBookmarksListForUser(
 		Guid userId);
+	public List<TfBookmark> GetSavesListForUser(
+		Guid userId);	
+	
 	public List<TfBookmark> GetBookmarksListForSpaceView(
 		Guid spaceViewId);
 
@@ -31,13 +36,30 @@ public partial class TfService : ITfService
 			foreach (var bookmark in bookmarks)
 				bookmark.Tags = GetBookmarkTags(bookmark.Id);
 
-			return bookmarks;
+			return bookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).ToList();
 		}
 		catch (Exception ex)
 		{
 			throw ProcessException(ex);
 		}
 	}
+	
+	public List<TfBookmark> GetSavesListForUser(
+		Guid userId)
+	{
+		try
+		{
+			var bookmarks = _dboManager.GetList<TfBookmark>(userId, nameof(TfBookmark.UserId));
+			foreach (var bookmark in bookmarks)
+				bookmark.Tags = GetBookmarkTags(bookmark.Id);
+
+			return bookmarks.Where(x => !String.IsNullOrWhiteSpace(x.Url)).ToList();;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}	
 
 	public List<TfBookmark> GetBookmarksListForSpaceView(
 		Guid spaceViewId)
@@ -187,6 +209,12 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfUserUpdatedEvent(GetUser(bookmark.UserId)));
+				});
+				task.WaitAndUnwrapException();				
+				
 				return GetBookmark(bookmark.Id);
 			}
 		}
@@ -265,7 +293,11 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Update<TfBookmark> failed.");
 
 				scope.Complete();
-
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfUserUpdatedEvent(GetUser(bookmark.UserId)));
+				});
+				task.WaitAndUnwrapException();		
 				return GetBookmark(bookmark.Id);
 			}
 		}
@@ -309,8 +341,14 @@ public partial class TfService : ITfService
 
 				if (!success)
 					throw new TfDboServiceException("Delete<TfBookmark> failed.");
-
+				
 				scope.Complete();
+				
+				var task = Task.Run(async () =>
+				{
+					await _eventProvider.PublishEventAsync(new TfUserUpdatedEvent(GetUser(existingBookmark.UserId)));
+				});
+				task.WaitAndUnwrapException();						
 			}
 		}
 		catch (Exception ex)

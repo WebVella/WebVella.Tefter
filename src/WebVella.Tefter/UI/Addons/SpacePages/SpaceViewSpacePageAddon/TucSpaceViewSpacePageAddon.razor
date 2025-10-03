@@ -31,6 +31,10 @@ else if (Context.Mode == TfComponentMode.Update)
 {
 	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No options available for update")</FluentMessageBar>
 }
+else if (Context.Mode == TfComponentMode.Manage)
+{
+	<TucSpaceViewManageTabPageContent Context="Context" />
+}
 else
 {
 	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Error">@LOC("Mode: {0} not supported",Context.Mode.ToString())</FluentMessageBar>

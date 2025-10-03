@@ -8,37 +8,34 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private ITfTemplateProcessorAddon? _processor = null;
 	private List<ITfTemplateProcessorAddon> _allProcessors = new();
-	private TfNavigationState _navState = default!;
+	private TfNavigationState _navState = null!;
 	public void Dispose()
 	{
-		TfUIService.TemplateUpdated -= On_TemplateUpdated;
-		TfUIService.NavigationStateChanged -= On_NavigationStateChanged;
+		TfEventProvider.TemplateUpdatedEvent -= On_TemplateUpdated;
+		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init();
-		TfUIService.TemplateUpdated += On_TemplateUpdated;
-		TfUIService.NavigationStateChanged += On_NavigationStateChanged;
+		await _init(TfAuthLayout.NavigationState);
+		TfEventProvider.TemplateUpdatedEvent += On_TemplateUpdated;
+		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_TemplateUpdated(object? caller, TfTemplate args)
+	private async void On_TemplateUpdated(TfTemplateUpdatedEvent args)
 	{
-		await _init(template: args);
+		await _init(navState:TfAuthLayout.NavigationState, template: args.Payload);
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(navState: args);
+		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+			await _init(navState: args.Payload);
 	}
 
-	private async Task _init(TfNavigationState? navState = null, TfTemplate? template = null)
+	private async Task _init(TfNavigationState navState, TfTemplate? template = null)
 	{
-		if (navState == null)
-			_navState = TfAuthLayout.NavigationState;
-		else
-			_navState = navState;
+		_navState = navState;
 		try
 		{
 			_template = null;
@@ -50,11 +47,11 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 			else
 			{
 				if (_navState.TemplateId is not null)
-					_template = TfUIService.GetTemplate(_navState.TemplateId.Value);
+					_template = TfService.GetTemplate(_navState.TemplateId.Value);
 
 			}
 			if (_template is null) return;
-			_spaceDataSelection = TfUIService.GetSpaceDataOptionsForTemplate().Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
+			_spaceDataSelection = TfService.GetSpaceDataOptionsForTemplate().Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
 			if (_template.ContentProcessorType is not null && _template.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 			{
 				_processor = (ITfTemplateProcessorAddon?)Activator.CreateInstance(_template.ContentProcessorType);
@@ -98,8 +95,8 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 			return;
 		try
 		{
-			TfUIService.DeleteTemplate(_template.Id);
-			var templates = TfUIService.GetTemplates(type: _template.ResultType);
+			TfService.DeleteTemplate(_template.Id);
+			var templates = TfService.GetTemplates(type: _template.ResultType);
 			ToastService.ShowSuccess(LOC("Template removed"));
 			if (templates.Count > 0)
 			{
@@ -146,7 +143,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 		{
 			_template = (TfTemplate)result.Data;
 
-			_spaceDataSelection = TfUIService.GetSpaceDataOptionsForTemplate().Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
+			_spaceDataSelection = TfService.GetSpaceDataOptionsForTemplate().Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
 		}
 	}
 }
