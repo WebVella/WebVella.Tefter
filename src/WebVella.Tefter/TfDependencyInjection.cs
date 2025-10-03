@@ -7,7 +7,9 @@ namespace WebVella.Tefter;
 
 public static class TfDependencyInjection
 {
-	public static IServiceCollection AddTefter(this IServiceCollection services, bool unitTestModeOn = false)
+	public static IServiceCollection AddTefter(
+		this IServiceCollection services, 
+		IConfigurationRoot? config = null)
 	{
 		LoadAllAssemblies();
 
@@ -79,6 +81,25 @@ public static class TfDependencyInjection
 		var applications = TfMetaService.GetApplications();
 		foreach (var app in applications)
 			app.OnRegisterDependencyInjections(services);
+
+		if(config is not null)
+		{
+			if (bool.TryParse(config["Tefter:DisableBackgroundJobs"], out var disableBackgroundJobs))
+			{
+				if(disableBackgroundJobs)
+				{
+					// Remove all IHostedService registrations
+					var hostedServiceDescriptors = services
+						.Where(sd => sd.ServiceType == typeof(IHostedService))
+						.ToList();
+
+					foreach (var descriptor in hostedServiceDescriptors)
+					{
+						services.Remove(descriptor);
+					}
+				}
+			}
+		}
 
 		return services;
 	}

@@ -61,8 +61,7 @@ try
 		builder.Services.AddBlazorTrace(new WvBlazorTraceConfiguration(){ EnableTracing = false});
 
 		//IMPORTANT: Do not remove. Required for the application to work
-		builder.Services.AddTefter();
-
+		builder.Services.AddTefter(config:config);
 	}
 
 	var app = builder.Build();
