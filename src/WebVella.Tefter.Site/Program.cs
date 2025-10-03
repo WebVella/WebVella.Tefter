@@ -102,7 +102,7 @@ try
 
 		//IMPORTANT: Do not remove. Required for the application to work
 		app.UseTefter();
-		app.Run();
+		await app.RunAsync();
 	}
 }
 catch (Exception ex)
