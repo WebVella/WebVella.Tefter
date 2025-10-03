@@ -174,14 +174,6 @@ public class TfDataRow : IEnumerable
 		return values;
 	}
 
-	private enum NumericType
-	{
-		Short,
-		Int,
-		Long,
-		Decimal
-	}
-
 	private static object? ConvertToNumericType(object value, TfDatabaseColumnType targetType)
 	{
 		if (value == null)
