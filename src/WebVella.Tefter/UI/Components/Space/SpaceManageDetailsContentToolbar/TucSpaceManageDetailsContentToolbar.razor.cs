@@ -6,23 +6,29 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDis
 
 	public void Dispose()
 	{
-		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		TfEventProvider.SpaceUpdatedEvent -= On_SpaceUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
-		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
 		TfEventProvider.SpaceUpdatedEvent += On_SpaceUpdated;
 	}
-	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
-		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
-			await _init(args.Payload);
+		await InvokeAsync(async () =>
+		{
+			if (UriInitialized != args.Uri)
+				await _init(args);
+		});
 	}
 	private async void On_SpaceUpdated(TfSpaceUpdatedEvent args)
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await InvokeAsync(async () =>
+		{
+			await _init(TfAuthLayout.NavigationState);
+		});
 	}
 
 	private async Task _init(TfNavigationState navState)

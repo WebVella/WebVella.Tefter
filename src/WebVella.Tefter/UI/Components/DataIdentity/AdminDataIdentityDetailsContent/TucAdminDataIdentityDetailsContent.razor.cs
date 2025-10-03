@@ -7,7 +7,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 	public void Dispose()
 	{
 		TfEventProvider.DataIdentityUpdatedEvent -= On_DataIdentityUpdated;
-		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -15,18 +15,24 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 		await base.OnInitializedAsync();
 		await _init(navState:TfAuthLayout.NavigationState);
 		TfEventProvider.DataIdentityUpdatedEvent += On_DataIdentityUpdated;
-		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_DataIdentityUpdated(TfDataIdentityUpdatedEvent args)
 	{
-		await _init(navState:TfAuthLayout.NavigationState, identity: args.Payload);
+		await InvokeAsync(async () =>
+		{
+			await _init(navState: TfAuthLayout.NavigationState, identity: args.Payload);
+		});
 	}
 
-	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
-		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
-			await _init(navState: args.Payload);
+		await InvokeAsync(async () =>
+		{
+			if (UriInitialized != args.Uri)
+				await _init(navState: args);
+		});
 	}
 
 	private async Task _init(TfNavigationState navState, TfDataIdentity? identity = null)

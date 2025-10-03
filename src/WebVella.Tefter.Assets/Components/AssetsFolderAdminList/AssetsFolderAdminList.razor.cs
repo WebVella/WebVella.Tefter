@@ -11,7 +11,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 		AssetsService.FolderCreated -= On_FolderChanged;
 		AssetsService.FolderUpdated -= On_FolderChanged;
 		AssetsService.FolderDeleted -= On_FolderChanged;
-		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
@@ -19,16 +19,19 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 		AssetsService.FolderCreated += On_FolderChanged;
 		AssetsService.FolderUpdated += On_FolderChanged;
 		AssetsService.FolderDeleted += On_FolderChanged;
-		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 	private async void On_FolderChanged(object? caller, AssetsFolder args)
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await InvokeAsync(async () => { await _init(TfAuthLayout.NavigationState); });
 	}
-	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
-		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
-			await _init(args.Payload);
+		await InvokeAsync(async () =>
+		{
+			if (UriInitialized != args.Uri)
+				await _init(args);
+		});
 	}
 
 	private async Task _init(TfNavigationState navState)

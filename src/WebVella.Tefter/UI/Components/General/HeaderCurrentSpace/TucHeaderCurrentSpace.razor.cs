@@ -8,24 +8,24 @@ public partial class TucHeaderCurrentSpace : TfBaseComponent, IDisposable
 	private string _styles = String.Empty;
 	public void Dispose()
 	{
-		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override void OnInitialized()
 	{
 		_init(TfAuthLayout.NavigationState);
-		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
-	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
-		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
+		await InvokeAsync(async () =>
 		{
-			await InvokeAsync(() =>
+			if (UriInitialized != args.Uri)
 			{
-				_init(args.Payload);
-				StateHasChanged();
-			});
-		}
+					_init(args);
+					await InvokeAsync(StateHasChanged);
+			}
+		});
 	}
 	private void _init(TfNavigationState navState)
 	{

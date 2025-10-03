@@ -1,16 +1,18 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucAdminDataIdentityDetailsAsideContent : TfBaseComponent, IDisposable
 {
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
 	private string? _search = String.Empty;
 	private List<TfMenuItem> _items = new();
+
 	public void Dispose()
 	{
 		TfEventProvider.DataIdentityCreatedEvent -= On_DataIdentityChanged;
 		TfEventProvider.DataIdentityUpdatedEvent -= On_DataIdentityChanged;
 		TfEventProvider.DataIdentityDeletedEvent -= On_DataIdentityChanged;
-		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -20,19 +22,25 @@ public partial class TucAdminDataIdentityDetailsAsideContent : TfBaseComponent, 
 		TfEventProvider.DataIdentityCreatedEvent += On_DataIdentityChanged;
 		TfEventProvider.DataIdentityUpdatedEvent += On_DataIdentityChanged;
 		TfEventProvider.DataIdentityDeletedEvent += On_DataIdentityChanged;
-		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_DataIdentityChanged(object args)
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await InvokeAsync(async () =>
+		{
+			await _init(TfAuthLayout.NavigationState);
+		});
 	}
 
 
-	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
-		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
-			await _init(args.Payload);
+		await InvokeAsync(async () =>
+		{
+			if (UriInitialized != args.Uri)
+				await _init(args);
+		});
 	}
 
 	private async Task _init(TfNavigationState navState)

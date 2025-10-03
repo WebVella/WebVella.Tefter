@@ -70,11 +70,7 @@ public partial class TfService : ITfService
 				throw new TfDboServiceException("Insert<TfDataIdentity> failed.");
 
 			var result = GetDataIdentity(dataIdentity.DataIdentity);
-			var task = Task.Run(async () =>
-			{
-				await _eventProvider.PublishEventAsync(new TfDataIdentityCreatedEvent(result));
-			});
-			task.WaitAndUnwrapException();
+			PublishEventWithScope(new TfDataIdentityCreatedEvent(result));
 			return result;
 
 		}
@@ -102,11 +98,7 @@ public partial class TfService : ITfService
 
 
 			var result = GetDataIdentity(dataIdentity.DataIdentity);
-			var task = Task.Run(async () =>
-			{
-				await _eventProvider.PublishEventAsync(new TfDataIdentityUpdatedEvent(result));
-			});
-			task.WaitAndUnwrapException();
+			PublishEventWithScope(new TfDataIdentityUpdatedEvent(result));
 			return result;
 
 		}
@@ -136,12 +128,7 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 				
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfDataIdentityDeletedEvent(existingIdentity));
-				});
-				task.WaitAndUnwrapException();
-				
+				PublishEventWithScope(new TfDataIdentityDeletedEvent(existingIdentity));
 			}
 		}
 		catch (Exception ex)

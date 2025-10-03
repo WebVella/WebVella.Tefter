@@ -95,11 +95,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 				var result = GetSharedColumn(column.Id);
 				
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfSharedColumnCreatedEvent(result));
-				});
-				task.WaitAndUnwrapException();
+				PublishEventWithScope(new TfSharedColumnCreatedEvent(result));
 
 				return result;
 			}
@@ -133,11 +129,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 				var result = GetSharedColumn(column.Id);
 				
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfSharedColumnUpdatedEvent(result));
-				});
-				task.WaitAndUnwrapException();
+				PublishEventWithScope(new TfSharedColumnUpdatedEvent(result));
 
 				return result;
 			}
@@ -173,11 +165,7 @@ public partial class TfService : ITfService
 				
 				var result = GetSharedColumn(column.Id);
 				
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfSharedColumnDeletedEvent(column));
-				});
-				task.WaitAndUnwrapException();
+				PublishEventWithScope(new TfSharedColumnDeletedEvent(column));
 			}
 		}
 		catch (Exception ex)

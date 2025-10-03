@@ -277,11 +277,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				allPages = GetSpacePages(spacePage.SpaceId);
-				var task2 = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfSpacePageCreatedEvent(allPages.Single(x=> x.Id == spacePage.Id)));
-				});
-				task2.WaitAndUnwrapException();
+				PublishEventWithScope(new TfSpacePageCreatedEvent(allPages.Single(x=> x.Id == spacePage.Id)));
 				return (spacePage.Id, allPages);
 			}
 		}
@@ -556,11 +552,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				allPages = GetSpacePages(spacePage.SpaceId);
-				var task2 = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfSpacePageUpdatedEvent(allPages.Single(x=> x.Id == spacePage.Id)));
-				});
-				task2.WaitAndUnwrapException();
+				PublishEventWithScope(new TfSpacePageUpdatedEvent(allPages.Single(x=> x.Id == spacePage.Id)));
 				return allPages;
 			}
 		}
@@ -664,10 +656,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				allPages = GetSpacePages(spacePage.SpaceId);
-				var task2 = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfSpacePageDeletedEvent(spacePage));
-				});
+				PublishEventWithScope(new TfSpacePageDeletedEvent(spacePage));
 				return allPages;
 			}
 		}

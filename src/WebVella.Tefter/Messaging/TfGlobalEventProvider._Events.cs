@@ -20,9 +20,6 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 	public event Action<TfDatasetUpdatedEvent> DatasetUpdatedEvent;
 	public event Action<TfDatasetDeletedEvent> DatasetDeletedEvent;		
 	
-	//navigation state
-	public event Action<TfNavigationStateChangedEvent> NavigationStateChangedEvent;
-	
 	//repository file
 	public event Action<TfRepositoryFileCreatedEvent> RepositoryFileCreatedEvent;
 	public event Action<TfRepositoryFileUpdatedEvent> RepositoryFileUpdatedEvent;
@@ -100,10 +97,6 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 	
 		if (obj is TfDatasetDeletedEvent)
 			DatasetDeletedEvent?.Invoke((TfDatasetDeletedEvent)obj);				
-
-		//navigataion state
-		if (obj is TfNavigationStateChangedEvent)
-			NavigationStateChangedEvent?.Invoke((TfNavigationStateChangedEvent)obj);		
 		
 		//repository file
 		if (obj is TfRepositoryFileCreatedEvent)

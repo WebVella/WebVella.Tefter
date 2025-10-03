@@ -12,7 +12,7 @@ public partial class TalkChannelAdminList : TfBaseComponent
         TalkService.ChannelCreated -= On_ChannelChanged;
         TalkService.ChannelUpdated -= On_ChannelChanged;
         TalkService.ChannelDeleted -= On_ChannelChanged;
-        TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+        TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
     }
 
     protected override async Task OnInitializedAsync()
@@ -21,18 +21,21 @@ public partial class TalkChannelAdminList : TfBaseComponent
         TalkService.ChannelCreated += On_ChannelChanged;
         TalkService.ChannelUpdated += On_ChannelChanged;
         TalkService.ChannelDeleted += On_ChannelChanged;
-        TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+        TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
     }
 
     private async void On_ChannelChanged(object? caller, TalkChannel args)
     {
-        await _init(TfAuthLayout.NavigationState);
+        await InvokeAsync(async () => { await _init(TfAuthLayout.NavigationState); });
     }
 
-    private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
+    private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
     {
-        if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
-            await _init(args.Payload);
+        await InvokeAsync(async () =>
+        {
+            if (UriInitialized != args.Uri)
+                await _init(args);
+        });
     }
 
     private async Task _init(TfNavigationState navState)

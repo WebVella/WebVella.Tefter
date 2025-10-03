@@ -214,11 +214,7 @@ public partial class TfService : ITfService
 
 				if (!sendEvent)
 				{
-					var task = Task.Run(async () =>
-					{
-						await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(provider));
-					});
-					task.WaitAndUnwrapException();
+					PublishEventWithScope(new TfDataProviderUpdatedEvent(provider));
 				}
 
 				return provider;
@@ -283,12 +279,7 @@ public partial class TfService : ITfService
 				if (provider is null)
 					throw new TfException("Failed to create new data provider column");
 
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(provider));
-				});
-				task.WaitAndUnwrapException();
-
+				PublishEventWithScope(new TfDataProviderUpdatedEvent(provider));
 				return provider;
 			}
 		}
@@ -339,12 +330,7 @@ public partial class TfService : ITfService
 			UpdateDatabaseColumn(provider, column, existingColumn);
 
 			var result = GetDataProvider(column.DataProviderId);
-			var task = Task.Run(async () =>
-			{
-				await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
-			});
-			task.WaitAndUnwrapException();
-
+			PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
 			return result;
 		}
 		catch (Exception ex)
@@ -401,12 +387,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				var result = GetDataProvider(column.DataProviderId);
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
-				});
-				task.WaitAndUnwrapException();
-
+				PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
 				return result;
 			}
 		}

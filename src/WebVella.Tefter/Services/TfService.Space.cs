@@ -230,11 +230,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 				
 				var result = GetSpace(space.Id);
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfSpaceCreatedEvent(result));
-				});
-				task.WaitAndUnwrapException();
+				PublishEventWithScope(new TfSpaceCreatedEvent(result));
 				
 				return result;
 			}
@@ -298,11 +294,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 				
 				var result = GetSpace(space.Id);
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfSpaceUpdatedEvent(result));
-				});
-				task.WaitAndUnwrapException();
+				PublishEventWithScope(new TfSpaceUpdatedEvent(result));
 				
 				return result;
 			}
@@ -353,12 +345,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 				
 				var result = GetSpace(id);
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfSpaceUpdatedEvent(result));
-				});
-				task.WaitAndUnwrapException();
-
+				PublishEventWithScope(new TfSpaceUpdatedEvent(result));
 			}
 		}
 		catch (Exception ex)
@@ -408,11 +395,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 				
 				var result = GetSpace(id);
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfSpaceUpdatedEvent(result));
-				});
-				task.WaitAndUnwrapException();				
+				PublishEventWithScope(new TfSpaceUpdatedEvent(result));
 			}
 		}
 		catch (Exception ex)
@@ -482,11 +465,7 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 				
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfSpaceUpdatedEvent(space));
-				});
-				task.WaitAndUnwrapException();				
+				PublishEventWithScope(new TfSpaceUpdatedEvent(space));
 			}
 		}
 		catch (Exception ex)
@@ -503,11 +482,7 @@ public partial class TfService : ITfService
 			throw new Exception("Space not found");
 		space.IsPrivate = isPrivate;
 		var result = UpdateSpace(space);
-		var task = Task.Run(async () =>
-		{
-			await _eventProvider.PublishEventAsync(new TfSpaceUpdatedEvent(space));
-		});
-		task.WaitAndUnwrapException();	
+		PublishEventWithScope(new TfSpaceUpdatedEvent(space));
 		return result;
 	}	
 

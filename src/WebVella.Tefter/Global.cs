@@ -17,6 +17,7 @@ global using Microsoft.FluentUI.AspNetCore.Components.Extensions;
 global using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons;
 global using Microsoft.JSInterop;
 global using Nito.AsyncEx;
+global using Nito.AsyncEx.Synchronous;
 global using Npgsql;
 global using System.Collections;
 global using System.Collections.Concurrent;

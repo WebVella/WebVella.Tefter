@@ -452,11 +452,7 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfDataProviderCreatedEvent(provider));
-				});
-				task.WaitAndUnwrapException();				
+				PublishEventWithScope(new TfDataProviderCreatedEvent(provider));
 				
 				return provider;
 			}
@@ -499,12 +495,8 @@ public partial class TfService : ITfService
 				throw new TfDboServiceException("Update<TfDataProviderDbo> failed.");
 
 			var result = GetDataProvider(updateModel.Id);
-			var task = Task.Run(async () =>
-			{
-				await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
-			});
-			task.WaitAndUnwrapException();				
-			
+			PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
+
 			return result;
 		}
 		catch (Exception ex)
@@ -567,12 +559,8 @@ public partial class TfService : ITfService
 				_dbManager.SaveChanges(dbBuilder);
 				scope.Complete();
 				
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfDataProviderDeletedEvent(provider));
-				});
-				task.WaitAndUnwrapException();								
-				
+				PublishEventWithScope(new TfDataProviderDeletedEvent(provider));
+			
 			}
 		}
 		catch (Exception ex)

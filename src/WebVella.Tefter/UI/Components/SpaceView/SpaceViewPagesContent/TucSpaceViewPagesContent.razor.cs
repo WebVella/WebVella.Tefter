@@ -8,24 +8,30 @@ public partial class TucSpaceViewPagesContent : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
-		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
 	{
-		await _init(navState:TfAuthLayout.NavigationState,spaceView: args);
+		await InvokeAsync(async () =>
+		{
+			await _init(navState: TfAuthLayout.NavigationState, spaceView: args);
+		});
 	}
 
-	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
-		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
-			await _init(navState: args.Payload);
+		await InvokeAsync(async () =>
+		{
+			if (UriInitialized != args.Uri)
+				await _init(navState: args);
+		});
 	}
 
 	private async Task _init(TfNavigationState navState, TfSpaceView? spaceView = null)

@@ -209,12 +209,7 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfUserUpdatedEvent(GetUser(bookmark.UserId)));
-				});
-				task.WaitAndUnwrapException();				
-				
+				PublishEventWithScope(new TfUserUpdatedEvent(GetUser(bookmark.UserId)));
 				return GetBookmark(bookmark.Id);
 			}
 		}
@@ -293,11 +288,8 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Update<TfBookmark> failed.");
 
 				scope.Complete();
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfUserUpdatedEvent(GetUser(bookmark.UserId)));
-				});
-				task.WaitAndUnwrapException();		
+				PublishEventWithScope(new TfUserUpdatedEvent(GetUser(bookmark.UserId)));
+
 				return GetBookmark(bookmark.Id);
 			}
 		}
@@ -344,11 +336,7 @@ public partial class TfService : ITfService
 				
 				scope.Complete();
 				
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfUserUpdatedEvent(GetUser(existingBookmark.UserId)));
-				});
-				task.WaitAndUnwrapException();						
+				PublishEventWithScope(new TfUserUpdatedEvent(GetUser(existingBookmark.UserId)));
 			}
 		}
 		catch (Exception ex)

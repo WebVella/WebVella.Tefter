@@ -7,7 +7,7 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 	public bool _submitting = false;
 	public void Dispose()
 	{
-		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		TfEventProvider.SpaceCreatedEvent -= On_SpaceChange;
 		TfEventProvider.SpaceUpdatedEvent -= On_SpaceChange;
 		TfEventProvider.SpaceDeletedEvent -= On_SpaceChange;
@@ -16,22 +16,28 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.NavigationState);
-		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
 		TfEventProvider.SpaceCreatedEvent += On_SpaceChange;
 		TfEventProvider.SpaceUpdatedEvent += On_SpaceChange;
 		TfEventProvider.SpaceDeletedEvent += On_SpaceChange;
 	}
 
 
-	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
-		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
-			await _init(navState: args.Payload);
+		await InvokeAsync(async () =>
+		{
+			if (UriInitialized != args.Uri)
+				await _init(navState: args);
+		});
 	}
 
 	private async void On_SpaceChange(object args)
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await InvokeAsync(async () =>
+		{
+			await _init(TfAuthLayout.NavigationState);
+		});
 	}
 
 	private async Task _init(TfNavigationState navState, TfSpace? role = null)

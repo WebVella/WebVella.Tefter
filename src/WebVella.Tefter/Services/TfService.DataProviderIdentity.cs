@@ -185,11 +185,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				var result = GetDataProvider(dataIdentity.DataProviderId);
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
-				});
-				task.WaitAndUnwrapException();						
+				PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
 				return result;
 			}
 		}
@@ -264,11 +260,7 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 				var result = GetDataProvider(dataIdentity.DataProviderId);
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
-				});
-				task.WaitAndUnwrapException();						
+				PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
 				return result;				
 			}
 		}
@@ -320,11 +312,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 				
 				var result = GetDataProvider(dataIdentity.DataProviderId);
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfDataProviderUpdatedEvent(result));
-				});
-				task.WaitAndUnwrapException();						
+				PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
 				return result;
 			}
 		}

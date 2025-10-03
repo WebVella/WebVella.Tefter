@@ -4,22 +4,12 @@ namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
-	void InvokeNavigationStateChanged(TfNavigationState newState);
 	TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? currentUser);
 }
 
 public partial class TfService : ITfService
 {
-	public void InvokeNavigationStateChanged(TfNavigationState newState)
-	{
-		var task = Task.Run(async () =>
-		{
-			await _eventProvider.PublishEventAsync(new TfNavigationStateChangedEvent(newState));
-		});
-		task.WaitAndUnwrapException();	
-	}
-
-public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? currentUser)
+	public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? currentUser)
 	{
 		if (currentUser is null) return new TfNavigationMenu();
 
@@ -59,7 +49,7 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 					addonPages: addonPages);
 			}
 			else if (navState.RouteNodes[0] == RouteDataNode.Home
-				|| navState.RouteNodes[0] == RouteDataNode.Space)
+			         || navState.RouteNodes[0] == RouteDataNode.Space)
 			{
 				var spaces = GetSpacesListForUser(currentUser.Id);
 				var pages = GetAllSpacePages();
@@ -69,9 +59,11 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 					pages: pages,
 					currentUser: currentUser);
 			}
+
 			return navMenu;
 		}
 	}
+
 	private List<TfMenuItem> generateAdminMenu(TfNavigationState routeState,
 		ReadOnlyCollection<TfUser> users,
 		ReadOnlyCollection<TfRole> roles,
@@ -80,10 +72,12 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 		List<TfDataIdentity> identities,
 		List<TfTemplate> templates,
 		ReadOnlyCollection<TfScreenRegionComponentMeta> addonPages
-		)
+	)
 	{
 		var menuItems = new List<TfMenuItem>();
+
 		#region << Dashboard >>
+
 		menuItems.Add(new TfMenuItem()
 		{
 			Id = "tf-dashboard-link",
@@ -94,8 +88,11 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 			Url = "/admin",
 			Text = LOC["Dashboard"]
 		});
+
 		#endregion
+
 		#region << Users >>
+
 		{
 			var rootMenu = new TfMenuItem()
 			{
@@ -104,7 +101,7 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 				IconExpanded = TfConstants.GetIcon("People"),
 				IconColor = TfConstants.AdminColor,
 				Selected = routeState.HasNode(RouteDataNode.Users, 1)
-					|| routeState.HasNode(RouteDataNode.Roles, 1),
+				           || routeState.HasNode(RouteDataNode.Roles, 1),
 				Url = null,
 				Text = LOC["Access"]
 			};
@@ -135,8 +132,11 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 
 			menuItems.Add(rootMenu);
 		}
+
 		#endregion
+
 		#region << Data Providers >>
+
 		{
 			var rootMenu = new TfMenuItem()
 			{
@@ -145,8 +145,8 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 				IconExpanded = TfConstants.GetIcon("Database"),
 				IconColor = TfConstants.AdminColor,
 				Selected = routeState.HasNode(RouteDataNode.DataProviders, 1)
-					|| routeState.HasNode(RouteDataNode.SharedColumns, 1)
-					|| routeState.HasNode(RouteDataNode.DataIdentities, 1),
+				           || routeState.HasNode(RouteDataNode.SharedColumns, 1)
+				           || routeState.HasNode(RouteDataNode.DataIdentities, 1),
 				Url = null,
 				Text = LOC["Data"]
 			};
@@ -188,8 +188,11 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 			});
 			menuItems.Add(rootMenu);
 		}
+
 		#endregion
+
 		#region << Content >>
+
 		{
 			var rootMenu = new TfMenuItem()
 			{
@@ -198,7 +201,7 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 				IconExpanded = TfConstants.GetIcon("Folder"),
 				IconColor = TfConstants.AdminColor,
 				Selected = routeState.HasNode(RouteDataNode.Templates, 1)
-					|| routeState.HasNode(RouteDataNode.FileRepository, 1),
+				           || routeState.HasNode(RouteDataNode.FileRepository, 1),
 				Url = null,
 				Text = LOC["Content"]
 			};
@@ -223,17 +226,22 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 					//IconExpanded = TfConstants.TemplateIcon,
 					//IconColor = TfConstants.AdminColor,
 					Selected = routeState.HasNode(RouteDataNode.Templates, 1) && routeState.NodesDict.Count >= 3
-						&& routeState.TemplateResultType == item,
+					                                                          && routeState.TemplateResultType == item,
 					Url = typeTemplates.Count == 0
-					? string.Format(TfConstants.AdminTemplatesTypePageUrl, ((int)item).ToString())
-					: string.Format(TfConstants.AdminTemplatesTemplatePageUrl, ((int)item).ToString(), typeTemplates[0].Id),
+						? string.Format(TfConstants.AdminTemplatesTypePageUrl, ((int)item).ToString())
+						: string.Format(TfConstants.AdminTemplatesTemplatePageUrl, ((int)item).ToString(),
+							typeTemplates[0].Id),
 					Text = String.Format(LOC["Template {0}"], LOC[item.ToDescriptionString()])
 				});
 			}
+
 			menuItems.Add(rootMenu);
 		}
+
 		#endregion
+
 		#region << Addons >>
+
 		if (addonPages.Count > 0)
 		{
 			var rootMenu = new TfMenuItem()
@@ -248,10 +256,12 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 			};
 			menuItems.Add(rootMenu);
 		}
+
 		#endregion
 
 		return menuItems;
 	}
+
 	private List<TfMenuItem> generateSpaceMenu(TfNavigationState routeState,
 		TfUser currentUser,
 		List<TfSpace> spaces,
@@ -260,6 +270,7 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 		var menuItems = new List<TfMenuItem>();
 
 		#region << Spaces >>
+
 		Dictionary<Guid, List<TfSpacePage>> pageDict = new();
 		foreach (var page in pages)
 		{
@@ -268,10 +279,12 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 
 			pageDict[page.SpaceId].Add(page);
 		}
+
 		foreach (var spaceId in pageDict.Keys)
 		{
 			pageDict[spaceId] = pageDict[spaceId].OrderBy(x => x.Position).ToList();
 		}
+
 		foreach (var space in spaces.OrderBy(x => x.Position))
 		{
 			var spacePages = pageDict.ContainsKey(space.Id) ? pageDict[space.Id] : new List<TfSpacePage>();
@@ -285,16 +298,18 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 					break;
 				}
 			}
+
 			var rootMenu = new TfMenuItem()
 			{
 				Id = $"tf-space-{space.Id}",
 				IconCollapsed = TfConstants.GetIcon(space.FluentIconName),
 				IconExpanded = TfConstants.GetIcon(space.FluentIconName),
 				IconColor = space.Color,
-				Selected = routeState.RouteNodes.Count >= 2 && routeState.RouteNodes[0] == RouteDataNode.Space && routeState.SpaceId == space.Id,
+				Selected = routeState.RouteNodes.Count >= 2 && routeState.RouteNodes[0] == RouteDataNode.Space &&
+				           routeState.SpaceId == space.Id,
 				Url = firstPageId is null
-				? String.Empty
-				: String.Format(TfConstants.SpacePagePageUrl, space.Id, firstPageId),
+					? String.Empty
+					: String.Format(TfConstants.SpacePagePageUrl, space.Id, firstPageId),
 				Tooltip = space.Name,
 				Text = space.Name
 			};
@@ -311,11 +326,7 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 						Url = String.Empty,
 						Text = LOC["New Page"],
 						Tooltip = LOC["add new page to this space"],
-						Data = new TfMenuItemData
-						{
-							SpaceId = space.Id,
-							MenuType = TfMenuItemType.CreateSpacePage
-						}
+						Data = new TfMenuItemData { SpaceId = space.Id, MenuType = TfMenuItemType.CreateSpacePage }
 					});
 				}
 				{
@@ -328,19 +339,18 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 						Url = String.Empty,
 						Text = LOC["Delete Space"],
 						Tooltip = LOC["delete this space"],
-						Data = new TfMenuItemData
-						{
-							SpaceId = space.Id,
-							MenuType = TfMenuItemType.DeleteSpace
-						}
+						Data = new TfMenuItemData { SpaceId = space.Id, MenuType = TfMenuItemType.DeleteSpace }
 					});
 				}
 			}
+
 			menuItems.Add(rootMenu);
 		}
+
 		#endregion
 
 		#region << Add space >>
+
 		if (currentUser.IsAdmin)
 		{
 			menuItems.Add(new TfMenuItem()
@@ -352,14 +362,12 @@ public TfNavigationMenu GetNavigationMenu(NavigationManager navigator, TfUser? c
 				Selected = false,
 				Url = String.Empty,
 				Tooltip = LOC["add new space"],
-				Data = new TfMenuItemData
-				{
-					MenuType = TfMenuItemType.CreateSpace
-				}
+				Data = new TfMenuItemData { MenuType = TfMenuItemType.CreateSpace }
 			});
 		}
+
 		#endregion
+
 		return menuItems;
-	}	
-	
+	}
 }

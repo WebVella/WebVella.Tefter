@@ -15,6 +15,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		return ValueTask.CompletedTask;
 	}
 
+	public event EventHandler<TfNavigationState> NavigationStateChangedEvent = null!;
 	public TfUser CurrentUser = null!;
 	public TfNavigationState NavigationState => Navigator.GetRouteState(); 
 	public TfNavigationMenu NavigationMenu => TfService.GetNavigationMenu(Navigator, CurrentUser);
@@ -69,13 +70,10 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		}
 	}
 
-	private async void Navigator_LocationChanged(object? sender, LocationChangedEventArgs e)
+	private void Navigator_LocationChanged(object? sender, LocationChangedEventArgs e)
 	{
-		await InvokeAsync(async () =>
-		{
 			_checkAccess();
-			TfService.InvokeNavigationStateChanged(NavigationState);
-		});
+			NavigationStateChangedEvent?.Invoke(this,Navigator.GetRouteState());
 	}
 
 	private void _checkAccess()

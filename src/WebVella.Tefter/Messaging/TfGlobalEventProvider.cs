@@ -21,6 +21,7 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 	private const string GLOBAL_CHANNEL = "GLOBAL_CHANNEL";
 	private readonly ITfEventBus _eventBus;
 	private readonly AuthenticationStateProvider _authStateProvider;
+	private readonly IServiceProvider _serviceProvider;
 
 	public TfGlobalEventProvider(
 		ITfEventBus eventBus,
@@ -34,14 +35,13 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 
 	public async Task PublishEventAsync(IGlobalEvent globalEvent)
 	{
-		var authState = _authStateProvider.GetAuthenticationStateAsync().GetAwaiter().GetResult();
-		if (authState is not null && authState.User.Identity != null && authState.User.Identity.IsAuthenticated)
-		{
-			var _currentUser = ((TfIdentity)authState.User.Identity).User;
-			if (_currentUser is not null)
-				globalEvent.UserId = _currentUser.Id;
-		}
+		var authState = await _authStateProvider.GetAuthenticationStateAsync();
+		if (authState is null || authState.User.Identity is null || !authState.User.Identity.IsAuthenticated)
+			return;
 
+		var currentUser = ((TfIdentity)authState.User.Identity).User;
+		if (currentUser is null) return;
+		globalEvent.UserId = currentUser.Id;
 		await _eventBus.PublishEventAsync(globalEvent);
 	}
 

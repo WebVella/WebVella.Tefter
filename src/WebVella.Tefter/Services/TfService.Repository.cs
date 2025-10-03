@@ -204,11 +204,7 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Insert repository file record into database failed");
 
 				scope.Complete();
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfRepositoryFileCreatedEvent(file));
-				});
-				task.WaitAndUnwrapException();
+				PublishEventWithScope(new TfRepositoryFileCreatedEvent(file));
 				return file;
 			}
 		}
@@ -258,12 +254,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 				var result = GetRepositoryFile(filename);
 				
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfRepositoryFileUpdatedEvent(result));
-				});
-				task.WaitAndUnwrapException();			
-				
+				PublishEventWithScope(new TfRepositoryFileUpdatedEvent(result));
 				return result;
 			}
 		}
@@ -302,11 +293,7 @@ public partial class TfService : ITfService
 
 				DeleteBlob(existingFile.Id);
 				scope.Complete();
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfRepositoryFileUpdatedEvent(existingFile));
-				});
-				task.WaitAndUnwrapException();									
+				PublishEventWithScope(new TfRepositoryFileUpdatedEvent(existingFile));
 			}
 		}
 		catch (Exception ex)

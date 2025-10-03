@@ -260,11 +260,7 @@ public partial class TfService : ITfService
 			if (!success)
 				throw new TfDboServiceException("Insert<RoleDbo> failed");
 			var result = GetRole(roleDbo.Id);
-			var task = Task.Run(async () =>
-			{
-				await _eventProvider.PublishEventAsync(new TfRoleCreatedEvent(result));
-			});
-			task.WaitAndUnwrapException();			
+			PublishEventWithScope(new TfRoleCreatedEvent(result));
 			
 			return result;
 		}
@@ -295,12 +291,7 @@ public partial class TfService : ITfService
 				throw new TfDboServiceException("Update<RoleDbo> failed");
 
 			var result = GetRole(roleDbo.Id);
-			var task = Task.Run(async () =>
-			{
-				await _eventProvider.PublishEventAsync(new TfRoleUpdatedEvent(result));
-			});
-			task.WaitAndUnwrapException();			
-			
+			PublishEventWithScope(new TfRoleUpdatedEvent(result));
 			return result;
 		}
 		catch (Exception ex)
@@ -325,11 +316,7 @@ public partial class TfService : ITfService
 			if (!success)
 				throw new TfDboServiceException("Delete<RoleDbo> failed");
 			
-			var task = Task.Run(async () =>
-			{
-				await _eventProvider.PublishEventAsync(new TfRoleDeletedEvent(role));
-			});
-			task.WaitAndUnwrapException();			
+			PublishEventWithScope(new TfRoleDeletedEvent(role));
 		}
 		catch (Exception ex)
 		{

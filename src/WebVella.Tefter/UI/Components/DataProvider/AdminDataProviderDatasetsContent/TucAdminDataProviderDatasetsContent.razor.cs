@@ -7,7 +7,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 
 	public void Dispose()
 	{
-		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		TfEventProvider.DatasetCreatedEvent -= On_DatasetChanged;
 		TfEventProvider.DatasetUpdatedEvent -= On_DatasetChanged;
 		TfEventProvider.DatasetDeletedEvent -= On_DatasetChanged;
@@ -16,20 +16,26 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 	{
 		await _init(TfAuthLayout.NavigationState);
 
-		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
 		TfEventProvider.DatasetCreatedEvent += On_DatasetChanged;
 		TfEventProvider.DatasetUpdatedEvent += On_DatasetChanged;
 		TfEventProvider.DatasetDeletedEvent += On_DatasetChanged;
 	}
-	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
-		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
-			await _init(args.Payload);
+		await InvokeAsync(async () =>
+		{
+			if (UriInitialized != args.Uri)
+				await _init(args);
+		});
 	}
 
 	private async void On_DatasetChanged(object  args)
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await InvokeAsync(async () =>
+		{
+			await _init(TfAuthLayout.NavigationState);
+		});
 	}
 
 	private async Task _init(TfNavigationState navState)

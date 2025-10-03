@@ -209,12 +209,7 @@ public partial class TfService : ITfService
 
 			contentProcessor.OnCreated(resultTemplate, _serviceProvider);
 
-			var task = Task.Run(async () =>
-			{
-				await _eventProvider.PublishEventAsync(new TfTemplateCreatedEvent(resultTemplate));
-			});
-			task.WaitAndUnwrapException();
-
+			PublishEventWithScope(new TfTemplateCreatedEvent(resultTemplate));
 			return resultTemplate;
 		}
 		catch (Exception ex)
@@ -317,11 +312,7 @@ public partial class TfService : ITfService
 
 			contentProcessor.OnUpdated(resultTemplate, _serviceProvider);
 
-			var task = Task.Run(async () =>
-			{
-				await _eventProvider.PublishEventAsync(new TfTemplateUpdatedEvent(resultTemplate));
-			});
-			task.WaitAndUnwrapException();			
+			PublishEventWithScope(new TfTemplateUpdatedEvent(resultTemplate));
 			return resultTemplate;
 		}
 		catch (Exception ex)
@@ -376,10 +367,7 @@ public partial class TfService : ITfService
 
 			contentProcessor.OnDeleted(existingTemplate, _serviceProvider);
 			
-			var task = Task.Run(async () =>
-			{
-				await _eventProvider.PublishEventAsync(new TfTemplateDeletedEvent(existingTemplate));
-			});			
+			PublishEventWithScope(new TfTemplateDeletedEvent(existingTemplate));
 		}
 		catch (Exception ex)
 		{
@@ -506,11 +494,7 @@ public partial class TfService : ITfService
 				UserId = template.CreatedBy?.Id
 			};
 			var result = UpdateTemplate(form);
-			var task = Task.Run(async () =>
-			{
-				await _eventProvider.PublishEventAsync(new TfTemplateUpdatedEvent(result));
-			});
-			task.WaitAndUnwrapException();
+			PublishEventWithScope(new TfTemplateUpdatedEvent(result));
 			return result;
 		}
 		catch (Exception ex)

@@ -191,12 +191,7 @@ public partial class TfService : ITfService
 
 				var result = GetDataset(newDataset.Id) ??
 				             throw new Exception($"GetDataset failed for id: {newDataset.Id}");
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfDatasetCreatedEvent(result));
-				});
-				task.WaitAndUnwrapException();
-
+				PublishEventWithScope(new TfDatasetCreatedEvent(result));
 				return result;
 			}
 		}
@@ -238,11 +233,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 				var result = GetDataset(dbo.Id) ??
 				             throw new Exception($"UpdateDataset failed for id: {updateDataset.Id}");
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfDatasetUpdatedEvent(result));
-				});
-				task.WaitAndUnwrapException();
+				PublishEventWithScope(new TfDatasetUpdatedEvent(result));
 
 				return result;
 			}
@@ -285,11 +276,7 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfDatasetDeletedEvent(dataset));
-				});
-				task.WaitAndUnwrapException();
+				PublishEventWithScope(new TfDatasetDeletedEvent(dataset));
 			}
 		}
 		catch (Exception ex)
@@ -339,12 +326,7 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				var result = GetDataset(dataset.Id) ?? throw new Exception($"CopyDataset failed for id: {originalId}");
-				var task = Task.Run(async () =>
-				{
-					await _eventProvider.PublishEventAsync(new TfDatasetCreatedEvent(result));
-				});
-				task.WaitAndUnwrapException();
-
+				PublishEventWithScope(new TfDatasetCreatedEvent(result));
 				return result;
 			}
 		}

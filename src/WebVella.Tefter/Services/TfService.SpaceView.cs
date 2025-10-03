@@ -328,7 +328,7 @@ public partial class TfService : ITfService
 				throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
 			
 			var spaceView = GetSpaceView(spaceViewId);
-			await _eventProvider.PublishEventAsync(new TfSpaceViewUpdatedEvent(spaceView) );			
+			await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView) );			
 		}
 		catch (Exception ex)
 		{
@@ -367,7 +367,7 @@ public partial class TfService : ITfService
 				throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
 			
 			var spaceView = GetSpaceView(spaceViewId);
-			await _eventProvider.PublishEventAsync(new TfSpaceViewUpdatedEvent(spaceView) );				
+			await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView) );				
 		}
 		catch (Exception ex)
 		{

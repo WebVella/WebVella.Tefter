@@ -11,7 +11,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfEventProvider.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		KeyCodeService.UnregisterListener(HandleKeyDownAsync);
 	}
 
@@ -20,13 +20,16 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		base.OnInitialized();
 		await initAdmin(TfAuthLayout.NavigationState);
 		KeyCodeService.RegisterListener(HandleKeyDownAsync);
-		TfEventProvider.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
-	private async void On_NavigationStateChanged(TfNavigationStateChangedEvent args)
+	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{
-		if (args.IsUserApplicable(TfAuthLayout.CurrentUser) && UriInitialized != args.Payload.Uri)
-			await initAdmin(args.Payload);
-		StateHasChanged();
+		await InvokeAsync(async () => { 
+			if (UriInitialized != args.Uri)
+				await initAdmin(args);
+			
+			await InvokeAsync(StateHasChanged);
+		});		
 	}
 
 	public Task HandleKeyDownAsync(FluentKeyCodeEventArgs args)
