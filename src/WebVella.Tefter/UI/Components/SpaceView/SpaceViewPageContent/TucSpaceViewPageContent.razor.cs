@@ -142,12 +142,14 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 			Guid? oldViewId = _spaceView is not null ? _spaceView.Id : null;
 			_spaceView = null;
-			if (_navState.SpaceId is null || _navState.SpacePageId is null)
-				return;
+			// if (_navState.SpaceId is null || _navState.SpacePageId is null)
+			// 	return;
 
 			_spacePage = Context!.SpacePage;
-			if (_spacePage is null || _spacePage.SpaceId != _navState.SpaceId.Value)
-				return;
+			// if (_spacePage is null || _spacePage.SpaceId != _navState.SpaceId.Value)
+			// 	return;
+			if (_spacePage is null)
+				return;			
 			_space = Context!.Space;
 			if (_space is null)
 				return;

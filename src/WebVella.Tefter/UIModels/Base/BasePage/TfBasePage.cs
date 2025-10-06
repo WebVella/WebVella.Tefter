@@ -5,12 +5,14 @@ namespace WebVella.Tefter.Models;
 
 public class TfBasePage : ComponentBase
 {
-	[Inject] protected IJSRuntime JSRuntimeSrv { get; set; } = null!;
+	[Inject] protected IJSRuntime JSRuntime { get; set; } = null!;
 	[Inject] protected NavigationManager Navigator { get; set; } = null!;
+	[Inject] protected AuthenticationStateProvider AuthenticationProvider { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
 	[Inject] protected IDialogService DialogService { get; set; } = null!;
 	[Inject] protected IMessageService MessageService { get; set; } = null!;
 	[Inject] protected ITfConfigurationService ConfigurationService { get; set; } = null!;
+	[Inject] protected ITfService TfService { get; set; } = null!;
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = null!;
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 

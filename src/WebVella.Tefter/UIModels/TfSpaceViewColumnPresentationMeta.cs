@@ -133,7 +133,7 @@ public record TfSpaceViewColumnPresentationMeta
 			if (!String.IsNullOrWhiteSpace(BackgroundColor))
 				sb.Append($"background:{BackgroundColor};");
 
-			if (sb.Length == 0) sb.Append("background:white;");
+			if (sb.Length == 0) sb.Append("background:transparent;");
 			return sb.ToString();
 		}
 	}

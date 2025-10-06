@@ -1,0 +1,27 @@
+﻿@import '_variables.less';
+
+.tf-space-actions {
+  position: relative;
+  padding-left: var(--tf-padding-content);
+  padding-right: var(--tf-padding-content);
+  --tf-space-pane-extra-space: 10px;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  gap: 10px;
+  height: 100%;
+  fluent-button{
+    flex:1 1 auto;
+  }
+  
+  &:after{
+    position: absolute;
+    content: '';
+    display: block;
+    bottom:0;
+    width: 90%;
+    height:1px;
+    border-bottom: 1px solid var(--tf-stroke-color-mute);
+    left:5%;
+  }
+}     

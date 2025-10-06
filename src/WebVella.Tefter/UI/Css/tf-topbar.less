@@ -1,0 +1,46 @@
+﻿@import '_variables.less';
+
+.tf-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  padding-left: var(--tf-padding-content);
+  padding-right: var(--tf-padding-content);
+  --accent-fill-rest:var(--tf-button-color);
+  &__left {
+    flex: 0 0 auto;
+  }
+  &__right{
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap:5px;
+  }
+
+  fluent-breadcrumb-item::part(control){
+    display: flex;
+    align-items: center;
+    background: light-dark(var(--tf-base-200),var(--tf-base-800));
+    color:var(--tf-font-color-base);
+    height:23px;
+    padding:0 5px;
+    border-radius: var(--tf-border-radius-sm);
+    margin-inline-end:0;
+    &:hover{
+      background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 80%),
+      color-mix(in srgb, var(--tf-accent-500), transparent 75%));
+      color:var(--tf-font-color-base);
+    }
+  }
+  fluent-breadcrumb-item::part(separator){
+    color: light-dark(var(--tf-base-400),var(--tf-base-600));
+    margin:0 5px;
+  }
+  fluent-divider{
+    height:1rem;
+    --neutral-stroke-divider-rest:var(--tf-stroke-color);
+    margin:0 1rem;
+  }
+}     

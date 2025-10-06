@@ -31,6 +31,12 @@
 
 	<ItemGroup>
 		<Content Remove="compilerconfig.json" />
+		<Content Update="wwwroot\styles.css">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="wwwroot\styles.css.map">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 	<!--<ItemGroup>
 		<EmbeddedResource Include="Resources\**\*.resx" />
@@ -47,9 +53,6 @@
 			<PackagePath>\</PackagePath>
 		</None>
 		<None Include="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\.editorconfig" />
-		<None Include="compilerconfig.json">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
 	</ItemGroup>
 
 	<ItemGroup>

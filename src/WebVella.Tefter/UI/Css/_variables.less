@@ -1,0 +1,64 @@
+@import '_colors.less';
+
+html:root {
+  color-scheme: light dark;
+  //color-scheme: dark;
+
+  //box shadows
+  --tf-shadow-md: light-dark(0px 0px 1.5px 0px rgba(0, 0, 0, 3%), 0px 1.4px 1.5px 0px rgba(0, 0, 0, 3%), 0px -1px 1px 0px rgba(0, 0, 0, 5%),
+  0px 0px 1.5px 0px rgba(255, 255, 255, 3%), 0px 1.4px 1.5px 0px rgba(255, 255, 255, 3%), 0px -1px 1px 0px rgba(255, 255, 255, 5%));
+  --tf-shadow-lg: light-dark(0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1),
+  0 10px 15px -3px rgb(255 255 255 / 0.1), 0 4px 6px -4px rgb(255 255 255 / 0.1));
+
+  //colors
+  --tf-font-color-base:light-dark(var(--tf-base-900), var(--tf-base-400));
+  --tf-fill-color-base:light-dark(var(--tf-base-100), var(--tf-base-900));
+  --tf-fill-color-invert:light-dark(color-mix(in srgb, var(--tf-fill-color-base), var(--tf-accent-900) 3%),
+  color-mix(in srgb, var(--tf-fill-color-base), var(--tf-accent-900) 3%));
+  --tf-button-color:light-dark(var(--tf-base-600), var(--tf-base-400));
+  --tf-accent-color:light-dark(var(--tf-accent-500), var(--tf-accent-700));
+  --tf-stroke-color:light-dark(rgba(0,0,0,15%), rgba(255,255,255,15%));
+  --tf-stroke-color-mute:light-dark(rgba(0,0,0,7.5%), rgba(255,255,255,7.5%));
+  --tf-stroke-color-hover:light-dark(rgba(0,0,0,20%), rgba(255,255,255,20%));
+  --tf-stroke-color-active:light-dark(rgba(0,0,0,25%), rgba(255,255,255,25%));
+
+  //paddings
+  --tf-padding-content: 15px;
+
+  //heights
+  --tf-topbar-height: 60px;
+  --tf-space-header-height: var(--tf-topbar-height);
+  --tf-space-actions-height: 50px;
+  --tf-content-header-height: var(--tf-space-actions-height);
+  --tf-content-tabs-height: 50px;
+  --tf-line-height-sm: 1.15em;
+
+  //widths
+  --tf-aside-width: 250px;
+
+
+  //Font size
+  --tf-font-size-base: 14px;
+  --tf-font-size-sm: 13px;
+  --tf-font-size-xs: 10px;
+  --tf-font-size-md: 16px;
+  --tf-font-size-lg: 18px;
+  --tf-font-size-xl: 20px;
+  --tf-font-size-xxl: 23px;
+
+  //Font weight
+  --tf-font-weight-base: 400;
+  --tf-font-weight-sm: 200;
+  --tf-font-weight-lg: 500;
+  --tf-font-weight-xl: 700;
+  --tf-font-weight-xxl: 900;
+
+  //border radius
+  --tf-border-radius-base: 0.5rem;
+  --tf-border-radius-sm: 0.25rem;
+  --tf-border-radius-md: 1rem;
+  --tf-border-radius-lg: 2rem;
+  --tf-border-radius-xl: 3rem;
+
+
+}

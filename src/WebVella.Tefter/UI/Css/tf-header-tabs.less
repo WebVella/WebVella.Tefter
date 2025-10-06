@@ -1,0 +1,26 @@
+﻿@import '_variables.less';
+
+.tf-header-tabs {
+  padding-left: var(--tf-padding-content);
+  padding-right: var(--tf-padding-content);
+  border-bottom: 1px solid var(--tf-stroke-color-mute);
+  --tf-tab-padding:calc(var(--tf-padding-content) / 3);
+
+  fluent-tabs {
+    margin-left: calc(-1 * var(--tf-tab-padding));
+    &::part(activeIndicator) {
+      width: 60%;
+      position: relative;
+      bottom: -7px;
+    }
+  }
+
+  fluent-tab {
+    padding-left: var(--tf-tab-padding);
+    padding-right: var(--tf-tab-padding);
+    --accent-fill-rest:var(--tf-font-color-base);
+    svg{
+      margin-right: 3px;
+    }
+  }
+}     

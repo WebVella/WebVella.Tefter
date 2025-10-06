@@ -1,0 +1,57 @@
+﻿@import '_variables.less';
+
+.tf-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: var(--tf-padding-content);
+  padding-right: var(--tf-padding-content);
+  --tf-title-width: 400px;
+
+  &__left {
+    flex: 0 0 auto;
+  }
+
+  &__right {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 5px;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+
+    &__icon {
+      flex: 0 0 24px;
+      display: flex;
+      justify-content: start;
+      align-items: center;
+    }
+
+    &__title {
+      flex: 1 1 var(--tf-title-width);
+      width: var(--tf-title-width);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: var(--tf-font-size-xl);
+    }
+  }
+
+  fluent-divider {
+    height: 1rem;
+    --neutral-stroke-divider-rest: var(--tf-stroke-color);
+    margin: 0 1rem;
+  }
+
+  fluent-button {
+    color: var(--tf-button-color);
+
+    svg {
+      --accent-fill-rest: var(--tf-button-color);
+    }
+  }
+}     

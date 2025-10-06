@@ -1,0 +1,67 @@
+﻿@import '_variables.less';
+
+.tflg {
+  display: flex;
+  flex-flow: row;
+
+
+  .box {
+    height: 100%;
+  }
+
+  &__aside {
+    flex: 0 0 var(--tf-aside-width);
+    display: flex;
+    flex-flow: column;
+    background: var(--tf-fill-color-invert);
+    border-right: 1px solid var(--tf-stroke-color-mute);
+  }
+
+  &__wrapper {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column;
+  }
+
+  &__space-header {
+    flex: 0 0 var(--tf-space-header-height);
+  }
+
+  &__space-actions {
+    flex: 0 0 var(--tf-space-actions-height);
+  }
+
+  &__sidenav {
+    flex: 1 1 auto;
+    height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-actions-height));
+    overflow-y: auto;
+    scrollbar-color: var(--tf-foreground-color-mute) var(--tf-background-color-body);
+    scrollbar-width: thin;
+  }
+
+  &__topbar {
+    flex: 0 0 var(--tf-topbar-height);
+  }
+
+  &__header {
+    flex: 0 0 var(--tf-content-header-height);
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+  }
+
+  &__content_tabs {
+    flex: 0 0 var(--tf-content-tabs-height);
+    display: flex;
+    flex-flow: column;
+    justify-content: end;    
+  }
+
+  &__content {
+    flex: 1 1 auto;
+    height: calc(100vh - var(--tf-topbar-height) - var(--tf-content-header-height) - var(--tf-content-tabs-height));
+    overflow-y: auto;
+    scrollbar-color: var(--tf-foreground-color-mute) var(--tf-background-color-body);
+    scrollbar-width: thin;
+  }
+}     

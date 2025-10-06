@@ -27,7 +27,7 @@ public partial class TfService : ITfService
 					throw new Exception("Current user is not admin");
 				navMenu.SpaceName = "Administration";
 				navMenu.SpaceColor = TfConstants.AdminColor;
-				navMenu.SpaceIcon = TfConstants.GetIcon("Settings")!;
+				navMenu.SpaceIcon = "Settings";
 
 
 				var users = GetUsers();

@@ -1,0 +1,12 @@
+﻿@import '_variables.less';
+
+.tf-button {
+  border-radius: var(--tf-border-radius-xl);
+  &::part(content){
+    position: relative;
+    top:-1px;
+  }
+  &--sm{
+    --base-height-multiplier:6;
+  }
+}     
