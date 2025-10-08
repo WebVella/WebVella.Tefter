@@ -39,7 +39,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 		}
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -49,7 +49,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	}
 
 
-	private async void On_RepositoryFileChanged(object args)
+	private async Task On_RepositoryFileChanged(object args)
 	{
 		await InvokeAsync(async () =>
 		{

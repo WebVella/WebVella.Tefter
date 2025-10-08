@@ -22,7 +22,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		KeyCodeService.RegisterListener(HandleKeyDownAsync);
 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () => { 
 			if (UriInitialized != args.Uri)

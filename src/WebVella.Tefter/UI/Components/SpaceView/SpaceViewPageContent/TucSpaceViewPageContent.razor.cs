@@ -100,7 +100,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 								 _objectRef, ComponentId, "OnColumnSort");
 		}
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -110,7 +110,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			}
 		});
 	}
-	private async void On_UserChanged(TfUserUpdatedEvent args)
+	private async Task On_UserChanged(TfUserUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -120,7 +120,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		});
 	}
 
-	private async void On_SpaceViewUpdated(TfSpaceViewColumnsChangedEvent args)
+	private async Task On_SpaceViewUpdated(TfSpaceViewColumnsChangedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{

@@ -20,12 +20,12 @@
 // 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 // 	}
 //
-// 	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
+// 	private async Task On_SpaceViewUpdated(object? caller, TfSpaceView args)
 // 	{
 // 		await _init(navState:TfAuthLayout.AppState.NavigationState, spaceView: args);
 // 	}
 //
-// 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+// 	private async Task On_NavigationStateChanged(TfNavigationState args)
 // 	{
 // 		if (UriInitialized != args.Uri)
 // 			await _init(navState: args.Payload);

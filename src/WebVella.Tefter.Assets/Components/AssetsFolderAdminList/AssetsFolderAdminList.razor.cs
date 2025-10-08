@@ -21,11 +21,11 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 		AssetsService.FolderDeleted += On_FolderChanged;
 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
-	private async void On_FolderChanged(object? caller, AssetsFolder args)
+	private async Task On_FolderChanged(AssetsFolder args)
 	{
 		await InvokeAsync(async () => { await _init(TfState.NavigationState); });
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{

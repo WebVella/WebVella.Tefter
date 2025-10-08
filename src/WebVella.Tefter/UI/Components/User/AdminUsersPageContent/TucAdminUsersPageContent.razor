@@ -1,10 +1,9 @@
 ﻿@namespace WebVella.Tefter.UI.Components
-@inherits ComponentBase
-<TucPageLayout>
-	<div style="padding:var(--tf-layout-content-padding)">
+@inherits TfBaseComponent
+
+	<div style="padding:var(--tf-padding-content)">
 		<FluentMessageBar Title="Error" AllowDismiss="false"
 						  Intent="@MessageIntent.Error">
 			<div>No user account Id is provided in the URL</div>
 		</FluentMessageBar>
 	</div>
-</TucPageLayout>

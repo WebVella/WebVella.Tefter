@@ -8,13 +8,13 @@
 }
 else if (Channel is null)
 {
-	<div style="margin:var(--tf-layout-content-padding)">
+	<div style="margin:var(--tf-padding-content)">
 		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No talk channel is selected for this view column!")</FluentMessageBar>
 	</div>
 }
 else if (String.IsNullOrWhiteSpace(Channel.DataIdentity))
 {
-	<div style="margin:var(--tf-layout-content-padding)">
+	<div style="margin:var(--tf-padding-content)">
 		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The talk channel has no join key set!")</FluentMessageBar>
 	</div>
 }

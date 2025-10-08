@@ -42,7 +42,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		}
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -53,12 +53,12 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		});
 	}
 
-	private async void On_SpaceViewUpdated(TfSpaceViewUpdatedEvent args)
+	private async Task On_SpaceViewUpdated(TfSpaceViewUpdatedEvent args)
 	{
 		if(args.UserId != TfState.User.Id) return;
 		await _init(TfState.NavigationState);
 	}	
-	private async void On_SpaceViewColumnUpdated(TfSpaceViewColumnsChangedEvent args)
+	private async Task On_SpaceViewColumnUpdated(TfSpaceViewColumnsChangedEvent args)
 	{
 		if(args.UserId != TfState.User.Id) return;
 		await _init(TfState.NavigationState);

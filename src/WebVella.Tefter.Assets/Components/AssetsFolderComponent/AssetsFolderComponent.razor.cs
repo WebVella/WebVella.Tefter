@@ -61,11 +61,11 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 
 	}
 
-	private async void On_AssetChanged(object? caller, Asset args)
+	private async Task On_AssetChanged(Asset args)
 	{
 		await InvokeAsync(async () => { await _init(TfState.NavigationState); });
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{

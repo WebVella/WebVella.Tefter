@@ -5,9 +5,9 @@ namespace WebVella.Tefter.Talk.Services;
 
 public partial interface ITalkService
 {
-	event EventHandler<TalkThread> ThreadCreated;
-	event EventHandler<TalkThread> ThreadUpdated;
-	event EventHandler<TalkThread> ThreadDeleted;
+	event Func<TalkThread,Task> ThreadCreated;
+	event Func<TalkThread,Task> ThreadUpdated;
+	event Func<TalkThread,Task> ThreadDeleted;
 	public TalkThread GetThread(
 		Guid id);
 
@@ -38,9 +38,9 @@ public partial interface ITalkService
 internal partial class TalkService : ITalkService
 {
 	#region << Events >>
-	public event EventHandler<TalkThread> ThreadCreated = null!;
-	public event EventHandler<TalkThread> ThreadUpdated = null!;
-	public event EventHandler<TalkThread> ThreadDeleted = null!;
+	public event Func<TalkThread,Task> ThreadCreated = null!;
+	public event Func<TalkThread,Task> ThreadUpdated = null!;
+	public event Func<TalkThread,Task> ThreadDeleted = null!;
 	#endregion
 
 	public TalkThread GetThread(
@@ -347,7 +347,7 @@ ORDER BY tt.created_on DESC";
 
             ModifyThreadSharedColumnCount(createdThread, isIncrement: true);
 
-            ThreadCreated?.Invoke(this, createdThread);
+            ThreadCreated?.Invoke(createdThread);
 
             return createdThread;
         }
@@ -479,7 +479,7 @@ ORDER BY tt.created_on DESC";
 
             ModifyThreadSharedColumnCount(createdThread, isIncrement: true);
 
-            ThreadCreated?.Invoke(this,createdThread);
+            ThreadCreated?.Invoke(createdThread);
 
 			return createdThread;
 		}
@@ -574,7 +574,7 @@ ORDER BY tt.created_on DESC";
 
 			scope.Complete();
 			var createdThread = GetThread(id);
-			ThreadCreated?.Invoke(this,createdThread);
+			ThreadCreated?.Invoke(createdThread);
 			return createdThread;
 		}
 	}
@@ -620,7 +620,7 @@ ORDER BY tt.created_on DESC";
 			throw new Exception("Failed to update row in database for thread object");
 
 			var createdThread = GetThread(threadId);
-			ThreadUpdated?.Invoke(this,createdThread);
+			ThreadUpdated?.Invoke(createdThread);
 	}
 
 	public void DeleteThread(
@@ -661,7 +661,7 @@ ORDER BY tt.created_on DESC";
 
 			scope.Complete();	
 
-            ThreadDeleted?.Invoke(this, existingThread);
+            ThreadDeleted?.Invoke(existingThread);
 		}
 	}
 

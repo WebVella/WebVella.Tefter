@@ -65,13 +65,13 @@
 		<TucErrorBoundry>
 			@if (String.IsNullOrWhiteSpace(UriInitialized))
 			{
-				<div style="padding:var(--tf-layout-content-padding)">
+				<div style="padding:var(--tf-padding-content)">
 					<TucSkeletonPageHeader />
 				</div>
 			}
 			else if (_provider is null)
 			{
-				<div style="padding:var(--tf-layout-content-padding)">
+				<div style="padding:var(--tf-padding-content)">
 					<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
 				</div>
 			}
@@ -170,7 +170,7 @@
 				}
 				else
 				{
-					<div style="padding:var(--tf-layout-content-padding)">
+					<div style="padding:var(--tf-padding-content)">
 						<TucLoadingPane />
 					</div>
 				}

@@ -24,7 +24,7 @@ public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 		TfEventProvider.SpacePageDeletedEvent += On_SpacePageChanged;
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -33,7 +33,7 @@ public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 		});
 	}
 
-	private async void On_SpacePageChanged(object args)
+	private async Task On_SpacePageChanged(object args)
 	{
 		await _init(TfState.NavigationState);
 	}

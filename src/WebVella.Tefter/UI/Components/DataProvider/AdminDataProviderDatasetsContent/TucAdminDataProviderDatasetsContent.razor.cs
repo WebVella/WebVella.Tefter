@@ -21,7 +21,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 		TfEventProvider.DatasetUpdatedEvent += On_DatasetChanged;
 		TfEventProvider.DatasetDeletedEvent += On_DatasetChanged;
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -30,7 +30,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 		});
 	}
 
-	private async void On_DatasetChanged(object  args)
+	private async Task On_DatasetChanged(object  args)
 	{
 		await InvokeAsync(async () =>
 		{

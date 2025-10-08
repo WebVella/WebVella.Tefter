@@ -22,7 +22,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_TemplateUpdated(TfTemplateUpdatedEvent args)
+	private async Task On_TemplateUpdated(TfTemplateUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -30,7 +30,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 		});
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{

@@ -3,7 +3,7 @@
 <TucPageLayout Icon="@TfConstants.GetIcon("Person")" Color="@_user?.Settings.ThemeColor"
 			   Area="@LOC("Users")" Title="@_user?.Names">
 	<TucErrorBoundry>
-		<div style="padding:var(--tf-layout-content-padding)">
+		<div style="padding:var(--tf-padding-content)">
 			@if (String.IsNullOrWhiteSpace(UriInitialized))
 			{
 				<TucSkeletonPageHeader />

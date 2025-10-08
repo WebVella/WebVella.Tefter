@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 
 <TucPageLayout Area="@LOC("Home")" Title="@LOC("Dashboard")" Icon="@TfConstants.GetIcon("Home")" Color="TfConstants.DefaultThemeColor">
-	<div style="padding:var(--tf-layout-content-padding)">
+	<div style="padding:var(--tf-padding-content)">
 		@if (_data.ShowWelcome)
 		{
 			<TucHowToCard Title="@LOC("Welcome to Tefter.bg")" SubTitle="@LOC("Here are listed the most common steps to setup your instance")" Items="_howToItems"></TucHowToCard>

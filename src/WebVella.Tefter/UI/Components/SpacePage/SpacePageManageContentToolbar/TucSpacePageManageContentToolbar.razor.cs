@@ -13,7 +13,7 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 		await _init(TfState.NavigationState);
 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await _init(args);

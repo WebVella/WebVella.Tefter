@@ -245,7 +245,7 @@ html:root {
   --tf-stone-950: oklch(14.7% 0.004 49.25);
 }
 html:root {
-  color-scheme: light dark;
+  color-scheme: light;
   --tf-shadow-md: light-dark(0px 0px 1.5px 0px rgba(0, 0, 0, 0.03), 0px 1.4px 1.5px 0px rgba(0, 0, 0, 0.03), 0px -1px 1px 0px rgba(0, 0, 0, 0.05), 0px 0px 1.5px 0px rgba(255, 255, 255, 0.03), 0px 1.4px 1.5px 0px rgba(255, 255, 255, 0.03), 0px -1px 1px 0px rgba(255, 255, 255, 0.05));
   --tf-shadow-lg: light-dark(0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -4px rgba(255, 255, 255, 0.1));
   --tf-font-color-base: light-dark(var(--tf-base-900), var(--tf-base-300));
@@ -1166,6 +1166,14 @@ div[class^='fluent-messagebar'],
 .tf-space-actions fluent-button {
   flex: 1 1 auto;
 }
+.tf-space-actions fluent-button:not(:hover) {
+  --tf-action-btn-color: light-dark(var(--tf-accent-800), var(--tf-accent-900));
+  --neutral-foreground-rest: var(--tf-action-btn-color);
+  --neutral-stroke-rest: color-mix(in srgb, var(--tf-action-btn-color), transparent 85%);
+}
+.tf-space-actions fluent-button:not(:hover) svg {
+  --accent-fill-rest: var(--tf-action-btn-color);
+}
 .tf-space-actions fluent-button svg {
   --accent-fill-rest: var(--tf-font-color-base);
 }
@@ -1198,6 +1206,9 @@ div[class^='fluent-messagebar'],
   justify-content: end;
   gap: 5px;
 }
+.tf-page-topbar fluent-breadcrumb {
+  margin-left: -5px;
+}
 .tf-page-topbar fluent-breadcrumb-item::part(control) {
   display: flex;
   align-items: center;
@@ -1208,6 +1219,7 @@ div[class^='fluent-messagebar'],
   border-radius: var(--tf-border-radius-sm);
   margin-inline-end: 0;
   cursor: pointer;
+  font-size: var(--tf-font-size-sm);
 }
 .tf-page-topbar fluent-breadcrumb-item::part(control):hover {
   background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 80%), color-mix(in srgb, var(--tf-accent-500), transparent 75%));
@@ -1294,10 +1306,10 @@ div[class^='fluent-messagebar'],
 }
 .tf-treemenu__item.tf-active:not(.tf-parent) {
   position: relative;
-  background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 85%), color-mix(in srgb, var(--tf-accent-500), transparent 80%));
+  background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 85%), color-mix(in srgb, var(--tf-accent-500), transparent 90%));
 }
 .tf-treemenu__item.tf-active:not(.tf-parent):hover {
-  background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 80%), color-mix(in srgb, var(--tf-accent-500), transparent 75%));
+  background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 80%), color-mix(in srgb, var(--tf-accent-500), transparent 85%));
 }
 .tf-treemenu__item.tf-active:not(.tf-parent)::before {
   display: none !important;

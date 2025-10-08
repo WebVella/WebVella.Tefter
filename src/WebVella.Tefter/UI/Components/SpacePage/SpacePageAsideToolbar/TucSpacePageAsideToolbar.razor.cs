@@ -19,7 +19,7 @@ public partial class TucSpacePageAsideToolbar : TfBaseComponent, IDisposable
 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{

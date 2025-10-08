@@ -22,7 +22,7 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_SharedColumnChanged(object args)
+	private async Task On_SharedColumnChanged(object args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -31,7 +31,7 @@ public partial class TucAdminSharedColumnDetailsAsideContent : TfBaseComponent, 
 	}
 
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{

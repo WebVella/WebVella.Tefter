@@ -20,7 +20,7 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 	}
 
 
-	private async void On_UserCreated(TfUserCreatedEvent args)
+	private async Task On_UserCreated(TfUserCreatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -28,7 +28,7 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 		});
 	}
 
-	private async void On_UserUpdated(TfUserUpdatedEvent args)
+	private async Task On_UserUpdated(TfUserUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -36,7 +36,7 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 		});
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{

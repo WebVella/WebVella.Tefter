@@ -16,7 +16,7 @@ public partial class TucSpacePageManageContent : TfBaseComponent, IDisposable
 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -25,7 +25,7 @@ public partial class TucSpacePageManageContent : TfBaseComponent, IDisposable
 		});
 	}
 
-	private async void On_SpacePageChanged(object args)
+	private async Task On_SpacePageChanged(object args)
 	{
 		await InvokeAsync(async () =>
 		{

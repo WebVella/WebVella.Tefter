@@ -35,12 +35,12 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
         }
     }
 
-    private async void On_EmailChanged(object? caller, EmailMessage args)
+    private async Task On_EmailChanged(EmailMessage args)
     {
         await InvokeAsync(async () => { await _init(TfState.NavigationState); });
     }
 
-    private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+    private async Task On_NavigationStateChanged(TfNavigationState args)
     {
         await InvokeAsync(async () =>
         {

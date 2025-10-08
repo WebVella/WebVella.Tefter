@@ -19,6 +19,10 @@
     gap:5px;
   }
 
+  fluent-breadcrumb{
+    margin-left:-5px;
+  }
+  
   fluent-breadcrumb-item::part(control){
     display: flex;
     align-items: center;
@@ -29,6 +33,7 @@
     border-radius: var(--tf-border-radius-sm);
     margin-inline-end:0;
     cursor: pointer;
+    font-size: var(--tf-font-size-sm);
     &:hover{
       background: light-dark(
               color-mix(in srgb, var(--tf-accent-500), transparent 80%),

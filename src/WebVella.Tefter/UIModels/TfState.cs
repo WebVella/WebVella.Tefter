@@ -11,5 +11,5 @@ public record TfState
 	public List<TfMenuItem> Breadcrumb { get; set; } = new();
 	public List<TfMenuItem> Menu { get; set; } = new();
 	
-	public event EventHandler<TfNavigationState> NavigationStateChangedEvent = null!;
+	public event Func<TfNavigationState, Task> NavigationStateChangedEvent = null!;
 }

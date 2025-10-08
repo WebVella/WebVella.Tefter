@@ -5,9 +5,9 @@ namespace WebVella.Tefter.Assets.Services;
 public partial interface IAssetsService
 {
 
-    event EventHandler<Asset> AssetCreated;
-    event EventHandler<Asset> AssetUpdated;
-    event EventHandler<Asset> AssetDeleted;
+    event Func<Asset,Task> AssetCreated;
+    event Func<Asset,Task> AssetUpdated;
+    event Func<Asset,Task> AssetDeleted;
 
     public Asset GetAsset(
         Guid id);
@@ -59,9 +59,9 @@ internal partial class AssetsService : IAssetsService
 {
 
     #region << Events >>
-    public event EventHandler<Asset> AssetCreated = null!;
-    public event EventHandler<Asset> AssetUpdated = null!;
-    public event EventHandler<Asset> AssetDeleted = null!;
+    public event Func<Asset,Task> AssetCreated = null!;
+    public event Func<Asset,Task> AssetUpdated = null!;
+    public event Func<Asset,Task> AssetDeleted = null!;
     #endregion
 
     public Asset GetAsset(
@@ -326,7 +326,7 @@ ORDER BY aa.created_on DESC;";
 
             ModifyAssetSharedColumnCount(resultAsset, isIncrement: true);
 
-            AssetCreated?.Invoke(this, resultAsset);
+            AssetCreated?.Invoke(resultAsset);
 
             return resultAsset;
         }
@@ -444,7 +444,7 @@ ORDER BY aa.created_on DESC;";
 
             ModifyAssetSharedColumnCount(resultAsset, isIncrement: true);
 
-            AssetCreated?.Invoke(this, resultAsset);
+            AssetCreated?.Invoke(resultAsset);
             return resultAsset;
         }
     }
@@ -554,7 +554,7 @@ ORDER BY aa.created_on DESC;";
 
             ModifyAssetSharedColumnCount(resultAsset, isIncrement: true);
 
-            AssetCreated?.Invoke(this, resultAsset);
+            AssetCreated?.Invoke(resultAsset);
 
             return resultAsset;
         }
@@ -677,7 +677,7 @@ ORDER BY aa.created_on DESC;";
 
             ModifyAssetSharedColumnCount(resultAsset, isIncrement: true);
 
-            AssetCreated?.Invoke(this, resultAsset);
+            AssetCreated?.Invoke(resultAsset);
 
             return resultAsset;
         }
@@ -791,7 +791,7 @@ ORDER BY aa.created_on DESC;";
             scope.Complete();
 
             var resultAsset = GetAsset(id);
-            AssetUpdated?.Invoke(this, resultAsset);
+            AssetUpdated?.Invoke(resultAsset);
             return resultAsset;
         }
     }
@@ -876,7 +876,7 @@ ORDER BY aa.created_on DESC;";
             scope.Complete();
 
             var resultAsset = GetAsset(id);
-            AssetUpdated?.Invoke(this, resultAsset);
+            AssetUpdated?.Invoke(resultAsset);
             return resultAsset;
         }
     }
@@ -922,7 +922,7 @@ ORDER BY aa.created_on DESC;";
 
             scope.Complete();
 
-            AssetDeleted?.Invoke(this, existingAsset);
+            AssetDeleted?.Invoke(existingAsset);
         }
     }
 

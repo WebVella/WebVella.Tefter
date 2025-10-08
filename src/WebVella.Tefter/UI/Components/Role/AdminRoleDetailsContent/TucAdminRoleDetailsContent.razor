@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 <TucPageLayout Icon="@TfConstants.GetIcon("Key")" Color="@TfConstants.AdminColor" Area="@LOC("Roles")" Title="@_role?.Name">
 	<TucErrorBoundry>
-		<div style="padding:var(--tf-layout-content-padding)">
+		<div style="padding:var(--tf-padding-content)">
 			@if (String.IsNullOrWhiteSpace(UriInitialized))
 			{
 				<TucSkeletonPageHeader />

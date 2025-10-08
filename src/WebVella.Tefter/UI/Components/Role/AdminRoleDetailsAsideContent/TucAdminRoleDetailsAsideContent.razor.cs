@@ -21,7 +21,7 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_RoleChanged(object args)
+	private async Task On_RoleChanged(object args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -29,7 +29,7 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 		});
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{

@@ -4,9 +4,9 @@ namespace WebVella.Tefter.Talk.Services;
 
 public partial interface ITalkService
 {
-    event EventHandler<TalkChannel> ChannelCreated;
-    event EventHandler<TalkChannel> ChannelUpdated;
-    event EventHandler<TalkChannel> ChannelDeleted;
+    event Func<TalkChannel,Task> ChannelCreated;
+    event Func<TalkChannel,Task> ChannelUpdated;
+    event Func<TalkChannel,Task> ChannelDeleted;
 
     TalkChannel GetChannel(
         Guid channelId);
@@ -26,9 +26,9 @@ public partial interface ITalkService
 internal partial class TalkService : ITalkService
 {
     #region << Events >>
-    public event EventHandler<TalkChannel> ChannelCreated = null!;
-    public event EventHandler<TalkChannel> ChannelUpdated = null!;
-    public event EventHandler<TalkChannel> ChannelDeleted = null!;
+    public event Func<TalkChannel,Task> ChannelCreated = null!;
+    public event Func<TalkChannel,Task> ChannelUpdated = null!;
+    public event Func<TalkChannel,Task> ChannelDeleted = null!;
     #endregion
 
     public TalkChannel GetChannel(
@@ -107,7 +107,7 @@ internal partial class TalkService : ITalkService
             throw new Exception("Failed to insert new row in database for channel object");
 
         channel = GetChannel(channel.Id);
-        ChannelCreated?.Invoke(this, channel);
+        ChannelCreated?.Invoke(channel);
         return channel;
     }
 
@@ -145,7 +145,7 @@ internal partial class TalkService : ITalkService
             throw new Exception("Failed to update row in database for channel object");
 
         var updatedChannel = GetChannel(channel.Id);
-        ChannelUpdated?.Invoke(this, updatedChannel);
+        ChannelUpdated?.Invoke(updatedChannel);
         return updatedChannel;
     }
 
@@ -171,7 +171,7 @@ internal partial class TalkService : ITalkService
         if (dbResult != 1)
             throw new Exception("Failed to delete row in database for channel object");
 
-        ChannelDeleted?.Invoke(this, existingChannel);
+        ChannelDeleted?.Invoke(existingChannel);
     }
 
     private TalkChannel ToChannel(DataRow dr)

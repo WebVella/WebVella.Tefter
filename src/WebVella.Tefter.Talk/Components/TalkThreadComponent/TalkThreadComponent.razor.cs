@@ -77,11 +77,11 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private async void On_ThreadChanged(object? caller, TalkThread args)
+	private async Task On_ThreadChanged(TalkThread args)
 	{
 		await InvokeAsync(async () => { await _init(TfState.NavigationState); });
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{

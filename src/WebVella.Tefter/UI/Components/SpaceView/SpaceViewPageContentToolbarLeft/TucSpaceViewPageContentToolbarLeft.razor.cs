@@ -29,7 +29,7 @@ public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 		TfEventProvider.UserUpdatedGlobalEvent += On_UserChanged;
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -37,7 +37,7 @@ public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 				await _init(args);
 		});
 	}
-	private async void On_UserChanged(TfUserUpdatedEvent args)
+	private async Task On_UserChanged(TfUserUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{

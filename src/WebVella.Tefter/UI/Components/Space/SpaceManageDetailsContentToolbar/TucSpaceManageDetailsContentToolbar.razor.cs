@@ -15,7 +15,7 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDis
 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 		TfEventProvider.SpaceUpdatedEvent += On_SpaceUpdated;
 	}
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -23,7 +23,7 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDis
 				await _init(args);
 		});
 	}
-	private async void On_SpaceUpdated(TfSpaceUpdatedEvent args)
+	private async Task On_SpaceUpdated(TfSpaceUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{

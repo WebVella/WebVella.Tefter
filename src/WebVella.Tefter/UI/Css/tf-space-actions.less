@@ -10,21 +10,34 @@
   align-items: start;
   gap: 10px;
   height: 100%;
-  fluent-button{
-    flex:1 1 auto;
-    svg{
+
+  fluent-button {
+    flex: 1 1 auto;
+
+    &:not(:hover) {
+      --tf-action-btn-color:light-dark(var(--tf-accent-800),
+      var(--tf-accent-900));
+      --neutral-foreground-rest: var(--tf-action-btn-color);
+      --neutral-stroke-rest: color-mix(in srgb, var(--tf-action-btn-color), transparent 85%);
+
+      svg {
+        --accent-fill-rest: var(--tf-action-btn-color);
+      }
+    }
+
+    svg {
       --accent-fill-rest: var(--tf-font-color-base);
     }
   }
-  
-  &:after{
+
+  &:after {
     position: absolute;
     content: '';
     display: block;
-    bottom:0;
+    bottom: 0;
     width: 90%;
-    height:1px;
+    height: 1px;
     border-bottom: 1px dashed var(--tf-stroke-color-mute);
-    left:5%;
+    left: 5%;
   }
 }     

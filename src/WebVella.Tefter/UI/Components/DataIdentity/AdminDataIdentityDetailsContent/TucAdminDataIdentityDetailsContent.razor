@@ -3,7 +3,7 @@
 <TucPageLayout Icon="@TfConstants.GetIcon("KeyMultiple")" Color="@TfConstants.AdminColor"
 			   Area="@LOC("Data Identities")" Title="@_identity?.DataIdentity">
 	<TucErrorBoundry>
-		<div style="padding:var(--tf-layout-content-padding)">
+		<div style="padding:var(--tf-padding-content)">
 			@if (String.IsNullOrWhiteSpace(UriInitialized))
 			{
 				<TucSkeletonPageHeader />

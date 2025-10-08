@@ -24,12 +24,12 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_SpacePageChanged(object args)
+	private async Task On_SpacePageChanged(object args)
 	{
 		await _init(TfState.NavigationState);
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		if (UriInitialized != args.Uri)
 			await _init(navState: args);

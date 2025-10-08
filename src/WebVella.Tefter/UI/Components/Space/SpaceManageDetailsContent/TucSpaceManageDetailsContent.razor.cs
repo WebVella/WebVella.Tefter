@@ -23,7 +23,7 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 	}
 
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -32,7 +32,7 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 		});
 	}
 
-	private async void On_SpaceChange(object args)
+	private async Task On_SpaceChange(object args)
 	{
 		await InvokeAsync(async () =>
 		{

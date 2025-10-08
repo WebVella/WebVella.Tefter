@@ -23,7 +23,7 @@ public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, 
 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_DataProviderChanged(object  user)
+	private async Task On_DataProviderChanged(object  user)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -31,7 +31,7 @@ public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, 
 		});
 	}
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{

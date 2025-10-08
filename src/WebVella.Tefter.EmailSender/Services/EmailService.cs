@@ -8,8 +8,8 @@ namespace WebVella.Tefter.EmailSender.Services;
 public partial interface IEmailService
 {
 	//Events
-	event EventHandler<EmailMessage> EmailCreated;
-	event EventHandler<EmailMessage> EmailUpdated;
+	event Func<EmailMessage,Task> EmailCreated;
+	event Func<EmailMessage,Task> EmailUpdated;
 
 	public List<EmailMessage> GetEmailMessages(
 		string search = null,
@@ -61,8 +61,8 @@ internal partial class EmailService : IEmailService
 	}
 
 	#region << Events >>
-	public event EventHandler<EmailMessage> EmailCreated = null!;
-	public event EventHandler<EmailMessage> EmailUpdated = null!;
+	public event Func<EmailMessage,Task> EmailCreated = null!;
+	public event Func<EmailMessage,Task> EmailUpdated = null!;
 	#endregion
 
 	public EmailMessage GetEmailMessageById(
@@ -303,7 +303,7 @@ VALUES
 			throw new Exception("Tefter failed to save email to database");
 
 		var email = GetEmailMessageById(id);
-		EmailCreated?.Invoke(this, email);
+		EmailCreated?.Invoke(email);
 		return email;
 	}
 
@@ -314,7 +314,7 @@ VALUES
 		if (email is null)
 			throw new Exception("Email not found");
 		//TODO RUMEN: implement
-		EmailCreated?.Invoke(this, email);
+		EmailCreated?.Invoke(email);
 		return email;
 
 	}
@@ -326,7 +326,7 @@ VALUES
 		if (email is null)
 			throw new Exception("Email not found");
 		//TODO RUMEN: implement
-		EmailUpdated?.Invoke(this, email);
+		EmailUpdated?.Invoke(email);
 		return email;
 
 	}

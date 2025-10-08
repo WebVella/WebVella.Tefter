@@ -24,12 +24,12 @@ public partial class TalkChannelAdminList : TfBaseComponent
         TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
     }
 
-    private async void On_ChannelChanged(object? caller, TalkChannel args)
+    private async Task On_ChannelChanged(TalkChannel args)
     {
         await InvokeAsync(async () => { await _init(TfState.NavigationState); });
     }
 
-    private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+    private async Task On_NavigationStateChanged(TfNavigationState args)
     {
         await InvokeAsync(async () =>
         {

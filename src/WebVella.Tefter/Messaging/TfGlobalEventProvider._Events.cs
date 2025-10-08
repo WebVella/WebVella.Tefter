@@ -3,62 +3,62 @@
 
 public partial class TfGlobalEventProvider : IAsyncDisposable
 {
-	public event Action<SampleGlobalEvent> SampleGlobalEvent;
+	public event Func<SampleGlobalEvent,Task> SampleGlobalEvent;
 	
 	//data identity
-	public event Action<TfDataIdentityCreatedEvent> DataIdentityCreatedEvent;
-	public event Action<TfDataIdentityUpdatedEvent> DataIdentityUpdatedEvent;
-	public event Action<TfDataIdentityDeletedEvent> DataIdentityDeletedEvent;		
+	public event Func<TfDataIdentityCreatedEvent,Task> DataIdentityCreatedEvent;
+	public event Func<TfDataIdentityUpdatedEvent,Task> DataIdentityUpdatedEvent;
+	public event Func<TfDataIdentityDeletedEvent,Task> DataIdentityDeletedEvent;		
 	
 	//data provider
-	public event Action<TfDataProviderCreatedEvent> DataProviderCreatedEvent;
-	public event Action<TfDataProviderUpdatedEvent> DataProviderUpdatedEvent;
-	public event Action<TfDataProviderDeletedEvent> DataProviderDeletedEvent;			
+	public event Func<TfDataProviderCreatedEvent,Task> DataProviderCreatedEvent;
+	public event Func<TfDataProviderUpdatedEvent,Task> DataProviderUpdatedEvent;
+	public event Func<TfDataProviderDeletedEvent,Task> DataProviderDeletedEvent;			
 	
 	//dataset
-	public event Action<TfDatasetCreatedEvent> DatasetCreatedEvent;
-	public event Action<TfDatasetUpdatedEvent> DatasetUpdatedEvent;
-	public event Action<TfDatasetDeletedEvent> DatasetDeletedEvent;		
+	public event Func<TfDatasetCreatedEvent,Task> DatasetCreatedEvent;
+	public event Func<TfDatasetUpdatedEvent,Task> DatasetUpdatedEvent;
+	public event Func<TfDatasetDeletedEvent,Task> DatasetDeletedEvent;		
 	
 	//repository file
-	public event Action<TfRepositoryFileCreatedEvent> RepositoryFileCreatedEvent;
-	public event Action<TfRepositoryFileUpdatedEvent> RepositoryFileUpdatedEvent;
-	public event Action<TfRepositoryFileDeletedEvent> RepositoryFileDeletedEvent;		
+	public event Func<TfRepositoryFileCreatedEvent,Task> RepositoryFileCreatedEvent;
+	public event Func<TfRepositoryFileUpdatedEvent,Task> RepositoryFileUpdatedEvent;
+	public event Func<TfRepositoryFileDeletedEvent,Task> RepositoryFileDeletedEvent;		
 	
 	//role
-	public event Action<TfRoleCreatedEvent> RoleCreatedEvent;
-	public event Action<TfRoleUpdatedEvent> RoleUpdatedEvent;
-	public event Action<TfRoleDeletedEvent> RoleDeletedEvent;		
+	public event Func<TfRoleCreatedEvent,Task> RoleCreatedEvent;
+	public event Func<TfRoleUpdatedEvent,Task> RoleUpdatedEvent;
+	public event Func<TfRoleDeletedEvent,Task> RoleDeletedEvent;		
 	
 	//shared column
-	public event Action<TfSharedColumnCreatedEvent> SharedColumnCreatedEvent;
-	public event Action<TfSharedColumnUpdatedEvent> SharedColumnUpdatedEvent;
-	public event Action<TfSharedColumnDeletedEvent> SharedColumnDeletedEvent;			
+	public event Func<TfSharedColumnCreatedEvent,Task> SharedColumnCreatedEvent;
+	public event Func<TfSharedColumnUpdatedEvent,Task> SharedColumnUpdatedEvent;
+	public event Func<TfSharedColumnDeletedEvent,Task> SharedColumnDeletedEvent;			
 	
 	//space
-	public event Action<TfSpaceCreatedEvent> SpaceCreatedEvent;
-	public event Action<TfSpaceUpdatedEvent> SpaceUpdatedEvent;
-	public event Action<TfSpaceDeletedEvent> SpaceDeletedEvent;		
+	public event Func<TfSpaceCreatedEvent,Task> SpaceCreatedEvent;
+	public event Func<TfSpaceUpdatedEvent,Task> SpaceUpdatedEvent;
+	public event Func<TfSpaceDeletedEvent,Task> SpaceDeletedEvent;		
 	
 	//space page
-	public event Action<TfSpacePageCreatedEvent> SpacePageCreatedEvent;
-	public event Action<TfSpacePageUpdatedEvent> SpacePageUpdatedEvent;
-	public event Action<TfSpacePageDeletedEvent> SpacePageDeletedEvent;	
+	public event Func<TfSpacePageCreatedEvent,Task> SpacePageCreatedEvent;
+	public event Func<TfSpacePageUpdatedEvent,Task> SpacePageUpdatedEvent;
+	public event Func<TfSpacePageDeletedEvent,Task> SpacePageDeletedEvent;	
 	
 	//space view column
-	public event Action<TfSpaceViewColumnsChangedEvent> SpaceViewColumnsChangedEvent;
+	public event Func<TfSpaceViewColumnsChangedEvent,Task> SpaceViewColumnsChangedEvent;
 	
 	//space view
-	public event Action<TfSpaceViewUpdatedEvent> SpaceViewUpdatedEvent;
+	public event Func<TfSpaceViewUpdatedEvent,Task> SpaceViewUpdatedEvent;
 	
 	//template
-	public event Action<TfTemplateCreatedEvent> TemplateCreatedEvent;
-	public event Action<TfTemplateUpdatedEvent> TemplateUpdatedEvent;
-	public event Action<TfTemplateDeletedEvent> TemplateDeletedEvent;
+	public event Func<TfTemplateCreatedEvent,Task> TemplateCreatedEvent;
+	public event Func<TfTemplateUpdatedEvent,Task> TemplateUpdatedEvent;
+	public event Func<TfTemplateDeletedEvent,Task> TemplateDeletedEvent;
 	
 	//user
-	public event Action<TfUserCreatedEvent> UserCreatedGlobalEvent;
-	public event Action<TfUserUpdatedEvent> UserUpdatedGlobalEvent;
+	public event Func<TfUserCreatedEvent,Task> UserCreatedGlobalEvent;
+	public event Func<TfUserUpdatedEvent,Task> UserUpdatedGlobalEvent;
 	
 
 

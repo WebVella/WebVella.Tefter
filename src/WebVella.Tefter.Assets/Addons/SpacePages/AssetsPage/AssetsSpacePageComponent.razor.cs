@@ -95,7 +95,7 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 	#endregion
 
 	#region << Private methods >>
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{

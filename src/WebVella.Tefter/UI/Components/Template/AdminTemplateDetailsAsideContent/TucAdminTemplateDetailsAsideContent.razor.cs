@@ -21,7 +21,7 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
-	private async void On_TemplateCreated(TfTemplateCreatedEvent args)
+	private async Task On_TemplateCreated(TfTemplateCreatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -29,7 +29,7 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 		});
 	}
 
-	private async void On_TemplateUpdated(TfTemplateUpdatedEvent args)
+	private async Task On_TemplateUpdated(TfTemplateUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -37,7 +37,7 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 		});
 	}
 
-	private async void On_TemplateDeleted(TfTemplateDeletedEvent args)
+	private async Task On_TemplateDeleted(TfTemplateDeletedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -46,7 +46,7 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 	}
 
 
-	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
+	private async Task On_NavigationStateChanged(TfNavigationState args)
 	{
 		await InvokeAsync(async () =>
 		{
