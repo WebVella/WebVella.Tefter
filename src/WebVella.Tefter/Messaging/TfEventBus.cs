@@ -12,11 +12,11 @@ public interface ITfEventBus: IAsyncDisposable
 }
 
 
-public class TfEventBus : ITfEventBus, IAsyncDisposable
+public class TfEventBus : ITfEventBus, IAsyncDisposable, IDisposable
 {
 	private readonly ITfChannelEventRouter _channelEventRouter;
 
-	public event Action<ITfEvent> OnEvent;
+	public event Action<ITfEvent>? OnEvent;
 
 	public TfEventBus(IServiceProvider serviceProvider)
 	{
@@ -50,8 +50,13 @@ public class TfEventBus : ITfEventBus, IAsyncDisposable
 
 	public async ValueTask DisposeAsync()
 	{
-		//cleanup so GC can recycle it if there are events subscribed
-		await LeaveAllChannelsAsync();
+		await _channelEventRouter.LeaveChannelsAsync(this);
+		OnEvent = null;
+	}
+
+	public void Dispose()
+	{
+		_channelEventRouter.LeaveAllChannels(this);
 		OnEvent = null;
 	}
 }

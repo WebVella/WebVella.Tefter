@@ -6,12 +6,13 @@ internal interface ITfChannelEventRouter
 	Task LeaveChannelsAsync(ITfEventBus bus, params string[] channels);
 	Task LeaveAllChannelsAsync(ITfEventBus bus);
 	Task PublishAsync(ITfEventBus bus, ITfEvent tfEvent);
+	void LeaveAllChannels(ITfEventBus bus);
 }
 
 
 internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 {
-	private static readonly AsyncLock _asyncLock = new AsyncLock();
+	private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 	private readonly Dictionary<string, HashSet<ITfEventBus>> _channelDict;
 	private readonly Dictionary<ITfEventBus, HashSet<string>> _busDict;
 
@@ -23,7 +24,8 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 
 	public async Task PublishAsync(ITfEventBus bus, ITfEvent tfEvent)
 	{
-		using (await _asyncLock.LockAsync())
+		await _semaphore.WaitAsync();
+		try
 		{
 			//throw probably
 			if (!_busDict.ContainsKey(bus))
@@ -36,6 +38,10 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 			}
 
 		}
+		finally
+		{
+			_semaphore.Release();
+		}
 	}
 
 	public async Task JoinChannelsAsync(ITfEventBus bus, params string[] channels)
@@ -47,7 +53,8 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 		if (processedChannels.Count == 0)
 			return;
 
-		using (await _asyncLock.LockAsync())
+		await _semaphore.WaitAsync();
+		try
 		{
 			if (!_busDict.ContainsKey(bus))
 				_busDict[bus] = new HashSet<string>();
@@ -64,6 +71,10 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 					_channelDict[channel].Add(bus);
 			}
 		}
+		finally
+		{
+			_semaphore.Release();
+		}
 	}
 
 	public async Task LeaveChannelsAsync(ITfEventBus bus, params string[] channels)
@@ -75,7 +86,8 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 		if (processedChannels.Count == 0)
 			return;
 
-		using (await _asyncLock.LockAsync())
+		await _semaphore.WaitAsync();
+		try
 		{
 			if (!_busDict.ContainsKey(bus))
 				return;
@@ -95,11 +107,16 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 			if (_busDict[bus].Count == 0)
 				_busDict.Remove(bus);
 		}
+		finally
+		{
+			_semaphore.Release();
+		}
 	}
 
 	public async Task LeaveAllChannelsAsync(ITfEventBus bus)
 	{
-		using (await _asyncLock.LockAsync())
+		await _semaphore.WaitAsync();
+		try
 		{
 			if (!_busDict.ContainsKey(bus))
 				return;
@@ -112,6 +129,33 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 					_channelDict.Remove(channel);
 			}
 			_busDict.Remove(bus);
+		}
+		finally
+		{
+			_semaphore.Release();
+		}
+	}
+
+	public void LeaveAllChannels(ITfEventBus bus)
+	{
+		_semaphore.Wait();
+		try
+		{
+			if (!_busDict.ContainsKey(bus))
+				return;
+
+			foreach (var channel in _busDict[bus])
+			{
+				_channelDict[channel].Remove(bus);
+
+				if (_channelDict[channel].Count == 0)
+					_channelDict.Remove(channel);
+			}
+			_busDict.Remove(bus);
+		}
+		finally
+		{
+			_semaphore.Release();
 		}
 	}
 }
