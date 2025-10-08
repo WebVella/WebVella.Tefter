@@ -21,17 +21,17 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 
 	public void Dispose()
 	{
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		TfEventProvider.UserUpdatedGlobalEvent -= On_UserChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_navState = TfAuthLayout.NavigationState;
+		_navState = TfState.NavigationState;
 		await _init(_navState);
 
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 		TfEventProvider.UserUpdatedGlobalEvent += On_UserChanged;
 	}
 
@@ -49,7 +49,7 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 		{
 			if (Context is not null)
 				Context.CurrentUser = args.Payload;
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		});
 	}
 	private async Task _init(TfNavigationState navState)
@@ -60,7 +60,7 @@ public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
 			var bookmarks = TfService.GetBookmarksListForUser(Context.CurrentUser.Id);
 			var saves = TfService.GetSavesListForUser(Context.CurrentUser.Id);
 
-			_activeBookmark = bookmarks.FirstOrDefault(x => x.SpaceViewId == _navState.SpaceViewId);
+			_activeBookmark = bookmarks.FirstOrDefault(x => x.SpacePageId == _navState.SpaceViewId);
 			_activeSavedUrl = saves.FirstOrDefault(x => x.Id == _navState.ActiveSaveId);
 			_hasViewPersonalization = Context.CurrentUser.Settings.ViewPresetColumnPersonalizations.Any(x =>
 				x.SpaceViewId == SpaceView.Id && x.PresetId == SpaceViewPreset?.Id);

@@ -1,0 +1,10 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<div class="tf-space-header">
+    <div class="tf-space-header__icon">
+        <FluentIcon Value="@TfConstants.GetIcon(TfState.Space?.FluentIconName ?? "Settings")" Focusable="false"></FluentIcon>
+    </div>
+    <div class="tf-space-header__meta">
+        <div class="tf-space-header__meta__title">@(TfState.Space?.Name ?? LOC("Administration"))</div>
+    </div>
+</div>

@@ -146,7 +146,7 @@ public partial interface ITfService
 	Task<TfUser?> GetUserFromCookieAsync(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider);
 
 	//Checks user current URL access
-	bool UserHasAccess(TfUser user, NavigationManager navigator);
+	bool UserHasAccess(TfUser user, NavigationManager navigator, string? urlOverride = null);
 
 	/// <summary>
 	/// Removes a role from a list of users.
@@ -1130,11 +1130,11 @@ public partial class TfService : ITfService
 		return tfUser;
 	}
 
-	public bool UserHasAccess(TfUser user, NavigationManager navigator)
+	public bool UserHasAccess(TfUser user, NavigationManager navigator, string? urlOverride = null)
 	{
 		if (user.IsAdmin) return true;
 
-		var routeData = navigator.GetRouteState();
+		var routeData = navigator.GetRouteState(urlOverride);
 		if (routeData.HasNode(RouteDataNode.Space, 0) && routeData.SpaceId is not null)
 		{
 			if (routeData.HasNode(RouteDataNode.Manage, 2)) return false;

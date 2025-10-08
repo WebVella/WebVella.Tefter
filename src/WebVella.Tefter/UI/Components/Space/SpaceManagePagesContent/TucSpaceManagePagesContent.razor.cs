@@ -12,21 +12,21 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 		TfEventProvider.SpacePageCreatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent -= On_SpacePageChanged;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		TfEventProvider.SpacePageCreatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent += On_SpacePageChanged;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_SpacePageChanged(object args)
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 	}
 
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)

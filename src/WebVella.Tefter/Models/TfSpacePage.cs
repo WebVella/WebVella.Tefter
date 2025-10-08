@@ -53,6 +53,7 @@ public record TfSpacePage
 		return null;
 	}
 
+	[Obsolete]
 	public TfMenuItem ToMenuItem(Action<TfMenuItem>? postProcess = null, Func<TfSpacePage, bool>? includeChildFunc = null)
 	{
 		var item = new TfMenuItem

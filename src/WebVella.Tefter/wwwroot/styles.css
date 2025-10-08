@@ -2,6 +2,15 @@ html:root {
   --tf-black: #000;
   --tf-white: #fff;
   --tf-red-50: oklch(97.1% 0.013 17.38);
+  --tf-red-100: oklch(93.6% 0.032 17.717);
+  --tf-red-200: oklch(88.5% 0.062 18.334);
+  --tf-red-400: oklch(70.4% 0.191 22.216);
+  --tf-red-500: oklch(63.7% 0.237 25.331);
+  --tf-red-600: oklch(57.7% 0.245 27.325);
+  --tf-red-700: oklch(50.5% 0.213 27.518);
+  --tf-red-800: oklch(44.4% 0.177 26.899);
+  --tf-red-900: oklch(39.6% 0.141 25.723);
+  --tf-red-950: oklch(25.8% 0.092 26.042);
   --tf-orange-50: oklch(98% 0.016 73.684);
   --tf-amber-50: oklch(98.7% 0.022 95.277);
   --tf-yellow-50: oklch(98.7% 0.026 102.212);
@@ -11,23 +20,15 @@ html:root {
   --tf-teal-50: oklch(98.4% 0.014 180.72);
   --tf-cyan-50: oklch(98.4% 0.019 200.873);
   --tf-sky-50: oklch(97.7% 0.013 236.62);
-  --tf-red-100: oklch(93.6% 0.032 17.717);
   --tf-blue-50: oklch(97% 0.014 254.604);
-  --tf-red-200: oklch(88.5% 0.062 18.334);
   --tf-indigo-50: oklch(96.2% 0.018 272.314);
   --tf-red-300: oklch(80.8% 0.114 19.571);
   --tf-violet-50: oklch(96.9% 0.016 293.756);
-  --tf-red-400: oklch(70.4% 0.191 22.216);
   --tf-purple-50: oklch(97.7% 0.014 308.299);
-  --tf-red-500: oklch(63.7% 0.237 25.331);
   --tf-fuchsia-50: oklch(97.7% 0.017 320.058);
-  --tf-red-600: oklch(57.7% 0.245 27.325);
   --tf-pink-50: oklch(97.1% 0.014 343.198);
-  --tf-red-700: oklch(50.5% 0.213 27.518);
   --tf-rose-50: oklch(96.9% 0.015 12.422);
-  --tf-red-800: oklch(44.4% 0.177 26.899);
   --tf-slate-50: oklch(98.4% 0.003 247.858);
-  --tf-red-900: oklch(39.6% 0.141 25.723);
   --tf-gray-50: oklch(98.5% 0.002 247.839);
   --tf-zinc-50: oklch(98.5% 0 0);
   --tf-orange-100: oklch(95.4% 0.038 75.164);
@@ -247,9 +248,10 @@ html:root {
   color-scheme: light dark;
   --tf-shadow-md: light-dark(0px 0px 1.5px 0px rgba(0, 0, 0, 0.03), 0px 1.4px 1.5px 0px rgba(0, 0, 0, 0.03), 0px -1px 1px 0px rgba(0, 0, 0, 0.05), 0px 0px 1.5px 0px rgba(255, 255, 255, 0.03), 0px 1.4px 1.5px 0px rgba(255, 255, 255, 0.03), 0px -1px 1px 0px rgba(255, 255, 255, 0.05));
   --tf-shadow-lg: light-dark(0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -4px rgba(255, 255, 255, 0.1));
-  --tf-font-color-base: light-dark(var(--tf-base-900), var(--tf-base-400));
+  --tf-font-color-base: light-dark(var(--tf-base-900), var(--tf-base-300));
+  --tf-font-color-mute: light-dark(var(--tf-base-500), var(--tf-base-500));
   --tf-fill-color-base: light-dark(var(--tf-base-100), var(--tf-base-900));
-  --tf-fill-color-invert: light-dark(color-mix(in srgb, var(--tf-fill-color-base), var(--tf-accent-900) 3%), color-mix(in srgb, var(--tf-fill-color-base), var(--tf-accent-900) 3%));
+  --tf-fill-color-invert: light-dark(color-mix(in srgb, var(--tf-fill-color-base), var(--tf-accent-900) 5%), color-mix(in srgb, var(--tf-fill-color-base), var(--tf-accent-900) 10%));
   --tf-button-color: light-dark(var(--tf-base-600), var(--tf-base-400));
   --tf-accent-color: light-dark(var(--tf-accent-500), var(--tf-accent-700));
   --tf-stroke-color: light-dark(rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.15));
@@ -257,11 +259,13 @@ html:root {
   --tf-stroke-color-hover: light-dark(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.2));
   --tf-stroke-color-active: light-dark(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.25));
   --tf-padding-content: 15px;
+  --tf-padding-aside: calc(var(--tf-padding-content) / 2);
   --tf-topbar-height: 60px;
   --tf-space-header-height: var(--tf-topbar-height);
-  --tf-space-actions-height: 50px;
-  --tf-content-header-height: var(--tf-space-actions-height);
-  --tf-content-tabs-height: 50px;
+  --tf-space-actions-height: 40px;
+  --tf-space-return-btn-height: 50px;
+  --tf-page-header-height: var(--tf-space-actions-height);
+  --tf-page-tabs-height: 50px;
   --tf-line-height-sm: 1.15em;
   --tf-aside-width: 250px;
   --tf-font-size-base: 14px;
@@ -295,13 +299,59 @@ a:hover {
 }
 html:root {
   --neutral-foreground-rest: var(--tf-font-color-base);
-  --accent-fill-rest: var(--tf-accent-color);
   --neutral-stroke-rest: var(--tf-stroke-color);
   --neutral-stroke-hover: var(--tf-stroke-color-hover);
   --neutral-stroke-active: var(--tf-stroke-color-active);
   --neutral-stroke-input-rest: var(--tf-stroke-color);
   --neutral-fill-input-rest: light-dark(var(--tf-base-50), var(--tf-base-800));
   --neutral-fill-input-focus: light-dark(var(--tf-base-50), var(--tf-base-800));
+  --accent-fill-rest: light-dark(var(--tf-accent-700), var(--tf-accent-900));
+  --accent-fill-hover: light-dark(var(--tf-accent-800), var(--tf-accent-950));
+  --accent-fill-active: light-dark(var(--tf-accent-800), var(--tf-accent-950));
+  --accent-stroke-control-rest: light-dark(var(--tf-accent-600), var(--tf-accent-800));
+  --accent-stroke-control-hover: light-dark(var(--tf-accent-700), var(--tf-accent-900));
+  --accent-stroke-control-active: light-dark(var(--tf-accent-600), var(--tf-accent-800));
+}
+/*Button*/
+fluent-button.accent svg,
+fluent-anchor.accent svg {
+  --accent-fill-rest: var(--tf-font-color-base);
+}
+fluent-anchored-region,
+fluent-menu {
+  --neutral-layer-floating: light-dark(var(--tf-base-100), var(--tf-base-700));
+}
+fluent-menu-item {
+  --neutral-foreground-rest: var(--tf-font-color-base);
+}
+/*Message*/
+.fluent-messagebar-message .title {
+  display: block;
+}
+div[class^='fluent-messagebar'],
+.fluent-messagebar-notification,
+.fluent-messagebar-message {
+  animation: none !important;
+}
+.fluent-messagebar.intent-success {
+  --success: light-dark(var(--tf-green-600), var(--tf-green-800));
+  background-color: light-dark(var(--tf-green-100), var(--tf-green-950)) !important;
+  border-color: light-dark(var(--tf-green-200), var(--tf-green-900)) !important;
+}
+.fluent-messagebar.intent-error {
+  --error: light-dark(var(--tf-red-600), var(--tf-red-800));
+  background-color: light-dark(var(--tf-red-100), var(--tf-red-950)) !important;
+  border-color: light-dark(var(--tf-red-200), var(--tf-red-900)) !important;
+}
+.fluent-messagebar.intent-warning {
+  --warning: light-dark(var(--tf-amber-600), var(--tf-amber-800));
+  background-color: light-dark(var(--tf-amber-100), var(--tf-amber-950)) !important;
+  border-color: light-dark(var(--tf-amber-200), var(--tf-amber-900)) !important;
+}
+.fluent-messagebar.intent-info {
+  --info: light-dark(var(--tf-blue-500), var(--tf-blue-700));
+  background-color: light-dark(var(--tf-blue-100), var(--tf-blue-950)) !important;
+  border-color: light-dark(var(--tf-blue-200), var(--tf-blue-900)) !important;
 }
 .tf-button {
   border-radius: var(--tf-border-radius-xl);
@@ -312,6 +362,104 @@ html:root {
 }
 .tf-button--sm {
   --base-height-multiplier: 6;
+}
+.tf-button .fluentui-counterbadge-container {
+  right: 5px;
+  position: absolute;
+}
+.tf-card {
+  --tf-card-border-radius: var(--tf-border-radius-base);
+  --tf-card-background-color: light-dark(var(--tf-base-50), var(--tf-base-800));
+  --tf-card-shadow-color: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.15));
+  border: 1px solid transparent;
+  border-radius: var(--tf-card-border-radius);
+  background: var(--tf-card-background-color);
+  padding: var(--tf-padding-content);
+  box-shadow: 0 0 1px 1px var(--tf-card-shadow-color);
+}
+.fluent-dialog-body .tf-card {
+  border: 1px solid var(--tf-stroke-color);
+}
+.tf-card__title {
+  background: transparent;
+  border-radius: 0.5rem;
+  padding: 0 0 1rem 0;
+  margin-bottom: 0;
+  font-size: var(--tf-font-size-md);
+  font-weight: var(--tf-font-weight-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tf-card__title__left {
+  flex: 0 0 auto;
+  display: grid;
+  grid-gap: 10px;
+  grid-auto-flow: column;
+}
+.tf-card__title__right {
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  padding-left: 1rem;
+  display: grid;
+  grid-gap: 10px;
+  grid-auto-flow: column;
+}
+.tf-card__title h3 {
+  margin-bottom: 0;
+  font-size: var(--tf-font-size-md);
+  font-weight: var(--tf-font-weight-base);
+}
+.tf-card__subtitle {
+  color: var(--tf-font-color-mute);
+  font-size: var(--tf-font-size-sm);
+}
+.tf-card__title + .tf-card__content {
+  padding-top: var(--tf-padding-content);
+}
+.tf-card + .tf-card {
+  margin-top: 2rem;
+}
+.tf-card--clickable {
+  cursor: pointer;
+}
+.tf-card--clickable:hover {
+  background: var(--tf-base-200);
+}
+.tf-card__content fluent-anchor.stealth {
+  --neutral-fill-stealth-rest: var(--tf-font-color-base);
+}
+.tf-card__footer {
+  padding-top: 1rem;
+}
+.tf-filter-manage .card-logical.tf-card {
+  border: 1px solid var(--tf-blue-200);
+  padding: 0;
+  border-radius: 0;
+}
+.tf-filter-manage .card-logical.tf-card > .tf-card__title {
+  background: var(--tf-blue-100);
+  border-radius: 0;
+}
+.tf-filter-manage .card-logical.tf-card > .tf-card__content {
+  margin: 10px;
+  padding: 0;
+}
+.tf-filter-manage .card-rule.tf-card {
+  border: 1px solid var(--tf-orange-200);
+  padding: 0;
+  border-radius: 0;
+}
+.tf-filter-manage .card-rule.tf-card > .tf-card__title {
+  background: var(--tf-orange-100);
+  border-radius: 0;
+}
+.tf-filter-manage .card-rule.tf-card > .tf-card__content {
+  margin: 10px;
+  padding: 0;
+}
+.tf-filter-manage .tf-card--no-body .tf-card__content {
+  display: none;
 }
 @keyframes gridLoadingBar {
   0% {
@@ -338,7 +486,7 @@ html:root {
 .tf-grid {
   table-layout: fixed;
   min-width: 100%;
-  border-bottom: none;
+  border: 1px solid var(--tf-stroke-color);
   border-collapse: separate !important;
   border-spacing: 0;
   margin-bottom: 0;
@@ -832,6 +980,7 @@ html:root {
   display: flex;
   justify-content: start;
   align-items: center;
+  --accent-fill-rest: var(--tf-stroke-color);
 }
 .tf-header__meta__title {
   flex: 1 1 var(--tf-title-width);
@@ -878,8 +1027,11 @@ html:root {
   display: flex;
   flex-flow: row;
 }
-.tflg .box {
-  height: 100%;
+.tflg:not(.tflg--has-page-tabs) {
+  --tf-page-tabs-height: 0px;
+}
+.tflg:not(.tflg--has-return-btn) {
+  --tf-space-return-btn-height: 0px;
 }
 .tflg__aside {
   flex: 0 0 var(--tf-aside-width);
@@ -899,60 +1051,84 @@ html:root {
 .tflg__space-actions {
   flex: 0 0 var(--tf-space-actions-height);
 }
+.tflg__return-btn {
+  height: var(--tf-space-return-btn-height);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: stretch;
+  padding-left: var(--tf-padding-aside);
+  padding-right: var(--tf-padding-aside);
+}
+.tflg__return-btn fluent-anchor {
+  flex: 1 1 auto;
+}
+.tflg__return-btn:after {
+  position: absolute;
+  content: '';
+  display: block;
+  bottom: 0;
+  width: 90%;
+  height: 1px;
+  border-bottom: 1px dashed var(--tf-stroke-color-mute);
+  left: 5%;
+}
 .tflg__sidenav {
   flex: 1 1 auto;
-  height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-actions-height));
+  height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-return-btn-height) - var(--tf-space-actions-height));
   overflow-y: auto;
   scrollbar-color: var(--tf-foreground-color-mute) var(--tf-background-color-body);
   scrollbar-width: thin;
 }
-.tflg__topbar {
+.tflg__page-topbar {
   flex: 0 0 var(--tf-topbar-height);
 }
-.tflg__header {
-  flex: 0 0 var(--tf-content-header-height);
+.tflg__page-header {
+  flex: 0 0 var(--tf-page-header-height);
   display: flex;
   flex-flow: column;
   justify-content: center;
 }
-.tflg__content_tabs {
-  flex: 0 0 var(--tf-content-tabs-height);
+.tflg__page-tabs {
+  flex: 0 0 var(--tf-page-tabs-height);
   display: flex;
   flex-flow: column;
   justify-content: end;
 }
-.tflg__content {
+.tflg__page-content {
   flex: 1 1 auto;
-  height: calc(100vh - var(--tf-topbar-height) - var(--tf-content-header-height) - var(--tf-content-tabs-height));
+  height: calc(100vh - var(--tf-topbar-height) - var(--tf-page-header-height) - var(--tf-page-tabs-height));
   overflow-y: auto;
   scrollbar-color: var(--tf-foreground-color-mute) var(--tf-background-color-body);
   scrollbar-width: thin;
 }
 .tf-sidenav {
-  --tf-sidenav-padding: calc(var(--tf-padding-content) / 2);
-  padding-left: var(--tf-sidenav-padding);
-  padding-right: var(--tf-sidenav-padding);
-  padding-top: var(--tf-sidenav-padding);
+  --tf-sidenav-return-height: 40px;
+  padding-left: var(--tf-padding-aside);
+  padding-right: var(--tf-padding-aside);
+  padding-top: var(--tf-padding-aside);
 }
 .tf-sidenav .tf-treemenu__item {
-  padding-left: var(--tf-sidenav-padding);
-  padding-right: var(--tf-sidenav-padding);
-  --accent-fill-rest: var(--tf-foreground-color-body);
+  padding-left: var(--tf-padding-aside);
+  padding-right: var(--tf-padding-aside);
 }
-.tf-space-pane {
+.tf-sidenav .tf-treemenu__item svg {
+  --accent-fill-rest: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 30%), color-mix(in srgb, var(--tf-accent-500), transparent 50%));
+}
+.tf-space-header {
   position: relative;
-  padding-left: var(--tf-padding-content);
-  padding-right: var(--tf-padding-content);
+  padding-left: var(--tf-padding-aside);
+  padding-right: var(--tf-padding-aside);
   --tf-space-pane-extra-space: 10px;
   display: flex;
   justify-items: center;
   align-items: center;
   height: 100%;
 }
-.tf-space-pane__icon {
-  --tf-icon-size: 32px;
-  --tf-svg-size: 24px;
-  --tf-svg-color: light-dark(var(--tf-accent-400), var(--tf-accent-800));
+.tf-space-header__icon {
+  --tf-icon-size: 27px;
+  --tf-svg-size: 20px;
+  --tf-svg-color: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 50%), color-mix(in srgb, var(--tf-accent-500), transparent 70%));
   flex: 0 0 var(--tf-icon-size);
   height: var(--tf-icon-size);
   width: var(--tf-icon-size);
@@ -963,32 +1139,35 @@ html:root {
   align-items: center;
   justify-content: center;
 }
-.tf-space-pane__icon svg {
+.tf-space-header__icon svg {
   width: var(--tf-svg-size) !important;
   height: var(--tf-svg-size) !important;
 }
-.tf-space-pane__meta {
+.tf-space-header__meta {
   flex: 1 1 auto;
-  padding-left: var(--tf-padding-content);
+  padding-left: 10px;
 }
-.tf-space-pane__meta__title {
+.tf-space-header__meta__title {
   padding-right: var(--tf-space-pane-extra-space);
   overflow: hidden;
   line-height: var(--tf-line-height-sm);
 }
 .tf-space-actions {
   position: relative;
-  padding-left: var(--tf-padding-content);
-  padding-right: var(--tf-padding-content);
+  padding-left: var(--tf-padding-aside);
+  padding-right: var(--tf-padding-aside);
   --tf-space-pane-extra-space: 10px;
   display: flex;
   justify-items: center;
-  align-items: center;
+  align-items: start;
   gap: 10px;
   height: 100%;
 }
 .tf-space-actions fluent-button {
   flex: 1 1 auto;
+}
+.tf-space-actions fluent-button svg {
+  --accent-fill-rest: var(--tf-font-color-base);
 }
 .tf-space-actions:after {
   position: absolute;
@@ -997,10 +1176,10 @@ html:root {
   bottom: 0;
   width: 90%;
   height: 1px;
-  border-bottom: 1px solid var(--tf-stroke-color-mute);
+  border-bottom: 1px dashed var(--tf-stroke-color-mute);
   left: 5%;
 }
-.tf-topbar {
+.tf-page-topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1009,38 +1188,63 @@ html:root {
   padding-right: var(--tf-padding-content);
   --accent-fill-rest: var(--tf-button-color);
 }
-.tf-topbar__left {
+.tf-page-topbar__left {
   flex: 0 0 auto;
 }
-.tf-topbar__right {
+.tf-page-topbar__right {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: end;
   gap: 5px;
 }
-.tf-topbar fluent-breadcrumb-item::part(control) {
+.tf-page-topbar fluent-breadcrumb-item::part(control) {
   display: flex;
   align-items: center;
-  background: light-dark(var(--tf-base-200), var(--tf-base-800));
-  color: var(--tf-font-color-base);
+  color: var(--tf-font-color-mute);
+  --accent-fill-rest: var(--tf-font-color-mute);
   height: 23px;
   padding: 0 5px;
   border-radius: var(--tf-border-radius-sm);
   margin-inline-end: 0;
+  cursor: pointer;
 }
-.tf-topbar fluent-breadcrumb-item::part(control):hover {
+.tf-page-topbar fluent-breadcrumb-item::part(control):hover {
   background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 80%), color-mix(in srgb, var(--tf-accent-500), transparent 75%));
   color: var(--tf-font-color-base);
+  --accent-fill-rest: var(--tf-font-color-base);
 }
-.tf-topbar fluent-breadcrumb-item::part(separator) {
+.tf-page-topbar fluent-breadcrumb-item::part(separator) {
   color: light-dark(var(--tf-base-400), var(--tf-base-600));
   margin: 0 5px;
 }
-.tf-topbar fluent-divider {
+.tf-page-topbar fluent-divider {
   height: 1rem;
   --neutral-stroke-divider-rest: var(--tf-stroke-color);
-  margin: 0 1rem;
+  margin: 0 0.5rem;
+}
+.tf-page-topbar fluent-anchor::part(control),
+.tf-page-topbar fluent-button::part(control) {
+  border-color: transparent;
+}
+.tf-page-topbar fluent-anchor::part(end),
+.tf-page-topbar fluent-button::part(end) {
+  margin-inline-start: 2px;
+  --accent-fill-rest: var(--tf-stroke-color);
+}
+.tf-page-topbar fluent-anchor:hover::part(control),
+.tf-page-topbar fluent-button:hover::part(control) {
+  border-color: var(--tf-stroke-color-hover);
+}
+.tf-page-topbar fluent-anchor:hover::part(end),
+.tf-page-topbar fluent-button:hover::part(end) {
+  --accent-fill-rest: var(--tf-stroke-color-hover);
+}
+.tf-page-topbar #user-menu-toggle {
+  color: var(--tf-base-700);
+}
+.tf-page-topbar #user-menu-toggle::part(content) {
+  top: 0;
 }
 .tf-treemenu {
   width: 100%;
@@ -1088,14 +1292,14 @@ html:root {
 .tf-treemenu__item:hover .tf-treemenu__item__expander {
   background: light-dark(color-mix(in srgb, var(--tf-base-500), transparent 85%), color-mix(in srgb, var(--tf-base-500), transparent 85%));
 }
-.tf-treemenu__item.tf-active {
+.tf-treemenu__item.tf-active:not(.tf-parent) {
   position: relative;
   background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 85%), color-mix(in srgb, var(--tf-accent-500), transparent 80%));
 }
-.tf-treemenu__item.tf-active:hover {
+.tf-treemenu__item.tf-active:not(.tf-parent):hover {
   background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 80%), color-mix(in srgb, var(--tf-accent-500), transparent 75%));
 }
-.tf-treemenu__item.tf-active::before {
+.tf-treemenu__item.tf-active:not(.tf-parent)::before {
   display: none !important;
 }
 .tf-treemenu__item__content {

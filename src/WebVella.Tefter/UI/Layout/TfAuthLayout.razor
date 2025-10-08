@@ -1,13 +1,14 @@
 ﻿@inherits LayoutComponentBase
 @if (_isLoaded)
 {
-	<CascadingValue TValue="TfAuthLayout" Name="TfAuthLayout" Value="this" IsFixed=true>
+	<CascadingValue TValue="TfState" Name="TfState" Value="_state" IsFixed=true>
+		@((MarkupString)_styles)
 		@Body
 		<FluentToastProvider MaxToastCount="5" Position="ToastPosition.BottomCenter" RemoveToastsOnNavigation=false />
-		<FluentDialogProvider />
-		<FluentTooltipProvider />
-		<FluentKeyCodeProvider />
-		<FluentMenuProvider />
+		<FluentDialogProvider/>
+		<FluentTooltipProvider/>
+		<FluentKeyCodeProvider/>
+		<FluentMenuProvider/>
 	</CascadingValue>
 }
 

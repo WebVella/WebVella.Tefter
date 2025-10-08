@@ -17,7 +17,7 @@ public class TfBaseComponent : ComponentBase
 	[Inject] protected ITfService TfService { get; set; } = null!;
 	[Inject] protected ITfMetaService TfMetaService { get; set; } = null!;
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
-	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = null!;
+	[CascadingParameter(Name = "TfState")] public TfState TfState { get; set; } = null!;
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
 	protected IStringLocalizer LC = null!;

@@ -5,14 +5,14 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 	private List<TfDataProvider> _connectedProviders = new();
 	public void Dispose()
 	{
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		TfEventProvider.DataProviderUpdatedEvent -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -28,7 +28,7 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		});
 	}
 

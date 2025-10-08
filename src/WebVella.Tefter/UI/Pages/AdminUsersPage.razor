@@ -1,14 +1,24 @@
 ﻿@namespace WebVella.Tefter.UI.Pages
 @page "/admin/users"
 @inherits TfBasePage
-<TucLayoutDetails>
-	<Header>
-		<TucHeader />
-	</Header>
-	<Content>
+<TucLayoutGeneral>
+	<SpaceHeader>
+		<TucSpaceHeader/>
+	</SpaceHeader>
+	<SpaceActions>
+		<TucSpaceActions/>
+	</SpaceActions>
+	<SideNav>
+		<TucAdminNavigation/>
+	</SideNav>
+	<PageTopbar>
+		<TucPageTopbar/>
+	</PageTopbar>	
+	<PageHeader>
+		<TucPageHeader Title="@LOC("Users")"/>
+	</PageHeader>
+	<ChildContent>
 		<TucAdminUsersPageContent/>
-	</Content>
-</TucLayoutDetails>
-
-
+	</ChildContent>
+</TucLayoutGeneral>
 

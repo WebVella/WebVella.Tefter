@@ -9,14 +9,14 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 	{
 		TfEventProvider.UserCreatedGlobalEvent -= On_UserCreated;
 		TfEventProvider.UserUpdatedGlobalEvent -= On_UserUpdated;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		TfEventProvider.UserCreatedGlobalEvent += On_UserCreated;
 		TfEventProvider.UserUpdatedGlobalEvent += On_UserUpdated;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 
@@ -24,7 +24,7 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		});
 	}
 
@@ -32,7 +32,7 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		});
 	}
 

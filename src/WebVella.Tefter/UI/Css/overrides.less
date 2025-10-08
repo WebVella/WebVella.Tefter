@@ -3,11 +3,77 @@
 //colors
 html:root {
   --neutral-foreground-rest: var(--tf-font-color-base);
-  --accent-fill-rest: var( --tf-accent-color);
   --neutral-stroke-rest: var(--tf-stroke-color);
   --neutral-stroke-hover: var(--tf-stroke-color-hover);
   --neutral-stroke-active: var(--tf-stroke-color-active);
-  --neutral-stroke-input-rest:var(--tf-stroke-color);
-  --neutral-fill-input-rest:light-dark(var(--tf-base-50),var(--tf-base-800));
-  --neutral-fill-input-focus:light-dark(var(--tf-base-50),var(--tf-base-800));
+  --neutral-stroke-input-rest: var(--tf-stroke-color);
+  --neutral-fill-input-rest: light-dark(var(--tf-base-50), var(--tf-base-800));
+  --neutral-fill-input-focus: light-dark(var(--tf-base-50), var(--tf-base-800));
+  --accent-fill-rest: light-dark(var(--tf-accent-700),
+  var(--tf-accent-900));
+  --accent-fill-hover: light-dark(var(--tf-accent-800),
+  var(--tf-accent-950));
+  --accent-fill-active: light-dark(var(--tf-accent-800),
+  var(--tf-accent-950));
+  --accent-stroke-control-rest: light-dark(var(--tf-accent-600),
+  var(--tf-accent-800));
+  --accent-stroke-control-hover: light-dark(var(--tf-accent-700),
+  var(--tf-accent-900));
+  --accent-stroke-control-active: light-dark(var(--tf-accent-600),
+  var(--tf-accent-800));
+}
+
+/*Button*/
+fluent-button, fluent-anchor {
+  &.accent {
+    svg {
+      --accent-fill-rest: var(--tf-font-color-base);
+    }
+  }
+}
+
+fluent-anchored-region,
+fluent-menu {
+  --neutral-layer-floating: light-dark(var(--tf-base-100), var(--tf-base-700));
+}
+
+fluent-menu-item {
+  --neutral-foreground-rest: var(--tf-font-color-base);
+}
+
+/*Message*/
+.fluent-messagebar-message .title {
+  display: block;
+}
+
+div[class ^='fluent-messagebar'],
+.fluent-messagebar-notification,
+.fluent-messagebar-message {
+  animation: none !important;
+}
+
+.fluent-messagebar {
+  &.intent-success {
+    --success: light-dark(var(--tf-green-600), var(--tf-green-800));
+    background-color: light-dark(var(--tf-green-100), var(--tf-green-950)) !important;
+    border-color: light-dark(var(--tf-green-200), var(--tf-green-900)) !important;
+  }
+
+  &.intent-error {
+    --error: light-dark(var(--tf-red-600), var(--tf-red-800));
+    background-color: light-dark(var(--tf-red-100), var(--tf-red-950)) !important;
+    border-color: light-dark(var(--tf-red-200), var(--tf-red-900)) !important;
+  }
+
+  &.intent-warning {
+    --warning: light-dark(var(--tf-amber-600), var(--tf-amber-800));
+    background-color: light-dark(var(--tf-amber-100), var(--tf-amber-950)) !important;
+    border-color: light-dark(var(--tf-amber-200), var(--tf-amber-900)) !important;
+  }
+
+  &.intent-info {
+    --info: light-dark(var(--tf-blue-500), var(--tf-blue-700));
+    background-color: light-dark(var(--tf-blue-100), var(--tf-blue-950)) !important;
+    border-color: light-dark(var(--tf-blue-200), var(--tf-blue-900)) !important;
+  }
 }

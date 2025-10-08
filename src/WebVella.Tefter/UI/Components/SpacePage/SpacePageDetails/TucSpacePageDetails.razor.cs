@@ -7,14 +7,14 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 	public TfNavigationState? _navState = null;
 	public void Dispose()
 	{
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		await _init(TfState.NavigationState);
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
 	}
 
@@ -31,7 +31,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		});
 	}
 
@@ -67,7 +67,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 				Mode = TfComponentMode.Read,
 				SpacePage = _spacePage,
 				Space = _space,
-				CurrentUser = TfAuthLayout.CurrentUser,
+				CurrentUser = TfState.User,
 				EditNode = EventCallback.Factory.Create(this, _onEdit),
 				DeleteNode = EventCallback.Factory.Create(this, _onRemove)
 			};

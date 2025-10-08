@@ -13,7 +13,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	[Inject] protected IMessageService MessageService { get; set; } = null!;
 	[Inject] protected ITfService TfService { get; set; } = null!;
 	[Inject] protected ITfMetaService TfMetaService { get; set; } = null!;
-	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = null!;
+	[CascadingParameter(Name = "TfState")] public TfState TfState { get; set; } = null!;
 
 	#endregion
 

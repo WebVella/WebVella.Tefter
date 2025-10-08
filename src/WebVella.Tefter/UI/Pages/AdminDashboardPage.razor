@@ -1,10 +1,22 @@
 ﻿@page "/admin"
 @inherits TfBasePage
-<TucLayoutDetails>
-	<Header>
-		<TucHeader />
-	</Header>
-	<Content>
-		<TucAdminDashboard />
-	</Content>
-</TucLayoutDetails>
+<TucLayoutGeneral>
+	<SpaceHeader>
+		<TucSpaceHeader/>
+	</SpaceHeader>
+	<SpaceActions>
+		<TucSpaceActions/>
+	</SpaceActions>
+	<SideNav>
+		<TucAdminNavigation/>
+	</SideNav>
+	<PageTopbar>
+		<TucPageTopbar/>
+	</PageTopbar>	
+	<PageHeader>
+		<TucPageHeader Title="@LOC("Dashboard")"/>
+	</PageHeader>
+	<ChildContent>
+		<TucAdminDashboard/>
+	</ChildContent>
+</TucLayoutGeneral>

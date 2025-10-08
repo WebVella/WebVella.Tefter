@@ -10,7 +10,7 @@ public partial class TucHomeDashboard : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_data = TfService.GetHomeDashboardData(TfAuthLayout.CurrentUser.Id);
+		_data = TfService.GetHomeDashboardData(TfState.User.Id);
 
 		_howToItems.Add(new TfHowToItem
 		{
@@ -56,7 +56,7 @@ public partial class TucHomeDashboard : TfBaseComponent
 
 	private async Task _onToggleFilter(string propName)
 	{
-		var navState = TfAuthLayout.NavigationState;
+		var navState = TfState.NavigationState;
 		var queryDict = new Dictionary<string, object>();
 		if (propName == "HomeSearchInBookmarks")
 			queryDict[TfConstants.SearchInBookmarksQueryName] = navState!.SearchInBookmarks ? false : null;

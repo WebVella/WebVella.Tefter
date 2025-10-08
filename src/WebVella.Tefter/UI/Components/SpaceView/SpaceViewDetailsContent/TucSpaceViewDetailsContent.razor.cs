@@ -11,19 +11,19 @@
 // 	public void Dispose()
 // 	{
 // 		TfUIService.SpaceViewUpdated -= On_SpaceViewUpdated;
-// 		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+// 		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 // 	}
 //
 // 	protected override async Task OnInitializedAsync()
 // 	{
-// 		await _init(TfAuthLayout.NavigationState);
+// 		await _init(TfAuthLayout.AppState.NavigationState);
 // 		TfUIService.SpaceViewUpdated += On_SpaceViewUpdated;
-// 		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+// 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 // 	}
 //
 // 	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
 // 	{
-// 		await _init(navState:TfAuthLayout.NavigationState,spaceView: args);
+// 		await _init(navState:TfAuthLayout.AppState.NavigationState,spaceView: args);
 // 	}
 //
 // 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -43,7 +43,7 @@
 // 			}
 // 			else
 // 			{
-// 				var routeData = TfAuthLayout.NavigationState;
+// 				var routeData = TfAuthLayout.AppState.NavigationState;
 // 				if (routeData.SpaceViewId is not null)
 // 					_spaceView = TfUIService.GetSpaceView(routeData.SpaceViewId.Value);
 //

@@ -23,8 +23,9 @@ public record TfBookmark
 	[TfDboModelProperty("user_id")]
 	public Guid UserId { get; set; }
 
+	//TODO RUMEN: needs to be changed to space_page_id
 	[TfDboModelProperty("space_view_id")]
-	public Guid SpaceViewId { get; set; }
+	public Guid SpacePageId { get; set; }
 
 	public List<TfTag> Tags { get; set; } = new();
 }

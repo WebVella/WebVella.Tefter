@@ -10,22 +10,22 @@ public partial class TucAdminRoleDetailsAsideContent : TfBaseComponent, IDisposa
 		TfEventProvider.RoleCreatedEvent -= On_RoleChanged;
 		TfEventProvider.RoleUpdatedEvent -= On_RoleChanged;
 		TfEventProvider.RoleDeletedEvent -= On_RoleChanged;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		TfEventProvider.RoleCreatedEvent += On_RoleChanged;
 		TfEventProvider.RoleUpdatedEvent += On_RoleChanged;
 		TfEventProvider.RoleDeletedEvent += On_RoleChanged;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_RoleChanged(object args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		});
 	}
 

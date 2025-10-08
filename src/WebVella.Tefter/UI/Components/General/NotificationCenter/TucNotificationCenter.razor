@@ -4,25 +4,24 @@
 	private RenderFragment NotificationIcon() =>
         @<FluentIcon Value="@TfConstants.GetIcon("Alert")" Title="Notification center" />;
 }
-<TucAnchor Href="#" OnClick="OpenNotificationCenterAsync"
-			  Title="Notification center" Appearance="Appearance.Hypertext">
-	@if (MessageService.Count(TfConstants.MESSAGES_NOTIFICATION_CENTER) > 0)
-	{
+@if (MessageService.Count(TfConstants.MESSAGES_NOTIFICATION_CENTER) > 0)
+{
+	<TucAnchor Href="#" OnClick="OpenNotificationCenterAsync" Class="tf-button"
+	           Title="Notification center" Appearance="Appearance.Outline">
 		<FluentCounterBadge Count="@MessageService.Count(TfConstants.MESSAGES_NOTIFICATION_CENTER)"
-							Max="9"
-							ShowOverflow="true"
-							BackgroundColor="@Color.Error"
-							Color="Color.Fill"
-							Appearance="Appearance.Accent">
-			<ChildContent>
-				@NotificationIcon()
-			</ChildContent>
+		                    Max="9" Class="tf-counter-badge"
+		                    ShowOverflow="true"
+		                    BackgroundColor="@Color.Error"
+		                    Color="Color.Fill"
+		                    Appearance="Appearance.Accent">
 		</FluentCounterBadge>
-	}
-	else
-	{
 		@NotificationIcon()
-	}
-</TucAnchor>
+	</TucAnchor>
+}
+else
+{
+	<TucAnchor Href="#" OnClick="OpenNotificationCenterAsync" Class="tf-button"
+	           Title="Notification center" Appearance="Appearance.Outline">@NotificationIcon()</TucAnchor>
+}
 
 

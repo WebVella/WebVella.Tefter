@@ -4,9 +4,12 @@
   display: flex;
   flex-flow: row;
 
+  &:not(.tflg--has-page-tabs) {
+    --tf-page-tabs-height: 0px;
+  }
 
-  .box {
-    height: 100%;
+  &:not(.tflg--has-return-btn) {
+    --tf-space-return-btn-height: 0px;
   }
 
   &__aside {
@@ -31,35 +34,60 @@
     flex: 0 0 var(--tf-space-actions-height);
   }
 
+  &__return-btn {
+    height: var(--tf-space-return-btn-height);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: stretch;
+    padding-left: var(--tf-padding-aside);
+    padding-right: var(--tf-padding-aside); 
+
+    fluent-anchor {
+      flex:1 1 auto;
+    }
+
+    &:after {
+      position: absolute;
+      content: '';
+      display: block;
+      bottom: 0;
+      width: 90%;
+      height: 1px;
+      border-bottom: 1px dashed var(--tf-stroke-color-mute);
+      left: 5%;
+    }
+  }
+
   &__sidenav {
     flex: 1 1 auto;
-    height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-actions-height));
+    height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-return-btn-height) - var(--tf-space-actions-height));
     overflow-y: auto;
     scrollbar-color: var(--tf-foreground-color-mute) var(--tf-background-color-body);
     scrollbar-width: thin;
   }
 
-  &__topbar {
+  &__page-topbar {
     flex: 0 0 var(--tf-topbar-height);
   }
 
-  &__header {
-    flex: 0 0 var(--tf-content-header-height);
+  &__page-header {
+    flex: 0 0 var(--tf-page-header-height);
     display: flex;
     flex-flow: column;
     justify-content: center;
   }
 
-  &__content_tabs {
-    flex: 0 0 var(--tf-content-tabs-height);
+  &__page-tabs {
+    flex: 0 0 var(--tf-page-tabs-height);
     display: flex;
     flex-flow: column;
-    justify-content: end;    
+    justify-content: end;
   }
 
-  &__content {
+  &__page-content {
     flex: 1 1 auto;
-    height: calc(100vh - var(--tf-topbar-height) - var(--tf-content-header-height) - var(--tf-content-tabs-height));
+    height: calc(100vh - var(--tf-topbar-height) - var(--tf-page-header-height) - var(--tf-page-tabs-height));
     overflow-y: auto;
     scrollbar-color: var(--tf-foreground-color-mute) var(--tf-background-color-body);
     scrollbar-width: thin;

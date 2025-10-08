@@ -1,9 +1,8 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-<TucPageLayout Title="@LOC("Dashboard")" Area="@LOC("Administration")"
-			   Icon="@TfConstants.GetIcon("Board")" Color="@TfConstants.AdminColor">
-	<div style="padding:var(--tf-layout-content-padding)">
+
+	<div style="padding:var(--tf-padding-content)">
 		<FluentGrid>
 			<FluentGridItem xs="6">
 				<TucCard Title="@LOC("Top Data Providers")">
@@ -104,4 +103,3 @@
 			</FluentGridItem>
 		</FluentGrid>
 	</div>
-</TucPageLayout>

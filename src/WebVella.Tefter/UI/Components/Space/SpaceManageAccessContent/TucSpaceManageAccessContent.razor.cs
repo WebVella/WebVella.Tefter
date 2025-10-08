@@ -13,14 +13,14 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		TfEventProvider.SpaceUpdatedEvent -= On_SpaceUpdated;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		TfEventProvider.SpaceUpdatedEvent += On_SpaceUpdated;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 
@@ -37,7 +37,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(navState: TfAuthLayout.NavigationState, space: args.Payload);
+			await _init(navState: TfState.NavigationState, space: args.Payload);
 		});
 	}
 

@@ -6,13 +6,13 @@ public partial class TucSpacePageManageTabContent : TfBaseComponent, IDisposable
 	private TfSpacePage _spacePage = null!;
 	public void Dispose()
 	{
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		await _init(TfState.NavigationState);
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -26,7 +26,7 @@ public partial class TucSpacePageManageTabContent : TfBaseComponent, IDisposable
 
 	private async void On_SpacePageChanged(object args)
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 	}
 
 	private async Task _init(TfNavigationState navState)
@@ -58,7 +58,7 @@ public partial class TucSpacePageManageTabContent : TfBaseComponent, IDisposable
 				Mode = TfComponentMode.Manage,
 				SpacePage = _spacePage,
 				Space = _space,
-				CurrentUser = TfAuthLayout.CurrentUser,
+				CurrentUser = TfState.User,
 			};
 		}
 

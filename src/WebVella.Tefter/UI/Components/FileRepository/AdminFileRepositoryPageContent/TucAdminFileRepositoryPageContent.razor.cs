@@ -18,17 +18,17 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 		TfEventProvider.RepositoryFileCreatedEvent -= On_RepositoryFileChanged;
 		TfEventProvider.RepositoryFileUpdatedEvent -= On_RepositoryFileChanged;
 		TfEventProvider.RepositoryFileDeletedEvent -= On_RepositoryFileChanged;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		TfEventProvider.RepositoryFileCreatedEvent += On_RepositoryFileChanged;
 		TfEventProvider.RepositoryFileUpdatedEvent += On_RepositoryFileChanged;
 		TfEventProvider.RepositoryFileDeletedEvent += On_RepositoryFileChanged;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -53,7 +53,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		});
 	}
 
@@ -84,7 +84,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 				var result = TfService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
-					CreatedBy = TfAuthLayout.CurrentUser?.Id,
+					CreatedBy = TfState.User?.Id,
 					LocalFilePath = file.LocalFile.ToString(),
 					Filename = file.Name,
 				});

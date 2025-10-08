@@ -66,7 +66,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			var bookmarks = _dboManager.GetList<TfBookmark>(spaceViewId, nameof(TfBookmark.SpaceViewId));
+			var bookmarks = _dboManager.GetList<TfBookmark>(spaceViewId, nameof(TfBookmark.SpacePageId));
 			foreach (var bookmark in bookmarks)
 				bookmark.Tags = GetBookmarkTags(bookmark.Id);
 

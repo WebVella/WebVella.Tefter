@@ -2,16 +2,19 @@
 
 .tf-space-actions {
   position: relative;
-  padding-left: var(--tf-padding-content);
-  padding-right: var(--tf-padding-content);
+  padding-left: var(--tf-padding-aside);
+  padding-right: var(--tf-padding-aside);
   --tf-space-pane-extra-space: 10px;
   display: flex;
   justify-items: center;
-  align-items: center;
+  align-items: start;
   gap: 10px;
   height: 100%;
   fluent-button{
     flex:1 1 auto;
+    svg{
+      --accent-fill-rest: var(--tf-font-color-base);
+    }
   }
   
   &:after{
@@ -21,7 +24,7 @@
     bottom:0;
     width: 90%;
     height:1px;
-    border-bottom: 1px solid var(--tf-stroke-color-mute);
+    border-bottom: 1px dashed var(--tf-stroke-color-mute);
     left:5%;
   }
 }     

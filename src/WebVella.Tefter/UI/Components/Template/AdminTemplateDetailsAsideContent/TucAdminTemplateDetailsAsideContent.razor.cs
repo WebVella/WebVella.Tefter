@@ -10,22 +10,22 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 		TfEventProvider.TemplateCreatedEvent -= On_TemplateCreated;
 		TfEventProvider.TemplateUpdatedEvent -= On_TemplateUpdated;
 		TfEventProvider.TemplateDeletedEvent -= On_TemplateDeleted;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		TfEventProvider.TemplateCreatedEvent += On_TemplateCreated;
 		TfEventProvider.TemplateUpdatedEvent += On_TemplateUpdated;
 		TfEventProvider.TemplateDeletedEvent += On_TemplateDeleted;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_TemplateCreated(TfTemplateCreatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		});
 	}
 
@@ -33,7 +33,7 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		});
 	}
 
@@ -41,7 +41,7 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		});
 	}
 

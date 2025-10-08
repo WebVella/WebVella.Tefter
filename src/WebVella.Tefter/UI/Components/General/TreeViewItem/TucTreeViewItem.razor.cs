@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucTreeViewItem : ComponentBase
 {
 	[Inject] protected NavigationManager Navigator { get; set; } = null!;
@@ -25,12 +26,26 @@ public partial class TucTreeViewItem : ComponentBase
 
 	private async Task _onClick()
 	{
+		if (!String.IsNullOrWhiteSpace(Item.Url))
+		{
+			Navigator.NavigateTo(Item.Url);
+			return;
+		}
+
 		if (Item.OnClick.HasDelegate)
 		{
 			await Item.OnClick.InvokeAsync();
 			return;
 		}
-		if (!String.IsNullOrWhiteSpace(Item.Url))
-			Navigator.NavigateTo(Item.Url);
+		if(Item.Items.Count > 0) 
+			await _onExpand();
+
+	}
+
+	private async Task _onExpand()
+	{
+		Item.Expanded = !Item.Expanded;
+		await Item.OnExpand.InvokeAsync(Item.Expanded);
+		await InvokeAsync(StateHasChanged);
 	}
 }

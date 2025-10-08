@@ -95,7 +95,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AdditionalFiles Include="UI\Components\General\PageHeader\TucPageTopbar.razor" />
+	  <AdditionalFiles Include="UI\Components\Page\PageLinkSaveSelector\TucPageLinkSaveSelector.razor" />
 	  <AdditionalFiles Include="UI\Components\SpaceView\SpaceViewManageMainTabDialog\TucSpaceViewManageDialog.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="UI\Components\SpaceView\SpaceViewLinkSaveSelector\TucSpaceViewLinkSaveSelector.razor" />
 	</ItemGroup>
 
 </Project>

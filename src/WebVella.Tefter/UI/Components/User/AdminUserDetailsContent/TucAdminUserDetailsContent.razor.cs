@@ -9,21 +9,21 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		TfEventProvider.UserUpdatedGlobalEvent -= On_UserUpdated;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		TfEventProvider.UserUpdatedGlobalEvent += On_UserUpdated;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_UserUpdated(TfUserUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(navState: TfAuthLayout.NavigationState, user: args.Payload);
+			await _init(navState: TfState.NavigationState, user: args.Payload);
 		});
 	}
 

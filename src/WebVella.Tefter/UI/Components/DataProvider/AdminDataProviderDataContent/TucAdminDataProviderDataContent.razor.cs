@@ -13,13 +13,13 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	private bool _syncRunning = false;
 	public void Dispose()
 	{
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		TfEventProvider.DataProviderUpdatedEvent -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		await _init(TfState.NavigationState);
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
@@ -35,7 +35,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		});
 	}
 
@@ -197,7 +197,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		try
 		{
 			var user = await TfService.SetPageSize(
-						userId: TfAuthLayout.CurrentUser.Id,
+						userId: TfState.User.Id,
 						pageSize: pageSize == TfConstants.PageSize ? null : pageSize
 					);
 		}

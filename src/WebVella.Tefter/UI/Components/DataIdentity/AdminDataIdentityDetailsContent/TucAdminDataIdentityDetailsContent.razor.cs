@@ -7,22 +7,22 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 	public void Dispose()
 	{
 		TfEventProvider.DataIdentityUpdatedEvent -= On_DataIdentityUpdated;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init(navState:TfAuthLayout.NavigationState);
+		await _init(navState:TfState.NavigationState);
 		TfEventProvider.DataIdentityUpdatedEvent += On_DataIdentityUpdated;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_DataIdentityUpdated(TfDataIdentityUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(navState: TfAuthLayout.NavigationState, identity: args.Payload);
+			await _init(navState: TfState.NavigationState, identity: args.Payload);
 		});
 	}
 

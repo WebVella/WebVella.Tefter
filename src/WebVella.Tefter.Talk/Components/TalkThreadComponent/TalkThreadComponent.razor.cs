@@ -43,18 +43,18 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 		TalkService.ThreadCreated -= On_ThreadChanged;
 		TalkService.ThreadUpdated -= On_ThreadChanged;
 		TalkService.ThreadDeleted -= On_ThreadChanged;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		_isLoading = false;
 		TalkService.ThreadCreated += On_ThreadChanged;
 		TalkService.ThreadUpdated += On_ThreadChanged;
 		TalkService.ThreadDeleted += On_ThreadChanged;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 	protected override void OnAfterRender(bool firstRender)
 	{
@@ -73,13 +73,13 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 		await base.OnParametersSetAsync();
 		if (_channelId == Channel?.Id && _dataIdentityValue == DataIdentityValue)
 			return;
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		await InvokeAsync(StateHasChanged);
 	}
 
 	private async void On_ThreadChanged(object? caller, TalkThread args)
 	{
-		await InvokeAsync(async () => { await _init(TfAuthLayout.NavigationState); });
+		await InvokeAsync(async () => { await _init(TfState.NavigationState); });
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{

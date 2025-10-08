@@ -30,14 +30,14 @@ public partial class TucPager : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		KeyCodeService.UnregisterListener(HandleKeyDownAsync);
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		KeyCodeService.RegisterListener(HandleKeyDownAsync);
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 		
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)

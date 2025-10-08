@@ -10,24 +10,24 @@ public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, 
 		TfEventProvider.DataProviderCreatedEvent -= On_DataProviderChanged;
 		TfEventProvider.DataProviderUpdatedEvent -= On_DataProviderChanged;
 		TfEventProvider.DataProviderDeletedEvent -= On_DataProviderChanged;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		TfEventProvider.DataProviderCreatedEvent += On_DataProviderChanged;
 		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderChanged;
 		TfEventProvider.DataProviderDeletedEvent += On_DataProviderChanged;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_DataProviderChanged(object  user)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		});
 	}
 

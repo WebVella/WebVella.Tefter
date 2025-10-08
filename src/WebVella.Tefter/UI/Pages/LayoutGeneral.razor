@@ -2,19 +2,15 @@
 @inherits TfBasePage
 
 @((MarkupString)_styles)
-<style>
-	.tf-page-layout__navigation, .tf-page-layout__toolbar {
-		display: none
-	}
-</style>
+
 <TucLayoutGeneral>
 	<SpaceHeader>
-		<div class="tf-space-pane">
-			<div class="tf-space-pane__icon">
+		<div class="tf-space-header">
+			<div class="tf-space-header__icon">
 				<FluentIcon Value="@TfConstants.GetIcon("Building", IconSize.Size24)" Focusable="false"></FluentIcon>
 			</div>
-			<div class="tf-space-pane__meta">
-				<div class="tf-space-pane__meta__title">Sea tempor elitr sed clita illum erat</div>
+			<div class="tf-space-header__meta">
+				<div class="tf-space-header__meta__title">Sea tempor elitr sed clita illum erat</div>
 			</div>
 		</div>
 	</SpaceHeader>
@@ -33,7 +29,7 @@
 			<TucTreeView Items="_menu"/>
 		</div>
 	</SideNav>
-	<ContentTopbar>
+	<PageTopbar>
 		<div class="tf-topbar">
 			<div class="tf-topbar__left">
 				<FluentBreadcrumb>
@@ -59,16 +55,17 @@
 				</FluentButton>
 				<FluentButton Class="tf-button" Appearance="Appearance.Outline">
 					<FluentIcon Value="@TfConstants.GetIcon("Settings")"/>
-				</FluentButton>				
+				</FluentButton>
 				<FluentDivider Orientation="Orientation.Vertical"/>
+				<FluentButton Class="tf-button" Appearance="Appearance.Outline">Admin Space</FluentButton>
 				<FluentButton Class="tf-button" IconEnd="@TfConstants.GetIcon("ChevronDown")"
 				              Appearance="@Appearance.Outline">
-					<TucAvatar User="@TfAuthLayout.CurrentUser"></TucAvatar>
+					<TucAvatar User="@TfState.User"></TucAvatar>
 				</FluentButton>
 			</div>
 		</div>
-	</ContentTopbar>
-	<ContentHeader>
+	</PageTopbar>
+	<PageHeader>
 		<div class="tf-header">
 			<div class="tf-header__left">
 				<div class="tf-header__meta">
@@ -105,8 +102,8 @@
 
 			</div>
 		</div>
-	</ContentHeader>
-	<ContentTabs>
+	</PageHeader>
+	<PageTabs>
 		<div class="tf-header-tabs">
 			<FluentTabs ActiveTabId="tab-1">
 				<FluentTab Id="tab-1">
@@ -130,7 +127,7 @@
 				</FluentTab>
 			</FluentTabs>
 		</div>
-	</ContentTabs>
+	</PageTabs>
 	<ChildContent>
 		<TucCard>
 			<TucSpaceViewPageContent Context="@_context"/>
@@ -138,11 +135,10 @@
 	</ChildContent>
 </TucLayoutGeneral>
 
-
 @code {
 
-	[CascadingParameter(Name = "TfAuthLayout")]
-	public TfAuthLayout TfAuthLayout { get; set; } = null!;
+	[CascadingParameter(Name = "TfState")]
+	public TfState TfState { get; set; } = null!;
 
 	[Inject] public ITfService TfService { get; set; } = null!;
 
@@ -157,7 +153,7 @@
 		_context.ComponentOptionsJson = @"{""DatasetId"":""82d669cb-4dd1-4a2d-a2b3-dccdf8f05e6a"",""SpaceViewId"":""615e9347-0123-4190-8a32-6d07cebf65e2""}";
 		_context.SpacePage = TfService.GetSpacePage(new Guid("3a8912c0-0efd-471f-a2bd-d97ffc366fed"));
 		_context.Space = TfService.GetSpace(_context.SpacePage.SpaceId);
-		_context.CurrentUser = TfAuthLayout.CurrentUser;
+		_context.CurrentUser = TfState.User;
 		var user = await TfService.GetUserFromCookieAsync(
 			jsRuntime: JSRuntime,
 			authStateProvider: AuthenticationProvider);
@@ -233,7 +229,7 @@
 
 		#endregion
 
-		_styles = TfColor.Green500.GenerateStylesForAccentColor();
+		_styles = TfColor.Red500.GenerateStylesForAccentColor();
 	}
 
 	private Task _onExpand(TfMenuItem item, bool expand)

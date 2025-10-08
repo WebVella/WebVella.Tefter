@@ -15,16 +15,16 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
     {
         EmailService.EmailCreated -= On_EmailChanged;
         EmailService.EmailUpdated -= On_EmailChanged;
-        TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+        TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
     }
 
     protected override async Task OnInitializedAsync()
     {
-        _currentUser = TfAuthLayout.CurrentUser;
-        await _init(TfAuthLayout.NavigationState);
+        _currentUser = TfState.User;
+        await _init(TfState.NavigationState);
         EmailService.EmailCreated += On_EmailChanged;
         EmailService.EmailUpdated += On_EmailChanged;
-        TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+        TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -37,7 +37,7 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 
     private async void On_EmailChanged(object? caller, EmailMessage args)
     {
-        await InvokeAsync(async () => { await _init(TfAuthLayout.NavigationState); });
+        await InvokeAsync(async () => { await _init(TfState.NavigationState); });
     }
 
     private async void On_NavigationStateChanged(object? caller, TfNavigationState args)

@@ -5,7 +5,7 @@
 else if (!String.IsNullOrWhiteSpace(Item.Url) && Item.Url != "#")
 {
 	<a id="@Item.Id" class="@_cssClass" href="@Item.Url">
-		<TucTreeViewItemContent Item="@Item" />
+		<TucTreeViewItemContent Item="@Item" OnExpand="_onExpand"/>
 	</a>
 	@if (Item.Items.Count > 0 && Item.Expanded)
 	{
@@ -21,7 +21,7 @@ else
 {
 	<a id="@Item.Id" class="@_cssClass" href="#"
 	   @onclick="@_onClick" @onclick:stopPropagation @onclick:preventDefault>
-		<TucTreeViewItemContent Item="@Item" />
+		<TucTreeViewItemContent Item="@Item"  OnExpand="_onExpand"/>
 	</a>
 	@if (Item.Items.Count > 0 && Item.Expanded)
 	{

@@ -1,6 +1,6 @@
 ﻿@import '_variables.less';
 
-.tf-topbar {
+.tf-page-topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -22,16 +22,20 @@
   fluent-breadcrumb-item::part(control){
     display: flex;
     align-items: center;
-    background: light-dark(var(--tf-base-200),var(--tf-base-800));
-    color:var(--tf-font-color-base);
+    color:var(--tf-font-color-mute);
+    --accent-fill-rest:var(--tf-font-color-mute);
     height:23px;
     padding:0 5px;
     border-radius: var(--tf-border-radius-sm);
     margin-inline-end:0;
+    cursor: pointer;
     &:hover{
-      background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 80%),
-      color-mix(in srgb, var(--tf-accent-500), transparent 75%));
+      background: light-dark(
+              color-mix(in srgb, var(--tf-accent-500), transparent 80%),
+              color-mix(in srgb, var(--tf-accent-500), transparent 75%)
+      );
       color:var(--tf-font-color-base);
+      --accent-fill-rest:var(--tf-font-color-base);
     }
   }
   fluent-breadcrumb-item::part(separator){
@@ -41,6 +45,29 @@
   fluent-divider{
     height:1rem;
     --neutral-stroke-divider-rest:var(--tf-stroke-color);
-    margin:0 1rem;
+    margin:0 0.5rem;
+  }
+  fluent-anchor,  fluent-button{
+    &::part(control){
+      border-color:transparent;
+    }
+    &::part(end){
+      margin-inline-start:2px;
+      --accent-fill-rest:var(--tf-stroke-color);      
+    }
+    &:hover{
+      &::part(control){
+        border-color:var(--tf-stroke-color-hover);
+      }      
+      &::part(end){
+        --accent-fill-rest:var(--tf-stroke-color-hover);
+      }
+    }
+  }
+  #user-menu-toggle{
+   color:var(--tf-base-700); 
+    &::part(content){
+      top:0;
+    }
   }
 }     

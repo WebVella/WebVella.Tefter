@@ -10,21 +10,21 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		TfEventProvider.RoleUpdatedEvent -= On_RoleUpdated;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		TfEventProvider.RoleUpdatedEvent += On_RoleUpdated;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_RoleUpdated(TfRoleUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(navState: TfAuthLayout.NavigationState, role: args.Payload);
+			await _init(navState: TfState.NavigationState, role: args.Payload);
 		});
 	}
 
@@ -47,7 +47,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 			}
 			else
 			{
-				var routeData = TfAuthLayout.NavigationState;
+				var routeData = TfState.NavigationState;
 				if (routeData.RoleId is not null)
 					_role = TfService.GetRole(routeData.RoleId.Value);
 

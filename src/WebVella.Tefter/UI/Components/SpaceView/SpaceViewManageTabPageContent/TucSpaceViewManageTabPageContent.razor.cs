@@ -17,7 +17,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	public bool _submitting = false;
 	public void Dispose()
 	{
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		TfEventProvider.SpaceViewUpdatedEvent -= On_SpaceViewUpdated;
 		TfEventProvider.SpaceViewColumnsChangedEvent -= On_SpaceViewColumnUpdated;
 	}
@@ -27,7 +27,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		await base.OnInitializedAsync();
 		if (Context is null)
 			throw new Exception("Context cannot be null");
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		_isDataLoading = false;
 	}
 
@@ -36,7 +36,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+			TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewUpdated;
 			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewColumnUpdated;
 		}
@@ -55,13 +55,13 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 
 	private async void On_SpaceViewUpdated(TfSpaceViewUpdatedEvent args)
 	{
-		if(args.UserId != TfAuthLayout.CurrentUser.Id) return;
-		await _init(TfAuthLayout.NavigationState);
+		if(args.UserId != TfState.User.Id) return;
+		await _init(TfState.NavigationState);
 	}	
 	private async void On_SpaceViewColumnUpdated(TfSpaceViewColumnsChangedEvent args)
 	{
-		if(args.UserId != TfAuthLayout.CurrentUser.Id) return;
-		await _init(TfAuthLayout.NavigationState);
+		if(args.UserId != TfState.User.Id) return;
+		await _init(TfState.NavigationState);
 	}
 
 	private async Task _init(TfNavigationState navState)

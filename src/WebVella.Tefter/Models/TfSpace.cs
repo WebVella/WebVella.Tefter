@@ -2,11 +2,11 @@
 public record TfSpace
 {
 	public Guid Id { get; set; }
-	public string Name { get; set; }
+	public string? Name { get; set; } = null;
 	public short Position { get; set; }
 	public bool IsPrivate { get; set; }
-	public string FluentIconName { get; set; }
-	public TfColor? Color { get; set; }
+	public string? FluentIconName { get; set; } = null;
+	public TfColor? Color { get; set; } = null;
 	public List<TfRole> Roles { get; set; } = new();
 }
 

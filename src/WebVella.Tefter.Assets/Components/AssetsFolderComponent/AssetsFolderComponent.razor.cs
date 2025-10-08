@@ -25,18 +25,18 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		AssetsService.AssetCreated -= On_AssetChanged;
 		AssetsService.AssetUpdated -= On_AssetChanged;
 		AssetsService.AssetDeleted -= On_AssetChanged;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		_isLoading = false;
 		AssetsService.AssetCreated += On_AssetChanged;
 		AssetsService.AssetUpdated += On_AssetChanged;
 		AssetsService.AssetDeleted += On_AssetChanged;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -56,14 +56,14 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		await base.OnParametersSetAsync();
 		if (_folderId == Folder?.Id && _dataIdentityValue == DataIdentityValue)
 			return;
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		await InvokeAsync(StateHasChanged);
 
 	}
 
 	private async void On_AssetChanged(object? caller, Asset args)
 	{
-		await InvokeAsync(async () => { await _init(TfAuthLayout.NavigationState); });
+		await InvokeAsync(async () => { await _init(TfState.NavigationState); });
 	}
 	private async void On_NavigationStateChanged(object? caller, TfNavigationState args)
 	{

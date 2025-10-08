@@ -27,7 +27,7 @@ else
 			<NavigationRight>
 				@if (Context.CurrentUser.IsAdmin)
 				{
-					<FluentAnchor Class="tf-button-mute"
+					<TucAnchor Class="tf-button-mute"
 						Href="@_managePageUrl"
 						AdditionalAttributes="@_manageBtnAttributes"
 						Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Settings")"/>

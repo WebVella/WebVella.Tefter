@@ -8,20 +8,20 @@ public partial class TucSpaceViewPagesContent : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		await _init(TfState.NavigationState);
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_SpaceViewUpdated(object? caller, TfSpaceView args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(navState: TfAuthLayout.NavigationState, spaceView: args);
+			await _init(navState: TfState.NavigationState, spaceView: args);
 		});
 	}
 
@@ -45,7 +45,7 @@ public partial class TucSpaceViewPagesContent : TfBaseComponent, IDisposable
 			}
 			else
 			{
-				var routeData = TfAuthLayout.NavigationState;
+				var routeData = TfState.NavigationState;
 				if (routeData.SpaceViewId is not null)
 					_spaceView = TfService.GetSpaceView(routeData.SpaceViewId.Value);
 

@@ -21,11 +21,11 @@ public partial class TucAvatar :ComponentBase
 				if (UseUserColor && User.Settings is not null && User.Settings.ThemeColor.HasValue)
 					list.Add($"background-color:{User.Settings.ThemeColor.GetColor().Value};");
 				else
-					list.Add("background-color:var(--neutral-fill-layer-hover);");
+					list.Add("background-color:var(--tf-base-300);");
 			}
 			else
 			{
-				list.Add("background-color:var(--neutral-fill-layer-hover);");
+				list.Add("background-color:var(--tf-base-300);");
 			}
 
 			if (OnClick.HasDelegate)

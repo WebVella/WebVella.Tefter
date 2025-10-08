@@ -21,7 +21,7 @@ public partial class TucFileRepositoryFileUpdateDialog : TfFormBaseComponent, ID
 		_form = new TfFileForm
 		{
 			Id = Content.Id,
-			CreatedBy = TfAuthLayout.CurrentUser.Id,
+			CreatedBy = TfState.User.Id,
 			LocalFilePath = null,
 			Filename = Content.Filename
 		};

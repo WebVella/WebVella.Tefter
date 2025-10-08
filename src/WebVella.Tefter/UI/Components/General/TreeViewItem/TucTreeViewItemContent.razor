@@ -19,7 +19,7 @@
 	}
 	@if (Item.Items.Count > 0)
 	{
-		<span class="tf-treemenu__item__expander" @onclick="@(async () => await Item.OnExpand.InvokeAsync(!Item.Expanded))" @onclick:stopPropagation @onclick:preventDefault>
+		<span class="tf-treemenu__item__expander" @onclick="@_onExpand" @onclick:stopPropagation @onclick:preventDefault>
 			<FluentIcon Value="@(Item.Expanded? TfConstants.GetIcon("ChevronUp") : TfConstants.GetIcon("ChevronDown"))" />
 		</span>
 	}

@@ -12,24 +12,24 @@ public partial class TucAdminDataIdentityDetailsAsideContent : TfBaseComponent, 
 		TfEventProvider.DataIdentityCreatedEvent -= On_DataIdentityChanged;
 		TfEventProvider.DataIdentityUpdatedEvent -= On_DataIdentityChanged;
 		TfEventProvider.DataIdentityDeletedEvent -= On_DataIdentityChanged;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		TfEventProvider.DataIdentityCreatedEvent += On_DataIdentityChanged;
 		TfEventProvider.DataIdentityUpdatedEvent += On_DataIdentityChanged;
 		TfEventProvider.DataIdentityDeletedEvent += On_DataIdentityChanged;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_DataIdentityChanged(object args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		});
 	}
 

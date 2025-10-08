@@ -68,14 +68,14 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	#region << Render Lifecycle >>
 	public void Dispose()
 	{
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		_currentUser = TfAuthLayout.CurrentUser;
-		await _init(TfAuthLayout.NavigationState);
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		_currentUser = TfState.User;
+		await _init(TfState.NavigationState);
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 		_isLoaded = true;
 	}
 	protected override void OnParametersSet()
@@ -147,7 +147,7 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	private async Task<string> _getDataIdentityValue()
 	{
 		if (_options is null) return Guid.NewGuid().ToSha1();
-		var navState = TfAuthLayout.NavigationState;
+		var navState = TfState.NavigationState;
 		switch (_options.DataIdentityValueType)
 		{
 			case TalkChannelDataIdentityValueType.SpacePageId:

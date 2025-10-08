@@ -1,26 +1,23 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceViewLinkSaveSelector : TfBaseComponent
+
+public partial class TucPageLinkSaveSelector : TfBaseComponent
 {
-	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
-	[Parameter] public TfDataTable Data { get; set; } = null!;
-	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
-	[Parameter] public TfBookmark? ActiveBookmark { get; set; } = null;
 	[Parameter] public TfBookmark? ActiveSavedUrl { get; set; } = null;
+
 	private bool _open = false;
+
 	public async Task ToggleSelector()
 	{
 		_open = !_open;
 		await InvokeAsync(StateHasChanged);
 	}
+
 	private async Task _updateUrl()
 	{
-		if(ActiveSavedUrl is null) return;
+		if (ActiveSavedUrl is null) return;
 		try
 		{
-			var submit = ActiveSavedUrl with
-			{
-				Url = new Uri(Navigator.Uri).PathAndQuery
-			};
+			var submit = ActiveSavedUrl with { Url = new Uri(Navigator.Uri).PathAndQuery };
 
 			TfService.UpdateBookmark(submit);
 
@@ -38,38 +35,40 @@ public partial class TucSpaceViewLinkSaveSelector : TfBaseComponent
 
 	private async Task _editUrl()
 	{
-		if(ActiveSavedUrl is null) return;
+		if (ActiveSavedUrl is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewBookmarkManageDialog>(
-						ActiveSavedUrl,
-						new DialogParameters()
-						{
-							PreventDismissOnOverlayClick = true,
-							PreventScroll = true,
-							Width = TfConstants.DialogWidthLarge,
-							TrapFocus = false
-						});
+			ActiveSavedUrl,
+			new DialogParameters()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
 		}
 	}
+
 	private async Task _saveUrlAs()
 	{
-		if(ActiveSavedUrl is null) return;
+		if (ActiveSavedUrl is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewBookmarkManageDialog>(
-						ActiveSavedUrl with { Id = Guid.Empty },
-						new DialogParameters()
-						{
-							PreventDismissOnOverlayClick = true,
-							PreventScroll = true,
-							Width = TfConstants.DialogWidthLarge,
-							TrapFocus = false
-						});
+			ActiveSavedUrl with { Id = Guid.Empty },
+			new DialogParameters()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
 		}
 	}
+
 	private async Task _removeUrl()
 	{
 		try
@@ -81,7 +80,7 @@ public partial class TucSpaceViewLinkSaveSelector : TfBaseComponent
 
 			ToastService.ShowSuccess(LOC("Saved URL removed"));
 
-			await Navigator.ApplyChangeToUrlQuery(TfConstants.ActiveSaveQueryName,null);
+			await Navigator.ApplyChangeToUrlQuery(TfConstants.ActiveSaveQueryName, null);
 		}
 		catch (Exception ex)
 		{
@@ -92,5 +91,4 @@ public partial class TucSpaceViewLinkSaveSelector : TfBaseComponent
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-
 }

@@ -12,21 +12,21 @@ public partial class TalkChannelAdminList : TfBaseComponent
         TalkService.ChannelCreated -= On_ChannelChanged;
         TalkService.ChannelUpdated -= On_ChannelChanged;
         TalkService.ChannelDeleted -= On_ChannelChanged;
-        TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+        TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await _init(TfAuthLayout.NavigationState);
+        await _init(TfState.NavigationState);
         TalkService.ChannelCreated += On_ChannelChanged;
         TalkService.ChannelUpdated += On_ChannelChanged;
         TalkService.ChannelDeleted += On_ChannelChanged;
-        TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+        TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
     }
 
     private async void On_ChannelChanged(object? caller, TalkChannel args)
     {
-        await InvokeAsync(async () => { await _init(TfAuthLayout.NavigationState); });
+        await InvokeAsync(async () => { await _init(TfState.NavigationState); });
     }
 
     private async void On_NavigationStateChanged(object? caller, TfNavigationState args)

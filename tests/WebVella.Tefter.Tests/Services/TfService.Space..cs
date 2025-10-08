@@ -370,7 +370,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "test1",
 					Description = " test with #tag1 #tAg2 #Tag3",
-					SpaceViewId = view.Id,
+					SpacePageId = view.Id,
 					Url = null,
 					UserId = user.Id,
 					CreatedOn = DateTime.UtcNow

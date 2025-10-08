@@ -8,7 +8,7 @@ public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 		TfEventProvider.SpacePageCreatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent -= On_SpacePageChanged;
@@ -17,8 +17,8 @@ public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init(TfAuthLayout.NavigationState);
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		await _init(TfState.NavigationState);
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 		TfEventProvider.SpacePageCreatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent += On_SpacePageChanged;
@@ -35,14 +35,14 @@ public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 
 	private async void On_SpacePageChanged(object args)
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 	}
 
 	private async Task _init(TfNavigationState navState)
 	{
 		try
 		{
-			_menu = TfAuthLayout.NavigationMenu.Menu;
+			_menu = TfState.Menu;
 		}
 		finally
 		{
@@ -84,7 +84,7 @@ public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 		if (!result.Cancelled && result.Data != null)
 		{
 			var item = (TfSpace)result.Data;
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		}
 	}
 
@@ -95,7 +95,7 @@ public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 		{
 			TfService.DeleteSpace(args.Data.SpaceId.Value);
 			ToastService.ShowSuccess(LOC("Space deleted"));
-			await _init(TfAuthLayout.NavigationState);
+			await _init(TfState.NavigationState);
 		}
 		catch (Exception ex)
 		{

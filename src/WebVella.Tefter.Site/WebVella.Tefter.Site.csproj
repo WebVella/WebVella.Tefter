@@ -31,7 +31,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Content Update="appsettings.DESKTOP-KU8LRG2.json">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
 

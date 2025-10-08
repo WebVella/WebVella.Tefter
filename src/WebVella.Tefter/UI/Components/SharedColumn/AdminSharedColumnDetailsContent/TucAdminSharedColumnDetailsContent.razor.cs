@@ -8,21 +8,21 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 	public void Dispose()
 	{
 		TfEventProvider.SharedColumnUpdatedEvent -= On_SharedColumnUpdated;
-		TfAuthLayout.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfAuthLayout.NavigationState);
+		await _init(TfState.NavigationState);
 		TfEventProvider.SharedColumnUpdatedEvent += On_SharedColumnUpdated;
-		TfAuthLayout.NavigationStateChangedEvent += On_NavigationStateChanged;
+		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
 	}
 
 	private async void On_SharedColumnUpdated(TfSharedColumnUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(navState: TfAuthLayout.NavigationState, column: args.Payload);
+			await _init(navState: TfState.NavigationState, column: args.Payload);
 		});
 	}
 
@@ -45,7 +45,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 			}
 			else
 			{
-				var routeData = TfAuthLayout.NavigationState;
+				var routeData = TfState.NavigationState;
 				if (routeData.SharedColumnId is not null)
 					_column = TfService.GetSharedColumn(routeData.SharedColumnId.Value);
 			}
