@@ -6,10 +6,10 @@
 	{
 		<div class="tf-page-layout__navigation">
 			<div class="tf-page-layout__navigation__left">
-				@if (!String.IsNullOrWhiteSpace(TfState.NavigationState.ReturnUrl))
+				@if (!String.IsNullOrWhiteSpace(TfAuthLayout.GetState().NavigationState.ReturnUrl))
 				{
 					<div class="tf-page-layout__navigation__left__back-btn">
-						<TucAnchor Appearance="@Appearance.Outline" Href="@TfState.NavigationState.ReturnUrl"
+						<TucAnchor Appearance="@Appearance.Outline" Href="@TfAuthLayout.GetState().NavigationState.ReturnUrl"
 						           IconStart="@TfConstants.GetIcon("ChevronLeft")">@LOC("Back")</TucAnchor>
 					</div>
 				}

@@ -1,40 +1,44 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminUsersPageContent :TfBaseComponent, IDisposable
+
+public partial class TucAdminUsersPageContent : TfBaseComponent, IDisposable
 {
 	private bool _isLoading = false;
-	private List<TfUser>? _items = null;
-	
+	private List<TfUser> _items = new();
+
 	public void Dispose()
 	{
 		TfEventProvider.UserCreatedGlobalEvent -= On_UserChanged;
 		TfEventProvider.UserUpdatedGlobalEvent -= On_UserChanged;
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		TfEventProvider.UserCreatedGlobalEvent += On_UserChanged;
 		TfEventProvider.UserUpdatedGlobalEvent += On_UserChanged;
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
-	
+
 	private async Task On_UserChanged(object args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfState.NavigationState);
+			await _init(TfAuthLayout.GetState().NavigationState);
 		});
-	}	
-	
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	}
+
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(args);
+			if (UriInitialized != args.Location)
+			{
+				await _init(TfAuthLayout.GetState().NavigationState);
+			}
 		});
-	}	
-	
+	}
+
 	private async Task _init(TfNavigationState navState)
 	{
 		try
@@ -47,5 +51,5 @@ public partial class TucAdminUsersPageContent :TfBaseComponent, IDisposable
 			UriInitialized = navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
-	}	
+	}
 }

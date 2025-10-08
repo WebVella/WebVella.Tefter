@@ -18,17 +18,17 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 		TfEventProvider.RepositoryFileCreatedEvent -= On_RepositoryFileChanged;
 		TfEventProvider.RepositoryFileUpdatedEvent -= On_RepositoryFileChanged;
 		TfEventProvider.RepositoryFileDeletedEvent -= On_RepositoryFileChanged;
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		TfEventProvider.RepositoryFileCreatedEvent += On_RepositoryFileChanged;
 		TfEventProvider.RepositoryFileUpdatedEvent += On_RepositoryFileChanged;
 		TfEventProvider.RepositoryFileDeletedEvent += On_RepositoryFileChanged;
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -39,12 +39,12 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 		}
 	}
 
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(navState: args);
+			if (UriInitialized != args.Location)
+				await _init(navState: TfAuthLayout.GetState().NavigationState);
 		});
 	}
 
@@ -53,7 +53,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfState.NavigationState);
+			await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
 
@@ -84,7 +84,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 				var result = TfService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
-					CreatedBy = TfState.User?.Id,
+					CreatedBy = TfAuthLayout.GetState().User?.Id,
 					LocalFilePath = file.LocalFile.ToString(),
 					Filename = file.Name,
 				});

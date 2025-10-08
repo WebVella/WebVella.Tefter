@@ -3,31 +3,26 @@
 public partial class TucPageHeader : TfBaseComponent, IDisposable
 {
 	[Parameter] public string? Title { get; set; } = null;
-	[Parameter] public RenderFragment? PageToolbar { get; set; } = null;
+	[Parameter] public RenderFragment? ChildContent { get; set; } = null;
 
 	public void Dispose()
 	{
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override void OnInitialized()
 	{
 		_init();
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(() =>
-		{
-			_init();
-			StateHasChanged();
-		});
+		_init();
+		StateHasChanged();
 	}
 
 	private void _init()
 	{
-		
 	}
-	
 }

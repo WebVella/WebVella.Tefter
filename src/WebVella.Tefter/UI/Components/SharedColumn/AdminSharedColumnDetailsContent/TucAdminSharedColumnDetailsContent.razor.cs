@@ -8,30 +8,30 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 	public void Dispose()
 	{
 		TfEventProvider.SharedColumnUpdatedEvent -= On_SharedColumnUpdated;
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		TfEventProvider.SharedColumnUpdatedEvent += On_SharedColumnUpdated;
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
 	private async Task On_SharedColumnUpdated(TfSharedColumnUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(navState: TfState.NavigationState, column: args.Payload);
+			await _init(navState: TfAuthLayout.GetState().NavigationState, column: args.Payload);
 		});
 	}
 
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(navState: args);
+			if (UriInitialized != args.Location)
+				await _init(navState: TfAuthLayout.GetState().NavigationState);
 		});
 	}
 
@@ -45,7 +45,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 			}
 			else
 			{
-				var routeData = TfState.NavigationState;
+				var routeData = TfAuthLayout.GetState().NavigationState;
 				if (routeData.SharedColumnId is not null)
 					_column = TfService.GetSharedColumn(routeData.SharedColumnId.Value);
 			}

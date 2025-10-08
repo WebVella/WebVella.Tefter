@@ -3,16 +3,16 @@ public partial class TucPageTopbarBreadcrumb : TfBaseComponent,IDisposable
 {
 	public void Dispose()
 	{
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 	protected override void OnInitialized()
 	{
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}	
 	
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(StateHasChanged);
+		StateHasChanged();
 	}
 	
 }

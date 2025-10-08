@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Assets.Components;
+﻿using Microsoft.AspNetCore.Components.Routing;
+
+namespace WebVella.Tefter.Assets.Components;
 public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 {
 	[Inject] public IAssetsService AssetsService { get; set; }
@@ -25,18 +27,18 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		AssetsService.AssetCreated -= On_AssetChanged;
 		AssetsService.AssetUpdated -= On_AssetChanged;
 		AssetsService.AssetDeleted -= On_AssetChanged;
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		_isLoading = false;
 		AssetsService.AssetCreated += On_AssetChanged;
 		AssetsService.AssetUpdated += On_AssetChanged;
 		AssetsService.AssetDeleted += On_AssetChanged;
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -56,21 +58,21 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 		await base.OnParametersSetAsync();
 		if (_folderId == Folder?.Id && _dataIdentityValue == DataIdentityValue)
 			return;
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		await InvokeAsync(StateHasChanged);
 
 	}
 
 	private async Task On_AssetChanged(Asset args)
 	{
-		await InvokeAsync(async () => { await _init(TfState.NavigationState); });
+		await InvokeAsync(async () => { await _init(TfAuthLayout.GetState().NavigationState); });
 	}
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(navState: args);
+			if (UriInitialized != args.Location)
+				await _init(navState: TfAuthLayout.GetState().NavigationState);
 		});
 	}
 	private async Task _init(TfNavigationState navState)

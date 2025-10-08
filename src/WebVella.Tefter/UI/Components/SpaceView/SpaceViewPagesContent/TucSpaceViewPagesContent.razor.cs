@@ -8,29 +8,29 @@ public partial class TucSpaceViewPagesContent : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfState.NavigationState);
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		await _init(TfAuthLayout.GetState().NavigationState);
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
 	private async Task On_SpaceViewUpdated(object? caller, TfSpaceView args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(navState: TfState.NavigationState, spaceView: args);
+			await _init(navState: TfAuthLayout.GetState().NavigationState, spaceView: args);
 		});
 	}
 
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(navState: args);
+			if (UriInitialized != args.Location)
+				await _init(navState: TfAuthLayout.GetState().NavigationState);
 		});
 	}
 
@@ -45,7 +45,7 @@ public partial class TucSpaceViewPagesContent : TfBaseComponent, IDisposable
 			}
 			else
 			{
-				var routeData = TfState.NavigationState;
+				var routeData = TfAuthLayout.GetState().NavigationState;
 				if (routeData.SpaceViewId is not null)
 					_spaceView = TfService.GetSpaceView(routeData.SpaceViewId.Value);
 

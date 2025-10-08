@@ -10,21 +10,21 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 
 	public void Dispose()
 	{
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 		TfEventProvider.DataProviderUpdatedEvent -= On_DataProviderUpdated;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfState.NavigationState);
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		await _init(TfAuthLayout.GetState().NavigationState);
+		Navigator.LocationChanged += On_NavigationStateChanged;
 		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
 	}
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(args);
+			if (UriInitialized != args.Location)
+				await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
 
@@ -32,7 +32,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfState.NavigationState);
+			await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
 

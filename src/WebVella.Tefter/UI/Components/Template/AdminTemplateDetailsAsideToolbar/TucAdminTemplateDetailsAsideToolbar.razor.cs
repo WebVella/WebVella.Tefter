@@ -6,21 +6,21 @@ public partial class TucAdminTemplateDetailsAsideToolbar : TfBaseComponent
 
 	public void Dispose()
 	{
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		_search = NavigatorExt.GetStringFromQuery(Navigator,TfConstants.AsideSearchQueryName,null);
-		_navState = TfState.NavigationState;
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		_navState = TfAuthLayout.GetState().NavigationState;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			_navState = args;
+			_navState = TfAuthLayout.GetState().NavigationState;
 			await InvokeAsync(StateHasChanged);
 		});
 	}

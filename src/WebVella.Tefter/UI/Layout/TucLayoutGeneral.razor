@@ -11,7 +11,7 @@
 		@if (_displayReturn)
 		{
 			<div class="tflg__return-btn">
-				<TucAnchor Href="@TfState.NavigationState.ReturnUrl" IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="Appearance.Accent">@LOC("Back")</TucAnchor>
+				<TucAnchor Href="@TfAuthLayout.GetState().NavigationState.ReturnUrl" IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="Appearance.Accent">@LOC("Back")</TucAnchor>
 			</div>
 		}
 		<div class="tflg__sidenav">

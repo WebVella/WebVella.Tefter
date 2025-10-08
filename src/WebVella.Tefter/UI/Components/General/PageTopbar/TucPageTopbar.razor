@@ -5,7 +5,7 @@
         <TucPageTopbarBreadcrumb/>
     </div>
     <div class="tf-page-topbar__right">
-        @if (TfState.Space is not null && TfState.SpacePage is not null)
+        @if (TfAuthLayout.GetState().Space is not null && TfAuthLayout.GetState().SpacePage is not null)
         {
             @if (_activeSavedUrl is not null)
             {
@@ -29,17 +29,17 @@
                 </FluentButton>
             }
 
-            @if (TfState.User.IsAdmin)
+            @if (TfAuthLayout.GetState().User.IsAdmin)
             {
                 <TucAnchor Class="tf-button" Appearance="Appearance.Outline"
-                              Href="@(String.Format(TfConstants.SpacePagePageManageUrl, TfState.Space!.Id, TfState.SpacePage!.Id))">
+                              Href="@(String.Format(TfConstants.SpacePagePageManageUrl, TfAuthLayout.GetState().Space!.Id, TfAuthLayout.GetState().SpacePage!.Id))">
                     <FluentIcon Value="@TfConstants.GetIcon("Settings")"/>
                 </TucAnchor>
             }
             <FluentDivider Orientation="Orientation.Vertical"/>
         }
 
-        @if (TfState.User.IsAdmin)
+        @if (TfAuthLayout.GetState().User.IsAdmin)
         {
             <TucAnchor Href="@TfConstants.AdminDashboardUrl" Class="tf-button" Appearance="Appearance.Outline">
                 Admin
@@ -48,11 +48,11 @@
         <TucNotificationCenter/>
         <TucAnchor Class="tf-button" Href="#" OnClick="() => _userMenuVisible = !_userMenuVisible"
                    Id="user-menu-toggle" Appearance="@Appearance.Outline" IconEnd="@TfConstants.GetIcon("ChevronDown")">
-            <TucAvatar User="TfState.User" UseUserColor="false"/>
+            <TucAvatar User="TfAuthLayout.GetState().User" UseUserColor="false"/>
         </TucAnchor>
         <FluentMenu Width="200px" @bind-Open="_userMenuVisible" Anchor="user-menu-toggle" UseMenuService="false">
             <FluentMenuItem Disabled="true">
-                @TfState.User.FirstName @TfState.User.LastName
+                @TfAuthLayout.GetState().User.FirstName @TfAuthLayout.GetState().User.LastName
             </FluentMenuItem>
             <FluentDivider Style="margin-top:10px"/>
             <FluentMenuItem OnClick="_setUrlAsStartup">

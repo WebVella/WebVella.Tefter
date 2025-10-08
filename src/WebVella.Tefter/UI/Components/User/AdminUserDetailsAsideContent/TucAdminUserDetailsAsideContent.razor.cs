@@ -9,14 +9,14 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 	{
 		TfEventProvider.UserCreatedGlobalEvent -= On_UserCreated;
 		TfEventProvider.UserUpdatedGlobalEvent -= On_UserUpdated;
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		TfEventProvider.UserCreatedGlobalEvent += On_UserCreated;
 		TfEventProvider.UserUpdatedGlobalEvent += On_UserUpdated;
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
 
@@ -24,7 +24,7 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfState.NavigationState);
+			await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
 
@@ -32,16 +32,16 @@ public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposa
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfState.NavigationState);
+			await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
 
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(args);
+			if (UriInitialized != args.Location)
+				await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
 

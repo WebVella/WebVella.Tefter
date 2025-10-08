@@ -4,7 +4,7 @@
     <FluentButton Class="tf-button" IconStart="@TfConstants.GetIcon("AppFolder")"
                   Appearance="@Appearance.Outline">@LOC("spaces")
     </FluentButton>
-    @if (TfState.Space is not null)
+    @if (TfAuthLayout.GetState().Space is not null)
     {
         <FluentButton Class="tf-button" IconStart="@TfConstants.GetIcon("Settings")"
                       Appearance="@Appearance.Outline">@LOC("settings")

@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.UI.Components;
+﻿using Microsoft.AspNetCore.Components.Routing;
+using WebVella.Tefter.UI.Components;
 
 namespace WebVella.Tefter.Talk.Components;
 
@@ -43,18 +44,18 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 		TalkService.ThreadCreated -= On_ThreadChanged;
 		TalkService.ThreadUpdated -= On_ThreadChanged;
 		TalkService.ThreadDeleted -= On_ThreadChanged;
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		_isLoading = false;
 		TalkService.ThreadCreated += On_ThreadChanged;
 		TalkService.ThreadUpdated += On_ThreadChanged;
 		TalkService.ThreadDeleted += On_ThreadChanged;
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 	protected override void OnAfterRender(bool firstRender)
 	{
@@ -73,20 +74,20 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 		await base.OnParametersSetAsync();
 		if (_channelId == Channel?.Id && _dataIdentityValue == DataIdentityValue)
 			return;
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		await InvokeAsync(StateHasChanged);
 	}
 
 	private async Task On_ThreadChanged(TalkThread args)
 	{
-		await InvokeAsync(async () => { await _init(TfState.NavigationState); });
+		await InvokeAsync(async () => { await _init(TfAuthLayout.GetState().NavigationState); });
 	}
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(navState: args);
+			if (UriInitialized != args.Location)
+				await _init(navState: TfAuthLayout.GetState().NavigationState);
 		});
 	}
 	private async Task _init(TfNavigationState navState)

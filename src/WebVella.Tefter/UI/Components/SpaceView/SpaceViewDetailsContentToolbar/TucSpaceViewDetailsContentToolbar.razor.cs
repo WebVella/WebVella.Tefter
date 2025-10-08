@@ -6,18 +6,18 @@
 //
 // 	public void Dispose()
 // 	{
-// 		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+// 		Navigator.LocationChanged -= On_NavigationStateChanged;
 // 		TfUIService.SpaceViewUpdated -= On_SpaceViewUpdated;
 // 		TfUIService.SpaceViewColumnsChanged -= On_SpaceViewColumnsUpdated;
 // 	}
 // 	protected override async Task OnInitializedAsync()
 // 	{
 // 		await _init(TfAuthLayout.AppState.NavigationState);
-// 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+// 		Navigator.LocationChanged += On_NavigationStateChanged;
 // 		TfUIService.SpaceViewUpdated += On_SpaceViewUpdated;
 // 		TfUIService.SpaceViewColumnsChanged += On_SpaceViewColumnsUpdated;
 // 	}
-// 	private async Task On_NavigationStateChanged(TfNavigationState args)
+// 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 // 	{
 // 		if (UriInitialized != args.Uri)
 // 			await _init(args.Payload);

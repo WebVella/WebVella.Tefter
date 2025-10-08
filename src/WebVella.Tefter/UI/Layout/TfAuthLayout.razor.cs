@@ -8,18 +8,18 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
-	public event EventHandler<TfNavigationState> NavigationStateChangedEvent = null!;
-
+	
 	private TfState _state = new();
 	private TfUser _currentUser = new();
 	private bool _isLoaded = false;
 	private string _urlInitialized = string.Empty;
 	private string _styles = String.Empty;
-	private IDisposable? locationChangingHandler;
+	private IDisposable? _locationChangingHandler;
+
+	public TfState GetState() => _state;
 	public ValueTask DisposeAsync()
 	{
-		Navigator.LocationChanged -= Navigator_LocationChanged;
-		locationChangingHandler?.Dispose();
+		_locationChangingHandler?.Dispose();
 		return ValueTask.CompletedTask;
 	}	
 	
@@ -70,8 +70,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
-			Navigator.LocationChanged += Navigator_LocationChanged;
-			locationChangingHandler = Navigator.RegisterLocationChangingHandler(Navigator_LocationChanging);
+			_locationChangingHandler = Navigator.RegisterLocationChangingHandler(Navigator_LocationChanging);
 		}
 	}
 
@@ -87,23 +86,18 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			}
 
 			_init(args.TargetLocation);
-			NavigationStateChangedEvent?.Invoke(this, Navigator.GetRouteState());
 			_urlInitialized = args.TargetLocation;
 		}
 		return ValueTask.CompletedTask;
 	}	
 	
-	private void Navigator_LocationChanged(object? sender, LocationChangedEventArgs e)
-	{
-		if (_urlInitialized != e.Location)
-		{
-			NavigationStateChangedEvent?.Invoke(this, Navigator.GetRouteState());
-		}
-	}
-
 	private void _init(string url)
 	{
-		_state = TfService.GetAppState(Navigator, _currentUser, url);
+		if(String.IsNullOrWhiteSpace(_state.Uri))
+			_state = TfService.GetAppState(Navigator, _currentUser, url,null);
+		else
+			_state = TfService.GetAppState(Navigator, _currentUser, url,_state);
+
 		_styles = (_state.Space?.Color ?? TfColor.Red500).GenerateStylesForAccentColor();
 	}
 

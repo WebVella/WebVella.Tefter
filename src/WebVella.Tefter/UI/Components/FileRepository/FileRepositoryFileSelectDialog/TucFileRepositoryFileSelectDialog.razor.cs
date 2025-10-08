@@ -61,7 +61,7 @@ public partial class TucFileRepositoryFileSelectDialog : TfBaseComponent, IDialo
 				var result = TfService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
-					CreatedBy = TfState.User?.Id,
+					CreatedBy = TfAuthLayout.GetState().User?.Id,
 					LocalFilePath = file.LocalFile.ToString(),
 					Filename = file.Name,
 				});

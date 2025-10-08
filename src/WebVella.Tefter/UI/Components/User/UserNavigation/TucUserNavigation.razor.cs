@@ -11,24 +11,24 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 		KeyCodeService.UnregisterListener(HandleKeyDownAsync);
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
-		await initAdmin(TfState.NavigationState);
+		await initAdmin(TfAuthLayout.GetState().NavigationState);
 		KeyCodeService.RegisterListener(HandleKeyDownAsync);
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () => { 
-			if (UriInitialized != args.Uri)
-				await initAdmin(args);
+		InvokeAsync(async () => { 
+			if (UriInitialized != args.Location)
+				await initAdmin(TfAuthLayout.GetState().NavigationState);
 			
-			await InvokeAsync(StateHasChanged);
+			StateHasChanged();
 		});		
 	}
 
@@ -42,7 +42,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 	private async Task initAdmin(TfNavigationState navState)
 	{
 		_adminMenu = new();
-		if (TfState.User!.IsAdmin)
+		if (TfAuthLayout.GetState().User!.IsAdmin)
 		{
 			_adminMenu.Add(new TfMenuItem
 			{
@@ -80,7 +80,7 @@ public partial class TucUserNavigation : TfBaseComponent, IDisposable
 		try
 		{
 			var user = await TfService.SetStartUpUrl(
-						userId: TfState.User.Id,
+						userId: TfAuthLayout.GetState().User.Id,
 						url: uri.PathAndQuery
 					);
 			ToastService.ShowSuccess(LOC("Startup URL was successfully changed!"));

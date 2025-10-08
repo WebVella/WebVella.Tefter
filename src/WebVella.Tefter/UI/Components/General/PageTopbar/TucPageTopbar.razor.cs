@@ -5,56 +5,55 @@ public partial class TucPageTopbar : TfBaseComponent, IDisposable
 	private TfBookmark? _activeSavedUrl = null!;
 	private TucPageLinkSaveSelector _saveSelector = null!;
 	private bool _userMenuVisible = false;
+
 	public void Dispose()
 	{
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override void OnInitialized()
 	{
 		_init();
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(() =>
-		{
-			_init();
-			StateHasChanged();
-		});
+		_init();
+		StateHasChanged();
 	}
 
 	private void _init()
 	{
-		_activeSavedUrl = TfState.UserSaves.FirstOrDefault(x => x.Id == TfState.NavigationState.ActiveSaveId);
+		_activeSavedUrl = TfAuthLayout.GetState().UserSaves.FirstOrDefault(x => x.Id == TfAuthLayout.GetState().NavigationState.ActiveSaveId);
 	}
+
 	private async Task _onSaveLinkClick()
 	{
-		if(TfState.SpacePage is null)
+		if (TfAuthLayout.GetState().SpacePage is null)
 			return;
 		if (_activeSavedUrl is not null)
 		{
 			await _saveSelector.ToggleSelector();
 			return;
 		}
+
 		try
 		{
 			var submit = new TfBookmark
 			{
 				Id = Guid.NewGuid(),
-				SpacePageId = TfState.SpacePage.Id,
-				UserId = TfState.User.Id,
+				SpacePageId = TfAuthLayout.GetState().SpacePage.Id,
+				UserId = TfAuthLayout.GetState().User.Id,
 				CreatedOn = DateTime.Now,
-				Description = String.Empty,//initially nothing is added for convenience
-				Name = TfState.SpacePage.Name + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
+				Description = String.Empty, //initially nothing is added for convenience
+				Name = TfAuthLayout.GetState().SpacePage.Name + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
 				Url = new Uri(Navigator.Uri).PathAndQuery
 			};
 			TfService.CreateBookmark(submit);
 
 			ToastService.ShowSuccess(LOC("URL is now saved"));
 			await Navigator.ApplyChangeToUrlQuery(TfConstants.ActiveSaveQueryName, submit.Id);
-
 		}
 		catch (Exception ex)
 		{
@@ -63,15 +62,16 @@ public partial class TucPageTopbar : TfBaseComponent, IDisposable
 		finally
 		{
 			await InvokeAsync(StateHasChanged);
-		}		
+		}
 	}
+
 	async Task _setUrlAsStartup()
 	{
 		var uri = new Uri(Navigator.Uri);
 		try
 		{
 			var user = await TfService.SetStartUpUrl(
-				userId: TfState.User.Id,
+				userId: TfAuthLayout.GetState().User.Id,
 				url: uri.PathAndQuery
 			);
 			ToastService.ShowSuccess(LOC("Startup URL was successfully changed!"));
@@ -86,6 +86,5 @@ public partial class TucPageTopbar : TfBaseComponent, IDisposable
 	{
 		await TfService.LogoutAsync(JSRuntime);
 		Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
-
-	}	
+	}
 }

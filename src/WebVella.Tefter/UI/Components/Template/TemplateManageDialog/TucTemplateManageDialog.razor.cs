@@ -38,7 +38,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 			IsSelectable = Content.IsSelectable,
 			Name = Content.Name,
 			SettingsJson = Content.SettingsJson,
-			UserId = TfState.User.Id,
+			UserId = TfAuthLayout.GetState().User.Id,
 			SpaceDataList = Content.SpaceDataList,
 		};
 		if (_form.ContentProcessorType is not null && _form.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
@@ -87,7 +87,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			TfManageTemplateModel submit = _form with { UserId = TfState.User.Id };
+			TfManageTemplateModel submit = _form with { UserId = TfAuthLayout.GetState().User.Id };
 			if (_isCreate)
 				submit = submit with { Id = Guid.NewGuid() };
 
