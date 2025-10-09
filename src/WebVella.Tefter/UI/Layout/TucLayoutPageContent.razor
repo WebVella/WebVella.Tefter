@@ -1,0 +1,31 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+<div class="tflpc">
+    <div class="tflpc__header">
+        <div class="tflpc__header__left">
+            @if (!String.IsNullOrWhiteSpace(TfAuthLayout.GetState().NavigationState.ReturnUrl))
+            {
+                <div class="tflpc__header__left__return">
+                    <TucAnchor Appearance="@Appearance.Outline" Href="@TfAuthLayout.GetState().NavigationState.ReturnUrl"
+                               IconStart="@TfConstants.GetIcon("ChevronLeft")">@LOC("Back")</TucAnchor>
+                </div>
+            }            
+            <div class="tflpc__header__left__title">@Title</div>
+        </div>
+        @if (Toolbar is not null)
+        {
+            <div class="tflpc__header__right">@Toolbar</div>
+        }
+    </div>
+    @if (Tabs is not null)
+    {
+        <div class="tflpc__tabs">@Tabs</div>
+    }
+    <div class="tflpc__content">
+        @ChildContent
+    </div>
+</div>
+
+
+

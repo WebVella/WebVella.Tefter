@@ -1,6 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfUser? _user = null;
 	private List<TfRole> _roleOptions = new();
 	private TfRole? _selectedRole = null;
@@ -8,14 +9,14 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 	public Guid? _removingRoleId = null;
 	public void Dispose()
 	{
-		TfEventProvider.UserUpdatedGlobalEvent -= On_UserUpdated;
+		TfEventProvider?.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.UserUpdatedGlobalEvent += On_UserUpdated;
+		TfEventProvider.UserUpdatedEvent += On_UserUpdated;
 		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 

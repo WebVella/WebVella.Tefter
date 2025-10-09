@@ -3,15 +3,14 @@ using WebVella.Tefter.Models;
 namespace WebVella.Tefter.UI.Components;
 public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private List<TfMenuItem> _menu = new();
 	private bool _isLoading = true;
 
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.SpacePageCreatedEvent -= On_SpacePageChanged;
-		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
-		TfEventProvider.SpacePageDeletedEvent -= On_SpacePageChanged;
+		TfEventProvider?.Dispose();
 	}
 
 	protected override async Task OnInitializedAsync()

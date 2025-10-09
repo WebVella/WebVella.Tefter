@@ -2,7 +2,7 @@
 public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 {
 	// Dependency Injection
-
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[CascadingParameter(Name = "TucSpaceViewPageContent")] 
 	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;
 	[Parameter] public TfSpacePageAddonContext Context { get; set; } = null!;
@@ -17,7 +17,7 @@ public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.UserUpdatedGlobalEvent -= On_UserChanged;
+		TfEventProvider?.Dispose();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -26,7 +26,7 @@ public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 		_navState = TfAuthLayout.GetState().NavigationState;
 		await _init(_navState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.UserUpdatedGlobalEvent += On_UserChanged;
+		TfEventProvider.UserUpdatedEvent += On_UserChanged;
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)

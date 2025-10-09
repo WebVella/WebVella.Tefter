@@ -2,21 +2,21 @@
 
 public partial class TucAdminUsersPageContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private bool _isLoading = false;
 	private List<TfUser> _items = new();
 
 	public void Dispose()
 	{
-		TfEventProvider.UserCreatedGlobalEvent -= On_UserChanged;
-		TfEventProvider.UserUpdatedGlobalEvent -= On_UserChanged;
+		TfEventProvider?.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.UserCreatedGlobalEvent += On_UserChanged;
-		TfEventProvider.UserUpdatedGlobalEvent += On_UserChanged;
+		TfEventProvider.UserCreatedEvent += On_UserChanged;
+		TfEventProvider.UserUpdatedEvent += On_UserChanged;
 		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
@@ -52,4 +52,19 @@ public partial class TucAdminUsersPageContent : TfBaseComponent, IDisposable
 			await InvokeAsync(StateHasChanged);
 		}
 	}
+	
+	private async Task addUser()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucUserManageDialog>(
+			new TfUser(),
+			new DialogParameters()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null) { }
+	}	
 }

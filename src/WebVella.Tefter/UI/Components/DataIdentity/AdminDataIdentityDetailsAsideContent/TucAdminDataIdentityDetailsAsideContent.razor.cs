@@ -2,6 +2,7 @@
 
 public partial class TucAdminDataIdentityDetailsAsideContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
 	private string? _search = String.Empty;
@@ -9,9 +10,7 @@ public partial class TucAdminDataIdentityDetailsAsideContent : TfBaseComponent, 
 
 	public void Dispose()
 	{
-		TfEventProvider.DataIdentityCreatedEvent -= On_DataIdentityChanged;
-		TfEventProvider.DataIdentityUpdatedEvent -= On_DataIdentityChanged;
-		TfEventProvider.DataIdentityDeletedEvent -= On_DataIdentityChanged;
+		TfEventProvider?.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 

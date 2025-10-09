@@ -2,6 +2,7 @@
 
 public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfSpace _space = null!;
 	private TfNavigationState _navState = null!;
 	public bool _submitting = false;
@@ -12,7 +13,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfEventProvider.SpaceUpdatedEvent -= On_SpaceUpdated;
+		TfEventProvider?.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 

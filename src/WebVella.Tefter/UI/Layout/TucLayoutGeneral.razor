@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<div class="@_cssClass" style="@Style">
+<div class="tflg" style="@Style">
 	<div class="tflg__aside">
 		<div class="tflg__space-header">
 			@SpaceHeader
@@ -8,12 +8,6 @@
 		<div class="tflg__space-actions">
 			@SpaceActions
 		</div>
-		@if (_displayReturn)
-		{
-			<div class="tflg__return-btn">
-				<TucAnchor Href="@TfAuthLayout.GetState().NavigationState.ReturnUrl" IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="Appearance.Accent">@LOC("Back")</TucAnchor>
-			</div>
-		}
 		<div class="tflg__sidenav">
 			@SideNav
 		</div>
@@ -22,15 +16,6 @@
 		<div class="tflg__page-topbar">
 			@PageTopbar
 		</div>
-		<div class="tflg__page-header">
-			@PageHeader
-		</div>
-		@if (PageTabs is not null)
-		{
-			<div class="tflg__page-tabs">
-				@PageTabs
-			</div>
-		}
 		<div class="tflg__page-content">
 			@ChildContent
 		</div>

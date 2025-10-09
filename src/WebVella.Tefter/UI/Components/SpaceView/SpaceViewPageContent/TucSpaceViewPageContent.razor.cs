@@ -3,6 +3,7 @@
 public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 {
 	#region << Init >>
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 
 	// State
@@ -37,8 +38,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.UserUpdatedGlobalEvent -= On_UserChanged;
-		TfEventProvider.SpaceViewColumnsChangedEvent -= On_SpaceViewUpdated;
+		TfEventProvider?.DisposeAsync();
 		_objectRef?.Dispose();
 		try
 		{
@@ -91,7 +91,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		if (firstRender)
 		{
 			Navigator.LocationChanged += On_NavigationStateChanged;
-			TfEventProvider.UserUpdatedGlobalEvent += On_UserChanged;
+			TfEventProvider.UserUpdatedEvent += On_UserChanged;
 			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewUpdated;
 			await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable", _tableId);
 			await JSRuntime.InvokeAsync<bool>("Tefter.addColumnResizeListener",

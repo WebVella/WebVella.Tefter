@@ -1,15 +1,14 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataProviderDetailsAsideContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
 	private string? _search = String.Empty;
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfEventProvider.DataProviderCreatedEvent -= On_DataProviderChanged;
-		TfEventProvider.DataProviderUpdatedEvent -= On_DataProviderChanged;
-		TfEventProvider.DataProviderDeletedEvent -= On_DataProviderChanged;
+		TfEventProvider?.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 

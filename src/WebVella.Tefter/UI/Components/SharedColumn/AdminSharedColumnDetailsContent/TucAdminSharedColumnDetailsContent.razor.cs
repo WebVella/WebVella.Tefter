@@ -1,13 +1,14 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfSharedColumn? _column = null;
 	private bool _isDeleting = false;
 
 	internal ReadOnlyCollection<TfDataProvider> _dataProviders = null!;
 	public void Dispose()
 	{
-		TfEventProvider.SharedColumnUpdatedEvent -= On_SharedColumnUpdated;
+		TfEventProvider?.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 

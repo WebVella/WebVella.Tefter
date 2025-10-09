@@ -72,17 +72,17 @@
 					<FluentValidationMessage For="@(() => _form.ConfirmPassword)" />
 				</FluentGridItem>
 			</FluentGrid>
-			<FluentGrid>
-				<FluentGridItem xs="6">
-					<TucSelect @bind-SelectedOption="@_form.ThemeMode" TOption="DesignThemeModes"
-								  Items="@(Enum.GetValues<DesignThemeModes>())" Style="width:100%"
-								  OptionValue="@(p => ((int)p).ToString())"
-								  OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")" />
-					<FluentValidationMessage For="@(() => _form.ThemeMode)" />
-				</FluentGridItem>
-				<FluentGridItem xs="6">
-				</FluentGridItem>
-			</FluentGrid>
+			@* <FluentGrid> *@
+			@* 	<FluentGridItem xs="6"> *@
+			@* 		<TucSelect @bind-SelectedOption="@_form.ThemeMode" TOption="DesignThemeModes" *@
+			@* 					  Items="@(Enum.GetValues<DesignThemeModes>())" Style="width:100%" *@
+			@* 					  OptionValue="@(p => ((int)p).ToString())" *@
+			@* 					  OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")" /> *@
+			@* 		<FluentValidationMessage For="@(() => _form.ThemeMode)" /> *@
+			@* 	</FluentGridItem> *@
+			@* 	<FluentGridItem xs="6"> *@
+			@* 	</FluentGridItem> *@
+			@* </FluentGrid> *@
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<TucSelect @bind-SelectedOption="@_form.Culture" TOption="TfCultureOption"

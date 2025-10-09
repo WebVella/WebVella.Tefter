@@ -31,7 +31,7 @@
 
             @if (TfAuthLayout.GetState().User.IsAdmin)
             {
-                <TucAnchor Class="tf-button" Appearance="Appearance.Outline"
+                <TucAnchor Appearance="Appearance.Outline"
                               Href="@(String.Format(TfConstants.SpacePagePageManageUrl, TfAuthLayout.GetState().Space!.Id, TfAuthLayout.GetState().SpacePage!.Id))">
                     <FluentIcon Value="@TfConstants.GetIcon("Settings")"/>
                 </TucAnchor>
@@ -41,12 +41,12 @@
 
         @if (TfAuthLayout.GetState().User.IsAdmin)
         {
-            <TucAnchor Href="@TfConstants.AdminDashboardUrl" Class="tf-button" Appearance="Appearance.Outline">
+            <TucAnchor Href="@TfConstants.AdminDashboardUrl" Appearance="Appearance.Outline">
                 Admin
             </TucAnchor>
         }
         <TucNotificationCenter/>
-        <TucAnchor Class="tf-button" Href="#" OnClick="() => _userMenuVisible = !_userMenuVisible"
+        <TucAnchor Href="#" OnClick="() => _userMenuVisible = !_userMenuVisible"
                    Id="user-menu-toggle" Appearance="@Appearance.Outline" IconEnd="@TfConstants.GetIcon("ChevronDown")">
             <TucAvatar User="TfAuthLayout.GetState().User" UseUserColor="false"/>
         </TucAnchor>

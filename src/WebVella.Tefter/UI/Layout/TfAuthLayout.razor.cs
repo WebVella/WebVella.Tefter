@@ -98,7 +98,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		else
 			_state = TfService.GetAppState(Navigator, _currentUser, url,_state);
 
-		_styles = (_state.Space?.Color ?? TfColor.Purple500).GenerateStylesForAccentColor();
+		_styles = (_state.Space?.Color ?? TfColor.Red500).GenerateStylesForAccentColor();
 	}
 
 	private bool _checkAccess(string? url = null)

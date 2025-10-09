@@ -1,63 +1,77 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-<div style="padding:var(--tf-padding-content)">
+<TucLayoutPageContent Title="@LOC("Users")">
+    <Toolbar>
+        <FluentButton OnClick="addUser" Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">
+            @LOC("New User")
+        </FluentButton>
+        <TucPageSearch/>
+    </Toolbar>
+    <ChildContent>
+        <div style="padding:var(--tf-padding-base)">
 
-        <table class="tf-grid">
-            <colgroup>
-                <col span="1" style="width: 20px;min-width: 20px">
-                <col/>
-                <col/>
-                <col/>
-            </colgroup>
-            <thead>
-            <tr class="tf-grid-thead-bkg"></tr>
-            @if (_isLoading)
-            {
-                <tr class="tf-grid-thead-loading"></tr>
-            }
-            <tr>
-                <th></th>
-                <th>@LOC("email")</th>
-                <th>@LOC("name")</th>
-                <th>@LOC("roles")</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in _items)
-            {
+            <table class="tf-grid">
+                <colgroup>
+                    <col span="1" style="width: 20px;min-width: 20px">
+                    <col/>
+                    <col/>
+                    <col/>
+                </colgroup>
+                <thead>
+                <tr class="tf-grid-thead-bkg"></tr>
+                @if (_isLoading)
+                {
+                    <tr class="tf-grid-thead-loading"></tr>
+                }
                 <tr>
-                    <td>
-                        <div>
-                            <TucAnchor Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
-                                       Href="@String.Format(TfConstants.AdminUserDetailsPageUrl, item.Id)"/>
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            @item.Email
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            @item.Names
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            @item.RoleNames
-                        </div>
-                    </td>
+                    <th></th>
+                    <th>@LOC("email")</th>
+                    <th>@LOC("name")</th>
+                    <th>@LOC("roles")</th>
                 </tr>
-            }
-            @if (_items.Count == 0)
-            {
-                <tr>
-                    <td colspan="4">
-                        <div>@LOC("no items")</div>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-</div>
+                </thead>
+                <tbody>
+                @foreach (var item in _items)
+                {
+                    <tr>
+                        <td>
+                            <div>
+                                <TucAnchor Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Open")"
+                                           Href="@String.Format(TfConstants.AdminUserDetailsPageUrl, item.Id).GenerateWithLocalAsReturnUrl(TfAuthLayout.GetState().NavigationState.Uri)"/>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                @item.Email
+                                @if (!item.Enabled)
+                                {
+                                    <div class="td-description" style="color:var(--error)"> [@LOC("disabled")]</div>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                @item.Names
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                @item.RoleNames
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (_items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="4">
+                            <div>@LOC("no items")</div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </ChildContent>
+</TucLayoutPageContent>

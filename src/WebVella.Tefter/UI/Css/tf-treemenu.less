@@ -2,7 +2,7 @@
 
 .tf-treemenu {
   width: 100%;
-  --tf-submenu-padding: calc(var(--tf-padding-content) * 1);
+  --tf-submenu-padding: calc(var(--tf-padding-base) * 1);
   --tf-submenu-padding-half: calc(var(--tf-submenu-padding) / 2);
 }
 
@@ -14,10 +14,10 @@
     content: "";
     display: block;
     position: absolute;
-    left: var(--tf-submenu-padding-half);
+    left: calc(var(--tf-submenu-padding-half) + 3px);
     top: 0;
     bottom: 0;
-    width: 2px;
+    width: 1px;
     background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 60%),
     color-mix(in srgb, var(--tf-accent-500), transparent 60%));;
   }
@@ -47,6 +47,7 @@
   padding: 0.5rem 0.25rem 0.5rem 0.5rem;
   color: var(--tf-font-color-base);
   border-radius: var(--tf-border-radius-sm);
+  position: relative;
   
   &:hover {
     color: var(--tf-font-color-base);
@@ -56,6 +57,7 @@
     & .tf-treemenu__item__expander {
       background: light-dark(color-mix(in srgb, var(--tf-base-500), transparent 85%),
       color-mix(in srgb, var(--tf-base-500), transparent 85%));
+      display: flex;
     }
   }
 
@@ -119,13 +121,19 @@
   }
 
   &__expander {
-    flex: 0 0 24px;
+    position: absolute;
+    right:var(--tf-padding-sm);
+    top:50%;
+    margin-top: -12px;
+    
+    //display: flex;
+    display: none;
     /*pointer-events: none;*/
     border-radius: 50%;
     background: transparent;
     width: 24px;
     height: 24px;
-    display: flex;
+
     justify-content: center;
     align-items: center;
     cursor: pointer;

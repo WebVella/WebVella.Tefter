@@ -1,21 +1,21 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminUserDetailsAsideContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private bool _isLoading = true;
 	private int _stringLimit = 30;
 	private string? _search = String.Empty;
 	private List<TfMenuItem> _items = new();
 	public void Dispose()
 	{
-		TfEventProvider.UserCreatedGlobalEvent -= On_UserCreated;
-		TfEventProvider.UserUpdatedGlobalEvent -= On_UserUpdated;
+		TfEventProvider?.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.UserCreatedGlobalEvent += On_UserCreated;
-		TfEventProvider.UserUpdatedGlobalEvent += On_UserUpdated;
+		TfEventProvider.UserCreatedEvent += On_UserCreated;
+		TfEventProvider.UserUpdatedEvent += On_UserUpdated;
 		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 

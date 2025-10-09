@@ -16,10 +16,10 @@
 	</SpaceHeader>
 	<SpaceActions>
 		<div class="tf-space-actions">
-			<FluentButton Class="tf-button" IconStart="@TfConstants.GetIcon("AppFolder", IconSize.Size16)"
+			<FluentButton IconStart="@TfConstants.GetIcon("AppFolder", IconSize.Size16)"
 			              Appearance="@Appearance.Outline">spaces
 			</FluentButton>
-			<FluentButton Class="tf-button" IconStart="@TfConstants.GetIcon("Settings", IconSize.Size16)"
+			<FluentButton IconStart="@TfConstants.GetIcon("Settings", IconSize.Size16)"
 			              Appearance="@Appearance.Outline">settings
 			</FluentButton>
 		</div>
@@ -44,90 +44,27 @@
 				</FluentBreadcrumb>
 			</div>
 			<div class="tf-topbar__right">
-				<FluentButton Class="tf-button" Id="view-bookmark-selector" Appearance="Appearance.Outline">
+				<FluentButton Id="view-bookmark-selector" Appearance="Appearance.Outline">
 					<FluentIcon Value="@TfConstants.GetIcon("Bookmark")"/>
 				</FluentButton>
-				<FluentButton Class="tf-button" Id="view-save-selector" Appearance="Appearance.Outline">
+				<FluentButton Id="view-save-selector" Appearance="Appearance.Outline">
 					<FluentIcon Value="@TfConstants.GetIcon("Link")"/>
 				</FluentButton>
-				<FluentButton Class="tf-button" Id="view-export-selector" Appearance="Appearance.Outline">
+				<FluentButton Id="view-export-selector" Appearance="Appearance.Outline">
 					<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")"/>
 				</FluentButton>
-				<FluentButton Class="tf-button" Appearance="Appearance.Outline">
+				<FluentButton Appearance="Appearance.Outline">
 					<FluentIcon Value="@TfConstants.GetIcon("Settings")"/>
 				</FluentButton>
 				<FluentDivider Orientation="Orientation.Vertical"/>
-				<FluentButton Class="tf-button" Appearance="Appearance.Outline">Admin Space</FluentButton>
-				<FluentButton Class="tf-button" IconEnd="@TfConstants.GetIcon("ChevronDown")"
+				<FluentButton Appearance="Appearance.Outline">Admin Space</FluentButton>
+				<FluentButton IconEnd="@TfConstants.GetIcon("ChevronDown")"
 				              Appearance="@Appearance.Outline">
 					<TucAvatar User="@TfAuthLayout.GetState().User"></TucAvatar>
 				</FluentButton>
 			</div>
 		</div>
 	</PageTopbar>
-	<PageHeader>
-		<div class="tf-header">
-			<div class="tf-header__left">
-				<div class="tf-header__meta">
-					<div class="tf-header__meta__icon">
-						<FluentIcon Value="@TfConstants.GetIcon("Document")"/>
-					</div>
-					<div class="tf-header__meta__title">Imperdiet eirmod sed amet et adipiscing sea et dignissim ipsum
-					</div>
-				</div>
-			</div>
-			<div class="tf-header__right">
-				<FluentButton Appearance="Appearance.Outline">
-					<FluentIcon Value="@TfConstants.GetIcon("Add")"/>
-				</FluentButton>
-				<FluentButton Id="select-all-menu-toggler" Title="@LOC("select all")" Appearance="Appearance.Outline">
-					<FluentBadge Appearance="Appearance.Accent">5</FluentBadge>
-					<FluentIcon Value="@TfConstants.GetIcon("CheckmarkStarburst")" Slot="start" Color="@Color.Accent"/>
-				</FluentButton>
-
-				<FluentButton BackgroundColor="var(--warning)" Color="transparent" Appearance="Appearance.Outline">
-					<FluentIcon Value="@TfConstants.GetIcon("Edit")"/>
-				</FluentButton>
-				<FluentButton Id="view-action-selector" Appearance="Appearance.Outline">
-					<FluentIcon Value="@TfConstants.GetIcon("Connector")"/>
-				</FluentButton>
-				<FluentDivider Orientation="Orientation.Vertical"/>
-				<FluentSearch AutoComplete="off" Placeholder="@LOC("search...")"/>
-				<FluentButton Id="view-filter-selector" Title="data filters" Appearance="Appearance.Outline">
-					<FluentIcon Value="@TfConstants.GetIcon("DataFunnel")" Color="@Color.Accent"/>
-				</FluentButton>
-				<FluentButton Id="view-sort-selector" Title="data sort" Appearance="Appearance.Outline">
-					<FluentIcon Value="@TfConstants.GetIcon("ArrowSortDownLines")" Color="@Color.Accent"/>
-				</FluentButton>
-
-			</div>
-		</div>
-	</PageHeader>
-	<PageTabs>
-		<div class="tf-header-tabs">
-			<FluentTabs ActiveTabId="tab-1">
-				<FluentTab Id="tab-1">
-					<Header>
-						<FluentIcon
-							Value="@TfConstants.GetIcon("LeafOne").WithColor(TfColor.Amber500.GetColor().Value)"/>
-						Dashboards
-					</Header>
-				</FluentTab>
-				<FluentTab Id="tab-2">
-					<Header>
-						<FluentIcon Value="@TfConstants.GetIcon("LeafOne")"/>
-						AllReports
-					</Header>
-				</FluentTab>
-				<FluentTab Id="tab-3">
-					<Header>
-						<FluentIcon Value="@TfConstants.GetIcon("LeafOne")"/>
-						Errors
-					</Header>
-				</FluentTab>
-			</FluentTabs>
-		</div>
-	</PageTabs>
 	<ChildContent>
 		<TucCard>
 			<TucSpaceViewPageContent Context="@_context"/>

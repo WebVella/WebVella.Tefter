@@ -2,20 +2,20 @@
 @page "/admin/users/{UserId:guid}/{*Path}"
 @inherits TfBasePage
 
-<TucLayoutListDetails>
-	<Header>
-		<TucHeader />
-	</Header>
-	<AsideToolbar>
-		<TucAdminUserDetailsAsideToolbar/>
-	</AsideToolbar>
-	<AsideContent>
-		<TucAdminUserDetailsAsideContent/>
-	</AsideContent>
-	<Content>
+<TucLayoutGeneral>
+	<SpaceHeader>
+		<TucSpaceHeader/>
+	</SpaceHeader>
+	<SpaceActions>
+		<TucSpaceActions/>
+	</SpaceActions>
+	<SideNav>
+		<TucAdminNavigation/>
+	</SideNav>
+	<PageTopbar>
+		<TucPageTopbar/>
+	</PageTopbar>
+	<ChildContent>
 		<TucAdminUserDetailsContent/>
-	</Content>
-</TucLayoutListDetails>
-
-
-
+	</ChildContent>
+</TucLayoutGeneral>

@@ -1,105 +1,106 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-
-	<div style="padding:var(--tf-padding-content)">
-		<FluentGrid>
-			<FluentGridItem xs="6">
-				<TucCard Title="@LOC("Top Data Providers")">
-					<ChildContent>
-						@if (_data is null)
+<TucLayoutPageContent Title="@LOC("Dashboard")">
+<div style="padding:var(--tf-padding-base)">
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<TucCard Title="@LOC("Top Data Providers")">
+				<ChildContent>
+					@if (_data is null)
+					{
+						for (int i = 0; i < 5; i++)
 						{
-							for (int i = 0; i < 5; i++)
+							<div style="padding:6px 0">
+								<FluentSkeleton Height="20px" Shimmer="true"></FluentSkeleton>
+							</div>
+						}
+					}
+					else if (_data.ProvidersInfo.Count > 0)
+					{
+						<table class="tf-grid">
+							<thead>
+							<tr>
+								<th>name</th>
+								<th>type</th>
+								<th>data</th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach (var context in _data.ProvidersInfo.OrderByDescending(x => x.RowsCount).Take(5))
 							{
-								<div style="padding:6px 0">
-									<FluentSkeleton Height="20px" Shimmer="true"></FluentSkeleton>
-								</div>
+								<tr @key=@context.Id>
+									<td>
+										<div>
+											@context.Name
+										</div>
+									</td>
+									<td>
+										<div>@context.ProviderType.AddonName</div>
+									</td>
+									<td>
+										<div>@context.RowsCount rows</div>
+									</td>
+								</tr>
 							}
-						}
-						else if (_data.ProvidersInfo.Count > 0)
+							</tbody>
+						</table>
+					}
+					else
+					{
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No data prividers created yet")</FluentMessageBar>
+					}
+				</ChildContent>
+			</TucCard>
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<TucCard>
+				<TitleTemplate>
+					<FluentStack VerticalAlignment="@VerticalAlignment.Center"
+					             HorizontalAlignment="@HorizontalAlignment.Left">
+						<div>@LOC("Next Data Synchronizations")</div>
+					</FluentStack>
+				</TitleTemplate>
+				<ChildContent>
+					@if (_data is null)
+					{
+						for (int i = 0; i < 5; i++)
 						{
-							<table class="tf-grid">
-								<thead>
-									<tr>
-										<th>name</th>
-										<th>type</th>
-										<th>data</th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach (var context in _data.ProvidersInfo.OrderByDescending(x => x.RowsCount).Take(5))
-									{
-										<tr @key=@context.Id>
-											<td>
-												<div>
-													@context.Name
-												</div>
-											</td>
-											<td>
-												<div>@context.ProviderType.AddonName</div>
-											</td>
-											<td>
-												<div>@context.RowsCount rows</div>
-											</td>
-										</tr>
-									}
-								</tbody>
-							</table>
+							<div style="padding:6px 0">
+								<FluentSkeleton Height="20px" Shimmer="true"></FluentSkeleton>
+							</div>
 						}
-						else
-						{
-							<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No data prividers created yet")</FluentMessageBar>
-						}
-					</ChildContent>
-				</TucCard>
-			</FluentGridItem>
-			<FluentGridItem xs="6">
-				<TucCard>
-					<TitleTemplate>
-						<FluentStack VerticalAlignment="@VerticalAlignment.Center"
-									 HorizontalAlignment="@HorizontalAlignment.Left">
-							<div>@LOC("Next Data Synchronizations")</div>
-						</FluentStack>
-					</TitleTemplate>
-					<ChildContent>
-						@if (_data is null)
-						{
-							for (int i = 0; i < 5; i++)
+					}
+					else if (_data.SyncInfo.Count > 0)
+					{
+						<table class="tf-grid">
+							<tbody class="tf-grid-tbody">
+							@foreach (var context in _data.SyncInfo)
 							{
-								<div style="padding:6px 0">
-									<FluentSkeleton Height="20px" Shimmer="true"></FluentSkeleton>
-								</div>
+								<tr @key=@context.Id class="tf-grid-tr">
+									<td class="tf-grid-td">
+										<div>
+											@context.Name
+										</div>
+									</td>
+									<td class="tf-grid-td">
+										<div>@context.ProviderType.AddonName</div>
+									</td>
+									<td class="tf-grid-td">
+										<div>@context.NextSyncOn!.Value.ToString(TfConstants.DateTimeFormat)</div>
+									</td>
+								</tr>
 							}
-						}
-						else if (_data.SyncInfo.Count > 0)
-						{
-							<table class="tf-grid">
-								<tbody class="tf-grid-tbody">
-									@foreach (var context in _data.SyncInfo)
-									{
-										<tr @key=@context.Id class="tf-grid-tr">
-											<td class="tf-grid-td">
-												<div>
-													@context.Name
-												</div>
-											</td>
-											<td class="tf-grid-td">
-												<div>@context.ProviderType.AddonName</div>
-											</td>
-											<td class="tf-grid-td">
-												<div>@context.NextSyncOn!.Value.ToString(TfConstants.DateTimeFormat)</div>
-											</td>
-										</tr>
-									}
-								</tbody>
-							</table>
-						}
-						else
-						{
-							<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No pending synchronization tasks")</FluentMessageBar>
-						}
-					</ChildContent>
-				</TucCard>
-			</FluentGridItem>
-		</FluentGrid>
-	</div>
+							</tbody>
+						</table>
+					}
+					else
+					{
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No pending synchronization tasks")</FluentMessageBar>
+					}
+				</ChildContent>
+			</TucCard>
+		</FluentGridItem>
+	</FluentGrid>
+</div>
+</TucLayoutPageContent>

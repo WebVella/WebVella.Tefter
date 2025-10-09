@@ -2,15 +2,14 @@
 
 public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	TfDataProvider? _provider = null;
 	List<TfDataset> _items = new();
 
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.DatasetCreatedEvent -= On_DatasetChanged;
-		TfEventProvider.DatasetUpdatedEvent -= On_DatasetChanged;
-		TfEventProvider.DatasetDeletedEvent -= On_DatasetChanged;
+		TfEventProvider?.Dispose();
 	}
 	protected override async Task OnInitializedAsync()
 	{

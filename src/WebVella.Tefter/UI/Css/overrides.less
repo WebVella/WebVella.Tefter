@@ -44,6 +44,11 @@ html:root {
   --accent-stroke-control-hover: light-dark(var(--tf-accent-700), var(--tf-accent-900));
   --accent-stroke-control-focus: light-dark(var(--tf-accent-600), var(--tf-accent-800));
   --accent-stroke-control-active: light-dark(var(--tf-accent-600), var(--tf-accent-800));
+
+  --foreground-on-accent-rest: light-dark(var(--tf-base-50), var(--tf-base-50));
+  --foreground-on-accent-hover: light-dark(var(--tf-base-50), var(--tf-base-50));
+  --foreground-on-accent-focus: light-dark(var(--tf-base-50), var(--tf-base-50));
+  --foreground-on-accent-active: light-dark(var(--tf-base-50), var(--tf-base-50));
   
   
   --clear-button-hover: var(--tf-stroke-color);
@@ -55,7 +60,7 @@ html:root {
 fluent-button, fluent-anchor {
   &.accent {
     svg {
-      --accent-fill-rest: var(--tf-font-color-base);
+      --accent-fill-rest: var(--tf-base-50) !important;
     }
   }
 }

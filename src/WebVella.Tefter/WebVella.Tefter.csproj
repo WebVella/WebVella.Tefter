@@ -94,4 +94,8 @@
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="UI\Components\User\AdminUsersPageToolbar\TucAdminUsersPageToolbar.razor" />
+	</ItemGroup>
+
 </Project>

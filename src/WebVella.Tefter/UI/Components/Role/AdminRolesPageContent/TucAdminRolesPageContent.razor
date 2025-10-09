@@ -1,10 +1,62 @@
 ﻿@namespace WebVella.Tefter.UI.Components
-@inherits ComponentBase
-<TucPageLayout>
-	<div style="padding:var(--tf-padding-content)">
-		<FluentMessageBar Title="Error" AllowDismiss="false"
-						  Intent="@MessageIntent.Error">
-			<div>No Access Role Id is provided in the URL</div>
-		</FluentMessageBar>
-	</div>
-</TucPageLayout>
+@inherits TfBaseComponent
+<TucLayoutPageContent Title="@LOC("Roles")">
+	<Toolbar>
+        <FluentButton OnClick="addRole" Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">
+            @LOC("New Role")
+        </FluentButton>
+        <TucPageSearch/>
+    </Toolbar>
+    <ChildContent>
+        <div style="padding:var(--tf-padding-base)">
+
+            <table class="tf-grid">
+                <colgroup>
+                    <col span="1" style="width: 20px;min-width: 20px">
+                    <col/>
+                </colgroup>
+                <thead>
+                <tr class="tf-grid-thead-bkg"></tr>
+                @if (_isLoading)
+                {
+                    <tr class="tf-grid-thead-loading"></tr>
+                }
+                <tr>
+                    <th></th>
+                    <th>@LOC("name")</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _items)
+                {
+                    <tr>
+                        <td>
+                            <div>
+                                <TucAnchor Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Open")"
+                                           Href="@String.Format(TfConstants.AdminRoleDetailsPageUrl, item.Id).GenerateWithLocalAsReturnUrl(TfAuthLayout.GetState().NavigationState.Uri)"/>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                @item.Name
+                                @if (item.IsSystem)
+                                {
+                                    <div class="td-description" style="color:var(--error)"> [@LOC("system")]</div>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (_items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="2">
+                            <div>@LOC("no items")</div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </ChildContent>
+</TucLayoutPageContent>

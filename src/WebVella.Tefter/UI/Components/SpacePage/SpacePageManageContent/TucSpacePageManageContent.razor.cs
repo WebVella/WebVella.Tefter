@@ -1,6 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpacePageManageContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private bool _isDeleting = false;
 	private TfSpace _space = null!;
 	private TfSpacePage _spacePage = null!;
@@ -8,7 +9,7 @@ public partial class TucSpacePageManageContent : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
+		TfEventProvider?.Dispose();
 	}
 	protected override async Task OnInitializedAsync()
 	{

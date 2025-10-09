@@ -1,6 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfTemplate? _template = null;
 	private List<TfDatasetAsOption> _spaceDataSelection = new();
 	public bool _submitting = false;
@@ -11,7 +12,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 	private TfNavigationState _navState = null!;
 	public void Dispose()
 	{
-		TfEventProvider.TemplateUpdatedEvent -= On_TemplateUpdated;
+		TfEventProvider?.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 

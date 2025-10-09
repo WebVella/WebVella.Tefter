@@ -3,7 +3,7 @@
 public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDisposable
 {
 	#region << Init >>
-
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 
 	// State
@@ -18,8 +18,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.SpaceViewUpdatedEvent -= On_SpaceViewUpdated;
-		TfEventProvider.SpaceViewColumnsChangedEvent -= On_SpaceViewColumnUpdated;
+		TfEventProvider?.Dispose();
 	}
 
 	protected override async Task OnInitializedAsync()

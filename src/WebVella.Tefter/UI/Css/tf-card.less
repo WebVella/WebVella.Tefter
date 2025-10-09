@@ -4,12 +4,11 @@
 .tf-card {
   --tf-card-border-radius: var(--tf-border-radius-base);
   --tf-card-background-color: light-dark(var(--tf-base-50), var(--tf-base-800));
-  --tf-card-shadow-color: light-dark(rgba(0, 0, 0, 0.05),rgba(255, 255, 255, 0.15));
   border: 1px solid transparent;
   border-radius: var(--tf-card-border-radius);
   background: var(--tf-card-background-color);
-  padding: var(--tf-padding-content);
-  box-shadow: 0 0 1px 1px var(--tf-card-shadow-color);
+  padding: var(--tf-padding-sm);
+  box-shadow: var(--tf-shadow-base);
 
   .fluent-dialog-body & {
     border: 1px solid var(--tf-stroke-color);
@@ -55,7 +54,7 @@
   }
 
   &__title + &__content {
-    padding-top: var(--tf-padding-content);
+    padding-top: var(--tf-padding-base);
   }
 
   & + & {

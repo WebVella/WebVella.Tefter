@@ -2,6 +2,7 @@
 
 public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfDataProvider? _provider = null;
 	private TfNavigationState _navState = new();
 
@@ -11,7 +12,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.DataProviderUpdatedEvent -= On_DataProviderUpdated;
+		TfEventProvider?.Dispose();
 	}
 	protected override async Task OnInitializedAsync()
 	{

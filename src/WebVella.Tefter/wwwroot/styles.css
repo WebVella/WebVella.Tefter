@@ -260,15 +260,13 @@ html:root {
   --tf-stroke-color-active: light-dark(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.25));
   --tf-accent-color: light-dark(var(--tf-accent-500), var(--tf-accent-700));
   --tf-accent-hover: light-dark(var(--tf-accent-400), var(--tf-accent-800));
-  --tf-padding-content: 15px;
-  --tf-padding-aside: calc(var(--tf-padding-content) / 2);
+  --tf-padding-base: 15px;
+  --tf-padding-sm: calc(var(--tf-padding-base) / 2);
   --tf-topbar-height: 60px;
   --tf-space-header-height: var(--tf-topbar-height);
   --tf-space-actions-height: 50px;
-  --tf-space-return-btn-height: 50px;
   --tf-page-header-height: var(--tf-space-actions-height);
   --tf-page-tabs-height: 50px;
-  --tf-line-height-sm: 1.15em;
   --tf-aside-width: 250px;
   --tf-font-size-base: 14px;
   --tf-font-size-sm: 13px;
@@ -287,7 +285,7 @@ html:root {
   --tf-border-radius-md: 1rem;
   --tf-border-radius-lg: 2rem;
   --tf-border-radius-xl: 3rem;
-  --tf-shadow-md: light-dark(0px 0px 1.5px 0px rgba(0, 0, 0, 0.03), 0px 1.4px 1.5px 0px rgba(0, 0, 0, 0.03), 0px -1px 1px 0px rgba(0, 0, 0, 0.05), 0px 0px 1.5px 0px rgba(255, 255, 255, 0.03), 0px 1.4px 1.5px 0px rgba(255, 255, 255, 0.03), 0px -1px 1px 0px rgba(255, 255, 255, 0.05));
+  --tf-shadow-base: light-dark(0px 0px 1.5px 0px rgba(0, 0, 0, 0.05), 0px 1.4px 1.5px 0px rgba(0, 0, 0, 0.05), 0px -1px 1px 0px rgba(0, 0, 0, 0.1), 0px 0px 1.5px 0px rgba(255, 255, 255, 0.03), 0px 1.4px 1.5px 0px rgba(255, 255, 255, 0.03), 0px -1px 1px 0px rgba(255, 255, 255, 0.05));
   --tf-shadow-lg: light-dark(0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -4px rgba(255, 255, 255, 0.1));
 }
 body {
@@ -335,13 +333,17 @@ html:root {
   --accent-stroke-control-hover: light-dark(var(--tf-accent-700), var(--tf-accent-900));
   --accent-stroke-control-focus: light-dark(var(--tf-accent-600), var(--tf-accent-800));
   --accent-stroke-control-active: light-dark(var(--tf-accent-600), var(--tf-accent-800));
+  --foreground-on-accent-rest: light-dark(var(--tf-base-50), var(--tf-base-50));
+  --foreground-on-accent-hover: light-dark(var(--tf-base-50), var(--tf-base-50));
+  --foreground-on-accent-focus: light-dark(var(--tf-base-50), var(--tf-base-50));
+  --foreground-on-accent-active: light-dark(var(--tf-base-50), var(--tf-base-50));
   --clear-button-hover: var(--tf-stroke-color);
   --fill-color: var(--tf-fill-color-base);
 }
 /*Button*/
 fluent-button.accent svg,
 fluent-anchor.accent svg {
-  --accent-fill-rest: var(--tf-font-color-base);
+  --accent-fill-rest: var(--tf-base-50) !important;
 }
 /*Dialog*/
 fluent-dialog::part(overlay) {
@@ -404,29 +406,14 @@ fluent-select fluent-option {
   --neutral-fill-stealth-focus: light-dark(var(--tf-base-50), var(--tf-base-800));
   --neutral-fill-stealth-active: light-dark(var(--tf-base-50), var(--tf-base-800));
 }
-.tf-button {
-  border-radius: var(--tf-border-radius-xl);
-}
-.tf-button::part(content) {
-  position: relative;
-  top: -1px;
-}
-.tf-button--sm {
-  --base-height-multiplier: 6;
-}
-.tf-button .fluentui-counterbadge-container {
-  right: 5px;
-  position: absolute;
-}
 .tf-card {
   --tf-card-border-radius: var(--tf-border-radius-base);
   --tf-card-background-color: light-dark(var(--tf-base-50), var(--tf-base-800));
-  --tf-card-shadow-color: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.15));
   border: 1px solid transparent;
   border-radius: var(--tf-card-border-radius);
   background: var(--tf-card-background-color);
-  padding: var(--tf-padding-content);
-  box-shadow: 0 0 1px 1px var(--tf-card-shadow-color);
+  padding: var(--tf-padding-sm);
+  box-shadow: var(--tf-shadow-base);
 }
 .fluent-dialog-body .tf-card {
   border: 1px solid var(--tf-stroke-color);
@@ -466,7 +453,7 @@ fluent-select fluent-option {
   font-size: var(--tf-font-size-sm);
 }
 .tf-card__title + .tf-card__content {
-  padding-top: var(--tf-padding-content);
+  padding-top: var(--tf-padding-base);
 }
 .tf-card + .tf-card {
   margin-top: 2rem;
@@ -1009,8 +996,8 @@ fluent-select fluent-option {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-left: var(--tf-padding-content);
-  padding-right: var(--tf-padding-content);
+  padding-left: var(--tf-padding-base);
+  padding-right: var(--tf-padding-base);
   --tf-title-width: 400px;
 }
 .tf-header__left {
@@ -1054,10 +1041,10 @@ fluent-select fluent-option {
   --accent-fill-rest: var(--tf-button-color);
 }
 .tf-header-tabs {
-  padding-left: var(--tf-padding-content);
-  padding-right: var(--tf-padding-content);
+  padding-left: var(--tf-padding-base);
+  padding-right: var(--tf-padding-base);
   border-bottom: 1px solid var(--tf-stroke-color-mute);
-  --tf-tab-padding: calc(var(--tf-padding-content) / 3);
+  --tf-tab-padding: calc(var(--tf-padding-base) / 3);
 }
 .tf-header-tabs fluent-tabs {
   margin-left: calc(-1 * var(--tf-tab-padding));
@@ -1082,9 +1069,6 @@ fluent-select fluent-option {
 .tflg:not(.tflg--has-page-tabs) {
   --tf-page-tabs-height: 0px;
 }
-.tflg:not(.tflg--has-return-btn) {
-  --tf-space-return-btn-height: 0px;
-}
 .tflg__aside {
   flex: 0 0 var(--tf-aside-width);
   display: flex;
@@ -1104,31 +1088,9 @@ fluent-select fluent-option {
 .tflg__space-actions {
   flex: 0 0 var(--tf-space-actions-height);
 }
-.tflg__return-btn {
-  height: var(--tf-space-return-btn-height);
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: stretch;
-  padding-left: var(--tf-padding-aside);
-  padding-right: var(--tf-padding-aside);
-}
-.tflg__return-btn fluent-anchor {
-  flex: 1 1 auto;
-}
-.tflg__return-btn:after {
-  position: absolute;
-  content: '';
-  display: block;
-  bottom: 0;
-  width: 90%;
-  height: 1px;
-  border-bottom: 1px dashed var(--tf-stroke-color-mute);
-  left: 5%;
-}
 .tflg__sidenav {
   flex: 1 1 auto;
-  height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-return-btn-height) - var(--tf-space-actions-height));
+  height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-actions-height));
   overflow-y: auto;
   scrollbar-color: var(--tf-foreground-color-mute) var(--tf-background-color-body);
   scrollbar-width: thin;
@@ -1136,19 +1098,46 @@ fluent-select fluent-option {
 .tflg__page-topbar {
   flex: 0 0 var(--tf-topbar-height);
 }
-.tflg__page-header {
+.tflg__page-content {
+  flex: 1 1 auto;
+}
+.tflpc {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.tflpc__header {
   flex: 0 0 var(--tf-page-header-height);
   display: flex;
-  flex-flow: column;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--tf-padding-base);
 }
-.tflg__page-tabs {
+.tflpc__header__left {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
+.tflpc__header__left__title {
+  font-weight: var(--tf-font-weight-lg);
+  font-size: var(--tf-font-size-lg);
+  line-height: 1.15em;
+}
+.tflpc__header__left__return {
+  padding-right: var(--tf-padding-base);
+}
+.tflpc__header__right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--tf-padding-sm);
+}
+.tflpc__tabs {
   flex: 0 0 var(--tf-page-tabs-height);
   display: flex;
   flex-flow: column;
   justify-content: end;
 }
-.tflg__page-content {
+.tflpc__content {
   flex: 1 1 auto;
   height: calc(100vh - var(--tf-topbar-height) - var(--tf-page-header-height) - var(--tf-page-tabs-height));
   overflow-y: auto;
@@ -1157,18 +1146,18 @@ fluent-select fluent-option {
 }
 .tf-sidenav {
   --tf-sidenav-return-height: 40px;
-  padding-left: var(--tf-padding-aside);
-  padding-right: var(--tf-padding-aside);
-  padding-top: var(--tf-padding-aside);
+  padding-left: var(--tf-padding-sm);
+  padding-right: var(--tf-padding-sm);
+  padding-top: var(--tf-padding-sm);
 }
 .tf-sidenav .tf-treemenu__item {
-  padding-left: var(--tf-padding-aside);
-  padding-right: var(--tf-padding-aside);
+  padding-left: var(--tf-padding-sm);
+  padding-right: var(--tf-padding-sm);
 }
 .tf-space-header {
   position: relative;
-  padding-left: var(--tf-padding-aside);
-  padding-right: var(--tf-padding-aside);
+  padding-left: var(--tf-padding-sm);
+  padding-right: var(--tf-padding-sm);
   --tf-space-pane-extra-space: 10px;
   display: flex;
   justify-items: center;
@@ -1183,7 +1172,6 @@ fluent-select fluent-option {
   height: var(--tf-icon-size);
   width: var(--tf-icon-size);
   border-radius: 50%;
-  background: var(--tf-fill-color-focus);
   --accent-fill-rest: var(--tf-svg-color);
   display: flex;
   align-items: center;
@@ -1195,7 +1183,7 @@ fluent-select fluent-option {
 }
 .tf-space-header__meta {
   flex: 1 1 auto;
-  padding-left: 10px;
+  padding-left: 5px;
 }
 .tf-space-header__meta__title {
   padding-right: var(--tf-space-pane-extra-space);
@@ -1204,8 +1192,8 @@ fluent-select fluent-option {
 }
 .tf-space-actions {
   position: relative;
-  padding-left: var(--tf-padding-aside);
-  padding-right: var(--tf-padding-aside);
+  padding-left: var(--tf-padding-sm);
+  padding-right: var(--tf-padding-sm);
   --tf-space-pane-extra-space: 10px;
   display: flex;
   justify-items: center;
@@ -1234,8 +1222,8 @@ fluent-select fluent-option {
   justify-content: space-between;
   align-items: center;
   height: 100%;
-  padding-left: var(--tf-padding-content);
-  padding-right: var(--tf-padding-content);
+  padding-left: var(--tf-padding-base);
+  padding-right: var(--tf-padding-base);
   --accent-fill-rest: var(--tf-button-color);
 }
 .tf-page-topbar__left {
@@ -1247,9 +1235,6 @@ fluent-select fluent-option {
   align-items: center;
   justify-content: end;
   gap: 5px;
-}
-.tf-page-topbar fluent-breadcrumb {
-  margin-left: -5px;
 }
 .tf-page-topbar fluent-breadcrumb-item::part(control) {
   display: flex;
@@ -1303,7 +1288,7 @@ fluent-select fluent-option {
 }
 .tf-treemenu {
   width: 100%;
-  --tf-submenu-padding: calc(var(--tf-padding-content) * 1);
+  --tf-submenu-padding: calc(var(--tf-padding-base) * 1);
   --tf-submenu-padding-half: calc(var(--tf-submenu-padding) / 2);
 }
 .tf-submenu {
@@ -1314,10 +1299,10 @@ fluent-select fluent-option {
   content: "";
   display: block;
   position: absolute;
-  left: var(--tf-submenu-padding-half);
+  left: calc(var(--tf-submenu-padding-half) + 3px);
   top: 0;
   bottom: 0;
-  width: 2px;
+  width: 1px;
   background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 60%), color-mix(in srgb, var(--tf-accent-500), transparent 60%));
 }
 .tf-submenu .tf-submenu {
@@ -1339,6 +1324,7 @@ fluent-select fluent-option {
   padding: 0.5rem 0.25rem 0.5rem 0.5rem;
   color: var(--tf-font-color-base);
   border-radius: var(--tf-border-radius-sm);
+  position: relative;
 }
 .tf-treemenu__item:hover {
   color: var(--tf-font-color-base);
@@ -1346,6 +1332,7 @@ fluent-select fluent-option {
 }
 .tf-treemenu__item:hover .tf-treemenu__item__expander {
   background: light-dark(color-mix(in srgb, var(--tf-base-500), transparent 85%), color-mix(in srgb, var(--tf-base-500), transparent 85%));
+  display: flex;
 }
 .tf-treemenu__item.tf-active:not(.tf-parent) {
   position: relative;
@@ -1396,13 +1383,16 @@ fluent-select fluent-option {
   line-height: 1em;
 }
 .tf-treemenu__item__expander {
-  flex: 0 0 24px;
+  position: absolute;
+  right: var(--tf-padding-sm);
+  top: 50%;
+  margin-top: -12px;
+  display: none;
   /*pointer-events: none;*/
   border-radius: 50%;
   background: transparent;
   width: 24px;
   height: 24px;
-  display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;

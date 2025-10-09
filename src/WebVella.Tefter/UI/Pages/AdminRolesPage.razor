@@ -1,14 +1,20 @@
 ﻿@namespace WebVella.Tefter.UI.Pages
 @page "/admin/roles"
 @inherits TfBasePage
-<TucLayoutDetails>
-	<Header>
-		<TucHeader />
-	</Header>
-	<Content>
-		<TucAdminRolesPageContent />
-	</Content>
-</TucLayoutDetails>
-
-
-
+<TucLayoutGeneral>
+	<SpaceHeader>
+		<TucSpaceHeader/>
+	</SpaceHeader>
+	<SpaceActions>
+		<TucSpaceActions/>
+	</SpaceActions>
+	<SideNav>
+		<TucAdminNavigation/>
+	</SideNav>
+	<PageTopbar>
+		<TucPageTopbar/>
+	</PageTopbar>
+	<ChildContent>
+		<TucAdminRolesPageContent/>
+	</ChildContent>
+</TucLayoutGeneral>

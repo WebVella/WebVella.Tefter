@@ -2,6 +2,7 @@
 
 public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private List<TfRepositoryFile>? _items = null;
 
 	FluentInputFile fileUploader = null!;
@@ -15,9 +16,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 
 	public void Dispose()
 	{
-		TfEventProvider.RepositoryFileCreatedEvent -= On_RepositoryFileChanged;
-		TfEventProvider.RepositoryFileUpdatedEvent -= On_RepositoryFileChanged;
-		TfEventProvider.RepositoryFileDeletedEvent -= On_RepositoryFileChanged;
+		TfEventProvider?.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 

@@ -3,7 +3,7 @@
 <TucPageLayout Icon="@TfConstants.GetIcon("CalendarTemplate")" Color="@TfConstants.AdminColor"
 			   Area="@LOC(String.Format("Template {0}",_template?.ResultType.ToDescriptionString()))" Title="@_template?.Name">
 <TucErrorBoundry>
-	<div style="padding:var(--tf-padding-content)">
+	<div style="padding:var(--tf-padding-base)">
 		@if (String.IsNullOrWhiteSpace(UriInitialized))
 		{
 			<TucSkeletonPageHeader />

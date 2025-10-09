@@ -1,6 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfRole? _role = null;
 	private List<TfUser> _userOptions = new();
 	private TfUser? _selectedUser = null;
@@ -9,7 +10,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 	public Guid? _removingUserId = null;
 	public void Dispose()
 	{
-		TfEventProvider.RoleUpdatedEvent -= On_RoleUpdated;
+		TfEventProvider?.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 

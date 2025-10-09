@@ -2,6 +2,7 @@
 
 public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfSpace? _space = null;
 	private List<TfSpacePage> _spacePages = new();
 	private TfNavigationState _navState = null!;
@@ -9,9 +10,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfEventProvider.SpacePageCreatedEvent -= On_SpacePageChanged;
-		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
-		TfEventProvider.SpacePageDeletedEvent -= On_SpacePageChanged;
+		TfEventProvider?.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 

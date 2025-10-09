@@ -16,7 +16,6 @@ public class TfBaseComponent : ComponentBase
 	[Inject] protected IKeyCodeService KeyCodeService { get; set; } = null!;
 	[Inject] protected ITfService TfService { get; set; } = null!;
 	[Inject] protected ITfMetaService TfMetaService { get; set; } = null!;
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = null!;
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 

@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 <TucPageLayout Icon="@TfConstants.GetIcon("BookDatabase")" Color="@TfConstants.AdminColor" Area="@LOC("Shared Columns")" Title="@_column?.DbName">
 	<TucErrorBoundry>
-		<div style="padding:var(--tf-padding-content)">
+		<div style="padding:var(--tf-padding-base)">
 			@if (String.IsNullOrWhiteSpace(UriInitialized))
 			{
 				<TucSkeletonPageHeader />

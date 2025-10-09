@@ -1,12 +1,13 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfDataProvider? _provider = null;
 	private Guid? _deletedColumnId = null;
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.DataProviderUpdatedEvent -= On_DataProviderUpdated;
+		TfEventProvider?.Dispose();
 	}
 	protected override async Task OnInitializedAsync()
 	{

@@ -57,8 +57,8 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 	public event Func<TfTemplateDeletedEvent,Task> TemplateDeletedEvent;
 	
 	//user
-	public event Func<TfUserCreatedEvent,Task> UserCreatedGlobalEvent;
-	public event Func<TfUserUpdatedEvent,Task> UserUpdatedGlobalEvent;
+	public event Func<TfUserCreatedEvent,Task> UserCreatedEvent;
+	public event Func<TfUserUpdatedEvent,Task> UserUpdatedEvent;
 	
 
 
@@ -180,9 +180,9 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 		
 		//user
 		if (obj is TfUserCreatedEvent)
-			UserCreatedGlobalEvent?.Invoke((TfUserCreatedEvent)obj);
+			UserCreatedEvent?.Invoke((TfUserCreatedEvent)obj);
 		
 		if (obj is TfUserUpdatedEvent)
-			UserUpdatedGlobalEvent?.Invoke((TfUserUpdatedEvent)obj);					
+			UserUpdatedEvent?.Invoke((TfUserUpdatedEvent)obj);					
 	}
 }

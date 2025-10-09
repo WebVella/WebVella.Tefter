@@ -1,12 +1,13 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisposable
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfDataIdentity? _identity = null;
 	public bool _submitting = false;
 
 	public void Dispose()
 	{
-		TfEventProvider.DataIdentityUpdatedEvent -= On_DataIdentityUpdated;
+		TfEventProvider?.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 

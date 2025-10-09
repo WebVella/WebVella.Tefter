@@ -1,0 +1,52 @@
+﻿@import '_variables.less';
+
+
+.tflpc {
+  display: flex;
+  flex-flow: column nowrap;
+
+  &__header {
+    flex: 0 0 var(--tf-page-header-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding:0 var(--tf-padding-base);
+
+    &__left {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      
+      &__title{
+        font-weight: var(--tf-font-weight-lg);
+        font-size: var(--tf-font-size-lg);
+        line-height: 1.15em;        
+      }
+      &__return{
+        padding-right: var(--tf-padding-base); 
+      }
+    }
+
+    &__right {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: var(--tf-padding-sm);
+    }
+  }
+
+  &__tabs {
+    flex: 0 0 var(--tf-page-tabs-height);
+    display: flex;
+    flex-flow: column;
+    justify-content: end;
+  }
+
+  &__content {
+    flex: 1 1 auto;
+    height: calc(100vh - var(--tf-topbar-height) - var(--tf-page-header-height) - var(--tf-page-tabs-height));
+    overflow-y: auto;
+    scrollbar-color: var(--tf-foreground-color-mute) var(--tf-background-color-body);
+    scrollbar-width: thin;
+  }
+}
