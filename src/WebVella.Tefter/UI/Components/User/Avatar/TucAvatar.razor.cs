@@ -16,17 +16,7 @@ public partial class TucAvatar :ComponentBase
 		{
 			var list = new List<string>();
 			if (!String.IsNullOrWhiteSpace(Styles)) list.Add(Styles);
-			if (User is not null)
-			{
-				if (UseUserColor && User.Settings is not null && User.Settings.ThemeColor.HasValue)
-					list.Add($"background-color:{User.Settings.ThemeColor.GetColor().Value};");
-				else
-					list.Add("background-color:var(--tf-base-300);");
-			}
-			else
-			{
-				list.Add("background-color:var(--tf-base-300);");
-			}
+			list.Add("background-color:var(--tf-fill-color-focus);");
 
 			if (OnClick.HasDelegate)
 				list.Add("cursor:pointer;");

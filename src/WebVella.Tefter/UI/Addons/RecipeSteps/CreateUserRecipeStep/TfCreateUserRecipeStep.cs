@@ -51,7 +51,6 @@ public class TfCreateUserRecipeStep : ITfRecipeStepAddon
 			LastName = step.LastName,
 			Settings = new TfUserSettings()
 			{
-				ThemeColor = step.Color ?? TfConstants.DefaultThemeColor,
 				CultureName = step.CultureName ?? TfConstants.DefaultCulture.Name,
 			}
 		});

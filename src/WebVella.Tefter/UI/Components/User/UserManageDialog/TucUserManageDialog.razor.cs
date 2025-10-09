@@ -40,7 +40,6 @@ public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentCo
 				LastName = Content.LastName,
 				Id = Content.Id,
 				ThemeMode = Content.Settings.ThemeMode,
-				ThemeColor = Content.Settings.ThemeColor,
 				IsSidebarOpen = Content.Settings.IsSidebarOpen,
 			};
 

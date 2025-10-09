@@ -11,7 +11,6 @@ public class TfUserBuilder
 	private DateTime _createdOn;
 
 	private DesignThemeModes _themeMode;
-	private TfColor? _themeColor;
 	private bool _sidebarOpen;
 	private string _cultureCode;
 	private string? _startUpUrl;
@@ -40,7 +39,6 @@ public class TfUserBuilder
 			_enabled = user.Enabled;
 			_createdOn = user.CreatedOn;
 			_themeMode = user.Settings.ThemeMode;
-			_themeColor = user.Settings.ThemeColor;
 			_sidebarOpen = (user?.Settings?.IsSidebarOpen) ?? true;
 			_cultureCode = (user?.Settings?.CultureName) ?? string.Empty;
 			_startUpUrl = (user?.Settings?.StartUpUrl) ?? string.Empty;
@@ -110,13 +108,6 @@ public class TfUserBuilder
 		DesignThemeModes themeMode)
 	{
 		_themeMode = themeMode;
-		return this;
-	}
-
-	public TfUserBuilder WithThemeColor(
-		TfColor? tfColor)
-	{
-		_themeColor = tfColor;
 		return this;
 	}
 
@@ -226,7 +217,6 @@ public class TfUserBuilder
 			Settings = new TfUserSettings
 			{
 				IsSidebarOpen = _sidebarOpen,
-				ThemeColor = _themeColor,
 				ThemeMode = _themeMode,
 				CultureName = _cultureCode,
 				StartUpUrl = _startUpUrl,

@@ -3,28 +3,52 @@
 //colors
 html:root {
   --neutral-foreground-rest: var(--tf-font-color-base);
+  
   --neutral-stroke-rest: var(--tf-stroke-color);
   --neutral-stroke-hover: var(--tf-stroke-color-hover);
+  --neutral-stroke-focus: var(--tf-stroke-color-active);
   --neutral-stroke-active: var(--tf-stroke-color-active);
+  
   --neutral-stroke-input-rest: var(--tf-stroke-color);
   --neutral-stroke-input-hover: var(--tf-stroke-color);
+  --neutral-stroke-input-focus: var(--tf-stroke-color);
+  --neutral-stroke-input-active: var(--tf-stroke-color);
+
+  --neutral-stroke-control-rest: var(--tf-stroke-color);
+  --neutral-stroke-control-hover: var(--tf-stroke-color);  
+  --neutral-stroke-control-focus: var(--tf-stroke-color);  
+  --neutral-stroke-control-active: var(--tf-stroke-color);  
+  
+  --neutral-fill-rest: light-dark(var(--tf-base-50), var(--tf-base-800));
+  --neutral-fill-hover: light-dark(var(--tf-base-50), var(--tf-base-800));
+  --neutral-fill-focus: light-dark(var(--tf-base-50), var(--tf-base-800));
+  --neutral-fill-active: light-dark(var(--tf-base-50), var(--tf-base-800));
+  
   --neutral-fill-input-rest: light-dark(var(--tf-base-50), var(--tf-base-800));
   --neutral-fill-input-hover: light-dark(var(--tf-base-50), var(--tf-base-800));
   --neutral-fill-input-focus: light-dark(var(--tf-base-50), var(--tf-base-800));
-  --accent-fill-rest: light-dark(var(--tf-accent-700),
-  var(--tf-accent-900));
-  --accent-fill-hover: light-dark(var(--tf-accent-800),
-  var(--tf-accent-950));
-  --accent-fill-active: light-dark(var(--tf-accent-800),
-  var(--tf-accent-950));
-  --accent-stroke-control-rest: light-dark(var(--tf-accent-600),
-  var(--tf-accent-800));
-  --accent-stroke-control-hover: light-dark(var(--tf-accent-700),
-  var(--tf-accent-900));
-  --accent-stroke-control-active: light-dark(var(--tf-accent-600),
-  var(--tf-accent-800));
+  --neutral-fill-input-active: light-dark(var(--tf-base-50), var(--tf-base-800));
 
-  --clear-button-hover:var(--tf-stroke-color);
+  --neutral-fill-stealth-rest: light-dark(var(--tf-base-50), var(--tf-base-800));
+  --neutral-fill-stealth-hover: light-dark(var(--tf-base-50), var(--tf-base-800));
+  --neutral-fill-stealth-focus: light-dark(var(--tf-base-50), var(--tf-base-800));
+  --neutral-fill-stealth-active: light-dark(var(--tf-base-50), var(--tf-base-800));  
+  
+  
+  --accent-fill-rest: light-dark(var(--tf-accent-700), var(--tf-accent-900));
+  --accent-fill-hover: light-dark(var(--tf-accent-800), var(--tf-accent-950));
+  --accent-fill-focus: light-dark(var(--tf-accent-800), var(--tf-accent-950));
+  --accent-fill-active: light-dark(var(--tf-accent-800), var(--tf-accent-950));
+  
+  --accent-stroke-control-rest: light-dark(var(--tf-accent-600), var(--tf-accent-800));
+  --accent-stroke-control-hover: light-dark(var(--tf-accent-700), var(--tf-accent-900));
+  --accent-stroke-control-focus: light-dark(var(--tf-accent-600), var(--tf-accent-800));
+  --accent-stroke-control-active: light-dark(var(--tf-accent-600), var(--tf-accent-800));
+  
+  
+  --clear-button-hover: var(--tf-stroke-color);
+
+  --fill-color: var(--tf-fill-color-base);
 }
 
 /*Button*/
@@ -36,6 +60,19 @@ fluent-button, fluent-anchor {
   }
 }
 
+/*Dialog*/
+fluent-dialog {
+  &::part(overlay) {
+    background: light-dark(rgba(0, 0, 0, 0.3),rgba(255, 255, 255, 0.05));
+  }
+  &::part(control){
+    --tf-elevation-color:light-dark(rgba(0, 0, 0, 0.2),rgba(255, 255, 255, 0.03));
+    --elevation-shadow-dialog: 0 0 2px var(--tf-elevation-color), 0 calc(128 * 0.5px) calc((128 * 1px)) var(--tf-elevation-color);
+  }
+}
+
+
+/*Menu*/
 fluent-anchored-region,
 fluent-menu {
   --neutral-layer-floating: light-dark(var(--tf-base-100), var(--tf-base-700));
@@ -79,5 +116,27 @@ div[class ^='fluent-messagebar'],
     --info: light-dark(var(--tf-blue-500), var(--tf-blue-700));
     background-color: light-dark(var(--tf-blue-100), var(--tf-blue-950)) !important;
     border-color: light-dark(var(--tf-blue-200), var(--tf-blue-900)) !important;
+  }
+}
+
+/*Select*/
+fluent-select{
+  &::part(listbox){
+    --fill-color: var(--tf-fill-color-hover);
+   
+  }
+  fluent-option{
+    --accent-fill-rest:var(--tf-accent-500);
+    --neutral-foreground-rest:var(--tf-font-color-base);
+    
+    --neutral-fill-secondary-rest:var(--tf-fill-color-active);
+    --neutral-fill-secondary-hover:var(--tf-fill-color-active);
+    --neutral-fill-secondary-focus:var(--tf-fill-color-active);
+    --neutral-fill-secondary-active:var(--tf-fill-color-active);
+    
+    --neutral-fill-stealth-rest: transparent;
+    --neutral-fill-stealth-hover: light-dark(var(--tf-base-50), var(--tf-base-800));
+    --neutral-fill-stealth-focus: light-dark(var(--tf-base-50), var(--tf-base-800));
+    --neutral-fill-stealth-active: light-dark(var(--tf-base-50), var(--tf-base-800));    
   }
 }

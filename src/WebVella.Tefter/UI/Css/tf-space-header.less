@@ -13,15 +13,12 @@
   &__icon {
     --tf-icon-size:27px;
     --tf-svg-size: 20px; 
-    --tf-svg-color:light-dark(
-            color-mix(in srgb, var(--tf-accent-500), transparent 50%),
-            color-mix(in srgb, var(--tf-accent-500), transparent 70%)
-    );
+    --tf-svg-color:light-dark(var(--tf-accent-500),var(--tf-accent-500));
     flex: 0 0 var(--tf-icon-size);
     height:var(--tf-icon-size);
     width: var(--tf-icon-size);
     border-radius: 50%;
-    border: 2px solid var(--tf-svg-color);
+    background: var(--tf-fill-color-focus);
     --accent-fill-rest: var(--tf-svg-color);
     display: flex;
     align-items: center;

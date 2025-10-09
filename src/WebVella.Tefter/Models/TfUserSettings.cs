@@ -8,7 +8,6 @@ namespace WebVella.Tefter.Models;
 public class TfUserSettings
 {
 	public DesignThemeModes ThemeMode { get; init; } = DesignThemeModes.System;
-	public TfColor? ThemeColor { get; init; } = null;
 	public bool IsSidebarOpen { get; init; } = true;
 	public string CultureName { get; init; } = "en-US";
 	[JsonIgnore]

@@ -273,7 +273,6 @@ public partial class TfService : ITfService
 			{
 				userBuilder
 					.WithThemeMode(userDbo.Settings.ThemeMode)
-					.WithThemeColor(userDbo.Settings.ThemeColor)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
 					.WithStartUpUrl(userDbo.Settings.StartUpUrl)
@@ -324,7 +323,6 @@ public partial class TfService : ITfService
 			{
 				userBuilder
 					.WithThemeMode(userDbo.Settings.ThemeMode)
-					.WithThemeColor(userDbo.Settings.ThemeColor)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
 					.WithStartUpUrl(userDbo.Settings.StartUpUrl)
@@ -383,7 +381,6 @@ public partial class TfService : ITfService
 			{
 				userBuilder
 					.WithThemeMode(userDbo.Settings.ThemeMode)
-					.WithThemeColor(userDbo.Settings.ThemeColor)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
 					.WithStartUpUrl(userDbo.Settings.StartUpUrl)
@@ -434,7 +431,6 @@ public partial class TfService : ITfService
 				{
 					userBuilder
 						.WithThemeMode(userDbo.Settings.ThemeMode)
-						.WithThemeColor(userDbo.Settings.ThemeColor)
 						.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 						.WithCultureCode(userDbo.Settings.CultureName)
 						.WithStartUpUrl(userDbo.Settings.StartUpUrl)
@@ -741,7 +737,6 @@ public partial class TfService : ITfService
 			{
 				userBuilder
 					.WithThemeMode(userDbo.Settings.ThemeMode)
-					.WithThemeColor(userDbo.Settings.ThemeColor)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
 					.WithStartUpUrl(userDbo.Settings.StartUpUrl)
@@ -793,7 +788,6 @@ public partial class TfService : ITfService
 			{
 				userBuilder
 					.WithThemeMode(userDbo.Settings.ThemeMode)
-					.WithThemeColor(userDbo.Settings.ThemeColor)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
 					.WithStartUpUrl(userDbo.Settings.StartUpUrl)
@@ -853,7 +847,6 @@ public partial class TfService : ITfService
 			{
 				userBuilder
 					.WithThemeMode(userDbo.Settings.ThemeMode)
-					.WithThemeColor(userDbo.Settings.ThemeColor)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
 					.WithStartUpUrl(userDbo.Settings.StartUpUrl)
@@ -904,7 +897,6 @@ public partial class TfService : ITfService
 				{
 					userBuilder
 						.WithThemeMode(userDbo.Settings.ThemeMode)
-						.WithThemeColor(userDbo.Settings.ThemeColor)
 						.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 						.WithCultureCode(userDbo.Settings.CultureName)
 						.WithStartUpUrl(userDbo.Settings.StartUpUrl)
@@ -1010,7 +1002,6 @@ public partial class TfService : ITfService
 			Roles = new List<TfRole>().AsReadOnly(),
 			Settings = new TfUserSettings
 			{
-				ThemeColor = form.ThemeColor,
 				ThemeMode = form.ThemeMode,
 				IsSidebarOpen = form.IsSidebarOpen,
 				CultureName = form.Culture?.CultureInfo.Name ?? TfConstants.DefaultCulture.Name,
@@ -1099,7 +1090,6 @@ public partial class TfService : ITfService
 			.WithLastName(form.LastName)
 			.Enabled(form.Enabled)
 			.WithThemeMode(form.ThemeMode)
-			.WithThemeColor(form.ThemeColor)
 			.WithCultureCode(form.Culture?.CultureInfo.Name ?? TfConstants.DefaultCulture.Name)
 			.WithRoles(user.Roles.ToArray());
 		if (!String.IsNullOrWhiteSpace(form.Password))

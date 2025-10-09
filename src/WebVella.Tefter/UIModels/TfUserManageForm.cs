@@ -20,8 +20,6 @@ public record TfUserManageForm
 	[Required]
 	public DesignThemeModes ThemeMode { get; set; } = DesignThemeModes.System;
 	[Required]
-	public TfColor? ThemeColor { get; set; }
-	[Required]
 	public bool IsSidebarOpen { get; set; } = true;
 	public TfCultureOption? Culture { get; set; } = null;
 

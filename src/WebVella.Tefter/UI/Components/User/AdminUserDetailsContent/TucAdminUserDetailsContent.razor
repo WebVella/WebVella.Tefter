@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout Icon="@TfConstants.GetIcon("Person")" Color="@_user?.Settings.ThemeColor"
+<TucPageLayout Icon="@TfConstants.GetIcon("Person")"
 			   Area="@LOC("Users")" Title="@_user?.Names">
 	<TucErrorBoundry>
 		<div style="padding:var(--tf-padding-content)">
@@ -63,8 +63,6 @@
 												 ReadOnly="true" Label="@LOC("Theme Mode")" Style="width:100%" />
 							</FluentGridItem>
 							<FluentGridItem xs="6">
-								<FluentInputLabel Label="@LOC("Theme Color")" />
-								<TucSelectColor Value="@(_user.Settings?.ThemeColor)" />
 							</FluentGridItem>
 						</FluentGrid>
 						<FluentGrid>

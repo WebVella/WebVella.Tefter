@@ -2,53 +2,62 @@
 @inherits TfBaseComponent
 
 <div style="padding:var(--tf-padding-content)">
-    <table class="tf-grid">
-        <colgroup>
-            <col span="1" style="width: 20px;min-width: 20px">
-            <col/>
-            <col/>
-            <col/>
-        </colgroup>
-        <thead>
-        <tr class="tf-grid-thead-bkg"></tr>
-        @if (_isLoading)
-        {
-            <tr class="tf-grid-thead-loading"></tr>
-        }
-        <tr>
-            <th></th>
-            <th>@LOC("email")</th>
-            <th>@LOC("name")</th>
-            <th>@LOC("roles")</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var item in _items)
-        {
+
+        <table class="tf-grid">
+            <colgroup>
+                <col span="1" style="width: 20px;min-width: 20px">
+                <col/>
+                <col/>
+                <col/>
+            </colgroup>
+            <thead>
+            <tr class="tf-grid-thead-bkg"></tr>
+            @if (_isLoading)
+            {
+                <tr class="tf-grid-thead-loading"></tr>
+            }
             <tr>
-                <td>
-                    <div>
-                        <TucAnchor Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
-                                   Href="@String.Format(TfConstants.AdminUserDetailsPageUrl, item.Id)"/>
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        @item.Email
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        @item.Names
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        @item.RoleNames
-                    </div>
-                </td>
+                <th></th>
+                <th>@LOC("email")</th>
+                <th>@LOC("name")</th>
+                <th>@LOC("roles")</th>
             </tr>
-        }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @foreach (var item in _items)
+            {
+                <tr>
+                    <td>
+                        <div>
+                            <TucAnchor Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
+                                       Href="@String.Format(TfConstants.AdminUserDetailsPageUrl, item.Id)"/>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            @item.Email
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            @item.Names
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            @item.RoleNames
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if (_items.Count == 0)
+            {
+                <tr>
+                    <td colspan="4">
+                        <div>@LOC("no items")</div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
 </div>
