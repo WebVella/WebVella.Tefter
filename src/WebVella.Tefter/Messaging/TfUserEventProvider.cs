@@ -2,7 +2,7 @@
 
 public interface IUserEvent : ITfEvent { }
 
-public partial class TfUserEventProvider : IAsyncDisposable
+public partial class TfUserEventProvider : IAsyncDisposable, IDisposable
 {
 	private readonly TfUser _currentUser;
 	private readonly ITfEventBus _eventBus;
@@ -34,5 +34,10 @@ public partial class TfUserEventProvider : IAsyncDisposable
 	public async ValueTask DisposeAsync()
 	{
 		await _eventBus.DisposeAsync();
+	}
+
+	public void Dispose()
+	{
+		_eventBus.Dispose();
 	}
 }

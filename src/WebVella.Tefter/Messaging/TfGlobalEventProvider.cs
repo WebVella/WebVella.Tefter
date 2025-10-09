@@ -16,7 +16,7 @@ public class TfGlobalEvent : IGlobalEvent
 		=> UserId is not null && user is not null && UserId.Value == user.Id;
 }
 
-public partial class TfGlobalEventProvider : IAsyncDisposable
+public partial class TfGlobalEventProvider : IAsyncDisposable, IDisposable
 {
 	private const string GLOBAL_CHANNEL = "GLOBAL_CHANNEL";
 	private readonly ITfEventBus _eventBus;
@@ -48,5 +48,10 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 	public async ValueTask DisposeAsync()
 	{
 		await _eventBus.DisposeAsync();
+	}
+
+	public void Dispose()
+	{
+		_eventBus.Dispose();
 	}
 }

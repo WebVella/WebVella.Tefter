@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Messaging;
 
-public interface ITfEventBus: IAsyncDisposable
+public interface ITfEventBus: IAsyncDisposable, IDisposable
 {
 	event Action<ITfEvent> OnEvent;
 	Task JoinChannelsAsync(params string[] channels);
@@ -12,7 +12,7 @@ public interface ITfEventBus: IAsyncDisposable
 }
 
 
-public class TfEventBus : ITfEventBus, IAsyncDisposable, IDisposable
+public class TfEventBus : ITfEventBus, IAsyncDisposable 
 {
 	private readonly ITfChannelEventRouter _channelEventRouter;
 
