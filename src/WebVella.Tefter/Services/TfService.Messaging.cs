@@ -18,6 +18,7 @@ public partial class TfService : ITfService
 			{
 				var eventProvider = scope.ServiceProvider.GetRequiredService<TfGlobalEventProvider>();
 				await eventProvider.PublishEventAsync(eventObj);
+				await eventProvider.DisposeAsync();
 			});
 			task.WaitAndUnwrapException();
 		}
