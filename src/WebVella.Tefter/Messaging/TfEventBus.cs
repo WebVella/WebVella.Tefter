@@ -50,7 +50,7 @@ public class TfEventBus : ITfEventBus, IAsyncDisposable
 
 	public async ValueTask DisposeAsync()
 	{
-		await _channelEventRouter.LeaveChannelsAsync(this);
+		await _channelEventRouter.LeaveAllChannelsAsync(this);
 		OnEvent = null;
 	}
 

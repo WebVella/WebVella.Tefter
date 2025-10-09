@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Messaging;
+﻿using System.Diagnostics;
+
+namespace WebVella.Tefter.Messaging;
 
 internal interface ITfChannelEventRouter
 {
@@ -12,7 +14,7 @@ internal interface ITfChannelEventRouter
 
 internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 {
-	private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+	private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 	private readonly Dictionary<string, HashSet<ITfEventBus>> _channelDict;
 	private readonly Dictionary<ITfEventBus, HashSet<string>> _busDict;
 
@@ -25,6 +27,9 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 	public async Task PublishAsync(ITfEventBus bus, ITfEvent tfEvent)
 	{
 		await _semaphore.WaitAsync();
+		//Debug.WriteLine($"{_semaphore.GetHashCode()} PublishAsync: Entered critical section:{_semaphore.CurrentCount}" );
+
+		List<TfEventBus> busses = new List<TfEventBus>();
 		try
 		{
 			//throw probably
@@ -34,14 +39,17 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 			foreach (var channel in _busDict[bus])
 			{
 				foreach (var eventBus in _channelDict[channel])
-					await ((TfEventBus)eventBus).RaiseEventInternal(tfEvent);
+					busses.Add((TfEventBus)eventBus);
 			}
-
 		}
 		finally
 		{
 			_semaphore.Release();
+			//Debug.WriteLine($"{_semaphore.GetHashCode()} PublishAsync: Exit critical section (async):{_semaphore.CurrentCount}");
 		}
+
+		foreach (var eventBus in busses)
+			await eventBus.RaiseEventInternal(tfEvent);
 	}
 
 	public async Task JoinChannelsAsync(ITfEventBus bus, params string[] channels)
@@ -54,10 +62,14 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 			return;
 
 		await _semaphore.WaitAsync();
+		//Debug.WriteLine($"{_semaphore.GetHashCode()} JoinChannelsAsync: Entered critical section:{_semaphore.CurrentCount}");
 		try
 		{
 			if (!_busDict.ContainsKey(bus))
+			{
 				_busDict[bus] = new HashSet<string>();
+				//Debug.WriteLine($"BUSS COUNT:{_busDict.Keys.Count()}");
+			}
 
 			foreach (var channel in processedChannels)
 			{
@@ -74,6 +86,7 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 		finally
 		{
 			_semaphore.Release();
+			//Debug.WriteLine($"{_semaphore.GetHashCode()} JoinChannelsAsync: Exit critical section (async):{_semaphore.CurrentCount}");
 		}
 	}
 
@@ -87,6 +100,7 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 			return;
 
 		await _semaphore.WaitAsync();
+		//Debug.WriteLine($"{_semaphore.GetHashCode()} LeaveChannelsAsync: Entered critical section:{_semaphore.CurrentCount}");
 		try
 		{
 			if (!_busDict.ContainsKey(bus))
@@ -110,12 +124,14 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 		finally
 		{
 			_semaphore.Release();
+			//Debug.WriteLine($"{_semaphore.GetHashCode()} LeaveChannelsAsync: Exit critical section (async):{_semaphore.CurrentCount}");
 		}
 	}
 
 	public async Task LeaveAllChannelsAsync(ITfEventBus bus)
 	{
 		await _semaphore.WaitAsync();
+		//Debug.WriteLine($"{_semaphore.GetHashCode()} LeaveAllChannelsAsync: Entered critical section:{_semaphore.CurrentCount}");
 		try
 		{
 			if (!_busDict.ContainsKey(bus))
@@ -133,12 +149,15 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 		finally
 		{
 			_semaphore.Release();
+			//Debug.WriteLine($"{_semaphore.GetHashCode()} LeaveAllChannelsAsync: Exit critical section (async):{_semaphore.CurrentCount}");
+			//Debug.WriteLine($"BUSS COUNT:{_busDict.Keys.Count()}");
 		}
 	}
 
 	public void LeaveAllChannels(ITfEventBus bus)
 	{
 		_semaphore.Wait();
+		//Debug.WriteLine($"{_semaphore.GetHashCode()} LeaveAllChannels: Entered critical section:{_semaphore.CurrentCount}");
 		try
 		{
 			if (!_busDict.ContainsKey(bus))
@@ -156,6 +175,8 @@ internal sealed class TfChannelEventRouter : ITfChannelEventRouter
 		finally
 		{
 			_semaphore.Release();
+			//Debug.WriteLine($"{_semaphore.GetHashCode()} LeaveAllChannels: Exit critical section (sync):{_semaphore.CurrentCount}");
+			//Debug.WriteLine($"BUSS COUNT:{_busDict.Keys.Count()}");
 		}
 	}
 }

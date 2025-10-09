@@ -1,4 +1,4 @@
-﻿using WebVella.Tefter.Authentication;
+﻿using System.Diagnostics;
 
 namespace WebVella.Tefter.Messaging;
 
@@ -31,6 +31,7 @@ public partial class TfGlobalEventProvider : IAsyncDisposable, IDisposable
 		_eventBus = eventBus;
 		_eventBus.JoinChannelsAsync(GLOBAL_CHANNEL);
 		_eventBus.OnEvent += OnEventReceived;
+		Debug.WriteLine($"CREATED:{_eventBus.GetHashCode()}");
 	}
 
 	public async Task PublishEventAsync(IGlobalEvent globalEvent)
@@ -47,11 +48,13 @@ public partial class TfGlobalEventProvider : IAsyncDisposable, IDisposable
 
 	public async ValueTask DisposeAsync()
 	{
+		Debug.WriteLine($"RELESED ASYNC:{_eventBus.GetHashCode()}");
 		await _eventBus.DisposeAsync();
 	}
 
 	public void Dispose()
 	{
+		Debug.WriteLine($"RELESED:{_eventBus.GetHashCode()}");
 		_eventBus.Dispose();
 	}
 }
