@@ -1,15 +1,14 @@
 ﻿@namespace WebVella.Tefter.EmailSender.Components
 @inherits TfBaseComponent
 
-<TucPageLayout Title="@LOC("Email Queue")"
-			   Icon="@TfConstants.GetIcon("Mail")" Color="@TfConstants.AdminColor">
-	<NavigationRight>
+<TucLayoutPageContent Title="@LOC("Email Queue")">
+	<Toolbar>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_createTestHandler" IconStart="@TfConstants.GetIcon("Add")">
 			@LOC("Sent test email")
 		</FluentButton>
 		<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@_search"
 					  AutoComplete="off" Style="margin-left:1rem;" @ref=_refSearch />
-	</NavigationRight>
+	</Toolbar>
 	<ChildContent>
 		<table class="tf-grid">
 			<thead class="tf-grid-thead">
@@ -92,4 +91,4 @@
 		<TucPager UserPageSize="@_currentUser?.Settings?.PageSize" GoLast="@_goLastPage" GoOnPage="@_goOnPage"
 				  Style="margin-top:1rem;" />
 	</ChildContent>
-</TucPageLayout>
+</TucLayoutPageContent>

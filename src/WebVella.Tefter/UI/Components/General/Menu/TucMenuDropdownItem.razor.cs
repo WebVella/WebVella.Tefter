@@ -29,15 +29,15 @@ public partial class TucMenuDropdownItem : TfBaseComponent
 		_attributes = (new Dictionary<string, object>() { { "title", Item.Tooltip ?? String.Empty } }).AsReadOnly();
 
 		var classList = new List<string>();
-		classList.Add("tf-menu__item");
+		classList.Add("tf-tabs__item");
 		if (!String.IsNullOrWhiteSpace(Class)) classList.Add(Class);
-		if (Item.Selected) classList.Add("tf-menu__item--active");
+		if (Item.Selected) classList.Add("tf-tabs__item--active");
 
 		if (Item.Disabled)
-			classList.Add("tf-menu__item--disabled");
+			classList.Add("tf-tabs__item--disabled");
 
 		if(Item.Data is not null) 
-			classList.Add($"tf-menu__item--{Item.Data.SpacePageType.ToDescriptionString()}");
+			classList.Add($"tf-tabs__item--{Item.Data.SpacePageType.ToDescriptionString()}");
 
 		_css = String.Join(" ", classList);
 	}

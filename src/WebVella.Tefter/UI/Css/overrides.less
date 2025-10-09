@@ -145,3 +145,16 @@ fluent-select{
     --neutral-fill-stealth-active: light-dark(var(--tf-base-50), var(--tf-base-800));    
   }
 }
+
+/*Input*/
+fluent-text-field{
+  &.with-prefix {
+    &::part(start) {
+      color: var(--tf-font-color-mute);
+    }
+
+    &::part(control) {
+      padding-left: 0;
+    }
+  }
+}

@@ -53,7 +53,7 @@ public partial class TucAdminUsersPageContent : TfBaseComponent, IDisposable
 		}
 	}
 	
-	private async Task addUser()
+	private async Task addItem()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucUserManageDialog>(
 			new TfUser(),

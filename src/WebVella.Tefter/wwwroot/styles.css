@@ -285,8 +285,9 @@ html:root {
   --tf-border-radius-md: 1rem;
   --tf-border-radius-lg: 2rem;
   --tf-border-radius-xl: 3rem;
-  --tf-shadow-base: light-dark(0px 0px 1.5px 0px rgba(0, 0, 0, 0.05), 0px 1.4px 1.5px 0px rgba(0, 0, 0, 0.05), 0px -1px 1px 0px rgba(0, 0, 0, 0.1), 0px 0px 1.5px 0px rgba(255, 255, 255, 0.03), 0px 1.4px 1.5px 0px rgba(255, 255, 255, 0.03), 0px -1px 1px 0px rgba(255, 255, 255, 0.05));
-  --tf-shadow-lg: light-dark(0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -4px rgba(255, 255, 255, 0.1));
+  --tf-shadow-color-1: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.07));
+  --tf-shadow-color-2: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.07));
+  --tf-shadow-base: 0px 0px 1.5px 0px var(--tf-shadow-color-1), 0px 1.4px 1.5px 0px var(--tf-shadow-color-1), 0px -1px 1px 0px var(--tf-shadow-color-2);
 }
 body {
   color: var(--tf-font-color-base);
@@ -405,6 +406,13 @@ fluent-select fluent-option {
   --neutral-fill-stealth-hover: light-dark(var(--tf-base-50), var(--tf-base-800));
   --neutral-fill-stealth-focus: light-dark(var(--tf-base-50), var(--tf-base-800));
   --neutral-fill-stealth-active: light-dark(var(--tf-base-50), var(--tf-base-800));
+}
+/*Input*/
+fluent-text-field.with-prefix::part(start) {
+  color: var(--tf-font-color-mute);
+}
+fluent-text-field.with-prefix::part(control) {
+  padding-left: 0;
 }
 .tf-card {
   --tf-card-border-radius: var(--tf-border-radius-base);
@@ -1066,9 +1074,6 @@ fluent-select fluent-option {
   display: flex;
   flex-flow: row;
 }
-.tflg:not(.tflg--has-page-tabs) {
-  --tf-page-tabs-height: 0px;
-}
 .tflg__aside {
   flex: 0 0 var(--tf-aside-width);
   display: flex;
@@ -1105,6 +1110,9 @@ fluent-select fluent-option {
   display: flex;
   flex-flow: column nowrap;
 }
+.tflpc:not(.tflpc--has-page-tabs) {
+  --tf-page-tabs-height: 0px;
+}
 .tflpc__header {
   flex: 0 0 var(--tf-page-header-height);
   display: flex;
@@ -1136,6 +1144,8 @@ fluent-select fluent-option {
   display: flex;
   flex-flow: column;
   justify-content: end;
+  padding-left: var(--tf-padding-base);
+  padding-right: var(--tf-padding-base);
 }
 .tflpc__content {
   flex: 1 1 auto;
@@ -1285,6 +1295,105 @@ fluent-select fluent-option {
 }
 .tf-page-topbar #user-menu-toggle::part(content) {
   top: 0;
+}
+.tf-select-component {
+  width: 100%;
+}
+.tf-select-component .tf-card {
+  border: 1px solid var(--tf-stroke-input);
+  padding: 5px;
+  border-radius: var(--tf-border-radius-sm);
+}
+.tf-select-component .tf-card__content {
+  padding-top: 0;
+}
+.tf-select-component.disabled .tf-card {
+  background: var(--tf-fill-color-base-1);
+  border: 1px solid var(--tf-stroke-base);
+}
+.tf-select-component:not(.disabled):not(.readonly) .tf-card:hover {
+  border: 1px solid var(--tf-stroke-input-hover);
+}
+.tf-select-component.readonly .tf-card {
+  border: 1px solid var(--tf-stroke-base);
+}
+.tf-select-component.readonly .tf-card:hover {
+  background: var(--tf-fill-color-base-1);
+  cursor: no-drop;
+}
+.tf-select-component .tf-component {
+  display: flex;
+  width: 100%;
+}
+.tf-select-component .tf-component-icon {
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+.tf-select-component .tf-component-icon svg {
+  width: 32px !important;
+}
+.tf-select-component .tf-component-meta {
+  flex: 1 1 auto;
+}
+.tf-select-component .tf-component-title {
+  font-size: 1.15em;
+}
+.tf-select-component .tf-component-description {
+  color: var(--neutral-base-color);
+}
+.tf-select-component .tf-component-caret {
+  flex: 0 0 20px;
+  display: flex;
+  align-items: center;
+}
+.tf-select-component .tf-component--small .tf-component-icon {
+  flex-basis: 24px;
+}
+.tf-select-component .tf-component--small .tf-component-icon svg {
+  width: 18px !important;
+}
+.tf-select-component .tf-component--small .tf-component-title {
+  font-size: 1em;
+}
+.tf-select-component .tf-component--small .tf-component-description {
+  font-size: 0.85em;
+}
+.tf-select-component fluent-menu-item {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 1rem;
+  height: auto;
+  display: flex !important;
+}
+.tf-select-component fluent-menu-item::part(start) {
+  display: none;
+}
+.tf-select-component fluent-menu-item::part(content) {
+  flex: 1 1 auto;
+}
+.tf-tabs {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid var(--tf-stroke-color);
+}
+.tf-tabs__item {
+  flex: 0 0 auto;
+  padding: var(--tf-padding-base);
+}
+.tf-tabs__item--active {
+  border-bottom: 2px solid var(--tf-accent-color);
+}
+.tf-tabs__item fluent-anchor {
+  --accent-foreground-rest: var(--tf-font-color-base);
+  --accent-fill-rest: var(--tf-font-color-base);
+}
+.tf-tabs__item fluent-anchor::part(start) {
+  margin-inline-end: 5px;
+}
+.tf-tabs__item fluent-anchor::part(control) {
+  text-decoration: none;
 }
 .tf-treemenu {
   width: 100%;

@@ -2,13 +2,12 @@
 @using WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-<TucPageLayout Title="@LOC("Asset Folders")"
-			   Icon="@TfConstants.GetIcon("Document")" Color="@TfConstants.AdminColor">
-	<NavigationRight>
+<TucLayoutPageContent Title="@LOC("Asset Folders")">
+	<Toolbar>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_createFolderHandler" IconStart="@TfConstants.GetIcon("Add")">
 			@LOC("Create folder")
 		</FluentButton>
-	</NavigationRight>
+	</Toolbar>
 	<ChildContent>
 		<table class="tf-grid">
 			<thead class="tf-grid-thead">
@@ -58,4 +57,4 @@
 			</tbody>
 		</table>
 	</ChildContent>
-</TucPageLayout>
+</TucLayoutPageContent>

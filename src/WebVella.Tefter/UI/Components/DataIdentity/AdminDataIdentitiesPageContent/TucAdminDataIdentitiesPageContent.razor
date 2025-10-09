@@ -1,15 +1,58 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout Icon="@TfConstants.GetIcon("KeyMultiple")" Area="@LOC("Data")"
-			   Title="@LOC("Data Identities")" Color="TfConstants.AdminColor">
-	<div style="padding:var(--tf-padding-base)">
-		<FluentMessageBar Title="Note" AllowDismiss="false"
-						  Intent="@MessageIntent.Info">
-			<div>@LOC("No Data Identities are created yet.")</div>
-		</FluentMessageBar>
-		<FluentButton Appearance="@Appearance.Outline" OnClick="onAddClick" Style="margin-top:2rem;">
-			<FluentIcon Slot="start" Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" />
-			@LOC("Create Data Identity")
-		</FluentButton>
-	</div>
-</TucPageLayout>
+<TucLayoutPageContent Title="@LOC("Data Identities")">
+    <Toolbar>
+        <FluentButton OnClick="onAddClick" Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">
+            @LOC("New Identity")
+        </FluentButton>
+        <TucPageSearch/>
+    </Toolbar>
+    <ChildContent>
+        <div style="padding:var(--tf-padding-base)">
+
+            <table class="tf-grid">
+                <colgroup>
+                    <col span="1" style="width: 20px;min-width: 20px">
+                    <col/>
+                </colgroup>
+                <thead>
+                <tr class="tf-grid-thead-bkg"></tr>
+                @if (_isLoading)
+                {
+                    <tr class="tf-grid-thead-loading"></tr>
+                }
+                <tr>
+                    <th></th>
+                    <th>@LOC("name")</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _items)
+                {
+                    <tr>
+                        <td>
+                            <div>
+                                <TucAnchor Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Open")"
+                                           Href="@String.Format(TfConstants.AdminDataIdentityDetailsPageUrl, item.DataIdentity).GenerateWithLocalAsReturnUrl(TfAuthLayout.GetState().NavigationState.Uri)"/>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                @item.DataIdentity
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (_items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="2">
+                            <div>@LOC("no items")</div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </ChildContent>
+</TucLayoutPageContent>

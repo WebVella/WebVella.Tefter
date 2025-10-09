@@ -57,7 +57,7 @@ public static partial class NavigatorExt
 						appState.SpacePages = oldState.SpacePages;
 					else
 						appState.SpacePages = _tfService.GetSpacePages(navState.SpaceId.Value);
-					
+
 					if (navState.SpacePageId is not null)
 						appState.SpacePage =
 							appState.SpacePages.FirstOrDefault(x => x.Id == navState.SpacePageId.Value);
@@ -190,7 +190,13 @@ public static partial class NavigatorExt
 				Url = string.Format(TfConstants.AdminFileRepositoryPageUrl),
 				Text = LOC["File Repository"]
 			});
-
+			rootMenu.Items.Add(new TfMenuItem()
+			{
+				Id = "tf-templates-link",
+				Selected = routeState.HasNode(RouteDataNode.Templates, 1),
+				Url = string.Format(TfConstants.AdminTemplatesPageUrl),
+				Text = LOC["Templates"]
+			});
 			menuItems.Add(rootMenu);
 		}
 
@@ -207,7 +213,8 @@ public static partial class NavigatorExt
 				IconExpanded = TfConstants.GetIcon("AppFolder"),
 				Selected = routeState.HasNode(RouteDataNode.Pages, 1),
 				Url = null,
-				Text = LOC["Addons"]
+				Text = LOC["Addons"],
+				Expanded = true
 			};
 
 			foreach (var addonPage in addonPages)
@@ -217,7 +224,7 @@ public static partial class NavigatorExt
 					Id = $"tf-addon-{addonPage.Id}",
 					Selected = routeState.PageId == addonPage.Id,
 					Url = string.Format(TfConstants.AdminPagesSingleUrl, addonPage.Id),
-					Text = LOC["File Repository"]
+					Text = addonPage.Name
 				});
 			}
 
@@ -316,62 +323,93 @@ public static partial class NavigatorExt
 						break;
 					case RouteDataNode.Users:
 						menu.Add(accessNode);
-						menu.Add(new()
+						if (navState.RouteNodes.Last() != node)
 						{
-							Id = "tf-admin-access-users", Text = LOC["Users"], Url = TfConstants.AdminUsersPageUrl
-						});
+							menu.Add(new()
+							{
+								Id = "tf-admin-access-users",
+								Text = LOC["Users"],
+								Url = TfConstants.AdminUsersPageUrl
+							});
+						}
+
 						break;
 					case RouteDataNode.Roles:
 						menu.Add(accessNode);
-						menu.Add(new()
+						if (navState.RouteNodes.Last() != node)
 						{
-							Id = "tf-admin-access-roles", Text = LOC["Roles"], Url = TfConstants.AdminRolesPageUrl
-						});
+							menu.Add(new()
+							{
+								Id = "tf-admin-access-roles",
+								Text = LOC["Roles"],
+								Url = TfConstants.AdminRolesPageUrl
+							});
+						}
+
 						break;
 					case RouteDataNode.DataProviders:
 						menu.Add(dataNode);
-						menu.Add(new()
+						if (navState.RouteNodes.Last() != node)
 						{
-							Id = "tf-admin-data-data-providers",
-							Text = LOC["Data Providers"],
-							Url = TfConstants.AdminDataProvidersPageUrl
-						});
+							menu.Add(new()
+							{
+								Id = "tf-admin-data-data-providers",
+								Text = LOC["Data Providers"],
+								Url = TfConstants.AdminDataProvidersPageUrl
+							});
+						}
 						break;
 					case RouteDataNode.SharedColumns:
 						menu.Add(dataNode);
-						menu.Add(new()
+						if (navState.RouteNodes.Last() != node)
 						{
-							Id = "tf-admin-data-shared-columns",
-							Text = LOC["Shared Columns"],
-							Url = TfConstants.AdminSharedColumnsPageUrl
-						});
+							menu.Add(new()
+							{
+								Id = "tf-admin-data-shared-columns",
+								Text = LOC["Shared Columns"],
+								Url = TfConstants.AdminSharedColumnsPageUrl
+							});
+						}
+
 						break;
 					case RouteDataNode.DataIdentities:
 						menu.Add(dataNode);
-						menu.Add(new()
+						if (navState.RouteNodes.Last() != node)
 						{
-							Id = "tf-admin-data-data-identities",
-							Text = LOC["Data Identities"],
-							Url = TfConstants.AdminDataIdentitiesPageUrl
-						});
+							menu.Add(new()
+							{
+								Id = "tf-admin-data-data-identities",
+								Text = LOC["Data Identities"],
+								Url = TfConstants.AdminDataIdentitiesPageUrl
+							});
+						}
+
 						break;
 					case RouteDataNode.FileRepository:
 						menu.Add(contentNode);
-						menu.Add(new()
+						if (navState.RouteNodes.Last() != node)
 						{
-							Id = "tf-admin-content-file-repository",
-							Text = LOC["File Repository"],
-							Url = TfConstants.AdminFileRepositoryPageUrl
-						});
+							menu.Add(new()
+							{
+								Id = "tf-admin-content-file-repository",
+								Text = LOC["File Repository"],
+								Url = TfConstants.AdminFileRepositoryPageUrl
+							});
+						}
+
 						break;
 					case RouteDataNode.Templates:
 						menu.Add(contentNode);
-						menu.Add(new()
+						if (navState.RouteNodes.Last() != node)
 						{
-							Id = "tf-admin-content-templates",
-							Text = LOC["Templates"],
-							Url = TfConstants.AdminTemplatesPageUrl
-						});
+							menu.Add(new()
+							{
+								Id = "tf-admin-content-templates",
+								Text = LOC["Templates"],
+								Url = TfConstants.AdminTemplatesPageUrl
+							});
+						}
+
 						break;
 					case RouteDataNode.Pages:
 						menu.Add(addonsNode);

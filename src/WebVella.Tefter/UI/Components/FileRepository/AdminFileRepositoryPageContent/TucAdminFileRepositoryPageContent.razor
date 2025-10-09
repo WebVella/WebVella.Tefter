@@ -1,8 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout Icon="@TfConstants.GetIcon("DocumentDatabase")" Area="@LOC("File Repository")"
-			   Title="@LOC("Files")" Color="TfConstants.AdminColor">
-	<NavigationRight>
+<TucLayoutPageContent Title="@LOC("Files")">
+	<Toolbar>
 		@if (progressPercent < 100)
 		{
 			<TucProgress Value="progressPercent" Visible="@(progressPercent > 0)" />
@@ -30,7 +29,7 @@
 		}
 		<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@_search"
 					  AutoComplete="off" Style="margin-left:1rem;" @ref=_refSearch />
-	</NavigationRight>
+	</Toolbar>
 	<ChildContent>
 		@if (String.IsNullOrWhiteSpace(_search) && (_items is null || _items.Count == 0))
 		{
@@ -111,4 +110,4 @@
 			</table>
 		}
 	</ChildContent>
-</TucPageLayout>
+</TucLayoutPageContent>

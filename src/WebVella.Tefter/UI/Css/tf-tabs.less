@@ -1,0 +1,29 @@
+﻿@import '_variables.less';
+
+.tf-tabs {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid var(--tf-stroke-color);
+
+  &__item {
+    flex: 0 0 auto;
+    padding:var(--tf-padding-base);
+    
+    &--active{
+      border-bottom: 2px solid var(--tf-accent-color);
+    }
+    
+    fluent-anchor {
+      --accent-foreground-rest: var(--tf-font-color-base);
+      --accent-fill-rest:var(--tf-font-color-base);
+      &::part(start){
+        margin-inline-end:5px;
+      }
+      
+      &::part(control) {
+        text-decoration: none;
+      }
+    }
+  }
+}
+

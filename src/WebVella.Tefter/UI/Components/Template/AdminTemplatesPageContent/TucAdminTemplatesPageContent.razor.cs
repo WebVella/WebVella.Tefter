@@ -1,10 +1,9 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-
-public partial class TucAdminDataProvidersPageContent : TfBaseComponent
+public partial class TucAdminTemplatesPageContent :TfBaseComponent
 {
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private bool _isLoading = false;
-	private List<TfDataProvider> _items = new();
+	private List<TfTemplate> _items = new();
 
 	public void Dispose()
 	{
@@ -15,12 +14,12 @@ public partial class TucAdminDataProvidersPageContent : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.DataProviderCreatedEvent += On_UserChanged;
-		TfEventProvider.DataIdentityUpdatedEvent += On_UserChanged;
+		TfEventProvider.TemplateCreatedEvent += On_ItemChanged;
+		TfEventProvider.TemplateUpdatedEvent += On_ItemChanged;
 		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
-	private async Task On_UserChanged(object args)
+	private async Task On_ItemChanged(object args)
 	{
 		await InvokeAsync(async () =>
 		{
@@ -43,7 +42,7 @@ public partial class TucAdminDataProvidersPageContent : TfBaseComponent
 	{
 		try
 		{
-			_items = TfService.GetDataProviders(navState.Search).ToList();
+			_items = TfService.GetTemplates(navState.Search).ToList();
 		}
 		finally
 		{
@@ -51,13 +50,11 @@ public partial class TucAdminDataProvidersPageContent : TfBaseComponent
 			UriInitialized = navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
-	}
-
-
-	private async Task addItem()
+	}	
+	private async Task onAddClick()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TucDataProviderManageDialog>(
-		new TfDataProvider(),
+		var dialog = await DialogService.ShowDialogAsync<TucTemplateManageDialog>(
+		new TfTemplate(), 
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,

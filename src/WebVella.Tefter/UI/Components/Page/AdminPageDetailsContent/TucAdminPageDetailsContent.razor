@@ -1,18 +1,17 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <TucErrorBoundry>
-	<div style="padding:var(--tf-padding-base)">
-		@if (String.IsNullOrWhiteSpace(UriInitialized))
-		{
-			<TucSkeletonPageHeader />
-		}
-		else if (_item is null)
-		{
-			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-		}
-		else
-		{
-			<TucScreenRegionComponent RegionContext="@(new TfAdminPageScreenRegionContext())" Scope="@(new TfScreenRegionScope(null, _item.Id))" />
-		}
-	</div>
+	@if (String.IsNullOrWhiteSpace(UriInitialized))
+	{
+		<TucSkeletonPageHeader/>
+	}
+	else if (_item is null)
+	{
+		<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+	}
+	else
+	{
+		<TucScreenRegionComponent RegionContext="@(new TfAdminPageScreenRegionContext())"
+		                          Scope="@(new TfScreenRegionScope(null, _item.Id))"/>
+	}
 </TucErrorBoundry>

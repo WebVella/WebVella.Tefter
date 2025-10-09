@@ -1,13 +1,12 @@
 ﻿@namespace WebVella.Tefter.Talk.Components
 @using WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout Title="@LOC("Talk Channels")"
-			   Icon="@TfConstants.GetIcon("Comment")" Color="@TfConstants.AdminColor">
-	<NavigationRight>
+<TucLayoutPageContent Title="@LOC("Talk Channels")">
+	<Toolbar>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_createChannelHandler" IconStart="@TfConstants.GetIcon("Add")">
 			@LOC("Create channel")
 		</FluentButton>
-	</NavigationRight>
+	</Toolbar>
 	<ChildContent>
 		<table class="tf-grid">
 			<thead class="tf-grid-thead">
@@ -57,4 +56,4 @@
 			</tbody>
 		</table>
 	</ChildContent>
-</TucPageLayout>
+</TucLayoutPageContent>

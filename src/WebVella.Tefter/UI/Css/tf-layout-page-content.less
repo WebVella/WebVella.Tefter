@@ -5,6 +5,10 @@
   display: flex;
   flex-flow: column nowrap;
 
+  &:not(.tflpc--has-page-tabs) {
+    --tf-page-tabs-height: 0px;
+  }  
+  
   &__header {
     flex: 0 0 var(--tf-page-header-height);
     display: flex;
@@ -40,6 +44,8 @@
     display: flex;
     flex-flow: column;
     justify-content: end;
+    padding-left: var(--tf-padding-base);
+    padding-right: var(--tf-padding-base);
   }
 
   &__content {

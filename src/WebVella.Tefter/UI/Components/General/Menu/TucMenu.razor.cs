@@ -49,8 +49,8 @@ public partial class TucMenu : TfBaseComponent
 
 		//Css
 		var classList = new List<string>();
-		classList.Add("tf-menu");
-		classList.Add($"tf-menu--level-{Level}");
+		classList.Add("tf-tabs");
+		classList.Add($"tf-tabs--level-{Level}");
 		if (!String.IsNullOrWhiteSpace(Class))
 			classList.Add(Class);
 		_css = String.Join(" ", classList);

@@ -1,90 +1,94 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout Icon="@TfConstants.GetIcon("KeyMultiple")" Color="@TfConstants.AdminColor"
-			   Area="@LOC("Data Identities")" Title="@_identity?.DataIdentity">
-	<TucErrorBoundry>
-		<div style="padding:var(--tf-padding-base)">
-			@if (String.IsNullOrWhiteSpace(UriInitialized))
-			{
-				<TucSkeletonPageHeader />
-			}
-			else if (_identity is null)
-			{
-				<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-			}
-			else
-			{
-				<TucCard Title="@LOC("Details")">
-					<ToolbarTemplate>
+<TucLayoutPageContent Title="@_identity?.DataIdentity">
+	<div style="padding:var(--tf-padding-base)">
+		@if (String.IsNullOrWhiteSpace(UriInitialized))
+		{
+			<TucSkeletonPageHeader/>
+		}
+		else if (_identity is null)
+		{
+			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+		}
+		else
+		{
+			<TucCard Title="@LOC("Details")">
+				<ToolbarTemplate>
+					@if (_identity.IsSystem)
+					{
+						<FluentButton Appearance="@Appearance.Outline" Disabled=true
+						              Title="@LOC("System roles cannot be managed")">
+							@LOC("Locked")
+							<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start"/>
+						</FluentButton>
+					}
+					else
+					{
+						<FluentButton Appearance="@Appearance.Outline" OnClick="_editIdentity">
+							@LOC("Edit")
+							<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start"/>
+						</FluentButton>
+					}
+				</ToolbarTemplate>
+				<ChildContent>
+					<FluentGrid>
+						<FluentGridItem xs="6">
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_identity.DataIdentity"
+							                 ReadOnly="true" Label="@LOC("Name")" Style="width:100%"/>
+						</FluentGridItem>
+						<FluentGridItem xs="6">
+							<FluentInputLabel>@LOC("Type")</FluentInputLabel>
+							<TucPlainTextField>
+								<FluentStack VerticalAlignment="@VerticalAlignment.Center"
+								             Class="fluent-plaintext-field">
+									@if (_identity.IsSystem)
+									{
+										<FluentIcon
+											Value="@TfConstants.GetIcon("ShieldError").WithColor(TfColor.Red600.GetColor().Value)"></FluentIcon>
+										<span>@LOC("system role")</span>
+									}
+									else
+									{
+										<FluentIcon
+											Value="@TfConstants.GetIcon("Person").WithColor(Color.Info)"></FluentIcon>
+										<span>@LOC("user created")</span>
+									}
+								</FluentStack>
+							</TucPlainTextField>
+						</FluentGridItem>
+					</FluentGrid>
+					<FluentGrid>
+						<FluentGridItem xs="12">
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_identity.Label"
+							                 ReadOnly="true" Label="@LOC("Description")" Style="width:100%"/>
+						</FluentGridItem>
+					</FluentGrid>
+				</ChildContent>
+			</TucCard>
+			<TucCard>
+				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween"
+				             VerticalAlignment="@VerticalAlignment.Center">
+					<div>@LOC("Deleting this identity will remove all data relations that depend on it, but will not alter any source data from providers, shared columns or applications. ")</div>
+					<div>
 						@if (_identity.IsSystem)
 						{
-							<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be managed")">
+							<FluentButton Appearance="@Appearance.Outline" Disabled=true
+							              Title="@LOC("System roles cannot be managed")">
 								@LOC("Locked")
-								<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
+								<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start"/>
 							</FluentButton>
 						}
 						else
 						{
-							<FluentButton Appearance="@Appearance.Outline" OnClick="_editIdentity">
-								@LOC("Edit")
-								<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
+							<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white"
+							              OnClick="_deleteIdentity">
+								@LOC("Delete this Data Identity")
+								<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start"/>
 							</FluentButton>
 						}
-					</ToolbarTemplate>
-					<ChildContent>
-						<FluentGrid>
-							<FluentGridItem xs="6">
-								<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_identity.DataIdentity"
-												 ReadOnly="true" Label="@LOC("Name")" Style="width:100%" />
-							</FluentGridItem>
-							<FluentGridItem xs="6">
-								<FluentInputLabel>@LOC("Type")</FluentInputLabel>
-								<TucPlainTextField>
-									<FluentStack VerticalAlignment="@VerticalAlignment.Center" Class="fluent-plaintext-field">
-										@if (_identity.IsSystem)
-										{
-											<FluentIcon Value="@TfConstants.GetIcon("ShieldError").WithColor(TfColor.Red600.GetColor().Value)"></FluentIcon>
-											<span>@LOC("system role")</span>
-										}
-										else
-										{
-											<FluentIcon Value="@TfConstants.GetIcon("Person").WithColor(Color.Info)"></FluentIcon>
-											<span>@LOC("user created")</span>
-										}
-									</FluentStack>
-								</TucPlainTextField>
-							</FluentGridItem>
-						</FluentGrid>
-						<FluentGrid>
-							<FluentGridItem xs="12">
-								<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_identity.Label"
-												 ReadOnly="true" Label="@LOC("Description")" Style="width:100%" />
-							</FluentGridItem>
-						</FluentGrid>
-					</ChildContent>
-				</TucCard>
-				<TucCard>
-					<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
-						<div>@LOC("Deleting this identity will remove all data relations that depend on it, but will not alter any source data from providers, shared columns or applications. ")</div>
-						<div>
-							@if (_identity.IsSystem)
-							{
-								<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be managed")">
-									@LOC("Locked")
-									<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start" />
-								</FluentButton>
-							}
-							else
-							{
-								<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteIdentity">
-									@LOC("Delete this Data Identity")
-									<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
-								</FluentButton>
-							}
-						</div>
-					</FluentStack>
-				</TucCard>
-			}
-		</div>
-	</TucErrorBoundry>
-</TucPageLayout>
+					</div>
+				</FluentStack>
+			</TucCard>
+		}
+	</div>
+</TucLayoutPageContent>

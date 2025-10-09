@@ -1,10 +1,9 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout Icon="@TfConstants.GetIcon("CloudDatabase")" Area="@LOC("Data Providers")"
-			   Title="@_provider?.Name" SubTitle="@LOC("Datasets")" Color="TfConstants.AdminColor">
-	<NavigationLeft>
+<TucLayoutPageContent Title="@_provider?.Name">
+	<Tabs>
 		<TucAdminDataProviderDetailsContentToolbar />
-	</NavigationLeft>
+	</Tabs>
 	<ChildContent>
 		<TucErrorBoundry>
 			<div style="padding:var(--tf-padding-base)">
@@ -168,4 +167,4 @@
 			</div>
 		</TucErrorBoundry>
 	</ChildContent>
-</TucPageLayout>
+</TucLayoutPageContent>

@@ -465,13 +465,12 @@ public partial class TfService : ITfService
 	{
 		var result = new List<TfDatasetAsOption>();
 		var spaceData = GetDatasets();
-		var spaceDict = GetSpacesList().ToDictionary(x => x.Id);
 		foreach (var item in spaceData)
 		{
 			result.Add(new TfDatasetAsOption { Id = item.Id, Name = item.Name, });
 		}
 
-		result = result.OrderBy(x => x.SpaceName).ThenBy(x => x.Name).ToList();
+		result = result.OrderBy(x => x.Name).ToList();
 		return result;
 	}
 

@@ -37,20 +37,20 @@ public partial class TucMenuItem : TfBaseComponent
 		_attributes = (new Dictionary<string, object>() { { "title", Item.Tooltip ?? String.Empty } }).AsReadOnly();
 
 		var classList = new List<string>();
-		classList.Add("tf-menu__item");
+		classList.Add("tf-tabs__item");
 		if (!String.IsNullOrWhiteSpace(Class)) classList.Add(Class);
-		if (Item.Selected) classList.Add("tf-menu__item--active");
+		if (Item.Selected) classList.Add("tf-tabs__item--active");
 
 		if (Item.Disabled)
-			classList.Add("tf-menu__item--disabled");
+			classList.Add("tf-tabs__item--disabled");
 
 		if (Item.Data is not null)
-			classList.Add($"tf-menu__item--{Item.Data.SpacePageType.ToDescriptionString()}");
+			classList.Add($"tf-tabs__item--{Item.Data.SpacePageType.ToDescriptionString()}");
 
 		_css = String.Join(" ", classList);
 
 		var expandClassList = classList.ToList();
-		expandClassList.Add("tf-menu__item--expand");
+		expandClassList.Add("tf-tabs__item--expand");
 		_expandItemCss = String.Join(" ", expandClassList);
 
 		if (Item.IsSeparateChevron is not null

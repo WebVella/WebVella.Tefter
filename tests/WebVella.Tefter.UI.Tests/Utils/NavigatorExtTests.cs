@@ -219,26 +219,14 @@ public class NavigatorExtTests
 		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
 		result.RouteNodes[1].Should().Be(RouteDataNode.Templates);
 
-		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminTemplatesTypePageUrl,TfTemplateResultType.Text)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminTemplateDetailsPageUrl,templateId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(3);
 		result.RouteNodes.Count.Should().Be(3);
 		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
 		result.RouteNodes[1].Should().Be(RouteDataNode.Templates);
-		result.RouteNodes[2].Should().Be(RouteDataNode.TemplateTypeId);
-		result.TemplateResultType.Should().Be(TfTemplateResultType.Text);
-
-		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminTemplatesTemplatePageUrl,TfTemplateResultType.Text,templateId)}");
-		result = NavigatorExt.GetNodeData(uri);
-		result.NodesDict.Should().NotBeNull();
-		result.NodesDict.Count.Should().Be(4);
-		result.RouteNodes.Count.Should().Be(4);
-		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
-		result.RouteNodes[1].Should().Be(RouteDataNode.Templates);
-		result.RouteNodes[2].Should().Be(RouteDataNode.TemplateTypeId);
-		result.RouteNodes[3].Should().Be(RouteDataNode.TemplateId);
-		result.TemplateResultType.Should().Be(TfTemplateResultType.Text);
+		result.RouteNodes[2].Should().Be(RouteDataNode.TemplateId);
 		result.TemplateId.Should().Be(templateId);
 		#endregion
 

@@ -1,11 +1,10 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout Icon="@TfConstants.GetIcon("CloudDatabase")" Area="@LOC("Data Providers")"
-			   Title="@_provider?.Name" SubTitle="@LOC("Data")" Color="TfConstants.AdminColor">
-	<NavigationLeft>
+<TucLayoutPageContent Title="@_provider?.Name">
+	<Tabs>
 		<TucAdminDataProviderDetailsContentToolbar />
-	</NavigationLeft>
-	<ToolbarLeft>
+	</Tabs>
+	<Toolbar>
 		@if (_provider is not null)
 		{
 			<FluentSearch Value="@_navState.Search" ValueChanged="_onSearch" AutoComplete="off" Placeholder="@LOC("search...")" />
@@ -31,8 +30,6 @@
 				</span>
 			</FluentButton>
 		}
-	</ToolbarLeft>
-	<ToolbarRight>
 		@if (_provider is not null)
 		{
 			@if (_syncRunning)
@@ -59,8 +56,8 @@
 		<FluentButton OnClick="_addRow" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("Add")" Slot="start" Color="@Color.Success" />
 			@LOC("add data")
-		</FluentButton>
-	</ToolbarRight>
+		</FluentButton>		
+	</Toolbar>
 	<ChildContent>
 		<TucErrorBoundry>
 			@if (String.IsNullOrWhiteSpace(UriInitialized))
@@ -177,4 +174,4 @@
 			}
 		</TucErrorBoundry>
 	</ChildContent>
-</TucPageLayout>
+</TucLayoutPageContent>
