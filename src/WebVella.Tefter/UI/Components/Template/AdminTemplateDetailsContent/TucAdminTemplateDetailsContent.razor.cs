@@ -12,30 +12,30 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 	public void Dispose()
 	{
 		TfEventProvider.TemplateUpdatedEvent -= On_TemplateUpdated;
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		TfEventProvider.TemplateUpdatedEvent += On_TemplateUpdated;
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
 	private async Task On_TemplateUpdated(TfTemplateUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(navState: TfState.NavigationState, template: args.Payload);
+			await _init(navState: TfAuthLayout.GetState().NavigationState, template: args.Payload);
 		});
 	}
 
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(navState: args);
+			if (UriInitialized != args.Location)
+				await _init(navState: TfAuthLayout.GetState().NavigationState);
 		});
 	}
 

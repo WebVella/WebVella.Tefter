@@ -12,27 +12,30 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 		TfEventProvider.SpacePageCreatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent -= On_SpacePageChanged;
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		TfEventProvider.SpacePageCreatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent += On_SpacePageChanged;
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
 	private async Task On_SpacePageChanged(object args)
 	{
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 	}
 
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(navState: args);
+		InvokeAsync(async () =>
+		{
+			if (UriInitialized != args.Location)
+				await _init(navState: TfAuthLayout.GetState().NavigationState);
+		});
 	}
 
 	private async Task _init(TfNavigationState navState)

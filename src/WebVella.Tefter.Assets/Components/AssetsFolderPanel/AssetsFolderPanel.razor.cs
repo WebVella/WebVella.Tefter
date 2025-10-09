@@ -34,7 +34,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 					if (_dataIdentityValue is not null)
 						_items = AssetsService.GetAssets(_folder.Id, _dataIdentityValue);
 				}
-				_currentUser = TfState.User;
+				_currentUser = TfAuthLayout.GetState().User;
 				if (_currentUser is null)
 					throw new Exception("User not found");
 				_isLoading = false;

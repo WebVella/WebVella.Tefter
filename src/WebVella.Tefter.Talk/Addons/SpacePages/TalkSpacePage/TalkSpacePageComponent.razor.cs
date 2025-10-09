@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Routing;
 using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.Talk.Addons;
@@ -68,14 +69,14 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	#region << Render Lifecycle >>
 	public void Dispose()
 	{
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		_currentUser = TfState.User;
-		await _init(TfState.NavigationState);
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		_currentUser = TfAuthLayout.GetState().User;
+		await _init(TfAuthLayout.GetState().NavigationState);
+		Navigator.LocationChanged += On_NavigationStateChanged;
 		_isLoaded = true;
 	}
 	protected override void OnParametersSet()
@@ -94,12 +95,12 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	#endregion
 
 	#region << Private methods >>
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (_uriInitialized != args.Uri)
-				await _init(navState: args);
+			if (_uriInitialized != args.Location)
+				await _init(navState: TfAuthLayout.GetState().NavigationState);
 		});
 	}
 
@@ -147,7 +148,7 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	private async Task<string> _getDataIdentityValue()
 	{
 		if (_options is null) return Guid.NewGuid().ToSha1();
-		var navState = TfState.NavigationState;
+		var navState = TfAuthLayout.GetState().NavigationState;
 		switch (_options.DataIdentityValueType)
 		{
 			case TalkChannelDataIdentityValueType.SpacePageId:

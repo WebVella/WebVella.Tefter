@@ -1,23 +1,31 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDisposable
 {
 	private bool _isLoading = true;
 	private List<TfMenuItem> _menu = new();
 	private TfSpacePage? _spacePage = null;
+
 	public void Dispose()
 	{
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfState.NavigationState);
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		await _init(TfAuthLayout.GetState().NavigationState);
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		if (UriInitialized != args.Uri)
-			await _init(args);
+		InvokeAsync(async () =>
+		{
+			if (UriInitialized != args.Location)
+				await _init(TfAuthLayout.GetState().NavigationState);
+		});
 	}
+
 	private async Task _init(TfNavigationState navState)
 	{
 		try
@@ -28,7 +36,7 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 			_spacePage = TfService.GetSpacePage(navState.SpacePageId.Value);
 			var pageMeta = TfMetaService.GetSpacePagesComponentsMeta();
 			var component = pageMeta.FirstOrDefault(x => x.Instance.AddonId == _spacePage.ComponentId);
-			if(_spacePage is null)
+			if (_spacePage is null)
 				return;
 
 			_menu.Add(new TfMenuItem
@@ -46,14 +54,18 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 				_menu.Add(new TfMenuItem
 				{
 					Id = Guid.NewGuid().ToString(),
-					Url = string.Format(TfConstants.SpacePagePageManageTabUrl, navState.SpaceId, navState.SpacePageId, tab.Slug)
+					Url = string.Format(TfConstants.SpacePagePageManageTabUrl, navState.SpaceId, navState.SpacePageId,
+							tab.Slug)
 						.GenerateWithLocalAsReturnUrl(navState.ReturnUrl),
-					Selected = navState.NodesDict.Keys.Count == 5 && navState.HasNode(RouteDataNode.ManageTab, 4) && navState.ManageTab == tab.Slug,
+					Selected =
+						navState.NodesDict.Keys.Count == 5 && navState.HasNode(RouteDataNode.ManageTab, 4) &&
+						navState.ManageTab == tab.Slug,
 					Text = tab.Label,
-					IconCollapsed = TfConstants.GetIcon(String.IsNullOrWhiteSpace(tab.FluentIconName) ? "PlugConnected" : tab.FluentIconName)
-				});				
+					IconCollapsed = TfConstants.GetIcon(String.IsNullOrWhiteSpace(tab.FluentIconName)
+						? "PlugConnected"
+						: tab.FluentIconName)
+				});
 			}
-
 		}
 		finally
 		{

@@ -13,13 +13,13 @@ public class SpaceViewPageComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var authLayout = new TfState();
+		var authLayout = new TfAuthLayout();
 		var cut = Context.RenderComponent<TucSpaceViewSpacePageAddon>(args => args
 		.Add(x => x.Context, new TfSpacePageAddonContext()
 		{
 			ComponentOptionsJson = JsonSerializer.Serialize(new TfSpaceViewSpacePageAddonOptions())
 		})
-		.Add(x=> x.TfState, authLayout)
+		.Add(x=> x.TfAuthLayout, authLayout)
 		);
 
 		// Assert

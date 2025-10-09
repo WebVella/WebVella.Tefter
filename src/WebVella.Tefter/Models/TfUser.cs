@@ -39,6 +39,15 @@ public class TfUser
 			return false;
 		}
 	}
+	
+	public string RoleNames
+	{
+		get
+		{
+			if (Roles is null || Roles.Count == 0) return String.Empty;
+			return String.Join(", ", Roles.Select(x => x.Name));
+		}
+	}	
 }
 
 

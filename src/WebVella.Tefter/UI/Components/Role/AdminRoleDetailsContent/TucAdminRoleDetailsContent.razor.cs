@@ -10,30 +10,30 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		TfEventProvider.RoleUpdatedEvent -= On_RoleUpdated;
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		TfEventProvider.RoleUpdatedEvent += On_RoleUpdated;
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
 	private async Task On_RoleUpdated(TfRoleUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(navState: TfState.NavigationState, role: args.Payload);
+			await _init(navState: TfAuthLayout.GetState().NavigationState, role: args.Payload);
 		});
 	}
 
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(navState: args);
+			if (UriInitialized != args.Location)
+				await _init(navState: TfAuthLayout.GetState().NavigationState);
 		});
 	}
 
@@ -47,7 +47,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 			}
 			else
 			{
-				var routeData = TfState.NavigationState;
+				var routeData = TfAuthLayout.GetState().NavigationState;
 				if (routeData.RoleId is not null)
 					_role = TfService.GetRole(routeData.RoleId.Value);
 

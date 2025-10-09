@@ -1,0 +1,6 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+<FluentSearch Class="search" Placeholder="@LOC("search...")" 
+              Value=@TfAuthLayout.GetState().NavigationState?.Search
+              ValueChanged="onSearch" AutoComplete="off" />

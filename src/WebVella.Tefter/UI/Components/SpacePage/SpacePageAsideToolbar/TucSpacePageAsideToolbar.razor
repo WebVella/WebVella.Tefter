@@ -17,7 +17,7 @@
 				</FluentSearch>
 			</FluentStack>
 		</div>
-		@if (TfState.User.IsAdmin)
+		@if (TfAuthLayout.GetState().User.IsAdmin)
 		{
 			<div class="tf-sidetoolbar__actions">
 				<FluentButton Title="More actions"

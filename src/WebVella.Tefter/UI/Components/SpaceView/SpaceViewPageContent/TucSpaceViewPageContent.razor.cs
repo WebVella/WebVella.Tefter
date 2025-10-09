@@ -36,7 +36,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private Dictionary<string, object>? _manageBtnAttributes = new();
 	public async ValueTask DisposeAsync()
 	{
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 		TfEventProvider.UserUpdatedGlobalEvent -= On_UserChanged;
 		TfEventProvider.SpaceViewColumnsChangedEvent -= On_SpaceViewUpdated;
 		_objectRef?.Dispose();
@@ -54,7 +54,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			throw new Exception("Context cannot be null");		
 		_componentMetaDict = TfMetaService.GetSpaceViewColumnComponentMetaDictionary();
 		_objectRef = DotNetObjectReference.Create(this);
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		_caretDownInactive = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
@@ -90,7 +90,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+			Navigator.LocationChanged += On_NavigationStateChanged;
 			TfEventProvider.UserUpdatedGlobalEvent += On_UserChanged;
 			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewUpdated;
 			await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable", _tableId);
@@ -100,13 +100,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 								 _objectRef, ComponentId, "OnColumnSort");
 		}
 	}
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
+			if (UriInitialized != args.Location)
 			{
-				await _init(navState: args);
+				await _init(navState: TfAuthLayout.GetState().NavigationState);
 			}
 		});
 	}
@@ -116,7 +116,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		{
 			if (Context is not null)
 				Context.CurrentUser = args.Payload;
-			await _init(TfState.NavigationState);
+			await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
 
@@ -124,9 +124,9 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		await InvokeAsync(async () =>
 		{
-			if (args.UserId != TfState.User.Id) return;
+			if (args.UserId != TfAuthLayout.GetState().User.Id) return;
 			_spaceViewColumns = args.Payload;
-			await _init(TfState.NavigationState);
+			await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
 

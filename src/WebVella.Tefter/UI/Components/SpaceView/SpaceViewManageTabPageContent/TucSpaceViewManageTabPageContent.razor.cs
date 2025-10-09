@@ -17,7 +17,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	public bool _submitting = false;
 	public void Dispose()
 	{
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 		TfEventProvider.SpaceViewUpdatedEvent -= On_SpaceViewUpdated;
 		TfEventProvider.SpaceViewColumnsChangedEvent -= On_SpaceViewColumnUpdated;
 	}
@@ -27,7 +27,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		await base.OnInitializedAsync();
 		if (Context is null)
 			throw new Exception("Context cannot be null");
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		_isDataLoading = false;
 	}
 
@@ -36,32 +36,32 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+			Navigator.LocationChanged += On_NavigationStateChanged;
 			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewUpdated;
 			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewColumnUpdated;
 		}
 	}
 
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
+			if (UriInitialized != args.Location)
 			{
-				await _init(args);
+				await _init(TfAuthLayout.GetState().NavigationState);
 			}
 		});
 	}
 
 	private async Task On_SpaceViewUpdated(TfSpaceViewUpdatedEvent args)
 	{
-		if(args.UserId != TfState.User.Id) return;
-		await _init(TfState.NavigationState);
+		if(args.UserId != TfAuthLayout.GetState().User.Id) return;
+		await _init(TfAuthLayout.GetState().NavigationState);
 	}	
 	private async Task On_SpaceViewColumnUpdated(TfSpaceViewColumnsChangedEvent args)
 	{
-		if(args.UserId != TfState.User.Id) return;
-		await _init(TfState.NavigationState);
+		if(args.UserId != TfAuthLayout.GetState().User.Id) return;
+		await _init(TfAuthLayout.GetState().NavigationState);
 	}
 
 	private async Task _init(TfNavigationState navState)

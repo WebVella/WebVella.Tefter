@@ -13,23 +13,23 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		TfEventProvider.SpaceUpdatedEvent -= On_SpaceUpdated;
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		TfEventProvider.SpaceUpdatedEvent += On_SpaceUpdated;
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
 
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(navState: args);
+			if (UriInitialized != args.Location)
+				await _init(navState: TfAuthLayout.GetState().NavigationState);
 		});
 	}
 
@@ -37,7 +37,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(navState: TfState.NavigationState, space: args.Payload);
+			await _init(navState: TfAuthLayout.GetState().NavigationState, space: args.Payload);
 		});
 	}
 

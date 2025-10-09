@@ -15,30 +15,30 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		TfEventProvider.SpacePageCreatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent -= On_SpacePageChanged;
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		TfEventProvider.SpacePageCreatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent += On_SpacePageChanged;
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
 	private async Task On_SpacePageChanged(object args)
 	{
 		await InvokeAsync(async () =>
 		{
-			await _init(TfState.NavigationState);
+			await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(args);
+			if (UriInitialized != args.Location)
+				await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
 
@@ -108,7 +108,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		}
 		else if (_activeTab == TfSpaceNavigationActiveTab.Bookmarks)
 		{
-			var bookmarks = TfService.GetBookmarksListForUser(TfState.User.Id);
+			var bookmarks = TfService.GetBookmarksListForUser(TfAuthLayout.GetState().User.Id);
 			var spaceViewDict = (TfService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
 			foreach (var record in bookmarks
 				.Where(x => spaceViewDict.ContainsKey(x.SpacePageId)).OrderBy(x => x.Name))
@@ -131,7 +131,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		}
 		else if (_activeTab == TfSpaceNavigationActiveTab.Saves)
 		{
-			var saves = TfService.GetSavesListForUser(TfState.User.Id);
+			var saves = TfService.GetSavesListForUser(TfAuthLayout.GetState().User.Id);
 			var spaceViewDict = (TfService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
 			foreach (var record in saves
 				.Where(x => spaceViewDict.ContainsKey(x.SpacePageId)).OrderBy(x => x.Name))

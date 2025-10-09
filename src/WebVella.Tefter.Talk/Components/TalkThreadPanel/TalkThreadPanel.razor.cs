@@ -49,7 +49,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 					if (_dataIdentityValue is not null)
 						_threads = TalkService.GetThreads(_channel.Id, _dataIdentityValue);
 				}
-				_currentUser = TfState.User;
+				_currentUser = TfAuthLayout.GetState().User;
 				if (_currentUser is null)
 					throw new Exception("User not found");
 				_isLoading = false;

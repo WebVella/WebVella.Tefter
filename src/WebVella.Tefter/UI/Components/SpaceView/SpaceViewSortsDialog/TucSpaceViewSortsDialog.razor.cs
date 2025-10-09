@@ -26,7 +26,7 @@ public partial class TucSpaceViewSortsDialog : TfFormBaseComponent, IDialogConte
 
 	private async Task _init()
 	{
-		var navState = TfState.NavigationState;
+		var navState = TfAuthLayout.GetState().NavigationState;
 		_items = navState.Sorts ?? new();
 	}
 

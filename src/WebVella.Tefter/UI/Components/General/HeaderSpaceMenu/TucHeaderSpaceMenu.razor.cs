@@ -8,7 +8,7 @@ public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 		TfEventProvider.SpacePageCreatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent -= On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent -= On_SpacePageChanged;
@@ -17,32 +17,32 @@ public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init(TfState.NavigationState);
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		await _init(TfAuthLayout.GetState().NavigationState);
+		Navigator.LocationChanged += On_NavigationStateChanged;
 		TfEventProvider.SpacePageCreatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
 		TfEventProvider.SpacePageDeletedEvent += On_SpacePageChanged;
 	}
 
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(args);
+			if (UriInitialized != args.Location)
+				await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
 
 	private async Task On_SpacePageChanged(object args)
 	{
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 	}
 
 	private async Task _init(TfNavigationState navState)
 	{
 		try
 		{
-			_menu = TfState.Menu;
+			_menu = TfAuthLayout.GetState().Menu;
 		}
 		finally
 		{
@@ -84,7 +84,7 @@ public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 		if (!result.Cancelled && result.Data != null)
 		{
 			var item = (TfSpace)result.Data;
-			await _init(TfState.NavigationState);
+			await _init(TfAuthLayout.GetState().NavigationState);
 		}
 	}
 
@@ -95,7 +95,7 @@ public partial class TucHeaderSpaceMenu : TfBaseComponent, IDisposable
 		{
 			TfService.DeleteSpace(args.Data.SpaceId.Value);
 			ToastService.ShowSuccess(LOC("Space deleted"));
-			await _init(TfState.NavigationState);
+			await _init(TfAuthLayout.GetState().NavigationState);
 		}
 		catch (Exception ex)
 		{

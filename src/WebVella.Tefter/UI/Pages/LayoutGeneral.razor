@@ -60,7 +60,7 @@
 				<FluentButton Class="tf-button" Appearance="Appearance.Outline">Admin Space</FluentButton>
 				<FluentButton Class="tf-button" IconEnd="@TfConstants.GetIcon("ChevronDown")"
 				              Appearance="@Appearance.Outline">
-					<TucAvatar User="@TfState.User"></TucAvatar>
+					<TucAvatar User="@TfAuthLayout.GetState().User"></TucAvatar>
 				</FluentButton>
 			</div>
 		</div>
@@ -137,8 +137,8 @@
 
 @code {
 
-	[CascadingParameter(Name = "TfState")]
-	public TfState TfState { get; set; } = null!;
+	[CascadingParameter(Name = "TfAuthLayout")]
+	public TfAuthLayout TfAuthLayout { get; set; } = null!;
 
 	[Inject] public ITfService TfService { get; set; } = null!;
 
@@ -153,7 +153,7 @@
 		_context.ComponentOptionsJson = @"{""DatasetId"":""82d669cb-4dd1-4a2d-a2b3-dccdf8f05e6a"",""SpaceViewId"":""615e9347-0123-4190-8a32-6d07cebf65e2""}";
 		_context.SpacePage = TfService.GetSpacePage(new Guid("3a8912c0-0efd-471f-a2bd-d97ffc366fed"));
 		_context.Space = TfService.GetSpace(_context.SpacePage.SpaceId);
-		_context.CurrentUser = TfState.User;
+		_context.CurrentUser = TfAuthLayout.GetState().User;
 		var user = await TfService.GetUserFromCookieAsync(
 			jsRuntime: JSRuntime,
 			authStateProvider: AuthenticationProvider);

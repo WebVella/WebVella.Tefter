@@ -8,15 +8,15 @@
 // 	private string _styles = String.Empty;
 // 	public void Dispose()
 // 	{
-// 		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+// 		Navigator.LocationChanged -= On_NavigationStateChanged;
 // 	}
 //
 // 	protected override void OnInitialized()
 // 	{
 // 		_init(TfAuthLayout.AppState.NavigationState);
-// 		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+// 		Navigator.LocationChanged += On_NavigationStateChanged;
 // 	}
-// 	private async Task On_NavigationStateChanged(TfNavigationState args)
+// 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 // 	{
 // 		await InvokeAsync(async () =>
 // 		{

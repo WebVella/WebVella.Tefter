@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Assets.Components;
+﻿using Microsoft.AspNetCore.Components.Routing;
+
+namespace WebVella.Tefter.Assets.Components;
 public partial class AssetsFolderAdminList : TfBaseComponent
 {
 	[Inject] public IAssetsService AssetsService { get; set; }
@@ -11,26 +13,26 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 		AssetsService.FolderCreated -= On_FolderChanged;
 		AssetsService.FolderUpdated -= On_FolderChanged;
 		AssetsService.FolderDeleted -= On_FolderChanged;
-		TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		await _init(TfState.NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState);
 		AssetsService.FolderCreated += On_FolderChanged;
 		AssetsService.FolderUpdated += On_FolderChanged;
 		AssetsService.FolderDeleted += On_FolderChanged;
-		TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 	private async Task On_FolderChanged(AssetsFolder args)
 	{
-		await InvokeAsync(async () => { await _init(TfState.NavigationState); });
+		await InvokeAsync(async () => { await _init(TfAuthLayout.GetState().NavigationState); });
 	}
-	private async Task On_NavigationStateChanged(TfNavigationState args)
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		await InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			if (UriInitialized != args.Uri)
-				await _init(args);
+			if (UriInitialized != args.Location)
+				await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
 

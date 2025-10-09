@@ -31,7 +31,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 		return JsonSerializer.Serialize(new TfExportViewData()
 		{
 			SelectedRows = SelectedRows,
-			RouteState = TfState.NavigationState
+			RouteState = TfAuthLayout.GetState().NavigationState
 		});
 	}
 
@@ -41,7 +41,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 		return JsonSerializer.Serialize(new TfExportViewData()
 		{
 			SelectedRows = new(),
-			RouteState = TfState.NavigationState
+			RouteState = TfAuthLayout.GetState().NavigationState
 		});
 	}
 
@@ -73,7 +73,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 			{
 				Id = Guid.NewGuid(),
 				SpacePageId = SpaceView.Id,
-				UserId = TfState.User!.Id,
+				UserId = TfAuthLayout.GetState().User!.Id,
 				CreatedOn = DateTime.Now,
 				Description = String.Empty,//initially nothing is added for convenience
 				Name = SpaceView.Name + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
@@ -101,7 +101,7 @@ public partial class TucSpaceViewShareSelector : TfBaseComponent
 			{
 				Id = Guid.NewGuid(),
 				SpacePageId = SpaceView.Id,
-				UserId = TfState.User.Id,
+				UserId = TfAuthLayout.GetState().User.Id,
 				CreatedOn = DateTime.Now,
 				Description = String.Empty,//initially nothing is added for convenience
 				Name = SpaceView.Name + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),

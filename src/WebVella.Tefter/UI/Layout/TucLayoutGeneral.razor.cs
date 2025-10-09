@@ -26,5 +26,5 @@ public partial class TucLayoutGeneral : TfBaseComponent
 		}
 	}
 	
-	private bool _displayReturn => !String.IsNullOrWhiteSpace(TfState.NavigationState.ReturnUrl);
+	private bool _displayReturn => !String.IsNullOrWhiteSpace(TfAuthLayout.GetState().NavigationState.ReturnUrl);
 }

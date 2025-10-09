@@ -9,14 +9,23 @@ public static partial class NavigatorExt
 		ITfMetaService _metaService,
 		IStringLocalizer<TfService> LOC,
 		TfUser currentUser,
-		string? urlOverride = null)
+		string? urlOverride = null,
+		TfState? oldState = null)
 	{
 		var navState = navigator.GetRouteState(urlOverride);
 		var appState = new TfState();
 		appState.Uri = navigator.Uri;
-		appState.User = currentUser;
 		appState.NavigationState = navState;
-		appState.UserSaves = _tfService.GetSavesListForUser(currentUser.Id);
+
+		//User
+		appState.User = currentUser;
+
+		//Get user saves
+		if (oldState is not null && oldState.User.Id == currentUser.Id)
+			appState.UserSaves = oldState.UserSaves;
+		else
+			appState.UserSaves = _tfService.GetSavesListForUser(currentUser.Id);
+
 		if (navState.RouteNodes.Count == 0) { }
 		else if (navState.RouteNodes[0] == RouteDataNode.Admin)
 		{
@@ -34,17 +43,29 @@ public static partial class NavigatorExt
 		{
 			if (navState.SpaceId is not null)
 			{
-				appState.Space = _tfService.GetSpace(navState.SpaceId.Value);
+				//get space
+				if (oldState is not null && oldState.Space is not null && oldState.Space.Id == navState.SpaceId)
+					appState.Space = oldState.Space;
+				else
+					appState.Space = _tfService.GetSpace(navState.SpaceId.Value);
+
 				if (appState.Space is not null)
 				{
-					var spacePages = _tfService.GetSpacePages(navState.SpaceId.Value);
+					//get space pages
+					if (oldState is not null && oldState.Space?.Id == appState.Space.Id
+					                         && oldState.SpacePages is not null)
+						appState.SpacePages = oldState.SpacePages;
+					else
+						appState.SpacePages = _tfService.GetSpacePages(navState.SpaceId.Value);
+					
 					if (navState.SpacePageId is not null)
-						appState.SpacePage = spacePages.FirstOrDefault(x => x.Id == navState.SpacePageId.Value);
+						appState.SpacePage =
+							appState.SpacePages.FirstOrDefault(x => x.Id == navState.SpacePageId.Value);
 
 					appState.Menu = navState.generateSpaceMenu(
-						spacePages: _tfService.GetSpacePages(navState.SpaceId.Value));
+						spacePages: appState.SpacePages);
 
-					appState.generateBreadcrumb(LOC, navState, spacePages: spacePages);
+					appState.generateBreadcrumb(LOC, navState, spacePages: appState.SpacePages);
 				}
 			}
 		}
@@ -382,8 +403,8 @@ public static partial class NavigatorExt
 					Id = $"tf-space-{appState.Space.Id}",
 					Text = appState.Space.Name,
 					Url = spacePages is not null && spacePages.Count > 0
-					? String.Format(TfConstants.SpacePagePageUrl,appState.Space.Id, spacePages[0].Id)
-					: null
+						? String.Format(TfConstants.SpacePagePageUrl, appState.Space.Id, spacePages[0].Id)
+						: null
 				});
 			}
 		}

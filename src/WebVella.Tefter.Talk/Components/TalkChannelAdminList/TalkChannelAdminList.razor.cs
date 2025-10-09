@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Talk.Components;
+﻿using Microsoft.AspNetCore.Components.Routing;
+
+namespace WebVella.Tefter.Talk.Components;
 
 public partial class TalkChannelAdminList : TfBaseComponent
 {
@@ -12,29 +14,29 @@ public partial class TalkChannelAdminList : TfBaseComponent
         TalkService.ChannelCreated -= On_ChannelChanged;
         TalkService.ChannelUpdated -= On_ChannelChanged;
         TalkService.ChannelDeleted -= On_ChannelChanged;
-        TfState.NavigationStateChangedEvent -= On_NavigationStateChanged;
+        Navigator.LocationChanged -= On_NavigationStateChanged;
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await _init(TfState.NavigationState);
+        await _init(TfAuthLayout.GetState().NavigationState);
         TalkService.ChannelCreated += On_ChannelChanged;
         TalkService.ChannelUpdated += On_ChannelChanged;
         TalkService.ChannelDeleted += On_ChannelChanged;
-        TfState.NavigationStateChangedEvent += On_NavigationStateChanged;
+        Navigator.LocationChanged += On_NavigationStateChanged;
     }
 
     private async Task On_ChannelChanged(TalkChannel args)
     {
-        await InvokeAsync(async () => { await _init(TfState.NavigationState); });
+        await InvokeAsync(async () => { await _init(TfAuthLayout.GetState().NavigationState); });
     }
 
-    private async Task On_NavigationStateChanged(TfNavigationState args)
+    private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
     {
-        await InvokeAsync(async () =>
+        InvokeAsync(async () =>
         {
-            if (UriInitialized != args.Uri)
-                await _init(args);
+            if (UriInitialized != args.Location)
+                await _init(TfAuthLayout.GetState().NavigationState);
         });
     }
 
