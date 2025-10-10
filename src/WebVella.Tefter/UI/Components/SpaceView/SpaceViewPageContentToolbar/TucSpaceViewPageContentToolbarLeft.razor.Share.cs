@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceViewPageContentToolbarRight : TfBaseComponent
+public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 {
 	private TucSpaceViewShareSelector _shareSelector;
 	private async Task OnExportClick()

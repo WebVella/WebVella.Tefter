@@ -20,11 +20,18 @@ public static partial class NavigatorExt
 		//User
 		appState.User = currentUser;
 
-		//Get user saves
+
+		//Get user saves and bookmarks
 		if (oldState is not null && oldState.User.Id == currentUser.Id)
+		{
+			appState.UserBookmarks = oldState.UserBookmarks;
 			appState.UserSaves = oldState.UserSaves;
+		}
 		else
+		{
+			appState.UserBookmarks = _tfService.GetBookmarksListForUser(currentUser.Id);
 			appState.UserSaves = _tfService.GetSavesListForUser(currentUser.Id);
+		}
 
 		if (navState.RouteNodes.Count == 0) { }
 		else if (navState.RouteNodes[0] == RouteDataNode.Admin)
@@ -256,6 +263,7 @@ public static partial class NavigatorExt
 			IconCollapsed = TfConstants.GetIcon(page.FluentIconName),
 			IconExpanded = TfConstants.GetIcon(page.FluentIconName),
 			Selected = page.Id == navState.SpacePageId,
+			Expanded = true,
 			ChildSelected = page.GetChildPagesPlainList().Any(x => x.Id == navState.SpacePageId),
 			Url = page.Type == TfSpacePageType.Folder
 				? null

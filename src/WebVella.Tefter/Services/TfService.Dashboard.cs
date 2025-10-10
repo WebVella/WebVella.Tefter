@@ -157,9 +157,9 @@ public partial class TfService : ITfService
 
 		foreach (var item in userBookmarks)
 		{
-			if (viewDict.ContainsKey(item.SpacePageId))
+			if (viewDict.ContainsKey(item.SpaceId))
 			{
-				var spaceView = viewDict[item.SpacePageId];
+				var spaceView = viewDict[item.SpaceId];
 				var space = spaceDict[spaceView.SpaceId];
 				var record = new TfSearchResult()
 				{
@@ -230,7 +230,7 @@ public partial class TfService : ITfService
 				CreatedOn = item.CreatedOn ?? DateTime.Now,
 				Description = item.Description ?? String.Empty,
 				Name = item.Title ?? String.Empty,
-				SpacePageId = item.SpaceViewId ?? Guid.Empty,
+				SpaceId = item.SpaceViewId ?? Guid.Empty,
 				Tags = item.Tags,
 				Url = item.Url ?? String.Empty
 			});

@@ -15,5 +15,5 @@ public partial class TucSpaceHeader : TfBaseComponent, IDisposable
 	{
 		StateHasChanged();
 	}	
-	
+		
 }

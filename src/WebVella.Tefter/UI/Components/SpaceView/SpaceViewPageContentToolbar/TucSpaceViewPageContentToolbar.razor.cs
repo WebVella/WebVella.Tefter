@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
+public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 {
 	// Dependency Injection
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
@@ -11,7 +11,7 @@ public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
 	[Parameter] public TfSpaceViewPreset? SpaceViewPreset { get; set; } = null;
 	[Parameter] public TfDataTable Data { get; set; } = null!;
 	[Parameter] public EventCallback<TfDataTable> DataChanged { get; set; }
-
+	
 	private TfNavigationState _navState = null!;
 	private bool _hasViewPersonalization = false;
 	public void Dispose()

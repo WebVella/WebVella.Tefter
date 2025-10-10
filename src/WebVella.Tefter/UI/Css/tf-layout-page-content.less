@@ -13,13 +13,14 @@
     flex: 0 0 var(--tf-page-header-height);
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: start;
     padding:0 var(--tf-padding-base);
 
     &__left {
       flex: 0 0 auto;
       display: flex;
       align-items: center;
+      min-height: 32px;
       
       &__title{
         font-weight: var(--tf-font-weight-lg);
@@ -33,6 +34,7 @@
 
     &__right {
       flex: 0 0 auto;
+      min-height: 32px;
       display: flex;
       align-items: center;
       gap: var(--tf-padding-sm);

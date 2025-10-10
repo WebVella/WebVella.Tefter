@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 <div class="tf-space-actions">
     <FluentButton IconStart="@TfConstants.GetIcon("AppFolder")"
-                  Appearance="@Appearance.Outline">@LOC("spaces")
+                  Appearance="@Appearance.Outline" OnClick="_findSpace">@LOC("spaces")
     </FluentButton>
     @if (TfAuthLayout.GetState().Space is not null)
     {

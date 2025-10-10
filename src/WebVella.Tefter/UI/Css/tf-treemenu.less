@@ -18,7 +18,7 @@
     top: 0;
     bottom: 0;
     width: 1px;
-    background:linear-gradient(to bottom, var(--tf-fill-base-hover) 0%, var(--tf-accent-color) 50%, var(--tf-fill-base-hover) 100%);
+    background:linear-gradient(to bottom, var(--tf-fill-base-hover) 0%, var(--tf-fill-base-active) 50%, var(--tf-fill-base-hover) 100%);
   }
 
 }
@@ -60,7 +60,7 @@
     }
   }
 
-  &.tf-active:not(.tf-parent) {
+  &.tf-active:not(.tf-child-active) {
     position: relative;
     color:var(--tf-accent-color);
     &::before {

@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceViewPageContentToolbarLeft : TfBaseComponent
+public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 {
 	//private TfSpaceViewPropertiesSelector _propertiesSelector;
 	//private Task OnGridPropertiesClick()

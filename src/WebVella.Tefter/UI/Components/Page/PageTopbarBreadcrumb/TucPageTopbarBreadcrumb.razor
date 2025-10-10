@@ -1,14 +1,29 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <FluentBreadcrumb>
-    @foreach (var item in TfAuthLayout.GetState().Breadcrumb)
+    @foreach (var item in _items)
     {
-        <FluentBreadcrumbItem Href="@item.Url">
-            @if (item.IconCollapsed is not null)
-            {
-                <FluentIcon Value="@item.IconCollapsed" Slot="start"/> 
-            } 
-            @item.Text
-        </FluentBreadcrumbItem>
+        @if (item.Href == "#" && item.OnClick.HasDelegate)
+        {
+            <div @onclick="item.OnClick" @onclick:preventDefault="true"  @onclick:stopPropagation="true">
+                <FluentBreadcrumbItem Href="#">
+                    @if (item.IconCollapsed is not null)
+                    {
+                        <FluentIcon Value="@item.IconCollapsed" Slot="start"/>
+                    }
+                    @item.Text
+                </FluentBreadcrumbItem>
+            </div>
+        }
+        else
+        {
+            <FluentBreadcrumbItem Href="@item.Url">
+                @if (item.IconCollapsed is not null)
+                {
+                    <FluentIcon Value="@item.IconCollapsed" Slot="start"/>
+                }
+                @item.Text
+            </FluentBreadcrumbItem>
+        }
     }
 </FluentBreadcrumb>

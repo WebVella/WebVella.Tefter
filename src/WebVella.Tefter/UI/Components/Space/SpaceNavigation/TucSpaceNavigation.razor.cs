@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminNavigation : TfBaseComponent,IDisposable
+public partial class TucSpaceNavigation : TfBaseComponent,IDisposable
 {
 	public void Dispose()
 	{

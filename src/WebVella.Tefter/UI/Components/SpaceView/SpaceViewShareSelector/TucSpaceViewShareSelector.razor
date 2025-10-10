@@ -8,21 +8,6 @@
 				@LOC("Copy link")
 				<FluentIcon Value="@TfConstants.GetIcon("Link")" Slot="start" Color="@Color.Accent" />
 			</FluentMenuItem>
-
-			@* 	@if (TfAppState.Value.ActiveSpaceViewBookmark is null)
-				{
-					<FluentMenuItem OnClick="_bookmarkView">
-						@LOC("Bookmark View")
-						<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Slot="start" Color="@Color.Accent" />
-					</FluentMenuItem>
-				} *@
-			@if (ActiveSavedUrl is null)
-			{
-				<FluentMenuItem OnClick="_saveViewUrl">
-					@LOC("Save URL")
-					<FluentIcon Value="@TfConstants.GetIcon("LinkAdd")" Slot="start" Color="@Color.Accent" />
-				</FluentMenuItem>
-			}
 			<FluentDivider />
 			<FluentMenuItem>
 				<ChildContent>
