@@ -55,13 +55,26 @@
                 @TfAuthLayout.GetState().User.FirstName @TfAuthLayout.GetState().User.LastName
             </FluentMenuItem>
             <FluentDivider Style="margin-top:10px"/>
-            <FluentMenuItem OnClick="_setUrlAsStartup">
-                @LOC("Set as Startup URL")
-                <span slot="start">
-                    <FluentIcon Value="@TfConstants.GetIcon("Pin")"
-                                Slot="start"/>
-                </span>
-            </FluentMenuItem>
+            @if (_isSetAsStartupUri())
+            {
+                <FluentMenuItem OnClick="_resetUrlAsStartup">
+                    @LOC("Reset Startup URL")
+                    <span slot="start">
+                        <FluentIcon Value="@TfConstants.GetIcon("PinOff")"
+                                    Slot="start"/>
+                    </span>
+                </FluentMenuItem>
+            }
+            else
+            {
+                <FluentMenuItem OnClick="_setUrlAsStartup">
+                    @LOC("Set as Startup URL")
+                    <span slot="start">
+                        <FluentIcon Value="@TfConstants.GetIcon("Pin")"
+                                    Slot="start"/>
+                    </span>
+                </FluentMenuItem>                
+            }
             <FluentMenuItem OnClick="_logout">
                 @LOC("Logout")
                 <span slot="start">

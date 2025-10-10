@@ -195,7 +195,7 @@ public partial interface ITfService
 		List<TfUser> users,
 		TfRole role);
 
-	Task<TfUser> SetStartUpUrl(Guid userId, string url);
+	Task<TfUser> SetStartUpUrl(Guid userId, string? url);
 
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
 
@@ -1229,7 +1229,7 @@ public partial class TfService : ITfService
 	}
 
 	public async Task<TfUser> SetStartUpUrl(Guid userId,
-		string url)
+		string? url)
 	{
 		var user = GetUser(userId);
 		var userBld = CreateUserBuilder(user);

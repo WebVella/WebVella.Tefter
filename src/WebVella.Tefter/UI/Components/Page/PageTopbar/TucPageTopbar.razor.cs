@@ -65,7 +65,7 @@ public partial class TucPageTopbar : TfBaseComponent, IDisposable
 		}
 	}
 
-	async Task _setUrlAsStartup()
+	private async Task _setUrlAsStartup()
 	{
 		var uri = new Uri(Navigator.Uri);
 		try
@@ -80,6 +80,27 @@ public partial class TucPageTopbar : TfBaseComponent, IDisposable
 		{
 			ProcessException(ex);
 		}
+	}
+
+	private async Task _resetUrlAsStartup()
+	{
+		try
+		{
+			var user = await TfService.SetStartUpUrl(
+				userId: TfAuthLayout.GetState().User.Id,
+				url: null
+			);
+			ToastService.ShowSuccess(LOC("Startup URL was successfully changed!"));
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+	}	
+	private bool _isSetAsStartupUri()
+	{
+		var uri = new Uri(Navigator.Uri);
+		return uri.PathAndQuery == TfAuthLayout.GetState().User.Settings.StartUpUrl;
 	}
 
 	private async Task _logout()

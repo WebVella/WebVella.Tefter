@@ -93,4 +93,18 @@
 		<PackageReference Include="WebVella.BlazorTrace" Version="1.1.0" />
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="UI\Components\General\PageSearch\TucPageSearch.razor" />
+	  <UpToDateCheckInput Remove="UI\Components\General\PageTopbar\TucPageTopbar.razor" />
+	  <UpToDateCheckInput Remove="UI\Components\General\PageTopbarBreadcrumb\TucPageTopbarBreadcrumb.razor" />
+	  <UpToDateCheckInput Remove="UI\Components\Dashboard\HomeDashboard\TucHomeDashboard.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AdditionalFiles Include="UI\Components\Install\InstallHome\TucHomeDashboard.razor" />
+	  <AdditionalFiles Include="UI\Components\Page\PageSearch\TucPageSearch.razor" />
+	  <AdditionalFiles Include="UI\Components\Page\PageTopbarBreadcrumb\TucPageTopbarBreadcrumb.razor" />
+	  <AdditionalFiles Include="UI\Components\Page\PageTopbar\TucPageTopbar.razor" />
+	</ItemGroup>
 </Project>

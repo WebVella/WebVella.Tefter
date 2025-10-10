@@ -1,17 +1,20 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<div class="tflg" style="@Style">
-	<div class="tflg__aside">
-		<div class="tflg__space-header">
-			@SpaceHeader
+<div class="@_cssClass" style="@Style">
+	@if (_hasSidebar)
+	{
+		<div class="tflg__aside">
+			<div class="tflg__space-header">
+				@SpaceHeader
+			</div>
+			<div class="tflg__space-actions">
+				@SpaceActions
+			</div>
+			<div class="tflg__sidenav">
+				@SideNav
+			</div>
 		</div>
-		<div class="tflg__space-actions">
-			@SpaceActions
-		</div>
-		<div class="tflg__sidenav">
-			@SideNav
-		</div>
-	</div>
+	}
 	<div class="tflg__wrapper">
 		<div class="tflg__page-topbar">
 			@PageTopbar
