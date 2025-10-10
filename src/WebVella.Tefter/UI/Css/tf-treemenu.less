@@ -18,8 +18,7 @@
     top: 0;
     bottom: 0;
     width: 1px;
-    background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 60%),
-    color-mix(in srgb, var(--tf-accent-500), transparent 60%));;
+    background:linear-gradient(to bottom, var(--tf-fill-base-hover) 0%, var(--tf-accent-color) 50%, var(--tf-fill-base-hover) 100%);
   }
 
 }
@@ -63,16 +62,12 @@
 
   &.tf-active:not(.tf-parent) {
     position: relative;
-    background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 85%),
-    color-mix(in srgb, var(--tf-accent-500), transparent 90%));
-    color:var(--tf-font-color-hover);
-    &:hover {
-      background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 80%),
-      color-mix(in srgb, var(--tf-accent-500), transparent 85%));
-    }
-
+    color:var(--tf-accent-color);
     &::before {
       display: none !important;
+    }
+    svg{
+      --accent-fill-rest: var(--tf-accent-color);
     }
   }
 

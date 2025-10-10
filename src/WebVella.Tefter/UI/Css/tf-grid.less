@@ -1,510 +1,506 @@
 ﻿@import '_variables.less';
 
 @keyframes gridLoadingBar {
-    0% {
-        left: 0%;
-        right: 100%;
-        width: 0%;
-    }
+  0% {
+    left: 0%;
+    right: 100%;
+    width: 0%;
+  }
 
-    10% {
-        left: 0%;
-        right: 75%;
-        width: 25%;
-    }
+  10% {
+    left: 0%;
+    right: 75%;
+    width: 25%;
+  }
 
-    90% {
-        right: 0%;
-        left: 75%;
-        width: 25%;
-    }
+  90% {
+    right: 0%;
+    left: 75%;
+    width: 25%;
+  }
 
-    100% {
-        left: 100%;
-        right: 0%;
-        width: 0%;
-    }
+  100% {
+    left: 100%;
+    right: 0%;
+    width: 0%;
+  }
 }
 
 .tf-grid {
-    table-layout: fixed;
-    min-width: 100%;
-    border: 1px solid var(--tf-stroke-color);
-    border-collapse: separate !important;
-    border-spacing: 0;
-    margin-bottom: 0;
-    background: transparent;
+  table-layout: fixed;
+  min-width: 100%;
+  border: 1px solid var(--tf-stroke-color);
+  border-collapse: separate !important;
+  border-spacing: 0;
+  margin-bottom: 0;
+  background: light-dark(var(--tf-base-50), var(--tf-fill-base-active));
 
-    thead {
-        position: sticky;
-        top: 0px;
-        z-index: 3;
+  thead {
+    position: sticky;
+    top: 0px;
+    z-index: 3;
 
-        & > tr:not(.tf-grid-thead-bkg):not(.tf-grid-thead-loading) {
-            position: relative;
-            z-index: 2;
+    & > tr:not(.tf-grid-thead-bkg):not(.tf-grid-thead-loading) {
+      position: relative;
+      z-index: 2;
 
-            &:first-child {
-                & > th {
-                    border-top: none;
-                }
-            }
+      &:first-child {
+        & > th {
+          border-top: none;
         }
-
-        & tr > th,
-        & tr > td {
-            border-bottom-width: 0;
-            border-top-width: 0;
-            background: var(--tf-fill-color-hover);
-            border-color: var(--tf-stroke-color);
-            font-weight: var(--tf-font-weight-lg);
-            min-width: 60px;
-            position: relative;
-            --tf-cell-padding: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
-
-
-            .resize-handle {
-                display: none;
-                position: absolute;
-                right: 0;
-                top: 0;
-                bottom: 0;
-                width: 5px;
-                background: var(--tf-stroke-color);
-                content: "";
-                cursor: col-resize;
-            }
-
-            &:hover, &.tf-resizing {
-                .resize-handle {
-                    display: block;
-                }
-            }
-
-            &.tf-resizing .resize-handle, .resize-handle:hover {
-                background: var(--accent-fill-rest);
-            }
-
-            .tf-column-action {
-                display: none;
-                position: absolute;
-                right: 0;
-                top: 50%;
-                margin-top: -10px;
-                width: 20px;
-                height: 20px;
-                overflow: hidden;
-                border-radius: 5px;
-                background: var(--tf-fill-color-base-1);
-                content: "";
-                cursor: pointer;
-                --tf-caret-color: var(--tf-fill-color-dark);
-                justify-content: center;
-                align-items: center;
-
-                &:hover {
-                    background: var(--accent-fill-rest) !important;
-                    --tf-caret-color: var(--tf-white);
-                }
-            }
-
-            &:hover .tf-column-action {
-                display: flex;
-                background: var(--tf-stroke-invert-base);
-            }
-
-            .tf-column-sort {
-                right: var(--tf-cell-padding);
-
-                svg {
-                    display: block;
-                }
-
-                &--descending, &--ascending {
-                    display: flex;
-                }
-
-                &__caret, &__caret-down, &__caret-up {
-                    display: none;
-                }
-
-                &--none .tf-column-sort__caret {
-                    display: block;
-                }
-
-                &--ascending .tf-column-sort__caret-up {
-                    display: block;
-                }
-
-                &--descending .tf-column-sort__caret-down {
-                    display: block;
-                }
-            }
-
-            .tf-column-manage {
-                right: calc(var(--tf-cell-padding) + 25px);
-            }
-        }
-
-        & tr > th,
-        & tr > td {
-            border-left-width: 0;
-        }
+      }
     }
 
-    &-thead {
-        &-bkg {
-            position: absolute;
-            content: "";
-            top: 0;
-            bottom: 0;
-            left: 1px;
-            right: 0;
-            z-index: 1;
-            pointer-events: none;
+    & tr > th,
+    & tr > td {
+      border-top-width: 0;
+      border-color: var(--tf-stroke-color);
+      font-weight: var(--tf-font-weight-lg);
+      min-width: 60px;
+      position: relative;
+      --tf-cell-padding: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
+
+
+      .resize-handle {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 5px;
+        background: var(--tf-stroke-color);
+        content: "";
+        cursor: col-resize;
+      }
+
+      &:hover, &.tf-resizing {
+        .resize-handle {
+          display: block;
+        }
+      }
+
+      &.tf-resizing .resize-handle, .resize-handle:hover {
+        background: var(--accent-fill-rest);
+      }
+
+      .tf-column-action {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        margin-top: -10px;
+        width: 20px;
+        height: 20px;
+        overflow: hidden;
+        border-radius: 5px;
+        background: var(--tf-fill-color-base-1);
+        content: "";
+        cursor: pointer;
+        --tf-caret-color: var(--tf-fill-color-dark);
+        justify-content: center;
+        align-items: center;
+
+        &:hover {
+          background: var(--accent-fill-rest) !important;
+          --tf-caret-color: var(--tf-white);
+        }
+      }
+
+      &:hover .tf-column-action {
+        display: flex;
+        background: var(--tf-stroke-invert-base);
+      }
+
+      .tf-column-sort {
+        right: var(--tf-cell-padding);
+
+        svg {
+          display: block;
         }
 
-        &-loading {
-            position: absolute;
-            content: "";
-            height: 3px;
-            bottom: -1px;
-            left: 0;
-            right: 0;
-            z-index: 10;
-            pointer-events: none;
-            background: linear-gradient(90deg,transparent 33%,var(--accent-fill-rest) 66%,transparent 100% );
-            width: 0;
-            animation: gridLoadingBar 2s linear infinite;
+        &--descending, &--ascending {
+          display: flex;
         }
+
+        &__caret, &__caret-down, &__caret-up {
+          display: none;
+        }
+
+        &--none .tf-column-sort__caret {
+          display: block;
+        }
+
+        &--ascending .tf-column-sort__caret-up {
+          display: block;
+        }
+
+        &--descending .tf-column-sort__caret-down {
+          display: block;
+        }
+      }
+
+      .tf-column-manage {
+        right: calc(var(--tf-cell-padding) + 25px);
+      }
     }
 
-    tbody {
-        & tr {
-            & > th,
-            & > td {
-                border-bottom-width: 0;
-                border-left-width: 0;
-                border-right-width: 1px;
-                border-top-width: 1px;
-                position: relative;
-                vertical-align: top;
+    & tr > th,
+    & tr > td {
+      border-left-width: 0;
+    }
+  }
 
-                &::before {
-                    content: "";
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    left: 0;
-                    bottom: 0;
-                    z-index: 0;
-                    border-radius: 0;
-                    background: light-dark(white, var(--tf-base-950));
-                }
-
-                & > * {
-                    position: relative;
-                }
-
-                & > .tf-grid-td-color {
-                    content: "";
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    left: 0;
-                    bottom: 0;
-                    z-index: 0;
-                    border-radius: 0;
-                }
-
-                & > .tf-grid-td-selection {
-                    display: none;
-                    content: "";
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    left: 0;
-                    bottom: 0;
-                    z-index: 0;
-                    border-radius: 0;
-                }
-
-                & > .tf-grid-td-hover {
-                    display: none;
-                    content: "";
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    left: 0;
-                    bottom: 0;
-                    z-index: 0;
-                    border-radius: 0;
-                    background: var(--tf-fill-color-hover);
-                }
-
-                & > div {
-                    border-radius: calc(var(--tf-border-radius-sm) * 1px);
-                    /*white-space: nowrap;*/
-                    text-overflow: ellipsis;
-                    padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
-                    min-height: 32px;
-                }
-
-                &.multiline-text {
-                    white-space: break-spaces;
-                }
-
-                & a {
-                    text-decoration: none;
-
-                    &:hover {
-                        text-decoration: underline;
-                    }
-                }
-
-                & .td-description {
-                    font-size: var(--tf-font-size-sm);
-                    color: var(--tf-font-color-mute);
-                    white-space: initial;
-                }
-            }
-
-            &.tf-grid-tr--selected .tf-grid-td-selection {
-                display: block;
-            }
-
-            &.tf-grid-tr--selected .tf-grid-td-hover {
-                background: var(--tf-blue-200);
-            }
-
-            &:hover .tf-grid-td-hover {
-                display: block;
-            }
-
-            &:last-child > th,
-            &:last-child > td {
-                border-bottom: 1px solid var(--tf-stroke-base);
-            }
-
-            &.tf-grid-tr--edited .tf-grid-td--check::after {
-                content: "";
-                position: absolute;
-                border-radius: 0 5px 5px 0;
-                top: 2px;
-                bottom: 2px;
-                width: 5px;
-                left: -1px;
-                background: var(--tf-amber-300);
-            }
-
-/*            &.tf-grid-tr--selected .tf-grid-td--check::after {
-                background: var(--tf-amber-400);
-            }*/
-        }
+  &-thead {
+    &-bkg {
+      position: absolute;
+      content: "";
+      top: 0;
+      bottom: 0;
+      left: 1px;
+      right: 0;
+      z-index: 1;
+      pointer-events: none;
     }
 
-    & > tbody {
-        tr:first-child {
-            & > td,
-            & > th {
-                border-top-width: 0;
-            }
-        }
+    &-loading {
+      position: absolute;
+      content: "";
+      height: 3px;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      pointer-events: none;
+      background: linear-gradient(90deg, transparent 33%, var(--tf-accent-color) 66%, transparent 100%);
+      width: 0;
+      animation: gridLoadingBar 2s linear infinite;
     }
+  }
 
-    td, th {
-        border-width: 1px;
-        border-style: solid;
+  tbody {
+    & tr {
+      & > th,
+      & > td {
+        border-bottom-width: 0;
+        border-left-width: 0;
+        border-right-width: 1px;
+        border-top-width: 1px;
+        position: relative;
+        vertical-align: top;
+
+        &::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          right: 0;
+          left: 0;
+          bottom: 0;
+          z-index: 0;
+          border-radius: 0;
+        }
+
+        & > * {
+          position: relative;
+        }
+
+        & > .tf-grid-td-color {
+          content: "";
+          position: absolute;
+          top: 0;
+          right: 0;
+          left: 0;
+          bottom: 0;
+          z-index: 0;
+          border-radius: 0;
+        }
+
+        & > .tf-grid-td-selection {
+          display: none;
+          content: "";
+          position: absolute;
+          top: 0;
+          right: 0;
+          left: 0;
+          bottom: 0;
+          z-index: 0;
+          border-radius: 0;
+        }
+
+        & > .tf-grid-td-hover {
+          display: none;
+          content: "";
+          position: absolute;
+          top: 0;
+          right: 0;
+          left: 0;
+          bottom: 0;
+          z-index: 0;
+          border-radius: 0;
+          background: var(--tf-fill-base);
+        }
 
         & > div {
+          border-radius: calc(var(--tf-border-radius-sm) * 1px);
+          /*white-space: nowrap;*/
+          text-overflow: ellipsis;
+          padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
+          min-height: 32px;
+          --accent-fill-rest:var(--tf-font-color-base);
+        }
+
+        &.multiline-text {
+          white-space: break-spaces;
+        }
+
+        & a {
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        & .td-description {
+          font-size: var(--tf-font-size-sm);
+          color: var(--tf-font-color-mute);
+          white-space: initial;
+        }
+      }
+
+      &.tf-grid-tr--selected .tf-grid-td-selection {
+        display: block;
+      }
+
+      &.tf-grid-tr--selected .tf-grid-td-hover {
+        background: var(--tf-blue-200);
+      }
+
+      &:hover .tf-grid-td-hover {
+        display: block;
+      }
+
+      &:last-child > th,
+      &:last-child > td {
+        border-bottom: 1px solid var(--tf-stroke-base);
+      }
+
+      &.tf-grid-tr--edited .tf-grid-td--check::after {
+        content: "";
+        position: absolute;
+        border-radius: 0 5px 5px 0;
+        top: 2px;
+        bottom: 2px;
+        width: 5px;
+        left: -1px;
+        background: var(--tf-amber-300);
+      }
+
+      /*            &.tf-grid-tr--selected .tf-grid-td--check::after {
+                      background: var(--tf-amber-400);
+                  }*/
+    }
+  }
+
+  & > tbody {
+    tr:first-child {
+      & > td,
+      & > th {
+        border-top-width: 0;
+      }
+    }
+  }
+
+  td, th {
+    border-width: 1px;
+    border-style: solid;
+
+    & > div {
+      display: flex;
+      justify-content: start;
+      align-items: start;
+      flex-flow: column;
+    }
+  }
+
+  thead, tbody {
+    & > tr {
+      & > .tf-grid-th--check,
+      & > .tf-grid-td--check {
+        padding: 0 !important;
+        text-align: center;
+        width: 40px;
+        min-width: 40px;
+
+        .check-content {
+          padding: 0;
+          display: flex;
+
+          &.multi {
             display: flex;
-            justify-content: start;
-            align-items: start;
             flex-flow: column;
+            justify-content: center;
+            align-items: center;
+
+            fluent-button {
+              flex: 0 0 auto;
+              background: transparent !important;
+              --neutral-stroke-input-active: var(--tf-stroke-button);
+              border-radius: 3px !important;
+              height: unset;
+              margin: 2px 0;
+
+              &::part(control) {
+                width: 100%;
+              }
+
+              &:hover {
+                background: var(--tf-white) !important;
+              }
+            }
+          }
+
+          &.check {
+            fluent-button {
+              position: absolute;
+              top: 0;
+              left: 0;
+              height: 100%;
+              width: 100%;
+              background: transparent !important;
+              --neutral-stroke-input-active: var(--tf-stroke-button);
+
+              &::part(control) {
+                background: transparent !important;
+                border: none;
+              }
+
+              &:hover {
+                background: transparent !important;
+              }
+            }
+          }
         }
+      }
+
+      & > th:first-child, & > td:first-child {
+        border-left-width: 0;
+      }
+
+      & > th:last-child, & > td:last-child {
+        border-right-width: 0;
+      }
+
+      & > td > div:not([class]):empty {
+        height: 30px;
+      }
+
+      .tr-actions {
+        display: none;
+      }
+
+      &:hover .tr-actions {
+        display: flex;
+      }
     }
 
-    thead, tbody {
-        & > tr {
-            & > .tf-grid-th--check,
-            & > .tf-grid-td--check {
-                padding: 0 !important;
-                text-align: center;
-                width: 40px;
-                min-width: 40px;
-
-                .check-content {
-                    padding: 0;
-                    display: flex;
-
-                    &.multi {
-                        display: flex;
-                        flex-flow: column;
-                        justify-content: center;
-                        align-items: center;
-
-                        fluent-button {
-                            flex: 0 0 auto;
-                            background: transparent !important;
-                            --neutral-stroke-input-active: var(--tf-stroke-button);
-                            border-radius: 3px !important;
-                            height: unset;
-                            margin: 2px 0;
-
-                            &::part(control) {
-                                width: 100%;
-                            }
-
-                            &:hover {
-                                background: var(--tf-white) !important;
-                            }
-                        }
-                    }
-
-                    &.check {
-                        fluent-button {
-                            position: absolute;
-                            top: 0;
-                            left: 0;
-                            height: 100%;
-                            width: 100%;
-                            background: transparent !important;
-                            --neutral-stroke-input-active: var(--tf-stroke-button);
-
-                            &::part(control) {
-                                background: transparent !important;
-                                border: none;
-                            }
-
-                            &:hover {
-                                background: transparent !important;
-                            }
-                        }
-                    }
-                }
-            }
-
-            & > th:first-child, & > td:first-child {
-                border-left-width: 0;
-            }
-
-            & > th:last-child, & > td:last-child {
-                border-right-width: 0;
-            }
-
-            & > td > div:not([class]):empty {
-                height: 30px;
-            }
-
-            .tr-actions {
-                display: none;
-            }
-
-            &:hover .tr-actions {
-                display: flex;
-            }
-        }
-
-        th.tf--sticky, td.tf--sticky {
-            position: sticky;
-            z-index: 2;
-        }
-
-
-
-
-        .tf--sticky-first::after {
-            border-right-width: 1px;
-            border-right-style: solid;
-            content: "";
-            display: block;
-            width: 10px;
-            top: 0;
-            bottom: 0;
-            left: -11px;
-            box-shadow: inset -2px 0 5px var(--neutral-layer-2);
-            position: absolute;
-        }
-
-        .tf--sticky-last::after {
-            content: "";
-            display: block;
-            width: 10px;
-            right: -10px;
-            top: 0;
-            bottom: 0;
-            box-shadow: inset 5px 0 5px rgba(0,0,0,0.1);
-            position: absolute;
-        }
+    th.tf--sticky, td.tf--sticky {
+      position: sticky;
+      z-index: 2;
     }
 
-    thead, tfoot {
-        & > tr {
-            & > th, & > td {
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
-            }
-        }
+
+    .tf--sticky-first::after {
+      border-right-width: 1px;
+      border-right-style: solid;
+      content: "";
+      display: block;
+      width: 10px;
+      top: 0;
+      bottom: 0;
+      left: -11px;
+      box-shadow: inset -2px 0 5px var(--neutral-layer-2);
+      position: absolute;
     }
 
-    .tf-grid-td-spacer {
-        display: inline-block;
-        width: 1rem;
+    .tf--sticky-last::after {
+      content: "";
+      display: block;
+      width: 10px;
+      right: -10px;
+      top: 0;
+      bottom: 0;
+      box-shadow: inset 5px 0 5px rgba(0, 0, 0, 0.1);
+      position: absolute;
     }
+  }
+
+  thead, tfoot {
+    & > tr {
+      & > th, & > td {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
+      }
+    }
+  }
+
+  .tf-grid-td-spacer {
+    display: inline-block;
+    width: 1rem;
+  }
 }
 
 .tf-grid__pager {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 .tf-grid-tr.tf-grid-tr--selected .tf-grid-td-selection {
-    background: var(--tf-blue-100);
+  background: var(--tf-blue-100);
 }
 
 .tf-grid-tr:hover .tf-grid-td-hover {
-    background: var(--neutral-fill-secondary-rest);
+  background: var(--neutral-fill-secondary-rest);
 }
 
 .tf-grid .tf-grid-td {
-    --tf-td-color-red: var(--tf-red-600);
-    --tf-td-fill-red: var(--tf-red-100);
-    --tf-td-color-orange: var(--tf-orange-600);
-    --tf-td-fill-orange: var(--tf-orange-100);
-    --tf-td-color-amber: var(--tf-amber-600);
-    --tf-td-fill-amber: var(--tf-amber-100);
-    --tf-td-color-yellow: var(--tf-yellow-600);
-    --tf-td-fill-yellow: var(--tf-yellow-100);
-    --tf-td-color-lime: var(--tf-lime-600);
-    --tf-td-fill-lime: var(--tf-lime-100);
-    --tf-td-color-green: var(--tf-green-600);
-    --tf-td-fill-green: var(--tf-green-100);
-    --tf-td-color-emerald: var(--tf-emerald-600);
-    --tf-td-fill-emerald: var(--tf-emerald-100);
-    --tf-td-color-teal: var(--tf-teal-600);
-    --tf-td-fill-teal: var(--tf-teal-100);
-    --tf-td-color-cyan: var(--tf-cyan-600);
-    --tf-td-fill-cyan: var(--tf-cyan-100);
-    --tf-td-color-sky: var(--tf-sky-600);
-    --tf-td-fill-sky: var(--tf-sky-100);
-    --tf-td-color-blue: var(--tf-blue-600);
-    --tf-td-fill-blue: var(--tf-blue-100);
-    --tf-td-color-indigo: var(--tf-indigo-600);
-    --tf-td-fill-indigo: var(--tf-indigo-100);
-    --tf-td-color-violet: var(--tf-violet-600);
-    --tf-td-fill-violet: var(--tf-violet-100);
-    --tf-td-color-purple: var(--tf-purple-600);
-    --tf-td-fill-purple: var(--tf-purple-100);
-    --tf-td-color-fuchsia: var(--tf-fuchsia-600);
-    --tf-td-fill-fuchsia: var(--tf-fuchsia-100);
-    --tf-td-color-pink: var(--tf-pink-600);
-    --tf-td-fill-pink: var(--tf-pink-100);
-    --tf-td-color-rose: var(--tf-rose-600);
-    --tf-td-fill-rose: var(--tf-rose-100);
-    --tf-td-color-slate: var(--tf-slate-600);
-    --tf-td-fill-slate: var(--tf-slate-100);
-    --tf-td-color-black: var(--tf-font-color-base);
-    --tf-td-fill-black: var(--tf-font-color-base);
-    --tf-td-color-white: var(--tf-white);
-    --tf-td-fill-white: var(--tf-white);
+  --tf-td-color-red: var(--tf-red-600);
+  --tf-td-fill-red: var(--tf-red-100);
+  --tf-td-color-orange: var(--tf-orange-600);
+  --tf-td-fill-orange: var(--tf-orange-100);
+  --tf-td-color-amber: var(--tf-amber-600);
+  --tf-td-fill-amber: var(--tf-amber-100);
+  --tf-td-color-yellow: var(--tf-yellow-600);
+  --tf-td-fill-yellow: var(--tf-yellow-100);
+  --tf-td-color-lime: var(--tf-lime-600);
+  --tf-td-fill-lime: var(--tf-lime-100);
+  --tf-td-color-green: var(--tf-green-600);
+  --tf-td-fill-green: var(--tf-green-100);
+  --tf-td-color-emerald: var(--tf-emerald-600);
+  --tf-td-fill-emerald: var(--tf-emerald-100);
+  --tf-td-color-teal: var(--tf-teal-600);
+  --tf-td-fill-teal: var(--tf-teal-100);
+  --tf-td-color-cyan: var(--tf-cyan-600);
+  --tf-td-fill-cyan: var(--tf-cyan-100);
+  --tf-td-color-sky: var(--tf-sky-600);
+  --tf-td-fill-sky: var(--tf-sky-100);
+  --tf-td-color-blue: var(--tf-blue-600);
+  --tf-td-fill-blue: var(--tf-blue-100);
+  --tf-td-color-indigo: var(--tf-indigo-600);
+  --tf-td-fill-indigo: var(--tf-indigo-100);
+  --tf-td-color-violet: var(--tf-violet-600);
+  --tf-td-fill-violet: var(--tf-violet-100);
+  --tf-td-color-purple: var(--tf-purple-600);
+  --tf-td-fill-purple: var(--tf-purple-100);
+  --tf-td-color-fuchsia: var(--tf-fuchsia-600);
+  --tf-td-fill-fuchsia: var(--tf-fuchsia-100);
+  --tf-td-color-pink: var(--tf-pink-600);
+  --tf-td-fill-pink: var(--tf-pink-100);
+  --tf-td-color-rose: var(--tf-rose-600);
+  --tf-td-fill-rose: var(--tf-rose-100);
+  --tf-td-color-slate: var(--tf-slate-600);
+  --tf-td-fill-slate: var(--tf-slate-100);
+  --tf-td-color-black: var(--tf-font-color-base);
+  --tf-td-fill-black: var(--tf-font-color-base);
+  --tf-td-color-white: var(--tf-white);
+  --tf-td-fill-white: var(--tf-white);
 }

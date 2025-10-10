@@ -93,13 +93,4 @@
 		<PackageReference Include="WebVella.BlazorTrace" Version="1.1.0" />
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="UI\Components\User\AdminUsersPageToolbar\TucAdminUsersPageToolbar.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <AdditionalFiles Include="UI\Components\Template\AdminTemplatesPageContent\TucAdminSharedColumnsPageContent.razor" />
-	</ItemGroup>
-
 </Project>

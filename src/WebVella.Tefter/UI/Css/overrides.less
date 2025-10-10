@@ -53,7 +53,7 @@ html:root {
   
   --clear-button-hover: var(--tf-stroke-color);
 
-  --fill-color: var(--tf-fill-color-base);
+  --fill-color: var(--tf-fill-base);
 }
 
 /*Button*/
@@ -127,17 +127,17 @@ div[class ^='fluent-messagebar'],
 /*Select*/
 fluent-select{
   &::part(listbox){
-    --fill-color: var(--tf-fill-color-hover);
+    --fill-color: var(--tf-fill-base-hover);
    
   }
   fluent-option{
     --accent-fill-rest:var(--tf-accent-500);
     --neutral-foreground-rest:var(--tf-font-color-base);
     
-    --neutral-fill-secondary-rest:var(--tf-fill-color-active);
-    --neutral-fill-secondary-hover:var(--tf-fill-color-active);
-    --neutral-fill-secondary-focus:var(--tf-fill-color-active);
-    --neutral-fill-secondary-active:var(--tf-fill-color-active);
+    --neutral-fill-secondary-rest:var(--tf-fill-base-active);
+    --neutral-fill-secondary-hover:var(--tf-fill-base-active);
+    --neutral-fill-secondary-focus:var(--tf-fill-base-active);
+    --neutral-fill-secondary-active:var(--tf-fill-base-active);
     
     --neutral-fill-stealth-rest: transparent;
     --neutral-fill-stealth-hover: light-dark(var(--tf-base-50), var(--tf-base-800));

@@ -249,15 +249,15 @@ html:root {
   --tf-font-color-base: light-dark(var(--tf-base-900), var(--tf-base-300));
   --tf-font-color-hover: light-dark(var(--tf-base-950), var(--tf-base-200));
   --tf-font-color-mute: light-dark(var(--tf-base-500), var(--tf-base-500));
-  --tf-fill-color-base: light-dark(var(--tf-base-100), var(--tf-base-900));
-  --tf-fill-color-hover: light-dark(color-mix(in srgb, var(--tf-fill-color-base), var(--tf-base-900) 2%), color-mix(in srgb, var(--tf-fill-color-base), var(--tf-base-900) 2%));
-  --tf-fill-color-focus: light-dark(color-mix(in srgb, var(--tf-fill-color-base), var(--tf-base-900) 5%), color-mix(in srgb, var(--tf-fill-color-base), var(--tf-base-900) 5%));
-  --tf-fill-color-active: light-dark(color-mix(in srgb, var(--tf-fill-color-base), var(--tf-accent-900) 20%), color-mix(in srgb, var(--tf-fill-color-base), var(--tf-accent-900) 25%));
+  --tf-fill-base: light-dark(var(--tf-base-100), var(--tf-base-900));
+  --tf-fill-base-hover: light-dark(color-mix(in srgb, var(--tf-fill-base), var(--tf-base-900) 2%), color-mix(in srgb, var(--tf-fill-base), var(--tf-base-950) 10%));
+  --tf-fill-base-focus: light-dark(color-mix(in srgb, var(--tf-fill-base), var(--tf-base-900) 5%), color-mix(in srgb, var(--tf-fill-base), var(--tf-base-950) 15%));
+  --tf-fill-base-active: light-dark(color-mix(in srgb, var(--tf-fill-base), var(--tf-base-900) 20%), color-mix(in srgb, var(--tf-fill-base), var(--tf-base-950) 25%));
   --tf-button-color: light-dark(var(--tf-base-600), var(--tf-base-400));
   --tf-stroke-color: light-dark(rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.1));
   --tf-stroke-color-mute: light-dark(rgba(0, 0, 0, 0.075), rgba(255, 255, 255, 0.075));
-  --tf-stroke-color-hover: light-dark(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.2));
-  --tf-stroke-color-active: light-dark(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.25));
+  --tf-stroke-color-hover: light-dark(rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.3));
+  --tf-stroke-color-active: light-dark(rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 0.4));
   --tf-accent-color: light-dark(var(--tf-accent-500), var(--tf-accent-700));
   --tf-accent-hover: light-dark(var(--tf-accent-400), var(--tf-accent-800));
   --tf-padding-base: 15px;
@@ -291,7 +291,7 @@ html:root {
 }
 body {
   color: var(--tf-font-color-base);
-  background: var(--tf-fill-color-base);
+  background: var(--tf-fill-base);
   font-size: var(--tf-font-size-base);
 }
 a {
@@ -339,7 +339,7 @@ html:root {
   --foreground-on-accent-focus: light-dark(var(--tf-base-50), var(--tf-base-50));
   --foreground-on-accent-active: light-dark(var(--tf-base-50), var(--tf-base-50));
   --clear-button-hover: var(--tf-stroke-color);
-  --fill-color: var(--tf-fill-color-base);
+  --fill-color: var(--tf-fill-base);
 }
 /*Button*/
 fluent-button.accent svg,
@@ -393,15 +393,15 @@ div[class^='fluent-messagebar'],
 }
 /*Select*/
 fluent-select::part(listbox) {
-  --fill-color: var(--tf-fill-color-hover);
+  --fill-color: var(--tf-fill-base-hover);
 }
 fluent-select fluent-option {
   --accent-fill-rest: var(--tf-accent-500);
   --neutral-foreground-rest: var(--tf-font-color-base);
-  --neutral-fill-secondary-rest: var(--tf-fill-color-active);
-  --neutral-fill-secondary-hover: var(--tf-fill-color-active);
-  --neutral-fill-secondary-focus: var(--tf-fill-color-active);
-  --neutral-fill-secondary-active: var(--tf-fill-color-active);
+  --neutral-fill-secondary-rest: var(--tf-fill-base-active);
+  --neutral-fill-secondary-hover: var(--tf-fill-base-active);
+  --neutral-fill-secondary-focus: var(--tf-fill-base-active);
+  --neutral-fill-secondary-active: var(--tf-fill-base-active);
   --neutral-fill-stealth-rest: transparent;
   --neutral-fill-stealth-hover: light-dark(var(--tf-base-50), var(--tf-base-800));
   --neutral-fill-stealth-focus: light-dark(var(--tf-base-50), var(--tf-base-800));
@@ -416,7 +416,7 @@ fluent-text-field.with-prefix::part(control) {
 }
 .tf-card {
   --tf-card-border-radius: var(--tf-border-radius-base);
-  --tf-card-background-color: light-dark(var(--tf-base-50), var(--tf-base-800));
+  --tf-card-background-color: light-dark(var(--tf-base-50), var(--tf-fill-base-active));
   border: 1px solid transparent;
   border-radius: var(--tf-card-border-radius);
   background: var(--tf-card-background-color);
@@ -536,7 +536,7 @@ fluent-text-field.with-prefix::part(control) {
   border-collapse: separate !important;
   border-spacing: 0;
   margin-bottom: 0;
-  background: transparent;
+  background: light-dark(var(--tf-base-50), var(--tf-fill-base-active));
 }
 .tf-grid thead {
   position: sticky;
@@ -552,9 +552,7 @@ fluent-text-field.with-prefix::part(control) {
 }
 .tf-grid thead tr > th,
 .tf-grid thead tr > td {
-  border-bottom-width: 0;
   border-top-width: 0;
-  background: var(--tf-fill-color-hover);
   border-color: var(--tf-stroke-color);
   font-weight: var(--tf-font-weight-lg);
   min-width: 60px;
@@ -674,14 +672,14 @@ fluent-text-field.with-prefix::part(control) {
   right: 0;
   z-index: 10;
   pointer-events: none;
-  background: linear-gradient(90deg, transparent 33%, var(--accent-fill-rest) 66%, transparent 100%);
+  background: linear-gradient(90deg, transparent 33%, var(--tf-accent-color) 66%, transparent 100%);
   width: 0;
   animation: gridLoadingBar 2s linear infinite;
 }
 .tf-grid tbody tr {
   /*            &.tf-grid-tr--selected .tf-grid-td--check::after {
-                background: var(--tf-amber-400);
-            }*/
+                      background: var(--tf-amber-400);
+                  }*/
 }
 .tf-grid tbody tr > th,
 .tf-grid tbody tr > td {
@@ -702,7 +700,6 @@ fluent-text-field.with-prefix::part(control) {
   bottom: 0;
   z-index: 0;
   border-radius: 0;
-  background: light-dark(white, var(--tf-base-950));
 }
 .tf-grid tbody tr > th > *,
 .tf-grid tbody tr > td > * {
@@ -742,7 +739,7 @@ fluent-text-field.with-prefix::part(control) {
   bottom: 0;
   z-index: 0;
   border-radius: 0;
-  background: var(--tf-fill-color-hover);
+  background: var(--tf-fill-base);
 }
 .tf-grid tbody tr > th > div,
 .tf-grid tbody tr > td > div {
@@ -751,6 +748,7 @@ fluent-text-field.with-prefix::part(control) {
   text-overflow: ellipsis;
   padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
   min-height: 32px;
+  --accent-fill-rest: var(--tf-font-color-base);
 }
 .tf-grid tbody tr > th.multiline-text,
 .tf-grid tbody tr > td.multiline-text {
@@ -1078,7 +1076,7 @@ fluent-text-field.with-prefix::part(control) {
   flex: 0 0 var(--tf-aside-width);
   display: flex;
   flex-flow: column;
-  background: var(--tf-fill-color-hover);
+  background: var(--tf-fill-base-hover);
   border-right: 1px solid var(--tf-stroke-color-mute);
   --accent-fill-rest: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 30%), color-mix(in srgb, var(--tf-accent-500), transparent 50%));
 }
@@ -1224,7 +1222,7 @@ fluent-text-field.with-prefix::part(control) {
   bottom: 0;
   width: 90%;
   height: 1px;
-  border-bottom: 1px dashed var(--tf-stroke-color-mute);
+  background: linear-gradient(to right, var(--tf-fill-base-hover) 0%, var(--tf-accent-color) 50%, var(--tf-fill-base-hover) 100%);
   left: 5%;
 }
 .tf-page-topbar {
@@ -1249,7 +1247,6 @@ fluent-text-field.with-prefix::part(control) {
 .tf-page-topbar fluent-breadcrumb-item::part(control) {
   display: flex;
   align-items: center;
-  color: var(--tf-font-color-mute);
   --accent-fill-rest: var(--tf-font-color-mute);
   height: 23px;
   padding: 0 5px;
@@ -1257,7 +1254,7 @@ fluent-text-field.with-prefix::part(control) {
   margin-inline-end: 0;
   cursor: pointer;
   font-size: var(--tf-font-size-sm);
-  background: var(--tf-fill-color-focus);
+  background: var(--tf-fill-base-focus);
 }
 .tf-page-topbar fluent-breadcrumb-item::part(control):hover {
   background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 80%), color-mix(in srgb, var(--tf-accent-500), transparent 75%));
@@ -1412,7 +1409,7 @@ fluent-text-field.with-prefix::part(control) {
   top: 0;
   bottom: 0;
   width: 1px;
-  background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 60%), color-mix(in srgb, var(--tf-accent-500), transparent 60%));
+  background: linear-gradient(to bottom, var(--tf-fill-base-hover) 0%, var(--tf-accent-color) 50%, var(--tf-fill-base-hover) 100%);
 }
 .tf-submenu .tf-submenu {
   padding-left: calc(var(--tf-submenu-padding) * 2);
@@ -1445,14 +1442,13 @@ fluent-text-field.with-prefix::part(control) {
 }
 .tf-treemenu__item.tf-active:not(.tf-parent) {
   position: relative;
-  background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 85%), color-mix(in srgb, var(--tf-accent-500), transparent 90%));
-  color: var(--tf-font-color-hover);
-}
-.tf-treemenu__item.tf-active:not(.tf-parent):hover {
-  background: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 80%), color-mix(in srgb, var(--tf-accent-500), transparent 85%));
+  color: var(--tf-accent-color);
 }
 .tf-treemenu__item.tf-active:not(.tf-parent)::before {
   display: none !important;
+}
+.tf-treemenu__item.tf-active:not(.tf-parent) svg {
+  --accent-fill-rest: var(--tf-accent-color);
 }
 .tf-treemenu__item__content {
   display: flex;

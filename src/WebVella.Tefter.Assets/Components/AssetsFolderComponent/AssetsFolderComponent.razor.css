@@ -16,7 +16,7 @@
 }
 
 	::deep .asset-item:hover {
-		background: var(--tf-fill-color-hover);
+		background: var(--tf-fill-base-hover);
 	}
 
 ::deep  .asset-item__icon {

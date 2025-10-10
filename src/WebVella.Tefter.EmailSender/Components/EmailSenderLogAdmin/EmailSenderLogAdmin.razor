@@ -26,29 +26,32 @@
 				{
 					<tr @key=@context.Id class="tf-grid-tr">
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>
 								<FluentStack>
 									<FluentButton Title="@LOC("view email")" OnClick="@(_ => _viewEmailHandler(context))"
-												  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Eye")" />
+									              Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Eye")"/>
 									@if (context.Status == EmailStatus.Sent || context.Status == EmailStatus.Aborted)
 									{
 										<FluentButton Title="@LOC("resent")" OnClick="@(_ => _resentEmailHandler(context))"
-													  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("MailArrowUp")"
-													  Disabled="@(_submitingEmail is not null)" Loading="@(_submitingEmail == context.Id)" />
+										              Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("MailArrowUp")"
+										              Disabled="@(_submitingEmail is not null)" Loading="@(_submitingEmail == context.Id)"/>
 									}
 									else
 									{
 										<FluentButton Title="@LOC("cancel")" OnClick="@(_ => _cancelEmailHandler(context))"
-													  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)"
-													  Disabled="@(_submitingEmail is not null)" Loading="@(_submitingEmail == context.Id)" />
+										              Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)"
+										              Disabled="@(_submitingEmail is not null)" Loading="@(_submitingEmail == context.Id)"/>
 									}
 								</FluentStack>
 							</div>
 						</td>
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>@context.Status.ToDescriptionString()</div>
 						</td>
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>
 								<div>@context.CreatedOn.ToString(TfConstants.DateHourFormat)</div>
 								@if (context.SentOn is not null)
@@ -58,9 +61,11 @@
 							</div>
 						</td>
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>@context.Subject</div>
 						</td>
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>
 								@if (context.Recipients.Count > 0)
 								{
@@ -81,7 +86,10 @@
 				@if (_messages.Count == 0)
 				{
 					<tr class="tf-grid-tr">
-						<td class="tf-grid-td" colspan="5"><div>@LOC("No items")</div></td>
+						<td class="tf-grid-td" colspan="5">
+							<div class="tf-grid-td-hover"></div>
+							<div>@LOC("No items")</div>
+						</td>
 					</tr>
 				}
 			</tbody>

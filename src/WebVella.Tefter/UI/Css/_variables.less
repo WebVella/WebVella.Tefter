@@ -4,38 +4,32 @@ html:root {
   //color-scheme: light dark;
   color-scheme: light;
 
-  //colors
-  --tf-font-color-base:light-dark(var(--tf-base-900), var(--tf-base-300));
-  --tf-font-color-hover:light-dark(var(--tf-base-950), var(--tf-base-200));
+  //colors 
+  --tf-font-color-base: light-dark(var(--tf-base-900), var(--tf-base-300));
+  --tf-font-color-hover: light-dark(var(--tf-base-950), var(--tf-base-200));
 
-  
-  --tf-font-color-mute:light-dark(var(--tf-base-500), var(--tf-base-500));
-  
-  --tf-fill-color-base:light-dark(var(--tf-base-100), var(--tf-base-900));
-  --tf-fill-color-hover:light-dark(
-          color-mix(in srgb, var(--tf-fill-color-base), var(--tf-base-900) 2%),
-          color-mix(in srgb, var(--tf-fill-color-base), var(--tf-base-900) 2%)
-  );
-  --tf-fill-color-focus:light-dark(
-          color-mix(in srgb, var(--tf-fill-color-base), var(--tf-base-900) 5%),
-          color-mix(in srgb, var(--tf-fill-color-base), var(--tf-base-900) 5%)
-  );  
-  --tf-fill-color-active:light-dark(
-          color-mix(in srgb, var(--tf-fill-color-base), var(--tf-accent-900) 20%),
-          color-mix(in srgb, var(--tf-fill-color-base), var(--tf-accent-900) 25%)
-  );  
-  
-  --tf-button-color:light-dark(var(--tf-base-600), var(--tf-base-400));
-    --tf-stroke-color:light-dark(rgba(0,0,0,15%), rgba(255,255,255,10%));
-  --tf-stroke-color-mute:light-dark(rgba(0,0,0,7.5%), rgba(255,255,255,7.5%));
-  --tf-stroke-color-hover:light-dark(rgba(0,0,0,20%), rgba(255,255,255,20%));
-  --tf-stroke-color-active:light-dark(rgba(0,0,0,25%), rgba(255,255,255,25%));
 
-  --tf-accent-color:light-dark(var(--tf-accent-500), var(--tf-accent-700));
-  --tf-accent-hover:light-dark(var(--tf-accent-400), var(--tf-accent-800));
+  --tf-font-color-mute: light-dark(var(--tf-base-500), var(--tf-base-500));
 
+  --tf-fill-base: light-dark(var(--tf-base-100), var(--tf-base-900));
+  --tf-fill-base-hover: light-dark(color-mix(in srgb, var(--tf-fill-base), var(--tf-base-900) 2%),
+  color-mix(in srgb, var(--tf-fill-base), var(--tf-base-950) 10%));
+  --tf-fill-base-focus: light-dark(color-mix(in srgb, var(--tf-fill-base), var(--tf-base-900) 5%),
+  color-mix(in srgb, var(--tf-fill-base), var(--tf-base-950) 15%));
+  --tf-fill-base-active: light-dark(color-mix(in srgb, var(--tf-fill-base), var(--tf-base-900) 20%),
+  color-mix(in srgb, var(--tf-fill-base), var(--tf-base-950) 25%));
+ 
   
-  
+  --tf-button-color: light-dark(var(--tf-base-600), var(--tf-base-400));
+  --tf-stroke-color: light-dark(rgba(0, 0, 0, 15%), rgba(255, 255, 255, 10%));
+  --tf-stroke-color-mute: light-dark(rgba(0, 0, 0, 7.5%), rgba(255, 255, 255, 7.5%));
+  --tf-stroke-color-hover: light-dark(rgba(0, 0, 0, 30%), rgba(255, 255, 255, 30%));
+  --tf-stroke-color-active: light-dark(rgba(0, 0, 0, 40%), rgba(255, 255, 255, 40%));
+
+  --tf-accent-color: light-dark(var(--tf-accent-500), var(--tf-accent-700));
+  --tf-accent-hover: light-dark(var(--tf-accent-400), var(--tf-accent-800));
+
+
   //paddings
   --tf-padding-base: 15px;
   --tf-padding-sm: calc(var(--tf-padding-base) / 2);
@@ -46,7 +40,7 @@ html:root {
   --tf-space-actions-height: 50px;
   --tf-page-header-height: var(--tf-space-actions-height);
   --tf-page-tabs-height: 50px;
-  
+
   //widths
   --tf-aside-width: 250px;
 
@@ -75,11 +69,9 @@ html:root {
   --tf-border-radius-xl: 3rem;
 
   //box shadows
-  --tf-shadow-color-1:light-dark(rgba(0, 0, 0, 5%),rgba(255, 255, 255, 7%));
-  --tf-shadow-color-2:light-dark(rgba(0, 0, 0, 5%),rgba(255, 255, 255, 7%));
+  --tf-shadow-color-1: light-dark(rgba(0, 0, 0, 5%), rgba(255, 255, 255, 7%));
+  --tf-shadow-color-2: light-dark(rgba(0, 0, 0, 5%), rgba(255, 255, 255, 7%));
   --tf-shadow-base: 0px 0px 1.5px 0px var(--tf-shadow-color-1), 0px 1.4px 1.5px 0px var(--tf-shadow-color-1), 0px -1px 1px 0px var(--tf-shadow-color-2);
-
-  
 
 
 }

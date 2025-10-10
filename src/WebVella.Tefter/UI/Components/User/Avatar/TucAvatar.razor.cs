@@ -15,8 +15,9 @@ public partial class TucAvatar :ComponentBase
 		get
 		{
 			var list = new List<string>();
-			if (!String.IsNullOrWhiteSpace(Styles)) list.Add(Styles);
-			list.Add("background-color:var(--tf-fill-color-focus);");
+			if (!String.IsNullOrWhiteSpace(Styles)) 
+				list.Add(Styles);
+			list.Add("background-color:var(--tf-fill-base-focus);");
 
 			if (OnClick.HasDelegate)
 				list.Add("cursor:pointer;");

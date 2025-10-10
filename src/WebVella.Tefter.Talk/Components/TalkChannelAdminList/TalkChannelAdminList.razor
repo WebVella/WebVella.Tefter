@@ -23,22 +23,26 @@
 				{
 					<tr @key=@context.Id class="tf-grid-tr">
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>
 								<FluentStack>
 									<FluentButton Title="@LOC("edit channel")" OnClick="@(_ => _editChannelHandler(context))"
-												  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")" />
+									              Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"/>
 									<FluentButton Title="@LOC("delete channel")" OnClick="@(_ => _deleteChannelHandler(context))" Appearance="@Appearance.Outline"
-												  IconStart="@TfConstants.GetIcon("Delete").WithColor(Color.Error)" />
+									              IconStart="@TfConstants.GetIcon("Delete").WithColor(Color.Error)"/>
 								</FluentStack>
 							</div>
 						</td>
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>@context.Name</div>
 						</td>
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>@context.DataIdentity</div>
 						</td>
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>@context.CountSharedColumnName</div>
 						</td>
 					</tr>
@@ -47,6 +51,7 @@
 				{
 					<tr class="tf-grid-tr">
 						<td class="tf-grid-td" colspan="4">
+							<div class="tf-grid-td-hover"></div>
 							<div>
 								@LOC("No channels created yet")
 							</div>

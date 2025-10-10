@@ -36,12 +36,14 @@
                 {
                     <tr>
                         <td>
+                            <div class="tf-grid-td-hover"></div>
                             <div>
                                 <TucAnchor Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Open")"
                                            Href="@String.Format(TfConstants.AdminUserDetailsPageUrl, item.Id).GenerateWithLocalAsReturnUrl(TfAuthLayout.GetState().NavigationState.Uri)"/>
                             </div>
                         </td>
                         <td>
+                            <div class="tf-grid-td-hover"></div>
                             <div>
                                 @item.Email
                                 @if (!item.Enabled)
@@ -51,11 +53,13 @@
                             </div>
                         </td>
                         <td>
+                            <div class="tf-grid-td-hover"></div>
                             <div>
                                 @item.Names
                             </div>
                         </td>
                         <td>
+                            <div class="tf-grid-td-hover"></div>
                             <div>
                                 @item.RoleNames
                             </div>
@@ -66,6 +70,7 @@
                 {
                     <tr>
                         <td colspan="4">
+                            <div class="tf-grid-td-hover"></div>
                             <div>@LOC("no items")</div>
                         </td>
                     </tr>
