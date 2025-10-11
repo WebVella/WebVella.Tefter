@@ -14,7 +14,7 @@
 @using Microsoft.Extensions.Localization;
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
 	<HeadOutlet @rendermode="new InteractiveServerRenderMode(prerender: false)" />
@@ -23,11 +23,11 @@
 	<base href="/" />
 	<ImportMap />
 	<link href="@Assets[$"_content/Microsoft.FluentUI.AspNetCore.Components/css/reboot.css?cb={cb}"]" rel="stylesheet" />
-	<link rel="stylesheet" href="@Assets[$"WebVella.Tefter.Site.styles.css?cb={cb}"]" />
-	<link rel="stylesheet" href="@Assets[$"_content/WebVella.Tefter/styles.css?cb={cb}"]" />
 	<link rel="icon" type="image/png" href="@Assets[$"/favicon.ico"]" />
 	<script src="_content/Microsoft.FluentUI.AspNetCore.Components/Microsoft.FluentUI.AspNetCore.Components.lib.module.js?cb=@cb" type="module" async></script>
 	<script src="@Assets[$"_content/WebVella.Tefter/lib/quill.js?cb={cb}"]"></script>
+	<link rel="stylesheet" href="@Assets[$"WebVella.Tefter.Site.styles.css?cb={cb}"]" />
+	<link rel="stylesheet" href="@Assets[$"_content/WebVella.Tefter/styles.css?cb={cb}"]" />	
 </head>
 
 <body>

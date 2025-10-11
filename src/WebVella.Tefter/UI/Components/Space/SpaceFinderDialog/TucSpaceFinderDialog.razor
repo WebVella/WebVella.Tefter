@@ -1,17 +1,31 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 @* Header *@
-<FluentDialogHeader ShowDismiss="true">
-    <div>search</div>
+<FluentDialogHeader ShowDismiss="false">
+    <FluentStack HorizontalGap="10">
+        <FluentSearch Style="width: 100%;flex:1 1 auto" Value="@_search" ValueChanged="_searchChanged"
+                      Immediate="true" AutoComplete="off"
+                      ImmediateDelay="200" @ref="_searchInput" Placeholder="@LOC("search spaces...")"/>
+        <FluentButton Style="flex:0 0 auto"
+                      IconStart="@TfConstants.GetIcon("Add")">@LOC("Create Space")</FluentButton>
+        <TucAnchor Href="@TfConstants.AdminDashboardUrl" Style="flex:0 0 auto"
+                   IconStart="@TfConstants.GetIcon("Settings")">@LOC("Administration")</TucAnchor>
+
+    </FluentStack>
 </FluentDialogHeader>
 
 @* Footer *@
-<FluentDialogFooter>
-   
-    <FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
-</FluentDialogFooter>
+<FluentDialogFooter Style="display: none"></FluentDialogFooter>
 
 @* Body *@
-<FluentDialogBody>
-    Body
+<FluentDialogBody Class="modal-body-scroll tf-space-finder">
+    @{
+        int index = 0;
+    }
+    @foreach (var space in _options)
+    {
+        <div id="space-option-@index" style="@(_selectedIndex == index ? "color:red" : "")"
+             @onclick="@space.OnClick">@space.Label</div>
+        index++;
+    }
 </FluentDialogBody>

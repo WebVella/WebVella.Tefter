@@ -1,14 +1,17 @@
-﻿namespace WebVella.Tefter.UI.Layout;
+﻿using Microsoft.FluentUI.AspNetCore.Components.DesignTokens;
+
+namespace WebVella.Tefter.UI.Layout;
 
 public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 {
 	[Inject] public ITfService TfService { get; set; } = null!;
 	[Inject] protected ITfConfigurationService TfConfigurationService { get; set; } = null!;
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[Inject] protected NavigationManager Navigator { get; set; } = null!;
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
-
+	
 	private TfState _state = new();
 	private TfUser _currentUser = new();
 	private bool _isLoaded = false;
@@ -20,6 +23,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	public ValueTask DisposeAsync()
 	{
+		TfEventProvider?.Dispose();
 		_locationChangingHandler?.Dispose();
 		return ValueTask.CompletedTask;
 	}
@@ -52,9 +56,23 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		if (firstRender)
 		{
 			_locationChangingHandler = Navigator.RegisterLocationChangingHandler(Navigator_LocationChanging);
+			TfEventProvider.UserUpdatedEvent += On_UserUpdated;
 		}
 	}
 
+	private async Task On_UserUpdated(TfUserUpdatedEvent args)
+	{
+		await InvokeAsync(async () =>
+		{
+			if (args.Payload.Id == _state.User.Id)
+			{
+				_currentUser = args.Payload;
+				_init(Navigator.Uri);
+				await InvokeAsync(StateHasChanged);
+			}
+		});
+	}	
+	
 	private ValueTask Navigator_LocationChanging(LocationChangingContext args)
 	{
 		if (_urlInitialized != args.TargetLocation)
@@ -80,10 +98,14 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		else
 			_state = TfService.GetAppState(Navigator, _currentUser, url, _state);
 
-		if(_state.NavigationState.RouteNodes.Count > 0 && _state.NavigationState.RouteNodes[0] == RouteDataNode.Admin)
-			_styles = (_state.Space?.Color ?? TfColor.Red500).GenerateStylesForAccentColor();
+
+		if (_state.NavigationState.RouteNodes.Count > 0 && _state.NavigationState.RouteNodes[0] == RouteDataNode.Admin)
+		{
+			_styles = (_state.Space?.Color ?? TfColor.Red500).GenerateStylesForAccentColor(_currentUser.Settings
+				?.ThemeMode);
+		}
 		else
-			_styles = (_state.Space?.Color ?? TfColor.Teal500).GenerateStylesForAccentColor();
+			_styles = (_state.Space?.Color ?? TfColor.Green500).GenerateStylesForAccentColor(_currentUser.Settings?.ThemeMode);
 	}
 
 	private bool _checkAccess(string url)

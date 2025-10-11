@@ -245,7 +245,6 @@ html:root {
   --tf-stone-950: oklch(14.7% 0.004 49.25);
 }
 html:root {
-  color-scheme: light;
   --tf-font-color-base: light-dark(var(--tf-base-900), var(--tf-base-300));
   --tf-font-color-hover: light-dark(var(--tf-base-950), var(--tf-base-200));
   --tf-font-color-mute: light-dark(var(--tf-base-500), var(--tf-base-500));
@@ -300,7 +299,22 @@ a {
 a:hover {
   color: var(--tf-foreground-color-link-hover);
 }
-html:root {
+html:root,
+fluent-anchored-region fluent-menu,
+fluent-anchored-region fluent-menu-item {
+  --font-monospace: Consolas, "Courier New", "Liberation Mono", SFMono-Regular, Menlo, Monaco, monospace;
+  --success: #0E700E;
+  --warning: #E9835E;
+  --error: #BC2F32;
+  --info: #616161;
+  --presence-available: #13a10e;
+  --presence-away: #eaa300;
+  --presence-busy: #d13438;
+  --presence-dnd: #d13438;
+  --presence-offline: #adadad;
+  --presence-oof: #c239b3;
+  --presence-unknown: #d13438;
+  --highlight-bg: #fff3cd;
   --neutral-foreground-rest: var(--tf-font-color-base);
   --neutral-stroke-rest: var(--tf-stroke-color);
   --neutral-stroke-hover: var(--tf-stroke-color-hover);
@@ -326,11 +340,11 @@ html:root {
   --neutral-fill-input-hover: light-dark(var(--tf-base-50), var(--tf-base-800));
   --neutral-fill-input-focus: light-dark(var(--tf-base-50), var(--tf-base-800));
   --neutral-fill-input-active: light-dark(var(--tf-base-50), var(--tf-base-800));
-  --neutral-fill-stealth-rest: light-dark(var(--tf-base-50), var(--tf-base-800));
-  --neutral-fill-stealth-hover: light-dark(var(--tf-base-50), var(--tf-base-800));
-  --neutral-fill-stealth-focus: light-dark(var(--tf-base-50), var(--tf-base-800));
-  --neutral-fill-stealth-active: light-dark(var(--tf-base-50), var(--tf-base-800));
-  --accent-fill-rest: light-dark(var(--tf-accent-700), var(--tf-accent-900));
+  --neutral-fill-stealth-rest: light-dark(var(--tf-base-100), var(--tf-base-800));
+  --neutral-fill-stealth-hover: light-dark(var(--tf-base-200), var(--tf-base-800)) !important;
+  --neutral-fill-stealth-focus: light-dark(var(--tf-base-300), var(--tf-base-800));
+  --neutral-fill-stealth-active: light-dark(var(--tf-base-400), var(--tf-base-800));
+  --accent-fill-rest: light-dark(var(--tf-accent-700), var(--tf-accent-900)) !important;
   --accent-fill-hover: light-dark(var(--tf-accent-800), var(--tf-accent-950));
   --accent-fill-focus: light-dark(var(--tf-accent-800), var(--tf-accent-950));
   --accent-fill-active: light-dark(var(--tf-accent-800), var(--tf-accent-950));
@@ -358,6 +372,13 @@ fluent-dialog::part(control) {
   --tf-elevation-color: light-dark(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.03));
   --elevation-shadow-dialog: 0 0 2px var(--tf-elevation-color), 0 calc(128 * 0.5px) calc(128 * 1px) var(--tf-elevation-color);
 }
+fluent-dialog .modal-body-scroll {
+  height: 60vh !important;
+  min-height: 200px !important;
+  overflow-y: auto !important;
+  scrollbar-color: var(--tf-foreground-color-mute) var(--tf-background-color-body);
+  scrollbar-width: thin;
+}
 /*Menu*/
 fluent-anchored-region,
 fluent-menu {
@@ -365,6 +386,9 @@ fluent-menu {
 }
 fluent-menu-item {
   --neutral-foreground-rest: var(--tf-font-color-base);
+}
+fluent-menu-item svg {
+  vertical-align: middle;
 }
 /*Message*/
 .fluent-messagebar-message .title {
@@ -535,9 +559,10 @@ fluent-text-field.with-prefix::part(control) {
 .tf-grid {
   table-layout: fixed;
   min-width: 100%;
-  border: 1px solid var(--tf-stroke-color);
+  border-width: 0;
+  border-color: var(--tf-stroke-color);
   border-collapse: separate !important;
-  border-spacing: 0;
+  border-spacing: 0 !important;
   margin-bottom: 0;
   background: light-dark(var(--tf-base-50), var(--tf-fill-base-active));
 }
@@ -555,6 +580,7 @@ fluent-text-field.with-prefix::part(control) {
 }
 .tf-grid thead tr > th,
 .tf-grid thead tr > td {
+  border: 1px solid var(--tf-stroke-color);
   border-top-width: 0;
   border-color: var(--tf-stroke-color);
   font-weight: var(--tf-font-weight-lg);
@@ -797,6 +823,10 @@ fluent-text-field.with-prefix::part(control) {
 }
 .tf-grid > tbody tr:first-child > td,
 .tf-grid > tbody tr:first-child > th {
+  border-top-width: 0;
+}
+.tf-grid > tbody > div + tr > td,
+.tf-grid > tbody > div + tr > th {
   border-top-width: 0;
 }
 .tf-grid td,
@@ -1250,7 +1280,7 @@ fluent-text-field.with-prefix::part(control) {
   align-items: center;
   height: 100%;
   padding-left: var(--tf-padding-base);
-  padding-right: var(--tf-padding-base);
+  padding-right: calc(var(--tf-padding-base) - 10px);
   --accent-fill-rest: var(--tf-button-color);
 }
 .tf-page-topbar__left {

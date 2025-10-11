@@ -22,16 +22,16 @@
 			<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" />
 		</FluentButton>
 	}
-}
-<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
+} 
+<FluentButton Id="view-actions-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
 	<FluentIcon Value="@TfConstants.GetIcon("Connector")" Color="@Color.Accent" />
 </FluentButton>
-<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
+<FluentButton Id="view-share-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
 	<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Accent" />
 </FluentButton>
 <FluentButton Id="select-all-menu-toggler"
-			  OnClick="@(() => _selectAllMenuVisible = !_selectAllMenuVisible)" Title="@LOC("select all")" Appearance="@Appearance.Outline"
-			  Loading="SelectAllLoading">
+              OnClick="@(() => _selectAllMenuVisible = !_selectAllMenuVisible)" Title="@LOC("select all")" Appearance="@Appearance.Outline"
+              Loading="SelectAllLoading">
 
 	@if (SelectedRows.Count > 0)
 	{
@@ -98,7 +98,6 @@
 @* 		<FluentButton Id="grid-properties-selector" OnClick="OnGridPropertiesClick" Title="grid properties" Appearance="@Appearance.Outline">
 		<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" Color="@Color.Accent" />
 		</FluentButton> *@
-
 
 <TucSpaceViewActionSelector @ref="_actionSelector" SpaceView="SpaceView" SpaceData="SpaceData" User=Context.CurrentUser Data="Data" SelectedRows="SelectedRows" />
 <TucSpaceViewShareSelector @ref="_shareSelector" SpaceView="SpaceView" Data="Data" SelectedRows="SelectedRows" />

@@ -29,9 +29,10 @@
 .tf-grid {
   table-layout: fixed;
   min-width: 100%;
-  border: 1px solid var(--tf-stroke-color);
+  border-width:0;
+  border-color: var(--tf-stroke-color);
   border-collapse: separate !important;
-  border-spacing: 0;
+  border-spacing: 0 !important;
   margin-bottom: 0;
   background: light-dark(var(--tf-base-50), var(--tf-fill-base-active));
 
@@ -53,6 +54,7 @@
 
     & tr > th,
     & tr > td {
+      border:1px solid var(--tf-stroke-color);
       border-top-width: 0;
       border-color: var(--tf-stroke-color);
       font-weight: var(--tf-font-weight-lg);
@@ -309,12 +311,17 @@
         border-top-width: 0;
       }
     }
+    & > div + tr{
+      & > td,
+      & > th {
+        border-top-width: 0;
+      }      
+    }
   }
 
   td, th {
     border-width: 1px;
     border-style: solid;
-
     & > div {
       display: flex;
       justify-content: start;

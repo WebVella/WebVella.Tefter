@@ -1,6 +1,31 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceActions : TfBaseComponent
+
+public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 {
+	private DotNetObjectReference<TucSpaceActions> _objectRef;
+	private bool _spaceMenuVisible = false;
+	public async ValueTask DisposeAsync()
+	{
+		try
+		{
+			await JSRuntime.InvokeAsync<object>("Tefter.removeGlobalSearchKeyListener", ComponentId.ToString());
+		}
+		catch
+		{
+			//In rare ocasions the item is disposed after the JSRuntime is no longer avaible
+		}
+		_objectRef?.Dispose();
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		base.OnInitialized();
+		ComponentId = Guid.NewGuid();
+		_objectRef = DotNetObjectReference.Create(this);
+		await JSRuntime.InvokeAsync<object>(
+			"Tefter.addGlobalSearchKeyListener", _objectRef, ComponentId.ToString(), "OnGlobalSearchHandler");
+	}
+
 	private async Task _findSpace()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceFinderDialog>(
@@ -15,4 +40,17 @@ public partial class TucSpaceActions : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null) { }
 	}
+
+	public async Task HandleKeyDownAsync(FluentKeyCodeEventArgs args)
+	{
+		if (args.CtrlKey && args.Key == KeyCode.KeyG)
+		{
+			await _findSpace();
+		}
+	}
+	[JSInvokable("OnGlobalSearchHandler")]
+	public async Task OnGlobalSearchHandler()
+	{
+		await _findSpace();
+	}	
 }

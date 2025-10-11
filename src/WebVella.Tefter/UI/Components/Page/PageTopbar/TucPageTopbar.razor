@@ -7,7 +7,8 @@
     <div class="tf-page-topbar__right">
         @if (TfAuthLayout.GetState().Space is not null && TfAuthLayout.GetState().SpacePage is not null)
         {
-            <FluentButton Id="view-bookmark-selector" OnClick="_onBookmarkClick" IconStart="@_bookmarkIcon" Appearance="@Appearance.Outline" Title="@_bookmarkTitle"/>
+            <FluentButton Id="view-bookmark-selector" OnClick="_onBookmarkClick" IconStart="@_bookmarkIcon"
+                          Appearance="@Appearance.Outline" Title="@_bookmarkTitle"/>
             @if (_activeSavedUrl is not null)
             {
                 @if (Navigator.IsSpaceViewSavedUrlChanged(_activeSavedUrl.Url))
@@ -49,22 +50,36 @@
         }
         <TucNotificationCenter/>
         <TucAnchor Href="#" OnClick="() => _userMenuVisible = !_userMenuVisible"
-                   Id="user-menu-toggle" Appearance="@Appearance.Outline" IconEnd="@TfConstants.GetIcon("ChevronDown")">
+                   Id="user-menu-toggle" Appearance="@Appearance.Outline">
             <TucAvatar User="TfAuthLayout.GetState().User" UseUserColor="false"/>
         </TucAnchor>
-        <FluentMenu Width="200px" @bind-Open="_userMenuVisible" Anchor="user-menu-toggle" UseMenuService="false">
+        <FluentMenu Width="200px" @bind-Open="_userMenuVisible" Anchor="user-menu-toggle" UseMenuService="true">
             <FluentMenuItem Disabled="true">
                 @TfAuthLayout.GetState().User.FirstName @TfAuthLayout.GetState().User.LastName
             </FluentMenuItem>
             <FluentDivider Style="margin-top:10px"/>
+            <FluentMenuItem OnClick="_themeChange">
+                @LOC("UI Theme")
+                <span slot="start">
+                            <FluentIcon Value="@TfConstants.GetIcon("DarkTheme")"
+                                        Slot="start"/>
+                        </span>
+            </FluentMenuItem>
+            <FluentMenuItem OnClick="_changeLanguage">
+                @LOC("Language & Locale")
+                <span slot="start">
+                            <FluentIcon Value="@TfConstants.GetIcon("Translate")"
+                                        Slot="start"/>
+                        </span>
+            </FluentMenuItem>
             @if (_isSetAsStartupUri())
             {
                 <FluentMenuItem OnClick="_resetUrlAsStartup">
                     @LOC("Reset Startup URL")
                     <span slot="start">
-                        <FluentIcon Value="@TfConstants.GetIcon("PinOff")"
-                                    Slot="start"/>
-                    </span>
+                                <FluentIcon Value="@TfConstants.GetIcon("PinOff")"
+                                            Slot="start"/>
+                            </span>
                 </FluentMenuItem>
             }
             else
@@ -72,17 +87,17 @@
                 <FluentMenuItem OnClick="_setUrlAsStartup">
                     @LOC("Set as Startup URL")
                     <span slot="start">
-                        <FluentIcon Value="@TfConstants.GetIcon("Pin")"
-                                    Slot="start"/>
-                    </span>
+                                <FluentIcon Value="@TfConstants.GetIcon("Pin")"
+                                            Slot="start"/>
+                            </span>
                 </FluentMenuItem>
             }
             <FluentMenuItem OnClick="_logout">
                 @LOC("Logout")
                 <span slot="start">
-                    <FluentIcon Value="@TfConstants.GetIcon("SignOut")"
-                                Slot="start"/>
-                </span>
+                            <FluentIcon Value="@TfConstants.GetIcon("SignOut")"
+                                        Slot="start"/>
+                        </span>
             </FluentMenuItem>
         </FluentMenu>
     </div>

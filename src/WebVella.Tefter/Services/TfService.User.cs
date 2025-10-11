@@ -141,6 +141,7 @@ public partial interface ITfService
 		TfUser user);
 
 	Task<TfUser> UpdateUserWithFormAsync(TfUserManageForm form);
+	Task<TfUser> UpdateUserThemeModeAsync(Guid userId, DesignThemeModes themeMode);
 
 	//Gets the authenticated user from cookie
 	Task<TfUser?> GetUserFromCookieAsync(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider);
@@ -1099,6 +1100,21 @@ public partial class TfService : ITfService
 		user = await SaveUserAsync(user);
 		return user;
 	}
+	
+	public async Task<TfUser> UpdateUserThemeModeAsync(Guid userId, DesignThemeModes themeMode)
+	{
+		var user = await GetUserAsync(userId);
+		if (user is null)
+			throw new Exception("user not found");
+		if(user.Settings.ThemeMode == themeMode) return user;
+		
+		TfUserBuilder userBuilder = CreateUserBuilder(user);
+		userBuilder
+			.WithThemeMode(themeMode);
+		user = userBuilder.Build();
+		user = await SaveUserAsync(user);
+		return user;
+	}	
 
 	public async Task<TfUser?> GetUserFromCookieAsync(IJSRuntime jsRuntime,
 		AuthenticationStateProvider authStateProvider)

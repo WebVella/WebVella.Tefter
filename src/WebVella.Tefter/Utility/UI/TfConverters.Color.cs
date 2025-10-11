@@ -2,13 +2,26 @@
 
 public static partial class TfConverters
 {
-	public static string GenerateStylesForAccentColor(this TfColor color)
+	public static string GenerateStylesForAccentColor(this TfColor color, DesignThemeModes? theme)
 	{
 		var colorAttr = color.GetColor();
 		var baseAttr = TfColor.Zinc500.GetColor();
 		var sb = new StringBuilder();
 		sb.AppendLine("<style>");
 		sb.AppendLine("html:root {");
+		if (theme is null || theme == DesignThemeModes.System)
+		{
+			sb.AppendLine("color-scheme: light dark;");
+		}
+		else if(theme == DesignThemeModes.Dark)
+		{
+			sb.AppendLine("color-scheme: dark;");
+		}
+		else
+		{
+			sb.AppendLine("color-scheme: light;");
+		}
+
 		foreach (var value in new List<int>
 		         {
 			         50,
