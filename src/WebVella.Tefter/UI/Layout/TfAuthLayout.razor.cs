@@ -57,6 +57,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		{
 			_locationChangingHandler = Navigator.RegisterLocationChangingHandler(Navigator_LocationChanging);
 			TfEventProvider.UserUpdatedEvent += On_UserUpdated;
+			TfEventProvider.SpaceUpdatedEvent += On_SpaceUpdated;
 		}
 	}
 
@@ -72,6 +73,18 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			}
 		});
 	}	
+	
+	private async Task On_SpaceUpdated(TfSpaceUpdatedEvent args)
+	{
+		await InvokeAsync(async () =>
+		{
+			if (args.Payload.Id == _state.Space?.Id)
+			{
+				_init(Navigator.Uri,args.Payload);
+				await InvokeAsync(StateHasChanged);
+			}
+		});
+	}		
 	
 	private ValueTask Navigator_LocationChanging(LocationChangingContext args)
 	{
@@ -91,12 +104,12 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		return ValueTask.CompletedTask;
 	}
 
-	private void _init(string url)
+	private void _init(string url, TfSpace? space = null)
 	{
 		if (String.IsNullOrWhiteSpace(_state.Uri))
-			_state = TfService.GetAppState(Navigator, _currentUser, url, null);
+			_state = TfService.GetAppState(Navigator, _currentUser, url, null, space);
 		else
-			_state = TfService.GetAppState(Navigator, _currentUser, url, _state);
+			_state = TfService.GetAppState(Navigator, _currentUser, url, _state, space);
 
 
 		if (_state.NavigationState.RouteNodes.Count > 0 && _state.NavigationState.RouteNodes[0] == RouteDataNode.Admin)

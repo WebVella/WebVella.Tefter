@@ -32,11 +32,6 @@ public partial class TucSpaceManageNodeItem : TfBaseComponent
 	private async Task _onMove(bool isUp){ 
 		await OnMove.InvokeAsync(new Tuple<TfSpacePage, bool>(Item,isUp));
 	}
-
-	private async Task _onEdit(){ 
-		await OnEdit.InvokeAsync(Item.Id);
-	}
-
 	private async Task _onCopy(){ 
 		await OnCopy.InvokeAsync(Item.Id);
 	}

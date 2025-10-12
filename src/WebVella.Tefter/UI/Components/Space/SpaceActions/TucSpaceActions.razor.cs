@@ -44,13 +44,19 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 		_spaceFinderVisible = false;
 	}
 
-	public async Task HandleKeyDownAsync(FluentKeyCodeEventArgs args)
+	private void _manageCurrentPage()
 	{
-		if (args.CtrlKey && args.Key == KeyCode.KeyG)
-		{
-			await _findSpace();
-		}
+		var pageManageUrl = String.Format(TfConstants.SpacePagePageManageUrl, TfAuthLayout.GetState().Space!.Id, TfAuthLayout.GetState().SpacePage!.Id);
+		Navigator.NavigateTo(pageManageUrl.GenerateWithLocalAsReturnUrl(Navigator.Uri)!);
 	}
+	private void _manageCurrentSpace()
+	{
+		var pageManageUrl = String.Format(TfConstants.SpaceManagePageUrl, TfAuthLayout.GetState().Space!.Id);
+		Navigator.NavigateTo(pageManageUrl.GenerateWithLocalAsReturnUrl(Navigator.Uri)!);
+	}	
+	
+
+
 	[JSInvokable("OnGlobalSearchHandler")]
 	public async Task OnGlobalSearchHandler()
 	{

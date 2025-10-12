@@ -10,7 +10,8 @@ public static partial class NavigatorExt
 		IStringLocalizer<TfService> LOC,
 		TfUser currentUser,
 		string? urlOverride = null,
-		TfState? oldState = null)
+		TfState? oldState = null,
+		TfSpace? updatedSpace = null)
 	{
 		var navState = navigator.GetRouteState(urlOverride);
 		var appState = new TfState();
@@ -51,7 +52,11 @@ public static partial class NavigatorExt
 			if (navState.SpaceId is not null)
 			{
 				//get space
-				if (oldState is not null && oldState.Space is not null && oldState.Space.Id == navState.SpaceId)
+				if (updatedSpace is not null)
+				{
+					appState.Space = updatedSpace;
+				}
+				else if (oldState is not null && oldState.Space is not null && oldState.Space.Id == navState.SpaceId)
 					appState.Space = oldState.Space;
 				else
 					appState.Space = _tfService.GetSpace(navState.SpaceId.Value);
@@ -65,9 +70,13 @@ public static partial class NavigatorExt
 					else
 						appState.SpacePages = _tfService.GetSpacePages(navState.SpaceId.Value);
 
-					if (navState.SpacePageId is not null)
-						appState.SpacePage =
-							appState.SpacePages.FirstOrDefault(x => x.Id == navState.SpacePageId.Value);
+					if (navState.SpacePageId is null)
+						appState.SpacePage = null;
+					else if (navState.SpacePageId == oldState?.SpacePage?.Id)
+						appState.SpacePage = oldState?.SpacePage;
+					else
+						appState.SpacePage =_tfService.GetSpacePage(navState.SpacePageId.Value);
+
 
 					appState.Menu = navState.generateSpaceMenu(
 						spacePages: appState.SpacePages);

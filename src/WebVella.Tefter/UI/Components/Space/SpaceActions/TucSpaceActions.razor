@@ -6,24 +6,27 @@
     </FluentButton>
     @if (TfAuthLayout.GetState().Space is not null)
     {
-        <FluentButton IconStart="@TfConstants.GetIcon("CodeBlock")" Id="space-menu-toggle"
-                      Appearance="@Appearance.Outline" Title="@LOC("Space Search [CTRL+Q]")"
-                      OnClick="() => _spaceMenuVisible = !_spaceMenuVisible">@LOC("actions")
+        <FluentButton IconStart="@TfConstants.GetIcon("Settings")" Id="space-menu-toggle"
+                      Appearance="@Appearance.Outline" Title="@LOC("Configure the current space")"
+                      OnClick="() => _spaceMenuVisible = !_spaceMenuVisible">@LOC("settings")
         </FluentButton>
         <FluentMenu @bind-Open="_spaceMenuVisible" Anchor="space-menu-toggle" UseMenuService="true"
                     HorizontalPosition="HorizontalPosition.Right">
+            @if (TfAuthLayout.GetState().SpacePage is not null)
+            {
+                <FluentMenuItem
+                    OnClick="_manageCurrentPage">
+                    @LOC("Current Page")
+                    <span slot="start">
+                        <FluentIcon Value="@TfConstants.GetIcon("Document")" Slot="start"/>
+                    </span>
+                </FluentMenuItem>
+            }
             <FluentMenuItem
-                OnClick="@(() => Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageManageUrl, TfAuthLayout.GetState().Space!.Id, TfAuthLayout.GetState().SpacePage!.Id)))">
-                @LOC("Manage page")
+                OnClick="_manageCurrentSpace">
+                @LOC("Current Space")
                 <span slot="start">
-                    <FluentIcon Value="@TfConstants.GetIcon("Document")" Slot="start"/>
-                </span>
-            </FluentMenuItem>
-            <FluentDivider/>
-            <FluentMenuItem>
-                @LOC("Manage space")
-                <span slot="start">
-                    <FluentIcon Value="@TfConstants.GetIcon("Settings")" Slot="start"/>
+                    <FluentIcon Value="@TfConstants.GetIcon("Circle")" Slot="start"/>
                 </span>
             </FluentMenuItem>
         </FluentMenu>

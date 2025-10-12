@@ -1128,6 +1128,7 @@ fluent-text-field.with-prefix::part(control) {
 .tflg {
   display: flex;
   flex-flow: row;
+  position: relative;
 }
 .tflg__aside {
   flex: 0 0 var(--tf-aside-width);
@@ -1208,7 +1209,7 @@ fluent-text-field.with-prefix::part(control) {
   flex: 1 1 auto;
   height: calc(100vh - var(--tf-topbar-height) - var(--tf-page-header-height) - var(--tf-page-tabs-height));
   overflow-y: auto;
-  scrollbar-color: var(--tf-foreground-color-mute) var(--tf-background-color-body);
+  scrollbar-color: var(--tf-fill-base-active) var(--tf-fill-base);
   scrollbar-width: thin;
 }
 .tf-sidenav {
