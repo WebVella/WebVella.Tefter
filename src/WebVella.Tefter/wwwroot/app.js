@@ -424,16 +424,17 @@ document.addEventListener("keydown", function (evtobj) {
             evtobj.preventDefault();
             Tefter.executeArrowsListenerCallbacks(evtobj.key === "ArrowUp");
         }
-    }
-    else if (evtobj.ctrlKey && evtobj.key === 'Tab') {
+    } else if (evtobj.ctrlKey && evtobj.key === 'Tab') {
         if (Tefter.GlobalSearchListeners && Object.keys(Tefter.GlobalSearchListeners).length > 0) {
             evtobj.stopPropagation();
             evtobj.preventDefault();
             Tefter.executeGlobalSearchKeyListenerCallbacks();
         }
-    }
-    else if (evtobj.key === 'Enter') {
+    } else if (evtobj.key === 'Enter') {
         if (Tefter.EnterKeyListeners && Object.keys(Tefter.EnterKeyListeners).length > 0) {
+            if (evtobj.target.type === "button") {
+                return;
+            }
             evtobj.stopPropagation();
             evtobj.preventDefault();
             Tefter.executeEnterKeyListenerCallbacks();

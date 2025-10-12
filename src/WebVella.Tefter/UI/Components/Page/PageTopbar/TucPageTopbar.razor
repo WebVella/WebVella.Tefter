@@ -30,23 +30,7 @@
                     <FluentIcon Value="@TfConstants.GetIcon("Link")"/>
                 </FluentButton>
             }
-
-            @if (TfAuthLayout.GetState().User.IsAdmin)
-            {
-                <TucAnchor Appearance="Appearance.Outline"
-                           Href="@(String.Format(TfConstants.SpacePagePageManageUrl, TfAuthLayout.GetState().Space!.Id, TfAuthLayout.GetState().SpacePage!.Id))">
-                    <FluentIcon Value="@TfConstants.GetIcon("Settings")"/>
-                </TucAnchor>
-            }
-
             <FluentDivider Orientation="Orientation.Vertical"/>
-        }
-
-        @if (TfAuthLayout.GetState().User.IsAdmin)
-        {
-            <TucAnchor Href="@TfConstants.AdminDashboardUrl" Appearance="Appearance.Outline">
-                Admin
-            </TucAnchor>
         }
         <TucNotificationCenter/>
         <TucAnchor Href="#" OnClick="() => _userMenuVisible = !_userMenuVisible"

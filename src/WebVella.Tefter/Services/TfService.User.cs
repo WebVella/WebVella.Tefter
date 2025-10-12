@@ -1106,7 +1106,6 @@ public partial class TfService : ITfService
 		var user = await GetUserAsync(userId);
 		if (user is null)
 			throw new Exception("user not found");
-		if(user.Settings.ThemeMode == themeMode) return user;
 		
 		TfUserBuilder userBuilder = CreateUserBuilder(user);
 		userBuilder

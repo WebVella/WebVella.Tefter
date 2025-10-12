@@ -12,6 +12,9 @@ public record TfSelectOption
 
 	[JsonIgnore]
 	public Action OnClick { get; set; }
+	
+	[JsonIgnore]
+	public Action OnBookmark { get; set; }	
 
 	public TfSelectOption() { }
 	public TfSelectOption(

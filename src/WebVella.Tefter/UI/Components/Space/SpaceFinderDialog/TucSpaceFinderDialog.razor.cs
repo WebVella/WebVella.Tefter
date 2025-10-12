@@ -10,12 +10,11 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 
 	private string? _search = null;
 	private List<TfSpace> _allSpaces = new();
-	private List<TfSelectOption> _bookmarkedSpaces = new();
-	private List<TfSelectOption> _otherSpaces = new();
-	private List<TfSelectOption> _options = new();
-	private FluentSearch _searchInput;
+	private HashSet<Guid> _userBookmarks = new();
+	private List<TfSpaceFinderItem> _options = new();
+	private FluentSearch _searchInput = null!;
 	private int _selectedIndex = 0;
-	private DotNetObjectReference<TucSpaceFinderDialog> _objectRef;
+	private DotNetObjectReference<TucSpaceFinderDialog> _objectRef = null!;
 
 	public async ValueTask DisposeAsync()
 	{
@@ -37,19 +36,16 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
 		_allSpaces = TfService.GetSpacesListForUser(Content.Id);
-		_objectRef = DotNetObjectReference.Create(this);
-		var faker = new Faker("en");
-		for (int i = 0; i < 200; i++)
+		_allSpaces.Add(new TfSpace
 		{
-			_allSpaces.Add(new TfSpace()
-			{
-				Id = Guid.NewGuid(),
-				Name = faker.Lorem.Sentence(5),
-				FluentIconName = "Settings",
-				Color = TfColor.Amber500
-			});
-		}
-
+			Id = Guid.Empty,
+			Name = "Boz",
+			FluentIconName = "Settings"
+			
+		});
+		_userBookmarks = TfAuthLayout.GetState().UserBookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).Select(x => x.SpaceId)
+			.ToHashSet();
+		_objectRef = DotNetObjectReference.Create(this);
 		_init(null);
 	}
 
@@ -68,36 +64,33 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 
 	private void _init(string? search)
 	{
-		_bookmarkedSpaces = new();
-		_otherSpaces = new();
 		_options = new();
 		_selectedIndex = 0;
-		var state = TfAuthLayout.GetState();
-		var userBookmarks = state.UserBookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).Select(x => x.SpaceId)
-			.ToHashSet();
 
 		search = search?.Trim().ToLowerInvariant();
+		
 		foreach (var space in _allSpaces)
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !space.Name!.ToLowerInvariant().Contains(search)) continue;
-			var option = new TfSelectOption()
-			{
-				Id = space.Id,
-				Label = space.Name!,
-				Color = space.Color?.GetColor().Value ?? "var(--tf-accent-color)",
-				IconName = space.FluentIconName ?? "Globe",
-				OnClick = async void () => await _selectSpace(space.Id),
-			};
-			if (userBookmarks.Contains(space.Id))
-				_bookmarkedSpaces.Add(option);
-			else
-				_otherSpaces.Add(option);
+			_options.Add(new TfSpaceFinderItem(
+				space:space,
+				index:0,
+				bookmarked:_userBookmarks.Contains(space.Id),
+				color: space.Color?.GetColor().Value ?? "var(--tf-accent-color)",
+				onClick:null!,
+				onBookmark:null!
+			));
 		}
 
-		_bookmarkedSpaces = _bookmarkedSpaces.OrderBy(x => x.Label).ToList();
-		_otherSpaces = _otherSpaces.OrderBy(x => x.Label).ToList();
-		_options.AddRange(_bookmarkedSpaces);
-		_options.AddRange(_otherSpaces);
+		_options = _options.OrderBy(x=> x.Bookmarked).ThenBy(x=> x.Space.Name).ToList();
+		var index = 0;
+		foreach (var option in _options)
+		{
+			option.Index = index;
+			option.OnClick = async void () => await _selectSpace(option);
+			option.OnBookmark = async void () => await _bookmarkSpace(option);
+			index++;
+		}
 	}
 
 	private void _searchChanged(string? search)
@@ -106,12 +99,49 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 		_init(search);
 	}
 
-	private Task _selectSpace(Guid spaceId)
+	private async Task _adminNavigation()
 	{
-		ToastService.ShowInfo(spaceId.ToString());
-		return Task.CompletedTask;;
+		Navigator.NavigateTo(TfConstants.AdminDashboardUrl);
+		await Dialog.CloseAsync();
 	}
 
+	private async Task _selectSpace(TfSpaceFinderItem option)
+	{
+		var spacePages = TfService.GetSpacePages(option.Space.Id);
+		if (spacePages.Count > 0)
+		{
+			Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl,option.Space.Id, spacePages[0].Id),false);
+			await Dialog.CloseAsync();
+			return;
+		}
+		ToastService.ShowWarning(LOC("Space has no pages created yet"));
+	}
+
+	private Task _bookmarkSpace(TfSpaceFinderItem option)
+	{
+		try
+		{
+			TfService.ToggleBookmark(
+				userId: TfAuthLayout.GetState().User.Id,
+				spaceId: option.Space.Id
+			);
+			option.Bookmarked = !option.Bookmarked;
+			if (option.Bookmarked)
+				_userBookmarks.Add(option.Space.Id);
+			else
+				_userBookmarks.Remove(option.Space.Id);
+			
+			ToastService.ShowSuccess(option.Bookmarked ? LOC("Space Bookmarked") : LOC("Space bookmark removed"));
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}		
+
+		return Task.CompletedTask;;
+	}
+	
+	
 	private async Task _cancel()
 	{
 		await Dialog.CancelAsync();
@@ -144,6 +174,6 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 	[JSInvokable("OnEnterKeyHandler")]
 	public async Task OnEnterKeyHandler()
 	{
-		ToastService.ShowInfo(_selectedIndex.ToString());
+		await _selectSpace(_options[_selectedIndex]);
 	}	
 }

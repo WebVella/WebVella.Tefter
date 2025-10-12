@@ -18,14 +18,26 @@ html:root {
  
   
   --tf-button-color: light-dark(var(--tf-base-600), var(--tf-base-400));
-  --tf-stroke-color: light-dark(rgba(0, 0, 0, 15%), rgba(255, 255, 255, 10%));
-  --tf-stroke-color-mute: light-dark(rgba(0, 0, 0, 7.5%), rgba(255, 255, 255, 7.5%));
-  --tf-stroke-color-hover: light-dark(rgba(0, 0, 0, 30%), rgba(255, 255, 255, 30%));
-  --tf-stroke-color-active: light-dark(rgba(0, 0, 0, 40%), rgba(255, 255, 255, 40%));
+  
+  --tf-stroke-color: light-dark(var(--tf-base-300), var(--tf-base-700));
+  --tf-stroke-color-mute: light-dark(var(--tf-base-200), var(--tf-base-800));
+  --tf-stroke-color-hover: light-dark(var(--tf-base-400), var(--tf-base-600));
+  --tf-stroke-color-active: light-dark(var(--tf-base-400), var(--tf-base-600));
 
   --tf-accent-color: light-dark(var(--tf-accent-500), var(--tf-accent-700));
   --tf-accent-hover: light-dark(var(--tf-accent-400), var(--tf-accent-800));
+  
+  --tf-fill-accent: light-dark(var(--tf-accent-50), var(--tf-accent-900));
+  --tf-fill-accent-hover: light-dark(var(--tf-accent-100), var(--tf-accent-900));
+  --tf-fill-accent-focus: light-dark(var(--tf-accent-200), var(--tf-accent-900));
+  --tf-fill-accent-active: light-dark(var(--tf-accent-300), var(--tf-accent-900));
 
+  --tf-stroke-accent: light-dark(var(--tf-accent-200), var(--tf-accent-700));
+  --tf-stroke-accent-mute: light-dark(var(--tf-accent-100), var(--tf-accent-800));
+  --tf-stroke-accent-hover: light-dark(var(--tf-accent-300), var(--tf-accent-600));
+  --tf-stroke-accent-active: light-dark(var(--tf-accent-400), var(--tf-accent-600));
+  
+  
 
   //paddings
   --tf-padding-base: 15px;
@@ -66,9 +78,13 @@ html:root {
   --tf-border-radius-xl: 3rem;
 
   //box shadows
-  --tf-shadow-color-1: light-dark(rgba(0, 0, 0, 10%), rgba(255, 255, 255, 10%));
+  --tf-shadow-color-1: light-dark(rgba(0, 0, 0, 7%), rgba(255, 255, 255, 7%));
   --tf-shadow-color-2: light-dark(rgba(0, 0, 0, 10%), rgba(255, 255, 255, 10%));
+  --tf-shadow-accent-1: light-dark(color-mix(in srgb, var(--tf-accent-color), transparent 50%), color-mix(in srgb, var(--tf-accent-color), transparent 5%));
+  --tf-shadow-accent-2: light-dark(color-mix(in srgb, var(--tf-accent-color), transparent 75%), color-mix(in srgb, var(--tf-accent-color), transparent 7%));
+
   --tf-shadow-base: 0px 0px 1.5px 0px var(--tf-shadow-color-1), 0px 1.4px 1.5px 0px var(--tf-shadow-color-1), 0px -1px 1px 0px var(--tf-shadow-color-2);
+  --tf-shadow-accent: 0px 0px 1.5px 0px var(--tf-shadow-accent-1), 0px 1.4px 1.5px 0px var(--tf-shadow-accent-1), 0px -1px 1px 0px var(--tf-shadow-accent-2);
 
 
 }

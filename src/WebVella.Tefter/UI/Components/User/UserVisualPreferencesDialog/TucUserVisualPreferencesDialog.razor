@@ -27,9 +27,6 @@
 			<TucSelect @bind-SelectedOption="@_culture" TOption="TfCultureOption"
 			           Items="@TfConstants.CultureOptions" Style="width:100%"
 			           OptionValue="@(p => p.CultureName)" Label="@LOC("Language")">
-				<Indicator>
-					<img style="height:16px;vertical-align:text-bottom;" src="@_culture.IconUrl"/>
-				</Indicator>
 				<OptionTemplate Context="option">
 					<FluentStack VerticalAlignment="@VerticalAlignment.Center">
 						<img style="height:16px;vertical-align:text-bottom;" src="@option.IconUrl"/>

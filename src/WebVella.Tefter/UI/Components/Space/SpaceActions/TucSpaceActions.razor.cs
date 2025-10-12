@@ -4,6 +4,7 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 {
 	private DotNetObjectReference<TucSpaceActions> _objectRef;
 	private bool _spaceMenuVisible = false;
+	private bool _spaceFinderVisible = false;
 	public async ValueTask DisposeAsync()
 	{
 		try
@@ -28,6 +29,8 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 
 	private async Task _findSpace()
 	{
+		if(_spaceFinderVisible) return;
+		_spaceFinderVisible = true;
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceFinderDialog>(
 			TfAuthLayout.GetState().User,
 			new DialogParameters()
@@ -35,10 +38,10 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 				PreventDismissOnOverlayClick = false,
 				PreventScroll = true,
 				Width = TfConstants.DialogWidthLarge,
-				TrapFocus = false
+				TrapFocus = false,
 			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		_spaceFinderVisible = false;
 	}
 
 	public async Task HandleKeyDownAsync(FluentKeyCodeEventArgs args)

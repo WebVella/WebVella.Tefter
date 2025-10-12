@@ -18,7 +18,7 @@ fluent-anchored-region fluent-menu-item
   --presence-offline: #adadad;
   --presence-oof: #c239b3;
   --presence-unknown: #d13438;
-  --highlight-bg: #fff3cd;
+  --highlight-bg: var(--tf-fill-accent);
     
   
   --neutral-foreground-rest: var(--tf-font-color-base);
@@ -91,18 +91,19 @@ fluent-button, fluent-anchor {
 
 /*Dialog*/
 fluent-dialog {
+  
   &::part(overlay) {
     background: light-dark(rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.05));
   }
 
   &::part(control) {
+    margin-top: 10%;
     --tf-elevation-color: light-dark(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.03));
     --elevation-shadow-dialog: 0 0 2px var(--tf-elevation-color), 0 calc(128 * 0.5px) calc((128 * 1px)) var(--tf-elevation-color);
   }
 
   .modal-body-scroll {
-    height: 60vh !important;
-    min-height: 200px !important;
+    max-height: 60vh !important;
     overflow-y: auto !important;
     scrollbar-color: var(--tf-foreground-color-mute) var(--tf-background-color-body);
     scrollbar-width: thin;

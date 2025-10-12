@@ -6,11 +6,20 @@
     </FluentButton>
     @if (TfAuthLayout.GetState().Space is not null)
     {
-        <FluentButton IconStart="@TfConstants.GetIcon("Settings")" Id="space-menu-toggle"
-                      Appearance="@Appearance.Outline"
-                      OnClick="() => _spaceMenuVisible = !_spaceMenuVisible">@LOC("settings")
+        <FluentButton IconStart="@TfConstants.GetIcon("CodeBlock")" Id="space-menu-toggle"
+                      Appearance="@Appearance.Outline" Title="@LOC("Space Search [CTRL+Q]")"
+                      OnClick="() => _spaceMenuVisible = !_spaceMenuVisible">@LOC("actions")
         </FluentButton>
-        <FluentMenu @bind-Open="_spaceMenuVisible" Anchor="space-menu-toggle" UseMenuService="true" HorizontalPosition="HorizontalPosition.Right">
+        <FluentMenu @bind-Open="_spaceMenuVisible" Anchor="space-menu-toggle" UseMenuService="true"
+                    HorizontalPosition="HorizontalPosition.Right">
+            <FluentMenuItem
+                OnClick="@(() => Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageManageUrl, TfAuthLayout.GetState().Space!.Id, TfAuthLayout.GetState().SpacePage!.Id)))">
+                @LOC("Manage page")
+                <span slot="start">
+                    <FluentIcon Value="@TfConstants.GetIcon("Document")" Slot="start"/>
+                </span>
+            </FluentMenuItem>
+            <FluentDivider/>
             <FluentMenuItem>
                 @LOC("Manage space")
                 <span slot="start">

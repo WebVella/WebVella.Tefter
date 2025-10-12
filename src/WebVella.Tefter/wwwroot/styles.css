@@ -253,12 +253,20 @@ html:root {
   --tf-fill-base-focus: light-dark(color-mix(in srgb, var(--tf-fill-base), var(--tf-base-900) 5%), color-mix(in srgb, var(--tf-fill-base), var(--tf-base-950) 15%));
   --tf-fill-base-active: light-dark(color-mix(in srgb, var(--tf-fill-base), var(--tf-base-900) 20%), color-mix(in srgb, var(--tf-fill-base), var(--tf-base-950) 25%));
   --tf-button-color: light-dark(var(--tf-base-600), var(--tf-base-400));
-  --tf-stroke-color: light-dark(rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.1));
-  --tf-stroke-color-mute: light-dark(rgba(0, 0, 0, 0.075), rgba(255, 255, 255, 0.075));
-  --tf-stroke-color-hover: light-dark(rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.3));
-  --tf-stroke-color-active: light-dark(rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 0.4));
+  --tf-stroke-color: light-dark(var(--tf-base-300), var(--tf-base-700));
+  --tf-stroke-color-mute: light-dark(var(--tf-base-200), var(--tf-base-800));
+  --tf-stroke-color-hover: light-dark(var(--tf-base-400), var(--tf-base-600));
+  --tf-stroke-color-active: light-dark(var(--tf-base-400), var(--tf-base-600));
   --tf-accent-color: light-dark(var(--tf-accent-500), var(--tf-accent-700));
   --tf-accent-hover: light-dark(var(--tf-accent-400), var(--tf-accent-800));
+  --tf-fill-accent: light-dark(var(--tf-accent-50), var(--tf-accent-900));
+  --tf-fill-accent-hover: light-dark(var(--tf-accent-100), var(--tf-accent-900));
+  --tf-fill-accent-focus: light-dark(var(--tf-accent-200), var(--tf-accent-900));
+  --tf-fill-accent-active: light-dark(var(--tf-accent-300), var(--tf-accent-900));
+  --tf-stroke-accent: light-dark(var(--tf-accent-200), var(--tf-accent-700));
+  --tf-stroke-accent-mute: light-dark(var(--tf-accent-100), var(--tf-accent-800));
+  --tf-stroke-accent-hover: light-dark(var(--tf-accent-300), var(--tf-accent-600));
+  --tf-stroke-accent-active: light-dark(var(--tf-accent-400), var(--tf-accent-600));
   --tf-padding-base: 15px;
   --tf-padding-sm: calc(var(--tf-padding-base) / 2);
   --tf-topbar-height: 60px;
@@ -284,9 +292,12 @@ html:root {
   --tf-border-radius-md: 1rem;
   --tf-border-radius-lg: 2rem;
   --tf-border-radius-xl: 3rem;
-  --tf-shadow-color-1: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
+  --tf-shadow-color-1: light-dark(rgba(0, 0, 0, 0.07), rgba(255, 255, 255, 0.07));
   --tf-shadow-color-2: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
+  --tf-shadow-accent-1: light-dark(color-mix(in srgb, var(--tf-accent-color), transparent 50%), color-mix(in srgb, var(--tf-accent-color), transparent 5%));
+  --tf-shadow-accent-2: light-dark(color-mix(in srgb, var(--tf-accent-color), transparent 75%), color-mix(in srgb, var(--tf-accent-color), transparent 7%));
   --tf-shadow-base: 0px 0px 1.5px 0px var(--tf-shadow-color-1), 0px 1.4px 1.5px 0px var(--tf-shadow-color-1), 0px -1px 1px 0px var(--tf-shadow-color-2);
+  --tf-shadow-accent: 0px 0px 1.5px 0px var(--tf-shadow-accent-1), 0px 1.4px 1.5px 0px var(--tf-shadow-accent-1), 0px -1px 1px 0px var(--tf-shadow-accent-2);
 }
 body {
   color: var(--tf-font-color-base);
@@ -314,7 +325,7 @@ fluent-anchored-region fluent-menu-item {
   --presence-offline: #adadad;
   --presence-oof: #c239b3;
   --presence-unknown: #d13438;
-  --highlight-bg: #fff3cd;
+  --highlight-bg: var(--tf-fill-accent);
   --neutral-foreground-rest: var(--tf-font-color-base);
   --neutral-stroke-rest: var(--tf-stroke-color);
   --neutral-stroke-hover: var(--tf-stroke-color-hover);
@@ -369,12 +380,12 @@ fluent-dialog::part(overlay) {
   background: light-dark(rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.05));
 }
 fluent-dialog::part(control) {
+  margin-top: 10%;
   --tf-elevation-color: light-dark(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.03));
   --elevation-shadow-dialog: 0 0 2px var(--tf-elevation-color), 0 calc(128 * 0.5px) calc(128 * 1px) var(--tf-elevation-color);
 }
 fluent-dialog .modal-body-scroll {
-  height: 60vh !important;
-  min-height: 200px !important;
+  max-height: 60vh !important;
   overflow-y: auto !important;
   scrollbar-color: var(--tf-foreground-color-mute) var(--tf-background-color-body);
   scrollbar-width: thin;
@@ -491,13 +502,13 @@ fluent-text-field.with-prefix::part(control) {
   padding-top: var(--tf-padding-base);
 }
 .tf-card + .tf-card {
-  margin-top: 2rem;
+  margin-top: var(--tf-padding-sm);
 }
 .tf-card--clickable {
   cursor: pointer;
 }
 .tf-card--clickable:hover {
-  background: var(--tf-base-200);
+  background: var(--tf-fill-base-hover);
 }
 .tf-card__content fluent-anchor.stealth {
   --neutral-fill-stealth-rest: var(--tf-font-color-base);
@@ -1273,6 +1284,40 @@ fluent-text-field.with-prefix::part(control) {
   height: 1px;
   background: linear-gradient(to right, var(--tf-fill-base-hover) 0%, var(--tf-fill-base-active) 50%, var(--tf-fill-base-hover) 100%);
   left: 5%;
+}
+.tf-space-finder__space {
+  box-shadow: none;
+  border-color: var(--tf-stroke-color) !important;
+}
+.tf-space-finder__space--active {
+  border-color: var(--accent-fill-rest) !important;
+}
+.tf-space-finder__space--active:hover {
+  background: var(--tf-fill-base-hover);
+}
+.tf-space-finder__space--active:focus,
+.tf-space-finder__space--active:active {
+  box-shadow: var(--tf-fill-base-hover);
+}
+.tf-space-finder__space .tf-card__content {
+  display: flex;
+  align-items: center;
+}
+.tf-space-finder__space__icon {
+  flex: 0 0 20px;
+  display: flex;
+  align-items: center;
+}
+.tf-space-finder__space__meta {
+  flex: 1 1 auto;
+  padding: 0 10px;
+}
+.tf-space-finder__space__meta mark {
+  background: transparent;
+  font-weight: bold;
+}
+.tf-space-finder__space__bookmark {
+  flex: 0 0 20px;
 }
 .tf-page-topbar {
   display: flex;
