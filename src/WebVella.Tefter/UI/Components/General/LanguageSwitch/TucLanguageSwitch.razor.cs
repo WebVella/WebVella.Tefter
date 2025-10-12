@@ -14,11 +14,11 @@ public partial class TucLanguageSwitch : TfBaseComponent
 		{
 			 await TfService.SetUserCulture(
 				userId: User.Id,
-				cultureCode: option.CultureCode);
+				cultureCode: option.CultureName);
 
 				ToastService.ShowSuccess(LOC("The language is successfully changed!"));
 
-				var culture = CultureInfo.GetCultureInfo(option.CultureCode);
+				var culture = CultureInfo.GetCultureInfo(option.CultureName);
 				await new CookieService(JSRuntime).SetAsync(CookieRequestCultureProvider.DefaultCookieName,
 						CookieRequestCultureProvider.MakeCookieValue(
 							new RequestCulture(

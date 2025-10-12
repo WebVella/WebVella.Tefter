@@ -1,18 +1,22 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucUserThemeDialog : TfBaseComponent, IDialogContentComponent<TfUser?>
+public partial class TucUserVisualPreferencesDialog : TfBaseComponent, IDialogContentComponent<TfUser?>
 {
 	[Parameter] public TfUser? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private bool _isSubmitting = false;
 	private DesignThemeModes _mode = DesignThemeModes.System;
+	private TfCultureOption _culture = null!;
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
 		_mode = Content.Settings?.ThemeMode ?? DesignThemeModes.System;
+		
+		_culture = TfConstants.CultureOptions.FirstOrDefault(x=> x.CultureName == Content.Settings?.Culture.Name)
+			?? TfConstants.CultureOptions.First();
 	}
 
 	private async Task _save()
@@ -28,7 +32,7 @@ public partial class TucUserThemeDialog : TfBaseComponent, IDialogContentCompone
 
 			var result = new TfUser();
 
-			result = await TfService.UpdateUserThemeModeAsync(Content!.Id,_mode);
+			result = await TfService.UpdateUserVisualPreferencesAsync(Content!.Id,_mode, _culture);
 			ToastService.ShowSuccess(LOC("User account was successfully updated!"));
 
 			await Dialog.CloseAsync(result);

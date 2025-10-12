@@ -43,7 +43,7 @@ public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentCo
 				IsSidebarOpen = Content.Settings.IsSidebarOpen,
 			};
 
-			_form.Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureCode == Content.Settings.CultureName);
+			_form.Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureName == Content.Settings.CultureName);
 			if (_form.Culture is null) _form.Culture = TfConstants.CultureOptions[0];
 		}
 		base.InitForm(_form);

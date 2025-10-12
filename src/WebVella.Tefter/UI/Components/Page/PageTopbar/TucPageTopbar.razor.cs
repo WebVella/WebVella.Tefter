@@ -70,35 +70,20 @@ public partial class TucPageTopbar : TfBaseComponent, IDisposable
 		}
 	}
 	
-	private async Task _themeChange()
+	private async Task _visualPreferencesHandler()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TucUserThemeDialog>(
+		var dialog = await DialogService.ShowDialogAsync<TucUserVisualPreferencesDialog>(
 			TfAuthLayout.GetState().User,
 			new DialogParameters()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
-				Width = TfConstants.DialogWidthLarge,
+				Width = TfConstants.DialogWidthSmall,
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null) { }
 	}	
-
-	private async Task _changeLanguage()
-	{
-		var dialog = await DialogService.ShowDialogAsync<TucUserLanguageDialog>(
-			TfAuthLayout.GetState().User,
-			new DialogParameters()
-			{
-				PreventDismissOnOverlayClick = true,
-				PreventScroll = true,
-				Width = TfConstants.DialogWidthLarge,
-				TrapFocus = false
-			});
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
-	}		
 	
 	private void _initBookmark()
 	{

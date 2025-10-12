@@ -87,7 +87,7 @@
 				<FluentGridItem xs="6">
 					<TucSelect @bind-SelectedOption="@_form.Culture" TOption="TfCultureOption"
 								  Items="@TfConstants.CultureOptions" Style="width:100%"
-								  OptionValue="@(p => p.CultureCode)"
+								  OptionValue="@(p => p.CultureName)"
 								  OptionText="@(p => p.CultureInfo.NativeName)" Label="@LOC("Localization")" />
 					<FluentValidationMessage For="@(() => _form.Culture)" />
 				</FluentGridItem>

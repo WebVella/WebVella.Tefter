@@ -58,19 +58,9 @@
                 @TfAuthLayout.GetState().User.FirstName @TfAuthLayout.GetState().User.LastName
             </FluentMenuItem>
             <FluentDivider Style="margin-top:10px"/>
-            <FluentMenuItem OnClick="_themeChange">
-                @LOC("UI Theme")
-                <span slot="start">
-                            <FluentIcon Value="@TfConstants.GetIcon("DarkTheme")"
-                                        Slot="start"/>
-                        </span>
-            </FluentMenuItem>
-            <FluentMenuItem OnClick="_changeLanguage">
-                @LOC("Language & Locale")
-                <span slot="start">
-                            <FluentIcon Value="@TfConstants.GetIcon("Translate")"
-                                        Slot="start"/>
-                        </span>
+            <FluentMenuItem OnClick="_visualPreferencesHandler">
+                @LOC("Visual Preferences")
+                <span slot="start"><FluentIcon Value="@TfConstants.GetIcon("Color")" Slot="start"/></span>
             </FluentMenuItem>
             @if (_isSetAsStartupUri())
             {

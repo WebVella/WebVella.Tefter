@@ -141,7 +141,7 @@ public partial interface ITfService
 		TfUser user);
 
 	Task<TfUser> UpdateUserWithFormAsync(TfUserManageForm form);
-	Task<TfUser> UpdateUserThemeModeAsync(Guid userId, DesignThemeModes themeMode);
+	Task<TfUser> UpdateUserVisualPreferencesAsync(Guid userId, DesignThemeModes themeMode, TfCultureOption culture);
 
 	//Gets the authenticated user from cookie
 	Task<TfUser?> GetUserFromCookieAsync(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider);
@@ -1101,7 +1101,7 @@ public partial class TfService : ITfService
 		return user;
 	}
 	
-	public async Task<TfUser> UpdateUserThemeModeAsync(Guid userId, DesignThemeModes themeMode)
+	public async Task<TfUser> UpdateUserVisualPreferencesAsync(Guid userId, DesignThemeModes themeMode, TfCultureOption culture)
 	{
 		var user = await GetUserAsync(userId);
 		if (user is null)
@@ -1110,7 +1110,8 @@ public partial class TfService : ITfService
 		
 		TfUserBuilder userBuilder = CreateUserBuilder(user);
 		userBuilder
-			.WithThemeMode(themeMode);
+			.WithThemeMode(themeMode)
+			.WithCultureCode(culture.CultureName);
 		user = userBuilder.Build();
 		user = await SaveUserAsync(user);
 		return user;
