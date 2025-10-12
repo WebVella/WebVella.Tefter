@@ -36,13 +36,6 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
 		_allSpaces = TfService.GetSpacesListForUser(Content.Id);
-		_allSpaces.Add(new TfSpace
-		{
-			Id = Guid.Empty,
-			Name = "Boz",
-			FluentIconName = "Settings"
-			
-		});
 		_userBookmarks = TfAuthLayout.GetState().UserBookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).Select(x => x.SpaceId)
 			.ToHashSet();
 		_objectRef = DotNetObjectReference.Create(this);
