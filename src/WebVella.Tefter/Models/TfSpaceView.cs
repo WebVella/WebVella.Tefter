@@ -6,14 +6,14 @@ public class TfSpaceView
 	public Guid DatasetId { get; set; }
 	public string SpaceDataName { get; set; } = null!;
 
-	//[Obsolete("Will be removed")]
-	//public Guid SpaceId { get; set; }
+	[Obsolete("Will be removed")]
+	public Guid SpaceId { get; set; }
 
-	//[Obsolete("Will be removed")]
-	//public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
+	[Obsolete("Will be removed")]
+	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
 	public string Name { get; set; } = null!;
-	//[Obsolete("Will be removed")]
-	//public short Position { get; set; }
+	[Obsolete("Will be removed")]
+	public short Position { get; set; }
 	public string SettingsJson { get; set; } = "{}";
 	public TfSpaceViewSettings Settings
 	{
