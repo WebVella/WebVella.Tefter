@@ -17,15 +17,15 @@ public partial class TfServiceTest : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
+				var (provider, dataset) = await CreateTestStructureAndData(ServiceProvider, dbService);
 
 				Data_GetDataIdentityValue(provider);
 
-				Data_InsertUpdateTableTest(provider.Id, spaceData.Id);
+				Data_InsertUpdateTableTest(provider.Id, dataset.Id);
 
-				Data_SimpleQueryTest(provider.Id, spaceData.Id);
+				Data_SimpleQueryTest(provider.Id, dataset.Id);
 
-				Data_QueryOnlyTfIds(provider.Id, spaceData.Id);
+				Data_QueryOnlyTfIds(provider.Id, dataset.Id);
 			}
 		}
 	}
