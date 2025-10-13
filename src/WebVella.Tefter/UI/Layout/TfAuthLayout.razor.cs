@@ -11,13 +11,18 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
-	
+
+	[Inject] private AccentBaseColor AccentBaseColor { get; set; } = default!;
+
 	private TfState _state = new();
 	private TfUser _currentUser = new();
 	private bool _isLoaded = false;
 	private string _urlInitialized = string.Empty;
-	private string _styles = String.Empty;
 	private IDisposable? _locationChangingHandler;
+
+	private TfColor _accentColor = TfColor.Red500;
+	private DesignThemeModes _themeMode = DesignThemeModes.System;
+
 
 	public TfState GetState() => _state;
 
@@ -41,6 +46,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 			return;
 		}
+
 		_currentUser = user;
 		if (!_checkAccess(Navigator.Uri))
 			Navigator.NavigateTo(string.Format(TfConstants.NoAccessPage));
@@ -72,20 +78,20 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 				await InvokeAsync(StateHasChanged);
 			}
 		});
-	}	
-	
+	}
+
 	private async Task On_SpaceUpdated(TfSpaceUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
 			if (args.Payload.Id == _state.Space?.Id)
 			{
-				_init(Navigator.Uri,args.Payload);
+				_init(Navigator.Uri, args.Payload);
 				await InvokeAsync(StateHasChanged);
 			}
 		});
-	}		
-	
+	}
+
 	private ValueTask Navigator_LocationChanging(LocationChangingContext args)
 	{
 		if (_urlInitialized != args.TargetLocation)
@@ -111,14 +117,8 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		else
 			_state = TfService.GetAppState(Navigator, _currentUser, url, _state, space);
 
-
-		if (_state.NavigationState.RouteNodes.Count > 0 && _state.NavigationState.RouteNodes[0] == RouteDataNode.Admin)
-		{
-			_styles = (_state.Space?.Color ?? TfColor.Red500).GenerateStylesForAccentColor(_currentUser.Settings
-				?.ThemeMode);
-		}
-		else
-			_styles = (_state.Space?.Color ?? TfColor.Green500).GenerateStylesForAccentColor(_currentUser.Settings?.ThemeMode);
+		_accentColor = (_state.Space?.Color ?? TfColor.Emerald500);
+		_themeMode = _currentUser?.Settings?.ThemeMode ?? DesignThemeModes.System;
 	}
 
 	private bool _checkAccess(string url)
@@ -127,5 +127,4 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			return true;
 		return false;
 	}
-
 }

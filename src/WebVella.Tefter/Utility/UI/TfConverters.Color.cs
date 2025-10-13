@@ -2,61 +2,8 @@
 
 public static partial class TfConverters
 {
-	public static string GenerateStylesForAccentColor(this TfColor color, DesignThemeModes? theme)
-	{
-		var colorAttr = color.GetColor();
-		var baseAttr = TfColor.Zinc500.GetColor();
-		var sb = new StringBuilder();
-		sb.AppendLine("<style>");
-		sb.AppendLine("html:root {");
-		if (theme is null || theme == DesignThemeModes.System)
-		{
-			sb.AppendLine("color-scheme: light dark;");
-		}
-		else if(theme == DesignThemeModes.Dark)
-		{
-			sb.AppendLine("color-scheme: dark;");
-		}
-		else
-		{
-			sb.AppendLine("color-scheme: light;");
-		}
-
-		foreach (var value in new List<int>
-		         {
-			         50,
-			         100,
-			         200,
-			         300,
-			         400,
-			         500,
-			         600,
-			         700,
-			         800,
-			         900,
-			         950
-		         })
-		{
-			sb.AppendLine($"--tf-accent-{value}: var(--tf-{colorAttr.Name}-{value});");			
-			sb.AppendLine($"--tf-base-{value}: var(--tf-{baseAttr.Name}-{value});");			
-		}
-
-
-		sb.AppendLine("}");
-		sb.AppendLine("</style>");
-
-		return sb.ToString();
-	}
-
-	public static System.Drawing.Color TfColorToColor(TfColor? color)
-	{
-		if (color is null)
-		{
-			return new System.Drawing.Color();
-		}
-
-		return System.Drawing.ColorTranslator.FromHtml(color.GetColor().Value);
-	}
+	public static System.Drawing.Color ToDrawingColor(this TfColor color)
+		=> System.Drawing.ColorTranslator.FromHtml(color.GetColor().OKLCH);
 
 	public static System.Drawing.Color HEXToColor(string color)
 	{
@@ -157,13 +104,13 @@ public static partial class TfConverters
 		if (int.TryParse(colorString, out int value)
 		    && Enum.IsDefined(typeof(TfColor), value))
 		{
-			return ((TfColor)value).GetColor().Value;
+			return ((TfColor)value).GetColor().OKLCH;
 		}
 
 		//Check if TfColor string
 		if (Enum.TryParse<TfColor>(colorString, true, out TfColor outColor))
 		{
-			return outColor.GetColor().Value;
+			return outColor.GetColor().OKLCH;
 		}
 
 		//named color

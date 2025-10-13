@@ -73,7 +73,7 @@ public static class EnumExtensions
 
 	public static TfColorAttribute GetColor<TEnum>(this TEnum e) where TEnum : Enum
 	{
-		TfColorAttribute result = new TfColorAttribute(name: "", value: "", variable: "", number: 0, selectable: false);
+		TfColorAttribute result = new TfColorAttribute(name: "", oklch: "", hex: "", variable: "", number: 0, selectable: false);
 		if (e is null)
 			return result;
 		if (e is Enum)
@@ -95,7 +95,7 @@ public static class EnumExtensions
 	}
 	public static TfColorAttribute GetColor<TEnum>(this TEnum? e) where TEnum : struct, Enum
 	{
-		TfColorAttribute result = new TfColorAttribute(name: "", value: "", variable: "", number: 0, selectable: false);
+		TfColorAttribute result = new TfColorAttribute(name: "", oklch: "", hex: "", variable: "", number: 0, selectable: false);
 		if (e is null)
 			return result;
 		if (e is Enum)

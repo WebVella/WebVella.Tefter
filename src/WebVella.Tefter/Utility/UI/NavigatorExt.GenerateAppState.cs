@@ -119,7 +119,7 @@ public static partial class NavigatorExt
 				IconExpanded = TfConstants.GetIcon("People"),
 				Selected = routeState.HasNode(RouteDataNode.Users, 1)
 				           || routeState.HasNode(RouteDataNode.Roles, 1),
-				Url = null,
+				Url = string.Format(TfConstants.AdminUsersPageUrl),
 				Text = LOC["Access"],
 				Expanded = true
 			};

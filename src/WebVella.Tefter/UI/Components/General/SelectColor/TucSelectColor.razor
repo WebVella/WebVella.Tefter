@@ -12,7 +12,7 @@
 		{
 			<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape", variant: IconVariant.Filled)"
 						Color="Color.Custom"
-						CustomColor="@Value.GetColor().Value" />
+						CustomColor="@Value.GetColor().OKLCH" />
 		}
 
 	</FluentTextField>
@@ -41,7 +41,7 @@ else
 					{
 						<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape", variant: IconVariant.Filled)"
 									Color="Color.Custom"
-									CustomColor="@Value.Value.GetColor().Value" />
+									CustomColor="@Value.Value.GetColor().OKLCH" />
 					}
 				}
 				<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-fill-strong-focus)" Color="@Color.Custom" />
@@ -74,7 +74,7 @@ else
 								{
 									<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape", variant: IconVariant.Filled)"
 												Color="Color.Custom"
-												CustomColor="@option.GetColor().Value" />
+												CustomColor="@option.GetColor().OKLCH" />
 								}
 								<FluentLabel>@option.GetColor().Name</FluentLabel>
 							</FluentMenuItem>

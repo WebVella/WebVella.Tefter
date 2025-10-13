@@ -1,0 +1,46 @@
+﻿.drag-drop-area {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    margin: 20px 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height:300px;
+}
+
+.drag-drop-area:hover,
+.drag-drop-area.drag-over {
+    border-color: #007bff;
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.drag-drop-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.drag-drop-area i {
+    font-size: 48px;
+    color: #007bff;
+}
+
+.drag-drop-area p {
+    margin: 0;
+    color: #666;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}

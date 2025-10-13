@@ -1,38 +1,35 @@
-﻿@import '_variables.less';
-
-.tf-treemenu {
+﻿.tf-treemenu {
   width: 100%;
-  --tf-submenu-padding: calc(var(--tf-padding-base) * 1);
-  --tf-submenu-padding-half: calc(var(--tf-submenu-padding) / 2);
+  padding: 0 calc(var(--tf-padding) / 2);
 }
 
 .tf-submenu {
-  padding-left: var(--tf-submenu-padding);
+  padding-left: calc(var(--tf-padding) * 2);
   position: relative;
 
   &:before {
     content: "";
     display: block;
     position: absolute;
-    left: calc(var(--tf-submenu-padding-half) + 3px);
+    left: calc(var(--tf-padding) + 3px);
     top: 0;
     bottom: 0;
     width: 1px;
-    background:linear-gradient(to bottom, var(--tf-fill-base-hover) 0%, var(--tf-fill-base-active) 50%, var(--tf-fill-base-hover) 100%);
+    background: linear-gradient(to bottom, var(--neutral-layer-2) 10%, var(--neutral-layer-3) 50%, var(--neutral-layer-2) 90%);
   }
 
 }
 
 .tf-submenu .tf-submenu {
-  padding-left: calc(var(--tf-submenu-padding) * 2);
+  padding-left: calc(var(--tf-padding) * 2);
 }
 
 .tf-submenu .tf-submenu .tf-submenu {
-  padding-left: calc(var(--tf-submenu-padding) * 3);
+  padding-left: calc(var(--tf-padding) * 3);
 }
 
 .tf-submenu .tf-submenu .tf-submenu .tf-submenu {
-  padding-left: calc(var(--tf-submenu-padding) * 4);
+  padding-left: calc(var(--tf-padding) * 4);
 }
 
 
@@ -43,32 +40,36 @@
   margin: calc(var(--design-unit) * 1px) 0;
   text-decoration: none;
   min-height: calc(((var(--base-height-multiplier) + var(--density)) * var(--design-unit) + 1) * 1px);
-  padding: 0.5rem 0.25rem 0.5rem 0.5rem;
-  color: var(--tf-font-color-base);
-  border-radius: var(--tf-border-radius-sm);
+  padding-left: calc(var(--tf-padding) / 2);
+  padding-right: calc(var(--tf-padding) / 2);
+  color: var(--neutral-foreground-rest);
+  border-radius: calc(var(--control-corner-radius) * 1px);
   position: relative;
-  
-  &:hover {
-    color: var(--tf-font-color-base);
-    background: light-dark(color-mix(in srgb, var(--tf-base-500), transparent 90%),
-    color-mix(in srgb, var(--tf-base-500), transparent 90%));
 
+  &:hover {
+    color: var(--accent-foreground-hover);
+    background: color-mix(in srgb, var(--neutral-layer-1), var(--accent-fill-rest) 5%);
+    
     & .tf-treemenu__item__expander {
-      background: light-dark(color-mix(in srgb, var(--tf-base-500), transparent 85%),
-      color-mix(in srgb, var(--tf-base-500), transparent 85%));
       display: flex;
     }
   }
 
   &.tf-active:not(.tf-child-active) {
     position: relative;
-    color:var(--tf-accent-color);
+    color: var(--accent-foreground-active);
+
     &::before {
       display: none !important;
     }
-    svg{
-      --accent-fill-rest: var(--tf-accent-color);
+
+    svg {
+      --accent-fill-rest: var(--accent-foreground-active);
     }
+  }
+
+  &.tf-active + .tf-submenu:before {
+    background: linear-gradient(to bottom, var(--neutral-layer-2) 10%, var(--accent-fill-rest) 50%, var(--neutral-layer-2) 90%);
   }
 
   &__content {
@@ -83,7 +84,7 @@
     align-items: center;
     justify-content: start;
 
-    --accent-fill-rest: var(--tf-font-color-base);
+    --accent-fill-rest: var(--neutral-foreground-hover);
 
     svg {
       width: 20px;
@@ -117,10 +118,10 @@
 
   &__expander {
     position: absolute;
-    right:var(--tf-padding-sm);
-    top:50%;
+    right: var(--tf-padding);
+    top: 50%;
     margin-top: -12px;
-    
+
     //display: flex;
     display: none;
     /*pointer-events: none;*/
@@ -132,8 +133,12 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    --accent-fill-rest: var(--tf-foreground-color-body);
+    --accent-fill-rest: var(--neutral-foreground-hover);
 
+    &:hover{
+      background: var(--neutral-layer-3);
+    }
+    
     svg {
       width: 16px !important;
     }

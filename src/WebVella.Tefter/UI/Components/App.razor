@@ -14,7 +14,7 @@
 @using Microsoft.Extensions.Localization;
 
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 
 <head>
 	<HeadOutlet @rendermode="new InteractiveServerRenderMode(prerender: false)" />
@@ -26,8 +26,10 @@
 	<link rel="icon" type="image/png" href="@Assets[$"/favicon.ico"]" />
 	<script src="_content/Microsoft.FluentUI.AspNetCore.Components/Microsoft.FluentUI.AspNetCore.Components.lib.module.js?cb=@cb" type="module" async></script>
 	<script src="@Assets[$"_content/WebVella.Tefter/lib/quill.js?cb={cb}"]"></script>
-	<link rel="stylesheet" href="@Assets[$"WebVella.Tefter.Site.styles.css?cb={cb}"]" />
+	<link rel="stylesheet" href="@Assets[$"WebVella.Tefter.Site.styles.css?cb={cb}"]" /> 
 	<link rel="stylesheet" href="@Assets[$"_content/WebVella.Tefter/styles.css?cb={cb}"]" />	
+	<link rel="stylesheet" href="@Assets[$"_content/WebVella.Tefter/css/drag-drop.css?cb={cb}"]" />
+	<script src="@Assets[$"_content/WebVella.Tefter/js/drag-drop.js?cb={cb}"]"></script>
 </head>
 
 <body>
