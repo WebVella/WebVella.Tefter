@@ -1,0 +1,39 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="false">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Theme mode")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
+	              Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	<FluentGrid>
+		<FluentGridItem xs="12">
+			<TucSelect @bind-SelectedOption="@_mode" TOption="DesignThemeModes"
+			           Items="@(Enum.GetValues<DesignThemeModes>())" Style="width:100%"
+			           OptionValue="@(p => ((int)p).ToString())"
+			           OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"/>
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentGrid>
+		<FluentGridItem xs="12">
+			<TucSelect @bind-SelectedOption="@_culture" TOption="TfCultureOption"
+			           Items="@TfConstants.CultureOptions" Style="width:100%"
+			           OptionValue="@(p => p.CultureName)" Label="@LOC("Language")">
+				<OptionTemplate Context="option">
+					<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+						<img style="height:16px;vertical-align:text-bottom;" src="@option.IconUrl"/>
+						@option.CultureInfo.NativeName
+					</FluentStack>
+				</OptionTemplate>
+			</TucSelect>
+		</FluentGridItem>
+	</FluentGrid>
+</FluentDialogBody>

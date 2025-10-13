@@ -2,20 +2,24 @@
 @page "/admin/data-identities/{ItemId}"
 @inherits TfBasePage
 
-<TucLayoutListDetails>
-	<Header>
-		<TucHeader />
-	</Header>
-	<AsideToolbar>
-		<TucAdminDataIdentityDetailsAsideToolbar />
-	</AsideToolbar>
-	<AsideContent>
-		<TucAdminDataIdentityDetailsAsideContent />
-	</AsideContent>
-	<Content>
+<TucLayoutGeneral>
+	<SpaceHeader>
+		<TucSpaceHeader/>
+	</SpaceHeader>
+	<SpaceActions>
+		<TucSpaceActions/>
+	</SpaceActions>
+	<SideNav>
+		<TucSpaceNavigation/>
+	</SideNav>
+	<PageTopbar>
+		<TucPageTopbar/>
+	</PageTopbar>
+	<ChildContent>
 		<TucAdminDataIdentityDetailsContent/>
-	</Content>
-</TucLayoutListDetails>
+	</ChildContent>
+</TucLayoutGeneral>
+
 
 
 

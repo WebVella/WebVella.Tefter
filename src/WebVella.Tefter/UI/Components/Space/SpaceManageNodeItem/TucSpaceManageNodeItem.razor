@@ -5,9 +5,9 @@
 	<td class="tf-grid-td">
 		<div>
 			<FluentStack Wrap="false">
-				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
+				<TucAnchor Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
 								Title="@LOC("edit")"
-							  OnClick="_onEdit" />
+							  Href="@(String.Format(TfConstants.SpacePagePageManageUrl,Item.SpaceId,Item.Id).GenerateWithLocalAsReturnUrl(TfAuthLayout.GetState().NavigationState.Uri))" />
 				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Copy")"
 							  Title="@LOC("copy")"
 							  OnClick="_onCopy" />

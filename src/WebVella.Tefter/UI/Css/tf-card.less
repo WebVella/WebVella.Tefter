@@ -1,9 +1,6 @@
-﻿@import '_variables.less';
-
-
-.tf-card {
+﻿.tf-card {
   --tf-card-border-radius: var(--tf-border-radius-base);
-  --tf-card-background-color: light-dark(var(--tf-base-50), var(--tf-base-800));
+  --tf-card-background-color: light-dark(var(--tf-base-50), var(--tf-fill-base-active));
   border: 1px solid transparent;
   border-radius: var(--tf-card-border-radius);
   background: var(--tf-card-background-color);
@@ -17,7 +14,7 @@
   &__title {
     background: transparent;
     border-radius: 0.5rem;
-    padding: 0 0 1rem 0;
+    //padding: 0 0 1rem 0;
     margin-bottom: 0;
     font-size: var(--tf-font-size-md);
     font-weight: var(--tf-font-weight-lg);
@@ -58,14 +55,14 @@
   }
 
   & + & {
-    margin-top: 2rem;
+    margin-top: var(--tf-padding-sm);
   }
 
   &--clickable {
     cursor: pointer;
 
     &:hover {
-      background: var(--tf-base-200);
+      background: var(--tf-fill-base-hover);
     }
   }
 

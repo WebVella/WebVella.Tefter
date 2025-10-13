@@ -10,7 +10,7 @@
 			<span slot="start">
 				@if (Item.Color is not null)
 				{
-					<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().Value)" />
+					<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().OKLCH)" />
 				}
 
 				else
@@ -23,7 +23,7 @@
 		{
 			@if (Item.Color is not null)
 			{
-				<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().Value)" />
+				<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().OKLCH)" />
 			}
 
 			else
@@ -33,7 +33,7 @@
 		}
 		@if (!String.IsNullOrWhiteSpace(Item.Text))
 		{
-			<span class="tf-menu__item__text" title="@Item.Text">
+			<span class="tf-tabs__item__text" title="@Item.Text">
 				@TfConverters.StringOverflow(Item.Text, EllipsesLimit)
 			</span>
 		}

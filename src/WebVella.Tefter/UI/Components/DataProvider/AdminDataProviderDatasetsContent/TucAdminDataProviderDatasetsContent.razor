@@ -1,10 +1,9 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout Icon="@TfConstants.GetIcon("CloudDatabase")" Area="@LOC("Data Providers")"
-			   Title="@_provider?.Name" SubTitle="@LOC("Datasets")" Color="TfConstants.AdminColor">
-	<NavigationLeft>
+<TucLayoutPageContent Title="@_provider?.Name">
+	<Tabs>
 		<TucAdminDataProviderDetailsContentToolbar />
-	</NavigationLeft>
+	</Tabs>
 	<ChildContent>
 		<TucErrorBoundry>
 			<div style="padding:var(--tf-padding-base)">
@@ -95,7 +94,7 @@
 															}
 															else
 															{
-																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().Value)" Color="@(TfColor.Orange700.GetColor().Value)">@columnCount</FluentBadge>
+																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().OKLCH)" Color="@(TfColor.Orange700.GetColor().OKLCH)">@columnCount</FluentBadge>
 															}
 														</div>
 														@LOC("columns")
@@ -113,7 +112,7 @@
 															}
 															else
 															{
-																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().Value)" Color="@(TfColor.Orange700.GetColor().Value)">@filterCount</FluentBadge>
+																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().OKLCH)" Color="@(TfColor.Orange700.GetColor().OKLCH)">@filterCount</FluentBadge>
 															}
 														</div>
 														@LOC("filters")
@@ -131,7 +130,7 @@
 															}
 															else
 															{
-																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().Value)" Color="@(TfColor.Orange700.GetColor().Value)">@sortCount</FluentBadge>
+																<FluentBadge Fill="somevalue" BackgroundColor="@(TfColor.Orange100.GetColor().OKLCH)" Color="@(TfColor.Orange700.GetColor().OKLCH)">@sortCount</FluentBadge>
 															}
 														</div>
 														@LOC("sorting")
@@ -168,4 +167,4 @@
 			</div>
 		</TucErrorBoundry>
 	</ChildContent>
-</TucPageLayout>
+</TucLayoutPageContent>

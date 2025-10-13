@@ -66,7 +66,7 @@ public partial class TucAdminTemplateDetailsAsideContent : TfBaseComponent, IDis
 			{
 				_items.Add(new TfMenuItem
 				{
-					Url = string.Format(TfConstants.AdminTemplatesTemplatePageUrl, (int)item.ResultType, item.Id),
+					Url = string.Format(TfConstants.AdminTemplateDetailsPageUrl, (int)item.ResultType, item.Id),
 					Description = item.ResultType.ToDescriptionString(),
 					Text = TfConverters.StringOverflow(item.Name, _stringLimit),
 					Selected = navState.TemplateId == item.Id

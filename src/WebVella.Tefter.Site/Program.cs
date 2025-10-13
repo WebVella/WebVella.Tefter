@@ -90,7 +90,7 @@ try
 		//This setups the localization of the Application. 
 		//It currently support only a selection of languages/cultures. 
 		//Contact us if you want to help with the translation in other languages
-		string[] supportedCultures = TfConstants.CultureOptions.Select(x => x.CultureCode).ToArray();
+		string[] supportedCultures = TfConstants.CultureOptions.Select(x => x.CultureName).ToArray();
 		var localizationOptions = new RequestLocalizationOptions()
 			.SetDefaultCulture(supportedCultures[0])
 			.AddSupportedCultures(supportedCultures)

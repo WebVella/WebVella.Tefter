@@ -1,21 +1,23 @@
 ﻿@namespace WebVella.Tefter.UI.Pages
 @page "/admin/shared-columns/{ItemId:guid}"
 @inherits TfBasePage
-
-<TucLayoutListDetails>
-	<Header>
-		<TucHeader />
-	</Header>
-	<AsideToolbar>
-		<TucAdminSharedColumnDetailsAsideToolbar/>
-	</AsideToolbar>
-	<AsideContent>
-		<TucAdminSharedColumnDetailsAsideContent />
-	</AsideContent>
-	<Content>
-		<TucAdminSharedColumnDetailsContent />
-	</Content>
-</TucLayoutListDetails>
+<TucLayoutGeneral>
+	<SpaceHeader>
+		<TucSpaceHeader/>
+	</SpaceHeader>
+	<SpaceActions>
+		<TucSpaceActions/>
+	</SpaceActions>
+	<SideNav>
+		<TucSpaceNavigation/>
+	</SideNav>
+	<PageTopbar>
+		<TucPageTopbar/>
+	</PageTopbar>
+	<ChildContent>
+		<TucAdminSharedColumnDetailsContent/>
+	</ChildContent>
+</TucLayoutGeneral>
 
 
 

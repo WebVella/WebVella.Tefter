@@ -1,20 +1,14 @@
-﻿@import '_variables.less';
-
-.tflg {
+﻿.tflg {
   display: flex;
   flex-flow: row;
-
-  &:not(.tflg--has-page-tabs) {
-    --tf-page-tabs-height: 0px;
-  }
-
+  position: relative;
+  
   &__aside {
     flex: 0 0 var(--tf-aside-width);
     display: flex;
     flex-flow: column;
-    background: var(--tf-fill-color-hover);
-    border-right: 1px solid var(--tf-stroke-color-mute);
-    --accent-fill-rest: light-dark(color-mix(in srgb, var(--tf-accent-500), transparent 30%), color-mix(in srgb, var(--tf-accent-500), transparent 50%));
+    background: var(--neutral-layer-1);
+    border-right: 1px solid var(--neutral-stroke-rest);
   }
 
   &__wrapper {
@@ -35,7 +29,6 @@
     flex: 1 1 auto;
     height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-actions-height));
     overflow-y: auto;
-    scrollbar-color: var(--tf-foreground-color-mute) var(--tf-background-color-body);
     scrollbar-width: thin;
   }
 

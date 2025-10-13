@@ -7,15 +7,15 @@
 					AdditionalAttributes="@_attributes">
 		@if (!String.IsNullOrWhiteSpace(Item.Text))
 		{
-			<span class="tf-menu__item__text" title="@Item.Text">
+			<span class="tf-tabs__item__text" title="@Item.Text">
 				@TfConverters.StringOverflow(Item.Text, EllipsesLimit)
 			</span>
 			@if (Item.Icon is not null)
 			{
-				<span slot="start" class="tf-menu__item__icon">
+				<span slot="start" class="tf-tabs__item__icon">
 					@if (Item.Color is not null)
 					{
-						<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().Value)" />
+						<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().OKLCH)" />
 					}
 
 					else
@@ -30,7 +30,7 @@
 		{
 			@if (Item.Color is not null)
 			{
-				<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().Value)" />
+				<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().OKLCH)" />
 			}
 
 			else
@@ -49,15 +49,15 @@ else
 		<ChildContent>
 			@if (!String.IsNullOrWhiteSpace(Item.Text))
 			{
-				<span class="tf-menu__item__text" title="@Item.Text">
+				<span class="tf-tabs__item__text" title="@Item.Text">
 					@TfConverters.StringOverflow(Item.Text, EllipsesLimit)
 				</span>
 				@if (Item.Icon is not null)
 				{
-					<span slot="start" class="tf-menu__item__icon">
+					<span slot="start" class="tf-tabs__item__icon">
 						@if (Item.Color is not null)
 						{
-							<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().Value)" />
+							<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().OKLCH)" />
 						}
 
 						else
@@ -71,7 +71,7 @@ else
 			{
 				@if (Item.Color is not null)
 				{
-					<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().Value)" />
+					<FluentIcon Value="@Item.Icon.WithColor(Item.Color.GetColor().OKLCH)" />
 				}
 
 				else

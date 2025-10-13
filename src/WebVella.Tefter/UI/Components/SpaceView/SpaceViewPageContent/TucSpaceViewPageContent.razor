@@ -19,31 +19,16 @@ else
 	//var configCss = _generateColumnConfigurationCss(_spaceView, _spaceViewColumns);
 	//var columnIndex = 1;
 	<CascadingValue IsFixed="true" TValue="TucSpaceViewPageContent" Value="this" Name="TucSpaceViewPageContent">
-		<TucPageLayout Title="@_spacePage!.Name" Icon="@TfConstants.GetIcon(_spacePage.FluentIconName)"
-		               Area="@_space!.Name" SubArea="@LOC("Pages")" Color="@_space!.Color">
-			<NavigationLeft>
+		<TucLayoutPageContent Title="@_spacePage!.Name" ShowTabs="_spaceView.Presets.Count > 0">
+			<Tabs>
 				<TucSpaceViewPageContentNavigation SpaceView="_spaceView" SpacePage="_spacePage"/>
-			</NavigationLeft>
-			<NavigationRight>
-				@if (Context.CurrentUser.IsAdmin)
-				{
-					<TucAnchor Href="@_managePageUrl"
-						AdditionalAttributes="@_manageBtnAttributes"
-						Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Settings")"/>
-				}
-			</NavigationRight>
-			<ToolbarLeft>
-				<TucSpaceViewPageContentToolbarLeft Context=Context SpaceView="_spaceView" Data=_data
+			</Tabs>
+			<Toolbar>
+				<TucSpaceViewPageContentToolbar Context=Context SpaceView="_spaceView" Data=_data
 				                                    SpaceData="_spaceData" SpaceViewPreset=_preset
 				                                    SelectAllLoading="_selectAllLoading"
 				                                    SelectedRows="_selectedDataRows"/>
-			</ToolbarLeft>
-			<ToolbarRight>
-				<TucSpaceViewPageContentToolbarRight Context=Context SpaceView="_spaceView" Data=_data
-				                                     SpaceData="_spaceData" SpaceViewPreset=_preset
-				                                     SelectAllLoading="_selectAllLoading"
-				                                     SelectedRows="_selectedDataRows"/>
-			</ToolbarRight>
+			</Toolbar>
 			<ChildContent>
 				<table class="tf-grid" id="@_tableId">
 					<colgroup>
@@ -236,6 +221,6 @@ else
 					</tbody>
 				</table>
 			</ChildContent>
-		</TucPageLayout>
+		</TucLayoutPageContent>
 	</CascadingValue>
 }

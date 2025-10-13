@@ -1,8 +1,6 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout Icon="@TfConstants.GetIcon("CalendarTemplate")" Color="@TfConstants.AdminColor"
-			   Area="@LOC(String.Format("Template {0}",_template?.ResultType.ToDescriptionString()))" Title="@_template?.Name">
-<TucErrorBoundry>
+<TucLayoutPageContent Title="@_template?.Name">
 	<div style="padding:var(--tf-padding-base)">
 		@if (String.IsNullOrWhiteSpace(UriInitialized))
 		{
@@ -45,22 +43,22 @@
 							<FluentInputLabel Label="@LOC("Status")" />
 							@if (_template.IsEnabled)
 							{
-								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetColor().Value" Color="white">enabled</FluentBadge>
+								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetColor().OKLCH" Color="white">enabled</FluentBadge>
 							}
 							else
 							{
-								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetColor().Value" Color="white">disabled</FluentBadge>
+								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetColor().OKLCH" Color="white">disabled</FluentBadge>
 							}
 						</FluentGridItem>
 						<FluentGridItem xs="3">
 							<FluentInputLabel Label="@LOC("Usable")" />
 							@if (_template.IsSelectable)
 							{
-								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetColor().Value" Color="white">selectable</FluentBadge>
+								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetColor().OKLCH" Color="white">selectable</FluentBadge>
 							}
 							else
 							{
-								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetColor().Value" Color="white">not selectable</FluentBadge>
+								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetColor().OKLCH" Color="white">not selectable</FluentBadge>
 							}
 						</FluentGridItem>
 					</FluentGrid>
@@ -72,7 +70,6 @@
 								<thead class="tf-grid-thead">
 									<tr class="tf-grid-thead-bkg"></tr>
 									<tr class="tf-grid-tr">
-										<th class="tf-grid-th">space</th>
 										<th class="tf-grid-th">data name</th>
 									</tr>
 								</thead>
@@ -80,11 +77,6 @@
 									@foreach (var row in _spaceDataSelection)
 									{
 										<tr @key=row.Id class="tf-grid-tr">
-											<td class="tf-grid-td">
-												<div>
-													@row.SpaceName
-												</div>
-											</td>
 											<td class="tf-grid-td">
 												<div>
 													@row.Name
@@ -95,7 +87,7 @@
 									@if (_spaceDataSelection.Count == 0)
 									{
 										<tr class="tf-grid-tr">
-											<td class="tf-grid-td" colspan="4">
+											<td class="tf-grid-td">
 												<div>
 													@LOC("No targeted space dataset found")
 												</div>
@@ -142,5 +134,4 @@
 			</TucCard>
 		}
 	</div>
-</TucErrorBoundry>
-</TucPageLayout>
+</TucLayoutPageContent>

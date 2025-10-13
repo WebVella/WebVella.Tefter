@@ -31,12 +31,14 @@
                 {
                     <tr>
                         <td>
+                            <div class="tf-grid-td-hover"></div>
                             <div>
                                 <TucAnchor Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Open")"
                                            Href="@String.Format(TfConstants.AdminRoleDetailsPageUrl, item.Id).GenerateWithLocalAsReturnUrl(TfAuthLayout.GetState().NavigationState.Uri)"/>
                             </div>
                         </td>
                         <td>
+                            <div class="tf-grid-td-hover"></div>
                             <div>
                                 @item.Name
                                 @if (item.IsSystem)
@@ -50,6 +52,7 @@
                 @if (_items.Count == 0)
                 {
                     <tr>
+                        <div class="tf-grid-td-hover"></div>
                         <td colspan="2">
                             <div>@LOC("no items")</div>
                         </td>

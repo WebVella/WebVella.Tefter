@@ -109,7 +109,6 @@ public class TfAvailableDatasetColumn
 public class TfDatasetAsOption
 {
 	public Guid Id { get; set; }
-	public string SpaceName { get; set; }
 	public string Name { get; set; }
 }
 

@@ -2,17 +2,59 @@
 
 public partial class TucAdminDataProvidersPageContent : TfBaseComponent
 {
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	private bool _isLoading = false;
+	private List<TfDataProvider> _items = new();
+
+	public void Dispose()
+	{
+		TfEventProvider?.Dispose();
+		Navigator.LocationChanged -= On_NavigationStateChanged;
+	}
+
 	protected override async Task OnInitializedAsync()
 	{
-		await base.OnInitializedAsync();
-		var dataProviders = TfService.GetDataProviders();
-		if (dataProviders.Count > 0)
+		await _init(TfAuthLayout.GetState().NavigationState);
+		TfEventProvider.DataProviderCreatedEvent += On_UserChanged;
+		TfEventProvider.DataIdentityUpdatedEvent += On_UserChanged;
+		Navigator.LocationChanged += On_NavigationStateChanged;
+	}
+
+	private async Task On_UserChanged(object args)
+	{
+		await InvokeAsync(async () =>
 		{
-			Navigator.NavigateTo(string.Format(TfConstants.AdminDataProviderDetailsPageUrl, dataProviders[0].Id));
+			await _init(TfAuthLayout.GetState().NavigationState);
+		});
+	}
+
+	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
+	{
+		InvokeAsync(async () =>
+		{
+			if (UriInitialized != args.Location)
+			{
+				await _init(TfAuthLayout.GetState().NavigationState);
+			}
+		});
+	}
+
+	private async Task _init(TfNavigationState navState)
+	{
+		try
+		{
+			_items = TfService.GetDataProviders(navState.Search).ToList();
+		}
+		finally
+		{
+			_isLoading = false;
+			UriInitialized = navState.Uri;
+			await InvokeAsync(StateHasChanged);
 		}
 	}
 
-	private async Task onAddClick()
+
+	private async Task addItem()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderManageDialog>(
 		new TfDataProvider(),
@@ -24,10 +66,6 @@ public partial class TucAdminDataProvidersPageContent : TfBaseComponent
 			TrapFocus = false
 		});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			var provider = (TfDataProvider)result.Data;
-			Navigator.NavigateTo(string.Format(TfConstants.AdminDataProviderDetailsPageUrl, provider.Id));
-		}
+		if (!result.Cancelled && result.Data != null) { }
 	}
 }

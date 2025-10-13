@@ -1,13 +1,34 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <div class="tf-space-actions">
-    <FluentButton IconStart="@TfConstants.GetIcon("AppFolder")"
-                  Appearance="@Appearance.Outline">@LOC("spaces")
+    <FluentButton IconStart="@TfConstants.GetIcon("AppFolder")" Title="@LOC("Space Search [CTRL+Tab]")"
+                  Appearance="@Appearance.Outline" OnClick="_findSpace">@LOC("spaces")
     </FluentButton>
     @if (TfAuthLayout.GetState().Space is not null)
     {
-        <FluentButton IconStart="@TfConstants.GetIcon("Settings")"
-                      Appearance="@Appearance.Outline">@LOC("settings")
+        <FluentButton IconStart="@TfConstants.GetIcon("Settings")" Id="space-menu-toggle"
+                      Appearance="@Appearance.Outline" Title="@LOC("Configure the current space")"
+                      OnClick="() => _spaceMenuVisible = !_spaceMenuVisible">@LOC("settings")
         </FluentButton>
+        <FluentMenu @bind-Open="_spaceMenuVisible" Anchor="space-menu-toggle" UseMenuService="true"
+                    HorizontalPosition="HorizontalPosition.Right">
+            @if (TfAuthLayout.GetState().SpacePage is not null)
+            {
+                <FluentMenuItem
+                    OnClick="_manageCurrentPage">
+                    @LOC("Current Page")
+                    <span slot="start">
+                        <FluentIcon Value="@TfConstants.GetIcon("Document")" Slot="start"/>
+                    </span>
+                </FluentMenuItem>
+            }
+            <FluentMenuItem
+                OnClick="_manageCurrentSpace">
+                @LOC("Current Space")
+                <span slot="start">
+                    <FluentIcon Value="@TfConstants.GetIcon("Circle")" Slot="start"/>
+                </span>
+            </FluentMenuItem>
+        </FluentMenu>
     }
 </div>

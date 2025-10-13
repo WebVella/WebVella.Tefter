@@ -107,11 +107,11 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 			ToastService.ShowSuccess(LOC("Template removed"));
 			if (templates.Count > 0)
 			{
-				Navigator.NavigateTo(string.Format(TfConstants.AdminTemplatesTemplatePageUrl, (int)_template.ResultType, templates[0].Id));
+				Navigator.NavigateTo(string.Format(TfConstants.AdminTemplateDetailsPageUrl, templates[0].Id));
 			}
 			else
 			{
-				Navigator.NavigateTo(string.Format(TfConstants.AdminTemplatesTypePageUrl, (int)_template.ResultType));
+				Navigator.NavigateTo(string.Format(TfConstants.AdminTemplatesPageUrl));
 			}
 		}
 		catch (Exception ex)

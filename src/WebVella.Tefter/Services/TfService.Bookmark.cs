@@ -15,6 +15,9 @@ public partial interface ITfService
 	public TfBookmark GetBookmark(
 		Guid id);
 
+	public void ToggleBookmark(
+		Guid userId, Guid spaceId);	
+	
 	public TfBookmark CreateBookmark(
 		TfBookmark bookmark);
 
@@ -66,7 +69,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			var bookmarks = _dboManager.GetList<TfBookmark>(spaceViewId, nameof(TfBookmark.SpacePageId));
+			var bookmarks = _dboManager.GetList<TfBookmark>(spaceViewId, nameof(TfBookmark.SpaceId));
 			foreach (var bookmark in bookmarks)
 				bookmark.Tags = GetBookmarkTags(bookmark.Id);
 
@@ -135,6 +138,28 @@ public partial class TfService : ITfService
 		catch (Exception ex)
 		{
 			throw ProcessException(ex);
+		}
+	}
+
+	public void ToggleBookmark(
+		Guid userId, Guid spaceId)
+	{
+		var bookmark = GetBookmarksListForUser(userId).FirstOrDefault(x => x.SpaceId == spaceId);
+		if (bookmark is not null)
+		{
+			DeleteBookmark(bookmark.Id);
+		}
+		else
+		{
+			var space = GetSpace(spaceId);
+			CreateBookmark(new TfBookmark()
+			{
+				Id= Guid.NewGuid(),
+				UserId = userId,
+				SpaceId = spaceId,
+				Name = space.Name ?? "uknown space",
+				Description = space.Name ?? "unknown space",
+			});
 		}
 	}
 

@@ -141,6 +141,7 @@ public partial interface ITfService
 		TfUser user);
 
 	Task<TfUser> UpdateUserWithFormAsync(TfUserManageForm form);
+	Task<TfUser> UpdateUserVisualPreferencesAsync(Guid userId, DesignThemeModes themeMode, TfCultureOption culture);
 
 	//Gets the authenticated user from cookie
 	Task<TfUser?> GetUserFromCookieAsync(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider);
@@ -195,7 +196,7 @@ public partial interface ITfService
 		List<TfUser> users,
 		TfRole role);
 
-	Task<TfUser> SetStartUpUrl(Guid userId, string url);
+	Task<TfUser> SetStartUpUrl(Guid userId, string? url);
 
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
 
@@ -1099,6 +1100,21 @@ public partial class TfService : ITfService
 		user = await SaveUserAsync(user);
 		return user;
 	}
+	
+	public async Task<TfUser> UpdateUserVisualPreferencesAsync(Guid userId, DesignThemeModes themeMode, TfCultureOption culture)
+	{
+		var user = await GetUserAsync(userId);
+		if (user is null)
+			throw new Exception("user not found");
+		
+		TfUserBuilder userBuilder = CreateUserBuilder(user);
+		userBuilder
+			.WithThemeMode(themeMode)
+			.WithCultureCode(culture.CultureName);
+		user = userBuilder.Build();
+		user = await SaveUserAsync(user);
+		return user;
+	}	
 
 	public async Task<TfUser?> GetUserFromCookieAsync(IJSRuntime jsRuntime,
 		AuthenticationStateProvider authStateProvider)
@@ -1229,7 +1245,7 @@ public partial class TfService : ITfService
 	}
 
 	public async Task<TfUser> SetStartUpUrl(Guid userId,
-		string url)
+		string? url)
 	{
 		var user = GetUser(userId);
 		var userBld = CreateUserBuilder(user);

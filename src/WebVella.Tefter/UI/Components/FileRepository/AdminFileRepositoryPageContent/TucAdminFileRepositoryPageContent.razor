@@ -1,8 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout Icon="@TfConstants.GetIcon("DocumentDatabase")" Area="@LOC("File Repository")"
-			   Title="@LOC("Files")" Color="TfConstants.AdminColor">
-	<NavigationRight>
+<TucLayoutPageContent Title="@LOC("Files")">
+	<Toolbar>
 		@if (progressPercent < 100)
 		{
 			<TucProgress Value="progressPercent" Visible="@(progressPercent > 0)" />
@@ -30,7 +29,7 @@
 		}
 		<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@_search"
 					  AutoComplete="off" Style="margin-left:1rem;" @ref=_refSearch />
-	</NavigationRight>
+	</Toolbar>
 	<ChildContent>
 		@if (String.IsNullOrWhiteSpace(_search) && (_items is null || _items.Count == 0))
 		{
@@ -72,23 +71,26 @@
 					{
 						<tr @key=context.Id class="tf-grid-tr">
 							<td class="tf-grid-td">
+								<div class="tf-grid-td-hover"></div>
 								<div>
 									<FluentStack Wrap="false">
 										<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
-													  Title="@LOC("Change file content")" OnClick="@(()=> _editFile(context))" />
+										              Title="@LOC("Change file content")" OnClick="@(() => _editFile(context))"/>
 										<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete column")"
-													  OnClick="@(() => _deleteFile(context))" IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" />
+										              OnClick="@(() => _deleteFile(context))" IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)"/>
 										<TucAnchor Appearance="@Appearance.Outline" Target="_blank"
-												   Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload")" />
+										           Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload")"/>
 									</FluentStack>
 								</div>
 							</td>
 							<td class="tf-grid-td">
+								<div class="tf-grid-td-hover"></div>
 								<div>
 									<div>@context.Filename</div>
 								</div>
 							</td>
 							<td class="tf-grid-td">
+								<div class="tf-grid-td-hover"></div>
 								<div>
 									<div>@context.CreatedOn.ToString(TfConstants.DateHourFormat)</div>
 									@if (!context.LastModifiedOn.Equals(context.CreatedOn))
@@ -98,10 +100,11 @@
 								</div>
 							</td>
 							<td class="tf-grid-td">
+								<div class="tf-grid-td-hover"></div>
 								<div>
 									<div style="display:flex;align-items:center">
 										@context.Uri.ToString()
-										<FluentIcon Value="@TfConstants.GetIcon("Clipboard")" OnClick="@(_ => _copyUri(context))" Title="copy value" />
+										<FluentIcon Value="@TfConstants.GetIcon("Clipboard")" OnClick="@(_ => _copyUri(context))" Title="copy value"/>
 									</div>
 								</div>
 							</td>
@@ -111,4 +114,4 @@
 			</table>
 		}
 	</ChildContent>
-</TucPageLayout>
+</TucLayoutPageContent>

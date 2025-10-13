@@ -1,9 +1,7 @@
-﻿@import '_variables.less';
-
-.tf-space-actions {
+﻿.tf-space-actions {
   position: relative;
-  padding-left: var(--tf-padding-sm);
-  padding-right: var(--tf-padding-sm);
+  padding-left: var(--tf-padding);
+  padding-right: var(--tf-padding);
   --tf-space-pane-extra-space: 10px;
   display: flex;
   justify-items: center;
@@ -13,20 +11,5 @@
 
   fluent-button {
     flex: 1 1 auto;
-
-      svg {
-      --accent-fill-rest: var(--tf-font-color-base);
-    }
-  }
-
-  &:after {
-    position: absolute;
-    content: '';
-    display: block;
-    bottom: 0;
-    width: 90%;
-    height: 1px;
-    border-bottom: 1px dashed var(--tf-stroke-color-mute);
-    left: 5%;
   }
 }     

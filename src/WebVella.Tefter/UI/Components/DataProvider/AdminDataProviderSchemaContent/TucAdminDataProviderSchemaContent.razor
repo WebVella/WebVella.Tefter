@@ -1,10 +1,9 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout Icon="@TfConstants.GetIcon("CloudDatabase")" Area="@LOC("Data Providers")"
-			   Title="@_provider?.Name" SubTitle="@LOC("Columns")" Color="TfConstants.AdminColor">
-	<NavigationLeft>
+<TucLayoutPageContent Title="@_provider?.Name">
+	<Tabs>
 		<TucAdminDataProviderDetailsContentToolbar />
-	</NavigationLeft>
+	</Tabs>
 	<ChildContent>
 		<TucErrorBoundry>
 			<div style="padding:var(--tf-padding-base)">
@@ -70,7 +69,7 @@
 														@if (!String.IsNullOrWhiteSpace(context.SourceName))
 														{
 															<span title="@LOC("synchronized")" style="display:inline-block;width:100%;">
-																<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetColor().Value" Color="white" Style="width:100%">ON</FluentBadge>
+																<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetColor().OKLCH" Color="white" Style="width:100%">ON</FluentBadge>
 															</span>
 														}
 														else
@@ -123,4 +122,4 @@
 			</div>
 		</TucErrorBoundry>
 	</ChildContent>
-</TucPageLayout>
+</TucLayoutPageContent>

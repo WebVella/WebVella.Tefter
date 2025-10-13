@@ -1,20 +1,19 @@
 ﻿@page "/space/{SpaceId:guid}/page/{PageId:guid}/manage"
 @inherits TfBasePage
-
-<TucLayoutListDetails>
-	<Header>
-		<TucHeader />
-	</Header>
-	<AsideToolbar>
-		<TucSpacePageAsideToolbar/>
-	</AsideToolbar>
-	<AsideContent>
-		<TucSpacePageAsideContent/>
-	</AsideContent>
-	<Content>
+<TucLayoutGeneral>
+	<SpaceHeader>
+		<TucSpaceHeader/>
+	</SpaceHeader>
+	<SpaceActions>
+		<TucSpaceActions/>
+	</SpaceActions>
+	<SideNav>
+		<TucSpaceNavigation/>
+	</SideNav>
+	<PageTopbar>
+		<TucPageTopbar/>
+	</PageTopbar>
+	<ChildContent>
 		<TucSpacePageManageContent/>
-	</Content>
-</TucLayoutListDetails>
-
-
-
+	</ChildContent>
+</TucLayoutGeneral>

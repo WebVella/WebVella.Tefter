@@ -1,9 +1,7 @@
-﻿@import '_variables.less';
-
-.tf-space-header {
+﻿.tf-space-header {
   position: relative;
-  padding-left: var(--tf-padding-sm);
-  padding-right: var(--tf-padding-sm);
+  padding-left: var(--tf-padding);
+  padding-right: var(--tf-padding);
   --tf-space-pane-extra-space: 10px;
   display: flex;
   justify-items: center;
@@ -13,16 +11,16 @@
   &__icon {
     --tf-icon-size:27px;
     --tf-svg-size: 20px; 
-    --tf-svg-color:light-dark(var(--tf-accent-500),var(--tf-accent-500));
     flex: 0 0 var(--tf-icon-size);
     height:var(--tf-icon-size);
     width: var(--tf-icon-size);
     border-radius: 50%;
-    --accent-fill-rest: var(--tf-svg-color);
     display: flex;
     align-items: center;
     justify-content: center;
+    background: var(--accent-fill-rest);
     svg{
+      --accent-fill-rest: var(--foreground-on-accent-rest-large);
       width: var(--tf-svg-size) !important;
       height: var(--tf-svg-size) !important;
     }
@@ -32,9 +30,9 @@
     flex: 1 1 auto;
     padding-left: 5px;
     &__title {
-      padding-right: var(--tf-space-pane-extra-space);
       overflow: hidden;
-      line-height: var(--tf-line-height-sm);
+      line-height: var(--type-ramp-plus-1-line-height);
+      font-size: var(--type-ramp-plus-1-font-size);
     }    
   }
  

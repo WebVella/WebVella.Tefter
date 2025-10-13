@@ -1,10 +1,9 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucPageLayout Icon="@TfConstants.GetIcon(_spacePage.FluentIconName)" Area="@_space.Name" SubArea="@LOC("Pages")"
-               Title="@_spacePage.Name" SubTitle="@LOC("Manage")" Color="@_space.Color">
-	<NavigationLeft>
+<TucLayoutPageContent Title="@_spacePage.Name">
+	<Tabs>
 		<TucSpacePageManageContentToolbar/>
-	</NavigationLeft>
+	</Tabs>
 	<ChildContent>
 		<div style="padding:var(--tf-padding-base)">
 			@if (_spacePage.ComponentType is not null)
@@ -20,4 +19,4 @@
 			}
 		</div>
 	</ChildContent>
-</TucPageLayout>
+</TucLayoutPageContent>

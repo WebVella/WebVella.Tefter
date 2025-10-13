@@ -1,0 +1,70 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent;
+@* DragAndDrop.razor *@
+<div class="drag-drop-area" @ondragover="HandleDragOver" @ondragleave="HandleDragLeave" @ondrop="HandleDrop"
+     @ondragover:preventDefault="true" @ondragleave:preventDefault="true" @ondrop:preventDefault="true">
+	<div class="drag-drop-content">
+		<i class="fas fa-cloud-upload-alt"></i>
+		<p>Drag & drop files here or click to browse</p>
+		<input type="file" id="fileInput" @ref="fileInputRef" multiple @onchange="HandleFileSelect" style="display: none;" />
+		<button class="btn btn-primary" @onclick="TriggerFileSelect">Browse Files</button>
+	</div>
+</div>
+
+@code {
+	private ElementReference fileInputRef;
+
+	[Parameter]
+	public EventCallback<List<IBrowserFile>> OnFilesSelected { get; set; }
+
+	private void HandleDragOver(MouseEventArgs e)
+	{
+		//e.preventDefault();
+		// Add visual feedback for drag over
+	}
+
+	private void HandleDragLeave(MouseEventArgs e)
+	{
+		//e.preventDefault();
+		// Remove visual feedback for drag leave
+	}
+
+	private async Task HandleDrop(DragEventArgs e)
+	{
+		//e.preventDefault();
+		var files = e.DataTransfer.Files;
+
+		if (files != null && files.Length > 0)
+		{
+			var fileList = new List<IBrowserFile>();
+			for (int i = 0; i < files.Length; i++)
+			{
+				var file = files[i];
+				// Process each file
+				//fileList.Add(file);
+				Console.WriteLine(file);
+			}
+
+			await OnFilesSelected.InvokeAsync(fileList);
+		}
+	}
+
+	private void TriggerFileSelect()
+	{
+		_ = InvokeAsync(async () =>
+		{
+			await fileInputRef.FocusAsync();
+			await Task.Delay(100); // Small delay to ensure focus
+			await JSRuntime.InvokeVoidAsync("clickElement", fileInputRef);
+		});
+	}
+
+	private async Task HandleFileSelect(ChangeEventArgs e)
+	{
+		var files = e.Value as List<IBrowserFile>;
+		if (files != null && files.Count > 0)
+		{
+			await OnFilesSelected.InvokeAsync(files.ToList());
+		}
+	}
+}

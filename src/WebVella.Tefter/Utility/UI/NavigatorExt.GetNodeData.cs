@@ -918,27 +918,7 @@ public static partial class NavigatorExt
 		if (result.NodesDict.Count < 3)
 			return result;
 
-		if (Enum.TryParse<TfTemplateResultType>(result.NodesDict[2], out TfTemplateResultType outEnum))
-		{
-			result = result.AddRouteNodes(RouteDataNode.TemplateTypeId);
-			result = result with { TemplateResultType = outEnum };
-			result = result.Admin_Templates_TemplateTypeId_TemplateId_NodesProcess();
-		}
-		return result;
-	}
-
-	private static TfNavigationState Admin_Templates_TemplateTypeId_TemplateId_NodesProcess(this TfNavigationState result)
-	{
-		if (result.RouteNodes.Count < 3
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.Templates
-			|| result.RouteNodes[2] != RouteDataNode.TemplateTypeId)
-			return result;
-
-		if (result.NodesDict.Count < 4)
-			return result;
-
-		if (Guid.TryParse(result.NodesDict[3], out Guid outGuid))
+		if (Guid.TryParse(result.NodesDict[2], out Guid outGuid))
 		{
 			result = result.AddRouteNodes(RouteDataNode.TemplateId);
 			result = result with { TemplateId = outGuid };

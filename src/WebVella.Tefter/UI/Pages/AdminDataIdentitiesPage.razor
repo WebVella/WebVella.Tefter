@@ -1,14 +1,22 @@
 ﻿@namespace WebVella.Tefter.UI.Pages
 @page "/admin/data-identities"
 @inherits TfBasePage
-<TucLayoutDetails>
-	<Header>
-		<TucHeader />
-	</Header>
-	<Content>
-		<TucAdminDataIdentitiesPageContent />
-	</Content>
-</TucLayoutDetails>
-
+<TucLayoutGeneral>
+	<SpaceHeader>
+		<TucSpaceHeader/>
+	</SpaceHeader>
+	<SpaceActions>
+		<TucSpaceActions/>
+	</SpaceActions>
+	<SideNav>
+		<TucSpaceNavigation/>
+	</SideNav>
+	<PageTopbar>
+		<TucPageTopbar/>
+	</PageTopbar>
+	<ChildContent>
+		<TucAdminDataIdentitiesPageContent/>
+	</ChildContent>
+</TucLayoutGeneral>
 
 

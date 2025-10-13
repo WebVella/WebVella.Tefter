@@ -1,0 +1,41 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="false">
+    <FluentStack HorizontalAlignment="HorizontalAlignment.SpaceBetween">
+        <FluentLabel Typo="Typography.PaneHeader">@LOC("Spaces")</FluentLabel>
+        <FluentStack HorizontalGap="10" HorizontalAlignment="HorizontalAlignment.End">
+            <FluentSearch Value="@_search" ValueChanged="_searchChanged"
+                          Immediate="true" AutoComplete="off" Style="order:2"
+                          ImmediateDelay="200" @ref="_searchInput" Placeholder="@LOC("search spaces...")"/>
+            <FluentButton OnClick="_adminNavigation" Style="order:1"
+                          IconStart="@TfConstants.GetIcon("Settings")">@LOC("Administration")</FluentButton>
+        </FluentStack>
+    </FluentStack>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter Style="display: none"></FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody Class="modal-body-scroll">
+    <div class="tf-space-finder">
+        <Virtualize Items="_options" TItem="TfSpaceFinderItem" Context="item">
+            <TucCard OnClick="item.OnClick" Id="@($"space-option-{item.Index}")"
+                     class="@($"tf-space-finder__space {(_selectedIndex == item.Index ? "tf-space-finder__space--active" : "")}")">
+                <div class="tf-space-finder__space__icon">
+                    <FluentIcon Value="@TfConstants.GetIcon(item.Space.FluentIconName)!.WithColor(item.Color)"/>
+                </div>
+                <div class="tf-space-finder__space__meta">
+                    <FluentHighlighter Text="@item.Space.Name" HighlightedText="@_search"/>
+                </div>
+                <div class="tf-space-finder__space__bookmark">
+                    <FluentButton Appearance="@Appearance.Outline" OnClick="item.OnBookmark" StopPropagation="true">
+                        <FluentIcon
+                            Value="@TfConstants.GetIcon("Star", variant: item.Bookmarked ? IconVariant.Filled : IconVariant.Regular)"/>
+                    </FluentButton>
+                </div>
+            </TucCard>
+        </Virtualize>
+    </div>
+</FluentDialogBody>

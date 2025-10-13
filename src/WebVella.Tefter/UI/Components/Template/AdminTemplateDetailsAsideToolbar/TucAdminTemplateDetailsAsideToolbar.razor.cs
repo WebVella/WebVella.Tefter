@@ -48,7 +48,7 @@ public partial class TucAdminTemplateDetailsAsideToolbar : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var item = (TfTemplate)result.Data;
-			Navigator.NavigateTo(string.Format(TfConstants.AdminTemplatesTemplatePageUrl, (int)item.ResultType,item.Id));
+			Navigator.NavigateTo(string.Format(TfConstants.AdminTemplateDetailsPageUrl, (int)item.ResultType,item.Id));
 		}
 
 	}

@@ -15,10 +15,10 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 	private ReadOnlyCollection<ITfTemplateProcessorAddon> _processors = null!;
 	private ITfTemplateProcessorAddon? _selectedProcessor = null;
 
-	private List<TfDatasetAsOption> _spaceDataAll = new();
-	private List<TfDatasetAsOption> _spaceDataOptions = new();
+	private List<TfDatasetAsOption> _datasetsAll = new();
+	private List<TfDatasetAsOption> _datasetOptions = new();
 	private List<TfDatasetAsOption> _spaceDataSelection = new();
-	private TfDatasetAsOption? _spaceDataOption = null;
+	private TfDatasetAsOption? _datasetOption = null;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -66,7 +66,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 		{
 			_form.FluentIconName = _selectedProcessor.ResultType.GetFluentIcon();
 		}
-		_spaceDataAll = TfService.GetSpaceDataOptionsForTemplate();
+		_datasetsAll = TfService.GetSpaceDataOptionsForTemplate();
 		_recalcSpaceDataOptions();
 		base.InitForm(_form);
 	}
@@ -128,13 +128,13 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 	private void _recalcSpaceDataOptions()
 	{
 		_spaceDataSelection = new();
-		_spaceDataOptions = _spaceDataAll.ToList();
+		_datasetOptions = _datasetsAll.ToList();
 		foreach (var item in _form.SpaceDataList)
 		{
-			var attachment = _spaceDataAll.Where(x => x.Id == item).FirstOrDefault();
+			var attachment = _datasetsAll.Where(x => x.Id == item).FirstOrDefault();
 			if (attachment is null) continue;
 			_spaceDataSelection.Add(attachment);
-			_spaceDataOptions = _spaceDataOptions.Where(x => x.Id != item).ToList();
+			_datasetOptions = _datasetOptions.Where(x => x.Id != item).ToList();
 		}
 	}
 
@@ -142,7 +142,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 	{
 		if (option is null) return;
 
-		_spaceDataOption = null;
+		_datasetOption = null;
 		bool isSelected = _form.SpaceDataList.Contains(option.Id);
 		if (isSelected) return;
 		_form.SpaceDataList.Add(option.Id);

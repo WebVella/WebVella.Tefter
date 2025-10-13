@@ -1,15 +1,14 @@
 ﻿@namespace WebVella.Tefter.EmailSender.Components
 @inherits TfBaseComponent
 
-<TucPageLayout Title="@LOC("Email Queue")"
-			   Icon="@TfConstants.GetIcon("Mail")" Color="@TfConstants.AdminColor">
-	<NavigationRight>
+<TucLayoutPageContent Title="@LOC("Email Queue")">
+	<Toolbar>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_createTestHandler" IconStart="@TfConstants.GetIcon("Add")">
 			@LOC("Sent test email")
 		</FluentButton>
 		<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@_search"
 					  AutoComplete="off" Style="margin-left:1rem;" @ref=_refSearch />
-	</NavigationRight>
+	</Toolbar>
 	<ChildContent>
 		<table class="tf-grid">
 			<thead class="tf-grid-thead">
@@ -27,29 +26,32 @@
 				{
 					<tr @key=@context.Id class="tf-grid-tr">
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>
 								<FluentStack>
 									<FluentButton Title="@LOC("view email")" OnClick="@(_ => _viewEmailHandler(context))"
-												  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Eye")" />
+									              Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Eye")"/>
 									@if (context.Status == EmailStatus.Sent || context.Status == EmailStatus.Aborted)
 									{
 										<FluentButton Title="@LOC("resent")" OnClick="@(_ => _resentEmailHandler(context))"
-													  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("MailArrowUp")"
-													  Disabled="@(_submitingEmail is not null)" Loading="@(_submitingEmail == context.Id)" />
+										              Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("MailArrowUp")"
+										              Disabled="@(_submitingEmail is not null)" Loading="@(_submitingEmail == context.Id)"/>
 									}
 									else
 									{
 										<FluentButton Title="@LOC("cancel")" OnClick="@(_ => _cancelEmailHandler(context))"
-													  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)"
-													  Disabled="@(_submitingEmail is not null)" Loading="@(_submitingEmail == context.Id)" />
+										              Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)"
+										              Disabled="@(_submitingEmail is not null)" Loading="@(_submitingEmail == context.Id)"/>
 									}
 								</FluentStack>
 							</div>
 						</td>
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>@context.Status.ToDescriptionString()</div>
 						</td>
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>
 								<div>@context.CreatedOn.ToString(TfConstants.DateHourFormat)</div>
 								@if (context.SentOn is not null)
@@ -59,9 +61,11 @@
 							</div>
 						</td>
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>@context.Subject</div>
 						</td>
 						<td class="tf-grid-td">
+							<div class="tf-grid-td-hover"></div>
 							<div>
 								@if (context.Recipients.Count > 0)
 								{
@@ -82,7 +86,10 @@
 				@if (_messages.Count == 0)
 				{
 					<tr class="tf-grid-tr">
-						<td class="tf-grid-td" colspan="5"><div>@LOC("No items")</div></td>
+						<td class="tf-grid-td" colspan="5">
+							<div class="tf-grid-td-hover"></div>
+							<div>@LOC("No items")</div>
+						</td>
 					</tr>
 				}
 			</tbody>
@@ -92,4 +99,4 @@
 		<TucPager UserPageSize="@_currentUser?.Settings?.PageSize" GoLast="@_goLastPage" GoOnPage="@_goOnPage"
 				  Style="margin-top:1rem;" />
 	</ChildContent>
-</TucPageLayout>
+</TucLayoutPageContent>

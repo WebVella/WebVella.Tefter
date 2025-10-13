@@ -6,6 +6,7 @@ public record TfState
 	public TfNavigationState NavigationState { get; set; } = null!;
 	public TfUser User { get; set; } = null!;
 	public List<TfBookmark> UserSaves { get; set; } = new();
+	public List<TfBookmark> UserBookmarks { get; set; } = new();
 	public TfSpace? Space { get; set; } = null;
 
 	public List<TfSpacePage>? SpacePages { get; set; } = null;

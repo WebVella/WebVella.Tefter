@@ -1,21 +1,21 @@
 ﻿@namespace WebVella.Tefter.UI.Pages
 @page "/admin/data-providers/{ItemId:guid}/synchronization"
 @inherits TfBasePage
-
-<TucLayoutListDetails>
-	<Header>
-		<TucHeader />
-	</Header>
-	<AsideToolbar>
-		<TucAdminDataProviderDetailsAsideToolbar />
-	</AsideToolbar>
-	<AsideContent>
-		<TucAdminDataProviderDetailsAsideContent />
-	</AsideContent>
-	<Content>
-		<TucAdminDataProviderSyncContent />
-	</Content>
-</TucLayoutListDetails>
-
-
+<TucLayoutGeneral>
+	<SpaceHeader>
+		<TucSpaceHeader/>
+	</SpaceHeader>
+	<SpaceActions>
+		<TucSpaceActions/>
+	</SpaceActions>
+	<SideNav>
+		<TucSpaceNavigation/>
+	</SideNav>
+	<PageTopbar>
+		<TucPageTopbar/>
+	</PageTopbar>
+	<ChildContent>
+		<TucAdminDataProviderSyncContent/>
+	</ChildContent>
+</TucLayoutGeneral>
 

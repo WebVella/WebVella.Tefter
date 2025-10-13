@@ -110,12 +110,12 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 			var bookmarks = TfService.GetBookmarksListForUser(TfAuthLayout.GetState().User.Id);
 			var spaceViewDict = (TfService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
 			foreach (var record in bookmarks
-				.Where(x => spaceViewDict.ContainsKey(x.SpacePageId)).OrderBy(x => x.Name))
+				.Where(x => spaceViewDict.ContainsKey(x.SpaceId)).OrderBy(x => x.Name))
 			{
 				if (!String.IsNullOrWhiteSpace(_search)
 					&& !(record.Name.ToLowerInvariant().Contains(_search) || record.Description.ToLowerInvariant().Contains(_search)))
 					continue;
-				var url = string.Format(TfConstants.SpaceViewPageUrl, _navState.SpaceId, record.SpacePageId);
+				var url = string.Format(TfConstants.SpaceViewPageUrl, _navState.SpaceId, record.SpaceId);
 				url = NavigatorExt.AddQueryValueToUri(url, TfConstants.TabQueryName, ((int)TfSpaceNavigationActiveTab.Bookmarks).ToString());
 				var viewMenu = new TfMenuItem
 				{
@@ -123,7 +123,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 					IconCollapsed = TfConstants.GetIcon("Bookmark"),
 					Text = record.Name,
 					Url = url,
-					Selected = record.SpacePageId == _navState.SpaceViewId
+					Selected = record.SpaceId == _navState.SpaceViewId
 				};
 				menuItems.Add(viewMenu);
 			}
@@ -133,7 +133,7 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 			var saves = TfService.GetSavesListForUser(TfAuthLayout.GetState().User.Id);
 			var spaceViewDict = (TfService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
 			foreach (var record in saves
-				.Where(x => spaceViewDict.ContainsKey(x.SpacePageId)).OrderBy(x => x.Name))
+				.Where(x => spaceViewDict.ContainsKey(x.SpaceId)).OrderBy(x => x.Name))
 			{
 				if (!String.IsNullOrWhiteSpace(_search)
 					&& !(record.Name.ToLowerInvariant().Contains(_search) || record.Description.ToLowerInvariant().Contains(_search)))

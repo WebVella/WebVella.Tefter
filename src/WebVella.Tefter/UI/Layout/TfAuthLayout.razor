@@ -2,14 +2,18 @@
 @if (_isLoaded)
 {
 	<CascadingValue TValue="TfAuthLayout" Name="TfAuthLayout" Value="this" IsFixed="true">
-		@((MarkupString)_styles)
-		@Body
-		<FluentToastProvider MaxToastCount="5" Position="ToastPosition.BottomCenter"
-		                     RemoveToastsOnNavigation=false/>
+		<FluentDesignTheme Mode="@_themeMode" CustomColor="@_accentColor.GetColor().HEX"/>
+		<!-- @_accentColor -->
+		@* <FluentDesignSystemProvider AccentBaseColor="@_accentColor.GetColor().HEX"> *@
+			@Body
+			<FluentToastProvider MaxToastCount="5" Position="ToastPosition.BottomCenter"
+			                     RemoveToastsOnNavigation="false"/>
 			<FluentDialogProvider/>
 			<FluentTooltipProvider/>
 			<FluentKeyCodeProvider/>
 			<FluentMenuProvider/>
+		@* </FluentDesignSystemProvider> *@
+
 	</CascadingValue>
 }
 

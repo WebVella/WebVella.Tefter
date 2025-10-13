@@ -1,3 +1,9 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucMenu Items="_menu" />
+@if (_menu.Count > 0)
+{
+    <TucMenu Items="_menu"/>
+}
+else
+{
+}

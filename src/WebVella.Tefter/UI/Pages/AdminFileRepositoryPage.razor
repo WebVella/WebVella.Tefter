@@ -1,14 +1,22 @@
 ﻿@namespace WebVella.Tefter.UI.Pages
 @page "/admin/file-repository"
 @inherits TfBasePage
-<TucLayoutDetails>
-	<Header>
-		<TucHeader />
-	</Header>
-	<Content>
-		<TucAdminFileRepositoryPageContent />
-	</Content>
-</TucLayoutDetails>
-
+<TucLayoutGeneral>
+	<SpaceHeader>
+		<TucSpaceHeader/>
+	</SpaceHeader>
+	<SpaceActions>
+		<TucSpaceActions/>
+	</SpaceActions>
+	<SideNav>
+		<TucSpaceNavigation/>
+	</SideNav>
+	<PageTopbar>
+		<TucPageTopbar/>
+	</PageTopbar>
+	<ChildContent>
+		<TucAdminFileRepositoryPageContent/>
+	</ChildContent>
+</TucLayoutGeneral>
 
 

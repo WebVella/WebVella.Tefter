@@ -1,0 +1,79 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<div class="tf-page-topbar">
+    <div class="tf-page-topbar__left">
+        <TucPageTopbarBreadcrumb/>
+    </div>
+    <div class="tf-page-topbar__right">
+        @if (TfAuthLayout.GetState().Space is not null && TfAuthLayout.GetState().SpacePage is not null)
+        {
+            <FluentButton Id="view-bookmark-selector" OnClick="_onBookmarkClick" IconStart="@_bookmarkIcon"
+                          Appearance="@Appearance.Outline" Title="@_bookmarkTitle"/>
+            @if (_activeSavedUrl is not null)
+            {
+                @if (Navigator.IsSpaceViewSavedUrlChanged(_activeSavedUrl.Url))
+                {
+                    <FluentButton Id="view-save-selector" OnClick="_onSaveLinkClick" Appearance="@Appearance.Outline">
+                        <FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Warning"/>
+                    </FluentButton>
+                }
+                else
+                {
+                    <FluentButton Id="view-save-selector" OnClick="_onSaveLinkClick" Appearance="@Appearance.Outline">
+                        <FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Accent"/>
+                    </FluentButton>
+                }
+            }
+            else
+            {
+                <FluentButton Id="view-save-selector" OnClick="_onSaveLinkClick" Appearance="@Appearance.Outline">
+                    <FluentIcon Value="@TfConstants.GetIcon("Link")"/>
+                </FluentButton>
+            }
+            <FluentDivider Orientation="Orientation.Vertical"/>
+        }
+        <TucNotificationCenter/>
+        <TucAnchor Href="#" OnClick="() => _userMenuVisible = !_userMenuVisible"
+                   Id="user-menu-toggle" Appearance="@Appearance.Outline">
+            <TucAvatar User="TfAuthLayout.GetState().User" UseUserColor="false"/>
+        </TucAnchor>
+        <FluentMenu Width="200px" @bind-Open="_userMenuVisible" Anchor="user-menu-toggle" UseMenuService="true">
+            <FluentMenuItem Disabled="true">
+                @TfAuthLayout.GetState().User.FirstName @TfAuthLayout.GetState().User.LastName
+            </FluentMenuItem>
+            <FluentDivider Style="margin-top:10px"/>
+            <FluentMenuItem OnClick="_visualPreferencesHandler">
+                @LOC("Visual Preferences")
+                <span slot="start"><FluentIcon Value="@TfConstants.GetIcon("Color")" Slot="start"/></span>
+            </FluentMenuItem>
+            @if (_isSetAsStartupUri())
+            {
+                <FluentMenuItem OnClick="_resetUrlAsStartup">
+                    @LOC("Reset Startup URL")
+                    <span slot="start">
+                                <FluentIcon Value="@TfConstants.GetIcon("PinOff")"
+                                            Slot="start"/>
+                            </span>
+                </FluentMenuItem>
+            }
+            else
+            {
+                <FluentMenuItem OnClick="_setUrlAsStartup">
+                    @LOC("Set as Startup URL")
+                    <span slot="start">
+                                <FluentIcon Value="@TfConstants.GetIcon("Pin")"
+                                            Slot="start"/>
+                            </span>
+                </FluentMenuItem>
+            }
+            <FluentMenuItem OnClick="_logout">
+                @LOC("Logout")
+                <span slot="start">
+                            <FluentIcon Value="@TfConstants.GetIcon("SignOut")"
+                                        Slot="start"/>
+                        </span>
+            </FluentMenuItem>
+        </FluentMenu>
+    </div>
+</div>
+<TucPageLinkSaveSelector @ref="_saveSelector" ActiveSavedUrl="@_activeSavedUrl"/>

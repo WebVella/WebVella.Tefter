@@ -2,9 +2,9 @@
 @inherits TfBaseComponent
 <div class="tf-space-header">
     <div class="tf-space-header__icon">
-        <FluentIcon Value="@TfConstants.GetIcon(TfAuthLayout.GetState().Space?.FluentIconName ?? "Settings")" Focusable="false"></FluentIcon>
+        <FluentIcon Value="@TfConstants.GetIcon(_space?.FluentIconName ?? "Settings")" Focusable="false"></FluentIcon>
     </div>
     <div class="tf-space-header__meta">
-        <div class="tf-space-header__meta__title">@(TfAuthLayout.GetState().Space?.Name ?? LOC("Administration"))</div>
+        <div class="tf-space-header__meta__title">@(_space?.Name ?? LOC("Administration"))</div>
     </div>
 </div>
