@@ -67,9 +67,9 @@ public partial interface ITfService
 		TfDataProvider provider,
 		int index);
 
-	internal void DeleteProviderRowsAfterIndex(
-		TfDataProvider provider,
-		int index);
+	//internal void DeleteProviderRowsAfterIndex(
+	//	TfDataProvider provider,
+	//	int index);
 
 	void DeleteAllProviderRows(
 			Guid providerId);
@@ -1502,20 +1502,20 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void DeleteProviderRowsAfterIndex(
-		TfDataProvider provider,
-		int index)
-	{
-		try
-		{
-			string sql = $"DELETE FROM dp{provider.Index} WHERE tf_row_index >= @index";
-			_dbService.ExecuteSqlNonQueryCommand(sql, new NpgsqlParameter("@index", index));
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
+	//public void DeleteProviderRowsAfterIndex(
+	//	TfDataProvider provider,
+	//	int index)
+	//{
+	//	try
+	//	{
+	//		string sql = $"DELETE FROM dp{provider.Index} WHERE tf_row_index >= @index";
+	//		_dbService.ExecuteSqlNonQueryCommand(sql, new NpgsqlParameter("@index", index));
+	//	}
+	//	catch (Exception ex)
+	//	{
+	//		throw ProcessException(ex);
+	//	}
+	//}
 
 	private string BuildSelectRowSql(
 		TfDataProvider provider,

@@ -231,7 +231,7 @@ public class BaseTest
 		foreach (DataRow dr in dt.Rows)
 		{
 			var textDataIdentityValue = (string)dr[$"tf_ide_{dataIdentity1.DataIdentity}"];
-			
+
 			if (textDataIdentityValues.Contains(textDataIdentityValue))
 				continue; //skip if already exists
 
