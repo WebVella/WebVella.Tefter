@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <TucLayoutPageContent Title="@_template?.Name">
-	<div style="padding:var(--tf-padding-base)">
+	<div style="padding:var(--tf-padding)">
 		@if (String.IsNullOrWhiteSpace(UriInitialized))
 		{
 			<TucSkeletonPageHeader />
@@ -100,13 +100,13 @@
 					</FluentGrid>
 				</ChildContent>
 			</TucCard>
-			<div style="margin:1rem 0">
+			<div style="margin-top: var(--tf-card-space)">
 				<TucSelectComponent TOption="ITfTemplateProcessorAddon" Items="@(new List<ITfTemplateProcessorAddon>())"
 								   Value="_processor"
 								   OptionText="@(x => x.Name)" OptionIcon="@(x => x.FluentIconName)" OptionDescription="@(x => x.Description)"
 								   OptionMatch="@((x, y) => x.Id == y.Id)" />
 			</div>
-			<TucCard Title="@LOC("Template Settings")">
+			<TucCard Title="@LOC("Template Settings")" Style="margin-top: var(--tf-card-space)">
 				<ToolbarTemplate>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="onHelpClick">
 						@LOC("Help")
@@ -121,7 +121,7 @@
 					<TucScreenRegionComponent RegionContext="_dynamicComponentContext" Scope="@_dynamicComponentScope" Placeholder="@LOC("Template does not require additional settings")" />
 				</ChildContent>
 			</TucCard>
-			<TucCard>
+			<TucCard Style="margin-top: var(--tf-card-space)">
 				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
 					<div>@LOC("Deleting the template will make it unavailable for future use.")</div>
 					<div>

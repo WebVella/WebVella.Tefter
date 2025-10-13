@@ -10,5 +10,7 @@ public partial class TucTreeView : ComponentBase
 	[Parameter]
 	public string? Class { get; set; }
 
+	[Parameter] public bool Collapsable { get; set; } = false;	
+	
 	private string _cssClass { get => $"tf-treemenu {Class}"; }
 }

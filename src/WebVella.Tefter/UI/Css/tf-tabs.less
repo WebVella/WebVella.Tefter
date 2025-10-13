@@ -4,8 +4,8 @@
   width: 100%;
   display: flex;
   height:calc(var(--tf-page-tabs-height) - var(--tf-tabs-bottom-margin));
-  border-bottom: 1px solid var(--tf-stroke-color);
-  margin-bottom: var(--tf-tabs-bottom-margin);
+  border-bottom: 1px solid var(--neutral-stroke-rest);
+  margin-bottom: var(--tf-tabs-padding);
 
   &__item {
     flex: 0 0 auto;
@@ -21,12 +21,12 @@
       left:var(--tf-tabs-padding);
       right:var(--tf-tabs-padding);
       bottom: -1px;
-      background:var(--tf-accent-color);
+      background: linear-gradient(90deg, transparent 0, var(--accent-fill-rest) 50%, transparent 100%);
     }
     
     fluent-anchor {
-      --accent-foreground-rest: var(--tf-font-color-base);
-      --accent-fill-rest:var(--tf-font-color-base);
+      --accent-foreground-rest: var(--neutral-foreground-rest);
+      --accent-fill-rest:var(--neutral-foreground-rest);
       &::part(start){
         margin-inline-end:5px;
         position: unset !important;

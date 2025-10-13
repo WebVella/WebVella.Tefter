@@ -137,7 +137,7 @@ public static partial class NavigatorExt
 				Url = string.Format(TfConstants.AdminRolesPageUrl),
 				Text = LOC["Roles"],
 			});
-
+			var boz1 = rootMenu.IdTree;
 			menuItems.Add(rootMenu);
 		}
 
@@ -154,7 +154,7 @@ public static partial class NavigatorExt
 				Selected = routeState.HasNode(RouteDataNode.DataProviders, 1)
 				           || routeState.HasNode(RouteDataNode.SharedColumns, 1)
 				           || routeState.HasNode(RouteDataNode.DataIdentities, 1),
-				Url = null,
+				Url = string.Format(TfConstants.AdminDataProvidersPageUrl),
 				Text = LOC["Data"],
 				Expanded = true
 			};
@@ -194,7 +194,7 @@ public static partial class NavigatorExt
 				IconExpanded = TfConstants.GetIcon("Folder"),
 				Selected = routeState.HasNode(RouteDataNode.Templates, 1)
 				           || routeState.HasNode(RouteDataNode.FileRepository, 1),
-				Url = null,
+				Url = string.Format(TfConstants.AdminFileRepositoryPageUrl),
 				Text = LOC["Content"],
 				Expanded = true
 			};
@@ -228,7 +228,7 @@ public static partial class NavigatorExt
 				IconCollapsed = TfConstants.GetIcon("AppFolder"),
 				IconExpanded = TfConstants.GetIcon("AppFolder"),
 				Selected = routeState.HasNode(RouteDataNode.Pages, 1),
-				Url = null,
+				Url = string.Format(TfConstants.AdminPagesSingleUrl, addonPages[0].Id),
 				Text = LOC["Addons"],
 				Expanded = true
 			};
@@ -273,7 +273,6 @@ public static partial class NavigatorExt
 			IconExpanded = TfConstants.GetIcon(page.FluentIconName),
 			Selected = page.Id == navState.SpacePageId,
 			Expanded = true,
-			ChildSelected = page.GetChildPagesPlainList().Any(x => x.Id == navState.SpacePageId),
 			Url = page.Type == TfSpacePageType.Folder
 				? null
 				: String.Format(TfConstants.SpacePagePageUrl, page.SpaceId, page.Id),

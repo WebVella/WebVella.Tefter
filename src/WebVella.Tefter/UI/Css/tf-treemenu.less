@@ -49,7 +49,7 @@
   &:hover {
     color: var(--accent-foreground-hover);
     background: color-mix(in srgb, var(--neutral-layer-1), var(--accent-fill-rest) 5%);
-    
+
     & .tf-treemenu__item__expander {
       display: flex;
     }
@@ -58,6 +58,7 @@
   &.tf-active:not(.tf-child-active) {
     position: relative;
     color: var(--accent-foreground-active);
+    font-weight: 600;
 
     &::before {
       display: none !important;
@@ -71,6 +72,10 @@
   &.tf-active + .tf-submenu:before {
     background: linear-gradient(to bottom, var(--neutral-layer-2) 10%, var(--accent-fill-rest) 50%, var(--neutral-layer-2) 90%);
   }
+  
+  //&.tf-expanded  &__expander{
+  //  display: none;
+  //}
 
   &__content {
     display: flex;
@@ -121,9 +126,7 @@
     right: var(--tf-padding);
     top: 50%;
     margin-top: -12px;
-
-    //display: flex;
-    display: none;
+    display: flex;
     /*pointer-events: none;*/
     border-radius: 50%;
     background: transparent;
@@ -133,13 +136,13 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    --accent-fill-rest: var(--neutral-foreground-hover);
 
-    &:hover{
-      background: var(--neutral-layer-3);
+    &:hover {
+      background: color-mix(in srgb, var(--accent-fill-rest), transparent 75%);
     }
-    
+
     svg {
+      --accent-fill-rest: var(--neutral-foreground-hover);
       width: 16px !important;
     }
   }

@@ -2225,9 +2225,16 @@ public static partial class TfConverters
 			var colorCount = colorCountHash.Count;			
 			
 			var selectable = "false";
-			if (!nonSelectableList.Any(x=> def.VariableName.Contains(x)))
+			if (
+				!nonSelectableList.Any(x=> def.VariableName.Contains(x))
+				&& def.ColorIntValue == "500")
 				selectable = "true";
 
+			if (def.ColorType == "white")
+				def.ColorIntValue = "1";
+			else if (def.ColorType == "black")
+				def.ColorIntValue = "0";			
+			
 			colorSB.AppendLine($"[TfColor(name: \"{def.ColorType}\",variable:\"--tf-{def.ColorType}-{def.ColorIntValue}\",oklch:\"{def.OKLCH}\",hex:\"{def.HEX}\",number:{def.ColorIntValue}, selectable: {selectable})]");
 			colorSB.AppendLine($"{textInfo.ToTitleCase(def.ColorType)}{def.ColorIntValue} = {colorCount}{def.ColorIntValue},");
 		}

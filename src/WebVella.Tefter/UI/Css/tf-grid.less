@@ -1,4 +1,6 @@
-﻿@keyframes gridLoadingBar {
+﻿@import '_colors.less';
+
+@keyframes gridLoadingBar {
   0% {
     left: 0%;
     right: 100%;
@@ -27,16 +29,16 @@
 .tf-grid {
   table-layout: fixed;
   min-width: 100%;
-  border-width:0;
-  border-color: var(--tf-stroke-color);
+  border-width: 0;
+  border-color: var(--neutral-stroke-rest);
   border-collapse: separate !important;
   border-spacing: 0 !important;
   margin-bottom: 0;
-  background: light-dark(var(--tf-base-50), var(--tf-fill-base-active));
+  border-bottom: 1px solid var(--neutral-stroke-rest);
 
   thead {
     position: sticky;
-    top: 0px;
+    top: 0;
     z-index: 3;
 
     & > tr:not(.tf-grid-thead-bkg):not(.tf-grid-thead-loading) {
@@ -52,10 +54,8 @@
 
     & tr > th,
     & tr > td {
-      border:1px solid var(--tf-stroke-color);
-      border-top-width: 0;
-      border-color: var(--tf-stroke-color);
-      font-weight: var(--tf-font-weight-lg);
+      border: 1px solid var(--neutral-stroke-rest);
+      font-weight: 600;
       min-width: 60px;
       position: relative;
       --tf-cell-padding: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
@@ -68,7 +68,7 @@
         top: 0;
         bottom: 0;
         width: 5px;
-        background: var(--tf-stroke-color);
+        background: var(--neutral-stroke-rest);
         content: "";
         cursor: col-resize;
       }
@@ -93,10 +93,10 @@
         height: 20px;
         overflow: hidden;
         border-radius: 5px;
-        background: var(--tf-fill-color-base-1);
+        background: var(--neutral-layer-2);
         content: "";
         cursor: pointer;
-        --tf-caret-color: var(--tf-fill-color-dark);
+        --tf-caret-color: var(--neutral-foreground-focus);
         justify-content: center;
         align-items: center;
 
@@ -160,7 +160,7 @@
       right: 0;
       z-index: 1;
       pointer-events: none;
-      background: light-dark(var(--tf-base-50), var(--tf-fill-base-active));
+      background: var(--fill-color);
     }
 
     &-loading {
@@ -172,7 +172,7 @@
       right: 0;
       z-index: 10;
       pointer-events: none;
-      background: linear-gradient(90deg, transparent 33%, var(--tf-accent-color) 66%, transparent 100%);
+      background: linear-gradient(90deg, transparent 33%, var(--accent-fill-rest) 66%, transparent 100%);
       width: 0;
       animation: gridLoadingBar 2s linear infinite;
     }
@@ -237,16 +237,15 @@
           bottom: 0;
           z-index: 0;
           border-radius: 0;
-          background: var(--tf-fill-base);
+          background: var(--neutral-fill-hover);
         }
 
         & > div {
-          border-radius: calc(var(--tf-border-radius-sm) * 1px);
+          border-radius: calc(var(--control-corner-radius) * 1px);
           /*white-space: nowrap;*/
           text-overflow: ellipsis;
           padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
           min-height: 32px;
-          --accent-fill-rest:var(--tf-font-color-base);
         }
 
         &.multiline-text {
@@ -262,8 +261,8 @@
         }
 
         & .td-description {
-          font-size: var(--tf-font-size-sm);
-          color: var(--tf-font-color-mute);
+          font-size: var(--type-ramp-minus-1-font-size);
+          color: var(--neutral-foreground-hint);
           white-space: initial;
         }
       }
@@ -273,7 +272,7 @@
       }
 
       &.tf-grid-tr--selected .tf-grid-td-hover {
-        background: var(--tf-blue-200);
+        background: color-mix(in srgb, var(--neutral-fill-rest), var(--accent-fill-rest) 15%);
       }
 
       &:hover .tf-grid-td-hover {
@@ -282,7 +281,7 @@
 
       &:last-child > th,
       &:last-child > td {
-        border-bottom: 1px solid var(--tf-stroke-base);
+        border-bottom: 1px solid var(--neutral-stroke-rest);
       }
 
       &.tf-grid-tr--edited .tf-grid-td--check::after {
@@ -309,17 +308,19 @@
         border-top-width: 0;
       }
     }
-    & > div + tr{
+
+    & > div + tr {
       & > td,
       & > th {
         border-top-width: 0;
-      }      
+      }
     }
   }
 
   td, th {
     border-width: 1px;
     border-style: solid;
+
     & > div {
       display: flex;
       justify-content: start;
@@ -350,7 +351,6 @@
             fluent-button {
               flex: 0 0 auto;
               background: transparent !important;
-              --neutral-stroke-input-active: var(--tf-stroke-button);
               border-radius: 3px !important;
               height: unset;
               margin: 2px 0;
@@ -361,6 +361,9 @@
 
               &:hover {
                 background: var(--tf-white) !important;
+              }
+              svg{
+                --neutral-stroke-input-active: var(--neutral-stroke-rest);                
               }
             }
           }
@@ -373,7 +376,6 @@
               height: 100%;
               width: 100%;
               background: transparent !important;
-              --neutral-stroke-input-active: var(--tf-stroke-button);
 
               &::part(control) {
                 background: transparent !important;
@@ -382,6 +384,9 @@
 
               &:hover {
                 background: transparent !important;
+              }
+              svg{
+                --neutral-stroke-input-active: var(--neutral-stroke-rest);                
               }
             }
           }
@@ -461,52 +466,33 @@
 }
 
 .tf-grid-tr.tf-grid-tr--selected .tf-grid-td-selection {
-  background: var(--tf-blue-100);
+  background: color-mix(in srgb, var(--neutral-fill-rest), var(--accent-fill-rest) 10%);
 }
 
 .tf-grid-tr:hover .tf-grid-td-hover {
-  background: var(--neutral-fill-secondary-rest);
+  background: var(--neutral-fill-hover);
 }
 
+@td-colors:
+        red, orange,
+        amber, yellow, lime, green, emerald, teal,
+        cyan, sky, blue, indigo, violet, purple,
+        fuchsia, pink, rose;
+
+.generate-color-variables(@list, @i: 1) when (@i <= length(@list)) {
+  // Get the current color name
+  @color: extract(@list, @i);
+
+  // Generate the CSS variable name and value
+  // Note: color-mix is a CSS function, not LESS. We output it directly.
+  --tf-td-color-@{color}: var(--tf-@{color}-500);
+  --tf-td-fill-@{color}: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-@{color}-500) 5%);
+
+  // Recursively call the mixin for the next item
+  .generate-color-variables(@list, @i + 1);
+}
+
+
 .tf-grid .tf-grid-td {
-  --tf-td-color-red: var(--tf-red-600);
-  --tf-td-fill-red: var(--tf-red-100);
-  --tf-td-color-orange: var(--tf-orange-600);
-  --tf-td-fill-orange: var(--tf-orange-100);
-  --tf-td-color-amber: var(--tf-amber-600);
-  --tf-td-fill-amber: var(--tf-amber-100);
-  --tf-td-color-yellow: var(--tf-yellow-600);
-  --tf-td-fill-yellow: var(--tf-yellow-100);
-  --tf-td-color-lime: var(--tf-lime-600);
-  --tf-td-fill-lime: var(--tf-lime-100);
-  --tf-td-color-green: var(--tf-green-600);
-  --tf-td-fill-green: var(--tf-green-100);
-  --tf-td-color-emerald: var(--tf-emerald-600);
-  --tf-td-fill-emerald: var(--tf-emerald-100);
-  --tf-td-color-teal: var(--tf-teal-600);
-  --tf-td-fill-teal: var(--tf-teal-100);
-  --tf-td-color-cyan: var(--tf-cyan-600);
-  --tf-td-fill-cyan: var(--tf-cyan-100);
-  --tf-td-color-sky: var(--tf-sky-600);
-  --tf-td-fill-sky: var(--tf-sky-100);
-  --tf-td-color-blue: var(--tf-blue-600);
-  --tf-td-fill-blue: var(--tf-blue-100);
-  --tf-td-color-indigo: var(--tf-indigo-600);
-  --tf-td-fill-indigo: var(--tf-indigo-100);
-  --tf-td-color-violet: var(--tf-violet-600);
-  --tf-td-fill-violet: var(--tf-violet-100);
-  --tf-td-color-purple: var(--tf-purple-600);
-  --tf-td-fill-purple: var(--tf-purple-100);
-  --tf-td-color-fuchsia: var(--tf-fuchsia-600);
-  --tf-td-fill-fuchsia: var(--tf-fuchsia-100);
-  --tf-td-color-pink: var(--tf-pink-600);
-  --tf-td-fill-pink: var(--tf-pink-100);
-  --tf-td-color-rose: var(--tf-rose-600);
-  --tf-td-fill-rose: var(--tf-rose-100);
-  --tf-td-color-slate: var(--tf-slate-600);
-  --tf-td-fill-slate: var(--tf-slate-100);
-  --tf-td-color-black: var(--tf-font-color-base);
-  --tf-td-fill-black: var(--tf-font-color-base);
-  --tf-td-color-white: var(--tf-white);
-  --tf-td-fill-white: var(--tf-white);
+  .generate-color-variables(@td-colors);
 }

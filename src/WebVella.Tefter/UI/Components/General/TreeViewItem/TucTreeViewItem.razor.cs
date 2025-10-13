@@ -5,6 +5,8 @@ public partial class TucTreeViewItem : ComponentBase
 	[Inject] protected NavigationManager Navigator { get; set; } = null!;
 	[Parameter] public TfMenuItem Item { get; set; } = null!;
 
+	[Parameter] public bool Collapsable { get; set; } = false;	
+	
 	private string _cssClass
 	{
 		get

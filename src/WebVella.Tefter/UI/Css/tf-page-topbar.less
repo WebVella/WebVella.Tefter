@@ -3,71 +3,67 @@
   justify-content: space-between;
   align-items: center;
   height: 100%;
-  padding-left: var(--tf-padding-base);
-  padding-right: calc(var(--tf-padding-base) - 10px);
-  --accent-fill-rest:var(--tf-button-color);
+  padding-left: calc(var(--tf-padding) - 5px);
+  padding-right: calc(var(--tf-padding) - 5px);
+
   &__left {
     flex: 0 0 auto;
   }
-  &__right{
+
+  &__right {
     flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: end;
-    gap:5px;
+    gap: 5px;
   }
 
- 
-  fluent-breadcrumb-item::part(control){
-    display: flex;
-    align-items: center;
-    --accent-fill-rest:var(--tf-font-color-mute);
-    height:23px;
-    padding:0 5px;
-    border-radius: var(--tf-border-radius-sm);
-    margin-inline-end:0;
-    cursor: pointer;
-    font-size: var(--tf-font-size-sm);
-    background: var(--tf-fill-base-focus);
-    &:hover{
-      background: light-dark(
-              color-mix(in srgb, var(--tf-accent-500), transparent 80%),
-              color-mix(in srgb, var(--tf-accent-500), transparent 75%)
-      );
-      color:var(--tf-font-color-base);
-      --accent-fill-rest:var(--tf-font-color-base);
+  fluent-breadcrumb-item {
+    &::part(start) {
+      --accent-fill-rest: var(--accent-fill-rest);
     }
-  }
-  fluent-breadcrumb-item::part(separator){
-    color: light-dark(var(--tf-base-400),var(--tf-base-600));
-    margin:0 5px;
-  }
-  fluent-divider{
-    height:1rem;
-    --neutral-stroke-divider-rest:var(--tf-stroke-color);
-    margin:0 0.5rem;
-  }
-  fluent-anchor,  fluent-button{
-    &::part(control){
-      border-color:transparent;
+
+    &::part(control) {
+      display: flex;
+      align-items: center;
+      height: 23px;
+      padding: 0 5px;
+      border-radius: calc(var(--control-corner-radius) * 1px);
+      margin-inline-end: 0;
+      cursor: pointer;
+      font-size: var(--type-ramp-minus-1-font-size);
+      color:var(--neutral-foreground-hint);
     }
-    &::part(end){
-      margin-inline-start:2px;
-      --accent-fill-rest:var(--tf-stroke-color);      
+
+    &::part(separator) {
+      color:var(--neutral-foreground-hint);
+      margin: 0 5px;
     }
-    &:hover{
-      &::part(control){
-        border-color:var(--tf-stroke-color-hover);
-      }      
-      &::part(end){
-        --accent-fill-rest:var(--tf-stroke-color-hover);
+
+    &:hover::part(control) {
+      background: color-mix(in srgb, var(--neutral-layer-1), var(--accent-fill-rest) 5%);
+      color: var(--accent-fill-rest);
+    }
+    
+    
+    
+  }
+
+  fluent-divider {
+    height: 1rem;
+    margin: 0 0.5rem;
+  }
+
+  fluent-anchor, fluent-button {
+    &::part(control) {
+      border-color: transparent;
+    }
+
+    &:hover {
+      &::part(control) {
+        border-color: var(--neutral-stroke-hover);
       }
     }
   }
-  #user-menu-toggle{
-   color:var(--tf-base-700); 
-    &::part(content){
-      top:0;
-    }
-  }
+
 }     

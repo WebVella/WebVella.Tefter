@@ -8,13 +8,13 @@
 }
 else if (Folder is null)
 {
-	<div style="margin:var(--tf-padding-base)">
+	<div style="margin:var(--tf-padding)">
 		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No assets folder is selected for this page!")</FluentMessageBar>
 	</div>
 }
 else if (String.IsNullOrWhiteSpace(Folder.DataIdentity))
 {
-	<div style="margin:var(--tf-padding-base)">
+	<div style="margin:var(--tf-padding)">
 		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The assets folder has no data identity!")</FluentMessageBar>
 	</div>
 }
@@ -31,7 +31,7 @@ else
 						  Style="margin-left:1rem" @ref=_refSearch />
 		</NavigationRight>
 		<ChildContent>
-			<div style="margin:var(--tf-padding-base)">
+			<div style="margin:var(--tf-padding)">
 				@if (_items.Count == 0)
 				{
 					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No assets in this folder yet")</FluentMessageBar>

@@ -14,6 +14,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	[Inject] private AccentBaseColor AccentBaseColor { get; set; } = default!;
 
+	
 	private TfState _state = new();
 	private TfUser _currentUser = new();
 	private bool _isLoaded = false;
@@ -40,7 +41,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		var user = await TfService.GetUserFromCookieAsync(
 			jsRuntime: JsRuntime,
 			authStateProvider: AuthenticationStateProvider);
-
+		
 		if (user is null)
 		{
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);

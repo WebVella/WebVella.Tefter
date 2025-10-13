@@ -7,8 +7,8 @@
             @if (!String.IsNullOrWhiteSpace(TfAuthLayout.GetState().NavigationState.ReturnUrl))
             {
                 <div class="tflpc__header__left__return">
-                    <TucAnchor Appearance="@Appearance.Outline" Href="@TfAuthLayout.GetState().NavigationState.ReturnUrl"
-                               IconStart="@TfConstants.GetIcon("ChevronLeft")">@LOC("Back")</TucAnchor>
+                    <TucAnchor Appearance="@Appearance.Accent" Href="@TfAuthLayout.GetState().NavigationState.ReturnUrl"
+                               IconStart="@TfConstants.GetIcon("ArrowLeft")"/>
                 </div>
             }            
             <div class="tflpc__header__left__title">@Title</div>

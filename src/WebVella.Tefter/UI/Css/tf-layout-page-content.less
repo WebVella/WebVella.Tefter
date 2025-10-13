@@ -4,28 +4,33 @@
 
   &:not(.tflpc--has-page-tabs) {
     --tf-page-tabs-height: 0px;
-  }  
-  
+  }
+
   &__header {
     flex: 0 0 var(--tf-page-header-height);
     display: flex;
     justify-content: space-between;
     align-items: start;
-    padding:0 var(--tf-padding-base);
+    padding: 0 var(--tf-padding);
 
     &__left {
       flex: 0 0 auto;
       display: flex;
       align-items: center;
       min-height: 32px;
-      
-      &__title{
-        font-weight: var(--tf-font-weight-lg);
-        font-size: var(--tf-font-size-lg);
-        line-height: 1.15em;        
+
+      &__title {
+        font-weight: 600;
+        font-size: var(--type-ramp-plus-3-font-size);
+        line-height: var(--type-ramp-plus-3-line-height);
       }
-      &__return{
-        padding-right: var(--tf-padding-base); 
+
+      &__return {
+        padding-right: var(--tf-padding);
+
+        svg {
+          --accent-fill-rest: var(--foreground-on-accent-rest);
+        }
       }
     }
 
@@ -34,7 +39,7 @@
       min-height: 32px;
       display: flex;
       align-items: center;
-      gap: var(--tf-padding-sm);
+      gap: var(--tf-padding);
     }
   }
 
@@ -43,15 +48,14 @@
     display: flex;
     flex-flow: column;
     justify-content: end;
-    padding-left: var(--tf-padding-base);
-    padding-right: var(--tf-padding-base);
+    padding-left: var(--tf-padding);
+    padding-right: var(--tf-padding);
   }
 
   &__content {
     flex: 1 1 auto;
     height: calc(100vh - var(--tf-topbar-height) - var(--tf-page-header-height) - var(--tf-page-tabs-height));
     overflow-y: auto;
-    scrollbar-color: var(--tf-fill-base-active) var(--tf-fill-base);
     scrollbar-width: thin;
   }
 }

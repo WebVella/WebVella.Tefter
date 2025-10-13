@@ -1,19 +1,15 @@
 ﻿@inherits LayoutComponentBase
 @if (_isLoaded)
 {
+	<FluentDesignTheme Mode="@_themeMode" CustomColor="@_accentColor.GetColor().HEX" StorageName="tf-theme"/>
 	<CascadingValue TValue="TfAuthLayout" Name="TfAuthLayout" Value="this" IsFixed="true">
-		<FluentDesignTheme Mode="@_themeMode" CustomColor="@_accentColor.GetColor().HEX"/>
-		<!-- @_accentColor -->
-		@* <FluentDesignSystemProvider AccentBaseColor="@_accentColor.GetColor().HEX"> *@
-			@Body
-			<FluentToastProvider MaxToastCount="5" Position="ToastPosition.BottomCenter"
-			                     RemoveToastsOnNavigation="false"/>
-			<FluentDialogProvider/>
-			<FluentTooltipProvider/>
-			<FluentKeyCodeProvider/>
-			<FluentMenuProvider/>
-		@* </FluentDesignSystemProvider> *@
-
+		@Body
+		<FluentToastProvider MaxToastCount="5" Position="ToastPosition.BottomCenter"
+		                     RemoveToastsOnNavigation="false"/>
+		<FluentDialogProvider/>
+		<FluentTooltipProvider/>
+		<FluentKeyCodeProvider/>
+		<FluentMenuProvider/>
 	</CascadingValue>
 }
 

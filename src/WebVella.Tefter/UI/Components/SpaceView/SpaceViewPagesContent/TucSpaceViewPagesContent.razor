@@ -4,7 +4,7 @@
 			   Area="@($"{_space?.Name} : {LOC("Space View")}")" Title="@_spaceView?.Name" SubTitle="@LOC("Pages")">
 	<ChildContent>
 		<TucErrorBoundry>
-			<div style="padding:var(--tf-padding-base)">
+			<div style="padding:var(--tf-padding)">
 				@if (String.IsNullOrWhiteSpace(UriInitialized))
 				{
 					<TucSkeletonPageHeader />

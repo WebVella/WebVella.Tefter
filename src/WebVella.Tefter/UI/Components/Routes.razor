@@ -5,8 +5,8 @@
 @using WebVella.BlazorTrace;
 <Router AppAssembly="typeof(WebVella.Tefter.UI.Components.App).Assembly">
 	<Found Context="routeData">
-		<RouteView RouteData="routeData" DefaultLayout="typeof(TfAuthLayout)" />
-		<FocusOnNavigate RouteData="routeData" Selector="#top" />
+		<FocusOnNavigate RouteData="routeData" Selector="#top"/>
+		<RouteView RouteData="routeData" DefaultLayout="typeof(TfAuthLayout)"/>
 	</Found>
 </Router>
 <WvBlazorTrace/>

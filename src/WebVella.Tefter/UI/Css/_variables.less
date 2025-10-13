@@ -2,12 +2,21 @@ html:root {
    //heights
   --tf-topbar-height: 60px;
   --tf-space-header-height: var(--tf-topbar-height);
-  --tf-space-actions-height: 50px;
-  --tf-page-header-height: var(--tf-space-actions-height);
+  --tf-space-actions-height: 60px;
+  --tf-page-header-height: 70px;
   --tf-page-tabs-height: 50px;
   //widths
-  --tf-aside-width: 250px;
+  --tf-aside-width: 220px;
   
   //padding
   --tf-padding: calc((10 + (var(--design-unit) * 2 * var(--density))) * 1px);
+  --tf-card-space: calc(var(--tf-padding) * 2);
+
+   
+}
+
+div[class ^='fluent-messagebar'],
+.fluent-messagebar-notification,
+.fluent-messagebar-message {
+  animation: none !important;
 }

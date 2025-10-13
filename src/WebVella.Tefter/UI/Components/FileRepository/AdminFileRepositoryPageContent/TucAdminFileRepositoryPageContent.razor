@@ -35,7 +35,7 @@
 		{
 			<FluentMessageBar Title="@LOC("No Files")" AllowDismiss="false"
 							  Intent="@MessageIntent.Info">@LOC("No files are created yet")</FluentMessageBar>
-			<div style="padding:var(--tf-padding-base)">
+			<div style="padding:var(--tf-padding)">
 				<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0)"
 							  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">@LOC("Upload file")</FluentButton>
 				<FluentInputFile @ref="@fileUploader"

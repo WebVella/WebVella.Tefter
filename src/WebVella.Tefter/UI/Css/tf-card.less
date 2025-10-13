@@ -1,23 +1,19 @@
 ﻿.tf-card {
-  --tf-card-border-radius: var(--tf-border-radius-base);
-  --tf-card-background-color: light-dark(var(--tf-base-50), var(--tf-fill-base-active));
-  border: 1px solid transparent;
+  --tf-card-border-radius: calc(var(--layer-corner-radius) * 1px);
+  --tf-card-background-color: var(--fill-color);
+  border: 1px solid var(--neutral-stroke-rest);
   border-radius: var(--tf-card-border-radius);
   background: var(--tf-card-background-color);
-  padding: var(--tf-padding-sm);
-  box-shadow: var(--tf-shadow-base);
-
-  .fluent-dialog-body & {
-    border: 1px solid var(--tf-stroke-color);
-  }
+  padding: var(--tf-padding);
+  box-shadow: var(--elevation-shadow-card-rest);
 
   &__title {
     background: transparent;
     border-radius: 0.5rem;
     //padding: 0 0 1rem 0;
     margin-bottom: 0;
-    font-size: var(--tf-font-size-md);
-    font-weight: var(--tf-font-weight-lg);
+    font-size: var(--type-ramp-plus-1-font-size);
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -40,18 +36,18 @@
 
     h3 {
       margin-bottom: 0;
-      font-size: var(--tf-font-size-md);
-      font-weight: var(--tf-font-weight-base);
+      font-size: var(--type-ramp-plus-1-font-size);
+      font-weight: 600;
     }
   }
 
   &__subtitle {
-    color: var(--tf-font-color-mute);
-    font-size: var(--tf-font-size-sm);
+    color: var(--neutral-foreground-hint);
+    font-size: var(--type-ramp-minus-1-font-size);
   }
 
   &__title + &__content {
-    padding-top: var(--tf-padding-base);
+    padding-top: var(--tf-padding);
   }
 
   & + & {
@@ -62,14 +58,14 @@
     cursor: pointer;
 
     &:hover {
-      background: var(--tf-fill-base-hover);
+      background: var(--neutral-fill-hover);
     }
   }
-
+  
   &__content {
     fluent-anchor {
       &.stealth {
-        --neutral-fill-stealth-rest: var(--tf-font-color-base);
+        --neutral-fill-stealth-rest: var(--neutral-foreground-rest);
       }
     }
   }
@@ -116,4 +112,12 @@
   .tf-card__content {
     display: none;
   }
+}
+
+.tf-card .tf-grid{
+  .tf-grid-thead-bkg{
+    background:var(--neutral-fill-rest);
+  }
+  border-left: 1px solid var(--neutral-stroke-rest);
+  border-right: 1px solid var(--neutral-stroke-rest);
 }

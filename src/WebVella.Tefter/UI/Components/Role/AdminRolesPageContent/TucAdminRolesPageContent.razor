@@ -1,65 +1,62 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <TucLayoutPageContent Title="@LOC("Roles")">
-	<Toolbar>
+    <Toolbar>
         <FluentButton OnClick="addRole" Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">
             @LOC("New Role")
         </FluentButton>
         <TucPageSearch/>
     </Toolbar>
     <ChildContent>
-        <div style="padding:var(--tf-padding-base)">
-
-            <table class="tf-grid">
-                <colgroup>
-                    <col span="1" style="width: 20px;min-width: 20px">
-                    <col/>
-                </colgroup>
-                <thead>
-                <tr class="tf-grid-thead-bkg"></tr>
-                @if (_isLoading)
-                {
-                    <tr class="tf-grid-thead-loading"></tr>
-                }
+        <table class="tf-grid">
+            <colgroup>
+                <col span="1" style="width: 20px;min-width: 20px">
+                <col/>
+            </colgroup>
+            <thead>
+            <tr class="tf-grid-thead-bkg"></tr>
+            @if (_isLoading)
+            {
+                <tr class="tf-grid-thead-loading"></tr>
+            }
+            <tr>
+                <th></th>
+                <th>@LOC("name")</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in _items)
+            {
                 <tr>
-                    <th></th>
-                    <th>@LOC("name")</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var item in _items)
-                {
-                    <tr>
-                        <td>
-                            <div class="tf-grid-td-hover"></div>
-                            <div>
-                                <TucAnchor Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Open")"
-                                           Href="@String.Format(TfConstants.AdminRoleDetailsPageUrl, item.Id).GenerateWithLocalAsReturnUrl(TfAuthLayout.GetState().NavigationState.Uri)"/>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="tf-grid-td-hover"></div>
-                            <div>
-                                @item.Name
-                                @if (item.IsSystem)
-                                {
-                                    <div class="td-description" style="color:var(--error)"> [@LOC("system")]</div>
-                                }
-                            </div>
-                        </td>
-                    </tr>
-                }
-                @if (_items.Count == 0)
-                {
-                    <tr>
+                    <td>
                         <div class="tf-grid-td-hover"></div>
-                        <td colspan="2">
-                            <div>@LOC("no items")</div>
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
+                        <div>
+                            <TucAnchor Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Open")"
+                                       Href="@String.Format(TfConstants.AdminRoleDetailsPageUrl, item.Id).GenerateWithLocalAsReturnUrl(TfAuthLayout.GetState().NavigationState.Uri)"/>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="tf-grid-td-hover"></div>
+                        <div>
+                            @item.Name
+                            @if (item.IsSystem)
+                            {
+                                <div class="td-description" style="color:var(--error)"> [@LOC("system")]</div>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if (_items.Count == 0)
+            {
+                <tr>
+                    <div class="tf-grid-td-hover"></div>
+                    <td colspan="2">
+                        <div>@LOC("no items")</div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
     </ChildContent>
 </TucLayoutPageContent>

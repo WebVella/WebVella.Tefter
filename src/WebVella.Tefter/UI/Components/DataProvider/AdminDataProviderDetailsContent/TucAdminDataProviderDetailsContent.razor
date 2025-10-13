@@ -6,7 +6,7 @@
 	</Tabs>
 	<ChildContent>
 		<TucErrorBoundry>
-			<div style="padding:var(--tf-padding-base)">
+			<div style="padding:var(--tf-padding)">
 				@if (String.IsNullOrWhiteSpace(UriInitialized))
 				{
 					<TucSkeletonPageHeader />
@@ -70,7 +70,7 @@
 							</FluentGrid>
 						</ChildContent>
 					</TucCard>
-					<TucCard>
+					<TucCard  Style="margin-top:var(--tf-card-space)">
 						<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
 							<div>@LOC("When a data provider is deleted all data that it holds will be deleted too. Data related to this data provider, but stored in shared columns, applications or other data providers will not be deleted. Thus, if recreate matching data identities in the future these relations will hold")</div>
 							<div>
