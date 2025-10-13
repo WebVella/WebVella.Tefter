@@ -991,15 +991,20 @@ div[class^='fluent-messagebar'],
   min-height: 32px;
 }
 .tflpc__header__left__title {
+  flex: 1 1 auto;
   font-weight: 600;
   font-size: var(--type-ramp-plus-3-font-size);
   line-height: var(--type-ramp-plus-3-line-height);
 }
-.tflpc__header__left__return {
+.tflpc__header__left__icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
   padding-right: var(--tf-padding);
 }
-.tflpc__header__left__return svg {
-  --accent-fill-rest: var(--foreground-on-accent-rest);
+.tflpc__header__left__return {
+  flex: 0 0 auto;
+  padding-right: var(--tf-padding);
 }
 .tflpc__header__right {
   flex: 0 0 auto;

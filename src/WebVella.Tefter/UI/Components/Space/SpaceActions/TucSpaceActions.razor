@@ -1,12 +1,12 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <div class="tf-space-actions">
-    <FluentButton IconStart="@TfConstants.GetIcon("AppFolder")" Title="@LOC("Space Search [CTRL+Tab]")"
+    <FluentButton Title="@LOC("Space Search [CTRL+Tab]")"
                   Appearance="@Appearance.Outline" OnClick="_findSpace">@LOC("spaces")
     </FluentButton>
     @if (TfAuthLayout.GetState().Space is not null)
     {
-        <FluentButton IconStart="@TfConstants.GetIcon("Settings")" Id="space-menu-toggle"
+        <FluentButton Id="space-menu-toggle"
                       Appearance="@Appearance.Outline" Title="@LOC("Configure the current space")"
                       OnClick="() => _spaceMenuVisible = !_spaceMenuVisible">@LOC("settings")
         </FluentButton>

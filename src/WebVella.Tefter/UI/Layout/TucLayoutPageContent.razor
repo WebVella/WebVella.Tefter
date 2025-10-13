@@ -7,10 +7,16 @@
             @if (!String.IsNullOrWhiteSpace(TfAuthLayout.GetState().NavigationState.ReturnUrl))
             {
                 <div class="tflpc__header__left__return">
-                    <TucAnchor Appearance="@Appearance.Accent" Href="@TfAuthLayout.GetState().NavigationState.ReturnUrl"
+                    <TucAnchor Appearance="@Appearance.Outline" Href="@TfAuthLayout.GetState().NavigationState.ReturnUrl"
                                IconStart="@TfConstants.GetIcon("ArrowLeft")"/>
                 </div>
-            }            
+            }
+            @if(!String.IsNullOrWhiteSpace(Icon))
+            {
+                <div class="tflpc__header__left__icon">
+                    <FluentIcon Value="@TfConstants.GetIcon(Icon,size:IconSize.Size24)"/>
+                </div>
+            }
             <div class="tflpc__header__left__title">@Title</div>
         </div>
         @if (Toolbar is not null)

@@ -118,7 +118,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		else
 			_state = TfService.GetAppState(Navigator, _currentUser, url, _state, space);
 
-		_accentColor = (_state.Space?.Color ?? TfColor.Emerald500);
+		_accentColor = (_state.Space?.Color ?? TfColor.Red500);
 		_themeMode = _currentUser?.Settings?.ThemeMode ?? DesignThemeModes.System;
 	}
 

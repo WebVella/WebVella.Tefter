@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @if (_isLoaded)
 {
-	<FluentDesignTheme Mode="@_themeMode" CustomColor="@_accentColor.GetColor().HEX" StorageName="tf-theme"/>
+	<FluentDesignTheme Mode="@_themeMode" CustomColor="@_accentColor.GetColor().HEX" NeutralBaseColor="@TfColor.Zinc500.GetColor().HEX"/>
 	<CascadingValue TValue="TfAuthLayout" Name="TfAuthLayout" Value="this" IsFixed="true">
 		@Body
 		<FluentToastProvider MaxToastCount="5" Position="ToastPosition.BottomCenter"

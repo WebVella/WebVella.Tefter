@@ -20,17 +20,26 @@
       min-height: 32px;
 
       &__title {
+        flex: 1 1 auto;
+        
         font-weight: 600;
         font-size: var(--type-ramp-plus-3-font-size);
         line-height: var(--type-ramp-plus-3-line-height);
       }
 
-      &__return {
+      &__icon {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
         padding-right: var(--tf-padding);
 
-        svg {
-          --accent-fill-rest: var(--foreground-on-accent-rest);
-        }
+      }
+      
+      
+      &__return {
+        flex: 0 0 auto;
+        padding-right: var(--tf-padding);
+
       }
     }
 

@@ -4,7 +4,7 @@ public class AssetsApp : ITfApplicationAddon
 	public const string ID = "5d229b2b-5c78-48fb-b91f-6e853f24aaf2";
 	public const string NAME = "Talk Application";
 	public const string DESCRIPTION = "Talk Application Description";
-	public const string FLUENT_ICON_NAME = "Folder";
+	public const string FLUENT_ICON_NAME = "BookDatabase";
 
 	public Guid AddonId { get; init;} =  new Guid(ID);
 	public string AddonName { get; init;} =  NAME;

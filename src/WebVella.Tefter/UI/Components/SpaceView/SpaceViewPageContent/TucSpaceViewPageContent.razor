@@ -19,7 +19,7 @@ else
 	//var configCss = _generateColumnConfigurationCss(_spaceView, _spaceViewColumns);
 	//var columnIndex = 1;
 	<CascadingValue IsFixed="true" TValue="TucSpaceViewPageContent" Value="this" Name="TucSpaceViewPageContent">
-		<TucLayoutPageContent Title="@_spacePage!.Name" ShowTabs="_spaceView.Presets.Count > 0">
+		<TucLayoutPageContent Icon="@_spacePage!.FluentIconName" Title="@_spacePage!.Name" ShowTabs="_spaceView.Presets.Count > 0">
 			<Tabs>
 				<TucSpaceViewPageContentNavigation SpaceView="_spaceView" SpacePage="_spacePage"/>
 			</Tabs>
