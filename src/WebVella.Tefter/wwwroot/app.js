@@ -7,6 +7,7 @@
     GlobalSearchListeners: {},
     ArrowsListeners: {},
     EnterKeyListeners: {},
+    ThemeSwitchListeners: {},
     dispose: function () {
         Tefter.HtmlEditors = {};
         Tefter.HtmlEditorsChangeListeners = {};
@@ -16,6 +17,7 @@
         Tefter.GlobalSearchListeners = {};
         Tefter.ArrowsListeners = {};
         Tefter.EnterKeyListeners = {};
+        Tefter.ThemeSwitchListeners = {};
     },
     copyToClipboard: function (text) {
         if (window.isSecureContext) {
@@ -400,6 +402,29 @@
         });
         return true;
     },
+    addThemeSwitchListener: function (dotNetHelper, listenerId, methodName) {
+        Tefter.ThemeSwitchListeners[listenerId] = {dotNetHelper: dotNetHelper, methodName: methodName};
+        return true;
+    },
+    removeThemeSwitchListener: function (listenerId) {
+        if (Tefter.ThemeSwitchListeners[listenerId]) {
+            delete Tefter.ThemeSwitchListeners[listenerId];
+        }
+        return true;
+    },
+    executeThemeSwitchListenerCallbacks: function () {
+        if (Tefter.ThemeSwitchListeners) {
+
+            for (const prop in Tefter.ThemeSwitchListeners) {
+                const dotNetHelper = Tefter.ThemeSwitchListeners[prop].dotNetHelper;
+                const methodName = Tefter.ThemeSwitchListeners[prop].methodName;
+                if (dotNetHelper && methodName) {
+                    dotNetHelper.invokeMethodAsync(methodName);
+                }
+            }
+        }
+        return true;
+    },    
 }
 
 //Listeners
@@ -440,5 +465,12 @@ document.addEventListener("keydown", function (evtobj) {
             Tefter.executeEnterKeyListenerCallbacks();
         }
     }
+    else if (evtobj.ctrlKey && (evtobj.key === 'q' || evtobj.key === 'Q')) {
+        if (Tefter.ThemeSwitchListeners && Object.keys(Tefter.ThemeSwitchListeners).length > 0) {
+            evtobj.stopPropagation();
+            evtobj.preventDefault();
+            Tefter.executeThemeSwitchListenerCallbacks();
+        }
+    }    
 
 });

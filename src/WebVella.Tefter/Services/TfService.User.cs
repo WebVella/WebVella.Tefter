@@ -199,6 +199,7 @@ public partial interface ITfService
 	Task<TfUser> SetStartUpUrl(Guid userId, string? url);
 
 	Task<TfUser> SetUserCulture(Guid userId, string cultureCode);
+	Task<TfUser> SetUserTheme(Guid userId, DesignThemeModes themeMode);
 
 	Task<TfUser> SetPageSize(Guid userId, int? pageSize);
 
@@ -1269,6 +1270,18 @@ public partial class TfService : ITfService
 		return result;
 	}
 
+	public virtual async Task<TfUser> SetUserTheme(Guid userId, DesignThemeModes themeMode)
+	{
+		TfUser user = GetUser(userId);
+		var userBld = CreateUserBuilder(user);
+		userBld.WithThemeMode(themeMode);
+		await SaveUserAsync(userBld.Build());
+		var result = GetUser(userId);
+		await PublishEventWithScopeAsync(new TfUserUpdatedEvent(result));
+		return result;
+	}
+	
+	
 	public virtual async Task<TfUser> SetPageSize(Guid userId, int? pageSize)
 	{
 		TfUser user = GetUser(userId);

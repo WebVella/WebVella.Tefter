@@ -8,7 +8,7 @@
             <FluentSearch Value="@_search" ValueChanged="_searchChanged"
                           Immediate="true" AutoComplete="off" Style="order:2"
                           ImmediateDelay="200" @ref="_searchInput" Placeholder="@LOC("search spaces...")"/>
-            <FluentButton OnClick="_adminNavigation" Style="order:1"
+            <FluentButton OnClick="_adminNavigation" Style="order:1" Appearance="Appearance.Outline"
                           IconStart="@TfConstants.GetIcon("Settings")">@LOC("Administration")</FluentButton>
         </FluentStack>
     </FluentStack>

@@ -69,7 +69,7 @@
 					<FluentGridItem xs="4">
 						<FluentInputLabel Label="@LOC("Data Link")" />
 						<FluentSwitch @bind-Value=@_isConnected UncheckedMessage="@LOC("local data only")"
-									  CheckedMessage="@LOC("synchronized with source")" />
+									  CheckedMessage="@LOC("synchronized with source")"/>
 					</FluentGridItem>
 					@if (_isConnected)
 					{

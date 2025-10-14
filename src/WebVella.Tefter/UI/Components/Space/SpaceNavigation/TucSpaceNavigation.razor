@@ -1,7 +1,12 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<div class="tf-sidenav">
-    <TucTreeView Items="@_menu"/>
+<div class="tf-sidenav tf-drag-container @_dragClass" @ondragover="_dragEnter" @ondragleave="_dragLeave" @ondragover:preventDefault="true" @ondragleave:preventDefault="true">
+    <TucTreeView Items="@_menu" Class="tf-drag-container__nodrag"/>
+    <div class="tf-drag-container__drag fluent-inputfile-container">
+        <div class="inputfile-content">
+            Drag
+        </div>
+    </div>
 </div>
 
 

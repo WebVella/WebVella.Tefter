@@ -1,0 +1,36 @@
+﻿.tf-plaintext-field {
+  display: flex;
+  align-items: center;
+
+  -webkit-appearance: none;
+  color: inherit;
+  background: transparent;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 0 calc(var(--design-unit) * 2px + 1px);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  width: 100%;
+  background: padding-box linear-gradient(var(--neutral-fill-input-rest),var(--neutral-fill-input-rest)),border-box var(--neutral-stroke-input-rest);
+  box-sizing: border-box;
+  position: relative;
+  border: calc(var(--stroke-width) * 1px) solid transparent;
+  border-radius: calc(var(--control-corner-radius) * 1px);
+  height: calc((var(--base-height-multiplier) + var(--density)) * var(--design-unit) * 1px);
+  
+  &__icon{
+    flex: 0 0 auto;
+    padding-right: 10px;
+    display: flex;
+    align-items: center;    
+  }
+  &__text{
+    flex: 1 0 auto;
+  }
+  
+  &:hover{
+    cursor: not-allowed;
+    background: padding-box linear-gradient(var(--neutral-fill-input-hover),var(--neutral-fill-input-hover)),border-box var(--neutral-stroke-input-hover);
+  }
+}

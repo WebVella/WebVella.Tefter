@@ -1,70 +1,68 @@
 ﻿@namespace WebVella.Tefter.UI.Components
-@inherits TfBaseComponent;
-@* DragAndDrop.razor *@
-<div class="drag-drop-area" @ondragover="HandleDragOver" @ondragleave="HandleDragLeave" @ondrop="HandleDrop"
-     @ondragover:preventDefault="true" @ondragleave:preventDefault="true" @ondrop:preventDefault="true">
-	<div class="drag-drop-content">
-		<i class="fas fa-cloud-upload-alt"></i>
-		<p>Drag & drop files here or click to browse</p>
-		<input type="file" id="fileInput" @ref="fileInputRef" multiple @onchange="HandleFileSelect" style="display: none;" />
-		<button class="btn btn-primary" @onclick="TriggerFileSelect">Browse Files</button>
-	</div>
-</div>
 
-@code {
-	private ElementReference fileInputRef;
+<FluentInputFile Id="my-file-uploader"
+                 Mode="InputFileMode.SaveToTemporaryFolder"
+                 Multiple="true"
+                 MaximumFileCount="4"
+                 MaximumFileSize="@(10*1024*1024)"
+                 Accept="image/*"
+                 @bind-ProgressPercent="@ProgressPercent"
+                 OnCompleted="@OnCompletedAsync"
+                 Style="height: 300px;">
+    <ChildContent>
+        <label for="my-file-uploader">
+            <FluentIcon Value="@(new @Icons.Regular.Size24.ArrowUpload())" />
+        </label>
 
-	[Parameter]
-	public EventCallback<List<IBrowserFile>> OnFilesSelected { get; set; }
+        <div>
+            Drag files here you wish to upload,
+            or <label for="my-file-uploader">browse</label>
+            for them<span style="color: red;">*</span>.
+            <br />
+            <em>Maximum of 4 files allowed.</em>
+        </div>
 
-	private void HandleDragOver(MouseEventArgs e)
-	{
-		//e.preventDefault();
-		// Add visual feedback for drag over
-	}
+        <div>
+            <br />
+            <a href="#">Read more about our supported file formats.</a>
+        </div>
+    </ChildContent>
+</FluentInputFile>
 
-	private void HandleDragLeave(MouseEventArgs e)
-	{
-		//e.preventDefault();
-		// Remove visual feedback for drag leave
-	}
+@if (Files.Any())
+{
+    <h4>File(s) uploaded:</h4>
+    <ul>
+        @foreach (var file in Files)
+        {
+            <li>
+                <b>@file.Name</b> 🔹
+                @($"{Decimal.Divide(file.Size, 1024):N} KB") 🔹
+                @file.ContentType 🔹
+                @file.LocalFile?.FullName
+                @file.ErrorMessage
+            </li>
+        }
+    </ul>
+}
 
-	private async Task HandleDrop(DragEventArgs e)
-	{
-		//e.preventDefault();
-		var files = e.DataTransfer.Files;
+@code
+{
+    int ProgressPercent = 0;
+    FluentInputFileEventArgs[] Files = Array.Empty<FluentInputFileEventArgs>();
 
-		if (files != null && files.Length > 0)
-		{
-			var fileList = new List<IBrowserFile>();
-			for (int i = 0; i < files.Length; i++)
-			{
-				var file = files[i];
-				// Process each file
-				//fileList.Add(file);
-				Console.WriteLine(file);
-			}
+    private async Task OnCompletedAsync(IEnumerable<FluentInputFileEventArgs> files)
+    {
+        Files = files.ToArray();
 
-			await OnFilesSelected.InvokeAsync(fileList);
-		}
-	}
+        // For the demo, delete these files.
+        foreach (var file in Files)
+        {
+            file.LocalFile?.Delete();
+        }
 
-	private void TriggerFileSelect()
-	{
-		_ = InvokeAsync(async () =>
-		{
-			await fileInputRef.FocusAsync();
-			await Task.Delay(100); // Small delay to ensure focus
-			await JSRuntime.InvokeVoidAsync("clickElement", fileInputRef);
-		});
-	}
-
-	private async Task HandleFileSelect(ChangeEventArgs e)
-	{
-		var files = e.Value as List<IBrowserFile>;
-		if (files != null && files.Count > 0)
-		{
-			await OnFilesSelected.InvokeAsync(files.ToList());
-		}
-	}
+        // Wait 3 seconds before to reset the progress bar.
+        await Task.Delay(3000);
+        ProgressPercent = 0;
+    }
 }

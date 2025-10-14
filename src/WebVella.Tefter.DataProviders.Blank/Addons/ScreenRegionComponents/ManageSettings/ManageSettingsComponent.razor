@@ -2,6 +2,9 @@
 @inherits TfFormBaseComponent
 
 <FluentEditForm EditContext="EditContext" FormName="dp-settings" class="tf-form" novalidate>
+    <FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss=false>
+        @LOC("Provider has no configuration options")
+    </FluentMessageBar>    
 </FluentEditForm>
 
 

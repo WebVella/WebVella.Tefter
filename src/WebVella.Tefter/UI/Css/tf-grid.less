@@ -36,10 +36,15 @@
   margin-bottom: 0;
   border-bottom: 1px solid var(--neutral-stroke-rest);
 
+  .fluent-dialog-body &,
+  .tf-card & {
+    border-left: 1px solid var(--neutral-stroke-rest);
+    border-right: 1px solid var(--neutral-stroke-rest);
+  }
+
   thead {
-    position: sticky;
-    top: 0;
-    z-index: 3;
+    position: relative;
+    z-index: 1;
 
     & > tr:not(.tf-grid-thead-bkg):not(.tf-grid-thead-loading) {
       position: relative;
@@ -161,7 +166,13 @@
       z-index: 1;
       pointer-events: none;
       background: var(--fill-color);
+
+      .fluent-dialog-body &,
+      .tf-card & {
+        background: var(--neutral-fill-rest);
+      }
     }
+
 
     &-loading {
       position: absolute;
@@ -179,6 +190,9 @@
   }
 
   tbody {
+    position: relative;
+    z-index: 2;
+
     & tr {
       & > th,
       & > td {
@@ -362,8 +376,9 @@
               &:hover {
                 background: var(--tf-white) !important;
               }
-              svg{
-                --neutral-stroke-input-active: var(--neutral-stroke-rest);                
+
+              svg {
+                --neutral-stroke-input-active: var(--neutral-stroke-rest);
               }
             }
           }
@@ -385,8 +400,9 @@
               &:hover {
                 background: transparent !important;
               }
-              svg{
-                --neutral-stroke-input-active: var(--neutral-stroke-rest);                
+
+              svg {
+                --neutral-stroke-input-active: var(--neutral-stroke-rest);
               }
             }
           }
@@ -459,6 +475,17 @@
     display: inline-block;
     width: 1rem;
   }
+
+  &--sticky {
+    thead {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+    tbody{
+      position: unset;
+    }
+  }  
 }
 
 .tf-grid__pager {
@@ -473,11 +500,10 @@
   background: var(--neutral-fill-hover);
 }
 
-@td-colors:
-        red, orange,
-        amber, yellow, lime, green, emerald, teal,
-        cyan, sky, blue, indigo, violet, purple,
-        fuchsia, pink, rose;
+@td-colors: red, orange,
+amber, yellow, lime, green, emerald, teal,
+cyan, sky, blue, indigo, violet, purple,
+fuchsia, pink, rose;
 
 .generate-color-variables(@list, @i: 1) when (@i <= length(@list)) {
   // Get the current color name

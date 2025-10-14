@@ -11,7 +11,8 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _activeTab = "new";
-
+	private List<TfMenuItem> _tabs = new();
+	
 	private List<TfUpsertDataProviderColumn> _newColumns = new List<TfUpsertDataProviderColumn>();
 	private List<TfUpsertDataProviderColumn> _existingColumns = new List<TfUpsertDataProviderColumn>();
 	private TfDataProviderSourceSchemaInfo _schemaInfo = new TfDataProviderSourceSchemaInfo();
@@ -24,6 +25,7 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
+		_initMenu();
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -35,6 +37,39 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 			_isBusy = false;
 			await InvokeAsync(StateHasChanged);
 		}
+	}
+
+	private void _initMenu()
+	{
+		_tabs = new();
+		_tabs.Add(new TfMenuItem()
+		{
+			Id = "new",
+			Text = LOC("New Columns"),
+			Selected = _activeTab == "new",
+			OnClick = EventCallback.Factory.Create(this, ()=> _menuClick("new"))
+		});		
+		_tabs.Add(new TfMenuItem()
+		{
+			Id = "existing",
+			Text = LOC("Existing Columns"),
+			Selected = _activeTab == "existing",
+			OnClick = EventCallback.Factory.Create(this, ()=> _menuClick("existing"))
+		});				
+	}
+
+	private void _menuClick(string menu)
+	{
+		foreach (var tab in _tabs)
+		{
+			if (tab.Id == menu)
+				tab.Selected = true;
+			else
+				tab.Selected = false;
+		}
+
+		_activeTab = menu;
+		StateHasChanged();
 	}
 
 	private void _loadData()

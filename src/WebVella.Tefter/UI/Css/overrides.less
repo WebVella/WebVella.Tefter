@@ -1,0 +1,80 @@
+﻿/*Colors*/
+html:root {
+  --success: light-dark(var(--tf-green-400), var(--tf-green-900));
+  --warning: light-dark(var(--tf-amber-400), var(--tf-amber-900));
+  --error: light-dark(var(--tf-red-400), var(--tf-red-900));
+  --info: #616161;
+  --presence-available: #13a10e;
+  --presence-away: #eaa300;
+  --presence-busy: #d13438;
+  --presence-dnd: #d13438;
+  --presence-offline: #adadad;
+  --presence-oof: #c239b3;
+  --presence-unknown: #d13438;
+  --highlight-bg: #fff3cd;
+}
+
+/*Badge*/
+.input-badge {
+  border-radius: calc(var(--control-corner-radius) * 1px);
+
+  &::part(control) {
+    padding: 7px 5px;
+
+  }
+
+  &--error {
+    background-color: var(--error);
+    color: var(--foreground-on-accent-rest);
+  }
+}
+
+/*Message bar*/
+div[class ^='fluent-messagebar'],
+.fluent-messagebar-notification,
+.fluent-messagebar-message {
+  animation: none !important;
+}
+
+.fluent-messagebar {
+  &.intent-success {
+    --success: var(--tf-green-500);
+    border-color: var(--tf-green-200) !important;
+    background-color: var(--tf-green-50) !important;    
+    &.dark {
+      border-color: var(--tf-green-800) !important;
+      background-color: var(--tf-green-950) !important;
+    }
+  }
+
+  &.intent-warning {
+    --warning: var(--tf-amber-500);
+    border-color: var(--tf-amber-200) !important;
+    background-color: var(--tf-amber-50) !important;    
+    &.dark {
+      border-color: var(--tf-amber-800) !important;
+      background-color: var(--tf-amber-950) !important;
+    }
+  }
+
+  &.intent-error {
+    --error: var(--tf-red-500);
+    border-color: var(--tf-red-200) !important;
+    background-color: var(--tf-red-50) !important;    
+    &.dark {
+      border-color: var(--tf-red-800) !important;
+      background-color: var(--tf-red-950) !important;
+    }
+  }
+
+  &.intent-info {
+    border-color: var(--tf-sky-200) !important;
+    background-color: var(--tf-sky-50) !important;
+    --info: var(--tf-sky-500);
+
+    &.dark {
+      border-color: var(--tf-sky-800) !important;
+      background-color: var(--tf-sky-950) !important;
+    }
+  }
+}

@@ -37,7 +37,7 @@
                    Id="user-menu-toggle" Appearance="@Appearance.Outline">
             <TucAvatar User="TfAuthLayout.GetState().User" UseUserColor="false"/>
         </TucAnchor>
-        <FluentMenu Width="200px" @bind-Open="_userMenuVisible" Anchor="user-menu-toggle" UseMenuService="true">
+        <FluentMenu Width="200px" @bind-Open="_userMenuVisible" Anchor="user-menu-toggle" UseMenuService="true" Class="tf-override">
             <FluentMenuItem Disabled="true">
                 @TfAuthLayout.GetState().User.FirstName @TfAuthLayout.GetState().User.LastName
             </FluentMenuItem>

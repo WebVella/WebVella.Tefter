@@ -1,7 +1,8 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucPageTopbar : TfBaseComponent, IDisposable
+public partial class TucPageTopbar : TfBaseComponent, IAsyncDisposable
 {
+	private DotNetObjectReference<TucPageTopbar> _objectRef;
 	private TfBookmark? _activeSavedUrl = null!;
 	private bool _hasBookmark = false;
 	private Icon _bookmarkIcon = null!;
@@ -9,14 +10,26 @@ public partial class TucPageTopbar : TfBaseComponent, IDisposable
 	private TucPageLinkSaveSelector _saveSelector = null!;
 	private bool _userMenuVisible = false;
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
+		try
+		{
+			await JSRuntime.InvokeAsync<object>("Tefter.removeThemeSwitchListener", ComponentId.ToString());
+		}
+		catch
+		{
+			//In rare ocasions the item is disposed after the JSRuntime is no longer avaible
+		}
+		_objectRef?.Dispose();		
 	}
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
 		_init();
+		_objectRef = DotNetObjectReference.Create(this);
+		await JSRuntime.InvokeAsync<object>(
+			"Tefter.addThemeSwitchListener", _objectRef, ComponentId.ToString(), "OnThemeSwitchHandler");		
 		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
@@ -164,4 +177,24 @@ public partial class TucPageTopbar : TfBaseComponent, IDisposable
 		await TfService.LogoutAsync(JSRuntime);
 		Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 	}
+	
+	[JSInvokable("OnThemeSwitchHandler")]
+	public async Task OnGlobalSearchHandler()
+	{
+		try
+		{
+			DesignThemeModes newMode = DesignThemeModes.Light;
+			if(TfAuthLayout.GetState().User.Settings.ThemeMode == DesignThemeModes.Light)
+				newMode = DesignThemeModes.Dark;
+			
+			var user = await TfService.SetUserTheme(
+				userId: TfAuthLayout.GetState().User.Id,
+				themeMode: newMode
+			);
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+	}		
 }

@@ -38,23 +38,15 @@
 						</FluentGridItem>
 						<FluentGridItem xs="6">
 							<FluentInputLabel>@LOC("Type")</FluentInputLabel>
-							<TucPlainTextField>
-								<FluentStack VerticalAlignment="@VerticalAlignment.Center"
-								             Class="fluent-plaintext-field">
-									@if (_identity.IsSystem)
-									{
-										<FluentIcon
-											Value="@TfConstants.GetIcon("ShieldError").WithColor(TfColor.Red600.GetColor().OKLCH)"></FluentIcon>
-										<span>@LOC("system role")</span>
-									}
-									else
-									{
-										<FluentIcon
-											Value="@TfConstants.GetIcon("Person").WithColor(Color.Info)"></FluentIcon>
-										<span>@LOC("user created")</span>
-									}
-								</FluentStack>
-							</TucPlainTextField>
+							@if (_identity.IsSystem)
+							{
+								<TucPlainTextField Text="@LOC("system role")" IconName="ShieldError"
+								                   IconColor="@TfColor.Red600.GetColor().OKLCH"/>
+							}
+							else
+							{
+								<TucPlainTextField Text="@LOC("user created")" IconName="Person"/>
+							}
 						</FluentGridItem>
 					</FluentGrid>
 					<FluentGrid>

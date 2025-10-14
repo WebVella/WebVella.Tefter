@@ -11,9 +11,6 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
-
-	[Inject] private AccentBaseColor AccentBaseColor { get; set; } = default!;
-
 	
 	private TfState _state = new();
 	private TfUser _currentUser = new();
@@ -57,9 +54,8 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		_isLoaded = true;
 	}
 
-	protected override void OnAfterRender(bool firstRender)
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
 			_locationChangingHandler = Navigator.RegisterLocationChangingHandler(Navigator_LocationChanging);

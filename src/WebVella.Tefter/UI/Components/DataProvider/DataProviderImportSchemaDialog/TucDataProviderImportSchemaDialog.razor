@@ -2,19 +2,8 @@
 @inherits TfBaseComponent
 
 @* Header *@
-<FluentDialogHeader ShowDismiss="true" Class="modal-with-tabs">
-	<div class="modal-with-tabs__title">
-		<FluentLabel Typo="Typography.PaneHeader">@LOC("Import schema")</FluentLabel>
-	</div>
-	<div class="modal-with-tabs__menu">
-		@if (!_isBusy && string.IsNullOrWhiteSpace(_error))
-		{
-			<FluentNavMenu Class="tf-tabnav">
-				<FluentNavLink OnClick="@(_ => _activeTab = "new")" Class="@(_activeTab == "new" ? "active" : "")">@LOC("New Columns")</FluentNavLink>
-				<FluentNavLink OnClick="@(_ => _activeTab = "existing")" Class="@(_activeTab == "existing" ? "active" : "")">@LOC("Already Present")</FluentNavLink>
-			</FluentNavMenu>
-		}
-	</div>
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Import schema")</FluentLabel>
 </FluentDialogHeader>
 
 @* Footer *@
@@ -22,7 +11,8 @@
 	@if (String.IsNullOrWhiteSpace(_error) && _newColumns.Count > 0)
 	{
 		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("ArrowDownload")"
-					  Loading="_isSubmitting" Disabled="@(_isSubmitting || _isBusy || _activeTab == "existing")">@LOC("Import")</FluentButton>
+		              Loading="_isSubmitting"
+		              Disabled="@(_isSubmitting || _isBusy || _activeTab == "existing")">@LOC("Import")</FluentButton>
 	}
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
@@ -32,30 +22,32 @@
 	<div>
 		@if (_isBusy)
 		{
-			<TucLoadingPane />
+			<TucLoadingPane/>
 		}
 		else if (!string.IsNullOrWhiteSpace(_error))
 		{
 			<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
-
 		}
-		else if (_activeTab == "new")
+		else
 		{
-			@if (_newColumns.Count > 0)
+			<TucMenu Items="_tabs" Style="margin-bottom: 1rem;"/>
+			@if (_activeTab == "new")
 			{
-				var _rowIndex = -1;
-				<table class="tf-grid">
-					<colgroup>
-						<col style="width:60px;max-width:60px;" />
-						<col />
-						<col style="width:180px;max-width:180px;" />
-						<col />
-						<col style="width:180px;max-width:180px;" />
-						<col />
-						<col />
-						<col style="width:80px;max-width:80px;" />
-					</colgroup>
-					<thead class="tf-grid-thead">
+				@if (_newColumns.Count > 0)
+				{
+					var _rowIndex = -1;
+					<table class="tf-grid">
+						<colgroup>
+							<col style="width:60px;max-width:60px;"/>
+							<col/>
+							<col style="width:180px;max-width:180px;"/>
+							<col/>
+							<col style="width:180px;max-width:180px;"/>
+							<col/>
+							<col/>
+							<col style="width:80px;max-width:80px;"/>
+						</colgroup>
+						<thead class="tf-grid-thead">
 						<tr class="tf-grid-thead-bkg"></tr>
 						<tr class="tf-grid-tr">
 							<th class="tf-grid-th"></th>
@@ -67,36 +59,44 @@
 							<th class="tf-grid-th">@LOC("default")</th>
 							<th class="tf-grid-th">@LOC("global search")</th>
 						</tr>
-					</thead>
-					<tbody class="tf-grid-tbody">
+						</thead>
+						<tbody class="tf-grid-tbody">
 						@foreach (var context in _newColumns)
 						{
 							_rowIndex++;
 							<tr @key=context.Id class="tf-grid-tr">
 								<td class="tf-grid-td">
-									<div><FluentButton Appearance=@Appearance.Outline IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)" OnClick="@(_ => _removeRow(context))" /></div>
+									<div>
+										<FluentButton Appearance=@Appearance.Outline
+										              IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)"
+										              OnClick="@(_ => _removeRow(context))"/>
+									</div>
 								</td>
 								<td class="tf-grid-td">
 									<div>
-										<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_processColumnName(context.DbName)
-														 ValueChanged="@(x => _dbNameChanged(x,context))" AutoComplete="off"
-														 Style="width:100%"
-														 Class="@($"{_getValidationCssClass(context.SourceName,nameof(context.DbName))} with-prefix")">
+										<FluentTextField TextFieldType="@TextFieldType.Text"
+										                 Value=@_processColumnName(context.DbName)
+										                 ValueChanged="@(x => _dbNameChanged(x, context))"
+										                 AutoComplete="off"
+										                 Style="width:100%"
+										                 Class="@($"{_getValidationCssClass(context.SourceName, nameof(context.DbName))} with-prefix")">
 											<span slot="start">@Content!.ColumnPrefix</span>
 										</FluentTextField>
-										<TucValidationMessage Field="@nameof(context.DbName)" Index=_rowIndex Errors="ValidationErrors" />
+										<TucValidationMessage Field="@nameof(context.DbName)" Index=_rowIndex
+										                      Errors="ValidationErrors"/>
 									</div>
 								</td>
 								<td class="tf-grid-td">
 									<div>
 										<TucSelect @bind-SelectedOption="@context.DbType"
-												   TOption="TfDatabaseColumnType"
-												   Style="width:100%"
-												   Class="@_getValidationCssClass(context.SourceName,nameof(context.DbType))"
-												   Items="@_schemaInfo.SourceTypeSupportedDbTypes[context.SourceType]"
-												   OptionValue="@(x=> x.ToString())"
-												   OptionText="@(x => x.ToString())" />
-										<TucValidationMessage Field="@nameof(context.DbType)" Index=_rowIndex Errors="ValidationErrors" />
+										           TOption="TfDatabaseColumnType"
+										           Style="width:100%"
+										           Class="@_getValidationCssClass(context.SourceName, nameof(context.DbType))"
+										           Items="@_schemaInfo.SourceTypeSupportedDbTypes[context.SourceType]"
+										           OptionValue="@(x => x.ToString())"
+										           OptionText="@(x => x.ToString())"/>
+										<TucValidationMessage Field="@nameof(context.DbType)" Index=_rowIndex
+										                      Errors="ValidationErrors"/>
 									</div>
 								</td>
 								<td class="tf-grid-td">
@@ -105,106 +105,119 @@
 								<td class="tf-grid-td">
 									<div>
 										<TucSelect SelectedOption="@context.SourceType"
-												   TOption="string"
-												   SelectedOptionChanged="@(x => _sourceTypeChanged(x,context))" Style="width:100%"
-												   Class="@_getValidationCssClass(context.SourceName,nameof(context.SourceType))"
-												   Items="@_schemaInfo.SourceTypeSupportedDbTypes.Keys" />
-										<TucValidationMessage Field="@nameof(context.SourceType)" Index=_rowIndex Errors="ValidationErrors" />
+										           TOption="string"
+										           SelectedOptionChanged="@(x => _sourceTypeChanged(x, context))"
+										           Style="width:100%"
+										           Class="@_getValidationCssClass(context.SourceName, nameof(context.SourceType))"
+										           Items="@_schemaInfo.SourceTypeSupportedDbTypes.Keys"/>
+										<TucValidationMessage Field="@nameof(context.SourceType)" Index=_rowIndex
+										                      Errors="ValidationErrors"/>
 									</div>
 								</td>
 								<td class="tf-grid-td">
 									<div>
 										<TucSelect @bind-SelectedOption="@context.RuleSet"
-												   TOption="TfDataProviderColumnRuleSet"
-												   OptionValue="((p) => p.ToString())"
-												   OptionText="@((p) => p.ToDescriptionString())"
-												   Class="@_getValidationCssClass(context.SourceName,nameof(context.SourceType))"
-												   Items="@(Enum.GetValues<TfDataProviderColumnRuleSet>())" />
-										<TucValidationMessage Field="@nameof(context.RuleSet)" Index=_rowIndex Errors="ValidationErrors" />
+										           TOption="TfDataProviderColumnRuleSet"
+										           OptionValue="((p) => p.ToString())"
+										           OptionText="@((p) => p.ToDescriptionString())"
+										           Class="@_getValidationCssClass(context.SourceName, nameof(context.SourceType))"
+										           Items="@(Enum.GetValues<TfDataProviderColumnRuleSet>())"/>
+										<TucValidationMessage Field="@nameof(context.RuleSet)" Index=_rowIndex
+										                      Errors="ValidationErrors"/>
 									</div>
 								</td>
 								<td class="tf-grid-td">
 									<div>
-										<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@context.DefaultValue AutoComplete="off"
-														 Class="@_getValidationCssClass(context.SourceName,nameof(context.DefaultValue))" Style="width:100%" />
-										<TucValidationMessage Field="@nameof(context.DefaultValue)" Index=_rowIndex Errors="ValidationErrors" />
+										<FluentTextField TextFieldType="@TextFieldType.Text"
+										                 @bind-Value=@context.DefaultValue AutoComplete="off"
+										                 Class="@_getValidationCssClass(context.SourceName, nameof(context.DefaultValue))"
+										                 Style="width:100%"/>
+										<TucValidationMessage Field="@nameof(context.DefaultValue)" Index=_rowIndex
+										                      Errors="ValidationErrors"/>
 									</div>
 								</td>
 								<td class="tf-grid-td">
 									<div>
-										<FluentSwitch @bind-Value=@context.IncludeInTableSearch Class="@_getValidationCssClass(context.SourceName, nameof(context.IncludeInTableSearch))" />
-										<TucValidationMessage Field="@nameof(context.IncludeInTableSearch)" Index=_rowIndex Errors="ValidationErrors" />
+										<FluentSwitch @bind-Value=@context.IncludeInTableSearch
+										              Class="@_getValidationCssClass(context.SourceName, nameof(context.IncludeInTableSearch))"/>
+										<TucValidationMessage Field="@nameof(context.IncludeInTableSearch)"
+										                      Index=_rowIndex Errors="ValidationErrors"/>
 									</div>
 								</td>
 							</tr>
 						}
-					</tbody>
-				</table>
+						</tbody>
+					</table>
+				}
+				else
+				{
+					<FluentMessageBar Intent="@MessageIntent.Info"
+					                  AllowDismiss="false">@LOC("No new columns are found in the source")</FluentMessageBar>
+				}
 			}
-			else
+			else if (_activeTab == "existing")
 			{
-				<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("No new columns are found in the source")</FluentMessageBar>
-			}
-		}
-		else if (_activeTab == "existing")
-		{
-			<table class="tf-grid">
-				<colgroup>
-					<col />
-					<col style="width:180px;max-width:180px;" />
-					<col />
-					<col style="width:180px;max-width:180px;" />
-					<col />
-					<col />
-					<col style="width:80px;max-width:80px;" />
-				</colgroup>
-				<thead class="tf-grid-thead">
-					<tr class="tf-grid-thead-bkg"></tr>
-					<tr class="tf-grid-tr">
-						<th class="tf-grid-th">@LOC("column name")</th>
-						<th class="tf-grid-th">@LOC("data type")</th>
-						<th class="tf-grid-th">@LOC("SOURCE column")</th>
-						<th class="tf-grid-th">@LOC("SOURCE type")</th>
-						<th class="tf-grid-th">@LOC("ruleset")</th>
-						<th class="tf-grid-th">@LOC("default")</th>
-						<th class="tf-grid-th">@LOC("global search")</th>
-					</tr>
-				</thead>
-				<tbody class="tf-grid-tbody">
-					@foreach (var context in _existingColumns)
-					{
-						<tr @key=context.Id class="tf-grid-tr">
-							<td class="tf-grid-td">
-								<div>@context.DbName</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>@(_dbTypeInfoDict[context.DbType].Name)</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>@context.SourceName</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>@context.SourceType</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>@context.RuleSet.ToDescriptionString()</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>@context.DefaultValue</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>
-									<FluentSwitch @bind-Value=@context.IncludeInTableSearch Disabled="true" />
-								</div>
-							</td>
+				@if (_existingColumns.Count > 0)
+				{
+					<table class="tf-grid">
+						<colgroup>
+							<col/>
+							<col style="width:180px;max-width:180px;"/>
+							<col/>
+							<col style="width:180px;max-width:180px;"/>
+							<col/>
+							<col/>
+							<col style="width:80px;max-width:80px;"/>
+						</colgroup>
+						<thead class="tf-grid-thead">
+						<tr class="tf-grid-thead-bkg"></tr>
+						<tr class="tf-grid-tr">
+							<th class="tf-grid-th">@LOC("column name")</th>
+							<th class="tf-grid-th">@LOC("data type")</th>
+							<th class="tf-grid-th">@LOC("SOURCE column")</th>
+							<th class="tf-grid-th">@LOC("SOURCE type")</th>
+							<th class="tf-grid-th">@LOC("ruleset")</th>
+							<th class="tf-grid-th">@LOC("default")</th>
+							<th class="tf-grid-th">@LOC("global search")</th>
 						</tr>
-					}
-				</tbody>
-			</table>
-
-			@if (_existingColumns.Count == 0)
-			{
-				<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("No existing columns are yet created")</FluentMessageBar>
+						</thead>
+						<tbody class="tf-grid-tbody">
+						@foreach (var context in _existingColumns)
+						{
+							<tr @key=context.Id class="tf-grid-tr">
+								<td class="tf-grid-td">
+									<div>@context.DbName</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>@(_dbTypeInfoDict[context.DbType].Name)</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>@context.SourceName</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>@context.SourceType</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>@context.RuleSet.ToDescriptionString()</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>@context.DefaultValue</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>
+										<FluentSwitch @bind-Value=@context.IncludeInTableSearch Disabled="true"/>
+									</div>
+								</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				}
+				else
+				{
+					<FluentMessageBar Intent="@MessageIntent.Info"
+					                  AllowDismiss="false">@LOC("No existing columns are yet created")</FluentMessageBar>
+				}
 			}
 		}
 	</div>

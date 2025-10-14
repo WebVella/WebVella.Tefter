@@ -1,6 +1,10 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-<div class="fluent-plaintext-field">
-	@ChildContent
+<div class="tf-plaintext-field">
+    @if (_icon is not null)
+    {
+        <div class="tf-plaintext-field__icon"><FluentIcon Value="@_icon"></FluentIcon></div>
+    }
+    <div class="tf-plaintext-field__text">@Text</div>
 </div>

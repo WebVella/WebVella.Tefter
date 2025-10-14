@@ -20,7 +20,6 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 
 	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
 		ComponentId = Guid.NewGuid();
 		_objectRef = DotNetObjectReference.Create(this);
 		await JSRuntime.InvokeAsync<object>(
