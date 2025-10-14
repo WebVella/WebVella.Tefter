@@ -14,6 +14,20 @@ html:root {
   --highlight-bg: #fff3cd;
 }
 
+/* Inputs */
+fluent-text-field {
+  &.with-prefix {
+    &::part(start) {
+      color: var(--tf-font-color-mute);
+    }
+
+    &::part(control) {
+      padding-left: 0;
+    }
+  }
+}
+
+
 /*Badge*/
 .input-badge {
   border-radius: calc(var(--control-corner-radius) * 1px);
@@ -40,7 +54,8 @@ div[class ^='fluent-messagebar'],
   &.intent-success {
     --success: var(--tf-green-500);
     border-color: var(--tf-green-200) !important;
-    background-color: var(--tf-green-50) !important;    
+    background-color: var(--tf-green-50) !important;
+
     &.dark {
       border-color: var(--tf-green-800) !important;
       background-color: var(--tf-green-950) !important;
@@ -50,7 +65,8 @@ div[class ^='fluent-messagebar'],
   &.intent-warning {
     --warning: var(--tf-amber-500);
     border-color: var(--tf-amber-200) !important;
-    background-color: var(--tf-amber-50) !important;    
+    background-color: var(--tf-amber-50) !important;
+
     &.dark {
       border-color: var(--tf-amber-800) !important;
       background-color: var(--tf-amber-950) !important;
@@ -60,7 +76,8 @@ div[class ^='fluent-messagebar'],
   &.intent-error {
     --error: var(--tf-red-500);
     border-color: var(--tf-red-200) !important;
-    background-color: var(--tf-red-50) !important;    
+    background-color: var(--tf-red-50) !important;
+
     &.dark {
       border-color: var(--tf-red-800) !important;
       background-color: var(--tf-red-950) !important;

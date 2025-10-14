@@ -658,6 +658,13 @@ html:root {
   --presence-unknown: #d13438;
   --highlight-bg: #fff3cd;
 }
+/* Inputs */
+fluent-text-field.with-prefix::part(start) {
+  color: var(--tf-font-color-mute);
+}
+fluent-text-field.with-prefix::part(control) {
+  padding-left: 0;
+}
 /*Badge*/
 .input-badge {
   border-radius: calc(var(--control-corner-radius) * 1px);

@@ -81,9 +81,24 @@ public partial class TucDataProviderManageDataDialog : TfBaseComponent, IDialogC
 					newRow[dbName] = _form[dbName]!;
 				}
 			}
-			throw new NotImplementedException();
-			//var dt = TfDataProviderUIService.AddNewRow(newDt);
-			await Dialog.CloseAsync();
+
+			TfDataProviderDataRow result;
+			if (Content.RowId is null)
+			{
+				result = TfService.InsertProviderRow(
+					Content.Provider.Id,
+					_form);				
+			}
+			else
+			{
+				result = TfService.UpdateProviderRow(
+					Content.RowId.Value,
+					Content.Provider.Id,
+					_form);				
+			}
+
+
+			await Dialog.CloseAsync(result);
 		}
 		catch (Exception ex)
 		{

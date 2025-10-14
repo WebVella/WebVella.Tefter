@@ -125,8 +125,9 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
+			await _init(TfAuthLayout.GetState().NavigationState);
+			await InvokeAsync(StateHasChanged);
 		}
-		//Navigator.ReloadCurrentUrl();
 	}
 
 	private async Task _editRow(TfDataRow row)
@@ -149,8 +150,9 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
+			await _init(TfAuthLayout.GetState().NavigationState);
+			await InvokeAsync(StateHasChanged);
 		}
-		//Navigator.ReloadCurrentUrl();
 	}
 	private async Task _deleteRow(TfDataRow row)
 	{
