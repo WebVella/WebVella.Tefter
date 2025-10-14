@@ -247,6 +247,7 @@ html:root {
 html:root {
   color-scheme: dark;
   --tf-topbar-height: 60px;
+  --tf-aside-footer-height: 30px;
   --tf-space-header-height: var(--tf-topbar-height);
   --tf-space-actions-height: 60px;
   --tf-page-header-height: 70px;
@@ -1443,6 +1444,24 @@ div[class^='fluent-messagebar'],
   background: var(--neutral-layer-1);
   border-right: 1px solid var(--neutral-stroke-rest);
 }
+.tflg__aside__footer {
+  flex: 0 0 var(--tf-aside-footer-height);
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  color: var(--neutral-foreground-hint);
+  font-size: var(--type-ramp-minus-1-font-size);
+}
+.tflg__aside__footer a {
+  color: var(--neutral-foreground-hint);
+  text-decoration: none;
+}
+.tflg__aside__footer a:hover {
+  color: var(--neutral-foreground-rest);
+}
+.tflg__aside__footer sup {
+  font-size: calc(var(--type-ramp-minus-1-font-size) - 4px);
+}
 .tflg__wrapper {
   flex: 1 1 auto;
   display: flex;
@@ -1456,7 +1475,7 @@ div[class^='fluent-messagebar'],
 }
 .tflg__sidenav {
   flex: 1 1 auto;
-  height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-actions-height));
+  height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-actions-height) - var(--tf-aside-footer-height));
   overflow-y: auto;
   scrollbar-width: thin;
 }
