@@ -34,11 +34,8 @@ public class TfCreateSpaceViewRecipeStep : ITfRecipeStepAddon
 		var spaceView = tfService.CreateSpaceView(new TfSpaceView
 		{
 			Id = step.SpaceViewId == Guid.Empty ? Guid.NewGuid() : step.SpaceViewId,
-			SpaceId = step.SpaceId,
 			Name = step.Name,
-			Position = step.Position,
 			DatasetId = step.SpaceDataId,
-			Type = TfSpaceViewType.DataGrid,
 			Presets = step.Presets,
 			SettingsJson = step.Settings is not null ? JsonSerializer.Serialize(step.Settings) : "{}",
 		});

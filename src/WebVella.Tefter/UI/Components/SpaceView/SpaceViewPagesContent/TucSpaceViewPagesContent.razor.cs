@@ -51,7 +51,7 @@ public partial class TucSpaceViewPagesContent : TfBaseComponent, IDisposable
 
 			}
 			if (_spaceView is null) return;
-			_space = TfService.GetSpace(_spaceView.SpaceId);
+			//_space = TfService.GetSpace(_spaceView.SpaceId);
 			_items = (TfService.GetSpacePages(_space.Id) ?? new List<TfSpacePage>())
 				.Where(x => x.ComponentOptionsJson.Contains(_spaceView.Id.ToString())).ToList();;
 

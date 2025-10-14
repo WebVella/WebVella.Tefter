@@ -1896,7 +1896,8 @@ div[class^='fluent-messagebar'],
 .tf-treemenu__item.tf-active:not(.tf-child-active) svg {
   --accent-fill-rest: var(--accent-foreground-active);
 }
-.tf-treemenu__item.tf-active + .tf-submenu:before {
+.tf-treemenu__item.tf-active + .tf-submenu:before,
+.tf-treemenu__item.tf-child-active + .tf-submenu:before {
   background: linear-gradient(to bottom, var(--neutral-layer-2) 10%, var(--accent-fill-rest) 50%, var(--neutral-layer-2) 90%);
 }
 .tf-treemenu__item__content {
