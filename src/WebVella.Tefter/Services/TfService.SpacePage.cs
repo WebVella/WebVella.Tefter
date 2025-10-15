@@ -66,7 +66,7 @@ public partial class TfService : ITfService
 		{
 			var spacePagesList = _dboManager.GetList<TfSpacePageDbo>(
 				spaceId,
-				nameof(TfSpaceView.SpaceId))
+				nameof(TfSpacePageDbo.SpaceId))
 			.Select(x => ConvertDboToModel(x))
 			.ToList();
 
@@ -277,7 +277,8 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				allPages = GetSpacePages(spacePage.SpaceId);
-				PublishEventWithScope(new TfSpacePageCreatedEvent(allPages.Single(x=> x.Id == spacePage.Id)));
+				var createdPage = FindPageById(spacePage.Id, allPages);
+				PublishEventWithScope(new TfSpacePageCreatedEvent(createdPage));
 				return (spacePage.Id, allPages);
 			}
 		}
@@ -552,7 +553,8 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				allPages = GetSpacePages(spacePage.SpaceId);
-				PublishEventWithScope(new TfSpacePageUpdatedEvent(allPages.Single(x=> x.Id == spacePage.Id)));
+				var updatedPage = FindPageById(spacePage.Id, allPages);
+				PublishEventWithScope(new TfSpacePageUpdatedEvent(updatedPage));
 				return allPages;
 			}
 		}

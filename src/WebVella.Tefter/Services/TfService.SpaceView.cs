@@ -6,8 +6,8 @@ public partial interface ITfService
 {
 	public List<TfSpaceView> GetAllSpaceViews(string? search = null);
 
-	public List<TfSpaceView> GetSpaceViewsList(
-		Guid spaceId, string? search = null);
+	//public List<TfSpaceView> GetSpaceViewsList(
+	//	Guid spaceId, string? search = null);
 
 	public TfSpaceView GetSpaceView(
 		Guid id);
@@ -62,40 +62,40 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfSpaceView> GetSpaceViewsList(
-		Guid spaceId, string? search = null)
-	{
-		try
-		{
-			var orderSettings = new TfOrderSettings(
-			nameof(TfSpace.Position),
-			OrderDirection.ASC);
+	//public List<TfSpaceView> GetSpaceViewsList(
+	//	Guid spaceId, string? search = null)
+	//{
+	//	try
+	//	{
+	//		var orderSettings = new TfOrderSettings(
+	//		nameof(TfSpace.Position),
+	//		OrderDirection.ASC);
 
-			var spaceViews = _dboManager.GetList<TfSpaceViewDbo>(
-				spaceId,
-				nameof(TfSpaceView.SpaceId),
-				order: orderSettings);
+	//		var spaceViews = _dboManager.GetList<TfSpaceViewDbo>(
+	//			spaceId,
+	//			nameof(TfSpaceView.SpaceId),
+	//			order: orderSettings);
 
-			var spaceDataDict = GetDatasets().ToDictionary(x => x.Id);
-			var allSpaceViews = spaceViews.Select(x => ConvertDboToModel(x)).ToList();
+	//		var spaceDataDict = GetDatasets().ToDictionary(x => x.Id);
+	//		var allSpaceViews = spaceViews.Select(x => ConvertDboToModel(x)).ToList();
 
-			foreach (var spaceView in allSpaceViews)
-			{
-				if (spaceDataDict.ContainsKey(spaceView.DatasetId))
-					spaceView.SpaceDataName = spaceDataDict[spaceView.DatasetId].Name;
-			}
-			if (String.IsNullOrWhiteSpace(search))
-				return allSpaceViews;
-			search = search.Trim().ToLowerInvariant();
-			return allSpaceViews.Where(x =>
-				x.Name.ToLowerInvariant().Contains(search)
-				).ToList();
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
+	//		foreach (var spaceView in allSpaceViews)
+	//		{
+	//			if (spaceDataDict.ContainsKey(spaceView.DatasetId))
+	//				spaceView.SpaceDataName = spaceDataDict[spaceView.DatasetId].Name;
+	//		}
+	//		if (String.IsNullOrWhiteSpace(search))
+	//			return allSpaceViews;
+	//		search = search.Trim().ToLowerInvariant();
+	//		return allSpaceViews.Where(x =>
+	//			x.Name.ToLowerInvariant().Contains(search)
+	//			).ToList();
+	//	}
+	//	catch (Exception ex)
+	//	{
+	//		throw ProcessException(ex);
+	//	}
+	//}
 
 
 	public TfSpaceView GetSpaceView(
@@ -166,7 +166,6 @@ public partial class TfService : ITfService
 					{
 						Id = Guid.NewGuid(),
 						Name = spaceViewExt.Name,
-						Position = 1,//will be overrided later
 						DatasetId = dataset.Id,
 						Presets = spaceViewExt.Presets,
 						SettingsJson = JsonSerializer.Serialize(spaceViewExt.Settings),
@@ -273,12 +272,6 @@ public partial class TfService : ITfService
 			if (spaceView != null && spaceView.Id == Guid.Empty)
 				spaceView.Id = Guid.NewGuid();
 
-			//TODO RUMEN -> As Space Id will be removed from the view it is hardcoded here but needs to be removed
-			{
-				spaceView.SpaceId = GetSpacesList().First().Id;
-			}
-
-
 			new TfSpaceViewValidator(this)
 				.ValidateCreate(spaceView)
 				.ToValidationException()
@@ -286,10 +279,6 @@ public partial class TfService : ITfService
 
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var spaceViews = GetSpaceViewsList(spaceView.SpaceId);
-
-				//position is ignored - space is added at last place
-				spaceView.Position = (short)(spaceViews.Count + 1);
 
 				var success = _dboManager.Insert<TfSpaceViewDbo>(ConvertModelToDbo(spaceView));
 				if (!success)
@@ -385,11 +374,6 @@ public partial class TfService : ITfService
 			.ToValidationException()
 			.ThrowIfContainsErrors();
 
-			var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceView.Id);
-
-			//position is not updated
-			spaceView.Position = existingSpaceView.Position;
-
 			var success = _dboManager.Update<TfSpaceViewDbo>(ConvertModelToDbo(spaceView));
 
 			if (!success)
@@ -425,23 +409,11 @@ public partial class TfService : ITfService
 					DeleteBookmark(bookmark.Id);
 				}
 
-				var spacesAfter = GetSpaceViewsList(spaceView.SpaceId)
-					.Where(x => x.Position > spaceView.Position).ToList();
-
-				//update positions for spaces after the one being deleted
-				foreach (var spaceAfter in spacesAfter)
-				{
-					spaceAfter.Position--;
-
-					success = _dboManager.Update<TfSpaceViewDbo>(ConvertModelToDbo(spaceAfter));
-					if (!success)
-						throw new TfDboServiceException("Delete<TfSpaceViewDbo> failed");
-				}
-
 				var spaceViewColumns = GetSpaceViewColumnsList(spaceView.Id);
 				foreach (var column in spaceViewColumns)
 				{
-					DeleteSpaceViewColumn(column.Id);
+					//delete method was changed to async in order to support event publishing
+					DeleteSpaceViewColumn(column.Id).GetAwaiter().GetResult();
 				}
 
 				success = _dboManager.Delete<TfSpaceViewDbo>(id);
@@ -481,11 +453,8 @@ public partial class TfService : ITfService
 		{
 			Id = dbo.Id,
 			Name = dbo.Name,
-			Position = dbo.Position,
 			SettingsJson = dbo.SettingsJson,
 			DatasetId = dbo.SpaceDataId,
-			SpaceId = dbo.SpaceId,
-			Type = dbo.Type,
 			Presets = presets
 		};
 
@@ -501,11 +470,8 @@ public partial class TfService : ITfService
 		{
 			Id = model.Id,
 			Name = model.Name,
-			Position = model.Position,
 			SettingsJson = model.SettingsJson,
 			SpaceDataId = model.DatasetId,
-			SpaceId = model.SpaceId,
-			Type = model.Type,
 			PresetsJson = JsonSerializer.Serialize(model.Presets ?? new List<TfSpaceViewPreset>())
 		};
 	}
@@ -528,10 +494,6 @@ public partial class TfService : ITfService
 				RuleFor(spaceView => spaceView.Name)
 					.NotEmpty()
 					.WithMessage("The space view name is required.");
-
-				RuleFor(spaceView => spaceView.SpaceId)
-					.NotEmpty()
-					.WithMessage("The space id is required.");
 
 				RuleFor(spaceView => spaceView.DatasetId)
 					.NotEmpty()

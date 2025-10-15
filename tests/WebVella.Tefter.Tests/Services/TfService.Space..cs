@@ -347,20 +347,14 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "view",
-					Position = 1,
 					DatasetId = spaceData.Id,
-					SpaceId = space.Id,
-					Type = TfSpaceViewType.DataGrid
 				};
 
 				var spaceView = tfService.CreateSpaceView(view);
 				spaceView.Should().NotBeNull();
 				spaceView.Id.Should().Be(view.Id);
 				spaceView.Name.Should().Be(view.Name);
-				spaceView.Position.Should().Be(view.Position);
 				spaceView.DatasetId.Should().Be(view.DatasetId);
-				spaceView.SpaceId.Should().Be(view.SpaceId);
-				spaceView.Type.Should().Be(view.Type);
 
 
 				var bookmarkList = tfService.GetBookmarksListForUser(user.Id);
@@ -441,33 +435,23 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "view",
-					Position = 1,
-					DatasetId = spaceData.Id,
-					SpaceId = space.Id,
-					Type = TfSpaceViewType.DataGrid
+					DatasetId = spaceData.Id
 				};
 
 				var spaceView = tfService.CreateSpaceView(view);
 				spaceView.Should().NotBeNull();
 				spaceView.Id.Should().Be(view.Id);
 				spaceView.Name.Should().Be(view.Name);
-				spaceView.Position.Should().Be(view.Position);
 				spaceView.DatasetId.Should().Be(view.DatasetId);
-				spaceView.SpaceId.Should().Be(view.SpaceId);
-				spaceView.Type.Should().Be(view.Type);
 
 
 				view.Name = "view1";
-				view.Type = TfSpaceViewType.Chart;
 
 				spaceView = tfService.UpdateSpaceView(view);
 				spaceView.Should().NotBeNull();
 				spaceView.Id.Should().Be(view.Id);
 				spaceView.Name.Should().Be(view.Name);
-				spaceView.Position.Should().Be(view.Position);
 				spaceView.DatasetId.Should().Be(view.DatasetId);
-				spaceView.SpaceId.Should().Be(view.SpaceId);
-				spaceView.Type.Should().Be(view.Type);
 
 				tfService.DeleteSpaceView(view.Id);
 			}
@@ -526,10 +510,7 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "view",
-					Position = 1,
-					DatasetId = spaceData.Id,
-					SpaceId = space.Id,
-					Type = TfSpaceViewType.DataGrid
+					DatasetId = spaceData.Id
 				};
 
 				var spaceView = tfService.CreateSpaceView(view);
@@ -583,7 +564,7 @@ public partial class TfServiceTest : BaseTest
 
 				for (int i = 1; i < columns.Count; i++)
 				{
-					tfService.MoveSpaceViewColumnUp(last.Id);
+					await tfService.MoveSpaceViewColumnUp(last.Id);
 
 					columns = tfService.GetSpaceViewColumnsList(view.Id);
 					var column = columns.Single(x => x.Id == last.Id);

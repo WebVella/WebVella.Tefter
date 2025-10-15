@@ -432,30 +432,10 @@ public partial class TfService : ITfService
 						throw new TfDboServiceException("Delete<SpaceRoleDbo> failed");
 				}
 
-				var spaceViews = GetSpaceViewsList(space.Id);
-				foreach (var spaceView in spaceViews)
-				{
-					DeleteSpaceView(spaceView.Id);
-				}
-
 				var spacePages = GetSpacePages(id);
 				foreach (var spacePage in spacePages.OrderByDescending(x => x.Position))
 				{
 					DeleteSpacePage(spacePage);
-				}
-
-				var spacesAfter = GetSpacesList()
-					.Where(x => x.Position > space.Position)
-					.ToList();
-
-				//update positions for spaces after the one being deleted
-				foreach (var spaceAfter in spacesAfter)
-				{
-					spaceAfter.Position--;
-
-					var successUpdatePosition = _dboManager.Update<TfSpaceDbo>(ConvertModelToDbo(spaceAfter));
-					if (!successUpdatePosition)
-						throw new TfDboServiceException("Update<TfSpaceDbo> failed");
 				}
 
 				success = _dboManager.Delete<TfSpaceDbo>(id);

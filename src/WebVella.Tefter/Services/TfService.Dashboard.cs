@@ -86,12 +86,15 @@ public partial class TfService : ITfService
 		var spaceViewDict = allSpaceViews.ToDictionary(x => x.Id);
 		if (searchInViews)
 		{
-			foreach (var record in allSpaceViews)
+			//TODO - spaceId was removed from spaceView - fix this
+			/*foreach (var record in allSpaceViews)
 			{
 				if (!String.IsNullOrWhiteSpace(search)
 						&& !record.Name.ToLowerInvariant().Contains(search))
 					continue;
+								
 				var space = spaceDict[record.SpaceId];
+
 				results.Add(new TfSearchResult
 				{
 					Id = record.Id,
@@ -107,7 +110,7 @@ public partial class TfService : ITfService
 					SpaceIcon = space.FluentIconName,
 					Url = string.Format(TfConstants.SpaceViewPageUrl, record.SpaceId, record.Id)
 				});
-			}
+			}*/
 		}
 
 		if (searchInBookmarks || searchInSaves)
@@ -157,6 +160,8 @@ public partial class TfService : ITfService
 
 		foreach (var item in userBookmarks)
 		{
+			//TODO - spaceId was removed from spaceView - fix this
+			/*
 			if (viewDict.ContainsKey(item.SpaceId))
 			{
 				var spaceView = viewDict[item.SpaceId];
@@ -185,6 +190,7 @@ public partial class TfService : ITfService
 				else
 					bookmarks.Add(record);
 			}
+			*/
 
 		}
 
@@ -240,7 +246,7 @@ public partial class TfService : ITfService
 
 	private List<TfSpaceView> GetHomeViewsAsync()
 	{
-		return GetAllSpaceViews().OrderByDescending(x => x.Position).Take(TfConstants.HomeSubListsMaxResult).ToList();
+		return GetAllSpaceViews().OrderByDescending(x => x.Name).Take(TfConstants.HomeSubListsMaxResult).ToList();
 
 	}
 }

@@ -108,7 +108,11 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		else if (_activeTab == TfSpaceNavigationActiveTab.Bookmarks)
 		{
 			var bookmarks = TfService.GetBookmarksListForUser(TfAuthLayout.GetState().User.Id);
-			var spaceViewDict = (TfService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
+
+			//TODO - spaceId was removed from spaceView - fix this
+			//var spaceViewDict = (TfService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
+			var spaceViewDict = new List<TfSpaceView>().ToDictionary(x => x.Id);
+
 			foreach (var record in bookmarks
 				.Where(x => spaceViewDict.ContainsKey(x.SpaceId)).OrderBy(x => x.Name))
 			{
@@ -131,7 +135,11 @@ public partial class TucSpacePageAsideContent : TfBaseComponent, IDisposable
 		else if (_activeTab == TfSpaceNavigationActiveTab.Saves)
 		{
 			var saves = TfService.GetSavesListForUser(TfAuthLayout.GetState().User.Id);
-			var spaceViewDict = (TfService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
+			
+			//TODO - spaceId was removed from spaceView - fix this
+			//var spaceViewDict = (TfService.GetSpaceViewsList(_navState.SpaceId!.Value) ?? new List<TfSpaceView>()).ToDictionary(x => x.Id);
+			var spaceViewDict = new List<TfSpaceView>().ToDictionary(x => x.Id);
+
 			foreach (var record in saves
 				.Where(x => spaceViewDict.ContainsKey(x.SpaceId)).OrderBy(x => x.Name))
 			{
