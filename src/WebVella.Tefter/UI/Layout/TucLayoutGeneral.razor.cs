@@ -8,7 +8,9 @@ public partial class TucLayoutGeneral : TfBaseComponent
 	[Parameter] public RenderFragment? PageTopbar { get; set; }
 	[Parameter] public RenderFragment? ChildContent { get; set; }
 	[Parameter] public string Style { get; set; }
-
+	
+	private string _dragClass = String.Empty;
+	
 	private bool _hasSidebar => SpaceHeader is not null || SpaceActions is not null || SideNav is not null;
 
 	private string _cssClass
@@ -25,5 +27,17 @@ public partial class TucLayoutGeneral : TfBaseComponent
 		}
 	}
 
+	private void _dragOver()
+	{
+		_dragClass = "tf-drag-container--dragging";
+		StateHasChanged();	
 
+	}
+
+	private void _dragLeave()
+	{
+		_dragClass = string.Empty;
+		StateHasChanged();	
+		
+	}
 }

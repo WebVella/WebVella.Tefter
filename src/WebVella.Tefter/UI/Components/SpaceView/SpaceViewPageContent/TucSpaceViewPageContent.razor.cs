@@ -87,6 +87,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
+		Console.WriteLine("OnAfterRenderAsync");
 		if (firstRender)
 		{
 			Navigator.LocationChanged += On_NavigationStateChanged;
@@ -508,6 +509,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	[JSInvokable("OnColumnResized")]
 	public async Task OnColumnResized(int position, short width)
 	{
+		Console.WriteLine("Column Resize triggered");
 		var column = _spaceViewColumns.SingleOrDefault(x => x.Position == position);
 		if (column is null) return;
 		await TfService.SetViewPresetColumnPersonalization(
@@ -516,6 +518,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		 presetId: _preset?.Id,
 		 spaceViewColumnId: column.Id,
 		 width: width);
+		
+		Console.WriteLine("Column Resize finished");
 	}
 
 	private async Task _manageColumn(TfSpaceViewColumn column)

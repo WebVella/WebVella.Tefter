@@ -643,18 +643,11 @@ progress {
 }
 /*Colors*/
 html:root {
-  --success: light-dark(var(--tf-green-400), var(--tf-green-900));
-  --warning: light-dark(var(--tf-amber-400), var(--tf-amber-900));
-  --error: light-dark(var(--tf-red-400), var(--tf-red-900));
-  --info: #616161;
-  --presence-available: #13a10e;
-  --presence-away: #eaa300;
-  --presence-busy: #d13438;
-  --presence-dnd: #d13438;
-  --presence-offline: #adadad;
-  --presence-oof: #c239b3;
-  --presence-unknown: #d13438;
-  --highlight-bg: #fff3cd;
+  --success: var(--tf-green-500);
+  --warning: var(--tf-amber-500);
+  --error: var(--tf-red-500);
+  --info: var(--tf-sky-500);
+  --highlight-bg: var(--tf-yellow-500);
 }
 /* Inputs */
 fluent-text-field.with-prefix::part(start) {
@@ -722,6 +715,11 @@ div[class^='fluent-messagebar'],
 .fluent-messagebar.intent-info.dark {
   border-color: var(--tf-sky-800) !important;
   background-color: var(--tf-sky-950) !important;
+}
+/*Menu*/
+fluent-menu-item::part(start) {
+  display: flex;
+  align-items: center;
 }
 .tf-card {
   --tf-card-border-radius: calc(var(--layer-corner-radius) * 1px);
@@ -831,7 +829,7 @@ div[class^='fluent-messagebar'],
   right: 0;
   width: 100%;
   height: 100%;
-  z-index: 10;
+  z-index: 100;
   border: 1px dashed var(--accent-fill-rest);
   background: var(--neutral-fill-hover);
 }
@@ -926,7 +924,7 @@ div[class^='fluent-messagebar'],
   height: 20px;
   overflow: hidden;
   border-radius: 5px;
-  background: var(--neutral-layer-2);
+  background: var(--neutral-fill-secondary-rest);
   content: "";
   cursor: pointer;
   --tf-caret-color: var(--neutral-foreground-focus);
@@ -941,7 +939,7 @@ div[class^='fluent-messagebar'],
 .tf-grid thead tr > th:hover .tf-column-action,
 .tf-grid thead tr > td:hover .tf-column-action {
   display: flex;
-  background: var(--tf-stroke-invert-base);
+  background: var(--neutral-fill-layer-alt-rest);
 }
 .tf-grid thead tr > th .tf-column-sort,
 .tf-grid thead tr > td .tf-column-sort {

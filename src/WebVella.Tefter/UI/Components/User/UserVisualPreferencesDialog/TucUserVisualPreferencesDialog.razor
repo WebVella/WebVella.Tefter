@@ -19,7 +19,7 @@
 			<TucSelect @bind-SelectedOption="@_mode" TOption="DesignThemeModes"
 			           Items="@(Enum.GetValues<DesignThemeModes>())" Style="width:100%"
 			           OptionValue="@(p => ((int)p).ToString())"
-			           OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"/>
+			           OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode [ctrl+Q]")"/>
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>

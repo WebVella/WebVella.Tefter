@@ -5,6 +5,7 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 	private DotNetObjectReference<TucSpaceActions> _objectRef;
 	private bool _spaceMenuVisible = false;
 	private bool _spaceFinderVisible = false;
+
 	public async ValueTask DisposeAsync()
 	{
 		try
@@ -15,6 +16,7 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 		{
 			//In rare ocasions the item is disposed after the JSRuntime is no longer avaible
 		}
+
 		_objectRef?.Dispose();
 	}
 
@@ -26,13 +28,72 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 			"Tefter.addGlobalSearchKeyListener", _objectRef, ComponentId.ToString(), "OnGlobalSearchHandler");
 	}
 
+	private async Task _addPage()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(
+			new TfSpacePage() { SpaceId = TfAuthLayout.GetState().Space!.Id },
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+		}
+	}
+
+	private async Task _copyPage()
+	{
+		var state = TfAuthLayout.GetState();
+		if (state.SpacePage is null) return;
+		try
+		{
+			TfService.CopySpacePage(state.SpacePage.Id);
+
+			ToastService.ShowSuccess(LOC("Space page updated!"));
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private async Task _removePage()
+	{
+		var state = TfAuthLayout.GetState();
+		if (state.SpacePage is null) return;
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this page deleted?")))
+			return;
+
+		try
+		{
+			TfService.DeleteSpacePage(state.SpacePage);
+			ToastService.ShowSuccess(LOC("Space page deleted!"));
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
 	private async Task _findSpace()
 	{
-		if(_spaceFinderVisible) return;
+		if (_spaceFinderVisible) return;
 		_spaceFinderVisible = true;
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceFinderDialog>(
 			TfAuthLayout.GetState().User,
-			new ()
+			new()
 			{
 				PreventDismissOnOverlayClick = false,
 				PreventScroll = true,
@@ -45,20 +106,39 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 
 	private void _manageCurrentPage()
 	{
-		var pageManageUrl = String.Format(TfConstants.SpacePagePageManageUrl, TfAuthLayout.GetState().Space!.Id, TfAuthLayout.GetState().SpacePage!.Id);
+		var pageManageUrl = String.Format(TfConstants.SpacePagePageManageUrl, TfAuthLayout.GetState().Space!.Id,
+			TfAuthLayout.GetState().SpacePage!.Id);
 		Navigator.NavigateTo(pageManageUrl.GenerateWithLocalAsReturnUrl(Navigator.Uri)!);
 	}
+
 	private void _manageCurrentSpace()
 	{
 		var pageManageUrl = String.Format(TfConstants.SpaceManagePageUrl, TfAuthLayout.GetState().Space!.Id);
 		Navigator.NavigateTo(pageManageUrl.GenerateWithLocalAsReturnUrl(Navigator.Uri)!);
+	}
+
+	private async Task _deleteSpace()
+	{
+		var state = TfAuthLayout.GetState();
+		if (state.Space is null) return;		
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this space deleted?")))
+			return;
+		try
+		{
+			TfService.DeleteSpace(state.Space.Id);
+			ToastService.ShowSuccess(LOC("Space deleted"));
+			Navigator.NavigateTo(TfConstants.HomePageUrl);
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
 	}	
 	
-
 
 	[JSInvokable("OnGlobalSearchHandler")]
 	public async Task OnGlobalSearchHandler()
 	{
 		await _findSpace();
-	}	
+	}
 }
