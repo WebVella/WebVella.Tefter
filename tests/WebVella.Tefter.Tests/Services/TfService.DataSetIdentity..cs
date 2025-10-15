@@ -128,7 +128,6 @@ public partial class TfServiceTest : BaseTest
 			IsSearchable = true,
 			IsSortable = true,
 			IsUnique = true,
-			PreferredSearchType = TfDataProviderColumnSearchType.Contains
 		};
 
 		tfService.CreateDataProviderColumn(column);
@@ -148,7 +147,6 @@ public partial class TfServiceTest : BaseTest
 			IsSearchable = true,
 			IsSortable = true,
 			IsUnique = true,
-			PreferredSearchType = TfDataProviderColumnSearchType.Contains
 		};
 
 		provider = tfService.CreateDataProviderColumn(column2);
@@ -171,7 +169,6 @@ public partial class TfServiceTest : BaseTest
 			IsSearchable = true,
 			IsSortable = true,
 			IsUnique = true,
-			PreferredSearchType = TfDataProviderColumnSearchType.Contains
 		};
 
 		tfService.CreateDataProviderColumn(column);
@@ -191,7 +188,6 @@ public partial class TfServiceTest : BaseTest
 			IsSearchable = true,
 			IsSortable = true,
 			IsUnique = true,
-			PreferredSearchType = TfDataProviderColumnSearchType.Contains
 		};
 
 		provider2 = tfService.CreateDataProviderColumn(column2);

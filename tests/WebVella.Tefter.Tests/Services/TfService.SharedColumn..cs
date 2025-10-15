@@ -155,7 +155,6 @@ public partial class TfServiceTest : BaseTest
 					IsSearchable = true,
 					IsSortable = true,
 					IsUnique = true,
-					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
 				task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });

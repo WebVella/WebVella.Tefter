@@ -234,7 +234,6 @@ public partial class TfServiceTest : BaseTest
 					IsSearchable = true,
 					IsSortable = true,
 					IsUnique = true,
-					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
 				//empty id, but internaly we set new id

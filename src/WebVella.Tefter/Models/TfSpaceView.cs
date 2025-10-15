@@ -5,15 +5,7 @@ public class TfSpaceView
 	public Guid Id { get; set; }
 	public Guid DatasetId { get; set; }
 	public string SpaceDataName { get; set; } = null!;
-
-	[Obsolete("Will be removed")]
-	public Guid SpaceId { get; set; }
-
-	[Obsolete("Will be removed")]
-	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
 	public string Name { get; set; } = null!;
-	[Obsolete("Will be removed")]
-	public short Position { get; set; }
 	public string SettingsJson { get; set; } = "{}";
 	public TfSpaceViewSettings Settings
 	{
@@ -40,22 +32,8 @@ public class TfSpaceViewDbo
 	[TfDboModelProperty("space_data_id")]
 	public Guid SpaceDataId { get; set; }
 
-	[Obsolete]
-	[TfDboModelProperty("space_id")]
-	public Guid SpaceId { get; set; }
-
-	[Obsolete]
-	[TfDboModelProperty("type")]
-	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfSpaceViewType>))]
-	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
-
 	[TfDboModelProperty("name")]
 	public string Name { get; set; }
-
-	[Obsolete]
-
-	[TfDboModelProperty("position")]
-	public short Position { get; set; }
 
 	[TfDboModelProperty("settings_json")]
 	public string SettingsJson { get; set; } = "{}";

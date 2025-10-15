@@ -30,7 +30,7 @@ public partial class TfServiceTest : BaseTest
 		}
 	}
 
-	public void Data_InsertUpdateTableTest(Guid providerId, Guid spaceDataId)
+	private void Data_InsertUpdateTableTest(Guid providerId, Guid spaceDataId)
 	{
 
 		var faker = new Faker("en");
@@ -155,7 +155,7 @@ public partial class TfServiceTest : BaseTest
 	}
 
 
-	public void Data_SimpleQueryTest(Guid providerId, Guid spaceDataId)
+	private void Data_SimpleQueryTest(Guid providerId, Guid spaceDataId)
 	{
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 		ITfService tfService = ServiceProvider.GetService<ITfService>();
@@ -220,7 +220,7 @@ public partial class TfServiceTest : BaseTest
 		}
 	}
 
-	public void Data_QueryOnlyTfIds(Guid providerId, Guid spaceDataId)
+	private void Data_QueryOnlyTfIds(Guid providerId, Guid spaceDataId)
 	{
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 		ITfService tfService = ServiceProvider.GetService<ITfService>();
@@ -251,7 +251,7 @@ public partial class TfServiceTest : BaseTest
 		}
 	}
 
-	public void Data_GetDataIdentityValue(TfDataProvider provider)
+	private void Data_GetDataIdentityValue(TfDataProvider provider)
 	{
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 		ITfService tfService = ServiceProvider.GetService<ITfService>();
