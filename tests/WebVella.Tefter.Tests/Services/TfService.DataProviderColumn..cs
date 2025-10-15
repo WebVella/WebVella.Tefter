@@ -31,8 +31,7 @@ public partial class TfServiceTest : BaseTest
 					IsNullable = true,
 					IsSearchable = true,
 					IsSortable = true,
-					IsUnique = true,
-					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+					IsUnique = true
 				};
 
 				//name format invalid
@@ -120,8 +119,7 @@ public partial class TfServiceTest : BaseTest
 					IsNullable = true,
 					IsSearchable = true,
 					IsSortable = true,
-					IsUnique = true,
-					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+					IsUnique = true
 				};
 
 				//empty id, but internally we set new id
@@ -160,7 +158,6 @@ public partial class TfServiceTest : BaseTest
 					IsSearchable = true,
 					IsSortable = true,
 					IsUnique = true,
-					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
 				//empty id
@@ -202,7 +199,6 @@ public partial class TfServiceTest : BaseTest
 					IsSearchable = true,
 					IsSortable = true,
 					IsUnique = true,
-					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
 				var task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
@@ -241,7 +237,6 @@ public partial class TfServiceTest : BaseTest
 					IsSearchable = true,
 					IsSortable = true,
 					IsUnique = true,
-					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
 				var task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
@@ -282,7 +277,6 @@ public partial class TfServiceTest : BaseTest
 					IsSearchable = true,
 					IsSortable = true,
 					IsUnique = true,
-					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
 				provider = tfService.CreateDataProviderColumn(column);
@@ -302,7 +296,6 @@ public partial class TfServiceTest : BaseTest
 					IsSearchable = true,
 					IsSortable = true,
 					IsUnique = true,
-					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
 				provider = tfService.CreateDataProviderColumn(column);
@@ -322,7 +315,6 @@ public partial class TfServiceTest : BaseTest
 					IsSearchable = false,
 					IsSortable = false,
 					IsUnique = false,
-					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
 				provider = tfService.CreateDataProviderColumn(column);
@@ -342,7 +334,6 @@ public partial class TfServiceTest : BaseTest
 					IsSearchable = false,
 					IsSortable = false,
 					IsUnique = false,
-					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
 				provider = tfService.CreateDataProviderColumn(column);
@@ -362,7 +353,6 @@ public partial class TfServiceTest : BaseTest
 					IsSearchable = false,
 					IsSortable = false,
 					IsUnique = false,
-					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
 				provider = tfService.CreateDataProviderColumn(column);
@@ -382,7 +372,6 @@ public partial class TfServiceTest : BaseTest
 					IsSearchable = false,
 					IsSortable = false,
 					IsUnique = false,
-					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
 				provider = tfService.CreateDataProviderColumn(column);
@@ -402,7 +391,6 @@ public partial class TfServiceTest : BaseTest
 					IsSearchable = false,
 					IsSortable = false,
 					IsUnique = false,
-					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
 				provider = tfService.CreateDataProviderColumn(column);
@@ -422,7 +410,6 @@ public partial class TfServiceTest : BaseTest
 					IsSearchable = false,
 					IsSortable = false,
 					IsUnique = false,
-					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
 				provider = tfService.CreateDataProviderColumn(column);
@@ -550,7 +537,6 @@ public partial class TfServiceTest : BaseTest
 				IsSearchable = true,
 				IsSortable = true,
 				IsUnique = true,
-				PreferredSearchType = TfDataProviderColumnSearchType.Contains
 			};
 
 			provider = tfService.CreateDataProviderColumn(column);
@@ -569,7 +555,6 @@ public partial class TfServiceTest : BaseTest
 			exColumn.IsSearchable.Should().Be(column.IsSearchable);
 			exColumn.IsSortable.Should().Be(column.IsSortable);
 			exColumn.IsUnique.Should().Be(column.IsUnique);
-			exColumn.PreferredSearchType.Should().Be(column.PreferredSearchType);
 			exColumn.DefaultValue.Should().Be(column.DefaultValue);
 
 			column.DefaultValue = defaultValue;
@@ -580,7 +565,6 @@ public partial class TfServiceTest : BaseTest
 			column.IsSearchable = !column.IsSearchable;
 			column.IsSortable = !column.IsSortable;
 			column.IsUnique = !column.IsUnique;
-			column.PreferredSearchType = TfDataProviderColumnSearchType.Equals;
 
 			provider = tfService.UpdateDataProviderColumn(column);
 
@@ -596,7 +580,6 @@ public partial class TfServiceTest : BaseTest
 			exColumn.IsSearchable.Should().Be(column.IsSearchable);
 			exColumn.IsSortable.Should().Be(column.IsSortable);
 			exColumn.IsUnique.Should().Be(column.IsUnique);
-			exColumn.PreferredSearchType.Should().Be(column.PreferredSearchType);
 			exColumn.DefaultValue.Should().Be(column.DefaultValue);
 		}
 	}

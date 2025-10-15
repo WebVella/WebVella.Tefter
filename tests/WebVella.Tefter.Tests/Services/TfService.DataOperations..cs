@@ -32,7 +32,7 @@ public partial class TfServiceTest : BaseTest
 		}
 	}
 
-	public void Data_InsertProviderRow(TfDataProvider provider)
+	private void Data_InsertProviderRow(TfDataProvider provider)
 	{
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 		ITfService tfService = ServiceProvider.GetService<ITfService>();
@@ -40,7 +40,7 @@ public partial class TfServiceTest : BaseTest
 
 		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
-			var newRow = new Dictionary<string, object?>();
+			var newRow = new Dictionary<string, object>();
 
 			newRow[$"dp{provider.Index}_guid_column"] = Guid.NewGuid();
 			newRow[$"dp{provider.Index}_short_text_column"] = faker.Lorem.Sentence();
@@ -59,7 +59,7 @@ public partial class TfServiceTest : BaseTest
 		}
 	}
 
-	public void Data_InsertDatasetRow(TfDataProvider provider, TfDataset dataset)
+	private void Data_InsertDatasetRow(TfDataProvider provider, TfDataset dataset)
 	{
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 		ITfService tfService = ServiceProvider.GetService<ITfService>();
@@ -67,7 +67,7 @@ public partial class TfServiceTest : BaseTest
 
 		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
-			var newRow = new Dictionary<string, object?>();
+			var newRow = new Dictionary<string, object>();
 
 			newRow[$"dp{provider.Index}_guid_column"] = Guid.NewGuid();
 			newRow[$"dp{provider.Index}_short_text_column"] = faker.Lorem.Sentence();
@@ -86,7 +86,7 @@ public partial class TfServiceTest : BaseTest
 		}
 	}
 
-	public void Data_UpdateProviderRow(TfDataProvider provider)
+	private void Data_UpdateProviderRow(TfDataProvider provider)
 	{
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 		ITfService tfService = ServiceProvider.GetService<ITfService>();
@@ -94,7 +94,7 @@ public partial class TfServiceTest : BaseTest
 
 		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
-			var newRow = new Dictionary<string, object?>();
+			var newRow = new Dictionary<string, object>();
 
 			newRow[$"dp{provider.Index}_guid_column"] = Guid.NewGuid();
 			newRow[$"dp{provider.Index}_short_text_column"] = faker.Lorem.Sentence();
@@ -112,7 +112,7 @@ public partial class TfServiceTest : BaseTest
 			var insertedRow = tfService.InsertProviderRow(provider.Id, newRow);
 
 			Guid tfId = (Guid)insertedRow["tf_id"];
-			var updateRow = new Dictionary<string, object?>();
+			var updateRow = new Dictionary<string, object>();
 
 			updateRow[$"dp{provider.Index}_short_text_column"] = faker.Lorem.Sentence() + " upd";
 			updateRow[$"dp{provider.Index}_text_column"] = faker.Lorem.Lines() + " upd";
@@ -159,7 +159,7 @@ public partial class TfServiceTest : BaseTest
 		}
 	}
 
-	public void Data_UpdateDatasetRow(TfDataProvider provider, TfDataset dataset)
+	private void Data_UpdateDatasetRow(TfDataProvider provider, TfDataset dataset)
 	{
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 		ITfService tfService = ServiceProvider.GetService<ITfService>();
@@ -167,7 +167,7 @@ public partial class TfServiceTest : BaseTest
 
 		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
-			var newRow = new Dictionary<string, object?>();
+			var newRow = new Dictionary<string, object>();
 
 			newRow[$"dp{provider.Index}_guid_column"] = Guid.NewGuid();
 			newRow[$"dp{provider.Index}_short_text_column"] = faker.Lorem.Sentence();
@@ -185,7 +185,7 @@ public partial class TfServiceTest : BaseTest
 			var insertedRow = tfService.InsertDatasetRow(dataset.Id, newRow);
 
 			Guid tfId = (Guid)insertedRow["tf_id"];
-			var updateRow = new Dictionary<string, object?>();
+			var updateRow = new Dictionary<string, object>();
 
 			updateRow[$"dp{provider.Index}_short_text_column"] = faker.Lorem.Sentence() + " upd";
 			updateRow[$"dp{provider.Index}_text_column"] = faker.Lorem.Lines() + " upd";
@@ -229,7 +229,7 @@ public partial class TfServiceTest : BaseTest
 		}
 	}
 
-	public void Data_InsertProviderRow_ValidateUniqueValues(TfDataProvider provider)
+	private void Data_InsertProviderRow_ValidateUniqueValues(TfDataProvider provider)
 	{
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 		ITfService tfService = ServiceProvider.GetService<ITfService>();
@@ -239,7 +239,7 @@ public partial class TfServiceTest : BaseTest
 		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_guid_column_unique";
 				try
@@ -261,7 +261,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_short_text_column_unique";
 				try
@@ -283,7 +283,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_text_column_unique";
 				try
@@ -305,7 +305,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_date_column_unique";
 				try
@@ -327,7 +327,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_datetime_column_unique";
 				try
@@ -349,7 +349,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_short_int_column_unique";
 				try
@@ -371,7 +371,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_int_column_unique";
 				try
@@ -393,7 +393,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_long_int_column_unique";
 				try
@@ -415,7 +415,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_number_column_unique";
 				try
@@ -438,7 +438,7 @@ public partial class TfServiceTest : BaseTest
 		}
 	}
 
-	public void Data_InsertDatasetRow_ValidateUniqueValues(TfDataProvider provider, TfDataset dataset)
+	private void Data_InsertDatasetRow_ValidateUniqueValues(TfDataProvider provider, TfDataset dataset)
 	{
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 		ITfService tfService = ServiceProvider.GetService<ITfService>();
@@ -448,7 +448,7 @@ public partial class TfServiceTest : BaseTest
 		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_guid_column_unique";
 				try
@@ -470,7 +470,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_short_text_column_unique";
 				try
@@ -492,7 +492,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_text_column_unique";
 				try
@@ -514,7 +514,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_date_column_unique";
 				try
@@ -536,7 +536,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_datetime_column_unique";
 				try
@@ -558,7 +558,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_short_int_column_unique";
 				try
@@ -580,7 +580,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_int_column_unique";
 				try
@@ -602,7 +602,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_long_int_column_unique";
 				try
@@ -624,7 +624,7 @@ public partial class TfServiceTest : BaseTest
 			}
 
 			{
-				var newRow = new Dictionary<string, object?>();
+				var newRow = new Dictionary<string, object>();
 				Exception exception = null;
 				string columnName = $"dp{provider.Index}_number_column_unique";
 				try

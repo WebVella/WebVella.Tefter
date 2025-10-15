@@ -443,6 +443,20 @@ public partial class TfService : ITfService
 				if (!success)
 					throw new TfDboServiceException("Delete<TfSpaceDbo> failed");
 
+				var spacesAfter = GetSpacesList()
+					.Where(x => x.Position > space.Position)
+					.ToList();
+
+				//update positions for spaces after the one being deleted
+				foreach (var spaceAfter in spacesAfter)
+				{
+					spaceAfter.Position--;
+
+					var successUpdatePosition = _dboManager.Update<TfSpaceDbo>(ConvertModelToDbo(spaceAfter));
+					if (!successUpdatePosition)
+						throw new TfDboServiceException("Update<TfSpaceDbo> failed");
+				}
+
 				scope.Complete();
 				
 				PublishEventWithScope(new TfSpaceUpdatedEvent(space));
@@ -623,7 +637,7 @@ public partial class TfService : ITfService
 								return true;
 
 							var spaces = tfService.GetSpacesList();
-							return !spaces.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
+							return !spaces.Any(x => x.Name!.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
 						})
 						.WithMessage("There is already existing space with same name.");
 			});

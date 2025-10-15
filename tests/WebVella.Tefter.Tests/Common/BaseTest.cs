@@ -337,8 +337,7 @@ public class BaseTest
 			IsNullable = true,
 			IsSearchable = true,
 			IsSortable = false,
-			IsUnique = isUnique??false,
-			PreferredSearchType = TfDataProviderColumnSearchType.Contains
+			IsUnique = isUnique??false
 		};
 
 		tfService.CreateDataProviderColumn(column);
