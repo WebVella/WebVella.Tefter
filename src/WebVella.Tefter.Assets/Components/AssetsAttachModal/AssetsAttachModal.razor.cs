@@ -65,7 +65,7 @@ public partial class AssetsAttachModal : TfFormBaseComponent, IDialogContentComp
 			RowIds = Content.SelectedRowIds,
 			IsAddOnly = true
 		},
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
@@ -95,7 +95,7 @@ public partial class AssetsAttachModal : TfFormBaseComponent, IDialogContentComp
 			FileName = null,
 			IsAddOnly = true
 		},
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,

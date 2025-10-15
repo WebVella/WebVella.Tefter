@@ -16,27 +16,27 @@ public class TfBasePage : ComponentBase
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = null!;
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
-	protected IStringLocalizer LC  = null!;
-	protected static IStringLocalizer? GL = null;
-	private static AsyncLock _lock = new();
+	// protected IStringLocalizer LC  = null!;
+	// protected static IStringLocalizer? GL = null;
+	// private static AsyncLock _lock = new();
 
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-		LC = StringLocalizerFactory.Create(this.GetType());
-		if (GL is null)
-		{
-			using (_lock.Lock())
-			{
-				GL = StringLocalizerFactory.Create(this.GetType().BaseType);
-			}
-		}
-	}
-	protected string LOC(string key, params object[] arguments)
-	{
-		if (LC[key, arguments] != key) return LC[key, arguments];
-		if (GL[key, arguments] != key) return GL[key, arguments];
-		return key;
-	}
+	// protected override void OnInitialized()
+	// {
+	// 	base.OnInitialized();
+	// 	LC = StringLocalizerFactory.Create(this.GetType());
+	// 	if (GL is null)
+	// 	{
+	// 		using (_lock.Lock())
+	// 		{
+	// 			GL = StringLocalizerFactory.Create(this.GetType().BaseType);
+	// 		}
+	// 	}
+	// }
+	// protected string LOC(string key, params object[] arguments)
+	// {
+	// 	if (LC[key, arguments] != key) return LC[key, arguments];
+	// 	if (GL[key, arguments] != key) return GL[key, arguments];
+	// 	return key;
+	// }
 
 }

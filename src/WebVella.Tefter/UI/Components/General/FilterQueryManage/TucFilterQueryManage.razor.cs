@@ -141,7 +141,7 @@ public partial class TucFilterQueryManage : TfBaseComponent
 			else if (propName == nameof(item.Value))
 			{
 				var value = (string?)valueObj;
-				if (!String.IsNullOrWhiteSpace(value) && !Guid.TryParse(value, out Guid outGuid))
+				if (!String.IsNullOrWhiteSpace(value) && !Guid.TryParse(value, out Guid _))
 					ToastService.ShowError(LOC("Invalid GUID value"));
 
 				item.ValueStringChanged(value);

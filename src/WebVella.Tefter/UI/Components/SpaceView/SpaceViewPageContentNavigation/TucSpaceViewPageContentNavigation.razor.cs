@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucSpaceViewPageContentNavigation : TfBaseComponent
+public partial class TucSpaceViewPageContentNavigation : TfBaseComponent, IDisposable
 {
 	// Dependency Injection
 	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;

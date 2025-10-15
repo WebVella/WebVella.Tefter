@@ -5,12 +5,9 @@ namespace WebVella.Tefter.Services;
 public partial interface ITfService
 {
 	public List<TfBookmark> GetBookmarksListForUser(
-		Guid userId);
+		Guid userId, Guid spaceId);
 	public List<TfBookmark> GetSavesListForUser(
-		Guid userId);	
-	
-	public List<TfBookmark> GetBookmarksListForSpaceView(
-		Guid spaceViewId);
+		Guid userId, Guid spaceId);	
 
 	public TfBookmark GetBookmark(
 		Guid id);
@@ -31,7 +28,7 @@ public partial interface ITfService
 public partial class TfService : ITfService
 {
 	public List<TfBookmark> GetBookmarksListForUser(
-		Guid userId)
+		Guid userId, Guid spaceId)
 	{
 		try
 		{
@@ -48,7 +45,7 @@ public partial class TfService : ITfService
 	}
 	
 	public List<TfBookmark> GetSavesListForUser(
-		Guid userId)
+		Guid userId, Guid spaceId)
 	{
 		try
 		{
@@ -64,16 +61,12 @@ public partial class TfService : ITfService
 		}
 	}	
 
-	public List<TfBookmark> GetBookmarksListForSpaceView(
-		Guid spaceViewId)
+	public List<TfBookmark> GetBookmarksListForSpace(
+		Guid spaceId)
 	{
 		try
 		{
-			var bookmarks = _dboManager.GetList<TfBookmark>(spaceViewId, nameof(TfBookmark.SpaceId));
-			foreach (var bookmark in bookmarks)
-				bookmark.Tags = GetBookmarkTags(bookmark.Id);
-
-			return bookmarks;
+			return _dboManager.GetList<TfBookmark>(spaceId, nameof(TfBookmark.SpaceId));
 		}
 		catch (Exception ex)
 		{
@@ -144,7 +137,7 @@ public partial class TfService : ITfService
 	public void ToggleBookmark(
 		Guid userId, Guid spaceId)
 	{
-		var bookmark = GetBookmarksListForUser(userId).FirstOrDefault(x => x.SpaceId == spaceId);
+		var bookmark = GetBookmarksListForUser(userId,spaceId).FirstOrDefault();
 		if (bookmark is not null)
 		{
 			DeleteBookmark(bookmark.Id);

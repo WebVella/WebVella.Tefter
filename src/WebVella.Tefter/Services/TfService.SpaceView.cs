@@ -403,6 +403,7 @@ public partial class TfService : ITfService
 		}
 	}
 
+	[Obsolete("Views can not be deleted by themselves any more, as they are connected to the page")]
 	public void DeleteSpaceView(
 		Guid id)
 	{
@@ -419,7 +420,7 @@ public partial class TfService : ITfService
 
 				bool success = false;
 
-				var bookmarks = GetBookmarksListForSpaceView(id);
+				var bookmarks = GetBookmarksListForSpace(id);
 				foreach (var bookmark in bookmarks)
 				{
 					DeleteBookmark(bookmark.Id);

@@ -4,10 +4,10 @@ public record TfSelectOption
 {
 	public Guid Id { get; set; } = Guid.NewGuid();
 	public object Value { get; set; }
-	public string Label { get; set; }
-	public string IconName { get; set; }
-	public string Color { get; set; }
-	public string BackgroundColor { get; set; }
+	public string? Label { get; set; }
+	public string? IconName { get; set; }
+	public string? Color { get; set; }
+	public string? BackgroundColor { get; set; }
 	public bool HideLabel { get; set; } = false;
 
 	[JsonIgnore]
@@ -19,10 +19,10 @@ public record TfSelectOption
 	public TfSelectOption() { }
 	public TfSelectOption(
 		object value, 
-		string label = null,
-		string iconName = null,
-		string color = null,
-		string backgroundColor = null,
+		string? label = null,
+		string? iconName = null,
+		string? color = null,
+		string? backgroundColor = null,
 		bool hideLabel = false)
 	{
 		Value = value;

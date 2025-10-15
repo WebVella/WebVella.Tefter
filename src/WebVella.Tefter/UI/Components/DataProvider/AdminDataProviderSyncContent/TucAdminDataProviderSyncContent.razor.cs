@@ -12,7 +12,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 	}
 	protected override async Task OnInitializedAsync()
 	{
@@ -67,9 +67,9 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	}
 	private async Task _onViewLogClick(TfDataProviderSynchronizeTask task)
 	{
-		var dialog = await DialogService.ShowDialogAsync<TucDataProviderSyncLogDialog>(
+		_ = await DialogService.ShowDialogAsync<TucDataProviderSyncLogDialog>(
 				task,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
@@ -92,7 +92,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 	private async Task _editSchedule()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderSyncManageDialog>(_provider!,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,

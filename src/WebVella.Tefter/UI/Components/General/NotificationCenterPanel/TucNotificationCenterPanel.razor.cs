@@ -23,20 +23,6 @@ public partial class TucNotificationCenterPanel : TfBaseComponent, IDialogConten
 		InvokeAsync(StateHasChanged);
 	}
 
-	private Task OpenNotificationCenterAsync()
-	{
-		//_dialog = await DialogService.ShowPanelAsync<NotificationCenterPanel>(new DialogParameters<GlobalState>()
-		//{
-		//    Alignment = HorizontalAlignment.Right,
-		//    Title = $"Notifications",
-		//    PrimaryAction = null,
-		//    SecondaryAction = null,
-		//    ShowDismiss = true
-		//});
-		//DialogResult result = await _dialog.Result;
-		//HandlePanel(result);
-		return Task.CompletedTask;
-	}
 	private async Task _cancel()
 	{
 		await Dialog.CancelAsync();
@@ -47,18 +33,5 @@ public partial class TucNotificationCenterPanel : TfBaseComponent, IDialogConten
 		MessageService.Clear(TfConstants.MESSAGES_NOTIFICATION_CENTER);
 		await _cancel();
 	}
-	private static void HandlePanel(DialogResult result)
-	{
-		if (result.Cancelled)
-		{
-			return;
-		}
-
-		if (result.Data is not null)
-		{
-			return;
-		}
-	}
-
 
 }

@@ -8,7 +8,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 	internal ReadOnlyCollection<TfDataProvider> _dataProviders = null!;
 	public void Dispose()
 	{
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
@@ -64,7 +64,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSharedColumnManageDialog>(
 				_column,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,

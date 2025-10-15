@@ -71,7 +71,7 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
     {
         var dialog = await DialogService.ShowDialogAsync<ViewEmailDialog>(
             message,
-            new DialogParameters()
+            new ()
             {
                 PreventDismissOnOverlayClick = true,
                 PreventScroll = true,
@@ -128,7 +128,7 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
     {
         var dialog = await DialogService.ShowDialogAsync<SendTestEmailDialog>(
             new EmailMessage(),
-            new DialogParameters()
+            new ()
             {
                 PreventDismissOnOverlayClick = true,
                 PreventScroll = true,

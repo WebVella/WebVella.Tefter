@@ -68,7 +68,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			Url = null,
 			DataIdentities = new List<string> { _dataIdentityValue },
 		},
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
@@ -95,7 +95,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			FileName = null,
 			DataIdentityValues = new List<string> { _dataIdentityValue },
 		},
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
@@ -127,7 +127,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 						FileName = assetContent.Filename,
 						DataIdentityValues = new List<string> { _dataIdentityValue },
 					},
-					new DialogParameters()
+					new ()
 					{
 						PreventDismissOnOverlayClick = true,
 						PreventScroll = true,
@@ -150,7 +150,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 						IconUrl = assetContent.IconUrl,
 						DataIdentities = new List<string> { _dataIdentityValue },
 					},
-					new DialogParameters()
+					new ()
 					{
 						PreventDismissOnOverlayClick = true,
 						PreventScroll = true,

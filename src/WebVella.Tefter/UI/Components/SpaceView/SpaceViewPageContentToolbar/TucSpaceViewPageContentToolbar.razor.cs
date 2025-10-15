@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
+public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposable
 {
 	// Dependency Injection
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
@@ -17,7 +17,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 	}
 
 	protected override async Task OnInitializedAsync()

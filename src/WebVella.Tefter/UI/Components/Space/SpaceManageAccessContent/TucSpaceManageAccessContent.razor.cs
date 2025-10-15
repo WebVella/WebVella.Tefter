@@ -13,7 +13,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
@@ -121,7 +121,7 @@ public partial class TucSpaceManageAccessContent : TfBaseComponent, IDisposable
 	{
 		try
 		{
-			var result = TfService.SetSpacePrivacy(_space.Id, newValue);
+			TfService.SetSpacePrivacy(_space.Id, newValue);
 			ToastService.ShowSuccess(LOC("Space access changed"));
 		}
 		catch (Exception ex)

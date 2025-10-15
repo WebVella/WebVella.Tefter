@@ -7,7 +7,7 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 	}
 	protected override async Task OnInitializedAsync()
 	{
@@ -56,7 +56,7 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderColumnManageDialog>(
 				column,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
@@ -83,7 +83,6 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			TfDataProvider provider = TfService.DeleteDataProviderColumn(column.Id);
 			ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
 		}
 		catch (Exception ex)
@@ -100,7 +99,7 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderColumnManageDialog>(
 		new TfDataProviderColumn() { DataProviderId = _provider!.Id },
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
@@ -115,7 +114,7 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderImportSchemaDialog>(
 				_provider!,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,

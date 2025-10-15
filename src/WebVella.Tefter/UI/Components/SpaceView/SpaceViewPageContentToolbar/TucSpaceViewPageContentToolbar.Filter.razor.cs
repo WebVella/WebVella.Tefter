@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
+public partial class TucSpaceViewPageContentToolbar
 {
 	private bool _showClearFilter
 	{
@@ -15,7 +15,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewFiltersDialog>(
 						SpaceView.Id,
-						new DialogParameters()
+						new ()
 						{
 							PreventDismissOnOverlayClick = true,
 							PreventScroll = true, 

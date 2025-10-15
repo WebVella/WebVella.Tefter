@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucAdminDataProvidersPageContent : TfBaseComponent
+public partial class TucAdminDataProvidersPageContent : TfBaseComponent,IDisposable
 {
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private bool _isLoading = false;
@@ -8,7 +8,7 @@ public partial class TucAdminDataProvidersPageContent : TfBaseComponent
 
 	public void Dispose()
 	{
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
@@ -58,7 +58,7 @@ public partial class TucAdminDataProvidersPageContent : TfBaseComponent
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderManageDialog>(
 		new TfDataProvider(),
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,

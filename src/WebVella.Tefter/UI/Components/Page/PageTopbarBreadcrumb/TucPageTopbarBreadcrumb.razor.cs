@@ -37,7 +37,7 @@ public partial class TucPageTopbarBreadcrumb : TfBaseComponent,IDisposable
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceFinderDialog>(
 			TfAuthLayout.GetState().User,
-			new DialogParameters()
+			new ()
 			{
 				PreventDismissOnOverlayClick = false,
 				PreventScroll = true,

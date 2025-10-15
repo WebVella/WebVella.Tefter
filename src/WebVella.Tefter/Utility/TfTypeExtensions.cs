@@ -1,21 +1,21 @@
 ﻿public static class TfTypeExtensions
 {
-	public static bool InheritsClass(this Type type, Type baseType)
-	{
-		if (type is null)
-			throw new ArgumentException("The provided type is null.", nameof(type));
-		if (baseType.IsInterface)
-			throw new ArgumentException("The provided type must not be an interface.", nameof(baseType));
-		Type currentType = type;
-		while (currentType != null)
-		{
-			if (currentType == baseType)
-				return true;
-
-			currentType = currentType.BaseType;
-		}
-		return false;
-	}
+	// public static bool InheritsClass(this Type type, Type baseType)
+	// {
+	// 	if (type is null)
+	// 		throw new ArgumentException("The provided type is null.", nameof(type));
+	// 	if (baseType.IsInterface)
+	// 		throw new ArgumentException("The provided type must not be an interface.", nameof(baseType));
+	// 	Type currentType = type;
+	// 	while (currentType != null)
+	// 	{
+	// 		if (currentType == baseType)
+	// 			return true;
+	//
+	// 		currentType = currentType.BaseType;
+	// 	}
+	// 	return false;
+	// }
 	public static bool InheritsGenericClass(this Type type, Type genericBaseType, Type genericArgumentType)
 	{
 		if (type is null)
@@ -54,16 +54,16 @@
 		return interfaceType.IsAssignableFrom(type);
 	}
 
-	public static bool ImplementsGenericInterface(this Type type, Type genericInterface)
-	{
-		if (type is null)
-			throw new ArgumentException("The provided type is null.", nameof(type));
-		if (!genericInterface.IsInterface)
-			throw new ArgumentException("The provided type must be an interface.", nameof(genericInterface));
-
-		return type.GetInterfaces()
-			.Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericInterface);
-	}
+	// public static bool ImplementsGenericInterface(this Type type, Type genericInterface)
+	// {
+	// 	if (type is null)
+	// 		throw new ArgumentException("The provided type is null.", nameof(type));
+	// 	if (!genericInterface.IsInterface)
+	// 		throw new ArgumentException("The provided type must be an interface.", nameof(genericInterface));
+	//
+	// 	return type.GetInterfaces()
+	// 		.Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericInterface);
+	// }
 
 	public static bool ImplementsGenericInterface(this Type type, Type genericInterface, Type genericArgument)
 	{

@@ -118,7 +118,7 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 		};
 		var dialog = await DialogService.ShowDialogAsync<TucPresetFilterManageDialog>(
 		context,
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,

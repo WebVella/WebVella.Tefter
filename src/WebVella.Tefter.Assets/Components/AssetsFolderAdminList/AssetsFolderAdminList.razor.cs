@@ -54,7 +54,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 	{
 		var dialog = await DialogService.ShowDialogAsync<AssetsFolderManageDialog>(
 		new AssetsFolder(),
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
@@ -69,7 +69,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 	{
 		var dialog = await DialogService.ShowDialogAsync<AssetsFolderManageDialog>(
 		folder,
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,

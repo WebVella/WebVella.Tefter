@@ -120,7 +120,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
     {
         var dialog = await DialogService.ShowDialogAsync<TucFileRepositoryFileSelectDialog>(
                 null,
-                new DialogParameters()
+                new ()
                 {
                     PreventDismissOnOverlayClick = true,
                     PreventScroll = true,

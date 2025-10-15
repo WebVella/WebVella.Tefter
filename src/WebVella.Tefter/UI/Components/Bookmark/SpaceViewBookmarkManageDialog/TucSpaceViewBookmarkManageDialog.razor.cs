@@ -41,7 +41,6 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			var result = (new List<TfBookmark>(), new List<TfBookmark>());
 			if (_form.Id == Guid.Empty)
 			{
 				_form.Id = Guid.NewGuid();

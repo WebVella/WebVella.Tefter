@@ -22,7 +22,7 @@ public class TfCreateSpaceRecipeStep : ITfRecipeStepAddon
 		var step = (TfCreateSpaceRecipeStepData)addon.Data;
 		var allRoles = tfService.GetRoles();
 		var stepRoles = allRoles.Where(x => step.Roles.Contains(x.Id)).ToList();
-		var result = tfService.CreateSpace(new TfSpace
+		_ = tfService.CreateSpace(new TfSpace
 		{
 			Id = step.SpaceId == Guid.Empty ? Guid.NewGuid() : step.SpaceId,
 			Name = step.Name,

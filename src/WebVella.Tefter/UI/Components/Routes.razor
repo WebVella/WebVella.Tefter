@@ -1,9 +1,4 @@
-﻿@using Microsoft.AspNetCore.Components.Routing
-@using Microsoft.AspNetCore.Components.Web
-@using Microsoft.FluentUI.AspNetCore.Components;
-@using WebVella.Tefter.Services
-@using WebVella.BlazorTrace;
-<Router AppAssembly="typeof(WebVella.Tefter.UI.Components.App).Assembly">
+﻿<Router AppAssembly="typeof(App).Assembly">
 	<Found Context="routeData">
 		<FocusOnNavigate RouteData="routeData" Selector="#top"/>
 		<RouteView RouteData="routeData" DefaultLayout="typeof(TfAuthLayout)"/>

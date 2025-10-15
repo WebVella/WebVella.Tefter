@@ -133,12 +133,6 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 
 		return Task.CompletedTask;;
 	}
-	
-	
-	private async Task _cancel()
-	{
-		await Dialog.CancelAsync();
-	}
 
 	[JSInvokable("OnArrowHandler")]
 	public async Task OnArrowHandler(bool isUp)

@@ -38,7 +38,7 @@ public partial class TucPageLinkSaveSelector : TfBaseComponent
 		if (ActiveSavedUrl is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewBookmarkManageDialog>(
 			ActiveSavedUrl,
-			new DialogParameters()
+			new ()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -56,7 +56,7 @@ public partial class TucPageLinkSaveSelector : TfBaseComponent
 		if (ActiveSavedUrl is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewBookmarkManageDialog>(
 			ActiveSavedUrl with { Id = Guid.Empty },
-			new DialogParameters()
+			new ()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,

@@ -1,1 +1,1 @@
-﻿global using WebVella.Tefter.Recipes;
+﻿

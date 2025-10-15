@@ -11,8 +11,6 @@ public class TfResultRecipeStep : ITfRecipeStepAddon
 	public ITfRecipeStepAddonData Data { get; set; }
 	public Task ApplyStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult stepResult)
 	{
-		ITfService tfService = serviceProvider.GetService<ITfService>();
-
 		if (addon.GetType().FullName != this.GetType().FullName)
 			throw new Exception("Wrong addon type provided for application");
 

@@ -87,7 +87,7 @@ public partial class TucPageTopbar : TfBaseComponent, IAsyncDisposable
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucUserVisualPreferencesDialog>(
 			TfAuthLayout.GetState().User,
-			new DialogParameters()
+			new ()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -137,7 +137,7 @@ public partial class TucPageTopbar : TfBaseComponent, IAsyncDisposable
 		var uri = new Uri(Navigator.Uri);
 		try
 		{
-			var user = await TfService.SetStartUpUrl(
+			_ = await TfService.SetStartUpUrl(
 				userId: TfAuthLayout.GetState().User.Id,
 				url: uri.PathAndQuery
 			);
@@ -153,7 +153,7 @@ public partial class TucPageTopbar : TfBaseComponent, IAsyncDisposable
 	{
 		try
 		{
-			var user = await TfService.SetStartUpUrl(
+			_ = await TfService.SetStartUpUrl(
 				userId: TfAuthLayout.GetState().User.Id,
 				url: null
 			);
@@ -187,7 +187,7 @@ public partial class TucPageTopbar : TfBaseComponent, IAsyncDisposable
 			if(TfAuthLayout.GetState().User.Settings.ThemeMode == DesignThemeModes.Light)
 				newMode = DesignThemeModes.Dark;
 			
-			var user = await TfService.SetUserTheme(
+			_ = await TfService.SetUserTheme(
 				userId: TfAuthLayout.GetState().User.Id,
 				themeMode: newMode
 			);

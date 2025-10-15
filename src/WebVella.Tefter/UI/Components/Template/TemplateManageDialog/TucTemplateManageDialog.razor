@@ -71,7 +71,7 @@
 					<FluentInputLabel Label="@LOC("Target Space Dataset")" />
 					<TucSelect Style="width:100%" TOption="TfDatasetAsOption" SelectedOption="_datasetOption" SelectedOptionChanged="_spaceDataOptionChanged"
 								  Placeholder="@LOC("select space dataset...")"
-								  OptionValue="@((p)=> p.Id.ToString())"
+								  OptionValue="((p)=> p.Id.ToString())"
 								  Items="_datasetOptions">
 						<OptionTemplate Context="option">@option.Name</OptionTemplate>
 					</TucSelect>

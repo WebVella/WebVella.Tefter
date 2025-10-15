@@ -16,7 +16,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 
 	public void Dispose()
 	{
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
@@ -80,7 +80,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 			var file = Files[0];
 			try
 			{
-				var result = TfService.CreateRepositoryFile(new TfFileForm
+				_ = TfService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
 					CreatedBy = TfAuthLayout.GetState().User?.Id,
@@ -113,7 +113,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucFileRepositoryFileUpdateDialog>(
 			file,
-			new DialogParameters()
+			new ()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,

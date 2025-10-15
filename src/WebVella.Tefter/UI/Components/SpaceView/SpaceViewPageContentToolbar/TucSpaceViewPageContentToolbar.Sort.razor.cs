@@ -1,11 +1,11 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceViewPageContentToolbar : TfBaseComponent
+public partial class TucSpaceViewPageContentToolbar
 {
 	private async Task OnSortClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewSortsDialog>(
 						SpaceView.Id,
-						new DialogParameters()
+						new ()
 						{
 							PreventDismissOnOverlayClick = true,
 							PreventScroll = true,

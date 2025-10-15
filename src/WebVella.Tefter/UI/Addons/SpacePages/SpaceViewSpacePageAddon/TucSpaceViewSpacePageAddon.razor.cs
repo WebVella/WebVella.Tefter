@@ -114,7 +114,6 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 	//Edit
 	private TfSpaceViewSpacePageAddonOptions _options { get; set; } = new();
 	private TfDataset? _selectedDataset = null;
-	private List<string> _generatedColumns = new();
 	private int _generatedColumnCountLimit = 10;
 
 	private List<TfDataset> _allDatasets = new();

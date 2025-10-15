@@ -27,6 +27,17 @@ fluent-text-field {
   }
 }
 
+fluent-switch::part(label){
+  margin-inline-end:0;
+}
+
+fluent-select{
+  fluent-option{
+    --neutral-fill-stealth-rest:transparent;
+    --neutral-fill-stealth-hover:color-mix(in srgb, var(--fill-color), var(--accent-fill-rest) 10%);
+    
+  }
+}
 
 /*Badge*/
 .input-badge {

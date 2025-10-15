@@ -10,7 +10,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 	public Guid? _removingUserId = null;
 	public void Dispose()
 	{
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
@@ -68,7 +68,7 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucRoleManageDialog>(
 		_role,
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
@@ -154,9 +154,4 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IDisposable
 		}
 	}
 
-	private void _onSelectedUserChange(TfUser? user)
-	{
-		_selectedUser = user;
-		StateHasChanged();
-	}
 }

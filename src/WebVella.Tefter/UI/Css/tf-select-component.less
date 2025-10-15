@@ -2,9 +2,10 @@
   width: 100%;
 
   .tf-card {
-    border: 1px solid var(--tf-stroke-input);
+    border: calc(var(--stroke-width) * 1px) solid transparent;
     padding: 5px;
-    border-radius: var(--tf-border-radius-sm);
+    border-radius: calc(var(--control-corner-radius) * 1px);
+    background: padding-box linear-gradient(var(--neutral-fill-input-rest),var(--neutral-fill-input-rest)),border-box var(--neutral-stroke-input-rest);
 
     &__content {
       padding-top: 0;

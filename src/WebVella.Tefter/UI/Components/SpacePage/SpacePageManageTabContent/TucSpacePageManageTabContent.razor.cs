@@ -8,7 +8,7 @@ public partial class TucSpacePageManageTabContent : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 	}
 	protected override async Task OnInitializedAsync()
 	{

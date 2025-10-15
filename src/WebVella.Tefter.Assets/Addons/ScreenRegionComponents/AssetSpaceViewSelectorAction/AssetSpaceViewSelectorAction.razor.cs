@@ -33,7 +33,7 @@ public partial class AssetSpaceViewSelectorAction : TfBaseComponent,
 		};
 		_dialog = await DialogService.ShowDialogAsync<AssetsAttachModal>(
 				context,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,

@@ -34,9 +34,11 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 			if (navState.SpacePageId is null)
 				throw new Exception("Space page Id not found in URL");
 			_spacePage = TfService.GetSpacePage(navState.SpacePageId.Value);
+			if (_spacePage is null)
+				return;
 			var pageMeta = TfMetaService.GetSpacePagesComponentsMeta();
 			var component = pageMeta.FirstOrDefault(x => x.Instance.AddonId == _spacePage.ComponentId);
-			if (_spacePage is null)
+			if(component is null)
 				return;
 
 			_menu.Add(new TfMenuItem
@@ -48,7 +50,6 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 				Text = LOC("Page"),
 				IconCollapsed = TfConstants.GetIcon(_spacePage.FluentIconName)
 			});
-			var tabs = component.Instance.GetManagementTabs();
 			foreach (var tab in component.Instance.GetManagementTabs())
 			{
 				_menu.Add(new TfMenuItem

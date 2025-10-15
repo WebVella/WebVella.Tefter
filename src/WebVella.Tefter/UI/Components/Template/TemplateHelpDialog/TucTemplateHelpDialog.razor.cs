@@ -25,7 +25,7 @@ public partial class TucTemplateHelpDialog : TfBaseComponent, IDialogContentComp
 	private ITfTemplateProcessorAddon? _getProcessor()
 	{
 
-		if (Content is not null && Content.ContentProcessorType is not null && Content.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
+		if (Content is not null && Content.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 		{
 			return (ITfTemplateProcessorAddon?)Activator.CreateInstance(Content.ContentProcessorType);
 

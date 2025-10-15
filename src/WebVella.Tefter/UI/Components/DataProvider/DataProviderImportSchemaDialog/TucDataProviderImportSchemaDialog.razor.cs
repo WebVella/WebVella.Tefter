@@ -2,7 +2,7 @@
 using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.UI.Components;
-public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialogContentComponent<TfDataProvider?>
+public sealed partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialogContentComponent<TfDataProvider?>
 {
 	[Parameter] public TfDataProvider? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
@@ -16,7 +16,7 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 	private List<TfUpsertDataProviderColumn> _newColumns = new List<TfUpsertDataProviderColumn>();
 	private List<TfUpsertDataProviderColumn> _existingColumns = new List<TfUpsertDataProviderColumn>();
 	private TfDataProviderSourceSchemaInfo _schemaInfo = new TfDataProviderSourceSchemaInfo();
-	public virtual List<ValidationError> ValidationErrors { get; set; } = new();
+	public List<ValidationError> ValidationErrors { get; set; } = new();
 
 	private Dictionary<TfDatabaseColumnType, DatabaseColumnTypeInfo> _dbTypeInfoDict = new();
 
@@ -82,7 +82,6 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 			_schemaInfo = TfService.GetDataProviderSourceSchemaInfo(Content.Id);
 			if (_schemaInfo is null) 
 				throw new Exception("NO _schemaInfo");
-			var supportedSourceTypes = Content.SupportedSourceDataTypes;
 			foreach (var columnName in _schemaInfo.SourceColumnDefaultDbType.Keys)
 			{
 				if (String.IsNullOrWhiteSpace(columnName)) continue;
@@ -116,7 +115,7 @@ public partial class TucDataProviderImportSchemaDialog : TfBaseComponent, IDialo
 		}
 	}
 
-	protected string _getValidationCssClass(string sourceName, string propName)
+	private string _getValidationCssClass(string sourceName, string propName)
 	{
 		return ValidationErrors.Any(x => x.PropertyName == $"{sourceName}-{propName}") ? "invalid" : "";
 	}

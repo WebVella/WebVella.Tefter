@@ -7,7 +7,7 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 	}
 	protected override async Task OnInitializedAsync()
 	{
@@ -59,7 +59,7 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderIdentityManageDialog>(
 		new TfDataProviderIdentity() { DataProviderId = _provider!.Id },
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
@@ -74,7 +74,7 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderIdentityManageDialog>(
 				identity,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
@@ -91,9 +91,7 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 			return;
 		try
 		{
-			var provider = TfService.DeleteDataProviderIdentity(key.Id);
 			ToastService.ShowSuccess(LOC("The implementation is successfully deleted!"));
-
 		}
 		catch (Exception ex)
 		{

@@ -8,7 +8,7 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDis
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 	}
 	protected override async Task OnInitializedAsync()
 	{

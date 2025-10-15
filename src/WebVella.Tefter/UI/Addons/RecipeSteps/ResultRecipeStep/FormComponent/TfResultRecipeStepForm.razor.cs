@@ -42,9 +42,9 @@ public partial class TfResultRecipeStepForm : TfRecipeStepFormBase
 
 	private async Task _showDetails(string details)
 	{
-		var dialog = await DialogService.ShowDialogAsync<TucShowTextDialog>(
+		_ = await DialogService.ShowDialogAsync<TucShowTextDialog>(
 				details,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,

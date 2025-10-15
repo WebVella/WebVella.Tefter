@@ -32,14 +32,14 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 		_spaceFinderVisible = true;
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceFinderDialog>(
 			TfAuthLayout.GetState().User,
-			new DialogParameters()
+			new ()
 			{
 				PreventDismissOnOverlayClick = false,
 				PreventScroll = true,
 				Width = TfConstants.DialogWidthLarge,
 				TrapFocus = false,
 			});
-		var result = await dialog.Result;
+		_ = await dialog.Result;
 		_spaceFinderVisible = false;
 	}
 

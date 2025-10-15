@@ -65,8 +65,6 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 		TfDataProvider provider, 
 		ITfDataProviderSychronizationLog synchLog)
 	{
-		var result = new List<TfDataProviderDataRow>();
-
 		MsSqlDataProviderSettings settings = null;
 		try
 		{
@@ -191,7 +189,7 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 			foreach (var providerDataType in provider.ProviderType.GetSupportedSourceDataTypes())
 			{
 				var supportedDBList = provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(providerDataType);
-				var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
+				//var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
 				schemaInfo.SourceTypeSupportedDbTypes[providerDataType] = supportedDBList.ToList();
 			}
 

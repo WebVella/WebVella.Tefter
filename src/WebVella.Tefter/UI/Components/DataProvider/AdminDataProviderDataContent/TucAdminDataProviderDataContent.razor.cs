@@ -15,7 +15,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 	}
 	protected override async Task OnInitializedAsync()
 	{
@@ -85,11 +85,6 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		_showSystemColumns = !_showSystemColumns;
 		StateHasChanged();
 	}
-	private void _toggleJoinKeyColumns()
-	{
-		_showJoinKeyColumns = !_showJoinKeyColumns;
-		StateHasChanged();
-	}
 	private void _toggleCustomColumns()
 	{
 		_showProviderColumns = !_showProviderColumns;
@@ -115,7 +110,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 				RowId = null,
 				Data = _data
 			},
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
@@ -140,7 +135,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 				RowId = row.GetRowId(),
 				Data = _data
 			},
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
@@ -156,6 +151,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	}
 	private async Task _deleteRow(TfDataRow row)
 	{
+		//TODO BOZ: implement
 		throw new NotImplementedException();
 	}
 
@@ -167,50 +163,6 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		var queryDict = new Dictionary<string, object?>{
 			{ TfConstants.SearchQueryName, value}
 		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
-
-	private async Task _goLastPage()
-	{
-		if (_isDataLoading) return;
-		if (_navState.Page == -1) return;
-		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object?>{
-			{ TfConstants.PageQueryName, -1}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
-	private async Task _goOnPage(int page)
-	{
-		if (_isDataLoading) return;
-		if (page < 1 && page != -1) page = 1;
-		if (_navState.Page == page) return;
-		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object?>{
-			{ TfConstants.PageQueryName, page}
-		};
-		await Navigator.ApplyChangeToUrlQuery(queryDict);
-	}
-
-	private async Task _pageSizeChange(int pageSize)
-	{
-		if (_isDataLoading) return;
-		if (pageSize < 0) pageSize = TfConstants.PageSize;
-		if (_navState.PageSize == pageSize) return;
-		try
-		{
-			var user = await TfService.SetPageSize(
-						userId: TfAuthLayout.GetState().User.Id,
-						pageSize: pageSize == TfConstants.PageSize ? null : pageSize
-					);
-		}
-		catch { }
-
-		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object?>{
-			{ TfConstants.PageSizeQueryName, pageSize}
-		};
-		queryDict[TfConstants.PageSizeQueryName] = pageSize;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 

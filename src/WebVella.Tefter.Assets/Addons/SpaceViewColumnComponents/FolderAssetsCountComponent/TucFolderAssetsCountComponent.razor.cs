@@ -116,7 +116,7 @@ public partial class TucFolderAssetsCountComponent : TucBaseViewColumn<TfFolderA
 
 		_dialog = await DialogService.ShowPanelAsync<AssetsFolderPanel>(
 		panelContext,
-		new DialogParameters()
+		new ()
 		{
 			DialogType = DialogType.Panel,
 			Alignment = HorizontalAlignment.Right,

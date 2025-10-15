@@ -33,7 +33,7 @@ public partial class TalkSpaceViewSelectorAction : TfBaseComponent,
 		};
 		_dialog = await DialogService.ShowDialogAsync<TalkThreadModal>(
 				context,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,

@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminRolesPageContent :TfBaseComponent
+public partial class TucAdminRolesPageContent :TfBaseComponent,IDisposable
 {
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private bool _isLoading = false;
@@ -7,7 +7,7 @@ public partial class TucAdminRolesPageContent :TfBaseComponent
 
 	public void Dispose()
 	{
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
@@ -56,7 +56,7 @@ public partial class TucAdminRolesPageContent :TfBaseComponent
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucRoleManageDialog>(
 			new TfRole(),
-			new DialogParameters()
+			new ()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,

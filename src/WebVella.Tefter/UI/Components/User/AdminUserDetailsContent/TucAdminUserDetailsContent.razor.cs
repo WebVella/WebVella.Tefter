@@ -9,7 +9,7 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 	public Guid? _removingRoleId = null;
 	public void Dispose()
 	{
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
@@ -64,7 +64,7 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucUserManageDialog>(
 		_user,
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
@@ -72,10 +72,7 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 			TrapFocus = false
 		});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			var user = (TfUser)result.Data;
-		}
+		if (!result.Cancelled && result.Data != null){}
 	}
 
 	private async Task _addRole()
@@ -104,14 +101,13 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IDisposable
 	private async Task _removeRole(TfRole role)
 	{
 		if (_removingRoleId is not null) return;
-		if (role is null) return;
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this role unassigned?")))
 			return;
 		try
 		{
 			_removingRoleId = role.Id;
 			_user = await TfService.RemoveUserFromRoleAsync( userId: _user.Id, roleId: role.Id);
-			_roleOptions = TfService.GetRoles().Where(x => !_user.Roles.Any(u => x.Id == u.Id)).ToList();
+			_roleOptions = (await TfService.GetRolesAsync()).Where(x => _user.Roles.All(u => x.Id != u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User role removed"));
 		}
 		catch (Exception ex)

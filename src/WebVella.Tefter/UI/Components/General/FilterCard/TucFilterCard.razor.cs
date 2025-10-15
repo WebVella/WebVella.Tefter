@@ -102,7 +102,7 @@ public partial class TucFilterCard : TfBaseComponent
 			TfFilterBase? parentFilter = null;
 			foreach (var item in _items)
 			{
-				var (result, resultParent) = FindFilter(item, parentId.Value, null);
+				var (result, _) = FindFilter(item, parentId.Value, null);
 				if (result is not null)
 				{
 					parentFilter = result;
@@ -144,24 +144,21 @@ public partial class TucFilterCard : TfBaseComponent
 		}
 	}
 
-	public async Task UpdateColumnFilter(TfFilterBase input)
+	private async Task UpdateColumnFilter(TfFilterBase input)
 	{
 		TfFilterBase? filter = null;
-		TfFilterBase? parentFilter = null;
 		foreach (var item in _items)
 		{
 			var (result, resultParent) = FindFilter(item, input.Id, null);
 			if (result is not null)
 			{
 				filter = result;
-				parentFilter = resultParent;
 				break;
 			}
 		}
 
 		if (filter is not null)
 		{
-			filter = input;
 			await InvokeAsync(StateHasChanged);
 			await ItemsChanged.InvokeAsync(_items);
 		}

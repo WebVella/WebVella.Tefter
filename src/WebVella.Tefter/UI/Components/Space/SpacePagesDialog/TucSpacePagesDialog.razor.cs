@@ -38,7 +38,7 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(
 		new TfSpacePage() { SpaceId = _space.Id },
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
@@ -134,7 +134,7 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 		}
 		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(
 		node,
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,

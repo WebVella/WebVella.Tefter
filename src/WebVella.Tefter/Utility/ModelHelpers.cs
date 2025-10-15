@@ -56,18 +56,18 @@ public static class ModelHelpers
 		return null;
 	}
 
-	internal static void FillPresetPathById(List<TfSpaceViewPreset> presets, Guid? presetId, List<TfSpaceViewPreset> result)
-	{
-		if (presetId is null) return;
-
-		var preset = presets.GetPresetById(presetId.Value);
-		if (preset is not null)
-		{
-			result.Add(preset);
-			FillPresetPathById(presets, preset.ParentId, result);
-		}
-		return;
-	}
+	// internal static void FillPresetPathById(List<TfSpaceViewPreset> presets, Guid? presetId, List<TfSpaceViewPreset> result)
+	// {
+	// 	if (presetId is null) return;
+	//
+	// 	var preset = presets.GetPresetById(presetId.Value);
+	// 	if (preset is not null)
+	// 	{
+	// 		result.Add(preset);
+	// 		FillPresetPathById(presets, preset.ParentId, result);
+	// 	}
+	// 	return;
+	// }
 
 	internal static TfSpacePage GetSpaceNodeById(this List<TfSpacePage> presets, Guid nodeId)
 	{

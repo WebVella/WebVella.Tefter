@@ -8,7 +8,7 @@ public partial class TucAdminUsersPageContent : TfBaseComponent, IDisposable
 
 	public void Dispose()
 	{
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
@@ -57,7 +57,7 @@ public partial class TucAdminUsersPageContent : TfBaseComponent, IDisposable
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucUserManageDialog>(
 			new TfUser(),
-			new DialogParameters()
+			new()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,

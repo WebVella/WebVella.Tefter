@@ -13,7 +13,7 @@ public partial class TucUserVisualPreferencesDialog : TfBaseComponent, IDialogCo
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
-		_mode = Content.Settings?.ThemeMode ?? DesignThemeModes.System;
+		_mode = Content.Settings.ThemeMode;
 		
 		_culture = TfConstants.CultureOptions.FirstOrDefault(x=> x.CultureName == Content.Settings?.Culture.Name)
 			?? TfConstants.CultureOptions.First();
@@ -30,9 +30,7 @@ public partial class TucUserVisualPreferencesDialog : TfBaseComponent, IDialogCo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new TfUser();
-
-			result = await TfService.UpdateUserVisualPreferencesAsync(Content!.Id,_mode, _culture);
+			var result = await TfService.UpdateUserVisualPreferencesAsync(Content!.Id,_mode, _culture);
 			ToastService.ShowSuccess(LOC("User account was successfully updated!"));
 
 			await Dialog.CloseAsync(result);

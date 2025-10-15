@@ -1,19 +1,14 @@
-﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public static class TfDependencyInjection
 {
 	public static IServiceCollection AddTefter(
-		this IServiceCollection services, 
+		this IServiceCollection services,
 		IConfigurationRoot? config = null)
 	{
 		LoadAllAssemblies();
 
-		
+
 		//because server render components are not disposed for about 10 min after page is left by browser
 		//maybe 5 seconds is too low ???
 		//https://stackoverflow.com/questions/78451698/dispose-is-never-called-for-any-server-side-blazor-components
@@ -35,11 +30,11 @@ public static class TfDependencyInjection
 		services.AddAuthorizationCore();
 		services.AddAuthenticationCore();
 
-		services.AddAuthentication(TfAuthSchemeOptions.DefaultScheme) 
+		services.AddAuthentication(TfAuthSchemeOptions.DefaultScheme)
 			.AddScheme<TfAuthSchemeOptions, TfAuthSchemeHandler>(
 				TfAuthSchemeOptions.DefaultScheme,
 				opts => { }
-		);
+			);
 		//services.AddTransient<TfAuthenticationMiddleware>();
 		services.AddScoped<AuthenticationStateProvider, TfAuthStateProvider>();
 		services.AddSingleton<ITfConfigurationService, TfConfigurationService>((Context) =>
@@ -47,7 +42,7 @@ public static class TfDependencyInjection
 			return new TfConfigurationService(new ConfigurationBuilder()
 				.AddJsonFile("appsettings.json".ToApplicationPath())
 				.AddJsonFile($"appsettings.{Environment.MachineName}.json".ToApplicationPath(), true)
-		   .Build());
+				.Build());
 		});
 
 		//messaging
@@ -71,7 +66,7 @@ public static class TfDependencyInjection
 		services.AddHostedService<TfDataProviderSynchronizeJob>();
 		services.AddHostedService<TfBlobMaintenanceJob>();
 		services.AddHostedService<TfDataProviderSynchScheduleJob>();
-		
+
 
 		//we don't use static constructor here, 
 		//because no control on assemblies order loading
@@ -82,11 +77,11 @@ public static class TfDependencyInjection
 		foreach (var app in applications)
 			app.OnRegisterDependencyInjections(services);
 
-		if(config is not null)
+		if (config is not null)
 		{
 			if (bool.TryParse(config["Tefter:DisableBackgroundJobs"], out var disableBackgroundJobs))
 			{
-				if(disableBackgroundJobs)
+				if (disableBackgroundJobs)
 				{
 					// Remove all IHostedService registrations
 					var hostedServiceDescriptors = services
@@ -104,7 +99,7 @@ public static class TfDependencyInjection
 		return services;
 	}
 
-	internal static IServiceProvider UseTefter(this IServiceProvider serviceProvider )
+	internal static IServiceProvider UseTefter(this IServiceProvider serviceProvider)
 	{
 		var migrationManager = serviceProvider.GetRequiredService<IMigrationManager>();
 		migrationManager.CheckExecutePendingMigrationsAsync().Wait();
@@ -117,7 +112,7 @@ public static class TfDependencyInjection
 		return serviceProvider;
 	}
 
-	public static WebApplication UseTefter(this WebApplication webApp )
+	public static WebApplication UseTefter(this WebApplication webApp)
 	{
 		webApp.Services.UseTefter();
 		//webApp.UseMiddleware<TfAuthenticationMiddleware>();
@@ -132,11 +127,15 @@ public static class TfDependencyInjection
 			var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
 			var loadedPaths = loadedAssemblies.Select(a => a.Location).ToHashSet();
 			var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
-			var toLoad = referencedPaths.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase)).ToList();
+			var toLoad = referencedPaths.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase))
+				.ToList();
 			foreach (var path in toLoad)
 			{
 				Assembly assembly = null;
-				try { assembly = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path)); } catch { };
+				try { assembly = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path)); }
+				catch { }
+
+				;
 				if (assembly != null)
 					loadedAssemblies.Add(assembly);
 			}

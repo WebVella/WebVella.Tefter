@@ -85,9 +85,6 @@ public class CsvDataProvider : ITfDataProviderAddon
 
         var currentCulture = Thread.CurrentThread.CurrentCulture;
         var currentUICulture = Thread.CurrentThread.CurrentUICulture;
-
-        var result = new List<TfDataProviderDataRow>();
-
         try
         {
             CsvDataProviderSettings? settings = null;
@@ -320,7 +317,7 @@ public class CsvDataProvider : ITfDataProviderAddon
         foreach (var providerDataType in provider.ProviderType.GetSupportedSourceDataTypes())
         {
             var supportedDBList = provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(providerDataType);
-            var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
+            //var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
             result.SourceTypeSupportedDbTypes[providerDataType] = supportedDBList.ToList();
             if (supportedDBList.Count > 0)
             {

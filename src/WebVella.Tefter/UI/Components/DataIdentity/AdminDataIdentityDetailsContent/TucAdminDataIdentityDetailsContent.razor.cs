@@ -3,11 +3,10 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 {
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfDataIdentity? _identity = null;
-	public bool _submitting = false;
 
 	public void Dispose()
 	{
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
@@ -61,7 +60,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataIdentityManageDialog>(
 		_identity,
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,

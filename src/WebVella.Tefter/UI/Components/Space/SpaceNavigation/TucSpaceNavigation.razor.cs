@@ -8,7 +8,7 @@ public partial class TucSpaceNavigation : TfBaseComponent,IDisposable
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 	}
 	protected override void OnInitialized()
 	{

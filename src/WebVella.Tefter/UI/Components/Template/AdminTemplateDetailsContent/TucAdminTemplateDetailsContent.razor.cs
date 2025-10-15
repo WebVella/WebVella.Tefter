@@ -4,15 +4,13 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfTemplate? _template = null;
 	private List<TfDatasetAsOption> _spaceDataSelection = new();
-	public bool _submitting = false;
 	private TfTemplateProcessorDisplaySettingsScreenRegionContext? _dynamicComponentContext = null;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private ITfTemplateProcessorAddon? _processor = null;
-	private List<ITfTemplateProcessorAddon> _allProcessors = new();
 	private TfNavigationState _navState = null!;
 	public void Dispose()
 	{
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
@@ -84,7 +82,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 		if (_template is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucTemplateManageDialog>(
 		_template,
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
@@ -123,9 +121,9 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 	private async Task onHelpClick()
 	{
 		if (_template is null) return;
-		var dialog = await DialogService.ShowDialogAsync<TucTemplateHelpDialog>(
+		_ = await DialogService.ShowDialogAsync<TucTemplateHelpDialog>(
 		_template,
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
@@ -138,7 +136,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 		if (_template is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucTemplateSettingsDialog>(
 		_template,
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,

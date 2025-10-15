@@ -22,7 +22,7 @@ public partial class TucNotificationCenter : TfBaseComponent, IDisposable
 	{
 		_dialog = await DialogService.ShowPanelAsync<TucNotificationCenterPanel>(
 		true,
-		new DialogParameters()
+		new ()
 		{
 			DialogType = DialogType.Panel,
 			Alignment = HorizontalAlignment.Right,

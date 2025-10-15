@@ -9,7 +9,6 @@ public partial class TucEditor : TfBaseComponent,IAsyncDisposable
 
 	[Parameter] public TfEditorSize Size { get; set; } = TfEditorSize.Normal;
 
-	private CancellationTokenSource inputThrottleCancalationToken = new();
 	private DotNetObjectReference<TucEditor> _objectRef;
 	private Guid _componentId = Guid.NewGuid();
 

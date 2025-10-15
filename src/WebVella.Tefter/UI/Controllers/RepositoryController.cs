@@ -103,10 +103,10 @@ public class RepositoryController : ControllerBase
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 			return NotFound();
 		}
-
-		string headerModifiedSince = Request.Headers["If-Modified-Since"];
-
-		var cultureInfo = new CultureInfo("en-US");
+		//
+		// string headerModifiedSince = Request.Headers["If-Modified-Since"];
+		//
+		// var cultureInfo = new CultureInfo("en-US");
 
 		const int durationInSeconds = 60 * 60 * 24 * 30; //30 days caching of these resources
 

@@ -15,7 +15,7 @@ public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentCo
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		base.InitForm(_form);
+		InitForm(_form);
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create user") : LOC("Manage user");
@@ -29,8 +29,7 @@ public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentCo
 		}
 		else
 		{
-
-			_form = new TfUserManageForm()
+			_form = new()
 			{
 				ConfirmPassword = null,
 				Password = null,
@@ -41,12 +40,11 @@ public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentCo
 				Id = Content.Id,
 				ThemeMode = Content.Settings.ThemeMode,
 				IsSidebarOpen = Content.Settings.IsSidebarOpen,
+				Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureName == Content.Settings.CultureName)
 			};
-
-			_form.Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureName == Content.Settings.CultureName);
-			if (_form.Culture is null) _form.Culture = TfConstants.CultureOptions[0];
+			_form.Culture ??= TfConstants.CultureOptions[0];
 		}
-		base.InitForm(_form);
+		InitForm(_form);
 	}
 
 	private async Task _save()
@@ -70,7 +68,7 @@ public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentCo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new TfUser();
+			TfUser result;
 			
 			if (_isCreate)
 			{

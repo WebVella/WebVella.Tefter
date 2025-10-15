@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
+public partial class TucSpaceViewPageContent
 {
 	private Dictionary<Guid, TfSpaceViewRowPresentationMeta> _rowMeta = new();
 	private Dictionary<Guid, TfSpaceViewColumnPresentationMeta> _columnsMeta = new();

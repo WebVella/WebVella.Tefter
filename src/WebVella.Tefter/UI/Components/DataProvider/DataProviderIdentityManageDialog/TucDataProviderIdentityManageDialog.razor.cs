@@ -63,7 +63,7 @@ public partial class TucDataProviderIdentityManageDialog : TfFormBaseComponent, 
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataIdentityManageDialog>(
 		new TfDataIdentity(),
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,

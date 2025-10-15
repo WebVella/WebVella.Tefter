@@ -117,7 +117,7 @@ public partial class TalkCommentsCountComponent : TucBaseViewColumn<TfTalkCommen
 
         _dialog = await DialogService.ShowPanelAsync<TalkThreadPanel>(
         panelContext,
-        new DialogParameters()
+        new ()
         {
             DialogType = DialogType.Panel,
             Alignment = HorizontalAlignment.Right,

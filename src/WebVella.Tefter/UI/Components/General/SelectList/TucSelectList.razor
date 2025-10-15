@@ -23,7 +23,7 @@
 		<FluentStack Class="tf-select-list-values" HorizontalGap="5">
 			@foreach (var item in Values)
 			{
-				<FluentBadge Appearance="Appearance.Neutral" OnDismissClick="@((e) => _onRemoveColumn(item))">@item</FluentBadge>
+				<FluentBadge Appearance="Appearance.Neutral" OnDismissClick="@(() => _onRemoveColumn(item))">@item</FluentBadge>
 			}
 			@if (Values.Count == 0)
 			{

@@ -23,15 +23,20 @@ public static partial class NavigatorExt
 
 
 		//Get user saves and bookmarks
-		if (oldState is not null && oldState.User.Id == currentUser.Id)
+		if (oldState is not null && oldState.User.Id == currentUser.Id && oldState.Space?.Id == navState.SpaceId)
 		{
 			appState.UserBookmarks = oldState.UserBookmarks;
 			appState.UserSaves = oldState.UserSaves;
 		}
+		else if (navState.SpaceId is null)
+		{
+			appState.UserBookmarks = new();
+			appState.UserSaves = new();
+		}
 		else
 		{
-			appState.UserBookmarks = _tfService.GetBookmarksListForUser(currentUser.Id);
-			appState.UserSaves = _tfService.GetSavesListForUser(currentUser.Id);
+			appState.UserBookmarks = _tfService.GetBookmarksListForUser(currentUser.Id,navState.SpaceId.Value);
+			appState.UserSaves = _tfService.GetSavesListForUser(currentUser.Id,navState.SpaceId.Value);
 		}
 
 		if (navState.RouteNodes.Count == 0) { }

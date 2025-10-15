@@ -9,7 +9,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 	}
 	protected override async Task OnInitializedAsync()
 	{
@@ -63,7 +63,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetManageDialog>(
 		new TfDataset() { DataProviderId = _provider!.Id },
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
@@ -78,7 +78,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetManageDialog>(
 				dataset,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
@@ -109,7 +109,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetColumnsDialog>(
 				dataset,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
@@ -124,7 +124,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetFiltersDialog>(
 				dataset,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
@@ -139,7 +139,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetSortOrderDialog>(
 				dataset,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
@@ -154,7 +154,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetDataDialog>(
 				dataset,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = false,
 					PreventScroll = true,

@@ -58,7 +58,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,	ITfScreenReg
 		{
 			MessageStore.Add(EditContext.Field(item.PropertyName), item.Message);
 		}
-		var isValid = EditContext.Validate();
+		EditContext.Validate();
 
 		StateHasChanged();
 

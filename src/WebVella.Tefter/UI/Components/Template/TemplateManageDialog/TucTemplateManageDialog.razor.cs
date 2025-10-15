@@ -41,7 +41,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 			UserId = TfAuthLayout.GetState().User.Id,
 			SpaceDataList = Content.SpaceDataList,
 		};
-		if (_form.ContentProcessorType is not null && _form.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
+		if (_form.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 		{
 			_selectedProcessor = (ITfTemplateProcessorAddon?)Activator.CreateInstance(_form.ContentProcessorType);
 
@@ -68,7 +68,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 		}
 		_datasetsAll = TfService.GetSpaceDataOptionsForTemplate();
 		_recalcSpaceDataOptions();
-		base.InitForm(_form);
+		InitForm(_form);
 	}
 
 
@@ -140,8 +140,6 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 
 	private void _spaceDataOptionChanged(TfDatasetAsOption option)
 	{
-		if (option is null) return;
-
 		_datasetOption = null;
 		bool isSelected = _form.SpaceDataList.Contains(option.Id);
 		if (isSelected) return;

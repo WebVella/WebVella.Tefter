@@ -29,7 +29,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
 
 	protected IStringLocalizer LC;
-	protected virtual TItem componentOptions { get; set; }
+	protected TItem componentOptions { get; set; }
 	protected string optionsSerialized = null;
 	#endregion
 

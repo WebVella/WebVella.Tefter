@@ -4,7 +4,7 @@
 /// A generic select component that allows users to choose an option from a list of items.
 /// </summary>
 /// <typeparam name="TOption">The type of the options in the select component.</typeparam>
-public partial class TucSelect<TOption> : TfBaseComponent where TOption : notnull
+public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption : notnull
 {
 
 	/// <summary>
@@ -44,7 +44,7 @@ public partial class TucSelect<TOption> : TfBaseComponent where TOption : notnul
 	/// Optional render fragment that allows custom rendering of each option item.
 	/// </summary>
 	[Parameter]
-	public virtual RenderFragment<TOption>? OptionTemplate { get; set; }
+	public RenderFragment<TOption>? OptionTemplate { get; set; }
 
 	/// <summary>
 	/// Gets or sets the label text for the select component.

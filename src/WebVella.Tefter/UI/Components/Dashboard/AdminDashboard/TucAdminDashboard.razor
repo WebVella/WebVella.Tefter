@@ -19,26 +19,27 @@
 						else if (_data.ProvidersInfo.Count > 0)
 						{
 							<table class="tf-grid">
-								<thead>
-								<tr>
-									<th>name</th>
-									<th>type</th>
-									<th>data</th>
+								<thead class="tf-grid-thead">
+								<tr class="tf-grid-thead-bkg"></tr>
+								<tr class="tf-grid-tr">
+									<th class="tf-grid-th">name</th>
+									<th class="tf-grid-th">type</th>
+									<th class="tf-grid-th">data</th>
 								</tr>
 								</thead>
 								<tbody>
 								@foreach (var context in _data.ProvidersInfo.OrderByDescending(x => x.RowsCount).Take(5))
 								{
-									<tr @key=@context.Id>
-										<td>
+									<tr @key=@context.Id class="tf-grid-tr">
+										<td class="tf-grid-td">
 											<div>
 												@context.Name
 											</div>
 										</td>
-										<td>
+										<td class="tf-grid-td">
 											<div>@context.ProviderType.AddonName</div>
 										</td>
-										<td>
+										<td class="tf-grid-td">
 											<div>@context.RowsCount rows</div>
 										</td>
 									</tr>
@@ -48,7 +49,8 @@
 						}
 						else
 						{
-							<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No data prividers created yet")</FluentMessageBar>
+							<FluentMessageBar AllowDismiss="false"
+							                  Intent="@MessageIntent.Info">@LOC("No data prividers created yet")</FluentMessageBar>
 						}
 					</ChildContent>
 				</TucCard>
@@ -94,10 +96,11 @@
 						}
 						else
 						{
-							<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No pending synchronization tasks")</FluentMessageBar>
+							<FluentMessageBar AllowDismiss="false"
+							                  Intent="@MessageIntent.Info">@LOC("No pending synchronization tasks")</FluentMessageBar>
 						}
 					</ChildContent>
-				</TucCard>				
+				</TucCard>
 			</FluentGridItem>
 			<FluentGridItem xs="6">
 				<TucCard>

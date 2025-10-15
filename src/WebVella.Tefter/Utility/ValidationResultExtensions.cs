@@ -2,7 +2,7 @@
 
 public static class ValidationResultExtensions
 {
-	public static TfValidationException ToValidationException(this ValidationResult validationResult)
+	public static TfValidationException ToValidationException(this ValidationResult? validationResult)
 	{
 		var valEx = new TfValidationException();
 

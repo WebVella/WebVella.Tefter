@@ -26,7 +26,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	public ValueTask DisposeAsync()
 	{
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 		_locationChangingHandler?.Dispose();
 		return ValueTask.CompletedTask;
 	}
@@ -114,7 +114,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		else
 			_state = TfService.GetAppState(Navigator, _currentUser, url, _state, space);
 
-		_accentColor = (_state.Space?.Color ?? TfColor.Red500);
+		_accentColor = (_state.Space?.Color ?? TfColor.Amber500);
 		_themeMode = _currentUser?.Settings?.ThemeMode ?? DesignThemeModes.System;
 	}
 

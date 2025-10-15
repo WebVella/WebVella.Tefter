@@ -21,7 +21,7 @@ public class TfCreateSpacePageRecipeStep : ITfRecipeStepAddon
 			throw new Exception("Wrong data model type provided for application");
 
 		var step = (TfCreateSpacePageRecipeStepData)addon.Data;
-		var result = tfService.CreateSpacePage(new TfSpacePage
+		_ = tfService.CreateSpacePage(new TfSpacePage
 		{
 			Id = step.SpacePageId == Guid.Empty ? Guid.NewGuid() : step.SpacePageId,
 			SpaceId = step.SpaceId,

@@ -18,7 +18,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -94,7 +94,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewManageDialog>(
 			_spaceView,
-			new DialogParameters()
+			new ()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -109,7 +109,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewManageMainTabDialog>(
 			_spaceView,
-			new DialogParameters()
+			new ()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -125,7 +125,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewColumnManageDialog>(
 			new TfSpaceViewColumn() with { SpaceViewId = _spaceView.Id },
-			new DialogParameters()
+			new ()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -143,7 +143,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewColumnManageDialog>(
 			column,
-			new DialogParameters()
+			new ()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,

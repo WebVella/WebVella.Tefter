@@ -62,7 +62,7 @@ public class TfCreateSpaceDataRecipeStep : ITfRecipeStepAddon
 		}
 
 
-		var result = tfService.CreateDataset(spData);
+		_ = tfService.CreateDataset(spData);
 
 		return Task.CompletedTask;
 	}

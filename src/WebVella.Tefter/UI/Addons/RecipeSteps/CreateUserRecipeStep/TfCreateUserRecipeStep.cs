@@ -39,7 +39,7 @@ public class TfCreateUserRecipeStep : ITfRecipeStepAddon
 			throw valEx;
 		}
 		var stepRoles = allRoles.Where(x => step.Roles.Contains(x.Id)).ToList();
-		var result = await tfService.CreateUserAsync(new TfUser
+		_ = await tfService.CreateUserAsync(new TfUser
 		{
 			Id = step.UserId == Guid.Empty ? Guid.NewGuid() : step.UserId,
 			CreatedOn = DateTime.Now,
@@ -69,6 +69,5 @@ public class TfCreateUserRecipeStepData : ITfRecipeStepAddonData
 	public string FirstName { get; set; }
 	public string LastName { get; set; }
 	public List<Guid> Roles { get; set; } = new();
-	public TfColor? Color { get; set; } = null;
 	public string? CultureName { get; set; } = null;
 }

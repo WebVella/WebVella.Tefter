@@ -9,7 +9,7 @@ public partial class TucSpacePageManageContent : TfBaseComponent, IDisposable
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 	}
 	protected override async Task OnInitializedAsync()
 	{
@@ -59,7 +59,7 @@ public partial class TucSpacePageManageContent : TfBaseComponent, IDisposable
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(
 			_spacePage,
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,

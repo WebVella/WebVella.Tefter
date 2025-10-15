@@ -19,7 +19,7 @@ public partial class TucSpaceViewBookmarkSelector : TfBaseComponent
 
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewBookmarkManageDialog>(
 				ActiveBookmark,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,

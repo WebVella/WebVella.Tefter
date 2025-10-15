@@ -6,10 +6,11 @@
         <FluentLabel Typo="Typography.PaneHeader">@LOC("Spaces")</FluentLabel>
         <FluentStack HorizontalGap="10" HorizontalAlignment="HorizontalAlignment.End">
             <FluentSearch Value="@_search" ValueChanged="_searchChanged"
-                          Immediate="true" AutoComplete="off" Style="order:2"
+                          Immediate="true" AutoComplete="off" Style="order:3"
                           ImmediateDelay="200" @ref="_searchInput" Placeholder="@LOC("search spaces...")"/>
-            <FluentButton OnClick="_adminNavigation" Style="order:1" Appearance="Appearance.Outline"
-                          IconStart="@TfConstants.GetIcon("Settings")">@LOC("Administration")</FluentButton>
+            <FluentButton OnClick="_adminNavigation" Style="order:1" Appearance="Appearance.Outline">@LOC("Administration")</FluentButton>
+            <FluentButton OnClick="_adminNavigation" Style="order:2" Appearance="Appearance.Outline">@LOC("New Space")</FluentButton>  
+         
         </FluentStack>
     </FluentStack>
 </FluentDialogHeader>

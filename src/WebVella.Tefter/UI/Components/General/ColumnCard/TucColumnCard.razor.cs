@@ -46,7 +46,6 @@ public partial class TucColumnCard : TfBaseComponent
 
 	private string? _selectedColumn = null;
 	public bool _submitting = false;
-	public Guid? _initedProviderId = null;
 
 	private async Task _addColumn()
 	{

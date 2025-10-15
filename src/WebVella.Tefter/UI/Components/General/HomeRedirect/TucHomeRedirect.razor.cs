@@ -1,7 +1,7 @@
 ﻿
 namespace WebVella.Tefter.UI.Components;
 
-public partial class TucHomeDashboard : TfBaseComponent
+public partial class TucHomeRedirect : TfBaseComponent
 {
 	[Inject] protected ITfConfigurationService TfConfigurationService { get; set; } = null!;
 	protected override async Task OnInitializedAsync()

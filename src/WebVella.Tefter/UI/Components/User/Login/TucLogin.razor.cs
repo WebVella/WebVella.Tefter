@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucLogin : TfFormBaseComponent
 {
 	private bool _isSubmitting = false;
@@ -10,7 +11,7 @@ public partial class TucLogin : TfFormBaseComponent
 		var installData = await TfService.GetInstallDataAsync();
 		if (installData is null)
 			Navigator.NavigateTo(TfConstants.InstallPage, true);
-		base.InitForm(_form);
+		InitForm(_form);
 	}
 
 	internal async Task _submit()
@@ -25,13 +26,13 @@ public partial class TucLogin : TfFormBaseComponent
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = await TfService.AuthenticateAsync(
+			_ = await TfService.AuthenticateAsync(
 				jsRuntime: JSRuntime,
 				email: _form.Email,
 				password: _form.Password,
 				rememberMe: _form.RememberMe);
-			if (result is not null)
-				Navigator.NavigateTo(TfConstants.HomePageUrl, true);
+
+			Navigator.NavigateTo(TfConstants.HomePageUrl, true);
 		}
 		catch (Exception ex)
 		{
@@ -43,6 +44,4 @@ public partial class TucLogin : TfFormBaseComponent
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-
 }
-

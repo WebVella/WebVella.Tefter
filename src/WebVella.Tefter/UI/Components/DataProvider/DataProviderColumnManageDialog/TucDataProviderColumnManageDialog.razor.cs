@@ -196,10 +196,4 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private bool _providerTypeSupportsAutogen()
-	{
-		var dbInfo = _providerColumnTypeOptions.FirstOrDefault(x => x.Type == _form.DbType);
-		if (dbInfo is null) return false;
-		return dbInfo.SupportAutoDefaultValue;
-	}
 }

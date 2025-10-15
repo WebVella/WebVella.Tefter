@@ -120,7 +120,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 				Url = null,
 				DataIdentities = new List<string> { _dataIdentityValue },
 			},
-			new DialogParameters()
+			new ()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -145,7 +145,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 				FileName = null,
 				DataIdentityValues = new List<string> { _dataIdentityValue },
 			},
-			new DialogParameters()
+			new ()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -175,7 +175,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 						FileName = assetContent.Filename,
 						DataIdentityValues = new List<string> { _dataIdentityValue },
 					},
-					new DialogParameters()
+					new ()
 					{
 						PreventDismissOnOverlayClick = true,
 						PreventScroll = true,
@@ -199,7 +199,7 @@ public partial class AssetsFolderComponent : TfBaseComponent, IDisposable
 						IconUrl = assetContent.IconUrl,
 						DataIdentities = new List<string> { _dataIdentityValue },
 					},
-					new DialogParameters()
+					new ()
 					{
 						PreventDismissOnOverlayClick = true,
 						PreventScroll = true,

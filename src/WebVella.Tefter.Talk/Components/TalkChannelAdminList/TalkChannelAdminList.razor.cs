@@ -59,7 +59,7 @@ public partial class TalkChannelAdminList : TfBaseComponent
     {
         var dialog = await DialogService.ShowDialogAsync<TalkChannelManageDialog>(
             new TalkChannel(),
-            new DialogParameters()
+            new ()
             {
                 PreventDismissOnOverlayClick = true,
                 PreventScroll = true,
@@ -76,7 +76,7 @@ public partial class TalkChannelAdminList : TfBaseComponent
     {
         var dialog = await DialogService.ShowDialogAsync<TalkChannelManageDialog>(
             channel,
-            new DialogParameters()
+            new ()
             {
                 PreventDismissOnOverlayClick = true,
                 PreventScroll = true,

@@ -4,12 +4,10 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfSpace _space = null!;
 	private TfNavigationState _navState = null!;
-	private string? _menu = null;
-	public bool _submitting = false;
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider?.Dispose();
+		TfEventProvider.Dispose();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -39,7 +37,7 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 		});
 	}
 
-	private async Task _init(TfNavigationState navState, TfSpace? role = null)
+	private async Task _init(TfNavigationState navState)
 	{
 		_navState = navState;
 
@@ -48,11 +46,6 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 			if (_navState.SpaceId is null) return;
 			_space = TfService.GetSpace(_navState.SpaceId.Value);
 			if (_space is null) return;
-
-			_menu = null;
-			if(_navState.NodesDict.Keys.Count > 3){ 
-				_menu = _navState.NodesDict[3];
-			}
 		}
 		finally
 		{
@@ -65,7 +58,7 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceManageDialog>(
 		_space,
-		new DialogParameters()
+		new ()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,

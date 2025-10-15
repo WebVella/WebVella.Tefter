@@ -7,10 +7,11 @@ public class UrlUtility
 		BASE_URL = config.BaseUrl;
 		if (BASE_URL.EndsWith("/")) BASE_URL = BASE_URL.Substring(0, BASE_URL.Length - 1);
 	}
-	public async Task<string> GetMetaTitleFromUrl(string url)
+	public async Task<string?> GetMetaTitleFromUrl(string? url)
 	{
+		if (String.IsNullOrWhiteSpace(url)) return null;
 		Uri uri = ConvertUrlToUri(url);
-		if (uri == null) return null;
+		if (!uri.IsAbsoluteUri) return null;
 
 		if (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps) return null;
 
@@ -30,10 +31,11 @@ public class UrlUtility
 		}
 	}
 
-	public async Task<string> GetFavIconForUrl(string url)
+	public async Task<string?> GetFavIconForUrl(string url)
 	{
+		if (String.IsNullOrWhiteSpace(url)) return null;
 		Uri uri = ConvertUrlToUri(url);
-		if (uri == null) return null;
+		if (!uri.IsAbsoluteUri) return null;
 		if (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps) return null;
 
 		using (HttpClient httpClient = new HttpClient())
@@ -66,15 +68,16 @@ public class UrlUtility
 		return null;
 	}
 
-	public static string GetDomainFromUrl(string url)
+	public static string? GetDomainFromUrl(string url)
 	{
+		if (String.IsNullOrWhiteSpace(url)) return null;
 		Uri uri = ConvertUrlToUri(url);
-		if (uri == null) return null;
+		if (!uri.IsAbsoluteUri) return null;
 
 		return uri.Authority;
 	}
 
-	public static Uri ConvertUrlToUri(string url)
+	private static Uri ConvertUrlToUri(string url)
 	{
 		//if (!url.StartsWith("http") && String.IsNullOrWhiteSpace(BASE_URL))
 		//	return null;

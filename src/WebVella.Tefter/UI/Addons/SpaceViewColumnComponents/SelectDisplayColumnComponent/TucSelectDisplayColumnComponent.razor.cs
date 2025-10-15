@@ -161,7 +161,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 			var componentOptions = GetOptions();
 			if (componentOptions.Source == TfSelectDisplayColumnComponentOptionsSourceType.ManuallySet)
 			{
-				selectOptions = _getOptionsFromString(componentOptions.OptionsString);
+				selectOptions = _getOptionsFromString();
 			}
 			else if (componentOptions.Source == TfSelectDisplayColumnComponentOptionsSourceType.SpaceData)
 			{
@@ -264,7 +264,7 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 		}
 	}
 
-	private List<TfSelectOption> _getOptionsFromString(string optionsString)
+	private List<TfSelectOption> _getOptionsFromString()
 	{
 		var result = new List<TfSelectOption>();
 		if (String.IsNullOrWhiteSpace(componentOptions.OptionsString)) return result;
@@ -321,12 +321,6 @@ public partial class TucSelectDisplayColumnComponent : TucBaseViewColumn<TucSele
 			));
 		}
 		return result;
-	}
-
-	private async Task _spaceDataChanged(TfDataset spaceData)
-	{
-		_selectedSpaceData = spaceData;
-		await OnOptionsChanged(nameof(componentOptions.SpaceDataId), _selectedSpaceData?.Id);
 	}
 
 

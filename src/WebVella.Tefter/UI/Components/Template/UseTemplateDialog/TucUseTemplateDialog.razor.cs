@@ -19,7 +19,6 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) _error = LOC("Content is null");
-		else if (Content.SpaceData is null) _error = LOC("SpaceData is null");
 		_initDynamicComponent();
 	}
 
@@ -36,7 +35,7 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 
 	private void _getTemplates()
 	{
-		_templates = TfService.GetSpaceDataTemplates(Content.SpaceData?.Id ?? Guid.Empty, _search);
+		_templates = TfService.GetSpaceDataTemplates(Content!.SpaceData.Id, _search);
 	}
 
 	private async Task _cancel()
@@ -90,11 +89,11 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 		_next();
 	}
 
-	private ITfTemplateProcessorAddon _getTemplateProcessorInstance(Type type)
+	private ITfTemplateProcessorAddon? _getTemplateProcessorInstance(Type type)
 	{
-		if (type is not null && type.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
+		if (type.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 		{
-			return (ITfTemplateProcessorAddon)Activator.CreateInstance(type);
+			return (ITfTemplateProcessorAddon?)Activator.CreateInstance(type);
 		}
 		return null;
 	}
@@ -103,7 +102,7 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 		var sb = new StringBuilder();
 		sb.AppendLine("<style>");
 		sb.AppendLine("html:root {");
-		sb.AppendLine($"--tf-grid-row-selected: var(--neutral-layer-3);");
+		sb.AppendLine("--tf-grid-row-selected: var(--neutral-layer-3);");
 		sb.AppendLine("}");
 		sb.AppendLine("</style>");
 		return sb.ToString();
@@ -123,14 +122,13 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 	{
 		_resultComponentContext.Preview = value;
 	}
-	private ITfTemplateProcessorAddon _getProcessor()
+	private ITfTemplateProcessorAddon? _getProcessor()
 	{
 		if (_selectedTemplate is null) return null;
 
-		if (_selectedTemplate.ContentProcessorType is not null
-			&& _selectedTemplate.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
+		if (_selectedTemplate.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 		{
-			return (ITfTemplateProcessorAddon)Activator.CreateInstance(_selectedTemplate.ContentProcessorType);
+			return (ITfTemplateProcessorAddon?)Activator.CreateInstance(_selectedTemplate.ContentProcessorType);
 
 		}
 		return null;
@@ -143,7 +141,7 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 		_resultPreviewComponentContext = new TfTemplateProcessorResultPreviewScreenRegionContext
 		{
 			Template = null,
-			SelectedRowIds = Content.SelectedRowIds,
+			SelectedRowIds = Content!.SelectedRowIds,
 			SpaceData = Content.SpaceData,
 			User = Content.User,
 			CustomSettingsJson = null,

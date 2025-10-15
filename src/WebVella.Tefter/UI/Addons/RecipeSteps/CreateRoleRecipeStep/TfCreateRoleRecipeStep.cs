@@ -20,7 +20,7 @@ public class TfCreateRoleRecipeStep : ITfRecipeStepAddon
 			throw new Exception("Wrong data model type provided for application");
 
 		var step = (TfCreateRoleRecipeStepData)addon.Data;
-		var result = await tfService.SaveRoleAsync(new TfRole
+		_ = await tfService.SaveRoleAsync(new TfRole
 		{
 			Id = step.RoleId == Guid.Empty ? Guid.NewGuid() : step.RoleId,
 			IsSystem = false,

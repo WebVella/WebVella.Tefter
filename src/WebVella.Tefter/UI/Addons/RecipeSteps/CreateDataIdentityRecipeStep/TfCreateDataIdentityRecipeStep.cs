@@ -20,7 +20,7 @@ public class TfCreateDataIdentityRecipeStep : ITfRecipeStepAddon
 			throw new Exception("Wrong data model type provided for application");
 
 		var step = (TfCreateDataIdentityRecipeStepData)addon.Data;
-		var result = tfService.CreateDataIdentity(new TfDataIdentity
+		_ = tfService.CreateDataIdentity(new TfDataIdentity
 		{
 			Label = step.Label,
 			DataIdentity = step.DataIdentity,

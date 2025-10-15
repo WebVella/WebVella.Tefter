@@ -256,9 +256,6 @@ html:root {
   --tf-padding: calc((10 + (var(--design-unit) * 2 * var(--density))) * 1px);
   --tf-card-space: calc(var(--tf-padding) * 2);
 }
-fluent-menu {
-  color-scheme: dark;
-}
 /*
  * Microsoft Fluent UI Blazor library - Reboot v1.0.2
  * Copyright 2024 Microsoft
@@ -665,6 +662,13 @@ fluent-text-field.with-prefix::part(start) {
 }
 fluent-text-field.with-prefix::part(control) {
   padding-left: 0;
+}
+fluent-switch::part(label) {
+  margin-inline-end: 0;
+}
+fluent-select fluent-option {
+  --neutral-fill-stealth-rest: transparent;
+  --neutral-fill-stealth-hover: color-mix(in srgb, var(--fill-color), var(--accent-fill-rest) 10%);
 }
 /*Badge*/
 .input-badge {
@@ -1448,9 +1452,11 @@ div[class^='fluent-messagebar'],
   flex: 0 0 var(--tf-aside-footer-height);
   display: flex;
   align-items: start;
-  justify-content: center;
+  justify-content: start;
   color: var(--neutral-foreground-hint);
   font-size: var(--type-ramp-minus-1-font-size);
+  padding-left: var(--tf-padding);
+  padding-right: var(--tf-padding);
 }
 .tflg__aside__footer a {
   color: var(--neutral-foreground-hint);
@@ -1527,6 +1533,9 @@ div[class^='fluent-messagebar'],
   display: flex;
   align-items: center;
   gap: var(--tf-padding);
+}
+.tflpc__header__right fluent-search::part(root) {
+  background: padding-box linear-gradient(var(--neutral-fill-input-active), var(--neutral-fill-input-active)), border-box var(--neutral-stroke-input-active);
 }
 .tflpc__tabs {
   flex: 0 0 var(--tf-page-tabs-height);
@@ -1722,9 +1731,10 @@ div[class^='fluent-messagebar'],
   width: 100%;
 }
 .tf-select-component .tf-card {
-  border: 1px solid var(--tf-stroke-input);
+  border: calc(var(--stroke-width) * 1px) solid transparent;
   padding: 5px;
-  border-radius: var(--tf-border-radius-sm);
+  border-radius: calc(var(--control-corner-radius) * 1px);
+  background: padding-box linear-gradient(var(--neutral-fill-input-rest), var(--neutral-fill-input-rest)), border-box var(--neutral-stroke-input-rest);
 }
 .tf-select-component .tf-card__content {
   padding-top: 0;

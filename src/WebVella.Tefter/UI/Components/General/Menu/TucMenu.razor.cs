@@ -123,8 +123,4 @@ public partial class TucMenu : TfBaseComponent
 		return Task.CompletedTask;
 	}
 
-	private Task _showOverflow()
-	{
-		return Task.CompletedTask;
-	}
 }

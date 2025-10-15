@@ -259,46 +259,6 @@ public class NavigatorExtTests
 		result.SpaceId.Should().Be(spaceId);
 		#endregion
 
-		#region << Space view >>
-		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceViewPageUrl, spaceId, viewId)}");
-		result = NavigatorExt.GetNodeData(uri);
-		result.NodesDict.Should().NotBeNull();
-		result.NodesDict.Count.Should().Be(4);
-		result.RouteNodes[0].Should().Be(RouteDataNode.Space);
-		result.RouteNodes[1].Should().Be(RouteDataNode.SpaceId);
-		result.RouteNodes[2].Should().Be(RouteDataNode.SpaceView);
-		result.RouteNodes[3].Should().Be(RouteDataNode.SpaceViewId);
-		result.SpaceId.Should().Be(spaceId);
-		result.SpaceViewId.Should().Be(viewId);
-		#endregion
-
-		#region << Space dataset >>
-
-		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceDataPageUrl, spaceId, dataId)}");
-		result = NavigatorExt.GetNodeData(uri);
-		result.NodesDict.Should().NotBeNull();
-		result.NodesDict.Count.Should().Be(4);
-		result.RouteNodes[0].Should().Be(RouteDataNode.Space);
-		result.RouteNodes[1].Should().Be(RouteDataNode.SpaceId);
-		result.RouteNodes[2].Should().Be(RouteDataNode.SpaceData);
-		result.RouteNodes[3].Should().Be(RouteDataNode.SpaceDataId);
-		result.SpaceId.Should().Be(spaceId);
-		result.SpaceDataId.Should().Be(dataId);
-
-		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceDataViewsPageUrl, spaceId, dataId)}");
-		result = NavigatorExt.GetNodeData(uri);
-		result.NodesDict.Should().NotBeNull();
-		result.NodesDict.Count.Should().Be(5);
-		result.RouteNodes[0].Should().Be(RouteDataNode.Space);
-		result.RouteNodes[1].Should().Be(RouteDataNode.SpaceId);
-		result.RouteNodes[2].Should().Be(RouteDataNode.SpaceData);
-		result.RouteNodes[3].Should().Be(RouteDataNode.SpaceDataId);
-		result.RouteNodes[4].Should().Be(RouteDataNode.Views);
-		result.SpaceId.Should().Be(spaceId);
-		result.SpaceDataId.Should().Be(dataId);
-
-		#endregion
-
 		#region << Space page >>
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpacePagePageUrl, spaceId, pageId)}");
 		result = NavigatorExt.GetNodeData(uri);

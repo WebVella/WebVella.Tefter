@@ -75,7 +75,6 @@ public partial class TucDataProviderManageDataDialog : TfBaseComponent, IDialogC
 			{
 				var dbName = column.DbName!;
 				newRow[dbName] = _form[dbName];
-				var ruleset = column.GetRuleSet();
 				if (_form.ContainsKey(dbName) && _form[dbName] is not null)
 				{
 					newRow[dbName] = _form[dbName]!;

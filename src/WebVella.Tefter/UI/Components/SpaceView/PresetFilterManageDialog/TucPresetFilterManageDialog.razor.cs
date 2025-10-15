@@ -43,15 +43,4 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent, IDialogC
 		await Dialog.CloseAsync(_form);
 	}
 
-	private void _onFiltersChanged(List<TfFilterBase> filters)
-	{
-		_form.Filters = filters;
-		StateHasChanged();
-	}
-	private void _onSortChanged(List<TfSort> sorts)
-	{
-		_form.SortOrders = sorts;
-		StateHasChanged();
-	}
-
 }

@@ -209,7 +209,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 			var componentOptions = GetOptions();
 			if (componentOptions.Source == TfSelectEditColumnComponentOptionsSourceType.ManuallySet)
 			{
-				selectOptions = _getOptionsFromString(componentOptions.OptionsString);
+				selectOptions = _getOptionsFromString();
 			}
 			else if (componentOptions.Source == TfSelectEditColumnComponentOptionsSourceType.SpaceData)
 			{
@@ -312,7 +312,7 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 		}
 	}
 
-	private List<TfSelectOption> _getOptionsFromString(string optionsString)
+	private List<TfSelectOption> _getOptionsFromString()
 	{
 		var result = new List<TfSelectOption>();
 		if (String.IsNullOrWhiteSpace(componentOptions.OptionsString)) return result;
@@ -375,12 +375,6 @@ public partial class TucSelectEditColumnComponent : TucBaseViewColumn<TucSelectE
 			));
 		}
 		return result;
-	}
-
-	private async Task _spaceDataChanged(TfDataset spaceData)
-	{
-		_selectedSpaceData = spaceData;
-		await OnOptionsChanged(nameof(componentOptions.SpaceDataId), _selectedSpaceData?.Id);
 	}
 	#endregion
 }

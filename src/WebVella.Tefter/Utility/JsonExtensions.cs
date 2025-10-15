@@ -3,7 +3,7 @@
 [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public class JsonIncludePrivatePropertyAttribute : System.Attribute { }
 
-public static partial class JsonExtensions
+public static class JsonExtensions
 {
 	public static Action<JsonTypeInfo> AddPrivateProperties<TAttribute>() where TAttribute : System.Attribute => typeInfo =>
 	{
@@ -13,20 +13,20 @@ public static partial class JsonExtensions
 			AddPrivateProperties(typeInfo, type, p => Attribute.IsDefined(p, typeof(TAttribute)));
 	};
 
-	public static Action<JsonTypeInfo> AddPrivateProperties(Type declaredType) => typeInfo =>
-		AddPrivateProperties(typeInfo, declaredType, p => true);
-
-	public static Action<JsonTypeInfo> AddPrivateProperty(Type declaredType, string propertyName) => typeInfo =>
-	{
-		if (typeInfo.Kind != JsonTypeInfoKind.Object || !declaredType.IsAssignableFrom(typeInfo.Type))
-			return;
-		var propertyInfo = declaredType.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.NonPublic);
-		if (propertyInfo == null)
-			throw new ArgumentException(string.Format("Private roperty {0} not found in type {1}", propertyName, declaredType));
-		if (typeInfo.Properties.Any(p => p.GetMemberInfo() == propertyInfo))
-			return;
-		AddProperty(typeInfo, propertyInfo);
-	};
+	// public static Action<JsonTypeInfo> AddPrivateProperties(Type declaredType) => typeInfo =>
+	// 	AddPrivateProperties(typeInfo, declaredType, p => true);
+	//
+	// public static Action<JsonTypeInfo> AddPrivateProperty(Type declaredType, string propertyName) => typeInfo =>
+	// {
+	// 	if (typeInfo.Kind != JsonTypeInfoKind.Object || !declaredType.IsAssignableFrom(typeInfo.Type))
+	// 		return;
+	// 	var propertyInfo = declaredType.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.NonPublic);
+	// 	if (propertyInfo == null)
+	// 		throw new ArgumentException(string.Format("Private roperty {0} not found in type {1}", propertyName, declaredType));
+	// 	if (typeInfo.Properties.Any(p => p.GetMemberInfo() == propertyInfo))
+	// 		return;
+	// 	AddProperty(typeInfo, propertyInfo);
+	// };
 
 	static void AddPrivateProperties(JsonTypeInfo typeInfo, Type declaredType, Func<PropertyInfo, bool> filter)
 	{
@@ -106,7 +106,7 @@ public static partial class JsonExtensions
 		}
 	}
 
-	static MemberInfo GetMemberInfo(this JsonPropertyInfo property) => (property.AttributeProvider as MemberInfo);
+	// static MemberInfo GetMemberInfo(this JsonPropertyInfo property) => (property.AttributeProvider as MemberInfo);
 
 	static IEnumerable<Type> BaseTypesAndSelf(this Type type)
 	{

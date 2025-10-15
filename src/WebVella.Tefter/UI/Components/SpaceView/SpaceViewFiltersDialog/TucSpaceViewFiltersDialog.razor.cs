@@ -12,7 +12,6 @@ public partial class TucSpaceViewFiltersDialog : TfFormBaseComponent, IDialogCon
 	private List<TfFilterQuery> _items = new List<TfFilterQuery>();
 	private string _activeTab = "current";
 	internal string? _selectedFilterColumn = null;
-	public bool _submitting = false;
 	private TfNavigationState _navState = null!;
 	protected override async Task OnInitializedAsync()
 	{

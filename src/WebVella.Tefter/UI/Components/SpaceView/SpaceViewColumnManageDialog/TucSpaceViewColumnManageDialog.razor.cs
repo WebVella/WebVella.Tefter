@@ -18,7 +18,6 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	private TfSpaceViewColumn _form = new();
 	private TfSpaceView _spaceView = new();
 	private TfDataset _spaceData = new();
-	private TfDataProvider _provider = new();
 	private List<string> _options = new();
 	private ReadOnlyCollection<TfSpaceViewColumnTypeAddonMeta> _availableColumnTypes = null!;
 	private TfSpaceViewColumnTypeAddonMeta? _selectedColumnType = null;
@@ -352,22 +351,5 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private List<Option<string>> _getTypeListAsOptions(List<Type> typeList)
-	{
-		var result = new List<Option<string>>();
-		if (typeList is null) return result;
 
-		foreach (var item in typeList)
-		{
-			result.Add(new Option<string> { Text = item.ToDescriptionString(), Value = item.Name });
-		}
-
-		return result;
-
-	}
-
-	private void _titleChanged(string title)
-	{
-		_form.Title = title;
-	}
 }

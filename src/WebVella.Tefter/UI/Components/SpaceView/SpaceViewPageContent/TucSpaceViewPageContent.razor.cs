@@ -32,7 +32,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private RenderFragment _caretDown = null!;
 	private RenderFragment _caretUp = null!;
 	private RenderFragment _manageIcon = null!;
-	private StringBuilder _columnSortClass = new();
 	private string? _managePageUrl = null;
 	private Dictionary<string, object>? _manageBtnAttributes = new();
 	public async ValueTask DisposeAsync()
@@ -394,7 +393,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			var changedRow = value.Rows[0];
 			var changedRowTfId = changedRow.GetRowId();
 
-			var dataTable = TfService.SaveDataTable(value);
+			TfService.SaveDataTable(value);
 
 			//Apply changed to the datatable
 			if (_data is null || _data.Rows.Count == 0 || _data.Rows.Count == 0) return;
@@ -524,14 +523,14 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewColumnManageDialog>(
 				column,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
 					Width = TfConstants.DialogWidthLarge,
 					TrapFocus = false
 				});
-		var result = await dialog.Result;
+		_ = await dialog.Result;
 	}
 	#endregion
 }

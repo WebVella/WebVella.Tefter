@@ -6,8 +6,6 @@ public record TfScreenRegionTab
 	public string Label { get; private set; } = null!;
 	public string? FluentIconName { get; private set; } = null;
 
-	public TfScreenRegionTab() { }
-
 	public TfScreenRegionTab(string slug, string label, string? fluentIconName = null)
 	{
 		Slug = slug;

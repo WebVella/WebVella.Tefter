@@ -85,7 +85,7 @@ public class TfCreateDataProviderRecipeStep : ITfRecipeStepAddon
 				DataIdentity = item.DataIdentity,
 				Columns = keyColumns
 			};
-			var result = tfService.CreateDataProviderIdentity(dpIdentity);
+			_ = tfService.CreateDataProviderIdentity(dpIdentity);
 		}
 
 		return Task.CompletedTask;

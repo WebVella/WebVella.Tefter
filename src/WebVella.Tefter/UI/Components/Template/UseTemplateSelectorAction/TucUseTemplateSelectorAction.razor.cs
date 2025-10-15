@@ -13,9 +13,7 @@ public partial class TucUseTemplateSelectorAction : TfBaseComponent, ITfScreenRe
 	public TfSpaceViewSelectorActionScreenRegionContext RegionContext { get; set; } = null!;
 	private async Task _clickHandler()
 	{
-		if (RegionContext.SelectedDataRows.Count == 0
-		|| RegionContext.SpaceData is null
-		|| RegionContext.CurrentUser is null) return;
+		if (RegionContext.SelectedDataRows.Count == 0) return;
 
 		var context = new TfUseTemplateContext
 		{
@@ -23,9 +21,9 @@ public partial class TucUseTemplateSelectorAction : TfBaseComponent, ITfScreenRe
 			SpaceData = RegionContext.SpaceData,
 			User = RegionContext.CurrentUser
 		};
-		var dialog = await DialogService.ShowDialogAsync<TucUseTemplateDialog>(
+		_ = await DialogService.ShowDialogAsync<TucUseTemplateDialog>(
 				context,
-				new DialogParameters()
+				new ()
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,

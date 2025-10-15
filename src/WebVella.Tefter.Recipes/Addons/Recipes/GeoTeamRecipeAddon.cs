@@ -186,7 +186,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 			},
 			Data = new TfGroupRecipeStepData()
 			{
-				Steps = new List<ITfRecipeStepAddon>() {
+				Steps = new () {
 					step11,step12,step13,step14,step15, step16
 				},
 			}
