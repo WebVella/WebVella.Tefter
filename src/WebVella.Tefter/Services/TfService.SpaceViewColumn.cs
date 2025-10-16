@@ -370,11 +370,8 @@ public partial class TfService : ITfService
 			OnlyIcon = dbo.OnlyIcon,
 			Position = dbo.Position,
 			TypeId = dbo.TypeId,
-			ComponentId = dbo.ComponentId,
-			EditComponentId = dbo.EditComponentId,
 			DataMapping = JsonSerializer.Deserialize<Dictionary<string, string>>(dbo.DataMappingJson) ?? new Dictionary<string, string>(),
-			ComponentOptionsJson = dbo.ComponentOptionsJson,
-			EditComponentOptionsJson = dbo.EditComponentOptionsJson,
+			TypeOptionsJson = dbo.TypeOptionsJson,
 			Settings = !String.IsNullOrWhiteSpace(dbo.SettingsJson) && dbo.SettingsJson.StartsWith("{") && dbo.SettingsJson.EndsWith("}")
 				? (JsonSerializer.Deserialize<TfSpaceViewColumnSettings>(dbo.SettingsJson) ?? new TfSpaceViewColumnSettings())
 				: new TfSpaceViewColumnSettings()
@@ -397,11 +394,8 @@ public partial class TfService : ITfService
 			OnlyIcon = model.OnlyIcon,
 			Position = (model.Position ?? 1),
 			TypeId = model.TypeId,
-			ComponentId = model.ComponentId,
-			EditComponentId = model.EditComponentId,
 			DataMappingJson = JsonSerializer.Serialize(model.DataMapping ?? new Dictionary<string, string>()),
-			ComponentOptionsJson = model.ComponentOptionsJson,
-			EditComponentOptionsJson = model.EditComponentOptionsJson,
+			TypeOptionsJson = model.TypeOptionsJson,
 			SettingsJson = JsonSerializer.Serialize(model.Settings),
 		};
 	}
@@ -432,14 +426,6 @@ public partial class TfService : ITfService
 				RuleFor(column => column.TypeId)
 					.NotEmpty()
 					.WithMessage("The column type is required.");
-
-				RuleFor(column => column.ComponentId)
-					.NotEmpty()
-					.WithMessage("The column component type is required.");
-
-				RuleFor(column => column.EditComponentId)
-					.NotEmpty()
-					.WithMessage("The column edit component type is required.");
 
 				RuleFor(column => column.SpaceViewId)
 					.NotEmpty()

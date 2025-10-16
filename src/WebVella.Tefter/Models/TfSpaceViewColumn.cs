@@ -10,11 +10,8 @@ public record TfSpaceViewColumn
 	public bool OnlyIcon { get; set; } = false;
 	public short? Position { get; set; }
 	public Guid TypeId { get; set; }
-	public Guid ComponentId { get; set; }
-	public Guid EditComponentId { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
-	public string ComponentOptionsJson { get; set; } = "{}";
-	public string EditComponentOptionsJson { get; set; } = "{}";
+	public string TypeOptionsJson { get; set; } = "{}";
 	public TfSpaceViewColumnSettings Settings { get; set; } = new();
 	public string? GetColumnNameFromDataMapping(){ 
 		if(DataMapping is null || DataMapping.Keys.Count == 0) return null;
@@ -49,20 +46,12 @@ internal class TfSpaceViewColumnDbo
 
 	[TfDboModelProperty("type_id")]
 	public Guid TypeId { get; set; }
-
-	[TfDboModelProperty("component_id")]
-	public Guid ComponentId { get; set; }
-	[TfDboModelProperty("edit_component_id")]
-	public Guid EditComponentId { get; set; }
+	
+	[TfDboModelProperty("type_options_json")]
+	public string TypeOptionsJson { get; set; } = "{}";
 
 	[TfDboModelProperty("data_mapping_json")]
 	public string DataMappingJson { get; set; } = "{}";
-
-	[TfDboModelProperty("custom_options_json")]
-	public string ComponentOptionsJson { get; set; } = "{}";
-
-	[TfDboModelProperty("edit_custom_options_json")]
-	public string EditComponentOptionsJson { get; set; } = "{}";
 
 	[TfDboModelProperty("settings_json")]
 	public string SettingsJson { get; set; } = "{}";

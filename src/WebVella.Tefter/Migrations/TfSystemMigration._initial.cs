@@ -687,11 +687,8 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 					.AddShortTextColumn("title", c => { c.NotNullable(); })
 					.AddShortIntegerColumn("position", c => { c.NotNullable(); })
 					.AddGuidColumn("type_id", c => { c.NotNullable(); })
-					.AddGuidColumn("component_id", c => { c.NotNullable(); })
-					.AddGuidColumn("edit_component_id", c => { c.NotNullable(); })
 					.AddTextColumn("data_mapping_json", c => { c.NotNullable(); })
-					.AddTextColumn("custom_options_json", c => { c.NotNullable(); })
-					.AddTextColumn("edit_custom_options_json", c => { c.NotNullable(); })
+					.AddTextColumn("type_options_json", c => { c.NotNullable(); })
 					.AddTextColumn("settings_json", c => { c.NotNullable().WithDefaultValue("{}"); })
 					.AddShortTextColumn("icon", c => { c.NotNullable().WithDefaultValue(""); })
 					.AddBooleanColumn("only_icon", c => { c.NotNullable().WithDefaultValue(false); });

@@ -223,18 +223,17 @@ public partial class TfService : ITfService
 							Position = position,
 							Title = NavigatorExt.ProcessForTitle(columnName),
 							QueryName = NavigatorExt.GenerateQueryName(),
-							ComponentOptionsJson = "{}",
-							EditComponentOptionsJson = "{}",
+							TypeOptionsJson = "{}",
 							DataMapping = new(),
-							TypeId = Guid.Empty,
-							ComponentId = Guid.Empty
+							TypeId = Guid.Empty
 						};
 
 						if (columnType is not null)
 						{
 							tfColumn.TypeId = columnType.AddonId;
-							tfColumn.ComponentId = columnType.DefaultDisplayComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
-							tfColumn.EditComponentId = columnType.DefaultEditComponentId ?? new Guid(TucTextEditColumnComponent.ID);
+							//TODO initialize type options with default values for the column type
+							//tfColumn.ComponentId = columnType.DefaultDisplayComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
+							//tfColumn.EditComponentId = columnType.DefaultEditComponentId ?? new Guid(TucTextEditColumnComponent.ID);
 							foreach (var mapper in columnType.DataMapping)
 							{
 								tfColumn.DataMapping[mapper.Alias] = columnName;
