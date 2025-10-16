@@ -1742,6 +1742,10 @@ fluent-menu-item::part(start) {
 .tf-space-finder__space {
   box-shadow: none;
   border-color: var(--neutral-stroke-rest) !important;
+  margin-top: 0.5rem !important;
+}
+.tf-space-finder__space:first-child {
+  margin-top: 0;
 }
 .tf-space-finder__space--active {
   border-color: var(--accent-fill-rest) !important;

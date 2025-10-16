@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucSpaceViewPageContentNavigation : TfBaseComponent, IDisposable
+public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IDisposable
 {
 	// Dependency Injection
 	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
@@ -47,8 +47,8 @@ public partial class TucSpaceViewPageContentNavigation : TfBaseComponent, IDispo
 		{
 			_menu = new();
 			Guid? currentPresetId = Navigator.GetGuidFromQuery(TfConstants.PresetIdQueryName);
-			var mainIcon = String.IsNullOrWhiteSpace(SpaceView.Settings.MainTabFluentIcon)
-				? TfConstants.GetIcon(SpacePage.FluentIconName)
+			Icon? mainIcon = String.IsNullOrWhiteSpace(SpaceView.Settings.MainTabFluentIcon)
+				? null
 				: TfConstants.GetIcon(SpaceView.Settings.MainTabFluentIcon);
 			if (SpaceView.Presets.Count > 0)
 			{

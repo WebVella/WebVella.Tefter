@@ -2,15 +2,24 @@
   &__space {
     box-shadow: none;
     border-color: var(--neutral-stroke-rest) !important;
-    &--active{
+    margin-top: 0.5rem !important;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &--active {
       border-color: var(--accent-fill-rest) !important;
-      &:hover{
+
+      &:hover {
         background: var(--neutral-fill-hover);
       }
-      &:focus,&:active{
+
+      &:focus, &:active {
         box-shadow: var(--neutral-fill-hover);
-      }      
+      }
     }
+
     .tf-card__content {
       display: flex;
       align-items: center;
@@ -25,7 +34,8 @@
     &__meta {
       flex: 1 1 auto;
       padding: 0 10px;
-      mark{
+
+      mark {
         background: transparent;
         font-weight: bold;
       }

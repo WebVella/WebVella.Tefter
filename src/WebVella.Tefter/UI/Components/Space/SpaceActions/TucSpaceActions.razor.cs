@@ -117,6 +117,23 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 		Navigator.NavigateTo(pageManageUrl.GenerateWithLocalAsReturnUrl(Navigator.Uri)!);
 	}
 
+	private async Task _addSpace()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucSpaceManageDialog>(
+			new TfSpace(),
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+		}
+	}		
+	
 	private async Task _deleteSpace()
 	{
 		var state = TfAuthLayout.GetState();
