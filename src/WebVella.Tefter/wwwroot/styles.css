@@ -731,15 +731,6 @@ fluent-menu-item::part(start) {
   align-items: center;
 }
 /*Dialog*/
-fluent-dialog-body {
-  scrollbar-width: thin;
-}
-.fluent-dialog-header fluent-button::part(control) {
-  background: transparent;
-}
-.fluent-dialog-main::part(control) {
-  padding: 0 !important;
-}
 .fluent-dialog-main.right::part(control),
 .fluent-dialog-main.left::part(control) {
   --dialog-padding: 0px;
@@ -1116,6 +1107,10 @@ fluent-dialog-body {
 .tf-grid tbody {
   position: relative;
   z-index: 2;
+  --neutral-fill-input-rest: var(--neutral-fill-input-active);
+  --neutral-stroke-input-rest: var(--neutral-stroke-input-active);
+  --neutral-fill-input-hover: var(--neutral-fill-input-focus);
+  --neutral-stroke-input-hover: var(--neutral-stroke-input-focus);
 }
 .tf-grid tbody tr {
   /*            &.tf-grid-tr--selected .tf-grid-td--check::after {
@@ -1229,7 +1224,7 @@ fluent-dialog-body {
   bottom: 2px;
   width: 5px;
   left: -1px;
-  background: var(--tf-amber-300);
+  background: var(--warning);
 }
 .tf-grid > tbody tr:first-child > td,
 .tf-grid > tbody tr:first-child > th {

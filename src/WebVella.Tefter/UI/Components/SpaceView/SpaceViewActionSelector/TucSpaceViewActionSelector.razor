@@ -7,13 +7,6 @@
 			<FluentMenuItem Disabled="@(SelectedRows.Count == 0)" OnClick="_deleteSelectedRecords">
 				@LOC("Delete Selected")
 				<FluentIcon Value="@TfConstants.GetIcon("Delete")" Slot="start" Color="@Color.Error"/>
-				@if (SelectedRows.Count > 0)
-				{
-					<span slot="end">
-							<FluentBadge Appearance="@Appearance.Neutral"
-							             Style="margin-left:3px;">@SelectedRows.Count</FluentBadge>
-						</span>
-				}
 			</FluentMenuItem>
 		}
 		<TucScreenRegionComponent RegionContext="@_context"/>

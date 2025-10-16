@@ -3,10 +3,4 @@
 <FluentMenuItem Disabled="@(RegionContext.SelectedDataRows.Count == 0)" OnClick="_clickHandler">
 	@LOC("Template Selected")
 	<FluentIcon Value="@TfConstants.GetIcon("CalendarTemplate")" Slot="start" Color="@Color.Error" />
-	@if (RegionContext.SelectedDataRows.Count > 0)
-	{
-		<span slot="end">
-			<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@RegionContext.SelectedDataRows.Count</FluentBadge>
-		</span>
-	}
 </FluentMenuItem>

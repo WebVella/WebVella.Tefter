@@ -8,6 +8,7 @@
 		<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" />
 	</FluentButton>
 }
+@* Manage rows *@
 @if (SpaceView.Settings.CanUpdateRows)
 {
 	@if (TucSpaceViewPageContent.GetEditAll())
@@ -22,13 +23,10 @@
 			<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" />
 		</FluentButton>
 	}
-} 
-<FluentButton Id="view-actions-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
-	<FluentIcon Value="@TfConstants.GetIcon("Connector")" Color="@Color.Accent" />
-</FluentButton>
-<FluentButton Id="view-share-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
-	<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Accent" />
-</FluentButton>
+	<FluentDivider Orientation="Orientation.Vertical"/>
+}
+
+@*Action on rows*@
 <FluentButton Id="select-all-menu-toggler"
               OnClick="@(() => _selectAllMenuVisible = !_selectAllMenuVisible)" Title="@LOC("select all")" Appearance="@Appearance.Outline"
               Loading="SelectAllLoading">
@@ -47,6 +45,13 @@
 	<FluentMenuItem OnClick="@OnSelectAllClick">select all</FluentMenuItem>
 	<FluentMenuItem OnClick="@OnDeSelectAllClick">deselect all</FluentMenuItem>
 </FluentMenu>
+
+<FluentButton Id="view-actions-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
+	<FluentIcon Value="@TfConstants.GetIcon("Connector")" Color="@Color.Accent" />
+</FluentButton>
+<FluentButton Id="view-share-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
+	<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Accent" />
+</FluentButton>
 @if (_hasViewPersonalization)
 {
 	<div class="tf-hover-switch">

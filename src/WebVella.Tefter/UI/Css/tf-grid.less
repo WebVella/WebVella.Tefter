@@ -42,7 +42,7 @@
     border-left: 1px solid var(--neutral-stroke-rest);
     border-right: 1px solid var(--neutral-stroke-rest);
   }
-
+  
   thead {
     position: relative;
     z-index: 1;
@@ -193,7 +193,11 @@
   tbody {
     position: relative;
     z-index: 2;
-
+    --neutral-fill-input-rest: var(--neutral-fill-input-active);
+    --neutral-stroke-input-rest: var(--neutral-stroke-input-active);
+    --neutral-fill-input-hover: var(--neutral-fill-input-focus);
+    --neutral-stroke-input-hover: var(--neutral-stroke-input-focus);
+    
     & tr {
       & > th,
       & > td {
@@ -307,7 +311,7 @@
         bottom: 2px;
         width: 5px;
         left: -1px;
-        background: var(--tf-amber-300);
+        background: var(--warning);
       }
 
       /*            &.tf-grid-tr--selected .tf-grid-td--check::after {
