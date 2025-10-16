@@ -5,7 +5,7 @@
     {
         @if (item.Href == "#" && item.OnClick.HasDelegate)
         {
-            <div @onclick="item.OnClick" @onclick:preventDefault="true"  @onclick:stopPropagation="true">
+            <div @onclick="item.OnClick" @onclick:preventDefault="true" @onclick:stopPropagation="true">
                 <FluentBreadcrumbItem Href="#">
                     @if (item.IconCollapsed is not null)
                     {
@@ -15,7 +15,7 @@
                 </FluentBreadcrumbItem>
             </div>
         }
-        else
+        else 
         {
             <FluentBreadcrumbItem Href="@item.Url">
                 @if (item.IconCollapsed is not null)
@@ -25,5 +25,9 @@
                 @item.Text
             </FluentBreadcrumbItem>
         }
+    }
+    @if (_items.Count == 0)
+    {
+        <FluentBreadcrumbItem Style="padding-left:var(--tf-padding)">@LOC("Tefter Home")</FluentBreadcrumbItem>
     }
 </FluentBreadcrumb>

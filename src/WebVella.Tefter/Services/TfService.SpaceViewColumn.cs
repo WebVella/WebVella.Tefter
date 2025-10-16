@@ -482,7 +482,7 @@ public partial class TfService : ITfService
 						Match match = Regex.Match(QueryName, TfConstants.DB_OBJECT_NAME_VALIDATION_PATTERN);
 						return match.Success && match.Value == QueryName.Trim();
 					})
-					.WithMessage($"The query name can only contains underscores and lowercase alphanumeric characters. It must beggin with a letter, " +
+					.WithMessage($"The query name can only contains underscores and lowercase alphanumeric characters. It must begin with a letter, " +
 						$"not include spaces, not end with an underscore, and not contain two consecutive underscores");
 
 			});

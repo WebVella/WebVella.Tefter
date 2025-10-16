@@ -70,6 +70,7 @@
 	position: relative;
 	overflow-y: auto;
 	padding: 10px;
+	scrollbar-width: thin;
 }
 
 ::deep .asset-panel__footer {
@@ -87,7 +88,7 @@
 
 ::deep .asset-panel__body .asset-item {
 	background: var(--neutral-fill-layer-rest);
-	border: none;
+	border: 1px solid var(--neutral-stroke-rest);
 	flex: 1 1 auto;
 	display: flex;
 	justify-content: start;
@@ -97,7 +98,7 @@
 }
 
 	::deep .asset-panel__body .asset-item:hover {
-		background-color: var(--neutral-fill-layer-active);
+		background-color: var(--neutral-fill-layer-hover);
 	}
 
 ::deep .asset-panel__body .asset-item__icon {
@@ -174,10 +175,6 @@
 
 ::deep .asset-panel__body .asset-item:hover .asset-item__action fluent-button {
 	visibility: visible;
-}
-
-::deep .asset-panel__body .asset-item:hover {
-	background: var(--neutral-layer-3);
 }
 
 ::deep .asset-panel__body .asset-item + .asset-item {

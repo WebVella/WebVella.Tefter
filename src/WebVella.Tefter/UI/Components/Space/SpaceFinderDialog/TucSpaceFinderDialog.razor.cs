@@ -92,6 +92,23 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 		_init(search);
 	}
 
+	private async Task _addSpace()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucSpaceManageDialog>(
+			new TfSpace(),
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+		}
+	}	
+	
 	private async Task _adminNavigation()
 	{
 		Navigator.NavigateTo(TfConstants.AdminDashboardUrl);
@@ -107,7 +124,10 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 			await Dialog.CloseAsync();
 			return;
 		}
-		ToastService.ShowWarning(LOC("Space has no pages created yet"));
+		else
+		{
+			Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl,option.Space.Id),false);
+		}
 	}
 
 	private Task _bookmarkSpace(TfSpaceFinderItem option)

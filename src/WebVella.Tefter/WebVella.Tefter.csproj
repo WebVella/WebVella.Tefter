@@ -95,40 +95,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <_ContentIncludedByDefault Remove="wwwroot\css\drag-drop.css" />
+	  <AdditionalFiles Include="UI\Components\Space\SpaceContent\TucSpaceManageDetailsContent.razor" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AdditionalFiles Include="UI\Components\Bookmark\SpaceViewBookmarkManageDialog\TucSpaceViewBookmarkManageDialog.razor" />
-	  <AdditionalFiles Include="UI\Components\Bookmark\SpaceViewBookmarkSelector\TucSpaceViewBookmarkSelector.razor" />
-	  <AdditionalFiles Include="UI\Components\General\HomeRedirect\TucHomeRedirect.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="UI\Components\Dashboard\HomeToolbar\TucHomeToolbar.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\DataIdentity\AdminDataIdentityDetailsAsideToolbar\TucAdminDataIdentityDetailsAsideToolbar.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\DataProvider\AdminDataProviderDetailsAsideToolbar\TucAdminDataProviderDetailsAsideToolbar.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\Page\AdminPageDetailsAsideToolbar\TucAdminPageDetailsAsideToolbar.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\Role\AdminRoleDetailsAsideToolbar\TucAdminRoleDetailsAsideToolbar.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\SharedColumn\AdminSharedColumnDetailsAsideToolbar\TucAdminSharedColumnDetailsAsideToolbar.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\SpacePage\SpacePageAsideToolbar\TucSpacePageAsideToolbar.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\SpaceView\SpaceViewBookmarkSelector\TucSpaceViewBookmarkSelector.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\SpaceView\SpaceViewColumnsContent\TucSpaceViewColumnsContent.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\SpaceView\SpaceViewDetailsContent\TucSpaceViewDetailsContent.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\SpaceView\SpaceViewFiltersContent\TucSpaceViewFiltersContent.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\SpaceView\SpaceViewPropertiesSelector\TucSpaceViewPropertiesSelector.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\Template\AdminTemplateDetailsAsideToolbar\TucAdminTemplateDetailsAsideToolbar.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\User\AdminUserDetailsAsideToolbar\TucAdminUserDetailsAsideToolbar.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\General\Layout\TucPageLayout.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\General\HeaderCurrentSpace\TucHeaderCurrentSpace.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\General\HeaderSpaceMenu\TucHeaderSpaceMenu.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\General\AsideMenu\TucAsideMenu.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\General\LanguageSwitch\TucLanguageSwitch.razor" />
-	  <UpToDateCheckInput Remove="UI\Components\General\SelectBasicColor\TucSelectBasicColor.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="UI\Components\Bookmark\" />
+	  <UpToDateCheckInput Remove="UI\Addons\RecipeSteps\CreateSpaceViewRecipeStep\FormComponent\TfCreateSpaceViewRecipeStepForm.razor" />
 	</ItemGroup>
 
 </Project>

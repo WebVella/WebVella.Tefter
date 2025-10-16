@@ -9,7 +9,7 @@ public partial interface ITfService
 	//public List<TfSpaceView> GetSpaceViewsList(
 	//	Guid spaceId, string? search = null);
 
-	public TfSpaceView GetSpaceView(
+	public TfSpaceView? GetSpaceView(
 		Guid id);
 
 	public Task<TfSpaceView> CreateSpaceView(
@@ -98,7 +98,7 @@ public partial class TfService : ITfService
 	//}
 
 
-	public TfSpaceView GetSpaceView(
+	public TfSpaceView? GetSpaceView(
 		Guid id)
 	{
 		try
@@ -221,8 +221,8 @@ public partial class TfService : ITfService
 							Id = Guid.NewGuid(),
 							SpaceViewId = spaceView.Id,
 							Position = position,
-							Title = columnName,
-							QueryName = columnName,
+							Title = NavigatorExt.ProcessForTitle(columnName),
+							QueryName = NavigatorExt.GenerateQueryName(),
 							ComponentOptionsJson = "{}",
 							EditComponentOptionsJson = "{}",
 							DataMapping = new(),
@@ -430,8 +430,8 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private TfSpaceView ConvertDboToModel(
-		TfSpaceViewDbo dbo)
+	private TfSpaceView? ConvertDboToModel(
+		TfSpaceViewDbo? dbo)
 	{
 		if (dbo == null)
 			return null;

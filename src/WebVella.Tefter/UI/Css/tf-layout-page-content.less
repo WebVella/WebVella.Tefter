@@ -69,7 +69,9 @@
   &__content {
     flex: 1 1 auto;
     height: calc(100vh - var(--tf-topbar-height) - var(--tf-page-header-height) - var(--tf-page-tabs-height));
+    width: calc(100vw - var(--tf-aside-width) - 1px);
     overflow-y: auto;
+    overflow-x: auto;
     scrollbar-width: thin;
   }
 }

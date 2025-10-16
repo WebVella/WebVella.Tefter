@@ -9,7 +9,7 @@ namespace WebVella.Tefter.UI.Addons.Recipes;
 public class BlankRecipeAddon : ITfRecipeAddon
 {
 	public Guid AddonId { get; init; } = new Guid("de692b3f-be7a-4ace-a1d5-4cdfcbf50d12");
-	public string AddonName { get; init; } = "Blank";
+	public string AddonName { get; init; } = "Manual Setup";
 	public string AddonDescription { get; init; } = "start with a blank configuration without any presets";
 	public string AddonFluentIconName { get; init; } = "Database";
 	public int SortIndex { get; init; } = 1;
@@ -51,6 +51,27 @@ public class BlankRecipeAddon : ITfRecipeAddon
 				FirstName = "System",
 				LastName = "Administrator",
 				Roles = new List<Guid> { TfConstants.ADMIN_ROLE_ID }
+			}
+		});
+		Steps.Add(new TfCreateSpaceRecipeStep()
+		{
+			Instance = new TfRecipeStepInstance
+			{
+				Visible = true,
+				StepId = new Guid("e077acf2-c69c-4605-aa11-5c5ad1abc85e"),
+				StepMenuTitle = "Create Space",
+				StepContentTitle = "Creates your first space",
+				StepContentDescription = "Setups your first space",
+			},
+			Data = new TfCreateSpaceRecipeStepData
+			{
+				SpaceId = Guid.NewGuid(),
+				Name= "First Space",
+				Color = TfColor.Sky500,
+				FluentIconName = "SquareDovetailJoint",
+				IsPrivate = false,
+				Position = 1,
+				Roles = new List<Guid> { }
 			}
 		});
 	}

@@ -9,7 +9,7 @@
                           Immediate="true" AutoComplete="off" Style="order:3"
                           ImmediateDelay="200" @ref="_searchInput" Placeholder="@LOC("search spaces...")"/>
             <FluentButton OnClick="_adminNavigation" Style="order:1" Appearance="Appearance.Outline">@LOC("Administration")</FluentButton>
-            <FluentButton OnClick="_adminNavigation" Style="order:2" Appearance="Appearance.Outline">@LOC("New Space")</FluentButton>  
+            <FluentButton OnClick="_addSpace" Style="order:2" Appearance="Appearance.Outline">@LOC("New Space")</FluentButton>  
          
         </FluentStack>
     </FluentStack>
@@ -25,7 +25,7 @@
             <TucCard OnClick="item.OnClick" Id="@($"space-option-{item.Index}")"
                      class="@($"tf-space-finder__space {(_selectedIndex == item.Index ? "tf-space-finder__space--active" : "")}")">
                 <div class="tf-space-finder__space__icon">
-                    <FluentIcon Value="@TfConstants.GetIcon(item.Space.FluentIconName)!.WithColor(item.Color)"/>
+                    <FluentIcon Value="@TfConstants.GetIcon(item.Space.FluentIconName ?? "Circle")!.WithColor(item.Color)"/>
                 </div>
                 <div class="tf-space-finder__space__meta">
                     <FluentHighlighter Text="@item.Space.Name" HighlightedText="@_search"/>

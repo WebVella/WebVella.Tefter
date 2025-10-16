@@ -1,35 +1,50 @@
 ﻿@namespace WebVella.Tefter.UI.Components
+@using WebVella.Tefter.UI.Addons.Recipes
 @inherits TfBaseComponent
 
 <div class="tf-welcome">
-	<h1 style="text-align: center">@LOC("Welcome to Tefter")</h1>
-	@if (!TfAuthLayout.GetState().User.IsAdmin)
-	{
-		<FluentMessageBar Style="margin-top:2rem;" Intent="@MessageIntent.Info">@LOC("Your administrator hasn't setup Tefter yet. Please check again in a few minutes")</FluentMessageBar>
-	}
-	else
-	{
-		<h3 style="text-align: center">@LOC("How would you like to start?")</h3>
-		<div class="tf-welcome__grid">
-			<div class="tf-welcome__grid__item">
-				<TucCard Title="@LOC("A. Just drop data and Start")">
+	<h1 style="text-align: center;">@LOC("Welcome to Tefter")</h1>
+	<h3 style="text-align: center">@LOC("How would you like to start?")</h3>
+	<div class="tf-welcome__grid">
+		<div class="tf-welcome__grid__item">
+			<TucCard>
+				<TitleTemplate>
+					<div><em>A.</em> @LOC("Data Drop")</div>
+				</TitleTemplate>
+				<ChildContent>
 					<p>@LOC("The system will try to automatically setup everything based on your data with no or few questions")</p>
-					<FluentButton Style="width: 100%" Appearance="Appearance.Outline">Choose this option</FluentButton>
-				</TucCard>
-			</div>
-			<div class="tf-welcome__grid__item">
-				<TucCard Title="@LOC("B. Use a recipe")">
-					<p>@LOC("Initialize the system by using one of our preset recipes. Each has an unique use case in mind that can fit your needs")</p>
-					<FluentButton Style="width: 100%" Appearance="Appearance.Outline">Choose this option</FluentButton>
-				</TucCard>
-			</div>			
-			<div class="tf-welcome__grid__item">
-				<TucCard Title="@LOC("C. Fine tune by manual setup")">
-					<p>@LOC("If you are experienced with Tefter or just looking for a precision in the outcome, you can start setting up the system yourself.")</p>
-					<FluentButton Style="width: 100%" Appearance="Appearance.Outline">Choose this option</FluentButton>
-				</TucCard>
-			</div>
+				</ChildContent>
+				<FooterTemplate>
+					<TucAnchor Style="width: 100%" Appearance="Appearance.Outline" Href="@TfConstants.InstallDataDropPage">Choose this option</TucAnchor>
+				</FooterTemplate>	
+			</TucCard>
 		</div>
-	}
+		<div class="tf-welcome__grid__item">
+			<TucCard>
+				<TitleTemplate>
+					<div><em>B.</em> @LOC("Recipe preset")</div>
+				</TitleTemplate>				
+				<ChildContent>
+					<p>@LOC("Initialize the system by using one of our preset recipes. Each has an unique use case in mind that can fit your needs")</p>
+				</ChildContent>
+				<FooterTemplate>
+					<TucAnchor Style="width: 100%" Appearance="Appearance.Outline" Href="@TfConstants.InstallRecipesPage">Choose this option</TucAnchor>
+				</FooterTemplate>
+			</TucCard>
+		</div>
+		<div class="tf-welcome__grid__item">
+			<TucCard>
+				<TitleTemplate>
+					<div><em>C.</em> @LOC("Manual Setup")</div>
+				</TitleTemplate>					
+				<ChildContent>
+					<p>@LOC("If you are experienced with Tefter or just looking for a precision in the outcome, you can start setting up the system yourself.")</p>
+				</ChildContent>
+				<FooterTemplate>
+					<TucAnchor Style="width: 100%" Appearance="Appearance.Outline" Href="@(String.Format(TfConstants.InstallRecipeDetailsPage,new BlankRecipeAddon().AddonId))">Choose this option</TucAnchor>
+				</FooterTemplate>
+			</TucCard>
+		</div>
+	</div>
 </div>
 

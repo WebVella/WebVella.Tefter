@@ -1,21 +1,23 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucLayoutGridContent Title="@LOC("Initial Setup")"
-						  SubTitle="@LOC("Welcome to Tefter. Begin using it by simply clicking on one of the available preconfiguration options.")"
-						  ColumnCount="3">
+<TucLayoutGridContent Title="@LOC("Recipe List")"
+                      SubTitle="@LOC("Select a recipe by simply clicking on one of the available preconfiguration options.")"
+                      ColumnCount="3">
 	<ChildContent>
 		@foreach (var item in _items)
 		{
-			<div class="tf-recipe" @onclick=@(() => _select(item))>
-				<div class="tf-recipe__icon">
-					<FluentIcon Value="@TfConstants.GetIcon(item.AddonFluentIconName)" Color="@Color.Custom" />
+			<TucCard OnClick="@(() => _select(item))">
+				<div class="tf-recipe">
+					<div class="tf-recipe__icon">
+						<FluentIcon Value="@TfConstants.GetIcon(item.AddonFluentIconName)" Color="@Color.Custom"/>
+					</div>
+					<div class="tf-recipe__meta">
+						<div class="tf-recipe__meta__name">@item.AddonName</div>
+						<div class="tf-recipe__meta__description">@item.AddonDescription</div>
+						<div class="tf-recipe__meta__author">by @item.Author</div>
+					</div>
 				</div>
-				<div class="tf-recipe__meta">
-					<div class="tf-recipe__meta__name">@item.AddonName</div>
-					<div class="tf-recipe__meta__description">@item.AddonDescription</div>
-					<div class="tf-recipe__meta__author">by @item.Author</div>
-				</div>
-			</div>
+			</TucCard>
 		}
 	</ChildContent>
 </TucLayoutGridContent>

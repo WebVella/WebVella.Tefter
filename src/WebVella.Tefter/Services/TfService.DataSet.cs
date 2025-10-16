@@ -142,7 +142,7 @@ public partial class TfService : ITfService
 
 				if (dataset.Identities.Count > 0)
 				{
-					var allProviders = GetDataProviders();
+					var otherProviders = GetDataProviders().Where(x=> x.Id != dataset.DataProviderId);
 					var sharedColumns = GetSharedColumns();
 
 					foreach (var sdIdentity in dataset.Identities)
@@ -150,9 +150,10 @@ public partial class TfService : ITfService
 						foreach (var column in sdIdentity.Columns)
 						{
 							var columnProvider =
-								allProviders.FirstOrDefault(x => x.Columns.Any(y => y.DbName == column));
+								otherProviders.FirstOrDefault(x => x.Columns.Any(y => y.DbName == column));
 							var sharedColumn = sharedColumns.FirstOrDefault(x => x.DbName == column);
-							if (columnProvider is null && sharedColumn is null) continue;
+							if (columnProvider is null && sharedColumn is null) 
+								throw new Exception($"The requested column '{column}' with data identity '{sdIdentity.DataIdentity}' is not found in other data providers or shared columns");
 
 							var colSubmit = new TfDatasetColumn
 							{

@@ -1,0 +1,13 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<TucLayoutPageContent Title="@_space.Name" Icon="Circle">
+	<ChildContent>
+		<div style="padding:var(--tf-padding)">
+			<h3>@LOC("No Pages created yet")</h3>
+			<p>@LOC("This space has not pages yet. You can start the process by drag & drop files in the sidebar or clicking the button below.")</p>
+			<div style="margin-top:var(--tf-padding)">
+				<FluentButton OnClick="_addPage" Appearance="Appearance.Accent">@LOC("Create Page")</FluentButton>
+			</div>
+		</div>
+	</ChildContent>
+</TucLayoutPageContent>

@@ -1,7 +1,28 @@
 ﻿@namespace WebVella.Tefter.UI.Addons.RecipeSteps
 @inherits TfRecipeStepFormBase
 
-<div>
-	<p>This step does not have any form to be filled.</p>
-	<p>Press Next to continue</p>
-</div>
+<FluentEditForm EditContext="EditContext"
+                FormName="submit-form" class="tf-form" novalidate>
+	<DataAnnotationsValidator />
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
+			                 Label="@LOC("Space Name")" Style="width:100%" AutoComplete="new-password" />
+			<FluentValidationMessage For="@(() => _form.Name)" />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentInputLabel Label="@LOC("Space Color")"/>
+			<TucSelectColor @bind-Value=@_form.Color/>
+			<FluentValidationMessage For="@(() => _form.Color)"/>
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentInputLabel Label="@LOC("Space Icon")"/>
+			<TucSelectIcon @bind-Value="@_form.FluentIconName"/>
+			<FluentValidationMessage For="@(() => _form.FluentIconName)"/>
+		</FluentGridItem>
+	</FluentGrid>
+</FluentEditForm>

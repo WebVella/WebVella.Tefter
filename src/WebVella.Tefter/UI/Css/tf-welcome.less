@@ -3,17 +3,29 @@
 .tf-welcome {
   padding-left:var(--tf-padding);
   padding-right:var(--tf-padding);
+  padding-top:3rem;
   h1,h3{
     text-align: center;
   }
   
   &__grid{
+    justify-content: center;
     max-width: 1000px;
     margin:0 auto;
     margin-top:3rem;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: calc(var(--tf-padding) * 2);
   }
+  
+  .tf-card{
+    height:100%;
+    &__title em{
+      font-style: normal;
+      color:var(--accent-fill-rest);
+    }
+  }
+  
+
 }
 

@@ -168,11 +168,15 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 
 	private bool _columnIsVisible(TfDataColumn column)
 	{
-		if (_showJoinKeyColumns && column.IsShared) return true;
-		if (_showSystemColumns && column.IsSystem) return true;
-		if (_showProviderColumns && !column.IsSystem) return true;
-
-		return false;
+		if (column.IsSystem)
+			return _showSystemColumns;
+		else if(column.IsIdentityColumn)
+			return _showJoinKeyColumns;
+		else if(column.IsJoinColumn)
+			return _showJoinKeyColumns;
+		else if (column.IsShared)
+			return _showJoinKeyColumns;
+		return _showProviderColumns;
 	}
 
 

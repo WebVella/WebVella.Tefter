@@ -663,6 +663,10 @@ fluent-select fluent-option {
   --neutral-fill-stealth-rest: transparent;
   --neutral-fill-stealth-hover: color-mix(in srgb, var(--fill-color), var(--accent-fill-rest) 10%);
 }
+.listbox {
+  z-index: 20;
+  position: relative;
+}
 /*Badge*/
 .input-badge {
   border-radius: calc(var(--control-corner-radius) * 1px);
@@ -679,6 +683,11 @@ div[class^='fluent-messagebar'],
 .fluent-messagebar-notification,
 .fluent-messagebar-message {
   animation: none !important;
+}
+.fluent-messagebar .title {
+  display: block;
+  font-size: var(--type-ramp-plus-1-font-size);
+  line-height: var(--type-ramp-plus-1-line-height);
 }
 .fluent-messagebar.intent-success {
   --success: var(--tf-green-500);
@@ -721,6 +730,20 @@ fluent-menu-item::part(start) {
   display: flex;
   align-items: center;
 }
+/*Dialog*/
+fluent-dialog-body {
+  scrollbar-width: thin;
+}
+.fluent-dialog-header fluent-button::part(control) {
+  background: transparent;
+}
+.fluent-dialog-main::part(control) {
+  padding: 0 !important;
+}
+.fluent-dialog-main.right::part(control),
+.fluent-dialog-main.left::part(control) {
+  --dialog-padding: 0px;
+}
 .tf-card {
   --tf-card-border-radius: calc(var(--layer-corner-radius) * 1px);
   --tf-card-background-color: var(--fill-color);
@@ -729,12 +752,15 @@ fluent-menu-item::part(start) {
   background: var(--tf-card-background-color);
   padding: var(--tf-padding);
   box-shadow: var(--elevation-shadow-card-rest);
+  display: flex;
+  flex-flow: column;
 }
 .tf-card__title {
+  flex: 0 0 auto;
   background: transparent;
   border-radius: 0.5rem;
   margin-bottom: 0;
-  font-size: var(--type-ramp-plus-1-font-size);
+  font-size: var(--type-ramp-plus-2-font-size);
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -754,17 +780,12 @@ fluent-menu-item::part(start) {
   grid-gap: 10px;
   grid-auto-flow: column;
 }
-.tf-card__title h3 {
-  margin-bottom: 0;
-  font-size: var(--type-ramp-plus-1-font-size);
-  font-weight: 600;
-}
 .tf-card__subtitle {
   color: var(--neutral-foreground-hint);
   font-size: var(--type-ramp-minus-1-font-size);
 }
 .tf-card__title + .tf-card__content {
-  padding-top: var(--tf-padding);
+  padding-top: calc(var(--tf-padding) * 2);
 }
 .tf-card + .tf-card {
   margin-top: var(--tf-padding-sm);
@@ -775,10 +796,14 @@ fluent-menu-item::part(start) {
 .tf-card--clickable:hover {
   background: var(--neutral-fill-hover);
 }
+.tf-card__content {
+  flex: 1 1 auto;
+}
 .tf-card__content fluent-anchor.stealth {
   --neutral-fill-stealth-rest: var(--neutral-foreground-rest);
 }
 .tf-card__footer {
+  flex: 0 0 auto;
   padding-top: 1rem;
 }
 .tf-filter-manage .card-logical.tf-card {
@@ -833,6 +858,81 @@ fluent-menu-item::part(start) {
   border: 1px dashed var(--accent-fill-rest);
   background: var(--neutral-fill-hover);
 }
+.tf-editor .toolbar {
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+.tf-editor .toolbar button {
+  border-radius: calc(var(--control-corner-radius)*1px);
+  background: transparent;
+  /*border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-rest);*/
+  border: calc(var(--stroke-width) * 1px) solid transparent;
+  line-height: var(--type-ramp-base-line-height);
+  height: calc((var(--base-height-multiplier) + var(--density))*var(--design-unit)*1px);
+  min-width: calc((var(--base-height-multiplier) + var(--density))*var(--design-unit)*1px);
+  fill: currentcolor;
+  font-size: var(--type-ramp-base-font-size);
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+.tf-editor .toolbar button:hover {
+  border-color: var(--neutral-stroke-hover);
+}
+.tf-editor .toolbar button svg {
+  fill: var(--neutral-base-color) !important;
+  width: 14px !important;
+}
+.tf-editor .toolbar button.ql-active {
+  color: var(--foreground-on-accent-rest) !important;
+  background: var(--neutral-base-color);
+}
+.tf-editor .toolbar button.ql-active svg {
+  fill: var(--foreground-on-accent-rest) !important;
+}
+.tf-editor .toolbar .separator {
+  background: var(--neutral-stroke-rest);
+  flex-shrink: 0;
+  align-self: center;
+  width: 1px;
+  height: 20px;
+  margin: 2px 4px;
+  display: inline-block;
+}
+.tf-editor .editor-area .ql-editor {
+  min-height: 60px;
+  border-radius: calc(var(--control-corner-radius)*1px);
+  background: var(--neutral-fill-input-rest);
+  border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-input-active);
+  outline: none;
+  padding: 5px 10px;
+  max-height: 200px;
+  position: relative;
+}
+.tf-editor .editor-area .ql-editor:active,
+.tf-editor .editor-area .ql-editor:focus,
+.tf-editor .editor-area .ql-editor:hover {
+  border: 1px solid var(--neutral-stroke-strong-hover);
+}
+.tf-editor--readonly .tf-editor .editor-area .ql-editor:hover {
+  border-color: var(--neutral-stroke-input-rest) !important;
+}
+.tf-editor .editor-area .ql-editor.ql-blank::before {
+  color: var(--neutral-stroke-rest);
+  left: 10px;
+  right: 10px;
+}
+/*	::deep .ql-editor ol > li[data-list=bullet] {
+		list-style: none;
+		margin-left: -10px;
+	}
+
+		::deep .ql-editor ol > li[data-list=bullet]:before {
+			content: '\2022';
+			padding-right: 5px;
+		}*/
 @keyframes gridLoadingBar {
   0% {
     left: 0%;
@@ -864,6 +964,8 @@ fluent-menu-item::part(start) {
   border-spacing: 0 !important;
   margin-bottom: 0;
   border-bottom: 1px solid var(--neutral-stroke-rest);
+  position: relative;
+  z-index: 0;
 }
 .fluent-dialog-body .tf-grid,
 .tf-card .tf-grid {
@@ -1434,6 +1536,39 @@ fluent-menu-item::part(start) {
 .tf-hover-switch:hover .tf-hover-switch__hover {
   display: block;
 }
+.tf-layout-centered-content {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 5rem;
+}
+.tf-layout-grid-content {
+  flex: 0 1 960px;
+}
+.tf-layout-grid-content-wrapper {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.tf-layout-grid-content__title {
+  padding-top: 2rem;
+  text-align: center;
+  font-size: 23px;
+  font-weight: bold;
+  padding-bottom: 1rem;
+}
+.tf-layout-grid-content__subtitle {
+  text-align: center;
+  padding-bottom: 1rem;
+}
+.tf-layout-grid-content__content {
+  padding-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 1rem;
+}
 .tflg {
   display: flex;
   flex-flow: row;
@@ -1546,7 +1681,9 @@ fluent-menu-item::part(start) {
 .tflpc__content {
   flex: 1 1 auto;
   height: calc(100vh - var(--tf-topbar-height) - var(--tf-page-header-height) - var(--tf-page-tabs-height));
+  width: calc(100vw - var(--tf-aside-width) - 1px);
   overflow-y: auto;
+  overflow-x: auto;
   scrollbar-width: thin;
 }
 .tf-sidenav {
@@ -1724,6 +1861,30 @@ fluent-menu-item::part(start) {
 .tf-plaintext-field:hover {
   cursor: not-allowed;
   background: padding-box linear-gradient(var(--neutral-fill-input-hover), var(--neutral-fill-input-hover)), border-box var(--neutral-stroke-input-hover);
+}
+.tf-recipe {
+  display: flex;
+}
+.tf-recipe__icon {
+  flex: 0 0 50px;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+}
+.tf-recipe__icon svg {
+  width: 36px !important;
+}
+.tf-recipe__meta {
+  flex: 1 1 auto;
+}
+.tf-recipe__meta__name {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+.tf-recipe__meta__author {
+  margin-top: 5px;
+  color: var(--neutral-foreground-hint);
 }
 .tf-select-component {
   width: 100%;
@@ -1970,17 +2131,122 @@ fluent-menu-item::part(start) {
 .tf-welcome {
   padding-left: var(--tf-padding);
   padding-right: var(--tf-padding);
+  padding-top: 3rem;
 }
 .tf-welcome h1,
 .tf-welcome h3 {
   text-align: center;
 }
 .tf-welcome__grid {
+  justify-content: center;
   max-width: 1000px;
   margin: 0 auto;
   margin-top: 3rem;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: calc(var(--tf-padding) * 2);
+}
+.tf-welcome .tf-card {
+  height: 100%;
+}
+.tf-welcome .tf-card__title em {
+  font-style: normal;
+  color: var(--accent-fill-rest);
+}
+.tf-wizard {
+  display: flex;
+  border: 1px solid var(--neutral-stroke-rest);
+  min-height: 300px;
+}
+.tf-card__content .tf-wizard {
+  margin: 0 calc(-1 * var(--tf-padding));
+  border-left: none;
+  border-right: none;
+}
+.tf-wizard__steps {
+  flex: 0 0 200px;
+  background: var(--neutral-fill-hover);
+  padding: 30px 0;
+}
+.tf-wizard__steps__step {
+  padding: 5px;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+}
+.tf-wizard__steps__step:hover:not(.result) {
+  background: var(--neutral-fill-secondary-hover);
+}
+.tf-wizard__steps__step__index {
+  flex: 0 0 23px;
+  text-align: right;
+  padding-right: 5px;
+}
+.tf-wizard__steps__step__title {
+  flex: 1 1 auto;
+}
+.tf-wizard__steps__step__icon {
+  flex: 0 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+.tf-wizard__steps__step .check,
+.tf-wizard__steps__step .arrow,
+.tf-wizard__steps__step .error {
+  display: none;
+}
+.tf-wizard__steps__step.completed .check {
+  display: inline-block;
+}
+.tf-wizard__steps__step.completed .pending {
+  display: none;
+}
+.tf-wizard__steps__step.active .arrow {
+  display: inline-block;
+}
+.tf-wizard__steps__step.active .pending {
+  display: none;
+}
+.tf-wizard__steps__step.result {
+  cursor: auto;
+}
+.tf-wizard__steps__step.error .error {
+  display: inline-block;
+}
+.tf-wizard__steps__step.error .pending {
+  display: none;
+}
+.tf-wizard__content {
+  flex: 1 1 0;
+  padding: 30px 15px;
+}
+.tf-wizard__content__step__title {
+  font-size: 18px;
+  margin-bottom: 1rem;
+  color: var(--accent-base-color);
+}
+.substep .tf-wizard__content__step__title {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  margin-top: 1rem;
+}
+.substep:first-child .tf-wizard__content__step__title {
+  margin-top: 0;
+}
+.tf-wizard__content__step__description {
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+  color: var(--neutral-foreground-hint);
+}
+.substep .tf-wizard__content__step__description {
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+.tf-wizard__content__step__form table:not(.tf-grid) th,
+.tf-wizard__content__step__form table:not(.tf-grid) td {
+  padding: 5px 10px;
+  border: 1px solid var(--neutral-stroke-rest);
 }
 /*# sourceMappingURL=styles.css.map */

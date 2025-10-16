@@ -561,6 +561,15 @@ public static partial class NavigatorExt
 	}
 	public static string GenerateQueryName()
 	{
-		return "q" + (Guid.NewGuid()).ToString().Split("-")[0];
+		return "q" + (Guid.NewGuid()).ToString().Substring(0,5);
+	}
+
+	public static string ProcessForTitle(string columnName)
+	{
+		if(String.IsNullOrWhiteSpace(columnName)) return columnName;
+		var colArray = columnName.Split(".");
+		var colName = colArray.Length > 1 ? colArray[1] : columnName;
+		colArray = colName.Split("_");
+		return colArray.Length > 1 ? colArray[1] : colName;
 	}
 }

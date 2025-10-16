@@ -1,12 +1,12 @@
 ﻿namespace WebVella.Tefter.UI.Addons.RecipeSteps;
-public class TfCreateSpaceDataRecipeStep : ITfRecipeStepAddon
+public class TfCreateDatasetRecipeStep : ITfRecipeStepAddon
 {
 	//addon
 	public Guid AddonId { get; init; } = new Guid("cef86567-4ec3-4bfc-a28a-f36db708ec5e");
 	public string AddonName { get; init; } = "CreateSpaceDataRecipeStep";
 	public string AddonDescription { get; init; } = "creates space data recipe step";
 	public string AddonFluentIconName { get; init; } = "PuzzlePiece";
-	public Type FormComponent { get; set; } = typeof(TfCreateSpaceDataRecipeStepForm);
+	public Type FormComponent { get; set; } = typeof(TfCreateDatasetRecipeStepForm);
 	public TfRecipeStepInstance Instance { get; set; }
 	public ITfRecipeStepAddonData Data { get; set; }
 	public Task ApplyStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult stepResult)
@@ -16,10 +16,10 @@ public class TfCreateSpaceDataRecipeStep : ITfRecipeStepAddon
 		if (addon.GetType().FullName != this.GetType().FullName)
 			throw new Exception("Wrong addon type provided for application");
 
-		if (addon.Data.GetType().FullName != typeof(TfCreateSpaceDataRecipeStepData).FullName)
+		if (addon.Data.GetType().FullName != typeof(TfCreateDatasetRecipeStepData).FullName)
 			throw new Exception("Wrong data model type provided for application");
 
-		var step = (TfCreateSpaceDataRecipeStepData)addon.Data;
+		var step = (TfCreateDatasetRecipeStepData)addon.Data;
 		var dataProvider = tfService.GetDataProvider(step.DataProviderId);
 		var dpPrefix = $"dp{dataProvider.Index}_";
 		if (step.Filters.Count > 0 || step.SortOrders.Count > 0)
@@ -72,7 +72,7 @@ public class TfCreateSpaceDataRecipeStep : ITfRecipeStepAddon
 	}
 }
 
-public class TfCreateSpaceDataRecipeStepData : ITfRecipeStepAddonData
+public class TfCreateDatasetRecipeStepData : ITfRecipeStepAddonData
 {
 	public Guid SpaceDataId { get; set; }
 	public Guid DataProviderId { get; set; }

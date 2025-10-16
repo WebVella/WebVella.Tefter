@@ -28,8 +28,12 @@ fluent-select{
   fluent-option{
     --neutral-fill-stealth-rest:transparent;
     --neutral-fill-stealth-hover:color-mix(in srgb, var(--fill-color), var(--accent-fill-rest) 10%);
-    
   }
+}
+
+.listbox{
+  z-index: 20;
+  position: relative;
 }
 
 /*Badge*/
@@ -55,6 +59,11 @@ div[class ^='fluent-messagebar'],
 }
 
 .fluent-messagebar {
+  .title{
+    display: block;
+    font-size:var(--type-ramp-plus-1-font-size);
+    line-height: var(--type-ramp-plus-1-line-height);
+  }
   &.intent-success {
     --success: var(--tf-green-500);
     border-color: var(--tf-green-200) !important;
@@ -106,4 +115,22 @@ fluent-menu-item{
     display: flex;
     align-items: center;
   }
+}
+
+/*Dialog*/
+
+fluent-dialog-body{
+  scrollbar-width: thin;
+}
+.fluent-dialog-header fluent-button::part(control) {
+  background: transparent;
+}
+
+.fluent-dialog-main::part(control) {
+  padding: 0 !important;
+}
+
+.fluent-dialog-main.right::part(control),
+.fluent-dialog-main.left::part(control) {
+  --dialog-padding: 0px;
 }

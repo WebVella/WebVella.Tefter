@@ -1,0 +1,46 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+<div style="padding:var(--tf-padding)">
+	@if (_currentUser.IsAdmin)
+	{
+		<div class="tf-welcome">
+			<h1 style="text-align: center;">@LOC("No spaces created yet")</h1>
+			<p style="text-align: center">@LOC("To continue please select on of the options:")</p>
+			<div class="tf-welcome__grid">
+				<div class="tf-welcome__grid__item">
+					<TucCard>
+						<TitleTemplate>
+							<div><em>A.</em> @LOC("Create Space")</div>
+						</TitleTemplate>
+						<ChildContent>
+							<p>@LOC("Create your first space which will host your data")</p>
+						</ChildContent>
+						<FooterTemplate>
+							<TucAnchor Style="width: 100%" Appearance="Appearance.Outline" OnClick="_addSpace">New Space</TucAnchor>
+						</FooterTemplate>	
+					</TucCard>
+				</div>
+				<div class="tf-welcome__grid__item">
+					<TucCard>
+						<TitleTemplate>
+							<div><em>B.</em> @LOC("Tefter Configuration")</div>
+						</TitleTemplate>				
+						<ChildContent><p>@LOC("Administer Tefter by setting up the access or the data used.")</p>
+						</ChildContent>
+						<FooterTemplate>
+							<TucAnchor Style="width: 100%" Appearance="Appearance.Outline" Href="@TfConstants.AdminDashboardUrl">To Administration</TucAnchor>
+						</FooterTemplate>
+					</TucCard>
+				</div>
+			</div>
+		</div>		
+	}
+	else
+	{
+		<FluentMessageBar AllowDismiss="false" Title="@LOC("Tefter not configured yet")">
+			@LOC("Your administrator has not configured the system yet. Please check back in several minutes");
+		</FluentMessageBar>
+	}
+</div>
+

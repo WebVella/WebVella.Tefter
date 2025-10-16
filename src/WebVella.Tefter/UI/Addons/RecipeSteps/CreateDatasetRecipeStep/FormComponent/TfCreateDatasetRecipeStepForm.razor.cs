@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Addons.RecipeSteps;
-public partial class TfCreateSpaceDataRecipeStepForm : TfRecipeStepFormBase
+public partial class TfCreateDatasetRecipeStepForm : TfRecipeStepFormBase
 {
-	[Parameter] public TfCreateSpaceDataRecipeStep Addon { get; set; }
+	[Parameter] public TfCreateDatasetRecipeStep Addon { get; set; }
 	protected override void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);

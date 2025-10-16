@@ -1,11 +1,14 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucPageTopbarBreadcrumb : TfBaseComponent,IDisposable
+
+public partial class TucPageTopbarBreadcrumb : TfBaseComponent, IDisposable
 {
 	private List<TfMenuItem> _items = new();
+
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
+
 	protected override void OnInitialized()
 	{
 		_init();
@@ -14,7 +17,7 @@ public partial class TucPageTopbarBreadcrumb : TfBaseComponent,IDisposable
 	protected override void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);
-		if(firstRender)
+		if (firstRender)
 			Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
@@ -26,18 +29,19 @@ public partial class TucPageTopbarBreadcrumb : TfBaseComponent,IDisposable
 
 	private void _init()
 	{
-
 		_items = TfAuthLayout.GetState().Breadcrumb;
-		_items[0].Url = "#";
-		_items[0].OnClick = EventCallback.Factory.Create(this, async () => await _findSpace());
-		
+		if (_items.Count > 0)
+		{
+			_items[0].Url = "#";
+			_items[0].OnClick = EventCallback.Factory.Create(this, async () => await _findSpace());
+		}
 	}
 
 	private async Task _findSpace()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceFinderDialog>(
 			TfAuthLayout.GetState().User,
-			new ()
+			new()
 			{
 				PreventDismissOnOverlayClick = false,
 				PreventScroll = true,
@@ -46,5 +50,5 @@ public partial class TucPageTopbarBreadcrumb : TfBaseComponent,IDisposable
 			});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null) { }
-	}		
+	}
 }

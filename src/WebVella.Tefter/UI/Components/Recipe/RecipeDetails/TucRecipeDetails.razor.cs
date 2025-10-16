@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using WebVella.Tefter.UI.Addons.Recipes;
 using WebVella.Tefter.UI.Addons.RecipeSteps;
 
 namespace WebVella.Tefter.UI.Components;
@@ -74,7 +75,10 @@ public partial class TucRecipeDetails : TfBaseComponent
 	}
 	private void _toList()
 	{
-		Navigator.NavigateTo(TfConstants.InstallPage);
+		if(new BlankRecipeAddon().AddonId == RecipeId)
+			Navigator.NavigateTo(TfConstants.InstallPage);
+		else
+			Navigator.NavigateTo(TfConstants.InstallRecipesPage);
 	}
 
 	private void _stepBack()

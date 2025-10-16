@@ -116,6 +116,7 @@
 	justify-content: end;
 	padding: 10px;
 	padding-bottom: 15px;
+	scrollbar-width: thin;
 }
 
 /*Channel label*/
@@ -164,8 +165,8 @@
 
 /*right header */
 ::deep .talk-panel__right__header.broadcast {
-	background-color: var(--tf-layout-color-mute);
-	border-bottom: 1px solid var(--tf-layout-color);
+	background-color: var(--neutral-fill-hover);
+	border-bottom: 1px solid var(--neutral-stroke-rest);
 }
 
 ::deep .talk-panel__right__header-icon {

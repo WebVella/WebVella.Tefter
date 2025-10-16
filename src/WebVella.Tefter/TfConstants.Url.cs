@@ -65,7 +65,7 @@ public partial class TfConstants
 	public static string AdminFileRepositoryPageUrl = $"/{RouteNameAdmin}/{RouteNameFileRepository}";
 	public static string AdminTemplatesPageUrl = $"/{RouteNameAdmin}/{RouteNameTemplates}";
 	public static string AdminTemplateDetailsPageUrl = $"/{RouteNameAdmin}/{RouteNameTemplates}/{{0}}";
-	public static string BlobDownloadUrl = "/fs/blob/{{0}}/{{1}}";
+	public static string BlobDownloadUrl = "/fs/blob/{0}/{1}";
 
 	public static string RouteNameSpace = "space";
 	public static string RouteNameSpacePage = "page";
@@ -73,6 +73,7 @@ public partial class TfConstants
 	public static string RouteNameSpaceData = "data";
 	public static string RouteNameManage = "manage";
 	public static string RouteNameViews = "views";
+	public static string SpacePageUrl = $"/{RouteNameSpace}/{{0}}";
 	public static string SpacePagePageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpacePage}/{{1}}";
 	public static string SpacePagePageManageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpacePage}/{{1}}/{RouteNameManage}";
 	public static string SpacePagePageManageTabUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpacePage}/{{1}}/{{2}}";
@@ -81,7 +82,9 @@ public partial class TfConstants
 	public static string SpaceManageAccessPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}/{RouteNameAccess}";
 	public static string NoAccessPage = "/403";
 	public static string InstallPage = "/tf-install";
-	public static string InstallDetailsPage = "/tf-install/{{0}}";
+	public static string InstallDataDropPage = "/tf-install/data-drop";
+	public static string InstallRecipesPage = "/tf-install/recipes";
+	public static string InstallRecipeDetailsPage = "/tf-install/recipes/{0}";
 
 	public static List<string> SupportedUriFirstNodes = [String.Empty, RouteNameAdmin, RouteNamePages, RouteNameSpace];
 

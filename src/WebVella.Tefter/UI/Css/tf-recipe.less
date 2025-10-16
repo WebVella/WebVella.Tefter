@@ -1,0 +1,29 @@
+﻿.tf-recipe {
+	display: flex;
+
+	&__icon {
+		flex: 0 0 50px;
+		display: flex;
+		flex-flow: column;
+		justify-content: center;
+
+		svg {
+			width: 36px !important;
+		}
+	}
+
+	&__meta {
+		flex: 1 1 auto;
+
+		&__name {
+			font-weight: bold;
+			font-size: 16px;
+			margin-bottom: 5px;
+		}
+
+		&__author {
+			margin-top: 5px;
+			color: var(--neutral-foreground-hint);
+		}
+	}
+}

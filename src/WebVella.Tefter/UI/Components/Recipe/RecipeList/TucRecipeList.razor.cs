@@ -1,8 +1,10 @@
 ﻿
+using WebVella.Tefter.UI.Addons.Recipes;
+
 namespace WebVella.Tefter.UI.Components;
 public partial class TucRecipeList : TfBaseComponent
 {
-	private ReadOnlyCollection<ITfRecipeAddon> _items;
+	private List<ITfRecipeAddon> _items = null!;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -10,12 +12,12 @@ public partial class TucRecipeList : TfBaseComponent
 		var installData = await TfService.GetInstallDataAsync();
 		if (installData is not null)
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
-
-		_items = TfMetaService.GetRecipes();
+		var blankRecipeId = new BlankRecipeAddon().AddonId;
+		_items = TfMetaService.GetRecipes().Where(x=> x.AddonId != blankRecipeId).ToList();
 	}
 
 	private void _select(ITfRecipeAddon recipe)
 	{
-		Navigator.NavigateTo(String.Format(TfConstants.InstallDetailsPage, recipe.AddonId));
+		Navigator.NavigateTo(String.Format(TfConstants.InstallRecipeDetailsPage, recipe.AddonId));
 	}
 }

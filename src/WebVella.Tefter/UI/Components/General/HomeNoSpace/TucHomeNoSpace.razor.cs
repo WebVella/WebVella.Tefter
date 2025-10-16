@@ -1,9 +1,11 @@
 ﻿
 namespace WebVella.Tefter.UI.Components;
 
-public partial class TucHomeRedirect : TfBaseComponent
+public partial class TucHomeNoSpace : TfBaseComponent
 {
 	[Inject] protected ITfConfigurationService TfConfigurationService { get; set; } = null!;
+
+	private TfUser _currentUser = null!;
 	protected override async Task OnInitializedAsync()
 	{
 		_checkRedirect(Navigator.Uri);
@@ -11,7 +13,7 @@ public partial class TucHomeRedirect : TfBaseComponent
 	private void _checkRedirect(string url)
 	{
 		var uri = new Uri(url);
-		var _currentUser = TfAuthLayout.GetState().User;
+		_currentUser = TfAuthLayout.GetState().User;
 		if (uri.LocalPath == "/")
 		{
 			var queryDictionary = HttpUtility.ParseQueryString(uri.Query);
@@ -33,13 +35,30 @@ public partial class TucHomeRedirect : TfBaseComponent
 
 			foreach (var space in TfService.GetSpacesListForUser(_currentUser.Id))
 			{
-				var spacePages = TfService.GetSpacePages(space.Id);
-				if(spacePages.Count == 0) continue;
-				Navigator.NavigateTo(string.Format(TfConstants.SpacePagePageUrl, space.Id, spacePages[0].Id),
+				Navigator.NavigateTo(string.Format(TfConstants.SpacePageUrl, space.Id),
 					true);				
 				
 				return;
 			}
 		}		
 	}
+	
+	private async Task _addSpace()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucSpaceManageDialog>(
+			new TfSpace(),
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var space = (TfSpace)result.Data;
+			Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, space.Id));
+		}
+	}		
 }
