@@ -1,11 +1,9 @@
 ﻿.tf-card {
-  --tf-card-border-radius: calc(var(--layer-corner-radius) * 1px);
-  --tf-card-background-color: var(--fill-color);
   border: 1px solid var(--neutral-stroke-rest);
-  border-radius: var(--tf-card-border-radius);
-  background: var(--tf-card-background-color);
-  padding: var(--tf-padding);
-  box-shadow: var(--elevation-shadow-card-rest);
+  border-radius: calc(var(--layer-corner-radius) * 1px);
+  background: var(--neutral-fill-secondary-active);
+  padding: var(--tfui-padding);
+  box-shadow: var(--elevation-shadow-card-active);
   display: flex;
   flex-flow: column;
   
@@ -44,11 +42,11 @@
   }
 
   &__title + &__content {
-    padding-top: calc(var(--tf-padding) * 2);
+    padding-top: calc(var(--tfui-padding) * 2);
   }
 
   & + & {
-    margin-top: var(--tf-padding-sm);
+    margin-top: var(--tf-padding);
   }
 
   &--clickable {
@@ -111,5 +109,10 @@
   .tf-card__content {
     display: none;
   }
+}
+
+.tf-card fluent-badge{
+
+  --neutral-fill-secondary-rest: light-dark(var(--neutral-layer-4),var(--neutral-layer-2));
 }
 

@@ -9,19 +9,14 @@
 		{
 			<div style="color:var(--error);" title="@LOC("folder is not configured")">error!</div>
 		}
-		else if (_value is null || _value == 0)
-		{
-			<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
-				<FluentIcon Value="@TfConstants.GetIcon("DocumentCopy")" />
-			</FluentButton>
-		}
 		else
 		{
-			<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
-				@_value 
-				<FluentIcon Slot="end" Value="@TfConstants.GetIcon("DocumentCopy")" />
-			</FluentButton>
+			<FluentCounterBadge Count="@((int?)_value)" VerticalPosition="35"
+			                    Appearance="Appearance.Lightweight">
+				<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick" IconStart="@TfConstants.GetIcon("DocumentCopy")"/>
+			</FluentCounterBadge>
 		}
+		
 	</div>
 
 

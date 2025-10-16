@@ -10,9 +10,15 @@ public record TfSpaceViewColumn
 	public bool OnlyIcon { get; set; } = false;
 	public short? Position { get; set; }
 	public Guid TypeId { get; set; }
-	public Dictionary<string, string> DataMapping { get; set; } = new();
-	public string TypeOptionsJson { get; set; } = "{}";
-	public TfSpaceViewColumnSettings Settings { get; set; } = new();
+	
+	public string PrimaryDbName { get; set; } = "";
+	public string ComponentOptionsJson { get; set; } = "{}";
+    public string TypeOptionsJson { get; set; } = "{}";
+
+    public TfSpaceViewColumnSettings Settings { get; set; } = new();
+	[Obsolete]
+    public Dictionary<string, string> DataMapping { get; set; } = new();
+	[Obsolete]
 	public string? GetColumnNameFromDataMapping(){ 
 		if(DataMapping is null || DataMapping.Keys.Count == 0) return null;
 		return DataMapping[DataMapping.Keys.First()];

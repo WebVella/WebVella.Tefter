@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <TucLayoutPageContent Title="@_identity?.DataIdentity" Icon="ContactCard">
-	<div style="padding:var(--tf-padding)">
+	<div style="padding:var(--tfui-padding)">
 		@if (String.IsNullOrWhiteSpace(UriInitialized))
 		{
 			<TucSkeletonPageHeader/>
@@ -57,7 +57,7 @@
 					</FluentGrid>
 				</ChildContent>
 			</TucCard>
-			<TucCard Style="margin-top: var(--tf-card-space)">
+			<TucCard Style="margin-top: var(--tfui-card-space)">
 				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween"
 				             VerticalAlignment="@VerticalAlignment.Center">
 					<div>@LOC("Deleting this identity will remove all data relations that depend on it, but will not alter any source data from providers, shared columns or applications. ")</div>

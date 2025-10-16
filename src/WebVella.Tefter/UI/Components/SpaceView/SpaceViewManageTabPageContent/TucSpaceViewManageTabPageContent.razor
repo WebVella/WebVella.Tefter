@@ -67,7 +67,7 @@ else if (_navState.ManageTab == "columns")
 			</FluentGrid>
 		</ChildContent>
 	</TucCard>
-	<TucCard Title="@LOC("Presented Columns")">
+	<TucCard Title="@LOC("Presented Columns")" Style="margin-top:var(--tfui-card-space)">
 		<ToolbarTemplate>
 			<FluentButton OnClick="_addColumn" Appearance="@Appearance.Outline">
 				<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start"/>
@@ -169,7 +169,7 @@ else if (_navState.ManageTab == "columns")
 }
 else if (_navState.ManageTab == "presets")
 {
-	<TucCard>
+	<TucCard Title="@LOC("Main tab")">
 		<ToolbarTemplate>
 			<FluentButton Appearance="@Appearance.Outline" OnClick="_editMainTab">
 				@LOC("Edit")
@@ -179,13 +179,13 @@ else if (_navState.ManageTab == "presets")
 		<ChildContent>
 			<FluentGrid>
 				<FluentGridItem xs="4">
-					<FluentInputLabel Label="@LOC("Main tab label")"/>
+					<FluentInputLabel Label="@LOC("Label")"/>
 					<FluentTextField Value=@_spaceView.Settings.MainTabLabel
 					                 Placeholder="@LOC("defaults to 'Main'")"
 					                 ReadOnly="true" Style="width:100%"/>
 				</FluentGridItem>
 				<FluentGridItem xs="4">
-					<FluentInputLabel Label="@LOC("Main tab Icon")"/>
+					<FluentInputLabel Label="@LOC("Icon")"/>
 					<TucSelectIcon Value=@_spaceView.Settings.MainTabFluentIcon
 					               Placeholder="@LOC("defaults to page icon")"
 					                 ReadOnly="true"/>
@@ -194,7 +194,7 @@ else if (_navState.ManageTab == "presets")
 		</ChildContent>
 	</TucCard>
 	<TucPresetFiltersCard Title="@LOC("Preset Filters Navigation")" Dataset="_spaceData" Items="_spaceView.Presets"
-	                      ItemsChanged="_onPresetsChanged"/>
+	                      ItemsChanged="_onPresetsChanged"  Style="margin-top:var(--tfui-card-space)"/>
 }
 else
 {

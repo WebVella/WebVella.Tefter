@@ -62,28 +62,28 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
 			builder.AddAttribute(1, "Value",
-				TfConstants.GetIcon("ArrowSortUpLines", IconSize.Size16)!.WithColor("var(--tf-caret-color)"));
+				TfConstants.GetIcon("ArrowSortUpLines", IconSize.Size16)!.WithColor("var(--neutral-stroke-rest)"));
 			builder.CloseComponent();
 		};
 		_caretDown = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
 			builder.AddAttribute(1, "Value",
-				TfConstants.GetIcon("ArrowSortDownLines", IconSize.Size16)!.WithColor("var(--tf-caret-color)"));
+				TfConstants.GetIcon("ArrowSortDownLines", IconSize.Size16)!.WithColor("var(--neutral-stroke-rest)"));
 			builder.CloseComponent();
 		};
 		_caretUp = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
 			builder.AddAttribute(1, "Value",
-				TfConstants.GetIcon("ArrowSortUpLines", IconSize.Size16)!.WithColor("var(--tf-caret-color)"));
+				TfConstants.GetIcon("ArrowSortUpLines", IconSize.Size16)!.WithColor("var(--neutral-stroke-rest)"));
 			builder.CloseComponent();
 		};
 		_manageIcon = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
 			builder.AddAttribute(1, "Value",
-				TfConstants.GetIcon("Settings", IconSize.Size16)!.WithColor("var(--tf-caret-color)"));
+				TfConstants.GetIcon("Settings", IconSize.Size16)!.WithColor("var(--neutral-stroke-rest)"));
 			builder.CloseComponent();
 		};
 		_isDataLoading = false;

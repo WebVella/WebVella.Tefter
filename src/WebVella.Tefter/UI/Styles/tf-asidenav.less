@@ -1,53 +1,53 @@
-﻿@import '_variables.less';
-
-
-.tf-asidenav {
-	--menu-item-v-padding: 0.5rem;
-	margin-top: calc(var(--menu-item-v-padding) * -1);
-
-	&__item {
-		padding: var(--menu-item-v-padding) var(--tf-padding-base);
-		display: flex;
-		border-bottom: 1px solid var(--tf-stroke-base);
-		cursor: pointer;
-		text-decoration: none;
-		color: var(--tf-font-color-base);
-
-		&:first-child {
-			border-top: 1px solid var(--tf-stroke-base);
-		}
-
-		&:not(&--active):hover {
-			background-color: var(--tf-fill-base-hover);
-			color: var(--tf-font-color-base);
-		}
-
-		&__badge {
-			flex: 0 0 32px;
-			display: flex;
-			align-items: center;
-
-			&__wrapper {
-				width: 24px;
-				height: 24px;
-				border-radius: var(--tf-border-radius-lg);
-				display: flex;
-				justify-content: center;
-				align-items: center;
-			}
-		}
-
-		&__meta {
-			flex: 1 1 auto;
-
-			&__description {
-				color: var(--tf-font-color-mute);
-				line-height: 1.15em;
-			}
-		}
-
-		&--active {
-			background-color: var(--tf-white);
-		}
-	}
-}
+﻿//@import '_variables.less';
+//
+//
+//.tf-asidenav {
+//	--menu-item-v-padding: 0.5rem;
+//	margin-top: calc(var(--menu-item-v-padding) * -1);
+//
+//	&__item {
+//		padding: var(--menu-item-v-padding) var(--tf-padding-base);
+//		display: flex;
+//		border-bottom: 1px solid var(--tf-stroke-base);
+//		cursor: pointer;
+//		text-decoration: none;
+//		color: var(--tf-font-color-base);
+//
+//		&:first-child {
+//			border-top: 1px solid var(--tf-stroke-base);
+//		}
+//
+//		&:not(&--active):hover {
+//			background-color: var(--tf-fill-base-hover);
+//			color: var(--tf-font-color-base);
+//		}
+//
+//		&__badge {
+//			flex: 0 0 32px;
+//			display: flex;
+//			align-items: center;
+//
+//			&__wrapper {
+//				width: 24px;
+//				height: 24px;
+//				border-radius: var(--tf-border-radius-lg);
+//				display: flex;
+//				justify-content: center;
+//				align-items: center;
+//			}
+//		}
+//
+//		&__meta {
+//			flex: 1 1 auto;
+//
+//			&__description {
+//				color: var(--tf-font-color-mute);
+//				line-height: 1.15em;
+//			}
+//		}
+//
+//		&--active {
+//			background-color: var(--tf-white);
+//		}
+//	}
+//}

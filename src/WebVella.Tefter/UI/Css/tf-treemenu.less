@@ -1,17 +1,17 @@
 ﻿.tf-treemenu {
   width: 100%;
-  padding: 0 calc(var(--tf-padding) / 2);
+  padding: 0 calc(var(--tfui-padding) / 2);
 }
 
 .tf-submenu {
-  padding-left: calc(var(--tf-padding) * 2);
+  padding-left: calc(var(--tfui-padding) * 2);
   position: relative;
 
   &:before {
     content: "";
     display: block;
     position: absolute;
-    left: calc(var(--tf-padding) + 3px);
+    left: calc(var(--tfui-padding) + 3px);
     top: 0;
     bottom: 0;
     width: 1px;
@@ -21,15 +21,15 @@
 }
 
 .tf-submenu .tf-submenu {
-  padding-left: calc(var(--tf-padding) * 2);
+  padding-left: calc(var(--tfui-padding) * 2);
 }
 
 .tf-submenu .tf-submenu .tf-submenu {
-  padding-left: calc(var(--tf-padding) * 3);
+  padding-left: calc(var(--tfui-padding) * 3);
 }
 
 .tf-submenu .tf-submenu .tf-submenu .tf-submenu {
-  padding-left: calc(var(--tf-padding) * 4);
+  padding-left: calc(var(--tfui-padding) * 4);
 }
 
 
@@ -40,8 +40,8 @@
   margin: calc(var(--design-unit) * 1px) 0;
   text-decoration: none;
   min-height: calc(((var(--base-height-multiplier) + var(--density)) * var(--design-unit) + 1) * 1px);
-  padding-left: calc(var(--tf-padding) / 2);
-  padding-right: calc(var(--tf-padding) / 2);
+  padding-left: calc(var(--tfui-padding) / 2);
+  padding-right: calc(var(--tfui-padding) / 2);
   color: var(--neutral-foreground-rest);
   border-radius: calc(var(--control-corner-radius) * 1px);
   position: relative;
@@ -124,7 +124,7 @@
 
   &__expander {
     position: absolute;
-    right: var(--tf-padding);
+    right: var(--tfui-padding);
     top: 50%;
     margin-top: -12px;
     display: flex;

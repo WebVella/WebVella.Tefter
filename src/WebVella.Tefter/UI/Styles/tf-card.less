@@ -1,121 +1,121 @@
-﻿@import '_variables.less';
-
-
-.tf-card {
-	--tf-card-border-radius: var(--tf-border-radius-md);
-	border-width: 0;
-	border-style: solid;
-	border-radius: var(--tf-card-border-radius);
-	background: var(--tf-white);
-	padding: var(--tf-padding-base);
-
-	.fluent-dialog-body & {
-		border: 1px solid var(--tf-stroke-base);
-	}
-
-	&__title {
-		background: var(--tf-fill-base);
-		border-radius: 0.5rem;
-		padding: 0.5rem 1rem;
-		margin-bottom: 0;
-		font-size: var(--tf-font-size-md);
-		font-weight: var(--tf-font-weight-base);
-		display: flex;
-		align-items: center;
-		justify-content:space-between;
-
-		&__left {
-			flex: 0 0 auto;
-			display: grid;
-			grid-gap: 10px;
-			grid-auto-flow: column;
-		}
-
-		&__right {
-			flex: 0 0 auto;
-			flex-wrap: nowrap;
-			padding-left: 1rem;
-			display: grid;
-			grid-gap: 10px;
-			grid-auto-flow: column;
-		}
-
-		h3 {
-			margin-bottom: 0;
-			font-size: var(--tf-font-size-md);
-			font-weight: var(--tf-font-weight-base);
-		}
-	}
-
-	&__subtitle {
-		color: var(--tf-font-color-mute);
-		font-size: var(--tf-font-size-sm);
-	}
-
-	&__title + &__content {
-		padding-top: var(--tf-padding-base);
-	}
-
-	& + & {
-		margin-top: 2rem;
-	}
-
-	&--clickable {
-		cursor: pointer;
-
-		&:hover {
-			background: var(--neutral-fill-secondary-rest);
-		}
-	}
-
-	&__content {
-		fluent-anchor {
-			&.stealth {
-				--neutral-fill-stealth-rest: var(--tf-fill-base);
-			}
-		}
-	}
-
-	&__footer {
-		padding-top: 1rem;
-	}
-}
-
-
-.tf-filter-manage .card-logical.tf-card {
-	border: 1px solid var(--tf-blue-200);
-	padding: 0;
-	border-radius: 0;
-
-	& > .tf-card__title {
-		background: var(--tf-blue-100);
-		border-radius: 0;
-	}
-
-	& > .tf-card__content {
-		margin: 10px;
-		padding: 0;
-	}
-}
-
-.tf-filter-manage .card-rule.tf-card {
-	border: 1px solid var(--tf-orange-200);
-	padding: 0;
-	border-radius: 0;
-
-	& > .tf-card__title {
-		background: var(--tf-orange-100);
-		border-radius: 0;
-	}
-
-	& > .tf-card__content {
-		margin: 10px;
-		padding:0;
-	}
-}
-
-.tf-filter-manage .tf-card--no-body {
-	.tf-card__content{
-		display:none;
-	}
-}
+﻿//@import '_variables.less';
+//
+//
+//.tf-card {
+//	--tf-card-border-radius: var(--tf-border-radius-md);
+//	border-width: 0;
+//	border-style: solid;
+//	border-radius: var(--tf-card-border-radius);
+//	background: var(--tf-white);
+//	padding: var(--tf-padding-base);
+//
+//	.fluent-dialog-body & {
+//		border: 1px solid var(--tf-stroke-base);
+//	}
+//
+//	&__title {
+//		background: var(--tf-fill-base);
+//		border-radius: 0.5rem;
+//		padding: 0.5rem 1rem;
+//		margin-bottom: 0;
+//		font-size: var(--tf-font-size-md);
+//		font-weight: var(--tf-font-weight-base);
+//		display: flex;
+//		align-items: center;
+//		justify-content:space-between;
+//
+//		&__left {
+//			flex: 0 0 auto;
+//			display: grid;
+//			grid-gap: 10px;
+//			grid-auto-flow: column;
+//		}
+//
+//		&__right {
+//			flex: 0 0 auto;
+//			flex-wrap: nowrap;
+//			padding-left: 1rem;
+//			display: grid;
+//			grid-gap: 10px;
+//			grid-auto-flow: column;
+//		}
+//
+//		h3 {
+//			margin-bottom: 0;
+//			font-size: var(--tf-font-size-md);
+//			font-weight: var(--tf-font-weight-base);
+//		}
+//	}
+//
+//	&__subtitle {
+//		color: var(--tf-font-color-mute);
+//		font-size: var(--tf-font-size-sm);
+//	}
+//
+//	&__title + &__content {
+//		padding-top: var(--tf-padding-base);
+//	}
+//
+//	& + & {
+//		margin-top: 2rem;
+//	}
+//
+//	&--clickable {
+//		cursor: pointer;
+//
+//		&:hover {
+//			background: var(--neutral-fill-secondary-rest);
+//		}
+//	}
+//
+//	&__content {
+//		fluent-anchor {
+//			&.stealth {
+//				--neutral-fill-stealth-rest: var(--tf-fill-base);
+//			}
+//		}
+//	}
+//
+//	&__footer {
+//		padding-top: 1rem;
+//	}
+//}
+//
+//
+//.tf-filter-manage .card-logical.tf-card {
+//	border: 1px solid var(--tf-blue-200);
+//	padding: 0;
+//	border-radius: 0;
+//
+//	& > .tf-card__title {
+//		background: var(--tf-blue-100);
+//		border-radius: 0;
+//	}
+//
+//	& > .tf-card__content {
+//		margin: 10px;
+//		padding: 0;
+//	}
+//}
+//
+//.tf-filter-manage .card-rule.tf-card {
+//	border: 1px solid var(--tf-orange-200);
+//	padding: 0;
+//	border-radius: 0;
+//
+//	& > .tf-card__title {
+//		background: var(--tf-orange-100);
+//		border-radius: 0;
+//	}
+//
+//	& > .tf-card__content {
+//		margin: 10px;
+//		padding:0;
+//	}
+//}
+//
+//.tf-filter-manage .tf-card--no-body {
+//	.tf-card__content{
+//		display:none;
+//	}
+//}

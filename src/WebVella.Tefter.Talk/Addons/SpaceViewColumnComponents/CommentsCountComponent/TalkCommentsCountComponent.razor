@@ -9,18 +9,12 @@
 		{
 			<div style="color:var(--error);" title="@LOC("channel is not configured")">error!</div>
 		}
-		else if (_value is null || _value == 0)
-		{
-			<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
-				<FluentIcon Value="@TfConstants.GetIcon("Comment")" />
-			</FluentButton>
-		}
 		else
 		{
-			<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
-				@_value
-				<FluentIcon Slot="end" Value="@TfConstants.GetIcon("Comment")" />
-			</FluentButton>
+			<FluentCounterBadge Count="@((int?)_value)" VerticalPosition="35"
+			                    Appearance="Appearance.Lightweight">
+				<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick" IconStart="@TfConstants.GetIcon("Comment")"/>
+			</FluentCounterBadge>			
 		}
 	</div>
 

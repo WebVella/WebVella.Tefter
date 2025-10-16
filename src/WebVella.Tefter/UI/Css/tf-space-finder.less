@@ -1,16 +1,25 @@
 ﻿.tf-space-finder {
   &__space {
     box-shadow: none;
-    border-color: var(--tf-stroke-color) !important;
-    &--active{
-      border-color: var(--accent-fill-rest) !important;
-      &:hover{
-        background: var(--tf-fill-base-hover);
-      }
-      &:focus,&:active{
-        box-shadow: var(--tf-fill-base-hover);
-      }      
+    border-color: var(--neutral-stroke-rest) !important;
+    margin-top: 0.5rem !important;
+
+    &:first-child {
+      margin-top: 0;
     }
+
+    &--active {
+      border-color: var(--accent-fill-rest) !important;
+
+      &:hover {
+        background: var(--neutral-fill-hover);
+      }
+
+      &:focus, &:active {
+        box-shadow: var(--neutral-fill-hover);
+      }
+    }
+
     .tf-card__content {
       display: flex;
       align-items: center;
@@ -25,7 +34,8 @@
     &__meta {
       flex: 1 1 auto;
       padding: 0 10px;
-      mark{
+
+      mark {
         background: transparent;
         font-weight: bold;
       }

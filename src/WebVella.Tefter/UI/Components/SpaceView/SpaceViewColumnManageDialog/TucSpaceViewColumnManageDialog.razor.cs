@@ -10,11 +10,14 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn = null!;
+
 	private bool _isCreate = false;
+
 	//NOTE: this changes the Items of the component type select
 	//there is a bug and the component needs to be rerendered when both value and items ara changed
 	private bool _renderComponentTypeSelect = false;
-	private string _activeTab = "data";
+	private TucSpaceViewColumnManageDialogTab _activeTab = TucSpaceViewColumnManageDialogTab.General;
+	private List<TfMenuItem> _menu = new();
 	private TfSpaceViewColumn _form = new();
 	private TfSpaceView _spaceView = new();
 	private TfDataset _spaceData = new();
@@ -24,6 +27,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	private List<ITfSpaceViewColumnComponentAddon> _selectedColumnTypeComponents = new();
 	private ITfSpaceViewColumnComponentAddon? _selectedColumnComponent = null;
 	private ITfSpaceViewColumnComponentAddon? _selectedEditColumnComponent = null;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -48,6 +52,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			Content = TfService.GetSpaceViewColumn(Content.Id);
 			_form = Content with { Id = Content.Id };
 		}
+
 		if (_form.ComponentId == Guid.Empty)
 			_form.ComponentId = new Guid(TucTextDisplayColumnComponent.ID);
 
@@ -87,6 +92,8 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 				}
 			}
 		}
+
+		_initMenu();
 	}
 
 	private void _selectComponentType(Guid typeId)
@@ -95,37 +102,46 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		_selectedColumnTypeComponents = new();
 
 		if (_selectedColumnType is not null)
-			_selectedColumnTypeComponents = TfMetaService.GetSpaceViewColumnTypeSupportedComponents(_selectedColumnType.Instance.AddonId);
+			_selectedColumnTypeComponents =
+				TfMetaService.GetSpaceViewColumnTypeSupportedComponents(_selectedColumnType.Instance.AddonId);
 
 		if (_selectedColumnTypeComponents.Count > 0)
 		{
 			//Display
 			if (_form.ComponentId != Guid.Empty)
 			{
-				_selectedColumnComponent = _selectedColumnTypeComponents.FirstOrDefault(x => x.AddonId == _form.ComponentId);
+				_selectedColumnComponent =
+					_selectedColumnTypeComponents.FirstOrDefault(x => x.AddonId == _form.ComponentId);
 			}
+
 			if (_selectedColumnComponent is null)
 			{
 				if (_selectedColumnType!.Instance.DefaultDisplayComponentId is not null)
 
-					_selectedColumnComponent = _selectedColumnTypeComponents.FirstOrDefault(x => x.AddonId == _selectedColumnType!.Instance.DefaultDisplayComponentId);
+					_selectedColumnComponent = _selectedColumnTypeComponents.FirstOrDefault(x =>
+						x.AddonId == _selectedColumnType!.Instance.DefaultDisplayComponentId);
 				else
 					_selectedColumnComponent = _selectedColumnTypeComponents[0];
 			}
+
 			_form.ComponentId = _selectedColumnComponent!.AddonId;
 
 			//Edit
 			if (_form.EditComponentId != Guid.Empty)
 			{
-				_selectedEditColumnComponent = _selectedColumnTypeComponents.FirstOrDefault(x => x.AddonId == _form.EditComponentId);
+				_selectedEditColumnComponent =
+					_selectedColumnTypeComponents.FirstOrDefault(x => x.AddonId == _form.EditComponentId);
 			}
+
 			if (_selectedEditColumnComponent is null)
 			{
 				if (_selectedColumnType!.Instance.DefaultEditComponentId is not null)
-					_selectedEditColumnComponent = _selectedColumnTypeComponents.FirstOrDefault(x => x.AddonId == _selectedColumnType!.Instance.DefaultEditComponentId);
+					_selectedEditColumnComponent = _selectedColumnTypeComponents.FirstOrDefault(x =>
+						x.AddonId == _selectedColumnType!.Instance.DefaultEditComponentId);
 				else
 					_selectedEditColumnComponent = _selectedColumnTypeComponents[0];
 			}
+
 			_form.EditComponentId = _selectedEditColumnComponent!.AddonId;
 		}
 		else
@@ -175,6 +191,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			await InvokeAsync(StateHasChanged);
 		}
 	}
+
 	private async Task _cancel()
 	{
 		await Dialog.CancelAsync();
@@ -197,12 +214,14 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			_selectedColumnType = TfMetaService.GetSpaceViewColumnType(new Guid(TfTextViewColumnType.ID));
 			_form.TypeId = _selectedColumnType.Instance.AddonId;
 		}
+
 		_selectComponentType(_form.TypeId);
 		await InvokeAsync(StateHasChanged);
 		await Task.Delay(1);
 		_renderComponentTypeSelect = true;
 		await InvokeAsync(StateHasChanged);
 	}
+
 	private void _columnComponentChangeHandler(ITfSpaceViewColumnComponentAddon componentType)
 	{
 		_selectedColumnComponent = null;
@@ -217,12 +236,12 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 
 			if (_selectedColumnComponent is null)
 			{
-				Guid defaultCompId = _selectedColumnType.Instance.DefaultDisplayComponentId is not null ? _selectedColumnType.Instance.DefaultDisplayComponentId.Value
+				Guid defaultCompId = _selectedColumnType.Instance.DefaultDisplayComponentId is not null
+					? _selectedColumnType.Instance.DefaultDisplayComponentId.Value
 					: new Guid(TucTextDisplayColumnComponent.ID);
 				_selectedColumnComponent = TfMetaService.GetSpaceViewColumnComponent(defaultCompId);
 				_form.ComponentId = _selectedColumnComponent.AddonId;
 			}
-
 		}
 	}
 
@@ -240,12 +259,12 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 
 			if (_selectedColumnComponent is null)
 			{
-				Guid defaultCompId = _selectedColumnType.Instance.DefaultEditComponentId is not null ? _selectedColumnType.Instance.DefaultEditComponentId.Value
+				Guid defaultCompId = _selectedColumnType.Instance.DefaultEditComponentId is not null
+					? _selectedColumnType.Instance.DefaultEditComponentId.Value
 					: new Guid(TucTextDisplayColumnComponent.ID);
 				_selectedEditColumnComponent = TfMetaService.GetSpaceViewColumnComponent(defaultCompId);
 				_form.EditComponentId = _selectedColumnComponent.AddonId;
 			}
-
 		}
 	}
 
@@ -271,6 +290,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			if (_form.DataMapping.ContainsKey(item.Alias))
 				dataMapping[item.Alias] = _form.DataMapping[item.Alias];
 		}
+
 		_form.DataMapping = dataMapping;
 	}
 
@@ -279,21 +299,24 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		var componentData = new Dictionary<string, object>();
 
 		var contextData = new Dictionary<string, object>();
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext(contextData)
-		{
-			Mode = TfComponentPresentationMode.Options,
-			ComponentOptionsJson = _form.ComponentOptionsJson,
-			DataMapping = _form.DataMapping,
-			DataTable = null,
-			RowId = Guid.Empty,
-			QueryName = _form.QueryName,
-			SpaceViewId = _form.SpaceViewId,
-			SpaceViewColumnId = _form.Id,
-			EditContext = EditContext,
-			ValidationMessageStore = MessageStore
-		};
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_OPTIONS_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<string>(this, _customOptionsChangedHandler);
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_DATA_MAPPING_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<Tuple<string, string>>(this, _dataMappingValueChanged);
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] =
+			new TfSpaceViewColumnScreenRegionContext(contextData)
+			{
+				Mode = TfComponentPresentationMode.Options,
+				ComponentOptionsJson = _form.ComponentOptionsJson,
+				DataMapping = _form.DataMapping,
+				DataTable = null,
+				RowId = Guid.Empty,
+				QueryName = _form.QueryName,
+				SpaceViewId = _form.SpaceViewId,
+				SpaceViewColumnId = _form.Id,
+				EditContext = EditContext,
+				ValidationMessageStore = MessageStore
+			};
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_OPTIONS_CHANGED_PROPERTY_NAME] =
+			EventCallback.Factory.Create<string>(this, _customOptionsChangedHandler);
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_DATA_MAPPING_CHANGED_PROPERTY_NAME] =
+			EventCallback.Factory.Create<Tuple<string, string>>(this, _dataMappingValueChanged);
 		return componentData;
 	}
 
@@ -302,21 +325,24 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		var componentData = new Dictionary<string, object>();
 
 		var contextData = new Dictionary<string, object>();
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext(contextData)
-		{
-			Mode = TfComponentPresentationMode.Options,
-			ComponentOptionsJson = _form.EditComponentOptionsJson,
-			DataMapping = _form.DataMapping,
-			DataTable = null,
-			RowId = Guid.Empty,
-			QueryName = _form.QueryName,
-			SpaceViewId = _form.SpaceViewId,
-			SpaceViewColumnId = _form.Id,
-			EditContext = EditContext,
-			ValidationMessageStore = MessageStore
-		};
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_OPTIONS_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<string>(this, _customEditOptionsChangedHandler);
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_DATA_MAPPING_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<Tuple<string, string>>(this, _dataMappingValueChanged);
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] =
+			new TfSpaceViewColumnScreenRegionContext(contextData)
+			{
+				Mode = TfComponentPresentationMode.Options,
+				ComponentOptionsJson = _form.EditComponentOptionsJson,
+				DataMapping = _form.DataMapping,
+				DataTable = null,
+				RowId = Guid.Empty,
+				QueryName = _form.QueryName,
+				SpaceViewId = _form.SpaceViewId,
+				SpaceViewColumnId = _form.Id,
+				EditContext = EditContext,
+				ValidationMessageStore = MessageStore
+			};
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_OPTIONS_CHANGED_PROPERTY_NAME] =
+			EventCallback.Factory.Create<string>(this, _customEditOptionsChangedHandler);
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_DATA_MAPPING_CHANGED_PROPERTY_NAME] =
+			EventCallback.Factory.Create<Tuple<string, string>>(this, _dataMappingValueChanged);
 		return componentData;
 	}
 
@@ -325,7 +351,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		if (String.IsNullOrWhiteSpace(value)) _form.ComponentOptionsJson = null;
 
 		if (!(value.StartsWith("{") && value.StartsWith("{"))
-		|| (value.StartsWith("[") && value.StartsWith("]")))
+		    || (value.StartsWith("[") && value.StartsWith("]")))
 		{
 			ToastService.ShowError("custom options value needs to be json");
 			return;
@@ -335,13 +361,12 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		await InvokeAsync(StateHasChanged);
 	}
 
-
 	private async Task _customEditOptionsChangedHandler(string value)
 	{
 		if (String.IsNullOrWhiteSpace(value)) _form.EditComponentOptionsJson = null;
 
 		if (!(value.StartsWith("{") && value.StartsWith("{"))
-		|| (value.StartsWith("[") && value.StartsWith("]")))
+		    || (value.StartsWith("[") && value.StartsWith("]")))
 		{
 			ToastService.ShowError("custom options value needs to be json");
 			return;
@@ -351,5 +376,40 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		await InvokeAsync(StateHasChanged);
 	}
 
+	private void _initMenu()
+	{
+		if (_menu.Count == 0)
+		{
+			foreach (var tab in Enum.GetValues<TucSpaceViewColumnManageDialogTab>())
+			{
+				_menu.Add(new()
+				{
+					Id = ((int)tab).ToString(),
+					Text = tab.ToDescriptionString(),
+					OnClick = EventCallback.Factory.Create(this, () => _tabChanged(tab)),
+				});
+			}
+		}
 
+		foreach (var item in _menu)
+			item.Selected = item.Id == ((int)_activeTab).ToString();
+	}
+
+	private void _tabChanged(TucSpaceViewColumnManageDialogTab tab)
+	{
+		_activeTab = tab;
+		_initMenu();
+		StateHasChanged();
+	}
+
+
+	private enum TucSpaceViewColumnManageDialogTab
+	{
+		[Description("General")] General = 0,
+		[Description("Read Mode")] ReadMode = 1,
+		[Description("Edit Mode")] EditMode = 2,		
+		[Description("Colors")] Colors = 3,
+		[Description("Template")] Template = 4,
+
+	}
 }

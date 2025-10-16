@@ -6,7 +6,7 @@
 	</Tabs>
 	<ChildContent>
 		<TucErrorBoundry>
-			<div style="padding:var(--tf-padding)">
+			<div style="padding:var(--tfui-padding)">
 				@if (String.IsNullOrWhiteSpace(UriInitialized))
 				{
 					<TucSkeletonPageHeader />
@@ -28,7 +28,7 @@
 							<FluentGrid>
 								<FluentGridItem xs="2">
 									<FluentTextField Value="@(_provider.Code)"
-													 Label="@LOC("Code")" Style="width:100%" ReadOnly="true" Disabled="true" />
+													 Label="@LOC("Code")" Style="width:100%" ReadOnly="true" />
 								</FluentGridItem>
 								<FluentGridItem xs="5">
 									<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_provider.Name"
@@ -70,7 +70,7 @@
 							</FluentGrid>
 						</ChildContent>
 					</TucCard>
-					<TucCard  Style="margin-top:var(--tf-card-space)">
+					<TucCard  Style="margin-top:var(--tfui-card-space)">
 						<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center" HorizontalGap="30">
 							<div>@LOC("When a data provider is deleted all data that it holds will be deleted too. Data related to this data provider, but stored in shared columns, applications or other data providers will not be deleted. Thus, if recreate matching data identities in the future these relations will hold")</div>
 							<div>

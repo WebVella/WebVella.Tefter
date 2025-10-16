@@ -22,7 +22,7 @@
                     </span>
                 </FluentMenuItem>
                 <FluentMenuItem
-                    OnClick="_addPage">
+                    OnClick="_addSpace">
                     @LOC("Create Space")
                     <span slot="start">
                         <FluentIcon Value="@TfConstants.GetIcon("Add")" Slot="start"/>
@@ -79,7 +79,7 @@
                     </FluentMenuItem>
                     <FluentDivider/>
                     <FluentMenuItem
-                        OnClick="_manageCurrentSpace">
+                        OnClick="_deleteSpace">
                         @LOC("Delete Space")
                         <span slot="start">
                             <FluentIcon Value="@TfConstants.GetIcon("Delete").WithColor(Color.Error)" Slot="start"/>

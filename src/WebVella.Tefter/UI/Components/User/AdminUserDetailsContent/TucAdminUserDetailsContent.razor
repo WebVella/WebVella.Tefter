@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <TucLayoutPageContent Title="@_user?.Names" Icon="Person">
-	<div style="padding:var(--tf-padding)">
+	<div style="padding:var(--tfui-padding)">
 		@if (String.IsNullOrWhiteSpace(UriInitialized))
 		{
 			<TucSkeletonPageHeader/>
@@ -77,7 +77,7 @@
 				</ChildContent>
 			</TucCard>
 
-			<TucCard Title="@LOC("Roles")" Style="margin-top:var(--tf-card-space)">
+			<TucCard Title="@LOC("Roles")" Style="margin-top:var(--tfui-card-space)">
 				<ToolbarTemplate>
 					@if (_roleOptions.Count > 0)
 					{
