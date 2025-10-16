@@ -13,6 +13,9 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 
 	[Parameter]
 	public string? Title { get; set; } = null;
+	
+	[Parameter]
+	public string? Style { get; set; } = null;
 
 	public bool _submitting = false;
 	public TfPresetFilterItemType _selectedType = TfPresetFilterItemType.PresetFilter;

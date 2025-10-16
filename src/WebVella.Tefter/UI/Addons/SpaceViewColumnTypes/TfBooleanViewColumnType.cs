@@ -16,6 +16,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 	public List<string> FilterAliases { get; init; }
 	public List<string> SortAliases { get; init; }
 	public Guid? DefaultDisplayComponentId { get; init; }
+	public List<Guid> SupportedDbTypes { get; set; } = new();
 	public List<Guid> SupportedComponents { get; set; } = new();
 	public Guid? DefaultEditComponentId { get; init; }
 

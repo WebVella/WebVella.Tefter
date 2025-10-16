@@ -3,15 +3,15 @@
   flex-flow: column nowrap;
 
   &:not(.tflpc--has-page-tabs) {
-    --tf-page-tabs-height: 0px;
+    --tfui-page-tabs-height: 0px;
   }
 
   &__header {
-    flex: 0 0 var(--tf-page-header-height);
+    flex: 0 0 var(--tfui-page-header-height);
     display: flex;
     justify-content: space-between;
     align-items: start;
-    padding: 0 var(--tf-padding);
+    padding: 0 var(--tfui-padding);
 
     &__left {
       flex: 0 0 auto;
@@ -31,14 +31,14 @@
         flex: 0 0 auto;
         display: flex;
         align-items: center;
-        padding-right: var(--tf-padding);
+        padding-right: var(--tfui-padding);
 
       }
       
       
       &__return {
         flex: 0 0 auto;
-        padding-right: var(--tf-padding);
+        padding-right: var(--tfui-padding);
 
       }
     }
@@ -48,7 +48,7 @@
       min-height: 32px;
       display: flex;
       align-items: center;
-      gap: var(--tf-padding);
+      gap: var(--tfui-padding);
       fluent-search{
         &::part(root){
           background:padding-box linear-gradient(var(--neutral-fill-input-active),var(--neutral-fill-input-active)),border-box var(--neutral-stroke-input-active);
@@ -58,18 +58,18 @@
   }
 
   &__tabs {
-    flex: 0 0 var(--tf-page-tabs-height);
+    flex: 0 0 var(--tfui-page-tabs-height);
     display: flex;
     flex-flow: column;
     justify-content: end;
-    padding-left: var(--tf-padding);
-    padding-right: var(--tf-padding);
+    padding-left: var(--tfui-padding);
+    padding-right: var(--tfui-padding);
   }
 
   &__content {
     flex: 1 1 auto;
-    height: calc(100vh - var(--tf-topbar-height) - var(--tf-page-header-height) - var(--tf-page-tabs-height));
-    width: calc(100vw - var(--tf-aside-width) - 1px);
+    height: calc(100vh - var(--tfui-topbar-height) - var(--tfui-page-header-height) - var(--tfui-page-tabs-height));
+    width: calc(100vw - var(--tfui-aside-width) - 1px);
     overflow-y: auto;
     overflow-x: auto;
     scrollbar-width: thin;

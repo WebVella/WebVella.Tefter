@@ -69,7 +69,7 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 				space:space,
 				index:0,
 				bookmarked:_userBookmarks.Contains(space.Id),
-				color: space.Color?.GetColor().OKLCH ?? "var(--tf-accent-color)",
+				color: space.Color?.GetColor().OKLCH ?? "var(--accent-foreground-rest)",
 				onClick:null!,
 				onBookmark:null!
 			));

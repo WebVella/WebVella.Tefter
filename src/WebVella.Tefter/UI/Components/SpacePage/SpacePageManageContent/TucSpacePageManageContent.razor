@@ -5,7 +5,7 @@
 		<TucSpacePageManageContentToolbar/>
 	</Tabs>
 	<ChildContent>
-		<div style="padding:var(--tf-padding)">
+		<div style="padding:var(--tfui-padding)">
 			<TucCard Title="@LOC("Details")">
 				<ToolbarTemplate>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_editPage">
@@ -59,7 +59,7 @@
 
 				</ChildContent>
 			</TucCard>
-			<TucCard>
+			<TucCard Style="margin-top:var(--tfui-card-space)">
 				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween"
 				             VerticalAlignment="@VerticalAlignment.Center">
 					<div>@LOC("When a page is deleted it will delete any data provider data. Only presentation configuration will be removed.")</div>

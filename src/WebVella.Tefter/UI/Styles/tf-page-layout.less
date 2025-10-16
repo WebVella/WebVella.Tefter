@@ -1,404 +1,404 @@
-﻿@import '_variables.less';
-
-
-.tf-page-layout {
-
-    &--with-navigation {
-        --content-top: var(--tf-layout-header-height);
-    }
-
-    &--with-toolbar {
-        --content-top: var(--tf-layout-content-toolbar-height);
-    }
-
-    &--with-navigation&--with-toolbar {
-        --content-top: calc(var(--tf-layout-header-height) + var(--tf-layout-content-toolbar-height));
-    }
-
-
-    &__navigation {
-        height: var(--tf-layout-header-height);
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        background: var(--tf-white);
-
-        &__left {
-            display: flex;
-            flex: 0 0 340px;
-            align-items: center;
-            padding-left: var(--tf-padding-base);
-
-            &__back-btn {
-                flex: 0 0 auto;
-                padding-right: 0.5rem;
-                display: flex;
-                align-items: center;
-
-                fluent-anchor {
-                    background: var(--tf-white);
-                }
-            }
-
-            &__icon-wrapper {
-                flex: 0 0 auto;
-                margin-right: 0.5rem;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-
-            &__icon {
-                width: 32px;
-                height: 32px;
-                /*border-radius: var(--tf-border-radius-base);*/
-                border-radius: 50%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background: var(--tf-fill-base);
-            }
-
-            &__meta {
-
-                &__area {
-                    color: var(--tf-font-color-mute);
-                    font-size: var(--tf-font-size-xs);
-                    line-height: 1.25em;
-                }
-
-                &__title {
-                    font-weight: var(--tf-font-weight-lg);
-                    font-size: var(--tf-font-size-lg);
-                    line-height: 1.15em;
-                }
-            }
-        }
-
-        &__right {
-            flex: 1 1 auto;
-            display: flex;
-
-            &__inner {
-                display: flex;
-                width: 100%;
-                justify-content: space-between;
-                font-size: var(--tf-font-size-sm);
-                background: var(--tf-white);
-                color: var(--tf-font-color-base);
-                padding: 0 1rem;
-
-                a {
-                    text-decoration: none;
-                    color: var(--tf-font-color-link);
-                }
-
-                &__left, &__right {
-                    display: flex;
-                    align-items: center;
-                    flex: 1 1 auto;
-                }
-
-                &__right {
-                    justify-content: end;
-                }
-            }
-        }
-
-        .tf-menu {
-            height: 100%;
-            display: flex;
-            padding-top: 0.75rem;
-
-            &__item {
-                fluent-anchor {
-                    height: 100%;
-                    --accent-foreground-rest: var(--tf-font-color-base);
-                    --accent-foreground-hover: var(--tf-font-color-link-hover);
-                    --accent-foreground-active: var(--tf-font-color-link-hover);
-                    --accent-fill-rest: var(--tf-font-color-base);
-
-                    &::part(control) {
-                        text-decoration: none !important;
-                        padding: 0 1em;
-                        display: flex;
-                        align-items: center;
-                        box-sizing: border-box;
-                        border-radius: 0;
-
-
-                        &:focus-visible {
-                            outline: none !important;
-                        }
-
-                        &:hover {
-                            --accent-fill-rest: var(--tf-font-color-link-hover);
-                        }
-                    }
-
-                    &::part(start) {
-                        top: 1px !important;
-                        margin-inline-end: 5px;
-                    }
-
-                    &::part(end) {
-                        top: 1px !important;
-                    }
-                }
-
-                &--disabled {
-                    fluent-anchor {
-                        --accent-foreground-rest: var(--tf-font-color-mute);
-                        --accent-foreground-hover: var(--tf-font-color-mute);
-                        --accent-foreground-active: var(--tf-font-color-mute);
-                        --accent-fill-rest: var(--tf-font-color-mute);
-                        color: var(--tf-font-color-mute);
-
-                        &::part(control):hover {
-                            --accent-fill-rest: var(--tf-font-color-mute);
-                        }
-                    }
-                }
-
-                &--expand {
-                    fluent-anchor {
-                        &::part(control) {
-                            padding: 0 0.25em;
-                        }
-                    }
-                }
-
-                &--active {
-                    fluent-anchor {
-                        &::part(control) {
-                            background: var(--tf-fill-base);
-                            border-radius: 4px 4px 0 0;
-                        }
-                    }
-                }
-            }
-        }
-
-        fluent-menu {
-            background: var(--tf-white);
-            color: var(--tf-font-color-mute);
-            border-radius: 0;
-
-            fluent-menu-item {
-                &:hover {
-                    background: var(--tf-fill-base-hover);
-                }
-
-                &::part(content) {
-                    color: var(--tf-font-color-base);
-                }
-
-                &::part(expand-collapse-glyph-container) {
-                    color: var(--tf-font-color-base);
-                }
-
-                &::part(start) {
-                    position: relative;
-                    top: 1px !important;
-                }
-
-                &::part(end) {
-                    position: relative;
-                    top: 1px !important;
-                }
-            }
-        }
-    }
-
-    &__toolbar {
-        height: var(--tf-layout-content-toolbar-height);
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        justify-content: space-between;
-        font-size: var(--tf-font-size-sm);
-        color: var(--tf-font-color-base);
-
-        .tf-page-layout--with-navigation & {
-            top: var(--tf-layout-header-height);
-        }
-
-        a {
-            text-decoration: none;
-            color: var(--tf-font-color-link);
-        }
-
-        &__left, &__right {
-            display: flex;
-            flex: 1 1 auto;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        &__left {
-            padding-left: 1rem;
-            justify-content: start;
-
-            & > * {
-                margin-right: 0.25rem;
-            }
-        }
-
-        &__right {
-            padding-right: 1rem;
-            justify-content: end;
-
-            & > * {
-                margin-left: 0.25rem;
-            }
-        }
-
-        .tf-menu {
-            height: 100%;
-            display: flex;
-
-            &__item {
-
-                fluent-anchor {
-                    height: 100%;
-                    --accent-foreground-rest: var(--tf-font-color-base);
-                    --accent-foreground-hover: var(--tf-font-color-link-hover);
-                    --accent-foreground-active: var(--tf-font-color-link-hover);
-                    --accent-fill-rest: var(--tf-font-color-base);
-
-
-                    &::part(control) {
-                        text-decoration: none !important;
-                        padding: 0 1em;
-                        display: flex;
-                        align-items: center;
-                        box-sizing: border-box;
-                        border-radius: 0;
-
-
-                        &:focus-visible {
-                            outline: none !important;
-                        }
-
-                        &:hover {
-                            --accent-fill-rest: var(--tf-font-color-link-hover);
-                        }
-                    }
-
-                    &::part(start) {
-                        top: 1px !important;
-                        margin-inline-end: 5px;
-                    }
-
-                    &::part(end) {
-                        top: 1px !important;
-                    }
-                }
-
-                &--disabled {
-                    fluent-anchor {
-                        --accent-foreground-rest: var(--tf-font-color-mute);
-                        --accent-foreground-hover: var(--tf-font-color-mute);
-                        --accent-foreground-active: var(--tf-font-color-mute);
-                        --accent-fill-rest: var(--tf-font-color-mute);
-                        color: var(--tf-font-color-mute);
-
-                        &::part(control):hover {
-                            --accent-fill-rest: var(--tf-font-color-mute);
-                        }
-                    }
-                }
-
-                &--expand {
-                    fluent-anchor {
-                        &::part(control) {
-                            padding: 0 0.25em;
-                        }
-                    }
-                }
-
-                &--active {
-                    fluent-anchor {
-                        &::part(control) {
-                            background: var(--tf-fill-base);
-                            border-radius: 4px 4px 0 0;
-                        }
-                    }
-                }
-            }
-        }
-
-        fluent-menu {
-            background: var(--tf-white);
-            color: var(--tf-font-color-mute);
-            border-radius: 0;
-
-            fluent-menu-item {
-                &:hover {
-                    background: var(--tf-fill-base-hover);
-                }
-
-                &::part(content) {
-                    color: var(--tf-font-color-base);
-                }
-
-                &::part(expand-collapse-glyph-container) {
-                    color: var(--tf-font-color-base);
-                }
-
-                &::part(start) {
-                    position: relative;
-                    top: 1px !important;
-                }
-
-                &::part(end) {
-                    position: relative;
-                    top: 1px !important;
-                }
-            }
-        }
-    }
-
-    &__content {
-        position: absolute;
-        top: var(--content-top);
-        left: 0;
-        right: 0;
-        bottom: 0;
-        overflow: auto;
-
-        .content-toolbar {
-            display: flex;
-            padding: var(--tf-padding-base);
-
-            &__left {
-                flex: 0 0 auto;
-                display: flex;
-                align-items: center;
-            }
-
-            &__right {
-                flex: 1 1 auto;
-                display: flex;
-                justify-content: end;
-                align-items: center;
-            }
-
-            fluent-button {
-                margin-right: 5px;
-
-                &:last-child {
-                    margin-right: 0;
-                }
-            }
-
-            fluent-search {
-                margin-right: 5px;
-            }
-        }
-    }
-}
+﻿//@import '_variables.less';
+//
+//
+//.tf-page-layout {
+//
+//    &--with-navigation {
+//        --content-top: var(--tf-layout-header-height);
+//    }
+//
+//    &--with-toolbar {
+//        --content-top: var(--tf-layout-content-toolbar-height);
+//    }
+//
+//    &--with-navigation&--with-toolbar {
+//        --content-top: calc(var(--tf-layout-header-height) + var(--tf-layout-content-toolbar-height));
+//    }
+//
+//
+//    &__navigation {
+//        height: var(--tf-layout-header-height);
+//        position: absolute;
+//        top: 0;
+//        left: 0;
+//        right: 0;
+//        display: flex;
+//        background: var(--tf-white);
+//
+//        &__left {
+//            display: flex;
+//            flex: 0 0 340px;
+//            align-items: center;
+//            padding-left: var(--tf-padding-base);
+//
+//            &__back-btn {
+//                flex: 0 0 auto;
+//                padding-right: 0.5rem;
+//                display: flex;
+//                align-items: center;
+//
+//                fluent-anchor {
+//                    background: var(--tf-white);
+//                }
+//            }
+//
+//            &__icon-wrapper {
+//                flex: 0 0 auto;
+//                margin-right: 0.5rem;
+//                display: flex;
+//                justify-content: center;
+//                align-items: center;
+//            }
+//
+//            &__icon {
+//                width: 32px;
+//                height: 32px;
+//                /*border-radius: var(--tf-border-radius-base);*/
+//                border-radius: 50%;
+//                display: flex;
+//                justify-content: center;
+//                align-items: center;
+//                background: var(--tf-fill-base);
+//            }
+//
+//            &__meta {
+//
+//                &__area {
+//                    color: var(--tf-font-color-mute);
+//                    font-size: var(--tf-font-size-xs);
+//                    line-height: 1.25em;
+//                }
+//
+//                &__title {
+//                    font-weight: var(--tf-font-weight-lg);
+//                    font-size: var(--tf-font-size-lg);
+//                    line-height: 1.15em;
+//                }
+//            }
+//        }
+//
+//        &__right {
+//            flex: 1 1 auto;
+//            display: flex;
+//
+//            &__inner {
+//                display: flex;
+//                width: 100%;
+//                justify-content: space-between;
+//                font-size: var(--tf-font-size-sm);
+//                background: var(--tf-white);
+//                color: var(--tf-font-color-base);
+//                padding: 0 1rem;
+//
+//                a {
+//                    text-decoration: none;
+//                    color: var(--tf-font-color-link);
+//                }
+//
+//                &__left, &__right {
+//                    display: flex;
+//                    align-items: center;
+//                    flex: 1 1 auto;
+//                }
+//
+//                &__right {
+//                    justify-content: end;
+//                }
+//            }
+//        }
+//
+//        .tf-menu {
+//            height: 100%;
+//            display: flex;
+//            padding-top: 0.75rem;
+//
+//            &__item {
+//                fluent-anchor {
+//                    height: 100%;
+//                    --accent-foreground-rest: var(--tf-font-color-base);
+//                    --accent-foreground-hover: var(--tf-font-color-link-hover);
+//                    --accent-foreground-active: var(--tf-font-color-link-hover);
+//                    --accent-fill-rest: var(--tf-font-color-base);
+//
+//                    &::part(control) {
+//                        text-decoration: none !important;
+//                        padding: 0 1em;
+//                        display: flex;
+//                        align-items: center;
+//                        box-sizing: border-box;
+//                        border-radius: 0;
+//
+//
+//                        &:focus-visible {
+//                            outline: none !important;
+//                        }
+//
+//                        &:hover {
+//                            --accent-fill-rest: var(--tf-font-color-link-hover);
+//                        }
+//                    }
+//
+//                    &::part(start) {
+//                        top: 1px !important;
+//                        margin-inline-end: 5px;
+//                    }
+//
+//                    &::part(end) {
+//                        top: 1px !important;
+//                    }
+//                }
+//
+//                &--disabled {
+//                    fluent-anchor {
+//                        --accent-foreground-rest: var(--tf-font-color-mute);
+//                        --accent-foreground-hover: var(--tf-font-color-mute);
+//                        --accent-foreground-active: var(--tf-font-color-mute);
+//                        --accent-fill-rest: var(--tf-font-color-mute);
+//                        color: var(--tf-font-color-mute);
+//
+//                        &::part(control):hover {
+//                            --accent-fill-rest: var(--tf-font-color-mute);
+//                        }
+//                    }
+//                }
+//
+//                &--expand {
+//                    fluent-anchor {
+//                        &::part(control) {
+//                            padding: 0 0.25em;
+//                        }
+//                    }
+//                }
+//
+//                &--active {
+//                    fluent-anchor {
+//                        &::part(control) {
+//                            background: var(--tf-fill-base);
+//                            border-radius: 4px 4px 0 0;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        fluent-menu {
+//            background: var(--tf-white);
+//            color: var(--tf-font-color-mute);
+//            border-radius: 0;
+//
+//            fluent-menu-item {
+//                &:hover {
+//                    background: var(--tf-fill-base-hover);
+//                }
+//
+//                &::part(content) {
+//                    color: var(--tf-font-color-base);
+//                }
+//
+//                &::part(expand-collapse-glyph-container) {
+//                    color: var(--tf-font-color-base);
+//                }
+//
+//                &::part(start) {
+//                    position: relative;
+//                    top: 1px !important;
+//                }
+//
+//                &::part(end) {
+//                    position: relative;
+//                    top: 1px !important;
+//                }
+//            }
+//        }
+//    }
+//
+//    &__toolbar {
+//        height: var(--tf-layout-content-toolbar-height);
+//        position: absolute;
+//        top: 0;
+//        left: 0;
+//        right: 0;
+//        display: flex;
+//        justify-content: space-between;
+//        font-size: var(--tf-font-size-sm);
+//        color: var(--tf-font-color-base);
+//
+//        .tf-page-layout--with-navigation & {
+//            top: var(--tf-layout-header-height);
+//        }
+//
+//        a {
+//            text-decoration: none;
+//            color: var(--tf-font-color-link);
+//        }
+//
+//        &__left, &__right {
+//            display: flex;
+//            flex: 1 1 auto;
+//            align-items: center;
+//            flex-wrap: wrap;
+//        }
+//
+//        &__left {
+//            padding-left: 1rem;
+//            justify-content: start;
+//
+//            & > * {
+//                margin-right: 0.25rem;
+//            }
+//        }
+//
+//        &__right {
+//            padding-right: 1rem;
+//            justify-content: end;
+//
+//            & > * {
+//                margin-left: 0.25rem;
+//            }
+//        }
+//
+//        .tf-menu {
+//            height: 100%;
+//            display: flex;
+//
+//            &__item {
+//
+//                fluent-anchor {
+//                    height: 100%;
+//                    --accent-foreground-rest: var(--tf-font-color-base);
+//                    --accent-foreground-hover: var(--tf-font-color-link-hover);
+//                    --accent-foreground-active: var(--tf-font-color-link-hover);
+//                    --accent-fill-rest: var(--tf-font-color-base);
+//
+//
+//                    &::part(control) {
+//                        text-decoration: none !important;
+//                        padding: 0 1em;
+//                        display: flex;
+//                        align-items: center;
+//                        box-sizing: border-box;
+//                        border-radius: 0;
+//
+//
+//                        &:focus-visible {
+//                            outline: none !important;
+//                        }
+//
+//                        &:hover {
+//                            --accent-fill-rest: var(--tf-font-color-link-hover);
+//                        }
+//                    }
+//
+//                    &::part(start) {
+//                        top: 1px !important;
+//                        margin-inline-end: 5px;
+//                    }
+//
+//                    &::part(end) {
+//                        top: 1px !important;
+//                    }
+//                }
+//
+//                &--disabled {
+//                    fluent-anchor {
+//                        --accent-foreground-rest: var(--tf-font-color-mute);
+//                        --accent-foreground-hover: var(--tf-font-color-mute);
+//                        --accent-foreground-active: var(--tf-font-color-mute);
+//                        --accent-fill-rest: var(--tf-font-color-mute);
+//                        color: var(--tf-font-color-mute);
+//
+//                        &::part(control):hover {
+//                            --accent-fill-rest: var(--tf-font-color-mute);
+//                        }
+//                    }
+//                }
+//
+//                &--expand {
+//                    fluent-anchor {
+//                        &::part(control) {
+//                            padding: 0 0.25em;
+//                        }
+//                    }
+//                }
+//
+//                &--active {
+//                    fluent-anchor {
+//                        &::part(control) {
+//                            background: var(--tf-fill-base);
+//                            border-radius: 4px 4px 0 0;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        fluent-menu {
+//            background: var(--tf-white);
+//            color: var(--tf-font-color-mute);
+//            border-radius: 0;
+//
+//            fluent-menu-item {
+//                &:hover {
+//                    background: var(--tf-fill-base-hover);
+//                }
+//
+//                &::part(content) {
+//                    color: var(--tf-font-color-base);
+//                }
+//
+//                &::part(expand-collapse-glyph-container) {
+//                    color: var(--tf-font-color-base);
+//                }
+//
+//                &::part(start) {
+//                    position: relative;
+//                    top: 1px !important;
+//                }
+//
+//                &::part(end) {
+//                    position: relative;
+//                    top: 1px !important;
+//                }
+//            }
+//        }
+//    }
+//
+//    &__content {
+//        position: absolute;
+//        top: var(--content-top);
+//        left: 0;
+//        right: 0;
+//        bottom: 0;
+//        overflow: auto;
+//
+//        .content-toolbar {
+//            display: flex;
+//            padding: var(--tf-padding-base);
+//
+//            &__left {
+//                flex: 0 0 auto;
+//                display: flex;
+//                align-items: center;
+//            }
+//
+//            &__right {
+//                flex: 1 1 auto;
+//                display: flex;
+//                justify-content: end;
+//                align-items: center;
+//            }
+//
+//            fluent-button {
+//                margin-right: 5px;
+//
+//                &:last-child {
+//                    margin-right: 0;
+//                }
+//            }
+//
+//            fluent-search {
+//                margin-right: 5px;
+//            }
+//        }
+//    }
+//}

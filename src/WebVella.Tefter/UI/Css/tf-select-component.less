@@ -5,26 +5,26 @@
     border: calc(var(--stroke-width) * 1px) solid transparent;
     padding: 5px;
     border-radius: calc(var(--control-corner-radius) * 1px);
-    background: padding-box linear-gradient(var(--neutral-fill-input-rest),var(--neutral-fill-input-rest)),border-box var(--neutral-stroke-input-rest);
+    background: padding-box linear-gradient(var(--neutral-fill-rest), var(--neutral-fill-rest)), border-box var(--neutral-stroke-control-rest);
+    box-shadow: none !important;
 
     &__content {
       padding-top: 0;
     }
   }
 
-  &.disabled .tf-card{
-    background: var(--tf-fill-color-base-1);
-    border: 1px solid var(--tf-stroke-base);
-  }
-  
-  &:not(.disabled):not(.readonly) .tf-card:hover {
-    border: 1px solid var(--tf-stroke-input-hover);
+  &.disabled .tf-card {
+    background: var(--neutral-fill-rest);
+    border-color: var(--neutral-stroke-rest);
   }
 
-  &.readonly .tf-card{
-    border: 1px solid var(--tf-stroke-base);
-    &:hover{
-      background: var(--tf-fill-color-base-1);
+  &:not(.disabled):not(.readonly) .tf-card:hover {
+    background: padding-box linear-gradient(var(--neutral-fill-hover), var(--neutral-fill-hover)), border-box var(--neutral-stroke-control-hover)
+  }
+
+  &.readonly .tf-card {
+    &:hover {
+      background: padding-box linear-gradient(var(--neutral-fill-input-hover), var(--neutral-fill-input-hover)), border-box var(--neutral-stroke-input-hover);
       cursor: no-drop;
     }
   }
@@ -61,6 +61,10 @@
     flex: 0 0 20px;
     display: flex;
     align-items: center;
+
+    svg {
+      --accent-fill-rest: var(--neutral-foreground-rest)
+    }
   }
 
   .tf-component--small .tf-component-icon {

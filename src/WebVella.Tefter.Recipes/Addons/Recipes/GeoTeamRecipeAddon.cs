@@ -516,12 +516,12 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                 Position = 100,
                 Columns = new()
                 {
+                    $"{dataIdentity}.{talkCountSharedColumnName}",
+                    $"{dataIdentity}.{assetsCountSharedColumnName}",
                     $"{dataProviderPrefix}city",
                     $"{dataProviderPrefix}country",
                     $"{dataProviderPrefix}population",
                     $"{dataProviderPrefix}id",
-                    $"{dataIdentity}.{talkCountSharedColumnName}",
-                    $"{dataIdentity}.{assetsCountSharedColumnName}",
                 },
                 Filters = new(),
                 SortOrders = new List<TfSort>
@@ -554,6 +554,8 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
         });
 
         #endregion
+
+        #region << Space page>>
 
         Steps.Add(new TfCreateSpaceViewRecipeStep
         {
@@ -634,58 +636,10 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                 },
                 Columns = new()
                 {
-                    new TfSpaceViewColumn
-                    {
-                        Id = new Guid("6a0eee60-6d6e-4fd8-9fed-e2462f1922ea"),
-                        Position = 1,
-                        QueryName = "id",
-                        Title = "id",
-                        DataMapping = new Dictionary<string, string> { { "Value", $"{dataProviderPrefix}id" } },
-                        SpaceViewId = spaceViewId,
-                        TypeId = new Guid(TfLongIntegerViewColumnType.ID),
-                        ComponentId = new Guid(TucLongIntegerDisplayColumnComponent.ID),
-                        EditComponentId = new Guid(TucLongIntegerEditColumnComponent.ID),
-                    },
-                    new TfSpaceViewColumn
-                    {
-                        Id = new Guid("7b9bed20-529c-4b53-b886-5d92cf317304"),
-                        Position = 2,
-                        QueryName = "city",
-                        Title = "city",
-                        DataMapping = new Dictionary<string, string> { { "Value", $"{dataProviderPrefix}city" } },
-                        SpaceViewId = spaceViewId,
-                        TypeId = new Guid(TfTextViewColumnType.ID),
-                        ComponentId = new Guid(TucTextDisplayColumnComponent.ID),
-                        EditComponentId = new Guid(TucTextEditColumnComponent.ID),
-                    },
-                    new TfSpaceViewColumn
-                    {
-                        Id = new Guid("80aa74a1-2453-4001-9af6-b4a537695d70"),
-                        Position = 3,
-                        QueryName = "country",
-                        Title = "country",
-                        DataMapping = new Dictionary<string, string> { { "Value", $"{dataProviderPrefix}country" } },
-                        SpaceViewId = spaceViewId,
-                        TypeId = new Guid(TfTextViewColumnType.ID),
-                        ComponentId = new Guid(TucTextDisplayColumnComponent.ID),
-                        EditComponentId = new Guid(TucTextEditColumnComponent.ID),
-                    },
-                    new TfSpaceViewColumn
-                    {
-                        Id = new Guid("c3f77a8c-9336-4bee-8412-7e193ee64882"),
-                        Position = 4,
-                        QueryName = "population",
-                        Title = "population",
-                        DataMapping = new Dictionary<string, string> { { "Value", $"{dataProviderPrefix}population" } },
-                        SpaceViewId = spaceViewId,
-                        TypeId = new Guid(TfLongIntegerViewColumnType.ID),
-                        ComponentId = new Guid(TucLongIntegerDisplayColumnComponent.ID),
-                        EditComponentId = new Guid(TucLongIntegerEditColumnComponent.ID),
-                    },
-                    new TfSpaceViewColumn
+                   new TfSpaceViewColumn
                     {
                         Id = new Guid("50dddc94-678c-4199-99f4-6b5f7fb3eba0"),
-                        Position = 5,
+                        Position = 1,
                         QueryName = "talk",
                         Title = "talk",
                         DataMapping = new Dictionary<string, string>
@@ -710,7 +664,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                     new TfSpaceViewColumn
                     {
                         Id = new Guid("ccdf96e3-298a-4604-b860-db559d5eb4e7"),
-                        Position = 6,
+                        Position = 2,
                         QueryName = "assets",
                         Title = "assets",
                         DataMapping = new Dictionary<string, string>
@@ -731,10 +685,61 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         {
                             Width = 65
                         }
+                    },                    
+
+                    new TfSpaceViewColumn
+                    {
+                        Id = new Guid("7b9bed20-529c-4b53-b886-5d92cf317304"),
+                        Position = 3,
+                        QueryName = "city",
+                        Title = "city",
+                        DataMapping = new Dictionary<string, string> { { "Value", $"{dataProviderPrefix}city" } },
+                        SpaceViewId = spaceViewId,
+                        TypeId = new Guid(TfTextViewColumnType.ID),
+                        ComponentId = new Guid(TucTextDisplayColumnComponent.ID),
+                        EditComponentId = new Guid(TucTextEditColumnComponent.ID),
+                    },
+                    new TfSpaceViewColumn
+                    {
+                        Id = new Guid("80aa74a1-2453-4001-9af6-b4a537695d70"),
+                        Position = 4,
+                        QueryName = "country",
+                        Title = "country",
+                        DataMapping = new Dictionary<string, string> { { "Value", $"{dataProviderPrefix}country" } },
+                        SpaceViewId = spaceViewId,
+                        TypeId = new Guid(TfTextViewColumnType.ID),
+                        ComponentId = new Guid(TucTextDisplayColumnComponent.ID),
+                        EditComponentId = new Guid(TucTextEditColumnComponent.ID),
+                    },
+                    new TfSpaceViewColumn
+                    {
+                        Id = new Guid("c3f77a8c-9336-4bee-8412-7e193ee64882"),
+                        Position = 5,
+                        QueryName = "population",
+                        Title = "population",
+                        DataMapping = new Dictionary<string, string> { { "Value", $"{dataProviderPrefix}population" } },
+                        SpaceViewId = spaceViewId,
+                        TypeId = new Guid(TfLongIntegerViewColumnType.ID),
+                        ComponentId = new Guid(TucLongIntegerDisplayColumnComponent.ID),
+                        EditComponentId = new Guid(TucLongIntegerEditColumnComponent.ID),
+                    },
+                    new TfSpaceViewColumn
+                    {
+                        Id = new Guid("6a0eee60-6d6e-4fd8-9fed-e2462f1922ea"),
+                        Position = 6,
+                        QueryName = "id",
+                        Title = "id",
+                        DataMapping = new Dictionary<string, string> { { "Value", $"{dataProviderPrefix}id" } },
+                        SpaceViewId = spaceViewId,
+                        TypeId = new Guid(TfLongIntegerViewColumnType.ID),
+                        ComponentId = new Guid(TucLongIntegerDisplayColumnComponent.ID),
+                        EditComponentId = new Guid(TucLongIntegerEditColumnComponent.ID),
                     },
                 }
             }
         });
+
+        #endregion
 
         #region << Space page>>
 
