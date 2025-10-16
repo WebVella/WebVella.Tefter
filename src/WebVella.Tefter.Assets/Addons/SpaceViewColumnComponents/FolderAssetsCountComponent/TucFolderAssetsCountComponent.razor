@@ -1,44 +1,44 @@
-﻿@namespace WebVella.Tefter.Assets.Addons
-
-@inherits TucBaseViewColumn<TfFolderAssetsCountComponentOptions>
-@if (RegionContext.Mode == TfComponentPresentationMode.Display)
-{
-
-	<div>
-		@if (_selectedFolder is null )
-		{
-			<div style="color:var(--error);" title="@LOC("folder is not configured")">error!</div>
-		}
-		else
-		{
-			<FluentCounterBadge Count="@((int?)_value)" VerticalPosition="35"
-			                    Appearance="Appearance.Lightweight">
-				<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick" IconStart="@TfConstants.GetIcon("DocumentCopy")"/>
-			</FluentCounterBadge>
-		}
-		
-	</div>
-
-
-}
-else if (RegionContext.Mode == TfComponentPresentationMode.Options)
-{
-	<FluentGrid>
-		<FluentGridItem xs="6">
-			<FluentInputLabel Label="@LOC("Folder")" />
-			<TucSelect TOption="AssetsFolder"
-						  Items="_folders"
-						  OptionValue="(x=> x.Id.ToString())"
-						  OptionText="(x=> x.Name)"
-						  SelectedOption="_selectedFolder"
-						  SelectedOptionChanged="_folderSelectHandler" />
-		</FluentGridItem>
-
-	</FluentGrid>
-}
-else
-{
-	<div style="color:red">@LOC("Component Mode Not implemented")</div>
-}
-
-
+﻿@* @namespace WebVella.Tefter.Assets.Addons *@
+@* *@
+@* @inherits TucBaseViewColumn<TfFolderAssetsCountComponentOptions> *@
+@* @if (RegionContext.Mode == TfComponentPresentationMode.Display) *@
+@* { *@
+@* *@
+@* 	<div> *@
+@* 		@if (_selectedFolder is null ) *@
+@* 		{ *@
+@* 			<div style="color:var(--error);" title="@LOC("folder is not configured")">error!</div> *@
+@* 		} *@
+@* 		else *@
+@* 		{ *@
+@* 			<FluentCounterBadge Count="@((int?)_value)" VerticalPosition="35" *@
+@* 			                    Appearance="Appearance.Lightweight"> *@
+@* 				<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick" IconStart="@TfConstants.GetIcon("DocumentCopy")"/> *@
+@* 			</FluentCounterBadge> *@
+@* 		} *@
+@* 		 *@
+@* 	</div> *@
+@* *@
+@* *@
+@* } *@
+@* else if (RegionContext.Mode == TfComponentPresentationMode.Options) *@
+@* { *@
+@* 	<FluentGrid> *@
+@* 		<FluentGridItem xs="6"> *@
+@* 			<FluentInputLabel Label="@LOC("Folder")" /> *@
+@* 			<TucSelect TOption="AssetsFolder" *@
+@* 						  Items="_folders" *@
+@* 						  OptionValue="(x=> x.Id.ToString())" *@
+@* 						  OptionText="(x=> x.Name)" *@
+@* 						  SelectedOption="_selectedFolder" *@
+@* 						  SelectedOptionChanged="_folderSelectHandler" /> *@
+@* 		</FluentGridItem> *@
+@* *@
+@* 	</FluentGrid> *@
+@* } *@
+@* else *@
+@* { *@
+@* 	<div style="color:red">@LOC("Component Mode Not implemented")</div> *@
+@* } *@
+@* *@
+@* *@

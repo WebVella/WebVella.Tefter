@@ -3,7 +3,7 @@ using WebVella.Tefter.UI.Layout;
 
 namespace WebVella.Tefter.Models;
 
-public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfSpaceViewColumnComponentAddon//, ITfAuxDataState
+public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable//, ITfAuxDataState
 {
 	#region << Injects >>
 	[Inject] protected IJSRuntime JSRuntime { get; set; } = null!;
@@ -18,16 +18,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	#endregion
 
 	#region << Properties >>
-	public virtual Guid AddonId { get; init; } = Guid.NewGuid();
-	public virtual string AddonName { get; init; } = String.Empty;
-	public virtual string AddonDescription { get; init; } = String.Empty;
-	public virtual string AddonFluentIconName { get; init; } = String.Empty;
-	public virtual List<Guid> SupportedColumnTypes { get; init; } = new();
-	[Parameter] public TfSpaceViewColumnScreenRegionContext RegionContext { get; set; }
-	[Parameter] public EventCallback<Tuple<string,string>> DataMappingChanged { get; set; }
-	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
-	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
+	[Parameter] public TfSpaceViewColumnScreenRegionContext RegionContext { get; set; } = null!;
 
+	//Internal
 	protected IStringLocalizer LC;
 	protected TItem componentOptions { get; set; }
 	protected string optionsSerialized = null;
@@ -67,9 +60,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (RegionContext.ComponentOptionsJson != optionsSerialized)
+		if (RegionContext.TypeOptionsJson != optionsSerialized)
 		{
-			optionsSerialized = RegionContext.ComponentOptionsJson;
+			optionsSerialized = RegionContext.TypeOptionsJson;
 			componentOptions = GetOptions();
 		}
 	}
@@ -322,9 +315,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// </summary>
 	protected virtual TItem GetOptions()
 	{
-		if (!String.IsNullOrWhiteSpace(RegionContext.ComponentOptionsJson))
+		if (!String.IsNullOrWhiteSpace(RegionContext.TypeOptionsJson))
 		{
-			componentOptions = JsonSerializer.Deserialize<TItem>(RegionContext.ComponentOptionsJson);
+			componentOptions = JsonSerializer.Deserialize<TItem>(RegionContext.TypeOptionsJson);
 			if (componentOptions is not null) return componentOptions;
 		}
 		return Activator.CreateInstance<TItem>();
@@ -348,8 +341,8 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		else if (value is Guid)
 			propertyInfo.SetValue(componentOptions, (Guid?)value, null);
 		else throw new Exception("Not supported object value type");
-		if (!OptionsChanged.HasDelegate) return;
-		await OptionsChanged.InvokeAsync(JsonSerializer.Serialize(componentOptions));
+		if (!RegionContext.OptionsChanged.HasDelegate) return;
+		await RegionContext.OptionsChanged.InvokeAsync(JsonSerializer.Serialize(componentOptions));
 	}
 
 	/// <summary>
@@ -386,7 +379,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	protected virtual async Task OnDataMappingChanged(string propName, string value)
 	{
 
-		await DataMappingChanged.InvokeAsync(new Tuple<string, string>(propName,value));
+		await RegionContext.DataMappingChanged.InvokeAsync(new Tuple<string, string>(propName,value));
 	}
 
 	/// <summary>
@@ -397,7 +390,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// <returns></returns>
 	protected virtual async Task OnRowChanged(TfDataTable dt)
 	{
-		await RowChanged.InvokeAsync(dt);
+		await RegionContext.RowChanged.InvokeAsync(dt);
 	}
 
 	/// <summary>
@@ -406,7 +399,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// </summary>
 	protected virtual async Task OnRowColumnChangedByAlias(string alias, object value)
 	{
-		if (!RowChanged.HasDelegate || RegionContext.DataTable is null) return;
+		if (!RegionContext.RowChanged.HasDelegate || RegionContext.DataTable is null) return;
 
 		var dt = RegionContext.DataTable.NewTableFromRowIds(RegionContext.RowId);
 		if (dt.Rows.Count == 0)

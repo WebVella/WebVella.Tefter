@@ -11,7 +11,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private DotNetObjectReference<TucSpaceViewPageContent> _objectRef;
 	private bool _isDataLoading = true;
 	private bool _selectAllLoading = false;
-	private ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> _componentMetaDict = null!;
+	private ReadOnlyDictionary<Guid, ITfSpaceViewColumnTypeAddon> _columnTypeMetaDict = null!;
 	private TfNavigationState _navState = null!;
 	private TfUser _currentUser = null!;
 	private TfSpace? _space = null;
@@ -55,7 +55,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		await base.OnInitializedAsync();
 		if (Context is null)
 			throw new Exception("Context cannot be null");
-		_componentMetaDict = TfMetaService.GetSpaceViewColumnComponentMetaDictionary();
+		_columnTypeMetaDict = TfMetaService.GetSpaceViewColumnTypeDictionary();
 		_objectRef = DotNetObjectReference.Create(this);
 		await _init(TfAuthLayout.GetState().NavigationState);
 		_caretDownInactive = builder =>

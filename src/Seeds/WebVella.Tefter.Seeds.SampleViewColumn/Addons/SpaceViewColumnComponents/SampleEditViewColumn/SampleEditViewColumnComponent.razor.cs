@@ -18,7 +18,7 @@ public partial class SampleEditViewColumnComponent : ComponentBase,ITfSpaceViewC
 	public string Description { get; init; } = DESCRIPTION;
 	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public List<Guid> SupportedColumnTypes { get; init; } = new List<Guid> {
-		new Guid(SampleViewColumnType.ID)
+		//new Guid(SampleViewColumnType.ID)
 	};
 	public TfSpaceViewColumnScreenRegionContext RegionContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 	public EventCallback<string> OptionsChanged { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

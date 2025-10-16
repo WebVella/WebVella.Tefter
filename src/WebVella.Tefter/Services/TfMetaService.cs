@@ -33,23 +33,6 @@ public partial class TfMetaService : ITfMetaService
 							.Where(a => !(a.FullName.ToLowerInvariant().StartsWith("microsoft.")
 							   || a.FullName.ToLowerInvariant().StartsWith("system.")));
 
-
-		//Components that needs to be processed first
-		foreach (var assembly in assemblies)
-		{
-			foreach (Type type in assembly.GetTypes())
-			{
-				if (type.IsAbstract || type.IsInterface)
-					continue;
-
-				var defaultConstructor = type.GetConstructor(Type.EmptyTypes);
-				if (defaultConstructor is null)
-					continue;
-
-				ScanAndRegisterSpaceViewColumnComponents(type);
-			}
-		}
-
 		foreach (var assembly in assemblies)
 		{
 			foreach (Type type in assembly.GetTypes())

@@ -187,23 +187,34 @@ else
 										     style="@_columnsMeta[column.Id].BodyFillCellStyles"></div>
 										<div class="tf-grid-td-selection"></div>
 										<div class="tf-grid-td-hover"></div>
+										@if (_columnTypeMetaDict.ContainsKey(column.TypeId))
+										{
+											<TucErrorBoundry>
+											@(((ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(_columnTypeMetaDict[column.TypeId]!.GetType())!).Render(_rowColumnContext[tfId][column.Id]))
+											</TucErrorBoundry>
+										}
+										else
+										{
+											<span style="color:var(--error)" title="@LOC("Column type not found")">error</span>
+										}
 
-										@if (_rowMeta[tfId].EditMode && _componentMetaDict.ContainsKey(column.EditComponentId))
-										{
-											<TucErrorBoundry>
-												<DynamicComponent
-													Type="_componentMetaDict[column.EditComponentId].InstanceType"
-													Parameters="@_rowColumnContext[tfId][column.Id]"/>
-											</TucErrorBoundry>
-										}
-										else if (_componentMetaDict.ContainsKey(column.ComponentId))
-										{
-											<TucErrorBoundry>
-												<DynamicComponent
-													Type="_componentMetaDict[column.ComponentId].InstanceType"
-													Parameters="@_rowColumnContext[tfId][column.Id]"/>
-											</TucErrorBoundry>
-										}
+										@*TODO BOZ: IMPLEMENT*@
+										@* @if (_rowMeta[tfId].EditMode && _componentMetaDict.ContainsKey(column.EditComponentId)) *@
+										@* { *@
+										@* 	<TucErrorBoundry> *@
+										@* 		<DynamicComponent *@
+										@* 			Type="_componentMetaDict[column.EditComponentId].InstanceType" *@
+										@* 			Parameters="@_rowColumnContext[tfId][column.Id]"/> *@
+										@* 	</TucErrorBoundry> *@
+										@* } *@
+										@* else if (_componentMetaDict.ContainsKey(column.ComponentId)) *@
+										@* { *@
+										@* 	<TucErrorBoundry> *@
+										@* 		<DynamicComponent *@
+										@* 			Type="_componentMetaDict[column.ComponentId].InstanceType" *@
+										@* 			Parameters="@_rowColumnContext[tfId][column.Id]"/> *@
+										@* 	</TucErrorBoundry> *@
+										@* } *@
 									</td>
 								}
 							</tr>

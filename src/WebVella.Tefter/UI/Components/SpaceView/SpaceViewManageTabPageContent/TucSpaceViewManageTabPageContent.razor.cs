@@ -12,8 +12,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	private TfSpaceView? _spaceView = null;
 	private TfDataset? _spaceData = null;
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
-	private ReadOnlyDictionary<Guid, TfSpaceViewColumnTypeAddonMeta> _typeMetaDict = null!;
-	private ReadOnlyDictionary<Guid, TfSpaceViewColumnComponentAddonMeta> _componentMetaDict = null!;
+	private ReadOnlyDictionary<Guid, ITfSpaceViewColumnTypeAddon> _typeMetaDict = null!;
 	public bool _submitting = false;
 	public void Dispose()
 	{
@@ -79,8 +78,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 			_spaceViewColumns = TfService.GetSpaceViewColumnsList(_spaceView.Id);
 			_spaceData = TfService.GetDataset(_spaceView.DatasetId);
 			if (_spaceData is null) throw new Exception("Dataset no longer exists");
-			_typeMetaDict = TfMetaService.GetSpaceViewColumnTypeMetaDictionary();
-			_componentMetaDict = TfMetaService.GetSpaceViewColumnComponentMetaDictionary();			
+			_typeMetaDict = TfMetaService.GetSpaceViewColumnTypeDictionary();
 		}
 		finally
 		{

@@ -22,11 +22,11 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	private TfSpaceView _spaceView = new();
 	private TfDataset _spaceData = new();
 	private List<string> _options = new();
-	private ReadOnlyCollection<TfSpaceViewColumnTypeAddonMeta> _availableColumnTypes = null!;
-	private TfSpaceViewColumnTypeAddonMeta? _selectedColumnType = null;
-	private List<ITfSpaceViewColumnComponentAddon> _selectedColumnTypeComponents = new();
-	private ITfSpaceViewColumnComponentAddon? _selectedColumnComponent = null;
-	private ITfSpaceViewColumnComponentAddon? _selectedEditColumnComponent = null;
+	private ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> _availableColumnTypes = null!;
+	private ITfSpaceViewColumnTypeAddon? _selectedColumnType = null;
+	// private List<ITfSpaceViewColumnComponentAddon> _selectedColumnTypeComponents = new();
+	// private ITfSpaceViewColumnComponentAddon? _selectedColumnComponent = null;
+	// private ITfSpaceViewColumnComponentAddon? _selectedEditColumnComponent = null;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -44,7 +44,6 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 				QueryName = NavigatorExt.GenerateQueryName(),
 				SpaceViewId = Content.SpaceViewId,
 				TypeId = new Guid(TfTextViewColumnType.ID),
-				ComponentId = new Guid(TucTextDisplayColumnComponent.ID),
 			};
 		}
 		else
@@ -52,9 +51,6 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			Content = TfService.GetSpaceViewColumn(Content.Id);
 			_form = Content with { Id = Content.Id };
 		}
-
-		if (_form.ComponentId == Guid.Empty)
-			_form.ComponentId = new Guid(TucTextDisplayColumnComponent.ID);
 
 		_availableColumnTypes = TfMetaService.GetSpaceViewColumnTypesMeta();
 
@@ -98,59 +94,59 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 
 	private void _selectComponentType(Guid typeId)
 	{
-		_selectedColumnType = TfMetaService.GetSpaceViewColumnType(typeId);
-		_selectedColumnTypeComponents = new();
-
-		if (_selectedColumnType is not null)
-			_selectedColumnTypeComponents =
-				TfMetaService.GetSpaceViewColumnTypeSupportedComponents(_selectedColumnType.Instance.AddonId);
-
-		if (_selectedColumnTypeComponents.Count > 0)
-		{
-			//Display
-			if (_form.ComponentId != Guid.Empty)
-			{
-				_selectedColumnComponent =
-					_selectedColumnTypeComponents.FirstOrDefault(x => x.AddonId == _form.ComponentId);
-			}
-
-			if (_selectedColumnComponent is null)
-			{
-				if (_selectedColumnType!.Instance.DefaultDisplayComponentId is not null)
-
-					_selectedColumnComponent = _selectedColumnTypeComponents.FirstOrDefault(x =>
-						x.AddonId == _selectedColumnType!.Instance.DefaultDisplayComponentId);
-				else
-					_selectedColumnComponent = _selectedColumnTypeComponents[0];
-			}
-
-			_form.ComponentId = _selectedColumnComponent!.AddonId;
-
-			//Edit
-			if (_form.EditComponentId != Guid.Empty)
-			{
-				_selectedEditColumnComponent =
-					_selectedColumnTypeComponents.FirstOrDefault(x => x.AddonId == _form.EditComponentId);
-			}
-
-			if (_selectedEditColumnComponent is null)
-			{
-				if (_selectedColumnType!.Instance.DefaultEditComponentId is not null)
-					_selectedEditColumnComponent = _selectedColumnTypeComponents.FirstOrDefault(x =>
-						x.AddonId == _selectedColumnType!.Instance.DefaultEditComponentId);
-				else
-					_selectedEditColumnComponent = _selectedColumnTypeComponents[0];
-			}
-
-			_form.EditComponentId = _selectedEditColumnComponent!.AddonId;
-		}
-		else
-		{
-			_selectedColumnComponent = null;
-			_selectedEditColumnComponent = null;
-			_form.ComponentId = Guid.Empty;
-			_form.EditComponentId = Guid.Empty;
-		}
+		// _selectedColumnType = TfMetaService.GetSpaceViewColumnType(typeId);
+		// _selectedColumnTypeComponents = new();
+		//
+		// if (_selectedColumnType is not null)
+		// 	_selectedColumnTypeComponents =
+		// 		TfMetaService.GetSpaceViewColumnTypeSupportedComponents(_selectedColumnType.Instance.AddonId);
+		//
+		// if (_selectedColumnTypeComponents.Count > 0)
+		// {
+		// 	//Display
+		// 	if (_form.ComponentId != Guid.Empty)
+		// 	{
+		// 		_selectedColumnComponent =
+		// 			_selectedColumnTypeComponents.FirstOrDefault(x => x.AddonId == _form.ComponentId);
+		// 	}
+		//
+		// 	if (_selectedColumnComponent is null)
+		// 	{
+		// 		if (_selectedColumnType!.Instance.DefaultDisplayComponentId is not null)
+		//
+		// 			_selectedColumnComponent = _selectedColumnTypeComponents.FirstOrDefault(x =>
+		// 				x.AddonId == _selectedColumnType!.Instance.DefaultDisplayComponentId);
+		// 		else
+		// 			_selectedColumnComponent = _selectedColumnTypeComponents[0];
+		// 	}
+		//
+		// 	_form.ComponentId = _selectedColumnComponent!.AddonId;
+		//
+		// 	//Edit
+		// 	if (_form.EditComponentId != Guid.Empty)
+		// 	{
+		// 		_selectedEditColumnComponent =
+		// 			_selectedColumnTypeComponents.FirstOrDefault(x => x.AddonId == _form.EditComponentId);
+		// 	}
+		//
+		// 	if (_selectedEditColumnComponent is null)
+		// 	{
+		// 		if (_selectedColumnType!.Instance.DefaultEditComponentId is not null)
+		// 			_selectedEditColumnComponent = _selectedColumnTypeComponents.FirstOrDefault(x =>
+		// 				x.AddonId == _selectedColumnType!.Instance.DefaultEditComponentId);
+		// 		else
+		// 			_selectedEditColumnComponent = _selectedColumnTypeComponents[0];
+		// 	}
+		//
+		// 	_form.EditComponentId = _selectedEditColumnComponent!.AddonId;
+		// }
+		// else
+		// {
+		// 	_selectedColumnComponent = null;
+		// 	_selectedEditColumnComponent = null;
+		// 	_form.ComponentId = Guid.Empty;
+		// 	_form.EditComponentId = Guid.Empty;
+		// }
 	}
 
 	private async Task _save()
@@ -197,22 +193,22 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		await Dialog.CancelAsync();
 	}
 
-	private async Task _columnTypeChangeHandler(TfSpaceViewColumnTypeAddonMeta columnType)
+	private async Task _columnTypeChangeHandler(ITfSpaceViewColumnTypeAddon columnType)
 	{
 		_renderComponentTypeSelect = false;
 		_selectedColumnType = null;
-		_selectedColumnComponent = null;
+		//_selectedColumnComponent = null;
 		_form.TypeId = Guid.Empty;
 		if (columnType is not null)
 		{
 			_selectedColumnType = columnType;
-			_form.TypeId = columnType.Instance.AddonId;
+			_form.TypeId = columnType.AddonId;
 		}
 
 		if (_selectedColumnType is null)
 		{
 			_selectedColumnType = TfMetaService.GetSpaceViewColumnType(new Guid(TfTextViewColumnType.ID));
-			_form.TypeId = _selectedColumnType.Instance.AddonId;
+			_form.TypeId = _selectedColumnType.AddonId;
 		}
 
 		_selectComponentType(_form.TypeId);
@@ -222,51 +218,51 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private void _columnComponentChangeHandler(ITfSpaceViewColumnComponentAddon componentType)
-	{
-		_selectedColumnComponent = null;
-		_form.ComponentId = Guid.Empty;
-		if (_selectedColumnType is not null)
-		{
-			if (componentType is not null)
-			{
-				_selectedColumnComponent = componentType;
-				_form.ComponentId = componentType.AddonId;
-			}
+	// private void _columnComponentChangeHandler(ITfSpaceViewColumnComponentAddon componentType)
+	// {
+	// 	//_selectedColumnComponent = null;
+	// 	// _form.ComponentId = Guid.Empty;
+	// 	// if (_selectedColumnType is not null)
+	// 	// {
+	// 	// 	if (componentType is not null)
+	// 	// 	{
+	// 	// 		_selectedColumnComponent = componentType;
+	// 	// 		_form.ComponentId = componentType.AddonId;
+	// 	// 	}
+	// 	//
+	// 	// 	if (_selectedColumnComponent is null)
+	// 	// 	{
+	// 	// 		// Guid defaultCompId = _selectedColumnType.Instance.DefaultDisplayComponentId is not null
+	// 	// 		// 	? _selectedColumnType.Instance.DefaultDisplayComponentId.Value
+	// 	// 		// 	: new Guid(TucTextDisplayColumnComponent.ID);
+	// 	// 		//_selectedColumnComponent = TfMetaService.GetSpaceViewColumnComponent(defaultCompId);
+	// 	// 		//_form.ComponentId = _selectedColumnComponent.AddonId;
+	// 	// 	}
+	// 	// }
+	// }
 
-			if (_selectedColumnComponent is null)
-			{
-				Guid defaultCompId = _selectedColumnType.Instance.DefaultDisplayComponentId is not null
-					? _selectedColumnType.Instance.DefaultDisplayComponentId.Value
-					: new Guid(TucTextDisplayColumnComponent.ID);
-				_selectedColumnComponent = TfMetaService.GetSpaceViewColumnComponent(defaultCompId);
-				_form.ComponentId = _selectedColumnComponent.AddonId;
-			}
-		}
-	}
-
-	private void _columnEditComponentChangeHandler(ITfSpaceViewColumnComponentAddon componentType)
-	{
-		_selectedEditColumnComponent = null;
-		_form.EditComponentId = Guid.Empty;
-		if (_selectedColumnType is not null)
-		{
-			if (componentType is not null)
-			{
-				_selectedColumnComponent = componentType;
-				_form.EditComponentId = componentType.AddonId;
-			}
-
-			if (_selectedColumnComponent is null)
-			{
-				Guid defaultCompId = _selectedColumnType.Instance.DefaultEditComponentId is not null
-					? _selectedColumnType.Instance.DefaultEditComponentId.Value
-					: new Guid(TucTextDisplayColumnComponent.ID);
-				_selectedEditColumnComponent = TfMetaService.GetSpaceViewColumnComponent(defaultCompId);
-				_form.EditComponentId = _selectedColumnComponent.AddonId;
-			}
-		}
-	}
+	// private void _columnEditComponentChangeHandler(ITfSpaceViewColumnComponentAddon componentType)
+	// {
+	// 	//_selectedEditColumnComponent = null;
+	// 	// _form.EditComponentId = Guid.Empty;
+	// 	// if (_selectedColumnType is not null)
+	// 	// {
+	// 	// 	if (componentType is not null)
+	// 	// 	{
+	// 	// 		_selectedColumnComponent = componentType;
+	// 	// 		_form.EditComponentId = componentType.AddonId;
+	// 	// 	}
+	// 	//
+	// 	// 	if (_selectedColumnComponent is null)
+	// 	// 	{
+	// 	// 		// Guid defaultCompId = _selectedColumnType.Instance.DefaultEditComponentId is not null
+	// 	// 		// 	? _selectedColumnType.Instance.DefaultEditComponentId.Value
+	// 	// 		// 	: new Guid(TucTextDisplayColumnComponent.ID);
+	// 	// 		// _selectedEditColumnComponent = TfMetaService.GetSpaceViewColumnComponent(defaultCompId);
+	// 	// 		// _form.EditComponentId = _selectedColumnComponent.AddonId;
+	// 	// 	}
+	// 	// }
+	// }
 
 	private string? _getDataMappingValue(string alias)
 	{
@@ -283,7 +279,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		//fix datamapping object based on the latest requirements
 		var dataMapping = new Dictionary<string, string>();
 		dataMapping[valueAlias.Item1] = valueAlias.Item2;
-		foreach (var item in _selectedColumnType.Instance.DataMapping)
+		foreach (var item in _selectedColumnType.DataMapping)
 		{
 			if (item.Alias == valueAlias.Item1) continue; //already added above
 			dataMapping[item.Alias] = null;
@@ -303,7 +299,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			new TfSpaceViewColumnScreenRegionContext(contextData)
 			{
 				Mode = TfComponentPresentationMode.Options,
-				ComponentOptionsJson = _form.ComponentOptionsJson,
+				TypeOptionsJson = _form.TypeOptionsJson,
 				DataMapping = _form.DataMapping,
 				DataTable = null,
 				RowId = Guid.Empty,
@@ -324,31 +320,29 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	{
 		var componentData = new Dictionary<string, object>();
 
-		var contextData = new Dictionary<string, object>();
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] =
-			new TfSpaceViewColumnScreenRegionContext(contextData)
-			{
-				Mode = TfComponentPresentationMode.Options,
-				ComponentOptionsJson = _form.EditComponentOptionsJson,
-				DataMapping = _form.DataMapping,
-				DataTable = null,
-				RowId = Guid.Empty,
-				QueryName = _form.QueryName,
-				SpaceViewId = _form.SpaceViewId,
-				SpaceViewColumnId = _form.Id,
-				EditContext = EditContext,
-				ValidationMessageStore = MessageStore
-			};
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_OPTIONS_CHANGED_PROPERTY_NAME] =
-			EventCallback.Factory.Create<string>(this, _customEditOptionsChangedHandler);
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_DATA_MAPPING_CHANGED_PROPERTY_NAME] =
-			EventCallback.Factory.Create<Tuple<string, string>>(this, _dataMappingValueChanged);
+		// var contextData = new Dictionary<string, object>();
+		// componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] =
+		// 	new TfSpaceViewColumnScreenRegionContext(contextData)
+		// 	{
+		// 		Mode = TfComponentPresentationMode.Options,
+		// 		TypeOptionsJson = _form.EditComponentOptionsJson,
+		// 		DataMapping = _form.DataMapping,
+		// 		DataTable = null,
+		// 		RowId = Guid.Empty,
+		// 		QueryName = _form.QueryName,
+		// 		SpaceViewId = _form.SpaceViewId,
+		// 		SpaceViewColumnId = _form.Id,
+		// 		EditContext = EditContext,
+		// 		ValidationMessageStore = MessageStore
+		// 	};
+		// componentData[TfConstants.SPACE_VIEW_COMPONENT_DATA_MAPPING_CHANGED_PROPERTY_NAME] =
+		// 	EventCallback.Factory.Create<Tuple<string, string>>(this, _dataMappingValueChanged);
 		return componentData;
 	}
 
 	private async Task _customOptionsChangedHandler(string value)
 	{
-		if (String.IsNullOrWhiteSpace(value)) _form.ComponentOptionsJson = null;
+		if (String.IsNullOrWhiteSpace(value)) _form.TypeOptionsJson = null;
 
 		if (!(value.StartsWith("{") && value.StartsWith("{"))
 		    || (value.StartsWith("[") && value.StartsWith("]")))
@@ -357,24 +351,11 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			return;
 		}
 
-		_form.ComponentOptionsJson = value;
+		_form.TypeOptionsJson = value;
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private async Task _customEditOptionsChangedHandler(string value)
-	{
-		if (String.IsNullOrWhiteSpace(value)) _form.EditComponentOptionsJson = null;
-
-		if (!(value.StartsWith("{") && value.StartsWith("{"))
-		    || (value.StartsWith("[") && value.StartsWith("]")))
-		{
-			ToastService.ShowError("custom options value needs to be json");
-			return;
-		}
-
-		_form.EditComponentOptionsJson = value;
-		await InvokeAsync(StateHasChanged);
-	}
+	
 
 	private void _initMenu()
 	{

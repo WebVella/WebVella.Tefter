@@ -6,12 +6,12 @@ namespace WebVella.Tefter.Services;
 public partial interface ITfService
 {
 	Task<byte[]> ExportViewToExcel(TfExportViewData data);
-	Task<byte[]> ExportViewToCSV(TfExportViewData data);	
+	Task<byte[]> ExportViewToCSV(TfExportViewData data);
 }
 
 public partial class TfService : ITfService
 {
-public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
+	public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 	{
 		Guid? spaceViewId = null;
 
@@ -27,11 +27,13 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 
 			var spacePagesMeta = _metaService.GetSpacePagesComponentsMeta();
 			var spacePageMeta = spacePagesMeta.SingleOrDefault(x => x.ComponentId == resultNode.ComponentId);
-			if (resultNode.Type == TfSpacePageType.Page && spacePageMeta != null && spacePageMeta.Instance.GetType() == typeof(TucSpaceViewSpacePageAddon))
+			if (resultNode.Type == TfSpacePageType.Page && spacePageMeta != null &&
+			    spacePageMeta.Instance.GetType() == typeof(TucSpaceViewSpacePageAddon))
 			{
 				try
 				{
-					var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(resultNode.ComponentOptionsJson);
+					var options =
+						JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(resultNode.ComponentOptionsJson);
 					spaceViewId = options.SpaceViewId;
 				}
 				catch (Exception ex)
@@ -54,8 +56,10 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 		var allDataProviders = GetDataProviders().ToList();
 		var allSharedColumns = GetSharedColumns();
 		var dataProvider = allDataProviders.FirstOrDefault(x => x.Id == spaceData.DataProviderId);
-		List<TfFilterBase> filters = data.RouteState.Filters.ConvertQueryFilterToList(viewColumns, allDataProviders, allSharedColumns);
-		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns); ;
+		List<TfFilterBase> filters =
+			data.RouteState.Filters.ConvertQueryFilterToList(viewColumns, allDataProviders, allSharedColumns);
+		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns);
+		;
 
 		var viewData = QueryDataset(
 			datasetId: view.DatasetId,
@@ -82,6 +86,7 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 				cellRange.Value = column.Title;
 				currentExcelColumn = currentExcelColumn + rangeColumns;
 			}
+
 			currentExcelRow++;
 
 			var typeDict = new Dictionary<string, object>();
@@ -93,10 +98,10 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 				SpaceViewId = view.Id,
 				EditContext = null, //ignored here
 				ValidationMessageStore = null, //ignored here
-				RowId = Guid.Empty,//set in row loop
-				ComponentOptionsJson = null, //set in column loop
-				DataMapping = null,//set in column loop
-				QueryName = null,//set in column loop
+				RowId = Guid.Empty, //set in row loop
+				TypeOptionsJson = null, //set in column loop
+				DataMapping = null, //set in column loop
+				QueryName = null, //set in column loop
 				SpaceViewColumnId = Guid.Empty
 			};
 			for (int i = 0; i < viewData.Rows.Count; i++)
@@ -106,23 +111,25 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 				currentExcelColumn = 1;
 				compContext.RowId = rowId;
 				if (data.SelectedRows is not null && data.SelectedRows.Count > 0
-					&& !data.SelectedRows.Contains(rowId)) continue;
+				                                  && !data.SelectedRows.Contains(rowId)) continue;
 				foreach (TfSpaceViewColumn column in viewColumns)
 				{
 					compContext.SpaceViewColumnId = column.Id;
-					compContext.ComponentOptionsJson = column.ComponentOptionsJson;
 					compContext.DataMapping = column.DataMapping;
 					compContext.QueryName = column.QueryName;
 
 					IXLCell excelCell = ws.Cell(currentExcelRow, currentExcelColumn);
-					var component = _metaService.GetSpaceViewColumnComponent(column.ComponentId);
+					var component = _metaService.GetSpaceViewColumnType(column.TypeId);
 					if (component is not null)
 					{
-						var componentNewInstance = (ITfSpaceViewColumnComponentAddon)Activator.CreateInstance(component.GetType(), compContext);
-						componentNewInstance.ProcessExcelCell(_serviceProvider, excelCell);
+						var componentNewInstance =
+							(ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(component.GetType(), compContext);
+						componentNewInstance.ProcessExcelCell(compContext, excelCell);
 					}
+
 					currentExcelColumn++;
 				}
+
 				currentExcelRow++;
 			}
 
@@ -132,6 +139,7 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 			return Task.FromResult(ms.ToArray());
 		}
 	}
+
 	public virtual Task<byte[]> ExportViewToCSV(TfExportViewData data)
 	{
 		Guid? spaceViewId = null;
@@ -149,11 +157,13 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 
 			var spacePagesMeta = _metaService.GetSpacePagesComponentsMeta();
 			var spacePageMeta = spacePagesMeta.SingleOrDefault(x => x.ComponentId == resultNode.ComponentId);
-			if (resultNode.Type == TfSpacePageType.Page && spacePageMeta != null && spacePageMeta.Instance.GetType() == typeof(TucSpaceViewSpacePageAddon))
+			if (resultNode.Type == TfSpacePageType.Page && spacePageMeta != null &&
+			    spacePageMeta.Instance.GetType() == typeof(TucSpaceViewSpacePageAddon))
 			{
 				try
 				{
-					var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(resultNode.ComponentOptionsJson);
+					var options =
+						JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(resultNode.ComponentOptionsJson);
 					spaceViewId = options.SpaceViewId;
 				}
 				catch (Exception ex)
@@ -176,8 +186,10 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 		var allDataProviders = GetDataProviders().ToList();
 		var allSharedColumns = GetSharedColumns();
 		var dataProvider = allDataProviders.FirstOrDefault(x => x.Id == spaceData.DataProviderId);
-		List<TfFilterBase> filters = data.RouteState.Filters.ConvertQueryFilterToList(viewColumns, allDataProviders, allSharedColumns);
-		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns); ;
+		List<TfFilterBase> filters =
+			data.RouteState.Filters.ConvertQueryFilterToList(viewColumns, allDataProviders, allSharedColumns);
+		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns);
+		;
 
 		var viewData = QueryDataset(
 			datasetId: view.DatasetId,
@@ -189,11 +201,7 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 		);
 
 		using var writer = new StringWriter(new StringBuilder());
-		var config = new CsvConfiguration(culture)
-		{
-			HasHeaderRecord = true,
-			ShouldQuote = _ => true
-		};
+		var config = new CsvConfiguration(culture) { HasHeaderRecord = true, ShouldQuote = _ => true };
 
 		using var csv = new CsvWriter(writer, config);
 
@@ -201,6 +209,7 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 		{
 			csv.WriteField(col.Title);
 		}
+
 		csv.NextRecord();
 
 		var typeDict = new Dictionary<string, object>();
@@ -212,10 +221,10 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 			SpaceViewId = view.Id,
 			EditContext = null, //ignored here
 			ValidationMessageStore = null, //ignored here
-			RowId = Guid.Empty,//set in row loop
-			ComponentOptionsJson = null, //set in column loop
-			DataMapping = null,//set in column loop
-			QueryName = null,//set in column loop
+			RowId = Guid.Empty, //set in row loop
+			TypeOptionsJson = null, //set in column loop
+			DataMapping = null, //set in column loop
+			QueryName = null, //set in column loop
 			SpaceViewColumnId = Guid.Empty
 		};
 
@@ -224,27 +233,29 @@ public virtual Task<byte[]> ExportViewToExcel(TfExportViewData data)
 			var row = viewData.Rows[rowIndex];
 			var rowId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
 			if (data.SelectedRows is not null && data.SelectedRows.Count > 0
-				&& !data.SelectedRows.Contains(rowId)) continue;
+			                                  && !data.SelectedRows.Contains(rowId)) continue;
 			compContext.RowId = rowId;
 			foreach (var column in viewColumns)
 			{
 				compContext.SpaceViewColumnId = column.Id;
-				compContext.ComponentOptionsJson = column.ComponentOptionsJson;
 				compContext.DataMapping = column.DataMapping;
 				compContext.QueryName = column.QueryName;
-				var component = _metaService.GetSpaceViewColumnComponent(column.ComponentId);
+				var component = _metaService.GetSpaceViewColumnType(column.TypeId);
 				string? value = null;
 				if (component is not null)
 				{
-					var componentNewInstance = (ITfSpaceViewColumnComponentAddon)Activator.CreateInstance(component.GetType(), compContext);
-					value = componentNewInstance.GetValueAsString(_serviceProvider);
+					var componentNewInstance =
+						(ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(component.GetType(), compContext);
+					value = componentNewInstance.GetValueAsString(compContext);
 				}
+
 				csv.WriteField(value);
 			}
+
 			csv.NextRecord();
 		}
 
 		var content = writer.ToString();
 		return Task.FromResult(Encoding.UTF8.GetBytes(content));
-	}	
+	}
 }

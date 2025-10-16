@@ -131,13 +131,13 @@ else if (_navState.ManageTab == "columns")
 										<div>
 											<FluentStack>
 												<FluentIcon
-													Value="@TfConstants.GetIcon(_typeMetaDict[context.TypeId].Instance.AddonFluentIconName)"
+													Value="@TfConstants.GetIcon(_typeMetaDict[context.TypeId].AddonFluentIconName)"
 													Color="@Color.Accent"/>
-												<div>@_typeMetaDict[context.TypeId].Instance.AddonName</div>
+												<div>@_typeMetaDict[context.TypeId].AddonName</div>
 											</FluentStack>
 										</div>
 										<div
-											class="td-description">@_typeMetaDict[context.TypeId].Instance.AddonDescription</div>
+											class="td-description">@_typeMetaDict[context.TypeId].AddonDescription</div>
 									</div>
 								}
 								else
@@ -146,18 +146,19 @@ else if (_navState.ManageTab == "columns")
 								}
 							</td>
 							<td class="tf-grid-td">
-								@if (_componentMetaDict.ContainsKey(context.ComponentId))
-								{
-									<div>
-										<div>@_componentMetaDict[context.ComponentId].Instance.AddonName</div>
-										<div
-											class="td-description">@_componentMetaDict[context.ComponentId].Instance.AddonDescription</div>
-									</div>
-								}
-								else
-								{
-									<div style="color:red">@LOC("unknown")</div>
-								}
+								@*TODO BOZ: IMPLEMENT*@
+								@* @if (_componentMetaDict.ContainsKey(context.ComponentId)) *@
+								@* { *@
+								@* 	<div> *@
+								@* 		<div>@_componentMetaDict[context.ComponentId].Instance.AddonName</div> *@
+								@* 		<div *@
+								@* 			class="td-description">@_componentMetaDict[context.ComponentId].Instance.AddonDescription</div> *@
+								@* 	</div> *@
+								@* } *@
+								@* else *@
+								@* { *@
+								@* 	<div style="color:red">@LOC("unknown")</div> *@
+								@* } *@
 							</td>
 						</tr>
 					}

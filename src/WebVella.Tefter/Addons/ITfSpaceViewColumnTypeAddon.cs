@@ -3,11 +3,16 @@
 public interface ITfSpaceViewColumnTypeAddon : ITfAddon
 {
 	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; }
-	public List<string> FilterAliases { get; init; }
-	public List<string> SortAliases { get; init; }
-	public Guid? DefaultDisplayComponentId { get; init; }
-	public List<Guid> SupportedComponents { get; set; }
-	public Guid? DefaultEditComponentId { get; init; }
+	
+	//Setups Excel cell with value and formatting
+	void ProcessExcelCell(
+		TfSpaceViewColumnScreenRegionContext regionContext,
+		IXLCell excelCell);
+	//Returns Value/s as string usually for CSV export
+	string? GetValueAsString(
+		TfSpaceViewColumnScreenRegionContext regionContext);
+	//Returns fragment to be rendered
+	RenderFragment Render(TfSpaceViewColumnScreenRegionContext regionContext);
 }
 
 public record TfSpaceViewColumnAddonDataMapping
