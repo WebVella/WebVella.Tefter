@@ -52,7 +52,7 @@ public class TfDataRow : IEnumerable
 				return;
 			}
 
-			if (column.IsJoinColumn)
+			if (column.OriginType == TfDataColumnOriginType.JoinedProviderColumn)
 			{
 				//this is internal case where we set list of values
 				switch (column.DbType)

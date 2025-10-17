@@ -48,7 +48,7 @@ public partial interface ITfService
 		string? search = null
 	);
 	TfDataTable InsertRowInDataTable(TfDataTable dt);
-	
+
 	public TfDataTable SaveDataTable(
 		TfDataTable table);
 
@@ -400,12 +400,12 @@ public partial class TfService : ITfService
 			{
 				var columnName = column.Name;
 
-				if (column.IsJoinColumn)
+				if (column.OriginType == TfDataColumnOriginType.JoinedProviderColumn)
 				{
 					values[valuesCounter++] = joinColumnValuesDict[column.Name];
 					continue;
 				}
-				else if (column.IsShared)
+				else if (column.OriginType == TfDataColumnOriginType.SharedColumn)
 				{
 					var segments = columnName.Split(".");
 					columnName = segments[1];
@@ -586,8 +586,8 @@ public partial class TfService : ITfService
 			result.Add((Guid)dt.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME]);
 		}
 		return result;
-	}	
-	
+	}
+
 	public TfDataTable SaveDataTable(
 		TfDataTable table)
 	{
@@ -671,7 +671,7 @@ public partial class TfService : ITfService
 		var newRow = newDt.NewRow();
 		newDt.Rows.Add(newRow);
 		return SaveDataTable(newDt);
-	}	
+	}
 
 	#region <--- insert / update row --->
 
@@ -712,7 +712,7 @@ public partial class TfService : ITfService
 					}
 					else
 					{
-						var uniqueValue = GetProviderColumnUniqueValue(provider,column);
+						var uniqueValue = GetProviderColumnUniqueValue(provider, column);
 						searchSb.Append($" {uniqueValue}");
 					}
 
@@ -759,13 +759,13 @@ public partial class TfService : ITfService
 
 		foreach (var tableColumn in row.DataTable.Columns)
 		{
-			if (!tableColumn.IsShared)
+			if (tableColumn.OriginType != TfDataColumnOriginType.SharedColumn)
 				continue;
 
 			//join columns will not be updated
 			//this is not supported at the moment, 
 			//but in case we support it at later stage
-			if (tableColumn.IsJoinColumn)
+			if (tableColumn.OriginType == TfDataColumnOriginType.JoinedProviderColumn)
 				continue;
 
 
@@ -901,7 +901,9 @@ public partial class TfService : ITfService
 			var tableColumn = row.DataTable.Columns[i];
 
 			//ignore shared, identity and joined columns here
-			if (tableColumn.IsShared || tableColumn.IsJoinColumn || tableColumn.IsIdentityColumn)
+			if (tableColumn.OriginType == TfDataColumnOriginType.SharedColumn ||
+				tableColumn.OriginType == TfDataColumnOriginType.JoinedProviderColumn |
+				tableColumn.OriginType == TfDataColumnOriginType.Identity)
 				continue;
 
 			processedColumns.Add(tableColumn.Name);
@@ -1028,7 +1030,9 @@ public partial class TfService : ITfService
 		foreach (var column in row.DataTable.Columns)
 		{
 			//join,shared and identity columns will not be updated
-			if (column.IsShared || column.IsJoinColumn || column.IsIdentityColumn)
+			if (column.OriginType == TfDataColumnOriginType.SharedColumn ||
+				column.OriginType == TfDataColumnOriginType.JoinedProviderColumn ||
+				column.OriginType == TfDataColumnOriginType.Identity)
 				continue;
 
 			if (column.DbType == TfDatabaseColumnType.Guid)
@@ -1101,13 +1105,13 @@ public partial class TfService : ITfService
 
 		foreach (var tableColumn in row.DataTable.Columns)
 		{
-			if (!tableColumn.IsShared)
+			if (tableColumn.OriginType != TfDataColumnOriginType.SharedColumn)
 				continue;
 
 			//join columns will not be updated
 			//this is not supported at the moment, 
 			//but in case we support it at later stage
-			if (tableColumn.IsJoinColumn)
+			if (tableColumn.OriginType == TfDataColumnOriginType.JoinedProviderColumn)
 				continue;
 
 			var sharedColumn = provider.SharedColumns.Single(x => $"{x.DataIdentity}.{x.DbName}" == tableColumn.Name);
@@ -1148,7 +1152,9 @@ public partial class TfService : ITfService
 			var tableColumn = row.DataTable.Columns[i];
 
 			//ignore shared,identity and joined columns here
-			if (tableColumn.IsIdentityColumn || tableColumn.IsShared || tableColumn.IsJoinColumn)
+			if (tableColumn.OriginType == TfDataColumnOriginType.SharedColumn ||
+				tableColumn.OriginType == TfDataColumnOriginType.JoinedProviderColumn ||
+				tableColumn.OriginType == TfDataColumnOriginType.Identity)
 				continue;
 
 			if (!columnsWithChange.Contains(tableColumn.Name))
@@ -1382,7 +1388,7 @@ public partial class TfService : ITfService
 		{
 			case TfDatabaseColumnType.DateOnly:
 				{
-					var dt =_dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), CURRENT_DATE) AS result FROM dp{provider.Index};");
+					var dt = _dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), CURRENT_DATE) AS result FROM dp{provider.Index};");
 					return DateOnly.FromDateTime((DateTime)dt.Rows[0]["result"]).ToDateTime();
 				}
 			case TfDatabaseColumnType.DateTime:

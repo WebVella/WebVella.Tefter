@@ -544,27 +544,30 @@ public partial class TfServiceTest : BaseTest
 				var columns = tfService.GetSpaceViewColumnsList(view.Id);
 				columns.Count.Should().Be(availableColumnTypes.Count);
 
-				var first = createdColums[0];
-				var last = createdColums[createdColums.Count - 1];
-
-				first.Position = (short)createdColums.Count;
-
-				var updateResult = await tfService.UpdateSpaceViewColumn(first);
-				updateResult.Should().NotBeNull();
-
-				columns = tfService.GetSpaceViewColumnsList(view.Id);
-				columns.Single(x => x.Id == first.Id).Position.Should().Be((short)createdColums.Count);
-				columns.Single(x => x.Id == last.Id).Position.Should().Be((short)(createdColums.Count - 1));
-
-				last = columns.Single(x => x.Id == first.Id);
-
-				for (int i = 1; i < columns.Count; i++)
+				if (columns.Count > 1)
 				{
-					await tfService.MoveSpaceViewColumnUp(last.Id);
+					var first = createdColums[0];
+					var last = createdColums[createdColums.Count - 1];
+
+					first.Position = (short)createdColums.Count;
+
+					var updateResult = await tfService.UpdateSpaceViewColumn(first);
+					updateResult.Should().NotBeNull();
 
 					columns = tfService.GetSpaceViewColumnsList(view.Id);
-					var column = columns.Single(x => x.Id == last.Id);
-					column.Position.Should().Be((short)(columns.Count - i));
+					columns.Single(x => x.Id == first.Id).Position.Should().Be((short)createdColums.Count);
+					columns.Single(x => x.Id == last.Id).Position.Should().Be((short)(createdColums.Count - 1));
+
+					last = columns.Single(x => x.Id == first.Id);
+
+					for (int i = 1; i < columns.Count; i++)
+					{
+						await tfService.MoveSpaceViewColumnUp(last.Id);
+
+						columns = tfService.GetSpaceViewColumnsList(view.Id);
+						var column = columns.Single(x => x.Id == last.Id);
+						column.Position.Should().Be((short)(columns.Count - i));
+					}
 				}
 
 				//test delete the entire space

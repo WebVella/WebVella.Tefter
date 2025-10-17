@@ -50,10 +50,7 @@ public sealed class TfDataTable
 				column.Name,
 				column.DbType,
 				column.IsNullable,
-				column.IsShared,
-				column.IsSystem,
-				column.IsJoinColumn,
-				column.IsIdentityColumn
+				column.OriginType
 			));
 		}
 
@@ -99,10 +96,7 @@ public sealed class TfDataTable
 				column.Name,
 				column.DbType,
 				column.IsNullable,
-				column.IsShared,
-				column.IsSystem,
-				column.IsJoinColumn,
-				column.IsIdentityColumn
+				column.OriginType
 			));
 		}
 
@@ -167,10 +161,7 @@ public sealed class TfDataTable
 				"tf_id",
 				TfDatabaseColumnType.Guid,
 				isNullable: false,
-				isShared: false,
-				isSystem: true,
-				isJoinColumn: false,
-				isIdentityColumn: false));
+				originType:  TfDataColumnOriginType.System));
 
 		//the case we return only tf_ids
 		if (onlyColumns != null && onlyColumns.Count == 1 && onlyColumns[0] == "tf_id")
@@ -183,40 +174,28 @@ public sealed class TfDataTable
 			"tf_row_index",
 			TfDatabaseColumnType.Integer,
 			isNullable: false,
-			isShared: false,
-			isSystem: true,
-			isJoinColumn: false,
-			isIdentityColumn: false));
+			originType: TfDataColumnOriginType.System));
 
 		columns.Add(new TfDataColumn(
 			this,
 			"tf_created_on",
 			TfDatabaseColumnType.DateTime,
 			isNullable: false,
-			isShared: false,
-			isSystem: true,
-			isJoinColumn: false,
-			isIdentityColumn: false));
+			originType: TfDataColumnOriginType.System));
 
 		columns.Add(new TfDataColumn(
 			this,
 			"tf_updated_on",
 			TfDatabaseColumnType.DateTime,
 			isNullable: false,
-			isShared: false,
-			isSystem: true,
-			isJoinColumn: false,
-			isIdentityColumn: false));
+			originType: TfDataColumnOriginType.System));
 
 		columns.Add(new TfDataColumn(
 			this,
 			"tf_search",
 			TfDatabaseColumnType.Text,
 			isNullable: false,
-			isShared: false,
-			isSystem: true,
-			isJoinColumn: false,
-			isIdentityColumn: false));
+			originType: TfDataColumnOriginType.System));
 
 		foreach (var identity in dataProvider.Identities)
 		{
@@ -226,10 +205,7 @@ public sealed class TfDataTable
 				name,
 				TfDatabaseColumnType.ShortText,
 				isNullable: false,
-				isShared: false,
-				isSystem: true,
-				isJoinColumn: false,
-				isIdentityColumn: true));
+				originType: TfDataColumnOriginType.Identity));
 		}
 
 		foreach (var providerColumn in dataProvider.Columns)
@@ -239,13 +215,10 @@ public sealed class TfDataTable
 
 			columns.Add(new TfDataColumn(
 				this,
-				providerColumn.DbName,
+				providerColumn.DbName!,
 				providerColumn.DbType,
 				isNullable: providerColumn.IsNullable,
-				isShared: false,
-				isSystem: false,
-				isJoinColumn: false,
-				isIdentityColumn: false));
+				originType: TfDataColumnOriginType.CurrentProvider));
 		}
 
 
@@ -258,10 +231,7 @@ public sealed class TfDataTable
 				combinedColumnName,
 				sharedColumnData.DbType,
 				isNullable: true,
-				isShared: true,
-				isSystem: false,
-				isJoinColumn: false,
-				isIdentityColumn: false));
+				originType: TfDataColumnOriginType.SharedColumn));
 		}
 
 		foreach (var data in joinData)
@@ -278,10 +248,7 @@ public sealed class TfDataTable
 					combinedColumnName,
 					connectedProviderColumn.DbType,
 					isNullable: connectedProviderColumn.IsNullable,
-					isShared: false,
-					isSystem: false,
-					isJoinColumn: true,
-					isIdentityColumn: false));
+					originType: TfDataColumnOriginType.JoinedProviderColumn));
 			}
 
 		}
