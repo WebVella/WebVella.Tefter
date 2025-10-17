@@ -4,7 +4,7 @@ public partial class TucSpaceViewPageContent
 {
 	private Dictionary<Guid, TfSpaceViewRowPresentationMeta> _rowMeta = new();
 	private Dictionary<Guid, TfSpaceViewColumnPresentationMeta> _columnsMeta = new();
-	private Dictionary<Guid, Dictionary<Guid, TfSpaceViewColumnScreenRegionContext>> _rowColumnContext = new();
+	private Dictionary<Guid, Dictionary<Guid, TfSpaceViewColumnBaseContext>> _regionContextDict = new();
 
 	private void _generateMeta()
 	{
@@ -15,13 +15,13 @@ public partial class TucSpaceViewPageContent
 	private void _generateRowsMeta()
 	{
 		_rowMeta = new();
-		_rowColumnContext = new();
+		_regionContextDict = new();
 		if (_data is null) return;
 		foreach (TfDataRow row in _data.Rows)
 		{
 			var tfId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
 			_rowMeta[tfId] = new();
-			_rowColumnContext[tfId] = new();
+			_regionContextDict[tfId] = new();
 
 			#region << Selected >>
 
@@ -35,22 +35,33 @@ public partial class TucSpaceViewPageContent
 
 			#endregion
 
-			#region << Context >>
+			#region << Column Context >>
 
 			foreach (TfSpaceViewColumn column in _spaceViewColumns)
 			{
-				_rowColumnContext[tfId] = new();
-				_rowColumnContext[tfId][column.Id] = new TfSpaceViewColumnScreenRegionContext(_contextData)
+				_regionContextDict[tfId] = new();
+				if (_rowMeta[tfId].EditMode)
 				{
-					Mode = TfComponentPresentationMode.Display,
-					TypeOptionsJson = column.TypeOptionsJson,
-					DataMapping = column.DataMapping,
-					DataTable = _data,
-					RowId = tfId,
-					QueryName = column.QueryName,
-					SpaceViewId = column.SpaceViewId,
-					SpaceViewColumnId = column.Id,
-				};
+					_regionContextDict[tfId][column.Id] = new TfSpaceViewColumnEditModeContext(_contextViewData)
+					{
+						TfService = TfService,
+						SpaceViewColumn = column,
+						DataTable = _data,
+						RowId = tfId,
+						DataChanged = EventCallback.Factory.Create<TfSpaceViewColumnDataChange>(this, _onRowChanged)
+					};					
+				}
+				else{
+					_regionContextDict[tfId][column.Id] = new TfSpaceViewColumnReadModeContext(_contextViewData)
+					{
+						TfService = TfService,
+						SpaceViewColumn = column,
+						DataTable = _data,
+						RowId = tfId
+					};						
+				}
+
+
 			}
 
 			#endregion
@@ -60,9 +71,7 @@ public partial class TucSpaceViewPageContent
 	private void _generateColumnsMeta()
 	{
 		_columnsMeta = new();
-		if (_spaceView is null
-		    || _spaceViewColumns is null
-		    || _currentUser is null) return;
+		if (_spaceView is null) return;
 
 		var userPersonalizationDict = new Dictionary<Guid, TfViewPresetColumnPersonalization>();
 		List<Guid> freezeLeftColumnIdList = new();

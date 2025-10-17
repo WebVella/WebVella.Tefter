@@ -10,14 +10,16 @@ public class TfDataColumn
 	public bool IsSystem { get; init; }
 	public bool IsJoinColumn { get; init; }
 	public bool IsIdentityColumn { get; init; }
+	
+	public TfDataColumnOriginType OriginType { get; init; } = TfDataColumnOriginType.CurrentProvider;
 
-	internal TfDataColumn( 
+	internal TfDataColumn(
 		TfDataTable dataTable,
 		string name,
 		TfDatabaseColumnType dbType,
 		bool isNullable,
 		bool isShared,
-		bool isSystem, 
+		bool isSystem,
 		bool isJoinColumn,
 		bool isIdentityColumn)
 	{

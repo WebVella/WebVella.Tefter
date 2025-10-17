@@ -1,49 +1,56 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<FluentMenu @bind-Open="_open" Anchor="view-share-selector" UseMenuService="true" HorizontalPosition="HorizontalPosition.Right">
+<FluentMenu @bind-Open="_open" Anchor="view-share-selector" UseMenuService="true"
+            HorizontalPosition="HorizontalPosition.Right">
 	<FluentMenuItem OnClick="_copyLinkToClipboard">
 		@LOC("Copy link")
 		<FluentIcon Value="@TfConstants.GetIcon("Link")" Slot="start"/>
 	</FluentMenuItem>
 	<FluentDivider/>
+	@if (SelectedRows.Count > 0)
+	{
+		<FluentMenuItem>
+			<ChildContent>
+				@LOC("Export Selected")
+				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown").WithColor(Color.Neutral)" Slot="start"/>
+				<span slot="end">(@SelectedRows.Count)</span>
+			</ChildContent>
+			<MenuItems>
+				<FluentMenuItem OnClick="_exportCSVSelection">
+					@LOC("CSV File")
+					<FluentIcon Value="@TfConstants.GetIcon("DocumentBulletList")" Slot="start"/>
+				</FluentMenuItem>
+				<FluentMenuItem Disabled="@(SelectedRows.Count == 0)" OnClick="_exportExcelSelection">
+					@LOC("Excel File")
+					<FluentIcon Value="@TfConstants.GetIcon("DocumentTable")" Slot="start"/>
+				</FluentMenuItem>
+
+			</MenuItems>
+		</FluentMenuItem>
+	}
+	else
+	{
+		<FluentMenuItem Disabled="true">
+			<ChildContent>
+				@LOC("Export Selected")
+				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown").WithColor(Color.Neutral)" Slot="start"/>
+				<span slot="end">(0)</span>
+			</ChildContent>
+		</FluentMenuItem>
+	}
 	<FluentMenuItem>
 		<ChildContent>
-			@LOC("Export")
+			@LOC("Export All")
 			<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown").WithColor(Color.Neutral)" Slot="start"/>
 		</ChildContent>
 		<MenuItems>
-			<FluentMenuItem Disabled="true">CSV</FluentMenuItem>
-			<FluentMenuItem Disabled="@(SelectedRows.Count == 0)" OnClick="_exportCSVSelection">
-				@LOC("CSV Selected")
-				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start"/>
-				@if (SelectedRows.Count > 0)
-				{
-					<span slot="end">
-								<FluentBadge Appearance="@Appearance.Accent"
-								             Style="margin-left:3px;">@SelectedRows.Count</FluentBadge>
-							</span>
-				}
-			</FluentMenuItem>
 			<FluentMenuItem OnClick="_exportCSVAll">
-				@LOC("CSV All")
-				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start"/>
-			</FluentMenuItem>
-			<FluentDivider/>
-			<FluentMenuItem Disabled="true">Excel</FluentMenuItem>
-			<FluentMenuItem Disabled="@(SelectedRows.Count == 0)" OnClick="_exportExcelSelection">
-				@LOC("Excel Selected")
-				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start"/>
-				@if (SelectedRows.Count > 0)
-				{
-					<span slot="end">
-								<FluentBadge Appearance="@Appearance.Accent"
-								             Style="margin-left:3px;">@SelectedRows.Count</FluentBadge>
-							</span>
-				}
+				@LOC("CSV File")
+				<FluentIcon Value="@TfConstants.GetIcon("DocumentBulletList")" Slot="start"/>
 			</FluentMenuItem>
 			<FluentMenuItem OnClick="_exportExcelAll">
-				@LOC("Excel All")
-				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start"/>
+				@LOC("Excel File")
+				<FluentIcon Value="@TfConstants.GetIcon("DocumentTable")" Slot="start"/>
 			</FluentMenuItem>
 		</MenuItems>
 	</FluentMenuItem>

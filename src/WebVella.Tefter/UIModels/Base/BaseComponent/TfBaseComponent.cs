@@ -5,6 +5,7 @@ namespace WebVella.Tefter.Models;
 
 public class TfBaseComponent : ComponentBase
 {
+	[Inject] protected IServiceProvider ServiceProvider { get; set; } = null!;
 	[Inject] protected IJSRuntime JSRuntime { get; set; } = null!;
 	[Inject] protected NavigationManager Navigator { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;

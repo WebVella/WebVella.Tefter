@@ -290,7 +290,7 @@ public sealed class TfDataTable
 		return columns;
 	}
 
-	public object this[Guid rowId, string columnName]
+	public object? this[Guid rowId, string columnName]
 	{
 		get
 		{

@@ -3,7 +3,6 @@
 public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 {
 	#region << Init >>
-
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 
@@ -27,7 +26,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private List<Guid> _selectedDataRows = new();
 	private List<Guid> _editedDataRows = new();
 	private bool _editAll = false;
-	private Dictionary<string, object> _contextData = new();
+	private Dictionary<string, object> _contextViewData = new();
 	private string _tableId = "space-view-table";
 	private RenderFragment _caretDownInactive = null!;
 	private RenderFragment _caretDown = null!;
@@ -183,7 +182,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 			if (oldViewId != options.SpaceViewId.Value)
 			{
-				_contextData = new();
+				_contextViewData = new();
 				_spaceData = TfService.GetDataset(_spaceView.DatasetId);
 				_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _spaceData.DataProviderId);
 				_selectedDataRows = new();
@@ -417,11 +416,23 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		       + JsonSerializer.Serialize(user.Settings.ViewPresetSortPersonalizations);
 	}
 
-	private async Task _onRowChanged(TfDataTable value)
+	private async Task _onRowChanged(TfSpaceViewColumnDataChange change)
 	{
+		if(_data is null) return;
 		try
 		{
-			if (value is null || value.Rows.Count == 0) return;
+			var value = _data.NewTableFromRowIds(change.RowId);
+			if (value.Rows.Count == 0)
+			{
+				ToastService.ShowError(LOC("Row with id {0} is not found",change.RowId));
+				return;
+			}
+
+			foreach (var columnName in change.DataChange.Keys)
+			{
+				value.Rows[0][columnName] = change.DataChange[columnName];				
+			}
+
 			var changedRow = value.Rows[0];
 			var changedRowTfId = changedRow.GetRowId();
 
@@ -440,7 +451,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				for (int j = 0; j < clonedData.Columns.Count; j++)
 				{
 					TfDataColumn column = clonedData.Columns[j];
-					if (column.IsSystem) continue;
+					if (column.OriginType == TfDataColumnOriginType.System || column.OriginType == TfDataColumnOriginType.Identity) continue;
 					row[column.Name] = changedRow[column.Name];
 				}
 			}

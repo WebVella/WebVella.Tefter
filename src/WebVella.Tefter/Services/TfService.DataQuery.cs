@@ -290,11 +290,11 @@ public partial class TfService : ITfService
 
 	public TfDataTable QueryDataset(
 		Guid datasetId,
-		List<TfFilterBase> userFilters = null,
-		List<TfSort> userSorts = null,
-		List<TfFilterBase> presetFilters = null,
-		List<TfSort> presetSorts = null,
-		string search = null,
+		List<TfFilterBase>? userFilters = null,
+		List<TfSort>? userSorts = null,
+		List<TfFilterBase>? presetFilters = null,
+		List<TfSort>? presetSorts = null,
+		string? search = null,
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false,

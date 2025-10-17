@@ -45,12 +45,8 @@ public partial class TfMetaService : ITfMetaService
 			_addonIdHS.Add(instance.AddonId);
 
 		
-			ITfSpaceViewColumnTypeAddon castType =  Unsafe.As<ITfSpaceViewColumnTypeAddon>(type);
-			
-			_columnTypeMetaList.Add(castType);
-			_columnTypeMetaDict[instance.AddonId] = castType;
-
-			_typesMap[type.FullName] = type;
+			_columnTypeMetaList.Add(instance);
+			_columnTypeMetaDict[instance.AddonId] = instance;
 		}
 	}
 

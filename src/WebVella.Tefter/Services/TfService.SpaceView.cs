@@ -234,7 +234,7 @@ public partial class TfService : ITfService
 							//TODO initialize type options with default values for the column type
 							//tfColumn.ComponentId = columnType.DefaultDisplayComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
 							//tfColumn.EditComponentId = columnType.DefaultEditComponentId ?? new Guid(TucTextEditColumnComponent.ID);
-							foreach (var mapper in columnType.DataMapping)
+							foreach (var mapper in columnType.DataMappingDefinitions)
 							{
 								tfColumn.DataMapping[mapper.Alias] = columnName;
 							}

@@ -2,33 +2,27 @@
 
 namespace WebVella.Tefter.Models;
 
-public class TfSpaceViewColumnScreenRegionContext(Dictionary<string, object> viewData) : TfBaseScreenRegionContext
+public abstract class TfSpaceViewColumnBaseContext : TfBaseScreenRegionContext
 {
-	public Guid SpaceViewId { get; set; }
-	public Guid SpaceViewColumnId { get; set; }
-	public string? QueryName { get; set; } = null;
-	public Dictionary<string, string> DataMapping { get; set; } = new();
-	public string TypeOptionsJson { get; set; } = "{}";
-	public TfComponentPresentationMode Mode { get; set; } = TfComponentPresentationMode.Display;
+	public TfSpaceViewColumn SpaceViewColumn { get; set; } = null!;
+	public ITfService TfService { get; init; } = null!;
+}
+
+public class TfSpaceViewColumnReadModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext
+{
+	//When columns need to share data between rows (optimization)
+	private Dictionary<string, object> _viewData = viewData;
+	public Dictionary<string, object> ViewData { get => _viewData; }
 	public TfDataTable? DataTable { get; set; } = null;
 	public Guid RowId { get; set; } = default;
-	//References
-	public EditContext? EditContext { get; set; } = null;
-	public ValidationMessageStore? ValidationMessageStore { get; set; } = null;
-	public Dictionary<string,object> ViewData { get; init; } = viewData;
-	public IServiceProvider ServiceProvider { get; init; } = null!;
-	//Callbacks
-	public EventCallback<Tuple<string,string>> DataMappingChanged { get; set; }
-	public EventCallback<string> OptionsChanged { get; set; }
-	public EventCallback<TfDataTable> RowChanged { get; set; }	
+	
 	
 	public string GetHash()
 	{
 		var sb = new StringBuilder();
 		sb.Append(RowId);
-		sb.Append(SpaceViewId);
-		sb.Append(SpaceViewColumnId);
-		sb.Append(TypeOptionsJson);
+		sb.Append(SpaceViewColumn.Id);
+		sb.Append(SpaceViewColumn.TypeOptionsJson);
 		if (DataTable is not null)
 		{
 			sb.Append(DataTable.GetHashCode());
@@ -36,6 +30,63 @@ public class TfSpaceViewColumnScreenRegionContext(Dictionary<string, object> vie
 			sb.Append(DataTable.QueryInfo.DataProviderId);
 			sb.Append(DataTable.QueryInfo.SpaceDataId);
 		}
+
 		return sb.ToString();
 	}
+}
+
+public class TfSpaceViewColumnEditModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext
+{
+	//When columns need to share data between rows (optimization)
+	private Dictionary<string, object> _viewData = viewData;
+	public Dictionary<string, object> ViewData { get => _viewData; }
+	public TfDataTable? DataTable { get; set; } = null;
+	public Guid RowId { get; set; } = default;
+	public EventCallback<TfSpaceViewColumnDataChange> DataChanged { get; set; }
+	public string GetHash()
+	{
+		var sb = new StringBuilder();
+		sb.Append(RowId);
+		sb.Append(SpaceViewColumn.Id);
+		sb.Append(SpaceViewColumn.TypeOptionsJson);
+		if (DataTable is not null)
+		{
+			sb.Append(DataTable.GetHashCode());
+			sb.Append(DataTable.QueryInfo);
+			sb.Append(DataTable.QueryInfo.DataProviderId);
+			sb.Append(DataTable.QueryInfo.SpaceDataId);
+		}
+
+		return sb.ToString();
+	}
+}
+
+public class TfSpaceViewColumnOptionsModeContext : TfSpaceViewColumnBaseContext
+{
+	public EditContext? EditContext { get; set; } = null;
+	public ValidationMessageStore? ValidationMessageStore { get; set; } = null;
+
+	// public EventCallback<Tuple<string,string>> DataMappingChanged { get; set; }
+	// public EventCallback<string> OptionsChanged { get; set; }	
+}
+
+public class TfSpaceViewColumnExportExcelModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext
+{
+	public TfDataTable? DataTable { get; set; } = null;
+
+	public Guid RowId { get; set; } = default;
+
+	//When columns need to share data between rows (optimization)
+	public Dictionary<string, object> ViewData { get; private init; } = viewData;
+	public IXLCell ExcelCell { get; set; } = null!;
+}
+
+public class TfSpaceViewColumnExportCsvModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext
+{
+	public TfDataTable? DataTable { get; set; } = null;
+
+	public Guid RowId { get; set; } = default;
+
+	//When columns need to share data between rows (optimization)
+	public Dictionary<string, object> ViewData { get; private init; } = viewData;
 }

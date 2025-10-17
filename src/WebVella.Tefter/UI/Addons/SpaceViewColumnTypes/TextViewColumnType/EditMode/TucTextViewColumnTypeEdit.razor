@@ -1,0 +1,15 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits ComponentBase
+<div>
+	@foreach (var index in _valueDict.Keys)
+	{
+		<div class="tf-grid-td-input">
+			<FluentTextField Id="@_valueInputId"
+			                 @bind-Value="@_valueDict[index]"
+			                 @bind-Value:after="_valueChanged"
+			                 Style="width:100%;min-width:60px;" AutoComplete="off"/>
+		</div>
+	}
+</div>
+
+

@@ -9,12 +9,12 @@ public class TfDataRow : IEnumerable
 	public Guid GetRowId() 
 		=> Field<Guid>(TfConstants.TEFTER_ITEM_ID_PROP_NAME);
 
-	public object this[int columnIndex]
+	public object? this[int columnIndex]
 	{
 		get { return _values[columnIndex]; }
 	}
 
-	public object this[string columnName]
+	public object? this[string columnName]
 	{
 		get
 		{

@@ -2,7 +2,9 @@
 
 public enum TfComponentPresentationMode
 {
-	Display,
+	Read,
+	Edit,
 	Options,
-	Edit
+	ExportExcel,
+	ExportCsv,
 }

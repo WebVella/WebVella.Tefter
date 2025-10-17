@@ -12,9 +12,7 @@ public record TfSpaceViewColumn
 	public Guid TypeId { get; set; }
     public string TypeOptionsJson { get; set; } = "{}";
     public TfSpaceViewColumnSettings Settings { get; set; } = new();
-	[Obsolete]
     public Dictionary<string, string> DataMapping { get; set; } = new();
-	[Obsolete]
 	public string? GetColumnNameFromDataMapping(){ 
 		if(DataMapping is null || DataMapping.Keys.Count == 0) return null;
 		return DataMapping[DataMapping.Keys.First()];

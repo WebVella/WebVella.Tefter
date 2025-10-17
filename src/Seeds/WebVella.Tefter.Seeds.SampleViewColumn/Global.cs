@@ -15,6 +15,5 @@ global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Exceptions;
 global using WebVella.Tefter.Web.Models;
 
-global using WebVella.Tefter.Seeds.Addons;
 
 

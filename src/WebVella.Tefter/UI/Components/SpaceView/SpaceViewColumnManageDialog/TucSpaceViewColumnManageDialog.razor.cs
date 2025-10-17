@@ -279,7 +279,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		//fix datamapping object based on the latest requirements
 		var dataMapping = new Dictionary<string, string>();
 		dataMapping[valueAlias.Item1] = valueAlias.Item2;
-		foreach (var item in _selectedColumnType.DataMapping)
+		foreach (var item in _selectedColumnType.DataMappingDefinitions)
 		{
 			if (item.Alias == valueAlias.Item1) continue; //already added above
 			dataMapping[item.Alias] = null;
@@ -296,18 +296,12 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 
 		var contextData = new Dictionary<string, object>();
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] =
-			new TfSpaceViewColumnScreenRegionContext(contextData)
+			new TfSpaceViewColumnOptionsModeContext()
 			{
-				Mode = TfComponentPresentationMode.Options,
-				TypeOptionsJson = _form.TypeOptionsJson,
-				DataMapping = _form.DataMapping,
-				DataTable = null,
-				RowId = Guid.Empty,
-				QueryName = _form.QueryName,
-				SpaceViewId = _form.SpaceViewId,
-				SpaceViewColumnId = _form.Id,
+				TfService = TfService,
+				SpaceViewColumn = _form,
 				EditContext = EditContext,
-				ValidationMessageStore = MessageStore
+				ValidationMessageStore = MessageStore,
 			};
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_OPTIONS_CHANGED_PROPERTY_NAME] =
 			EventCallback.Factory.Create<string>(this, _customOptionsChangedHandler);

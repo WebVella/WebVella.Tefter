@@ -19,15 +19,16 @@ else
 	//var configCss = _generateColumnConfigurationCss(_spaceView, _spaceViewColumns);
 	//var columnIndex = 1;
 	<CascadingValue IsFixed="true" TValue="TucSpaceViewPageContent" Value="this" Name="TucSpaceViewPageContent">
-		<TucLayoutPageContent Icon="@_spacePage!.FluentIconName" Title="@_spacePage!.Name" ShowTabs="_spaceView.Presets.Count > 0">
+		<TucLayoutPageContent Icon="@_spacePage!.FluentIconName" Title="@_spacePage!.Name"
+		                      ShowTabs="_spaceView.Presets.Count > 0">
 			<Tabs>
 				<TucSpaceViewPageContentTabs SpaceView="_spaceView" SpacePage="_spacePage"/>
 			</Tabs>
 			<Toolbar>
 				<TucSpaceViewPageContentToolbar Context=Context SpaceView="_spaceView" Data=_data
-				                                    SpaceData="_spaceData" SpaceViewPreset=_preset
-				                                    SelectAllLoading="_selectAllLoading"
-				                                    SelectedRows="_selectedDataRows"/>
+				                                SpaceData="_spaceData" SpaceViewPreset=_preset
+				                                SelectAllLoading="_selectAllLoading"
+				                                SelectedRows="_selectedDataRows"/>
 			</Toolbar>
 			<ChildContent>
 				<table class="tf-grid  tf-grid--sticky" id="@_tableId">
@@ -154,6 +155,17 @@ else
 												</FluentButton>
 											</div>
 										}
+										else
+										{
+											<div class="check-content check">
+												<FluentButton Disabled="true" BackgroundColor="transparent"
+												              Color="transparent">
+													<FluentIcon Value="@TfConstants.GetIcon("LockClosed")"
+													            Color="@Color.Custom"
+													            CustomColor="var(--neutral-stroke-input-active)"/>
+												</FluentButton>
+											</div>											
+										}
 									}
 									else
 									{
@@ -190,12 +202,13 @@ else
 										@if (_columnTypeMetaDict.ContainsKey(column.TypeId))
 										{
 											<TucErrorBoundry>
-											@(((ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(_columnTypeMetaDict[column.TypeId]!.GetType())!).Render(_rowColumnContext[tfId][column.Id]))
+												@(((ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(_columnTypeMetaDict[column.TypeId]!.GetType())!).Render(_regionContextDict[tfId][column.Id]))
 											</TucErrorBoundry>
 										}
 										else
 										{
-											<span style="color:var(--error)" title="@LOC("Column type not found")">error</span>
+											<span style="color:var(--error)"
+											      title="@LOC("Column type not found")">error</span>
 										}
 
 										@*TODO BOZ: IMPLEMENT*@
