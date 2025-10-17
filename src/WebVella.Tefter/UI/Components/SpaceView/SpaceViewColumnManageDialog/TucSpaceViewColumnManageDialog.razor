@@ -11,7 +11,17 @@
 		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
 		                FormName="submit-form" class="tf-form" novalidate>
 			<DataAnnotationsValidator/>
-			<TucMenu Items="_menu" Style="margin-bottom: 1rem;"/>
+
+			<TucSelectComponent
+				TOption="ITfSpaceViewColumnTypeAddon?"
+				Items="_availableColumnTypes" @bind-Value="_selectedColumnType"
+				OptionText="@(x => x.AddonName)"
+				OptionIcon="@(x => x.AddonFluentIconName)"
+				OptionDescription="@(x => x.AddonDescription)"
+				OptionMatch="@((x, y) => x?.AddonId == y?.AddonId)"/>
+			<FluentValidationMessage For="@(() => _form.TypeId)"/>
+
+			<TucMenu Items="_menu" Style="margin-bottom: 1rem; margin-top:1rem;"/>
 
 			@if (_activeTab == TucSpaceViewColumnManageDialogTab.General)
 			{
@@ -48,45 +58,46 @@
 						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.QueryName
 						                 Label="@LOC("Query Name")" Style="width:100%" AutoComplete="off"/>
 						<FluentValidationMessage For="@(() => _form.QueryName)"/>
-					</FluentGridItem>					
-				</FluentGrid>
-				<FluentGrid>
-					<FluentGridItem xs="6">
-						<FluentInputLabel Label="@LOC("Column type")"/>
-						<FluentStack HorizontalGap="5">
-							@if (String.IsNullOrWhiteSpace(_selectedColumnType?.AddonFluentIconName))
-							{
-								<FluentButton Appearance="@Appearance.Outline"/>
-							}
-							else
-							{
-								<FluentButton Appearance="@Appearance.Outline"
-								              IconStart="@TfConstants.GetIcon(_selectedColumnType!.AddonFluentIconName)"/>
-							}
-							<TucSelect Style="width:100%"
-							           TOption="ITfSpaceViewColumnTypeAddon"
-							           Placeholder="@LOC("select...")"
-							           SelectedOption="@_selectedColumnType"
-							           SelectedOptionChanged="_columnTypeChangeHandler"
-							           OptionText="((x) => x.AddonName)"
-							           OptionValue="((x) => x.AddonId.ToString())"
-							           Items="_availableColumnTypes">
-								<OptionTemplate Context="option">
-									<FluentStack>
-										@if (!String.IsNullOrWhiteSpace(option.AddonFluentIconName))
-										{
-											<FluentIcon
-												Value="@TfConstants.GetIcon(option.AddonFluentIconName)"
-												Color="@Color.Accent"/>
-										}
-										@option.AddonName
-									</FluentStack>
-								</OptionTemplate>
-							</TucSelect>
-						</FluentStack>
-						<FluentValidationMessage For="@(() => _form.TypeId)"/>
 					</FluentGridItem>
 				</FluentGrid>
+			}
+			else if (_activeTab == TucSpaceViewColumnManageDialogTab.ColumnType)
+			{
+				@if (_selectedColumnType is not null)
+				{
+					foreach (var item in _selectedColumnType.DataMappingDefinitions)
+					{
+						<FluentGrid>
+							<FluentGridItem xs="6">
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@item.Alias Immediate
+								                 ImmediateDelay="500"
+								                 Disabled="true" Label="@LOC("Component alias")" Style="width:100%"
+								                 AutoComplete="off"/>
+							</FluentGridItem>
+							<FluentGridItem xs="6">
+								<FluentCombobox TOption="string"
+								                Autocomplete="ComboboxAutocomplete.Both"
+								                Items="_options"
+								                Height="@TfConstants.ComboPanelHeight"
+								                Value=@_getDataMappingValue(item.Alias)
+								                Immediate ImmediateDelay="500"
+								                ValueChanged="@((x) => _dataMappingValueChanged(new Tuple<string, string>(item.Alias, x)))"
+								                Label="@LOC("Data column name")" Style="width:100%"/>
+							</FluentGridItem>
+						</FluentGrid>
+					}
+
+					if (_selectedColumnType.DataMappingDefinitions.Count == 0)
+					{
+						<FluentMessageBar Intent="@MessageIntent.Info"
+						                  Title="@LOC("This component does not require data mapping")"
+						                  AllowDismiss="false"/>
+					}
+					
+					<TucErrorBoundry>
+						@(((ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(_selectedColumnType.GetType())!).Render(_componentContext))
+					</TucErrorBoundry>
+				}
 			}
 			@* else if (_activeTab == TucSpaceViewColumnManageDialogTab.ReadMode) *@
 			@* { *@
@@ -248,19 +259,29 @@
 					</FluentGridItem>
 				</FluentGrid>
 			}
-			else if (_activeTab == TucSpaceViewColumnManageDialogTab.Template)
-			{
-			}			
+
 		</FluentEditForm>
 	</FluentDialogBody>
 
 	@* Footer *@
 	<FluentDialogFooter>
-		@if (String.IsNullOrWhiteSpace(_error))
-		{
-			<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
-			              Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
-		}
-		<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+		<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="VerticalAlignment.Center">
+			<FluentStack  VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.Left">
+				@if (String.IsNullOrWhiteSpace(_error) && !_isCreate)
+				{
+					<FluentButton Appearance="Appearance.Outline" OnClick="@_delete"
+					              IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)"
+					              Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Delete")</FluentButton>
+				}
+			</FluentStack>
+			<FluentStack VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.Right">
+				@if (String.IsNullOrWhiteSpace(_error))
+				{
+					<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
+					              Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
+				}
+				<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+			</FluentStack>
+		</FluentStack>
 	</FluentDialogFooter>
 </div>

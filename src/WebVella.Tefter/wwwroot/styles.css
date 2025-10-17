@@ -1182,8 +1182,8 @@ fluent-menu-item::part(start) {
   border-radius: 0;
   background: var(--neutral-fill-hover);
 }
-.tf-grid tbody tr > th > div,
-.tf-grid tbody tr > td > div {
+.tf-grid tbody tr > th > div:not(.tf-grid-td-color):not(.tf-grid-td-selection):not(.tf-grid-td-hover),
+.tf-grid tbody tr > td > div:not(.tf-grid-td-color):not(.tf-grid-td-selection):not(.tf-grid-td-hover) {
   border-radius: calc(var(--control-corner-radius) * 1px);
   /*white-space: nowrap;*/
   text-overflow: ellipsis;
@@ -1220,6 +1220,10 @@ fluent-menu-item::part(start) {
 .tf-grid tbody tr:last-child > th,
 .tf-grid tbody tr:last-child > td {
   border-bottom: 1px solid var(--neutral-stroke-rest);
+}
+.tf-grid tbody tr.tf-grid-tr--edited td > div:not(.tf-grid-td-color):not(.tf-grid-td-selection):not(.tf-grid-td-hover) {
+  padding-right: 3px !important;
+  padding-left: 3px !important;
 }
 .tf-grid tbody tr.tf-grid-tr--edited .tf-grid-td--check::after {
   content: "";
@@ -2018,6 +2022,7 @@ fluent-menu-item::part(start) {
   background: linear-gradient(90deg, transparent 0, var(--accent-fill-rest) 50%, transparent 100%);
 }
 .tf-tabs__item fluent-anchor {
+  height: 100%;
   --accent-foreground-rest: var(--neutral-foreground-rest);
   --accent-fill-rest: var(--neutral-foreground-rest);
 }

@@ -1,34 +1,26 @@
-﻿using System.ComponentModel.Design;
+﻿namespace WebVella.Tefter.UI.Addons;
 
-namespace WebVella.Tefter.UI.Addons;
-
-public partial class TucTextViewColumnTypeEdit : ComponentBase
+public partial class TucTextViewColumnTypeEdit : TfLocalizedViewColumnComponent
 {
-	[Parameter] public List<string?>? Value { get; set; }
-	[Parameter] public EventCallback<List<string?>> ValueChanged { get; set; }
+	[Inject] protected IJSRuntime JSRuntime { get; set; } = null!;	
+	[Parameter] public string? Value { get; set; }
+	[Parameter] public EventCallback<string> ValueChanged { get; set; }
+	[Parameter] public TfTextViewColumnTypeSettings Settings { get; set; } = null!;
 
-	private string _valueInputId = "input-" + Guid.NewGuid();
-	private Dictionary<int, string?> _valueDict = new();
+	private readonly string _valueInputId = "input-" + Guid.NewGuid();
 
 
-	protected override void OnInitialized()
+	private async Task _valueChanged(string? value)
 	{
-		if (Value is not null)
+		if (!String.IsNullOrWhiteSpace(Settings.ChangeConfirmationMessage))
 		{
-			for (int i = 0; i < Value.Count; i++)
+			if (!await JSRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
 			{
-				_valueDict[i] = Value[i];
+				return;
 			}
 		}
-	}
-
-	private async Task _valueChanged()
-	{
-		var values = new List<string?>();
-		foreach (var index in _valueDict.Keys)
-		{
-			values.Add(_valueDict[index]);
-		}
-		await ValueChanged.InvokeAsync(values);
+		Value = value;
+		await ValueChanged.InvokeAsync(Value);
+		await JSRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
 	}
 }

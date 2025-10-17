@@ -33,12 +33,29 @@ public static class ViewColumnTypeExt
 		if (dt is null) 
 			throw new Exception("DataTable not provided");
 
-		TfDataColumn? column = dt.GetColumnByAlias(alias, args.SpaceViewColumn.DataMapping);
+		TfDataColumn? column = dt.GetColumnByAlias(alias, args.ViewColumn.DataMapping);
 		if (column is null)
 			throw new Exception("Column not found");
 		return (column, dt.GetColumnData(rowId, column));
 	}
 
+	public static T GetColumnTypeOptions<T>(this TfSpaceViewColumnBaseContext args, T defaultValue)
+	{
+		if (args.ViewColumn.TypeOptionsJson is null) return defaultValue;
+		var options = JsonSerializer.Deserialize<T>(args.ViewColumn.TypeOptionsJson);
+		if (options is null) return defaultValue;
+		return options;
+	}
+
+	public static void SetColumnTypeOptions<T>(this TfSpaceViewColumnBaseContext args, T? options)
+	{
+		if (options is null)
+			args.ViewColumn.TypeOptionsJson = "{}";
+
+		args.ViewColumn.TypeOptionsJson = JsonSerializer.Serialize(options);
+	}
+	
+	
 	#endregion
 
 

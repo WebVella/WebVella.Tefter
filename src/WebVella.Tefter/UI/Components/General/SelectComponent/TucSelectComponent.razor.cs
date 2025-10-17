@@ -40,7 +40,7 @@ public partial class TucSelectComponent<TOption> : TfBaseComponent where TOption
 
 	private string _getOptionText(TOption item)
 	{
-		if (item != null)
+		if (item != null && OptionText != null)
 		{
 			return OptionText.Invoke(item) ?? item.ToString();
 		}
@@ -52,7 +52,7 @@ public partial class TucSelectComponent<TOption> : TfBaseComponent where TOption
 
 	private string _getOptionDescription(TOption item)
 	{
-		if (item != null)
+		if (item != null && OptionDescription != null)
 		{
 			return OptionDescription.Invoke(item) ?? null;
 		}
@@ -64,7 +64,7 @@ public partial class TucSelectComponent<TOption> : TfBaseComponent where TOption
 
 	private string _getOptionIcon(TOption item)
 	{
-		if (item != null)
+		if (item != null && OptionIcon != null)
 		{
 			return OptionIcon.Invoke(item) ?? null;
 		}

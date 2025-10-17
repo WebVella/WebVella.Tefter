@@ -10,7 +10,7 @@ public record TfSpaceViewColumn
 	public bool OnlyIcon { get; set; } = false;
 	public short? Position { get; set; }
 	public Guid TypeId { get; set; }
-    public string TypeOptionsJson { get; set; } = "{}";
+    public string? TypeOptionsJson { get; set; } = "{}";
     public TfSpaceViewColumnSettings Settings { get; set; } = new();
     public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string? GetColumnNameFromDataMapping(){ 

@@ -131,9 +131,4 @@
 	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\UrlEditColumnComponent\TucUrlEditColumnComponent.razor" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="UI\Addons\SpaceViewColumnTypes\TextViewColumnType\EditOptions\" />
-	  <Folder Include="UI\Addons\SpaceViewColumnTypes\TextViewColumnType\ReadOptions\" />
-	</ItemGroup>
-
 </Project>

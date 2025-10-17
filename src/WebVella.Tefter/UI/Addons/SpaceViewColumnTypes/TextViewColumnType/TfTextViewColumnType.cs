@@ -38,7 +38,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 		if (args is not TfSpaceViewColumnExportExcelModeContext)
 			throw new Exception("Wrong context type. TfSpaceViewColumnExportExcelModeContext is expected");
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
-			context.ExcelCell.SetValue(XLCellValue.FromObject(String.Join(", ", _initValues(args))));
+			context.ExcelCell.SetValue(XLCellValue.FromObject(String.Join(", ", _initValue(args))));
 	}
 
 	//Returns Value/s as string usually for CSV export
@@ -47,7 +47,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 		if (args is not TfSpaceViewColumnExportCsvModeContext)
 			throw new Exception("Wrong context type. TfSpaceViewColumnExportCsvModeContext is expected");
 
-		return String.Join(", ", _initValues(args));
+		return String.Join(", ", _initValue(args));
 	}
 
 	public RenderFragment? Render(TfSpaceViewColumnBaseContext args)
@@ -69,7 +69,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 	#region << Private >>
 
 	//Value
-	private List<string?> _initValues(TfSpaceViewColumnBaseContext args)
+	private List<string?> _initValue(TfSpaceViewColumnBaseContext args)
 	{
 		var values = new List<string?>();
 
@@ -98,11 +98,12 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 	//Render
 	private RenderFragment? _renderReadMode(TfSpaceViewColumnReadModeContext context)
 	{
-		var values = _initValues(context);
+		var values = _initValue(context);
 		return builder =>
 		{
 			builder.OpenComponent<TucTextViewColumnTypeRead>(0);
 			builder.AddAttribute(1, "Value", values);
+			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfTextViewColumnTypeSettings()));
 			builder.CloseComponent();
 		};
 	}
@@ -110,18 +111,17 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 	private RenderFragment? _renderEditMode(TfSpaceViewColumnEditModeContext context)
 	{
 		var (column, columnData) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
-
 		//Editable columns
 		if (column.OriginType == TfDataColumnOriginType.CurrentProvider
 		    || column.OriginType == TfDataColumnOriginType.SharedColumn)
 		{
-			var values = _initValues(context);
+			var values = _initValue(context);
 
 			return builder =>
 			{
 				builder.OpenComponent<TucTextViewColumnTypeEdit>(0);
-				builder.AddAttribute(1, "Value", values);
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create(this, async (x) =>
+				builder.AddAttribute(1, "Value", values[0]);
+				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<string?>(this, async (x) =>
 				{
 					var (column, columnData) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
 					var change = new TfSpaceViewColumnDataChange
@@ -130,6 +130,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
+				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfTextViewColumnTypeSettings()));
 				builder.CloseComponent();
 			};
 		}
@@ -138,7 +139,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 		return _renderReadMode(new TfSpaceViewColumnReadModeContext(context.ViewData)
 		{
 			TfService = context.TfService,
-			SpaceViewColumn = context.SpaceViewColumn,
+			ViewColumn = context.ViewColumn,
 			DataTable = context.DataTable,
 			RowId = context.RowId,
 		});
@@ -148,12 +149,26 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 	{
 		return builder =>
 		{
-			builder.OpenElement(0, "span");
-			builder.AddAttribute(1, "style", "color:var(--error)");
-			builder.AddContent(2, "error");
-			builder.CloseElement();
+			builder.OpenComponent<TucTextViewColumnTypeOptions>(0);
+			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfTextViewColumnTypeSettings()));
+			builder.AddAttribute(2, "EditContext", context.EditContext);
+			builder.AddAttribute(3, "ValidationMessageStore", context.ValidationMessageStore);
+			builder.AddAttribute(4, "OptionsChanged", EventCallback.Factory.Create<TfTextViewColumnTypeSettings>(this, async (options) =>
+			{
+				context.SetColumnTypeOptions(options);
+				await context.OptionsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
+			}));
+			builder.CloseComponent();
 		};
 	}
 
 	#endregion
+
 }
+
+public class TfTextViewColumnTypeSettings
+{
+
+	[JsonPropertyName("ChangeConfirmationMessage")]
+	public string? ChangeConfirmationMessage { get; set; }
+}	

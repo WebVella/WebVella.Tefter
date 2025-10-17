@@ -259,7 +259,7 @@
           background: var(--neutral-fill-hover);
         }
 
-        & > div {
+        & > div:not(.tf-grid-td-color):not(.tf-grid-td-selection):not(.tf-grid-td-hover) {
           border-radius: calc(var(--control-corner-radius) * 1px);
           /*white-space: nowrap;*/
           text-overflow: ellipsis;
@@ -303,15 +303,21 @@
         border-bottom: 1px solid var(--neutral-stroke-rest);
       }
 
-      &.tf-grid-tr--edited .tf-grid-td--check::after {
-        content: "";
-        position: absolute;
-        border-radius: 0 5px 5px 0;
-        top: 2px;
-        bottom: 2px;
-        width: 5px;
-        left: -1px;
-        background: var(--warning);
+      &.tf-grid-tr--edited {
+        & td > div:not(.tf-grid-td-color):not(.tf-grid-td-selection):not(.tf-grid-td-hover){
+          padding-right: 3px !important;
+          padding-left: 3px !important;
+        }        
+        .tf-grid-td--check::after {
+          content: "";
+          position: absolute;
+          border-radius: 0 5px 5px 0;
+          top: 2px;
+          bottom: 2px;
+          width: 5px;
+          left: -1px;
+          background: var(--warning);
+        }
       }
 
       /*            &.tf-grid-tr--selected .tf-grid-td--check::after {

@@ -90,7 +90,7 @@ public partial class TfService
 			var compContext = new TfSpaceViewColumnExportExcelModeContext(contextData)
 			{
 				DataTable = dataset,
-				SpaceViewColumn = null!,
+				ViewColumn = null!,
 				TfService = this,
 				RowId = Guid.Empty, //set in row loop
 				ExcelCell = null! //set in row loop
@@ -105,7 +105,7 @@ public partial class TfService
 				                                  && !data.SelectedRows.Contains(rowId)) continue;
 				foreach (TfSpaceViewColumn column in viewColumns)
 				{
-					compContext.SpaceViewColumn = column;
+					compContext.ViewColumn = column;
 					compContext.ExcelCell = ws.Cell(currentExcelRow, currentExcelColumn);
 					var component = _metaService.GetSpaceViewColumnType(column.TypeId);
 					if (component is not null)
@@ -200,7 +200,7 @@ public partial class TfService
 		{
 			DataTable = dataset,
 			TfService = this,
-			SpaceViewColumn = null!, //set in row loop
+			ViewColumn = null!, //set in row loop
 			RowId = Guid.Empty, //set in row loop
 		};
 
@@ -213,7 +213,7 @@ public partial class TfService
 			compContext.RowId = rowId;
 			foreach (var column in viewColumns)
 			{
-				compContext.SpaceViewColumn = column;
+				compContext.ViewColumn = column;
 				var component = _metaService.GetSpaceViewColumnType(column.TypeId);
 				string? value = null;
 				if (component is not null)

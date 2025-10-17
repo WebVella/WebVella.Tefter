@@ -4,7 +4,7 @@ namespace WebVella.Tefter.Models;
 
 public abstract class TfSpaceViewColumnBaseContext : TfBaseScreenRegionContext
 {
-	public TfSpaceViewColumn SpaceViewColumn { get; set; } = null!;
+	public TfSpaceViewColumn ViewColumn { get; set; } = null!;
 	public ITfService TfService { get; init; } = null!;
 }
 
@@ -21,8 +21,8 @@ public class TfSpaceViewColumnReadModeContext(Dictionary<string, object> viewDat
 	{
 		var sb = new StringBuilder();
 		sb.Append(RowId);
-		sb.Append(SpaceViewColumn.Id);
-		sb.Append(SpaceViewColumn.TypeOptionsJson);
+		sb.Append(ViewColumn.Id);
+		sb.Append(ViewColumn.TypeOptionsJson);
 		if (DataTable is not null)
 		{
 			sb.Append(DataTable.GetHashCode());
@@ -47,8 +47,8 @@ public class TfSpaceViewColumnEditModeContext(Dictionary<string, object> viewDat
 	{
 		var sb = new StringBuilder();
 		sb.Append(RowId);
-		sb.Append(SpaceViewColumn.Id);
-		sb.Append(SpaceViewColumn.TypeOptionsJson);
+		sb.Append(ViewColumn.Id);
+		sb.Append(ViewColumn.TypeOptionsJson);
 		if (DataTable is not null)
 		{
 			sb.Append(DataTable.GetHashCode());
@@ -67,7 +67,7 @@ public class TfSpaceViewColumnOptionsModeContext : TfSpaceViewColumnBaseContext
 	public ValidationMessageStore? ValidationMessageStore { get; set; } = null;
 
 	// public EventCallback<Tuple<string,string>> DataMappingChanged { get; set; }
-	// public EventCallback<string> OptionsChanged { get; set; }	
+	 public EventCallback<string> OptionsChanged { get; set; }	
 }
 
 public class TfSpaceViewColumnExportExcelModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext

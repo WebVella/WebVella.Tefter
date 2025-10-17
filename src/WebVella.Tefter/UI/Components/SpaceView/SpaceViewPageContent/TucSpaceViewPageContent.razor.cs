@@ -441,22 +441,19 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			//Apply changed to the datatable
 			if (_data is null || _data.Rows.Count == 0 || _data.Rows.Count == 0) return;
 
-			var clonedData = _data.Clone();
-			for (int i = 0; i < clonedData.Rows.Count; i++)
+			for (int i = 0; i < _data.Rows.Count; i++)
 			{
-				TfDataRow row = clonedData.Rows[i];
+				TfDataRow row = _data.Rows[i];
 				Guid tfId = row.GetRowId();
 				if (changedRowTfId != tfId) continue;
 
-				for (int j = 0; j < clonedData.Columns.Count; j++)
+				for (int j = 0; j < _data.Columns.Count; j++)
 				{
-					TfDataColumn column = clonedData.Columns[j];
+					TfDataColumn column = _data.Columns[j];
 					if (column.OriginType == TfDataColumnOriginType.System || column.OriginType == TfDataColumnOriginType.Identity) continue;
 					row[column.Name] = changedRow[column.Name];
 				}
 			}
-
-			_data = clonedData;
 			_generateMeta();
 			await InvokeAsync(StateHasChanged);
 		}
