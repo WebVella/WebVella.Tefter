@@ -1,0 +1,51 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits ComponentBase
+
+@foreach (var item in Value ?? new())
+{
+	if (item is null)
+	{
+		if (!String.IsNullOrWhiteSpace(Settings.NullLabel))
+		{
+			<div>@Settings.NullLabel</div>
+		}
+		else if (Settings.NullValueShowAsIcon)
+		{
+			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("SubtractSquare")" Color="@Color.FillInverse" /></div>
+		}
+		else
+		{
+			<div></div>
+		}
+	}
+	else if (item.Value)
+	{
+		if (!String.IsNullOrWhiteSpace(Settings.TrueLabel))
+		{
+			<div>@Settings.TrueLabel</div>
+		}
+		else if (Settings.TrueValueShowAsIcon)
+		{
+			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Checkmark",variant:IconVariant.Filled)" Color="@Color.Success" /></div>
+		}		
+		else 
+		{
+			<div>@item.Value.ToString()</div>
+		}
+	}
+	else
+	{
+		if (!String.IsNullOrWhiteSpace(Settings.FalseLabel))
+		{
+			<div>@Settings.FalseLabel</div>
+		}
+		else if (Settings.FalseValueShowAsIcon)
+		{
+			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Dismiss")" Color="@Color.Error" /></div>
+		}
+		else
+		{
+			<div>@item.Value.ToString()</div>
+		}
+	}
+}

@@ -39,7 +39,6 @@ public partial class TucSpaceViewPageContent
 
 			foreach (TfSpaceViewColumn column in _spaceViewColumns)
 			{
-				_regionContextDict[tfId] = new();
 				if (_rowMeta[tfId].EditMode)
 				{
 					_regionContextDict[tfId][column.Id] = new TfSpaceViewColumnEditModeContext(_contextViewData)

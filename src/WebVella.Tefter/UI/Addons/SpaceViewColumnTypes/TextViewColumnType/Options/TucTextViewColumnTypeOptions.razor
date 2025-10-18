@@ -5,9 +5,9 @@
 	<FluentGridItem xs="12">
 		<FluentTextField Label="@LOC("Confirmation message")"
 		                 Value="@Settings.ChangeConfirmationMessage" Style="width:100%"
-		                 ValueChanged=@((x)=> _onOptionsChanged(nameof(Settings.ChangeConfirmationMessage),x))
-		                 Placeholder="@LOC("empty for no confirmation")" />
+		                 ValueChanged=@((x) => _onSettingsChanged(nameof(Settings.ChangeConfirmationMessage), x))
+		                 Placeholder="@LOC("empty for no confirmation")"/>
+		<FluentValidationMessage For="@(() => Settings.ChangeConfirmationMessage)"/>
+		<TucValidationMessage Field="@(nameof(Settings.ChangeConfirmationMessage))" Errors="ValidationErrors"/>
 	</FluentGridItem>
 </FluentGrid>
-
-

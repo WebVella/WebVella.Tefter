@@ -29,6 +29,8 @@ public partial class TucSelectComponent<TOption> : TfBaseComponent where TOption
 
 	private void _onOpenChanged(bool isOpened)
 	{
+		if (Disabled || ReadOnly)
+			return;
 		_open = isOpened;
 	}
 

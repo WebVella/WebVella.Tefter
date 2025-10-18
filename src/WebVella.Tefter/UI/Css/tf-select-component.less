@@ -16,6 +16,7 @@
   &.disabled .tf-card {
     background: var(--neutral-fill-rest);
     border-color: var(--neutral-stroke-rest);
+    cursor: not-allowed;
   }
 
   &:not(.disabled):not(.readonly) .tf-card:hover {
@@ -23,6 +24,7 @@
   }
 
   &.readonly .tf-card {
+    cursor: not-allowed;
     &:hover {
       background: padding-box linear-gradient(var(--neutral-fill-input-hover), var(--neutral-fill-input-hover)), border-box var(--neutral-stroke-input-hover);
       cursor: no-drop;

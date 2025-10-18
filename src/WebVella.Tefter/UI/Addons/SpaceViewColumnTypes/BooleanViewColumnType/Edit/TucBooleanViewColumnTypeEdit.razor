@@ -1,0 +1,20 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits TfLocalizedViewColumnComponent
+
+
+<div>
+	@if (IsNullableColumn)
+	{
+		<FluentCheckbox ThreeState="true" Value="@(Value ?? false)" CheckState="@Value"
+		                CheckStateChanged=_valueChanged
+		                Label="@_getLabel()" />
+	}
+	else
+	{
+		<FluentCheckbox ThreeState="false" Value="@(Value ?? false)"
+		                ValueChanged=_valueChangedNotNull
+		                Label="@_getLabel()" />
+	}
+</div>
+
+

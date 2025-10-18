@@ -1906,9 +1906,13 @@ fluent-menu-item::part(start) {
 .tf-select-component.disabled .tf-card {
   background: var(--neutral-fill-rest);
   border-color: var(--neutral-stroke-rest);
+  cursor: not-allowed;
 }
 .tf-select-component:not(.disabled):not(.readonly) .tf-card:hover {
   background: padding-box linear-gradient(var(--neutral-fill-hover), var(--neutral-fill-hover)), border-box var(--neutral-stroke-control-hover);
+}
+.tf-select-component.readonly .tf-card {
+  cursor: not-allowed;
 }
 .tf-select-component.readonly .tf-card:hover {
   background: padding-box linear-gradient(var(--neutral-fill-input-hover), var(--neutral-fill-input-hover)), border-box var(--neutral-stroke-input-hover);

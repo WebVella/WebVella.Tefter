@@ -3,12 +3,13 @@
 public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 {
 	#region << Init >>
+
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 
 	// State
 	private DotNetObjectReference<TucSpaceViewPageContent> _objectRef;
-	private bool _isDataLoading = true;
+	private bool _isDataLoading = false;
 	private bool _selectAllLoading = false;
 	private ReadOnlyDictionary<Guid, ITfSpaceViewColumnTypeAddon> _columnTypeMetaDict = null!;
 	private TfNavigationState _navState = null!;
@@ -56,7 +57,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			throw new Exception("Context cannot be null");
 		_columnTypeMetaDict = TfMetaService.GetSpaceViewColumnTypeDictionary();
 		_objectRef = DotNetObjectReference.Create(this);
-		await _init(TfAuthLayout.GetState().NavigationState);
+		await _init(TfAuthLayout.GetState().NavigationState, false);
 		_caretDownInactive = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
@@ -85,7 +86,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				TfConstants.GetIcon("Settings", IconSize.Size16)!.WithColor("var(--neutral-stroke-rest)"));
 			builder.CloseComponent();
 		};
-		_isDataLoading = false;
 		_manageBtnAttributes!.Add("title", LOC("Manage Page"));
 		_managePageUrl = string.Format(TfConstants.SpacePagePageManageUrl, Context.SpacePage.SpaceId,
 			Context.SpacePage.Id).GenerateWithLocalAsReturnUrl(Navigator.Uri);
@@ -127,7 +127,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			var payloadHash = _getUserChangeHash(args.Payload);
 
 			if (contextHash == payloadHash) return;
-			
+
 			Context.CurrentUser = args.Payload;
 			await _init(TfAuthLayout.GetState().NavigationState);
 		});
@@ -143,12 +143,15 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		});
 	}
 
-	private async Task _init(TfNavigationState navState)
+	private async Task _init(TfNavigationState navState, bool showLoading = true)
 	{
 		try
 		{
-			_isDataLoading = true;
-			await InvokeAsync(StateHasChanged);
+			if (showLoading)
+			{
+				_isDataLoading = true;
+				await InvokeAsync(StateHasChanged);
+			}
 
 			_navState = navState;
 
@@ -211,6 +214,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			foreach (TfDataRow row in _data.Rows)
 			{
 				row.OnEdit = () => _setRowEditable(row);
+				row.OnDblClick = () => _rowDoubleClick(row);
 				row.OnSelect = () => _toggleItemSelection(row);
 			}
 
@@ -218,9 +222,12 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		}
 		finally
 		{
-			_isDataLoading = false;
 			UriInitialized = _navState.Uri;
-			await InvokeAsync(StateHasChanged);
+			if (showLoading)
+			{
+				_isDataLoading = false;
+				await InvokeAsync(StateHasChanged);
+			}
 		}
 	}
 
@@ -418,19 +425,19 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 	private async Task _onRowChanged(TfSpaceViewColumnDataChange change)
 	{
-		if(_data is null) return;
+		if (_data is null) return;
 		try
 		{
 			var value = _data.NewTableFromRowIds(change.RowId);
 			if (value.Rows.Count == 0)
 			{
-				ToastService.ShowError(LOC("Row with id {0} is not found",change.RowId));
+				ToastService.ShowError(LOC("Row with id {0} is not found", change.RowId));
 				return;
 			}
 
 			foreach (var columnName in change.DataChange.Keys)
 			{
-				value.Rows[0][columnName] = change.DataChange[columnName];				
+				value.Rows[0][columnName] = change.DataChange[columnName];
 			}
 
 			var changedRow = value.Rows[0];
@@ -450,10 +457,12 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				for (int j = 0; j < _data.Columns.Count; j++)
 				{
 					TfDataColumn column = _data.Columns[j];
-					if (column.OriginType == TfDataColumnOriginType.System || column.OriginType == TfDataColumnOriginType.Identity) continue;
+					if (column.OriginType == TfDataColumnOriginType.System ||
+					    column.OriginType == TfDataColumnOriginType.Identity) continue;
 					row[column.Name] = changedRow[column.Name];
 				}
 			}
+
 			_generateMeta();
 			await InvokeAsync(StateHasChanged);
 		}
@@ -533,6 +542,18 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		_generateMeta();
 	}
 
+	private void _rowDoubleClick(TfDataRow row)
+	{
+		if (!_spaceView.Settings.CanUpdateRows) return;
+		var rowId = row.GetRowId();
+		if (!_editedDataRows.Contains(rowId))
+		{
+			_editedDataRows.Add(rowId);
+		}
+		_generateMeta();
+	}	
+	
+	
 	[JSInvokable("OnColumnSort")]
 	public async void OnColumnSort(int position, bool hasShift)
 	{

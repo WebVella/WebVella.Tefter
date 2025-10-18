@@ -12,13 +12,10 @@ public partial class TucTextViewColumnTypeEdit : TfLocalizedViewColumnComponent
 
 	private async Task _valueChanged(string? value)
 	{
-		if (!String.IsNullOrWhiteSpace(Settings.ChangeConfirmationMessage))
-		{
-			if (!await JSRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
-			{
-				return;
-			}
-		}
+		if (!String.IsNullOrWhiteSpace(Settings.ChangeConfirmationMessage)
+		    && !await JSRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
+			return;
+		
 		Value = value;
 		await ValueChanged.InvokeAsync(Value);
 		await JSRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);

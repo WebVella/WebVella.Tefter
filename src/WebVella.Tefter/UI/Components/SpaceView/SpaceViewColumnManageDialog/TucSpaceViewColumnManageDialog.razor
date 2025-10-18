@@ -13,12 +13,14 @@
 			<DataAnnotationsValidator/>
 
 			<TucSelectComponent
-				TOption="ITfSpaceViewColumnTypeAddon?"
-				Items="_availableColumnTypes" @bind-Value="_selectedColumnType"
+				TOption="ITfSpaceViewColumnTypeAddon"
+				Items="_availableColumnTypes" Value="_selectedColumnType"
+				ValueChanged="_columnTypeChangeHandler"
 				OptionText="@(x => x.AddonName)"
 				OptionIcon="@(x => x.AddonFluentIconName)"
 				OptionDescription="@(x => x.AddonDescription)"
-				OptionMatch="@((x, y) => x?.AddonId == y?.AddonId)"/>
+				OptionMatch="@((x, y) => x.AddonId == y.AddonId)"
+				Disabled="!_isCreate"/>
 			<FluentValidationMessage For="@(() => _form.TypeId)"/>
 
 			<TucMenu Items="_menu" Style="margin-bottom: 1rem; margin-top:1rem;"/>
@@ -63,211 +65,49 @@
 			}
 			else if (_activeTab == TucSpaceViewColumnManageDialogTab.ColumnType)
 			{
-				@if (_selectedColumnType is not null)
+				foreach (var item in _selectedColumnType.DataMappingDefinitions)
 				{
-					foreach (var item in _selectedColumnType.DataMappingDefinitions)
-					{
-						<FluentGrid>
-							<FluentGridItem xs="6">
-								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@item.Alias Immediate
-								                 ImmediateDelay="500"
-								                 Disabled="true" Label="@LOC("Component alias")" Style="width:100%"
-								                 AutoComplete="off"/>
-							</FluentGridItem>
-							<FluentGridItem xs="6">
-								<FluentCombobox TOption="string"
-								                Autocomplete="ComboboxAutocomplete.Both"
-								                Items="_options"
-								                Height="@TfConstants.ComboPanelHeight"
-								                Value=@_getDataMappingValue(item.Alias)
-								                Immediate ImmediateDelay="500"
-								                ValueChanged="@((x) => _dataMappingValueChanged(new Tuple<string, string>(item.Alias, x)))"
-								                Label="@LOC("Data column name")" Style="width:100%"/>
-							</FluentGridItem>
-						</FluentGrid>
-					}
-
-					if (_selectedColumnType.DataMappingDefinitions.Count == 0)
-					{
-						<FluentMessageBar Intent="@MessageIntent.Info"
-						                  Title="@LOC("This component does not require data mapping")"
-						                  AllowDismiss="false"/>
-					}
-					
-					<TucErrorBoundry>
-						@(((ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(_selectedColumnType.GetType())!).Render(_componentContext))
-					</TucErrorBoundry>
+					<FluentGrid>
+						<FluentGridItem xs="6">
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@item.Alias Immediate
+							                 ImmediateDelay="500"
+							                 Disabled="true" Label="@LOC("Component alias")" Style="width:100%"
+							                 AutoComplete="off"/>
+						</FluentGridItem>
+						<FluentGridItem xs="6">
+							<FluentCombobox TOption="string"
+							                Autocomplete="ComboboxAutocomplete.Both"
+							                Items="_options"
+							                Height="@TfConstants.ComboPanelHeight"
+							                Value=@_getDataMappingValue(item.Alias)
+							                Immediate ImmediateDelay="500"
+							                ValueChanged="@((x) => _dataMappingValueChanged(new Tuple<string, string?>(item.Alias, x)))"
+							                Label="@LOC("Data column name")" Style="width:100%"/>
+						</FluentGridItem>
+					</FluentGrid>
 				}
-			}
-			@* else if (_activeTab == TucSpaceViewColumnManageDialogTab.ReadMode) *@
-			@* { *@
-			@* 	@if (_selectedColumnType is not null && _selectedColumnComponent is not null) *@
-			@* 	{ *@
-			@* 		@if (_selectedColumnType.Instance.DataMapping is not null *@
-			@* 		     && _selectedColumnType.Instance.DataMapping.Count > 0) *@
-			@* 		{ *@
-			@* 			foreach (var item in _selectedColumnType.Instance.DataMapping) *@
-			@* 			{ *@
-			@* 				<FluentGrid> *@
-			@* 					<FluentGridItem xs="6"> *@
-			@* 						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@item.Alias Immediate *@
-			@* 						                 ImmediateDelay="500" *@
-			@* 						                 Disabled="true" Label="@LOC("Component alias")" Style="width:100%" *@
-			@* 						                 AutoComplete="off"/> *@
-			@* 					</FluentGridItem> *@
-			@* 					<FluentGridItem xs="6"> *@
-			@* 						<FluentCombobox TOption="string" *@
-			@* 						                Autocomplete="ComboboxAutocomplete.Both" *@
-			@* 						                Items="_options" *@
-			@* 						                Height="@TfConstants.ComboPanelHeight" *@
-			@* 						                Value=@_getDataMappingValue(item.Alias) *@
-			@* 						                Immediate ImmediateDelay="500" *@
-			@* 						                ValueChanged="@((x) => _dataMappingValueChanged(new Tuple<string, string>(item.Alias, x)))" *@
-			@* 						                Label="@LOC("Data column name")" Style="width:100%"/> *@
-			@* 					</FluentGridItem> *@
-			@* 				</FluentGrid> *@
-			@* 			} *@
-			@* 		} *@
-			@* 		else *@
-			@* 		{ *@
-			@* 			<FluentMessageBar Intent="@MessageIntent.Info" *@
-			@* 			                  Title="@LOC("This component does not require data mapping")" *@
-			@* 			                  AllowDismiss="false"/> *@
-			@* 		} *@
-			@* 	} *@
-			@* 	else *@
-			@* 	{ *@
-			@* 		<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("Please select data provider first")" *@
-			@* 		                  AllowDismiss="false"/> *@
-			@* 	} *@
-			@* *@
-			@* 	<FluentValidationMessage For="@(() => _form.DataMapping)"/> *@
-			@* *@
-			@* 	@if (_renderComponentTypeSelect) *@
-			@* 	{ *@
-			@* 		<FluentGrid> *@
-			@* 			<FluentGridItem xs="6"> *@
-			@* 				$1$ <TucSelect Label="@LOC("Display component")" #1# *@
-			@* 				$1$            Style="width:100%" Required=true #1# *@
-			@* 				$1$            SelectedOption="@_selectedColumnComponent" #1# *@
-			@* 				$1$            SelectedOptionChanged="_columnComponentChangeHandler" #1# *@
-			@* 				$1$            TOption="ITfSpaceViewColumnComponentAddon" #1# *@
-			@* 				$1$            OptionText="((x) => x.AddonName)" #1# *@
-			@* 				$1$            OptionValue="((x) => x.AddonId.ToString())" #1# *@
-			@* 				$1$            Items="_selectedColumnTypeComponents"/> #1# *@
-			@* *@
-			@* 				<FluentValidationMessage For="@(() => _form.TypeId)"/> *@
-			@* 			</FluentGridItem> *@
-			@* 		</FluentGrid> *@
-			@* 	} *@
-			@* 	else *@
-			@* 	{ *@
-			@* 		<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("Please select column type first")" *@
-			@* 		                  AllowDismiss="false"/> *@
-			@* 	} *@
-			@* *@
-			@* 	@if (_selectedColumnType is not null && _selectedColumnComponent is not null) *@
-			@* 	{ *@
-			@* 		<FluentGrid> *@
-			@* 			<FluentGridItem xs="12"> *@
-			@* 				@if (_selectedColumnComponent is not null) *@
-			@* 				{ *@
-			@* 					<TucErrorBoundry> *@
-			@* 						<DynamicComponent Type="_selectedColumnComponent.GetType()" *@
-			@* 						                  Parameters="@_getColumnComponentContext()"/> *@
-			@* 					</TucErrorBoundry> *@
-			@* 				} *@
-			@* 				else *@
-			@* 				{ *@
-			@* 					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning" *@
-			@* 					                  Title="@LOC("Warning")"> *@
-			@* 						<div>@LOC(" Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!")</div> *@
-			@* 					</FluentMessageBar> *@
-			@* 				} *@
-			@* 			</FluentGridItem> *@
-			@* 		</FluentGrid> *@
-			@* 	} *@
-			@* 	else *@
-			@* 	{ *@
-			@* 		<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("Please select data provider first")" *@
-			@* 		                  AllowDismiss="false"/> *@
-			@* 	} *@
-			@* } *@
-			@* else if (_activeTab == TucSpaceViewColumnManageDialogTab.EditMode) *@
-			@* { *@
-			@* 	@if (_renderComponentTypeSelect) *@
-			@* 	{ *@
-			@* 		<FluentGrid> *@
-			@* 			<FluentGridItem xs="6"> *@
-			@* 				$1$ <TucSelect Label="@LOC("Edit component")" #1# *@
-			@* 				$1$            Style="width:100%" Required=true #1# *@
-			@* 				$1$            SelectedOption="@_selectedEditColumnComponent" #1# *@
-			@* 				$1$            SelectedOptionChanged="_columnEditComponentChangeHandler" #1# *@
-			@* 				$1$            TOption="ITfSpaceViewColumnComponentAddon" #1# *@
-			@* 				$1$            OptionText="((x) => x.AddonName)" #1# *@
-			@* 				$1$            OptionValue="((x) => x.AddonId.ToString())" #1# *@
-			@* 				$1$            Items="_selectedColumnTypeComponents"/> #1# *@
-			@* 				<FluentValidationMessage For="@(() => _form.TypeId)"/> *@
-			@* 			</FluentGridItem> *@
-			@* 		</FluentGrid> *@
-			@* 	} *@
-			@* 	else *@
-			@* 	{ *@
-			@* 		<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("Please select column type first")" *@
-			@* 		                  AllowDismiss="false"/> *@
-			@* 	} *@
-			@* *@
-			@* 	@if (_selectedColumnType is not null && _selectedEditColumnComponent is not null) *@
-			@* 	{ *@
-			@* 		<FluentGrid> *@
-			@* 			<FluentGridItem xs="12"> *@
-			@* 				@if (_selectedEditColumnComponent is not null) *@
-			@* 				{ *@
-			@* 					<TucErrorBoundry> *@
-			@* 						<DynamicComponent Type="_selectedEditColumnComponent.GetType()" *@
-			@* 						                  Parameters="@_getColumnEditComponentContext()"/> *@
-			@* 					</TucErrorBoundry> *@
-			@* 				} *@
-			@* 				else *@
-			@* 				{ *@
-			@* 					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning" *@
-			@* 					                  Title="@LOC("Warning")"> *@
-			@* 						<div>@LOC(" Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!")</div> *@
-			@* 					</FluentMessageBar> *@
-			@* 				} *@
-			@* 			</FluentGridItem> *@
-			@* 		</FluentGrid> *@
-			@* 	} *@
-			@* 	else *@
-			@* 	{ *@
-			@* 		<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("Please select data provider first")" *@
-			@* 		                  AllowDismiss="false"/> *@
-			@* 	} *@
-			@* } *@
-			else if (_activeTab == TucSpaceViewColumnManageDialogTab.Colors)
-			{
-				<FluentGrid>
-					<FluentGridItem xs="6">
-						<FluentInputLabel Label="@LOC("Color")"/>
-						<TucSelectColor @bind-Value=@_form.Settings.Color/>
-						<FluentValidationMessage For="@(() => _form.Settings.Color)"/>
-					</FluentGridItem>
-					<FluentGridItem xs="6">
-						<FluentInputLabel Label="@LOC("Background Color")"/>
-						<TucSelectColor @bind-Value=@_form.Settings.BackgroundColor/>
-						<FluentValidationMessage For="@(() => _form.Settings.BackgroundColor)"/>
-					</FluentGridItem>
-				</FluentGrid>
-			}
 
+				if (_selectedColumnType.DataMappingDefinitions.Count == 0)
+				{
+					<FluentMessageBar Intent="@MessageIntent.Info"
+					                  Title="@LOC("This component does not require data mapping")"
+					                  AllowDismiss="false"/>
+				}
+
+				<TucErrorBoundry>
+					@(((ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(_selectedColumnType.GetType())!).Render(_typeOptionsContext))
+					<FluentValidationMessage For="@(() => _form.TypeOptionsJson)"/>
+				</TucErrorBoundry>
+			}
 		</FluentEditForm>
 	</FluentDialogBody>
 
 	@* Footer *@
 	<FluentDialogFooter>
-		<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="VerticalAlignment.Center">
-			<FluentStack  VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.Left">
-				@if (String.IsNullOrWhiteSpace(_error) && !_isCreate)
+		<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween"
+		             VerticalAlignment="VerticalAlignment.Center">
+			<FluentStack VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.Left">
+				@if (!_isCreate)
 				{
 					<FluentButton Appearance="Appearance.Outline" OnClick="@_delete"
 					              IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)"
@@ -275,11 +115,8 @@
 				}
 			</FluentStack>
 			<FluentStack VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.Right">
-				@if (String.IsNullOrWhiteSpace(_error))
-				{
-					<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
-					              Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
-				}
+				<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
+				              Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
 				<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 			</FluentStack>
 		</FluentStack>

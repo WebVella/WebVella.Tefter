@@ -94,41 +94,4 @@
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <AdditionalFiles Include="UI\Components\Space\SpaceContent\TucSpaceManageDetailsContent.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="UI\Addons\RecipeSteps\CreateSpaceViewRecipeStep\FormComponent\TfCreateSpaceViewRecipeStepForm.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\BooleanDisplayColumnComponent\TucBooleanDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\BooleanEditColumnComponent\TucBooleanEditColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\DateOnlyDisplayColumnComponent\TucDateOnlyDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\DateOnlyEditColumnComponent\TucDateOnlyEditColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\DateTimeDisplayColumnComponent\TucDateTimeDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\DateTimeEditColumnComponent\TucDateTimeEditColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\EmailDisplayColumnComponent\TucEmailDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\EmailEditColumnComponent\TucEmailEditColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\GuidDisplayColumnComponent\TucGuidDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\GuidEditColumnComponent\TucGuidEditColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\ImageDisplayColumnComponent\TucImageDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\IntegerDisplayColumnComponent\TucIntegerDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\IntegerEditColumnComponent\TucIntegerEditColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\LongIntegerDisplayColumnComponent\TucLongIntegerDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\LongIntegerEditColumnComponent\TucLongIntegerEditColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\NumberDisplayColumnComponent\TucNumberDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\NumberEditColumnComponent\TucNumberEditColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\PhoneDisplayColumnComponent\TucPhoneDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\PhoneEditColumnComponent\TucPhoneEditColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\SelectDisplayColumnComponent\TucSelectDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\SelectEditColumnComponent\TucSelectEditColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\ShortIntegerDisplayColumnComponent\TucShortIntegerDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\ShortIntegerEditColumnComponent\TucShortIntegerEditColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\TextDisplayColumnComponent\TucTextDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\TextEditColumnComponent\TucTextEditColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\TimeDisplayColumnComponent\TucTimeDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\TimeEditColumnComponent\TucTimeEditColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\UrlDisplayColumnComponent\TucUrlDisplayColumnComponent.razor" />
-	  <UpToDateCheckInput Remove="UI\Addons\SpaceViewColumnComponents\UrlEditColumnComponent\TucUrlEditColumnComponent.razor" />
-	</ItemGroup>
-
 </Project>

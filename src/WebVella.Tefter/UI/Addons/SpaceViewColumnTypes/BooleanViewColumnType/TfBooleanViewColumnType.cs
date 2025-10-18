@@ -1,13 +1,13 @@
 ﻿namespace WebVella.Tefter.UI.Addons;
 
-public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
+public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 {
 	#region << INIT >>
 
-	public const string ID = "f061a3ce-7813-4fd6-98cb-a10cccea4797";
-	public const string NAME = "Text";
-	public const string DESCRIPTION = "displays text";
-	public const string FLUENT_ICON_NAME = "TextCaseTitle";
+	public const string ID = "c28e933b-6800-4819-b22f-e091e3e3c961";
+	public const string NAME = "Boolean";
+	public const string DESCRIPTION = "displays a boolean";
+	public const string FLUENT_ICON_NAME = "CircleMultipleSubtractCheckmark";
 	private const string VALUE_ALIAS = "Value";
 
 	public Guid AddonId { get; init; } = new Guid(ID);
@@ -21,10 +21,10 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 		{
 			Alias = VALUE_ALIAS,
 			Description =
-				"this column is compatible with all column types, but its intended use is with text",
+				"this column is compatible with the Boolean database column type",
 			SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType>
 			{
-				TfDatabaseColumnType.ShortText, TfDatabaseColumnType.Text
+				TfDatabaseColumnType.Boolean
 			}
 		}
 	};
@@ -34,7 +34,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 	#region << PRIVATE >>
 
 	private List<ValidationError> _validationErrors = new();
-	#endregion
+	#endregion	
 	
 	#region << PUBLIC >>
 
@@ -75,19 +75,19 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 		return _validationErrors;
 	}
 
-	#endregion
-
+	#endregion	
+	
 	#region << Private >>
 
 	//Value
-	private List<string?> _initValue(TfSpaceViewColumnBaseContext args)
+	private List<bool?> _initValue(TfSpaceViewColumnBaseContext args)
 	{
-		var values = new List<string?>();
+		var values = new List<bool?>();
 
 		var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
 		if (columnData is null)
 		{
-			values.Add(String.Empty);
+			values.Add(null);
 		}
 		else if (column.OriginType == TfDataColumnOriginType.JoinedProviderColumn)
 		{
@@ -96,12 +96,12 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 				if (columnData is IList joinValues)
 				{
 					foreach (var joinValue in joinValues)
-						values.Add(joinValue?.ToString());
+						values.Add((bool?)joinValue);
 				}
 			}
 		}
 		else
-			values.Add(columnData.ToString());
+			values.Add((bool?)columnData);
 
 		return values;
 	}
@@ -112,9 +112,9 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 		var values = _initValue(context);
 		return builder =>
 		{
-			builder.OpenComponent<TucTextViewColumnTypeRead>(0);
+			builder.OpenComponent<TucBooleanViewColumnTypeRead>(0);
 			builder.AddAttribute(1, "Value", values);
-			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfTextViewColumnTypeSettings()));
+			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfBooleanViewColumnTypeSettings()));
 			builder.CloseComponent();
 		};
 	}
@@ -130,9 +130,9 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 
 			return builder =>
 			{
-				builder.OpenComponent<TucTextViewColumnTypeEdit>(0);
+				builder.OpenComponent<TucBooleanViewColumnTypeEdit>(0);
 				builder.AddAttribute(1, "Value", values[0]);
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<string?>(this, async (x) =>
+				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<bool?>(this, async (x) =>
 				{
 					var change = new TfSpaceViewColumnDataChange
 					{
@@ -140,7 +140,8 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
-				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfTextViewColumnTypeSettings()));
+				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfBooleanViewColumnTypeSettings()));
+				builder.AddAttribute(4, "IsNullableColumn", column.IsNullable);
 				builder.CloseComponent();
 			};
 		}
@@ -159,10 +160,10 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 	{
 		return builder =>
 		{
-			builder.OpenComponent<TucTextViewColumnTypeOptions>(0);
-			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfTextViewColumnTypeSettings()));
+			builder.OpenComponent<TucBooleanViewColumnTypeOptions>(0);
+			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfBooleanViewColumnTypeSettings()));
 			builder.AddAttribute(2, "ValidationErrors", context.ValidationErrors);
-			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfTextViewColumnTypeSettings>(this, async (options) =>
+			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfBooleanViewColumnTypeSettings>(this, async (options) =>
 			{
 				context.SetColumnTypeOptions(options);
 				await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
@@ -171,13 +172,33 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 		};
 	}
 
-	#endregion
-
+	#endregion	
 }
 
-public class TfTextViewColumnTypeSettings
+public class TfBooleanViewColumnTypeSettings
 {
+	[JsonPropertyName("ShowLabel")]
+	public bool ShowLabel { get; set; } = true;
+	
+	[JsonPropertyName("TrueLabel")]
+	public string? TrueLabel { get; set; }
 
+	[JsonPropertyName("TrueValueShowAsIcon")]
+	public bool TrueValueShowAsIcon { get; set; }
+
+	[JsonPropertyName("FalseLabel")]
+	public string? FalseLabel { get; set; }
+
+	[JsonPropertyName("FalseValueShowAsIcon")]
+	public bool FalseValueShowAsIcon { get; set; }
+
+	[JsonPropertyName("NullLabel")]
+	public string? NullLabel { get; set; }
+
+	[JsonPropertyName("NullValueShowAsIcon")]
+	public bool NullValueShowAsIcon { get; set; }
+	
 	[JsonPropertyName("ChangeConfirmationMessage")]
-	public string? ChangeConfirmationMessage { get; set; }
+	public string? ChangeConfirmationMessage { get; set; }	
+
 }	

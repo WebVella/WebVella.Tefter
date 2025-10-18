@@ -63,12 +63,10 @@ public class TfSpaceViewColumnEditModeContext(Dictionary<string, object> viewDat
 
 public class TfSpaceViewColumnOptionsModeContext : TfSpaceViewColumnBaseContext
 {
-	public EditContext? EditContext { get; set; } = null;
-	public ValidationMessageStore? ValidationMessageStore { get; set; } = null;
-
-	// public EventCallback<Tuple<string,string>> DataMappingChanged { get; set; }
-	 public EventCallback<string> OptionsChanged { get; set; }	
+	public List<ValidationError> ValidationErrors { get; set; } = new();
+	 public EventCallback<string> SettingsChanged { get; set; }	
 }
+
 
 public class TfSpaceViewColumnExportExcelModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext
 {

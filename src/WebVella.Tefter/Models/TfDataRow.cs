@@ -270,6 +270,9 @@ public class TfDataRow : IEnumerable
 
 		return (string)_values[index];
 	}
+	
+	[JsonIgnore]
+	public Action OnDblClick { get; set;}	
 
 	[JsonIgnore]
 	public Action OnEdit { get; set;}

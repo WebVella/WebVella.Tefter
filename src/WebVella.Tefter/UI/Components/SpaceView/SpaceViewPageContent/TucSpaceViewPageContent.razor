@@ -10,9 +10,22 @@ else if (_spaceView is null)
 		                  Style="@("border: 1px solid var(--neutral-base-color)")"
 		                  Intent="MessageIntent.Info"
 		                  AllowDismiss="false">
-			Space view not found
+			@LOC("Space view not found")
 		</FluentMessageBar>
 	</div>
+}
+else if (_spaceViewColumns.Count == 0)
+{
+	<TucLayoutPageContent Icon="@_spacePage!.FluentIconName" Title="@_spacePage!.Name">
+		<ChildContent>
+			<FluentMessageBar Title="@LOC("No columns created")"
+			                  Style="@("border: 1px solid var(--neutral-base-color)")"
+			                  Intent="MessageIntent.Info"
+			                  AllowDismiss="false">
+				@LOC("No columns were added to this page by the Administrator.")
+			</FluentMessageBar>
+		</ChildContent>
+	</TucLayoutPageContent>
 }
 else
 {
@@ -40,76 +53,76 @@ else
 						}
 					</colgroup>
 					<thead class="tf-grid-thead">
-					<tr class="tf-grid-thead-bkg"></tr>
-					@if (_isDataLoading)
-					{
-						<tr class="tf-grid-thead-loading"></tr>
-					}
-					<tr class="tf-grid-tr">
-						<th class="@_columnsMeta[Guid.Empty].HeaderCellClass"
-						    style="@_columnsMeta[Guid.Empty].HeaderCellStyles">
-							<div class="check-content check">
-								@if (_allDataRowsSelected())
-								{
-									<FluentButton OnClick="@(() => _toggleSelectAll(false))"
-									              BackgroundColor="transparent" Color="transparent">
-										<FluentIcon
-											Value="@TfConstants.GetIcon("CheckboxChecked", variant: IconVariant.Filled)"
-											Color="@Color.Accent"/>
-									</FluentButton>
-								}
-								else
-								{
-									<FluentButton OnClick="@(() => _toggleSelectAll(true))"
-									              BackgroundColor="transparent" Color="transparent">
-										<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")"
-										            Color="@Color.Custom"
-										            CustomColor="var(--neutral-stroke-input-active)"/>
-									</FluentButton>
-								}
-							</div>
-						</th>
-						@foreach (var column in _spaceViewColumns.OrderBy(x => x.Position))
+						<tr class="tf-grid-thead-bkg"></tr>
+						@if (_isDataLoading)
 						{
-							<th data-query-name="@column.QueryName" class="@_columnsMeta[column.Id].HeaderCellClass"
-							    style="@_columnsMeta[column.Id].HeaderCellStyles">
-								<div>
-									@if (String.IsNullOrWhiteSpace(column.Icon))
+							<tr class="tf-grid-thead-loading"></tr>
+						}
+						<tr class="tf-grid-tr">
+							<th class="@_columnsMeta[Guid.Empty].HeaderCellClass"
+							    style="@_columnsMeta[Guid.Empty].HeaderCellStyles">
+								<div class="check-content check">
+									@if (_allDataRowsSelected())
 									{
-										<div>@column.Title</div>
-									}
-									else if (column.OnlyIcon)
-									{
-										<div style="display:flex;">
-											<FluentIcon Value="@TfConstants.GetIcon(column.Icon)"/>
-										</div>
+										<FluentButton OnClick="@(() => _toggleSelectAll(false))"
+										              BackgroundColor="transparent" Color="transparent">
+											<FluentIcon
+												Value="@TfConstants.GetIcon("CheckboxChecked", variant: IconVariant.Filled)"
+												Color="@Color.Accent"/>
+										</FluentButton>
 									}
 									else
 									{
-										<div style="display:flex">
-											<FluentIcon Value="@TfConstants.GetIcon(column.Icon)"/>
-											<div style="padding-left:5px;">@column.Title</div>
-										</div>
+										<FluentButton OnClick="@(() => _toggleSelectAll(true))"
+										              BackgroundColor="transparent" Color="transparent">
+											<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")"
+											            Color="@Color.Custom"
+											            CustomColor="var(--neutral-stroke-input-active)"/>
+										</FluentButton>
 									}
 								</div>
-								<div class="resize-handle" data-column="@column.Position"></div>
-								@if (_currentUser.IsAdmin)
-								{
-									<div class="tf-column-action tf-column-manage"
-									     @onclick="@(() => _manageColumn(column))">
-										@_manageIcon
-									</div>
-								}
-								<div class="@_columnsMeta[column.Id].HeaderSortActionClass"
-								     data-column="@column.Position"
-								     title="@LOC("Click to sort. SHIFT+click for multiple sort")">
-									<div class="tf-column-sort__caret-down">@_caretDown</div>
-									<div class="tf-column-sort__caret-up">@_caretUp</div>
-									<div class="tf-column-sort__caret">@_caretDownInactive</div>
-								</div>
 							</th>
-						}
-					</tr>
+							@foreach (var column in _spaceViewColumns.OrderBy(x => x.Position))
+							{
+								<th data-query-name="@column.QueryName" class="@_columnsMeta[column.Id].HeaderCellClass"
+								    style="@_columnsMeta[column.Id].HeaderCellStyles">
+									<div>
+										@if (String.IsNullOrWhiteSpace(column.Icon))
+										{
+											<div>@column.Title</div>
+										}
+										else if (column.OnlyIcon)
+										{
+											<div style="display:flex;">
+												<FluentIcon Value="@TfConstants.GetIcon(column.Icon)"/>
+											</div>
+										}
+										else
+										{
+											<div style="display:flex">
+												<FluentIcon Value="@TfConstants.GetIcon(column.Icon)"/>
+												<div style="padding-left:5px;">@column.Title</div>
+											</div>
+										}
+									</div>
+									<div class="resize-handle" data-column="@column.Position"></div>
+									@if (_currentUser.IsAdmin)
+									{
+										<div class="tf-column-action tf-column-manage"
+										     @onclick="@(() => _manageColumn(column))">
+											@_manageIcon
+										</div>
+									}
+									<div class="@_columnsMeta[column.Id].HeaderSortActionClass"
+									     data-column="@column.Position"
+									     title="@LOC("Click to sort. SHIFT+click for multiple sort")">
+										<div class="tf-column-sort__caret-down">@_caretDown</div>
+										<div class="tf-column-sort__caret-up">@_caretUp</div>
+										<div class="tf-column-sort__caret">@_caretDownInactive</div>
+									</div>
+								</th>
+							}
+						</tr>
 					</thead>
 					<tbody class="tf-grid-tbody">
 					@if (_data is null)
@@ -134,7 +147,7 @@ else
 							@{
 								var tfId = row.GetRowId();
 							}
-							<tr @key=@tfId class="@_rowMeta[tfId].RowClass" @ondblclick="@row.OnEdit"
+							<tr @key=@tfId class="@_rowMeta[tfId].RowClass" @ondblclick="@row.OnDblClick"
 							    id="@($"row-{tfId}")">
 								<td class="@_columnsMeta[Guid.Empty].BodyCellClass"
 								    style="@_columnsMeta[Guid.Empty].BodyCellStyles">
@@ -164,7 +177,7 @@ else
 													            Color="@Color.Custom"
 													            CustomColor="var(--neutral-stroke-input-active)"/>
 												</FluentButton>
-											</div>											
+											</div>
 										}
 									}
 									else

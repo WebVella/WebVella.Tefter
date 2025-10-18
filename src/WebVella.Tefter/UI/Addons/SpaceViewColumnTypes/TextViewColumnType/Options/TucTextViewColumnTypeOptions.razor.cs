@@ -1,30 +1,12 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-
-namespace WebVella.Tefter.UI.Addons;
-
-public partial class TucTextViewColumnTypeOptions : TfLocalizedViewColumnComponent,IDisposable
+﻿namespace WebVella.Tefter.UI.Addons;
+public partial class TucTextViewColumnTypeOptions : TfLocalizedViewColumnComponent
 {
 	[Parameter] public TfTextViewColumnTypeSettings Settings { get; set; } = null!;
-	[Parameter] public EditContext? EditContext { get; set; } = null;
-	[Parameter] public ValidationMessageStore? ValidationMessageStore { get; set; } = null;
-	[Parameter] public EventCallback<TfTextViewColumnTypeSettings> OptionsChanged { get; set; }	
+	[Parameter] public EventCallback<TfTextViewColumnTypeSettings> SettingsChanged { get; set; }
+	[Parameter] public List<ValidationError> ValidationErrors { get; set; } = new();	
 	
-	public void Dispose()
-	{
-		if (EditContext is not null)
-		{
-			EditContext.OnValidationRequested -= OnOptionsValidationRequested;
-		}
-	}	
-	
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-		if (EditContext is not null)
-			EditContext.OnValidationRequested += OnOptionsValidationRequested;
-	}	
-	
-	private async Task _onOptionsChanged(string propName, object? value)
+
+	private async Task _onSettingsChanged(string propName, object? value)
 	{
 		switch (propName)
 		{
@@ -33,12 +15,7 @@ public partial class TucTextViewColumnTypeOptions : TfLocalizedViewColumnCompone
 				break;			
 		}
 	
-		await OptionsChanged.InvokeAsync(Settings);
+		await SettingsChanged.InvokeAsync(Settings);
 	}
-	
-	private void OnOptionsValidationRequested(object? sender, ValidationRequestedEventArgs e)
-	{
-		//nothing to validate
-	}	
 
 }
