@@ -168,11 +168,11 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 
 	private bool _columnIsVisible(TfDataColumn column)
 	{
-		if (column.OriginType == TfDataColumnOriginType.System
-		    || column.OriginType == TfDataColumnOriginType.Identity)
+		if (column.Origin == TfDataColumnOriginType.System
+		    || column.Origin == TfDataColumnOriginType.Identity)
 			return _showSystemColumns;
-		else if(column.OriginType == TfDataColumnOriginType.SharedColumn
-		        || column.OriginType == TfDataColumnOriginType.JoinedProviderColumn)
+		else if(column.Origin == TfDataColumnOriginType.SharedColumn
+		        || column.Origin == TfDataColumnOriginType.JoinedProviderColumn)
 			return _showJoinKeyColumns;
 		return _showProviderColumns;
 	}

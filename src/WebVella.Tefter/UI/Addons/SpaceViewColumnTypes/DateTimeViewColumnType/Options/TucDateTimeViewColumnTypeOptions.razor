@@ -1,0 +1,31 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits TfLocalizedViewColumnComponent
+
+<FluentGrid>
+	<FluentGridItem xs="12">
+		<FluentTextField Label="@LOC("Confirmation message")"
+		                 Value="@Settings.ChangeConfirmationMessage" Style="width:100%"
+		                 ValueChanged=@((x) => _onSettingsChanged(nameof(Settings.ChangeConfirmationMessage), x))
+		                 Placeholder="@LOC("empty for no confirmation")"/>
+		<FluentValidationMessage For="@(() => Settings.ChangeConfirmationMessage)"/>
+		<TucValidationMessage Field="@(nameof(Settings.ChangeConfirmationMessage))" Errors="ValidationErrors"/>
+	</FluentGridItem>
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentInputLabel Label="@LOC("Selection method")" />
+			<TucSelect Items="@(Enum.GetValues<CalendarViews>())"
+			           OptionValue="@((p)=> ((int)p).ToString())"
+			           OptionText="@((x)=>x.ToString())"
+			           TOption="CalendarViews"
+			           SelectedOption="@Settings.CalendarViewsSelection"
+			           SelectedOptionChanged=@((x)=> _onSettingsChanged(nameof(Settings.CalendarViewsSelection),x)) />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentTextField Label="@LOC("Format")"
+			                 Value="@Settings.Format" Style="width:100%"
+			                 ValueChanged=@((x)=> _onSettingsChanged(nameof(Settings.Format),x))
+			                 Placeholder="@LOC("eg. 'dd MMM yyyy HH:mm:ss'")" />
+			<div class="tf-input-description">@LOC("defaults to the system's short date format")</div>
+		</FluentGridItem>		
+	</FluentGrid>	
+</FluentGrid>

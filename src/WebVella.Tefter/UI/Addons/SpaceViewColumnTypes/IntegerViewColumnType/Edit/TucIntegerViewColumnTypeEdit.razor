@@ -1,0 +1,15 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits TfLocalizedViewColumnComponent
+
+<div>
+	<FluentNumberField TValue="int?"
+	                   Id="@_valueInputId"
+	                   @bind-Value="@_value"
+	                   @bind-Value:after="_valueChanged"
+	                   Step="1"
+	                   Style="width:100%;min-width:80px;" AutoComplete="off" 
+	                   Min="@(int.MinValue.ToString())"
+	                   Max="@(int.MaxValue.ToString())" />	
+</div>
+
+

@@ -400,12 +400,12 @@ public partial class TfService : ITfService
 			{
 				var columnName = column.Name;
 
-				if (column.OriginType == TfDataColumnOriginType.JoinedProviderColumn)
+				if (column.Origin == TfDataColumnOriginType.JoinedProviderColumn)
 				{
 					values[valuesCounter++] = joinColumnValuesDict[column.Name];
 					continue;
 				}
-				else if (column.OriginType == TfDataColumnOriginType.SharedColumn)
+				else if (column.Origin == TfDataColumnOriginType.SharedColumn)
 				{
 					var segments = columnName.Split(".");
 					columnName = segments[1];
@@ -759,13 +759,13 @@ public partial class TfService : ITfService
 
 		foreach (var tableColumn in row.DataTable.Columns)
 		{
-			if (tableColumn.OriginType != TfDataColumnOriginType.SharedColumn)
+			if (tableColumn.Origin != TfDataColumnOriginType.SharedColumn)
 				continue;
 
 			//join columns will not be updated
 			//this is not supported at the moment, 
 			//but in case we support it at later stage
-			if (tableColumn.OriginType == TfDataColumnOriginType.JoinedProviderColumn)
+			if (tableColumn.Origin == TfDataColumnOriginType.JoinedProviderColumn)
 				continue;
 
 
@@ -901,9 +901,9 @@ public partial class TfService : ITfService
 			var tableColumn = row.DataTable.Columns[i];
 
 			//ignore shared, identity and joined columns here
-			if (tableColumn.OriginType == TfDataColumnOriginType.SharedColumn ||
-				tableColumn.OriginType == TfDataColumnOriginType.JoinedProviderColumn |
-				tableColumn.OriginType == TfDataColumnOriginType.Identity)
+			if (tableColumn.Origin == TfDataColumnOriginType.SharedColumn ||
+				tableColumn.Origin == TfDataColumnOriginType.JoinedProviderColumn |
+				tableColumn.Origin == TfDataColumnOriginType.Identity)
 				continue;
 
 			processedColumns.Add(tableColumn.Name);
@@ -1030,9 +1030,9 @@ public partial class TfService : ITfService
 		foreach (var column in row.DataTable.Columns)
 		{
 			//join,shared and identity columns will not be updated
-			if (column.OriginType == TfDataColumnOriginType.SharedColumn ||
-				column.OriginType == TfDataColumnOriginType.JoinedProviderColumn ||
-				column.OriginType == TfDataColumnOriginType.Identity)
+			if (column.Origin == TfDataColumnOriginType.SharedColumn ||
+				column.Origin == TfDataColumnOriginType.JoinedProviderColumn ||
+				column.Origin == TfDataColumnOriginType.Identity)
 				continue;
 
 			if (column.DbType == TfDatabaseColumnType.Guid)
@@ -1105,13 +1105,13 @@ public partial class TfService : ITfService
 
 		foreach (var tableColumn in row.DataTable.Columns)
 		{
-			if (tableColumn.OriginType != TfDataColumnOriginType.SharedColumn)
+			if (tableColumn.Origin != TfDataColumnOriginType.SharedColumn)
 				continue;
 
 			//join columns will not be updated
 			//this is not supported at the moment, 
 			//but in case we support it at later stage
-			if (tableColumn.OriginType == TfDataColumnOriginType.JoinedProviderColumn)
+			if (tableColumn.Origin == TfDataColumnOriginType.JoinedProviderColumn)
 				continue;
 
 			var sharedColumn = provider.SharedColumns.Single(x => $"{x.DataIdentity}.{x.DbName}" == tableColumn.Name);
@@ -1152,9 +1152,9 @@ public partial class TfService : ITfService
 			var tableColumn = row.DataTable.Columns[i];
 
 			//ignore shared,identity and joined columns here
-			if (tableColumn.OriginType == TfDataColumnOriginType.SharedColumn ||
-				tableColumn.OriginType == TfDataColumnOriginType.JoinedProviderColumn ||
-				tableColumn.OriginType == TfDataColumnOriginType.Identity)
+			if (tableColumn.Origin == TfDataColumnOriginType.SharedColumn ||
+				tableColumn.Origin == TfDataColumnOriginType.JoinedProviderColumn ||
+				tableColumn.Origin == TfDataColumnOriginType.Identity)
 				continue;
 
 			if (!columnsWithChange.Contains(tableColumn.Name))

@@ -30,7 +30,7 @@
 				<tr class="tf-grid-tr">
 					@foreach (var column in _data.Columns)
 					{
-						@if (column.OriginType == TfDataColumnOriginType.System || column.OriginType == TfDataColumnOriginType.Identity) continue;
+						@if (column.Origin == TfDataColumnOriginType.System || column.Origin == TfDataColumnOriginType.Identity) continue;
 						<th class="tf-grid-th">@column.Name</th>
 						columnCount++;
 					}
@@ -60,10 +60,10 @@
 						<tr @key=@row["tf_id"] class="tf-grid-tr">
 							@foreach (var column in _data.Columns)
 							{
-								@if (column.OriginType == TfDataColumnOriginType.System || column.OriginType == TfDataColumnOriginType.Identity) continue;
+								@if (column.Origin == TfDataColumnOriginType.System || column.Origin == TfDataColumnOriginType.Identity) continue;
 								<td class="tf-grid-td">
 									<div class="tf-grid-td-hover"></div>
-									@if (column.OriginType == TfDataColumnOriginType.JoinedProviderColumn)
+									@if (column.Origin == TfDataColumnOriginType.JoinedProviderColumn)
 									{
 										<div>@(String.Join(", ", (List<string>)row[column.Name]))</div>
 									}

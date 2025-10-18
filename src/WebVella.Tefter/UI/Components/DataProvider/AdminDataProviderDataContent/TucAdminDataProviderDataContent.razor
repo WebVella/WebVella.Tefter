@@ -142,7 +142,7 @@
 
 											<td class="tf-grid-td">
 												<div class="tf-grid-td-hover"></div>
-												@if (column.OriginType == TfDataColumnOriginType.JoinedProviderColumn)
+												@if (column.Origin == TfDataColumnOriginType.JoinedProviderColumn)
 												{
 													<div>@(String.Join(", ", (List<string>)row[column.Name]))</div>
 												}

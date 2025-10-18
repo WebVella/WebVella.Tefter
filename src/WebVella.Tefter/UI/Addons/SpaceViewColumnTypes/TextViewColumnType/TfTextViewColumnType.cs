@@ -89,7 +89,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 		{
 			values.Add(String.Empty);
 		}
-		else if (column.OriginType == TfDataColumnOriginType.JoinedProviderColumn)
+		else if (column.Origin == TfDataColumnOriginType.JoinedProviderColumn)
 		{
 			if (columnData.GetType().ImplementsInterface(typeof(IList)))
 			{
@@ -123,8 +123,8 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 	{
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
 		//Editable columns
-		if (column.OriginType == TfDataColumnOriginType.CurrentProvider
-		    || column.OriginType == TfDataColumnOriginType.SharedColumn)
+		if (column.Origin == TfDataColumnOriginType.CurrentProvider
+		    || column.Origin == TfDataColumnOriginType.SharedColumn)
 		{
 			var values = _initValue(context);
 

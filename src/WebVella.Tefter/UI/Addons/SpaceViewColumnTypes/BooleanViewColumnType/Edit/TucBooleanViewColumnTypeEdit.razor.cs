@@ -2,7 +2,7 @@
 
 public partial class TucBooleanViewColumnTypeEdit : TfLocalizedViewColumnComponent
 {
-	[Inject] protected IJSRuntime JSRuntime { get; set; } = null!;
+	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Parameter] public bool? Value { get; set; }
 	[Parameter] public EventCallback<bool?> ValueChanged { get; set; }
 	[Parameter] public TfBooleanViewColumnTypeSettings Settings { get; set; } = null!;
@@ -14,21 +14,21 @@ public partial class TucBooleanViewColumnTypeEdit : TfLocalizedViewColumnCompone
 	private async Task _valueChanged(bool? value)
 	{
 		if (!String.IsNullOrWhiteSpace(Settings.ChangeConfirmationMessage)
-		    && !await JSRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
+		    && !await JsRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
 			return;
 		Value = value;
 		await ValueChanged.InvokeAsync(Value);
-		await JSRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
+		await JsRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
 	}
 
 	private async Task _valueChangedNotNull(bool value)
 	{
 		if (!String.IsNullOrWhiteSpace(Settings.ChangeConfirmationMessage)
-		    && !await JSRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
+		    && !await JsRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
 			return;
 		Value = value;
 		await ValueChanged.InvokeAsync(Value);
-		await JSRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
+		await JsRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
 	}
 
 	private string? _getLabel()

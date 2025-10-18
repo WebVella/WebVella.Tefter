@@ -6,20 +6,20 @@ public class TfDataColumn
 	public string Name { get; init; }
 	public TfDatabaseColumnType DbType { get; init; }
 	public bool IsNullable { get; init; }	
-	public TfDataColumnOriginType OriginType { get; init; } = TfDataColumnOriginType.CurrentProvider;
+	public TfDataColumnOriginType Origin { get; init; } = TfDataColumnOriginType.CurrentProvider;
 
 	internal TfDataColumn(
 		TfDataTable dataTable,
 		string name,
 		TfDatabaseColumnType dbType,
 		bool isNullable,
-		TfDataColumnOriginType originType )
+		TfDataColumnOriginType origin )
 	{
 		DataTable = dataTable;
 		Name = name;
 		DbType = dbType;
 		IsNullable = isNullable;
-		OriginType = originType;
+		Origin = origin;
 	}
 
 	public override string ToString()

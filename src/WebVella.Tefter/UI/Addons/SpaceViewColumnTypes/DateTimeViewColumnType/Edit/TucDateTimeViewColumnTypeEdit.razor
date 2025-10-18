@@ -1,0 +1,18 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits TfLocalizedViewColumnComponent
+
+<div>
+	<FluentStack Wrap="false">
+		<FluentDatePicker Id="@_valueInputId"
+		                  @bind-Value="@_value"
+		                  @bind-Value:after="_valueChanged"
+		                  View="@Settings.CalendarViewsSelection"
+		                  Style="width:60%;min-width:120px;" />
+		<FluentTimePicker Id="@_valueTimeInputId"
+		                  @bind-Value="@_value"
+		                  @bind-Value:after="_valueChanged"
+		                  Style="width:40%;min-width:120px;" />
+	</FluentStack>	
+</div>
+
+

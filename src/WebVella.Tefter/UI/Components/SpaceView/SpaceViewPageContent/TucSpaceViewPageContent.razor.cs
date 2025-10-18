@@ -457,14 +457,14 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				for (int j = 0; j < _data.Columns.Count; j++)
 				{
 					TfDataColumn column = _data.Columns[j];
-					if (column.OriginType == TfDataColumnOriginType.System ||
-					    column.OriginType == TfDataColumnOriginType.Identity) continue;
+					if (column.Origin == TfDataColumnOriginType.System ||
+					    column.Origin == TfDataColumnOriginType.Identity) continue;
 					row[column.Name] = changedRow[column.Name];
 				}
 			}
-
 			_generateMeta();
 			await InvokeAsync(StateHasChanged);
+			ToastService.ShowSuccess(LOC("Data was updated"));
 		}
 		catch (Exception ex)
 		{

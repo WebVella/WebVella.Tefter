@@ -77,7 +77,7 @@
 						<FluentGridItem xs="6">
 							<FluentCombobox TOption="string"
 							                Autocomplete="ComboboxAutocomplete.Both"
-							                Items="_options"
+							                Items="_optionsDict[item.Alias]"
 							                Height="@TfConstants.ComboPanelHeight"
 							                Value=@_getDataMappingValue(item.Alias)
 							                Immediate ImmediateDelay="500"

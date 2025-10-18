@@ -1949,7 +1949,7 @@ fluent-menu-item::part(start) {
   --accent-fill-rest: var(--neutral-foreground-rest);
 }
 .tf-select-component .tf-component--small .tf-component-icon {
-  flex-basis: 24px;
+  flex-basis: 32px;
 }
 .tf-select-component .tf-component--small .tf-component-icon svg {
   width: 18px !important;

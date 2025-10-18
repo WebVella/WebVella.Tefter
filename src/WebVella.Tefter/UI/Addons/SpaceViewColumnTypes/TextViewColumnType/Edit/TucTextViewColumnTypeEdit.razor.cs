@@ -2,7 +2,7 @@
 
 public partial class TucTextViewColumnTypeEdit : TfLocalizedViewColumnComponent
 {
-	[Inject] protected IJSRuntime JSRuntime { get; set; } = null!;	
+	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;	
 	[Parameter] public string? Value { get; set; }
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
 	[Parameter] public TfTextViewColumnTypeSettings Settings { get; set; } = null!;
@@ -13,11 +13,11 @@ public partial class TucTextViewColumnTypeEdit : TfLocalizedViewColumnComponent
 	private async Task _valueChanged(string? value)
 	{
 		if (!String.IsNullOrWhiteSpace(Settings.ChangeConfirmationMessage)
-		    && !await JSRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
+		    && !await JsRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
 			return;
 		
 		Value = value;
 		await ValueChanged.InvokeAsync(Value);
-		await JSRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
+		await JsRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
 	}
 }

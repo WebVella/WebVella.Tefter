@@ -1,0 +1,12 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits TfLocalizedViewColumnComponent
+
+<div>
+	<FluentTextField Id="@_valueInputId"
+	                 Value="@Value"
+	                 ValueChanged="_valueChanged"
+	                 TextFieldType="@TextFieldType.Url"
+	                 Style="width:100%;min-width:60px;" AutoComplete="off"/>
+</div>
+
+

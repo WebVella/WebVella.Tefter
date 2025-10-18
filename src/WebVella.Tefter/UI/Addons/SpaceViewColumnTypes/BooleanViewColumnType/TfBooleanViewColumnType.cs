@@ -43,7 +43,45 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 		if (args is not TfSpaceViewColumnExportExcelModeContext)
 			throw new Exception("Wrong context type. TfSpaceViewColumnExportExcelModeContext is expected");
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
-			context.ExcelCell.SetValue(XLCellValue.FromObject(String.Join(", ", _initValue(args))));
+		{
+			var settings = context.GetColumnTypeOptions(new TfBooleanViewColumnTypeSettings());
+			var value = _initValue(args);
+			if (value.Count == 0)
+			{
+				return;
+			}
+			else if (value.Count == 1)
+			{
+				if (value[0] is null) return;
+				if (!String.IsNullOrWhiteSpace(settings.TrueLabel))
+					context.ExcelCell.SetValue(XLCellValue.FromObject(settings.TrueLabel));
+				else if (!String.IsNullOrWhiteSpace(settings.FalseLabel))
+					context.ExcelCell.SetValue(XLCellValue.FromObject(settings.FalseLabel));
+				else
+					context.ExcelCell.SetValue(XLCellValue.FromObject((bool?)value[0]));
+			}
+			else
+			{
+				var valuesList = new List<string>();
+				foreach (var item in value)
+				{
+					if (item is null)
+					{
+						valuesList.Add(TfConstants.ExcelNullWord);
+						continue;
+					}
+					if (!String.IsNullOrWhiteSpace(settings.TrueLabel))
+						valuesList.Add(settings.TrueLabel);
+					else if (!String.IsNullOrWhiteSpace(settings.FalseLabel))
+						valuesList.Add(settings.FalseLabel);
+					else
+						valuesList.Add(item.Value.ToString());
+				}
+				context.ExcelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
+			}			
+		}
+
+		
 	}
 
 	//Returns Value/s as string usually for CSV export
@@ -52,7 +90,46 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 		if (args is not TfSpaceViewColumnExportCsvModeContext)
 			throw new Exception("Wrong context type. TfSpaceViewColumnExportCsvModeContext is expected");
 
-		return String.Join(", ", _initValue(args));
+		if (args is TfSpaceViewColumnExportExcelModeContext context)
+		{
+			var settings = context.GetColumnTypeOptions(new TfBooleanViewColumnTypeSettings());
+			var value = _initValue(args);
+			if (value.Count == 0)
+			{
+				return String.Empty;
+			}
+			else if (value.Count == 1)
+			{
+				if (value[0] is null) return String.Empty;
+				if (!String.IsNullOrWhiteSpace(settings.TrueLabel))
+					return settings.TrueLabel;
+				else if (!String.IsNullOrWhiteSpace(settings.FalseLabel))
+					return settings.FalseLabel;
+				else
+					return ((bool)value[0]!).ToString().ToLowerInvariant();
+			}
+			else
+			{
+				var valuesList = new List<string>();
+				foreach (var item in value)
+				{
+					if (item is null)
+					{
+						valuesList.Add(TfConstants.ExcelNullWord);
+						continue;
+					}
+					if (!String.IsNullOrWhiteSpace(settings.TrueLabel))
+						valuesList.Add(settings.TrueLabel);
+					else if (!String.IsNullOrWhiteSpace(settings.FalseLabel))
+						valuesList.Add(settings.FalseLabel);
+					else
+						valuesList.Add(item.Value.ToString());
+				}
+				return String.Join(", ", valuesList);
+			}			
+		}
+
+		return String.Empty;
 	}
 
 	public RenderFragment Render(TfSpaceViewColumnBaseContext args)
@@ -89,7 +166,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 		{
 			values.Add(null);
 		}
-		else if (column.OriginType == TfDataColumnOriginType.JoinedProviderColumn)
+		else if (column.Origin == TfDataColumnOriginType.JoinedProviderColumn)
 		{
 			if (columnData.GetType().ImplementsInterface(typeof(IList)))
 			{
@@ -123,8 +200,8 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 	{
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
 		//Editable columns
-		if (column.OriginType == TfDataColumnOriginType.CurrentProvider
-		    || column.OriginType == TfDataColumnOriginType.SharedColumn)
+		if (column.Origin == TfDataColumnOriginType.CurrentProvider
+		    || column.Origin == TfDataColumnOriginType.SharedColumn)
 		{
 			var values = _initValue(context);
 

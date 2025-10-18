@@ -21,7 +21,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 
 	private TfSpaceView _spaceView = new();
 	private TfDataTable _sampleData = null!;
-	private List<string> _options = new();
+	private Dictionary<string,List<string>> _optionsDict = new();
 
 	protected override void OnInitialized()
 	{
@@ -147,7 +147,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		await Dialog.CancelAsync();
 	}
 
-	private async Task _columnTypeChangeHandler(ITfSpaceViewColumnTypeAddon columnType)
+	private void _columnTypeChangeHandler(ITfSpaceViewColumnTypeAddon columnType)
 	{
 		_selectedColumnType = columnType;
 		_form.TypeId = columnType.AddonId;
@@ -156,17 +156,24 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 
 	private void _initDataMappingOptions()
 	{
-		_options = new();
-		var supportedDbTypes = new List<TfDatabaseColumnType>();
-		_selectedColumnType.DataMappingDefinitions.ForEach(x =>
-			supportedDbTypes.AddRange(x.SupportedDatabaseColumnTypes));
+		_optionsDict = new();
 
-		foreach (var column in _sampleData.Columns)
+		foreach (var definition in _selectedColumnType.DataMappingDefinitions)
 		{
-			if (!supportedDbTypes.Contains(column.DbType))
-				continue;
-			_options.Add(column.Name);
+			_optionsDict[definition.Alias] = new();
+			foreach (var column in _sampleData.Columns)
+			{
+				if(column.Origin == TfDataColumnOriginType.System
+				   || column.Origin == TfDataColumnOriginType.Identity)
+					continue;
+				if (!definition.SupportedDatabaseColumnTypes.Contains(column.DbType))
+					continue;
+				
+				_optionsDict[definition.Alias].Add(column.Name);
+			}			
 		}
+
+
 	}
 
 	private string? _getDataMappingValue(string alias)
