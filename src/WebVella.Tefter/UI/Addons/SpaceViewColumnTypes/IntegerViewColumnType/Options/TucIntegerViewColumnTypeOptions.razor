@@ -7,7 +7,6 @@
 		                 Value="@Settings.ChangeConfirmationMessage" Style="width:100%"
 		                 ValueChanged=@((x) => _onSettingsChanged(nameof(Settings.ChangeConfirmationMessage), x))
 		                 Placeholder="@LOC("empty for no confirmation")"/>
-		<FluentValidationMessage For="@(() => Settings.ChangeConfirmationMessage)"/>
 		<TucValidationMessage Field="@(nameof(Settings.ChangeConfirmationMessage))" Errors="ValidationErrors"/>
 	</FluentGridItem>
 </FluentGrid>
@@ -16,7 +15,8 @@
 		<FluentTextField Label="@LOC("Format")"
 		                 Value="@Settings.Format" Style="width:100%" Immediate ImmediateDelay="500"
 		                 ValueChanged=@((x)=> _onSettingsChanged(nameof(Settings.Format),x))
-		                 Placeholder="@LOC("eg. 'N3'")" />
+		                 Placeholder="@LOC("eg. 'D5'")" />
+		<TucValidationMessage Field="@(nameof(Settings.Format))" Errors="ValidationErrors"/>		
 	</FluentGridItem>
 	<FluentGridItem xs="6"></FluentGridItem>
 </FluentGrid>

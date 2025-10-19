@@ -1,0 +1,31 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits TfLocalizedViewColumnComponent
+
+<div>
+	<FluentButton Id="@_valueInputId" class="tf-select-btn" Style="width:100%;min-width:80px;"
+	              OnClick="@(() => _open = !_open)" Appearance="Appearance.Outline"
+	              Color="@Value?.Color" BackgroundColor="@Value?.BackgroundColor">
+		@if (Value is not null && !Value.HideLabel)
+		{
+			<span>@Value?.Label</span>
+		}
+		@if (Value is not null && !String.IsNullOrWhiteSpace(Value.IconName))
+		{
+			<FluentIcon Slot="start" Value="@TfConstants.GetIcon(Value.IconName)"
+			            Color="Color.Custom" CustomColor="@Value?.Color" />
+		}
+		<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-fill-strong-focus)" Color="@Color.Custom" />
+	</FluentButton>
+	<FluentMenu UseMenuService="true"
+	            HorizontalScaling="AxisScalingMode.Anchor"
+	            Class="tf-btn-menu"
+	            Anchor="@_valueInputId"
+	            @bind-Open="_open">
+		<Virtualize TItem="TfSelectOption" Items="Options" Context="option" ItemSize="32">
+			<FluentMenuItem @key=@option.Id OnClick="@(()=> _valueChanged(option))" 
+			                Class="@(option.Value == Value?.Value ? "tf-menu__item--active" : "")"
+			                title="@option.Label">@option.Label</FluentMenuItem>
+		</Virtualize>
+	</FluentMenu>
+</div>
+

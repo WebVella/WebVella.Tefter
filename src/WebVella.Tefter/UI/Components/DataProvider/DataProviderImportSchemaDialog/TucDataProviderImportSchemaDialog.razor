@@ -104,7 +104,7 @@
 								</td>
 								<td class="tf-grid-td">
 									<div>
-										<TucSelect SelectedOption="@context.SourceType"
+										<TucSelect OptionSelected="@((x) => x == context.SourceType)"
 										           TOption="string"
 										           SelectedOptionChanged="@(x => _sourceTypeChanged(x, context))"
 										           Style="width:100%"

@@ -94,5 +94,4 @@
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
 
-
 </Project>

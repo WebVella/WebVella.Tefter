@@ -10,7 +10,7 @@
 	@if (String.IsNullOrWhiteSpace(_error))
 	{
 		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
-					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
+		              Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
 	}
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
@@ -24,107 +24,111 @@
 	else
 	{
 		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
-						FormName="submit-form" class="tf-form" novalidate>
-			<DataAnnotationsValidator />
+		                FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator/>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentInputLabel Label="@LOC("Status")" />
+					<FluentInputLabel Label="@LOC("Status")"/>
 					<FluentSwitch @bind-Value=@_form.IsEnabled>
 						<span slot="checked-message">@LOC("enabled")</span>
 						<span slot="unchecked-message">@LOC("enabled")</span>
 					</FluentSwitch>
-					<FluentValidationMessage For="@(() => _form.IsEnabled)" />
+					<FluentValidationMessage For="@(() => _form.IsEnabled)"/>
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentInputLabel Label="@LOC("Use")" />
+					<FluentInputLabel Label="@LOC("Use")"/>
 					<FluentSwitch @bind-Value=@_form.IsSelectable>
 						<span slot="checked-message">@LOC("selectable")</span>
 						<span slot="unchecked-message">@LOC("selectable")</span>
 					</FluentSwitch>
-					<FluentValidationMessage For="@(() => _form.IsSelectable)" />
+					<FluentValidationMessage For="@(() => _form.IsSelectable)"/>
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text"
-									 @bind-Value=@_form.Name AutoComplete="off"
-									 Label="@LOC("Name")" Style="width:100%" />
-					<FluentValidationMessage For="@(() => _form.Name)" />
+					                 @bind-Value=@_form.Name AutoComplete="off"
+					                 Label="@LOC("Name")" Style="width:100%"/>
+					<FluentValidationMessage For="@(() => _form.Name)"/>
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentInputLabel Label="@LOC("Icon")" />
-					<TucSelectIcon @bind-Value="@_form.FluentIconName" Required="true" />
-					<FluentValidationMessage For="@(() => _form.FluentIconName)" />
+					<FluentInputLabel Label="@LOC("Icon")"/>
+					<TucSelectIcon @bind-Value="@_form.FluentIconName" Required="true"/>
+					<FluentValidationMessage For="@(() => _form.FluentIconName)"/>
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="12">
 					<FluentTextArea Rows="2"
-									@bind-Value=@_form.Description
-									Resize="TextAreaResize.Vertical"
-									Label="@LOC("Description")" Style="width:100%" />
-					<FluentValidationMessage For="@(() => _form.Name)" />
+					                @bind-Value=@_form.Description
+					                Resize="TextAreaResize.Vertical"
+					                Label="@LOC("Description")" Style="width:100%"/>
+					<FluentValidationMessage For="@(() => _form.Name)"/>
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentInputLabel Label="@LOC("Target Space Dataset")" />
-					<TucSelect Style="width:100%" TOption="TfDatasetAsOption" SelectedOption="_datasetOption" SelectedOptionChanged="_spaceDataOptionChanged"
-								  Placeholder="@LOC("select space dataset...")"
-								  OptionValue="((p)=> p.Id.ToString())"
-								  Items="_datasetOptions">
+					<FluentInputLabel Label="@LOC("Target Space Dataset")"/>
+					<TucSelect Style="width:100%" TOption="TfDatasetAsOption"
+					           OptionSelected="@((x) => x.Id == _datasetOption?.Id)"
+					           SelectedOptionChanged="_spaceDataOptionChanged"
+					           Placeholder="@LOC("select space dataset...")"
+					           OptionValue="((p)=> p.Id.ToString())"
+					           Items="_datasetOptions">
 						<OptionTemplate Context="option">@option.Name</OptionTemplate>
 					</TucSelect>
-					<FluentValidationMessage For="@(() => _form.SpaceDataList)" />
+					<FluentValidationMessage For="@(() => _form.SpaceDataList)"/>
 					<table class="tf-grid" style="margin-top:15px;">
 						<thead class="tf-grid-thead">
-							<tr class="tf-grid-thead-bkg"></tr>
-							<tr class="tf-grid-tr">
-								<th class="tf-grid-th" style="width:30px;min-width:30px;"></th>
-								<th class="tf-grid-th">data name</th>
-							</tr>
+						<tr class="tf-grid-thead-bkg"></tr>
+						<tr class="tf-grid-tr">
+							<th class="tf-grid-th" style="width:30px;min-width:30px;"></th>
+							<th class="tf-grid-th">data name</th>
+						</tr>
 						</thead>
 						<tbody class="tf-grid-tbody">
-							@foreach (var row in _spaceDataSelection)
-							{
-								<tr @key=row.Id class="tf-grid-tr">
-									<td class="tf-grid-td">
-										<div>
-											<FluentButton Appearance=@Appearance.Outline IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)"
-														  OnClick="@(_=> _removeItem(row))" />
-										</div>
-									</td>
-									<td class="tf-grid-td">
-										<div>
-											@row.Name
-										</div>
-									</td>
-								</tr>
-							}
-							@if (_spaceDataSelection.Count == 0)
-							{
-								<tr class="tf-grid-tr">
-									<td class="tf-grid-td" colspan="2">
-										<div>
-											@LOC("No targeted space dataset found")
-										</div>
-									</td>
-								</tr>
-							}
+						@foreach (var row in _spaceDataSelection)
+						{
+							<tr @key=row.Id class="tf-grid-tr">
+								<td class="tf-grid-td">
+									<div>
+										<FluentButton Appearance=@Appearance.Outline
+										              IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)"
+										              OnClick="@(_ => _removeItem(row))"/>
+									</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>
+										@row.Name
+									</div>
+								</td>
+							</tr>
+						}
+						@if (_spaceDataSelection.Count == 0)
+						{
+							<tr class="tf-grid-tr">
+								<td class="tf-grid-td" colspan="2">
+									<div>
+										@LOC("No targeted space dataset found")
+									</div>
+								</td>
+							</tr>
+						}
 						</tbody>
 					</table>
 				</FluentGridItem>
 			</FluentGrid>
 			@if (_isCreate)
 			{
-				<FluentDivider Style="margin:15px 0" />
+				<FluentDivider Style="margin:15px 0"/>
 				<FluentGrid>
 					<FluentGridItem xs="12">
-						<FluentInputLabel Label="@LOC("Template type")" />
+						<FluentInputLabel Label="@LOC("Template type")"/>
 						<TucSelectComponent TOption="ITfTemplateProcessorAddon" Items="@_processors"
-											Value="_selectedProcessor" ValueChanged="_componentChanged"
-											OptionText="@(x=> x.Name)" OptionIcon="@(x=> x.FluentIconName)" OptionDescription="@(x=> x.Description)"
-											OptionMatch="@((x,y)=> x.Id == y.Id)" />
+						                    Value="_selectedProcessor" ValueChanged="_componentChanged"
+						                    OptionText="@(x => x.Name)" OptionIcon="@(x => x.FluentIconName)"
+						                    OptionDescription="@(x => x.Description)"
+						                    OptionMatch="@((x, y) => x.Id == y.Id)"/>
 					</FluentGridItem>
 				</FluentGrid>
 			}

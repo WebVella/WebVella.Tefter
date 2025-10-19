@@ -8,12 +8,6 @@ public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption :
 {
 
 	/// <summary>
-	/// Gets or sets the currently selected option.
-	/// </summary>
-	[Parameter]
-	public TOption? SelectedOption { get; set; }
-
-	/// <summary>
 	/// Event callback that is triggered when the selected option changes.
 	/// </summary>
 	[Parameter]
@@ -117,6 +111,7 @@ public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption :
 	/// <returns>A Task representing the asynchronous operation.</returns>
 	protected override async Task OnParametersSetAsync()
 	{
+		
 		// If OptionText is not provided, default to using ToString() on the option
 		if (OptionText is null && OptionTemplate is null)
 			OptionText = x => x.ToString();
@@ -140,13 +135,15 @@ public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption :
 
 	async Task _selectedOptionChanged(TOption? option)
 	{
-		if (option is null && SelectedOption is null) return;
-		//Infinite change trigger
-		// if (JsonSerializer.Serialize(option) == JsonSerializer.Serialize(SelectedOption))
-		// 	return;
-
-		SelectedOption = option;
 		if (SelectedOptionChanged.HasDelegate)
 			await SelectedOptionChanged.InvokeAsync(option);
+	}
+
+	private string? _getPlacehoder()
+	{
+		if (Required) return Placeholder;
+		if (!String.IsNullOrWhiteSpace(Placeholder)) return Placeholder;
+
+		return LOC("select...");
 	}
 }

@@ -201,6 +201,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 
 	private async Task _customOptionsChangedHandler(string value)
 	{
+		Console.WriteLine("_customOptionsChangedHandler");
 		if (String.IsNullOrWhiteSpace(value)) _form.TypeOptionsJson = null;
 
 		if (!(value.StartsWith("{") && value.StartsWith("{"))

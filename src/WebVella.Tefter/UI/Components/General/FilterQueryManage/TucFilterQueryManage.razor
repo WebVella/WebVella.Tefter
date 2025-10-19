@@ -64,7 +64,7 @@
 				else if (TypeDict[Item.Name] == TfDatabaseColumnType.Boolean)
 				{
 					var context = new TfFilterBoolean();
-					<TucSelect SelectedOption="@((TfFilterBooleanComparisonMethod)Item.Method)"
+					<TucSelect OptionSelected="@((x) => x == (TfFilterBooleanComparisonMethod)Item.Method)"
 							   SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(Item.Method),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterBooleanComparisonMethod" Required="true"
@@ -73,21 +73,20 @@
 							   OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 					@if (context.RequiresValue)
 					{
-						<TucSelect SelectedOption="@(context.ValueOptions.FirstOrDefault(x => x.Value == Item.Value))"
+						<TucSelect OptionSelected="@((x) => x.Value == Item.Value)"
 								   SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.Value),value))"
 								   Disabled="@(Disabled || ReadOnly)"
 								   TOption="Option<string>" Required="false"
 								   OptionText="@((p)=> p.Text)"
 								   OptionValue="@((p)=> p.Value)"
-								   Items="@context.ValueOptions" Style="width:300px"
-								   OptionSelected=@((x=> x.Value == context.ValueOption.Value)) />
+								   Items="@context.ValueOptions" Style="width:300px" />
 					}
 				}
 				else if (TypeDict[Item.Name] == TfDatabaseColumnType.DateOnly
 				|| TypeDict[Item.Name] == TfDatabaseColumnType.DateTime)
 				{
 					var context = new TfFilterDateTime();
-					<TucSelect SelectedOption="@((TfFilterDateTimeComparisonMethod)Item.Method)"
+					<TucSelect OptionSelected="@((x) => x == (TfFilterDateTimeComparisonMethod)Item.Method)"
 							   SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterDateTimeComparisonMethod" Required="true"
@@ -112,7 +111,7 @@
 				else if (TypeDict[Item.Name] == TfDatabaseColumnType.Guid)
 				{
 					var context = new TfFilterGuid();
-					<TucSelect SelectedOption="@((TfFilterGuidComparisonMethod)Item.Method)"
+					<TucSelect OptionSelected="@((x) => x == (TfFilterGuidComparisonMethod)Item.Method)"
 							   SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterGuidComparisonMethod" Required="true"
@@ -133,7 +132,7 @@
 				|| TypeDict[Item.Name] == TfDatabaseColumnType.LongInteger)
 				{
 					var context = new TfFilterNumeric();
-					<TucSelect SelectedOption="@((TfFilterNumericComparisonMethod)Item.Method)"
+					<TucSelect OptionSelected="@((x) => x == (TfFilterNumericComparisonMethod)Item.Method)"
 							   SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterNumericComparisonMethod" Required="true"
@@ -153,7 +152,7 @@
 				else if (TypeDict[Item.Name] == TfDatabaseColumnType.Number)
 				{
 					var context = new TfFilterNumeric();
-					<TucSelect SelectedOption="@((TfFilterNumericComparisonMethod)Item.Method)"
+					<TucSelect OptionSelected="@((x) => x == (TfFilterNumericComparisonMethod)Item.Method)"
 							   SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterNumericComparisonMethod" Required="true"
@@ -174,7 +173,7 @@
 				|| TypeDict[Item.Name] == TfDatabaseColumnType.Text)
 				{
 					var context = new TfFilterText();
-					<TucSelect SelectedOption="@((TfFilterTextComparisonMethod)Item.Method)"
+					<TucSelect OptionSelected="@((x) => x == (TfFilterTextComparisonMethod)Item.Method)"
 							   SelectedOptionChanged="@((value) => _valueChanged(TypeDict[Item.Name],nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterTextComparisonMethod" Required="true"

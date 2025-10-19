@@ -5,6 +5,7 @@ html:root {
   --error: var(--tf-red-500);
   --info: var(--tf-sky-500);
   --highlight-bg: var(--tf-yellow-500);
+  --neutral-layer-floating:var(--neutral-layer-2);
 }
 
 /* Inputs */
@@ -115,6 +116,9 @@ div[class ^='fluent-messagebar'],
 }
 
 /*Menu*/
+fluent-menu{
+  --neutral-layer-floating:var(--neutral-layer-2);
+}
 fluent-menu-item{
   &::part(start){
     display: flex;

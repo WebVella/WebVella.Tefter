@@ -1,0 +1,14 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits ComponentBase
+
+@foreach (var item in Value ?? new())
+{
+    if (!String.IsNullOrWhiteSpace(item) && TfValidators.IsValidURL(item))
+    {
+        <div><img src="@item" alt="@item"/></div>
+    }
+    else
+    {
+        <div>@item</div>
+    }
+}

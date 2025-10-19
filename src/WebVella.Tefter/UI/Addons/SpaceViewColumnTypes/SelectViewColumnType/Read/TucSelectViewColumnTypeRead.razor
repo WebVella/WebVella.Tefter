@@ -1,0 +1,27 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits ComponentBase
+<div>
+	@foreach (TfSelectOption? selectedOption in Value ?? new())
+	{
+		@if (selectedOption is not null)
+		{
+			<div style="@_getStyle(selectedOption)" class="@_getClass(selectedOption)">
+				@if (!String.IsNullOrWhiteSpace(selectedOption?.IconName))
+				{
+					<div class="tf-select-btn__start">
+						<FluentIcon Value="@TfConstants.GetIcon(selectedOption.IconName)"
+						            Color="Color.Custom" CustomColor="@selectedOption?.Color"/>
+					</div>
+				}
+				@if (!selectedOption!.HideLabel)
+				{
+					<div class="tf-select-btn__content">@selectedOption?.Label</div>
+				}
+			</div>
+		}
+		else
+		{
+			<div>@(Settings.NotSelectedString ?? "n/a")</div>
+		}
+	}
+</div>

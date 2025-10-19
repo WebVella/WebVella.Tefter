@@ -7,7 +7,6 @@
 		                 Value="@Settings.ChangeConfirmationMessage" Style="width:100%"
 		                 ValueChanged=@((x) => _onSettingsChanged(nameof(Settings.ChangeConfirmationMessage), x))
 		                 Placeholder="@LOC("empty for no confirmation")"/>
-		<FluentValidationMessage For="@(() => Settings.ChangeConfirmationMessage)"/>
 		<TucValidationMessage Field="@(nameof(Settings.ChangeConfirmationMessage))" Errors="ValidationErrors"/>
 	</FluentGridItem>
 	<FluentGrid>
@@ -17,8 +16,9 @@
 			           OptionValue="@((p)=> ((int)p).ToString())"
 			           OptionText="@((x)=>x.ToString())"
 			           TOption="CalendarViews"
-			           SelectedOption="@Settings.CalendarViewsSelection"
+			           OptionSelected="@((x) => x == Settings.CalendarViewsSelection)"
 			           SelectedOptionChanged=@((x)=> _onSettingsChanged(nameof(Settings.CalendarViewsSelection),x)) />
+			<TucValidationMessage Field="@(nameof(Settings.CalendarViewsSelection))" Errors="ValidationErrors"/>			
 		</FluentGridItem>
 		<FluentGridItem xs="6">
 			<FluentTextField Label="@LOC("Format")"
@@ -26,6 +26,7 @@
 			                 ValueChanged=@((x)=> _onSettingsChanged(nameof(Settings.Format),x))
 			                 Placeholder="@LOC("eg. 'dd MMM yyyy HH:mm:ss'")" />
 			<div class="tf-input-description">@LOC("defaults to the system's short date format")</div>
+			<TucValidationMessage Field="@(nameof(Settings.Format))" Errors="ValidationErrors"/>
 		</FluentGridItem>		
 	</FluentGrid>	
 </FluentGrid>

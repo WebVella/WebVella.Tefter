@@ -5,13 +5,12 @@
 @if (_shouldRender)
 {
 	<FluentSelect TOption="TOption"
-				  SelectedOption="@SelectedOption"
 				  SelectedOptionChanged="_selectedOptionChanged"
 				  OptionSelected="@OptionSelected"
 				  Items="@Items"
 				  Class="@Class"
 				  Style="@Style"
-				  Placeholder="@Placeholder"
+				  Placeholder="@_getPlacehoder()"
 				  OptionText="@OptionText"
 				  OptionValue="@OptionValue"
 				  OptionTemplate="@OptionTemplate"

@@ -1,13 +1,13 @@
 ﻿namespace WebVella.Tefter.UI.Addons;
 
-public class TfTimeViewColumnType : ITfSpaceViewColumnTypeAddon
+public class TfImageViewColumnType : ITfSpaceViewColumnTypeAddon
 {
 	#region << INIT >>
 
-	public const string ID = "6848d278-77d7-4a77-b661-0aea30d2cc65";
-	public const string NAME = "Time";
-	public const string DESCRIPTION = "displays time";
-	public const string FLUENT_ICON_NAME = "Clock";
+	public const string ID = "e4ac0380-7285-40a2-a4ba-4a7b28e4a345";
+	public const string NAME = "Image";
+	public const string DESCRIPTION = "displays an Image";
+	public const string FLUENT_ICON_NAME = "Image";
 	private const string VALUE_ALIAS = "Value";
 
 	public Guid AddonId { get; init; } = new Guid(ID);
@@ -22,7 +22,10 @@ public class TfTimeViewColumnType : ITfSpaceViewColumnTypeAddon
 			Alias = VALUE_ALIAS,
 			Description =
 				"this column is compatible with all column types, but its intended use is with text",
-			SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateTime }
+			SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType>
+			{
+				TfDatabaseColumnType.ShortText, TfDatabaseColumnType.Text
+			}
 		}
 	};
 
@@ -31,9 +34,8 @@ public class TfTimeViewColumnType : ITfSpaceViewColumnTypeAddon
 	#region << PRIVATE >>
 
 	private List<ValidationError> _validationErrors = new();
-	private string _defaultFormat = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern;
 	#endregion
-
+	
 	#region << PUBLIC >>
 
 	public void ProcessExcelCell(TfSpaceViewColumnBaseContext args)
@@ -41,35 +43,7 @@ public class TfTimeViewColumnType : ITfSpaceViewColumnTypeAddon
 		if (args is not TfSpaceViewColumnExportExcelModeContext)
 			throw new Exception("Wrong context type. TfSpaceViewColumnExportExcelModeContext is expected");
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
-		{
-			var settings = context.GetColumnTypeOptions(new TfDateTimeViewColumnTypeSettings());
-			var value = _initValue(args);
-			if (value.Count == 0)
-			{
-				return;
-			}
-			else if (value.Count == 1)
-			{
-				if (value[0] is null) return;
-				context.ExcelCell.SetValue(XLCellValue.FromObject((DateTime?)value[0]));
-			}
-			else
-			{
-				var valuesList = new List<string>();
-				var format = !String.IsNullOrWhiteSpace(settings.Format) ? settings.Format : _defaultFormat;
-				foreach (var item in value)
-				{
-					if (item is null)
-					{
-						valuesList.Add(TfConstants.ExcelNullWord);
-						continue;
-					}
-					valuesList.Add(item.Value.ToString(format));
-				}
-
-				context.ExcelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
-			}
-		}
+			context.ExcelCell.SetValue(XLCellValue.FromObject(String.Join(", ", _initValue(args))));
 	}
 
 	//Returns Value/s as string usually for CSV export
@@ -78,39 +52,7 @@ public class TfTimeViewColumnType : ITfSpaceViewColumnTypeAddon
 		if (args is not TfSpaceViewColumnExportCsvModeContext)
 			throw new Exception("Wrong context type. TfSpaceViewColumnExportCsvModeContext is expected");
 
-		if (args is TfSpaceViewColumnExportExcelModeContext context)
-		{
-			var settings = context.GetColumnTypeOptions(new TfDateTimeViewColumnTypeSettings());
-			var value = _initValue(args);
-			var format = !String.IsNullOrWhiteSpace(settings.Format) ? settings.Format : _defaultFormat;
-			if (value.Count == 0)
-			{
-				return String.Empty;
-			}
-			else if (value.Count == 1)
-			{
-				if (value[0] is null) return String.Empty;
-				return ((DateTime)value[0]!).ToString(format);
-			}
-			else
-			{
-				var valuesList = new List<string>();
-				foreach (var item in value)
-				{
-					if (item is null)
-					{
-						valuesList.Add(TfConstants.ExcelNullWord);
-						continue;
-					}
-
-					valuesList.Add(item.Value.ToString(format));
-				}
-
-				return String.Join(", ", valuesList);
-			}
-		}
-
-		return String.Empty;
+		return String.Join(", ", _initValue(args));
 	}
 
 	public RenderFragment Render(TfSpaceViewColumnBaseContext args)
@@ -138,14 +80,14 @@ public class TfTimeViewColumnType : ITfSpaceViewColumnTypeAddon
 	#region << Private >>
 
 	//Value
-	private List<DateTime?> _initValue(TfSpaceViewColumnBaseContext args)
+	private List<string?> _initValue(TfSpaceViewColumnBaseContext args)
 	{
-		var values = new List<DateTime?>();
+		var values = new List<string?>();
 
 		var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
 		if (columnData is null)
 		{
-			values.Add(null);
+			values.Add(String.Empty);
 		}
 		else if (column.Origin == TfDataColumnOriginType.JoinedProviderColumn)
 		{
@@ -154,12 +96,12 @@ public class TfTimeViewColumnType : ITfSpaceViewColumnTypeAddon
 				if (columnData is IList joinValues)
 				{
 					foreach (var joinValue in joinValues)
-						values.Add((DateTime?)joinValue);
+						values.Add(joinValue?.ToString());
 				}
 			}
 		}
 		else
-			values.Add((DateTime)columnData);
+			values.Add(columnData.ToString());
 
 		return values;
 	}
@@ -170,9 +112,9 @@ public class TfTimeViewColumnType : ITfSpaceViewColumnTypeAddon
 		var values = _initValue(context);
 		return builder =>
 		{
-			builder.OpenComponent<TucTimeViewColumnTypeRead>(0);
+			builder.OpenComponent<TucImageViewColumnTypeRead>(0);
 			builder.AddAttribute(1, "Value", values);
-			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfTimeViewColumnTypeSettings()));
+			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfImageViewColumnTypeSettings()));
 			builder.CloseComponent();
 		};
 	}
@@ -188,9 +130,9 @@ public class TfTimeViewColumnType : ITfSpaceViewColumnTypeAddon
 
 			return builder =>
 			{
-				builder.OpenComponent<TucTimeViewColumnTypeEdit>(0);
+				builder.OpenComponent<TucImageViewColumnTypeEdit>(0);
 				builder.AddAttribute(1, "Value", values[0]);
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<DateTime?>(this, async (x) =>
+				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<string?>(this, async (x) =>
 				{
 					var change = new TfSpaceViewColumnDataChange
 					{
@@ -198,7 +140,7 @@ public class TfTimeViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
-				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfTimeViewColumnTypeSettings()));
+				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfImageViewColumnTypeSettings()));
 				builder.CloseComponent();
 			};
 		}
@@ -217,28 +159,25 @@ public class TfTimeViewColumnType : ITfSpaceViewColumnTypeAddon
 	{
 		return builder =>
 		{
-			builder.OpenComponent<TucTimeViewColumnTypeOptions>(0);
-			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfTimeViewColumnTypeSettings()));
+			builder.OpenComponent<TucImageViewColumnTypeOptions>(0);
+			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfImageViewColumnTypeSettings()));
 			builder.AddAttribute(2, "ValidationErrors", context.ValidationErrors);
-			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfTimeViewColumnTypeSettings>(this,
-				async (options) =>
-				{
-					context.SetColumnTypeOptions(options);
-					await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
-				}));
+			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfImageViewColumnTypeSettings>(this, async (options) =>
+			{
+				context.SetColumnTypeOptions(options);
+				await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
+			}));
 			builder.CloseComponent();
 		};
 	}
 
 	#endregion
+
 }
 
-public class TfTimeViewColumnTypeSettings
+public class TfImageViewColumnTypeSettings
 {
+
 	[JsonPropertyName("ChangeConfirmationMessage")]
 	public string? ChangeConfirmationMessage { get; set; }
-	
-	[JsonPropertyName("Format")]
-	public string? Format { get; set; }	
-
-}
+}	

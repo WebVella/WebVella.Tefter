@@ -65,7 +65,7 @@
 				@if (Item is TfFilterBoolean)
 				{
 					var context = (TfFilterBoolean)Item;
-					<TucSelect SelectedOption="@context.ComparisonMethod"
+					<TucSelect OptionSelected="@((x) => x == context.ComparisonMethod)"
 							   SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterBooleanComparisonMethod" Required="true"
@@ -74,20 +74,19 @@
 							   OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 					@if (context.RequiresValue)
 					{
-						<TucSelect SelectedOption="@context.ValueOption"
+						<TucSelect OptionSelected="@((x) => x.Value == context.ValueOption?.Value)"
 								   SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 								   Disabled="@(Disabled || ReadOnly)"
 								   TOption="Option<string>" Required="false"
 								   OptionText="@((p)=> p.Text)"
 								   OptionValue="@((p)=> p.Value)"
-								   Items="@context.ValueOptions" Style="width:300px"
-								   OptionSelected=@((x=> x.Value == context.ValueOption.Value)) />
+								   Items="@context.ValueOptions" Style="width:300px" />
 					}
 				}
 				else if (Item is TfFilterDateTime)
 				{
 					var context = (TfFilterDateTime)Item;
-					<TucSelect SelectedOption="@context.ComparisonMethod"
+					<TucSelect OptionSelected="@((x) => x == context.ComparisonMethod)"
 							   SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterDateTimeComparisonMethod" Required="true"
@@ -112,7 +111,7 @@
 				else if (Item is TfFilterGuid)
 				{
 					var context = (TfFilterGuid)Item;
-					<TucSelect SelectedOption="@context.ComparisonMethod"
+					<TucSelect OptionSelected="@((x) => x == context.ComparisonMethod)"
 							   SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterGuidComparisonMethod" Required="true"
@@ -131,7 +130,7 @@
 				else if (Item is TfFilterNumeric)
 				{
 					var context = (TfFilterNumeric)Item;
-					<TucSelect SelectedOption="@context.ComparisonMethod"
+					<TucSelect OptionSelected="@((x) => x == context.ComparisonMethod)"
 							   SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterNumericComparisonMethod" Required="true"
@@ -149,7 +148,7 @@
 				else if (Item is TfFilterText)
 				{
 					var context = (TfFilterText)Item;
-					<TucSelect SelectedOption="@context.ComparisonMethod"
+					<TucSelect OptionSelected="@((x) => x == context.ComparisonMethod)"
 							   SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 							   Disabled="@(Disabled || ReadOnly)"
 							   TOption="TfFilterTextComparisonMethod" Required="true"

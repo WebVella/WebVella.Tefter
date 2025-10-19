@@ -648,6 +648,7 @@ html:root {
   --error: var(--tf-red-500);
   --info: var(--tf-sky-500);
   --highlight-bg: var(--tf-yellow-500);
+  --neutral-layer-floating: var(--neutral-layer-2);
 }
 /* Inputs */
 .fluent-input-label,
@@ -730,6 +731,9 @@ div[class^='fluent-messagebar'],
   background-color: var(--tf-sky-950) !important;
 }
 /*Menu*/
+fluent-menu {
+  --neutral-layer-floating: var(--neutral-layer-2);
+}
 fluent-menu-item::part(start) {
   display: flex;
   align-items: center;
@@ -1889,6 +1893,39 @@ fluent-menu-item::part(start) {
 .tf-recipe__meta__author {
   margin-top: 5px;
   color: var(--neutral-foreground-hint);
+}
+.tf-select-btn {
+  justify-content: start;
+  display: flex;
+  align-items: center;
+  font-size: var(--type-ramp-base-font-size);
+}
+.tf-select-btn--with-background {
+  border-radius: calc(var(--control-corner-radius) * 1px);
+  height: calc((var(--base-height-multiplier) + var(--density)) * var(--design-unit) * 1px);
+  line-height: var(--type-ramp-base-line-height);
+  padding: 0 calc((10 + (var(--design-unit) * 2 * var(--density))) * 1px);
+}
+.tf-select-btn::part(start) {
+  flex: 0 0 auto;
+}
+.tf-select-btn::part(start) svg {
+  width: 20px;
+  vertical-align: bottom;
+}
+.tf-select-btn::part(content) {
+  height: 32px;
+  flex: 1 1 auto;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+.tf-btn-menu fluent-menu {
+  max-width: 100%;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  height: 300px;
+  max-height: 300px;
 }
 .tf-select-component {
   width: 100%;

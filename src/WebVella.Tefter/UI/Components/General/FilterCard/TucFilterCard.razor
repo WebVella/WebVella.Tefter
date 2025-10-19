@@ -3,39 +3,44 @@
 
 <TucCard Class="tf-card--filter">
 	<TitleTemplate>
-		<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TfFilterAnd), null, null))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
-		<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TfFilterOr), null, null))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+		<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TfFilterAnd), null, null))"
+		              IconStart="@TfConstants.GetIcon("Add")"
+		              Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+		<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TfFilterOr), null, null))"
+		              IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
 	</TitleTemplate>
 	<ToolbarTemplate>
 		<FluentStack VerticalAlignment="@VerticalAlignment.Center">
-			<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--tf-font-color-base);opacity:0.5">@LOC("Columns:")</FluentLabel>
+			<FluentLabel Typo="@Typography.Body"
+			             Style="margin-left:0.5rem;color:var(--tf-font-color-base);opacity:0.5">@LOC("Columns:")</FluentLabel>
 			@if (_allOptions.Count == 0)
 			{
 				<FluentBadge Appearance="Appearance.Accent">@LOC("no columns")</FluentBadge>
 			}
 			else
 			{
-				<TucSelect SelectedOption="@_selectedColumn"
-						   SelectedOptionChanged="@((x) => AddColumnFilter(x,null))"
-						   TOption="string" Required="false"
-						   Items="@_allOptions" Style="width:300px"
-						   Placeholder="@LOC("select to add...")" />
+				<TucSelect OptionSelected="@((x) => x == _selectedColumn)"
+				           SelectedOptionChanged="@((x) => AddColumnFilter(x, null))"
+				           TOption="string" Required="false"
+				           Items="@_allOptions" Style="width:300px"
+				           Placeholder="@LOC("select to add...")"/>
 			}
 		</FluentStack>
 	</ToolbarTemplate>
 	<ChildContent>
 		@if (_items.Count == 0)
 		{
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No filters added yet")</FluentMessageBar>
+			<FluentMessageBar AllowDismiss="false"
+			                  Intent="@MessageIntent.Info">@LOC("No filters added yet")</FluentMessageBar>
 		}
 		@foreach (var item in _items)
 		{
 			<TucFilterManage Item="item" Disabled="_submitting"
-							 AllColumnOptions="_allOptions"
-							 AddFilter="@((x) => AddFilter(x.Item1,x.Item2,x.Item3))"
-							 AddColumnFilter="@((x) => AddColumnFilter(x.Item1,x.Item2))"
-							 RemoveColumnFilter="@((x) => RemoveColumnFilter(x))"
-							 UpdateColumnFilter="@((x) => UpdateColumnFilter(x))" />
+			                 AllColumnOptions="_allOptions"
+			                 AddFilter="@((x) => AddFilter(x.Item1, x.Item2, x.Item3))"
+			                 AddColumnFilter="@((x) => AddColumnFilter(x.Item1, x.Item2))"
+			                 RemoveColumnFilter="@((x) => RemoveColumnFilter(x))"
+			                 UpdateColumnFilter="@((x) => UpdateColumnFilter(x))"/>
 		}
 	</ChildContent>
 </TucCard>

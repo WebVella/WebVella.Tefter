@@ -2,134 +2,145 @@
 @inherits TfBaseComponent
 @if (_isLoading)
 {
-	<TucLoadingPane />
+	<TucLoadingPane/>
 }
 else if (RegionContext is null || RegionContext.Template is null || RegionContext.SpaceData is null)
 {
-	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("Result cannot be generated as arguments are missing from the provided context")</FluentMessageBar>
+	<FluentMessageBar Intent="@MessageIntent.Error"
+	                  AllowDismiss="false">@LOC("Result cannot be generated as arguments are missing from the provided context")</FluentMessageBar>
 }
 else if (_result is null)
 {
-	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("Result is from the wrong object type")</FluentMessageBar>
+	<FluentMessageBar Intent="@MessageIntent.Error"
+	                  AllowDismiss="false">@LOC("Result is from the wrong object type")</FluentMessageBar>
 }
 else if (_result.Errors.Count > 0)
 {
 	<h4>@LOC("Errors")</h4>
-	<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("Errors occurred while generating the preview")</FluentMessageBar>
+	<FluentMessageBar Intent="@MessageIntent.Warning"
+	                  AllowDismiss="false">@LOC("Errors occurred while generating the preview")</FluentMessageBar>
 	<table class="tf-grid" style="margin-top:15px;">
 		<thead class="tf-grid-thead">
-			<tr class="tf-grid-tr">
-				<th class="tf-grid-th">@LOC("property")</th>
-				<th class="tf-grid-th">@LOC("error")</th>
-			</tr>
+		<tr class="tf-grid-tr">
+			<th class="tf-grid-th">@LOC("property")</th>
+			<th class="tf-grid-th">@LOC("error")</th>
+		</tr>
 		</thead>
 		<tbody class="tf-grid-tbody">
-			@foreach (var error in _result.Errors)
-			{
-				<tr @key=@(Guid.NewGuid())>
-					<td class="tf-grid-td">
-						<div>
-							@error.PropertyName
-						</div>
-					</td>
-					<td class="tf-grid-td">
-						<div>@error.Message</div>
-					</td>
-				</tr>
-			}
+		@foreach (var error in _result.Errors)
+		{
+			<tr @key=@(Guid.NewGuid())>
+				<td class="tf-grid-td">
+					<div>
+						@error.PropertyName
+					</div>
+				</td>
+				<td class="tf-grid-td">
+					<div>@error.Message</div>
+				</td>
+			</tr>
+		}
 		</tbody>
 	</table>
 }
 else if (_result.Items.Count == 0)
 {
-	<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("No content was generated")</FluentMessageBar>
+	<FluentMessageBar Intent="@MessageIntent.Warning"
+	                  AllowDismiss="false">@LOC("No content was generated")</FluentMessageBar>
 }
 else if (_result.ItemWithErrorsCount > 0)
 {
-	<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("{0} content have errors", _result.ItemWithErrorsCount)</FluentMessageBar>
+	<FluentMessageBar Intent="@MessageIntent.Warning"
+	                  AllowDismiss="false">@LOC("{0} content have errors", _result.ItemWithErrorsCount)</FluentMessageBar>
 	<h4 style="margin-top:1rem;">@LOC("Content to be generated")</h4>
 	<table class="tf-grid" style="margin-top:15px;">
 		<thead class="tf-grid-thead">
-			<tr class="tf-grid-thead-bkg"></tr>
-			<tr class="tf-grid-tr">
-				<th class="tf-grid-th">@LOC("group")</th>
-				<th class="tf-grid-th" style="width:80px;max-width:80px;">@LOC("used rows")</th>
-				<th class="tf-grid-th">@LOC("errors")</th>
-			</tr>
+		<tr class="tf-grid-thead-bkg"></tr>
+		<tr class="tf-grid-tr">
+			<th class="tf-grid-th">@LOC("group")</th>
+			<th class="tf-grid-th" style="width:80px;max-width:80px;">@LOC("used rows")</th>
+			<th class="tf-grid-th">@LOC("errors")</th>
+		</tr>
 		</thead>
 		<tbody class="tf-grid-tbody">
-			@foreach (var item in _result.Items)
-			{
-				<tr @key=@(Guid.NewGuid())>
-					<td class="tf-grid-td">
-						<div>
-							@LOC("group {0}", _itemPosition)
-						</div>
-					</td>
-					<td class="tf-grid-td">
-						<div>@item.NumberOfRows</div>
-					</td>
-					<td class="tf-grid-td">
-						<div style="white-space:normal">
-							@if (item.Errors.Count > 0)
-							{
-								<ul>
-									@foreach (var error in item.Errors)
-									{
-										<li style="color:var(--error)">
-											@if (String.IsNullOrWhiteSpace(error.PropertyName))
-											{
-												<span>@error.Message</span>
-											}
-											else
-											{
-												<span><i>@error.PropertyName :</i> <span>@error.Message</span></span>
-											}
-										</li>
-									}
-								</ul>
-							}
-							else
-							{
-								<span>@LOC("no errors")</span>
-							}
-						</div>
-					</td>
-				</tr>
-				_itemPosition++;
-			}
+		@foreach (var item in _result.Items)
+		{
+			<tr @key=@(Guid.NewGuid())>
+				<td class="tf-grid-td">
+					<div>
+						@LOC("group {0}", _itemPosition)
+					</div>
+				</td>
+				<td class="tf-grid-td">
+					<div>@item.NumberOfRows</div>
+				</td>
+				<td class="tf-grid-td">
+					<div style="white-space:normal">
+						@if (item.Errors.Count > 0)
+						{
+							<ul>
+								@foreach (var error in item.Errors)
+								{
+									<li style="color:var(--error)">
+										@if (String.IsNullOrWhiteSpace(error.PropertyName))
+										{
+											<span>@error.Message</span>
+										}
+										else
+										{
+											<span><i>@error.PropertyName :</i> <span>@error.Message</span></span>
+										}
+									</li>
+								}
+							</ul>
+						}
+						else
+						{
+							<span>@LOC("no errors")</span>
+						}
+					</div>
+				</td>
+			</tr>
+			_itemPosition++;
+		}
 		</tbody>
 	</table>
 }
 else
 {
 	<FluentStack>
-		<h4 style="flex:0 0 30%">@LOC("Generated content") <FluentBadge Appearance="Appearance.Accent">@_result.Items.Count</FluentBadge></h4>
+		<h4 style="flex:0 0 30%">@LOC("Generated content") <FluentBadge
+				Appearance="Appearance.Accent">@_result.Items.Count</FluentBadge>
+		</h4>
 		<FluentStack Style="flex:1 1 auto" HorizontalGap="5">
-			<FluentButton IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="@Appearance.Outline" Style="flex:0 0 80px" OnClick="_prevItem"
-						  Disabled="@(_result.Items.Count == 1)" />
-			<TucSelect TOption="TextContentTemplateResultItem" Style="flex:1 1 auto" SelectedOption="@_form"
-						  SelectedOptionChanged="_selectedOptionChanged"
-						  Disabled="@(_result.Items.Count == 1)"
-						  OptionValue="@((p)=> p.Id.ToString())"
-						  Items="_result.Items">
+			<FluentButton IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="@Appearance.Outline"
+			              Style="flex:0 0 80px" OnClick="_prevItem"
+			              Disabled="@(_result.Items.Count == 1)"/>
+			<TucSelect TOption="TextContentTemplateResultItem" Style="flex:1 1 auto"
+			           OptionSelected="@((x) => x.Id == _form?.Id)"
+			           SelectedOptionChanged="_selectedOptionChanged"
+			           Disabled="@(_result.Items.Count == 1)"
+			           OptionValue="@((p) => p.Id.ToString())"
+			           Items="_result.Items">
 				<OptionTemplate Context="p">
 					@LOC("content {0}", _itemPositionDict[p.Id])
 				</OptionTemplate>
 			</TucSelect>
-			<FluentButton IconStart="@TfConstants.GetIcon("Copy")" Appearance="@Appearance.Outline" Style="flex:0 0 100px" OnClick="_copyToClipboard">@LOC("copy")</FluentButton>
-			<FluentButton IconStart="@TfConstants.GetIcon("ArrowRight")" Appearance="@Appearance.Outline" Style="flex:0 0 80px" OnClick="_nextItem"
-						  Disabled="@(_result.Items.Count == 1)" />
+			<FluentButton IconStart="@TfConstants.GetIcon("Copy")" Appearance="@Appearance.Outline"
+			              Style="flex:0 0 100px" OnClick="_copyToClipboard">@LOC("copy")</FluentButton>
+			<FluentButton IconStart="@TfConstants.GetIcon("ArrowRight")" Appearance="@Appearance.Outline"
+			              Style="flex:0 0 80px" OnClick="_nextItem"
+			              Disabled="@(_result.Items.Count == 1)"/>
 		</FluentStack>
 	</FluentStack>
-	<FluentDivider Style="margin:10px 0" />
+	<FluentDivider Style="margin:10px 0"/>
 	@if (_result.IsHtml)
 	{
-		<TucEditor Value=@_form.Content Size="TfEditorSize.Large" ReadOnly="true" />
+		<TucEditor Value=@_form.Content Size="TfEditorSize.Large" ReadOnly="true"/>
 	}
 	else
 	{
-		<FluentTextArea Value=@_form.Content ReadOnly="true" Style="width:100%" Rows="7" />
+		<FluentTextArea Value=@_form.Content ReadOnly="true" Style="width:100%" Rows="7"/>
 	}
 }
 

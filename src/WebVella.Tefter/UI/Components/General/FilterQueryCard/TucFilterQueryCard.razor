@@ -3,35 +3,40 @@
 
 <TucCard Title="@Title" Class="tf-card--filter">
 	<TitleTemplate>
-		<FluentButton OnClick="@(() => AddFilter(new TfFilterAnd().GetColumnName(), null))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
-		<FluentButton OnClick="@(() => AddFilter(new TfFilterOr().GetColumnName(), null))" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+		<FluentButton OnClick="@(() => AddFilter(new TfFilterAnd().GetColumnName(), null))"
+		              IconStart="@TfConstants.GetIcon("Add")"
+		              Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+		<FluentButton OnClick="@(() => AddFilter(new TfFilterOr().GetColumnName(), null))"
+		              IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
 	</TitleTemplate>
 	<ToolbarTemplate>
 		<FluentStack VerticalAlignment="@VerticalAlignment.Center" HorizontalAlignment="@HorizontalAlignment.Right">
-			<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">@LOC("Columns:")</FluentLabel>
-			<TucSelect SelectedOption="@_selectedOption"
-						  SelectedOptionChanged="(x=> _addColumnFilterHandler(x))"
-						  TOption="TfFilterQuery" Required="false"
-						  Items="@_allOptions" Style="width:300px"
-						  Placeholder="@LOC("select to add...")"
-						  OptionValue="(x=> x.Name)"
-						  OptionText="(x=> _columnDict.ContainsKey(x.Name) ? _columnDict[x.Name] : x.Name)" />
+			<FluentLabel Typo="@Typography.Body"
+			             Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">@LOC("Columns:")</FluentLabel>
+			<TucSelect OptionSelected="@((x) => x.Name == _selectedOption?.Name)"
+			           SelectedOptionChanged="(x=> _addColumnFilterHandler(x))"
+			           TOption="TfFilterQuery" Required="false"
+			           Items="@_allOptions" Style="width:300px"
+			           Placeholder="@LOC("select to add...")"
+			           OptionValue="(x=> x.Name)"
+			           OptionText="(x=> _columnDict.ContainsKey(x.Name) ? _columnDict[x.Name] : x.Name)"/>
 		</FluentStack>
 	</ToolbarTemplate>
 	<ChildContent>
 		@if (Items.Count == 0)
 		{
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No filters added yet")</FluentMessageBar>
+			<FluentMessageBar AllowDismiss="false"
+			                  Intent="@MessageIntent.Info">@LOC("No filters added yet")</FluentMessageBar>
 		}
 		@foreach (var item in Items)
 		{
 			<TucFilterQueryManage Item="item"
-								  AddFilter="@((x) => AddFilter(x.Item1,x.Item2))"
-								  RemoveFilter="@((x) => RemoveFilter(x))"
-								  UpdateFilter="@((x) => UpdateFilter(x))"
-								  AllOptions=_allOptions
-								  ColumnDict="_columnDict"
-								  TypeDict="_typeDict" />
+			                      AddFilter="@((x) => AddFilter(x.Item1, x.Item2))"
+			                      RemoveFilter="@((x) => RemoveFilter(x))"
+			                      UpdateFilter="@((x) => UpdateFilter(x))"
+			                      AllOptions=_allOptions
+			                      ColumnDict="_columnDict"
+			                      TypeDict="_typeDict"/>
 		}
 	</ChildContent>
 </TucCard>

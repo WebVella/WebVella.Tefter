@@ -12,7 +12,7 @@
 		{
 			<TucSelect SelectedOptionChanged="((column) => _addColumn(column))"
 			           TOption="TfDatasetColumn" Required="false"
-			           SelectedOption="@_selectedColumn"
+			           OptionSelected="@((x) => x.ColumnName == _selectedColumn?.ColumnName)"
 			           OptionValue="@((p) => p.ColumnName)"
 			           OptionText="@(p => p.ColumnName)"
 			           Items="@_options" Style="width:300px"

@@ -3,7 +3,7 @@
 public record TfSelectOption
 {
 	public Guid Id { get; set; } = Guid.NewGuid();
-	public object Value { get; set; }
+	public object? Value { get; set; }
 	public string? Label { get; set; }
 	public string? IconName { get; set; }
 	public string? Color { get; set; }
@@ -18,7 +18,7 @@ public record TfSelectOption
 
 	public TfSelectOption() { }
 	public TfSelectOption(
-		object value, 
+		object? value, 
 		string? label = null,
 		string? iconName = null,
 		string? color = null,

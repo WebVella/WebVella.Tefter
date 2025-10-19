@@ -2,11 +2,45 @@
 
 public static class ViewColumnTypeExt
 {
+	#region << DataColumn >>
+	public static object? ConvertStringToColumnObject(this TfDataColumn? column, string stringValue)
+	{
+		if (column is null) return null;
+
+		switch (column.DbType)
+		{
+			case TfDatabaseColumnType.ShortInteger:
+				return TfConverters.Convert<short>(stringValue);
+			case TfDatabaseColumnType.Integer:
+				return TfConverters.Convert<int>(stringValue);
+			case TfDatabaseColumnType.LongInteger:
+				return TfConverters.Convert<long>(stringValue);
+			case TfDatabaseColumnType.Number:
+				return TfConverters.Convert<decimal>(stringValue);
+			case TfDatabaseColumnType.Boolean:
+				return TfConverters.Convert<bool>(stringValue);
+			case TfDatabaseColumnType.DateOnly:
+				return TfConverters.Convert<DateOnly>(stringValue);
+			case TfDatabaseColumnType.DateTime:
+				return TfConverters.Convert<DateTime>(stringValue);
+			case TfDatabaseColumnType.ShortText:
+			case TfDatabaseColumnType.Text:
+				return stringValue;
+			case TfDatabaseColumnType.Guid:
+				return TfConverters.Convert<Guid>(stringValue); ;
+			default:
+				throw new Exception("colDbType not supported");
+		}
+	}
+	
+
+	#endregion
+	
 	#region << Context >>
 
 	public static (TfDataColumn, object?) GetColumnAndDataByAlias(this TfSpaceViewColumnBaseContext args, string alias)
 	{
-		TfDataTable? dt = null;
+		TfDataTable? dt;
 		Guid rowId;
 		switch (args)
 		{
@@ -58,11 +92,10 @@ public static class ViewColumnTypeExt
 	
 	#endregion
 
-
 	#region << DataTable >>
 
 	public static TfDataColumn? GetColumnByAlias(this TfDataTable? dt, string alias,
-		Dictionary<string, string> dataMapping)
+		Dictionary<string, string?> dataMapping)
 	{
 		if (dt is null) return null;
 		var colName = dataMapping._getColumnNameFromAlias(alias);
@@ -105,7 +138,7 @@ public static class ViewColumnTypeExt
 
 	#region << Private >>
 
-	private static string? _getColumnNameFromAlias(this Dictionary<string, string> dataMapping, string alias)
+	private static string? _getColumnNameFromAlias(this Dictionary<string, string?> dataMapping, string alias)
 	{
 		if (dataMapping.ContainsKey(alias))
 			return dataMapping[alias];
@@ -127,7 +160,7 @@ public static class ViewColumnTypeExt
 		object? value = dt[rowId, colDbName];
 		if (value is null) return defaultValue;
 		if (value.GetType().ImplementsInterface(typeof(IList))) return (List<string>)value;
-		return value!.ToString();
+		return value.ToString();
 	}
 
 
@@ -163,11 +196,11 @@ public static class ViewColumnTypeExt
 		T? defaultValue = null)
 		where T : struct
 	{
-		return dt._getDataStruct<T>(rowId, column.Name, defaultValue);
+		return dt._getDataStruct(rowId, column.Name, defaultValue);
 	}
 
 
-	private static T? GetDataObjectFromJsonByAlias<T>(this TfDataTable? dt, Guid rowId, TfDataColumn column,
+	private static T? _getDataObjectFromJsonByAlias<T>(this TfDataTable? dt, Guid rowId, TfDataColumn column,
 		T? defaultValue = null) where T : class
 	{
 		if (dt is null || dt.Rows.Count == 0 || rowId == Guid.Empty) return defaultValue;

@@ -5,7 +5,7 @@ public class TfPhoneViewColumnType : ITfSpaceViewColumnTypeAddon
 	#region << INIT >>
 
 	public const string ID = "d1183066-3c70-44de-88f9-e15e61b9c0ce";
-	public const string NAME = "Phone Display";
+	public const string NAME = "Phone";
 	public const string DESCRIPTION = "displays a phone number";
 	public const string FLUENT_ICON_NAME = "Call";
 	private const string VALUE_ALIAS = "Value";

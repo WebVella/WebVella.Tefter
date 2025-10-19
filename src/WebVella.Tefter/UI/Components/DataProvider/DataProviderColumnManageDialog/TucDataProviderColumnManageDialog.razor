@@ -52,7 +52,7 @@
 						}
 					</FluentGridItem>
 					<FluentGridItem xs="4">
-						<TucSelect SelectedOption="@_form.DbType"
+						<TucSelect OptionSelected="@((x) => x == _form.DbType)"
 								   SelectedOptionChanged="_dbTypeChanged"
 								   TOption="TfDatabaseColumnType"
 								   Items="@_providerColumnTypeToSourceTypes.Keys"
