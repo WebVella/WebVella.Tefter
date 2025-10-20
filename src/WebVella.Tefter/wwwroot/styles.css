@@ -1271,6 +1271,16 @@ fluent-menu-item::part(start) {
   padding: 0;
   display: flex;
 }
+.tf-grid thead > tr > .tf-grid-th--check .check-content .loading-button,
+.tf-grid tbody > tr > .tf-grid-th--check .check-content .loading-button,
+.tf-grid thead > tr > .tf-grid-td--check .check-content .loading-button,
+.tf-grid tbody > tr > .tf-grid-td--check .check-content .loading-button {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
 .tf-grid thead > tr > .tf-grid-th--check .check-content.multi,
 .tf-grid tbody > tr > .tf-grid-th--check .check-content.multi,
 .tf-grid thead > tr > .tf-grid-td--check .check-content.multi,

@@ -30,17 +30,21 @@
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DataIdentity
-									 Label="@LOC("Name")" Style="width:100%" 
-									 AutoComplete="off" Disabled=@(!_isCreate) ReadOnly=@(!_isCreate)/>
+					                 Label="@LOC("Name")" Style="width:100%" Required="true"
+					                 AutoComplete="off" Disabled=@(!_isCreate) ReadOnly=@(!_isCreate)/>
 					<FluentValidationMessage For="@(() => _form.DataIdentity)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Label
-									 Label="@LOC("Description")" Style="width:100%" 
-									 AutoComplete="off"/>
-					<FluentValidationMessage For="@(() => _form.Label)" />
 				</FluentGridItem>
 			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Label
+					                 Label="@LOC("Description")" Style="width:100%" 
+					                 AutoComplete="off"/>
+					<FluentValidationMessage For="@(() => _form.Label)" />
+				</FluentGridItem>
+			</FluentGrid>			
 		</FluentEditForm>
 	}
 </FluentDialogBody>

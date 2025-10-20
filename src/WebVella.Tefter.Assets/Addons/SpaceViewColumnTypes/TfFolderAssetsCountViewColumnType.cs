@@ -78,6 +78,9 @@ public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnTypeAddon
     public List<ValidationError> ValidateTypeOptions(TfSpaceViewColumnOptionsModeContext args)
     {
         _validationErrors = new();
+        var settings = args.GetSettings<TfFolderAssetsCountViewColumnTypeSettings>();
+        if(settings.FolderId is null || settings.FolderId == Guid.Empty)
+            _validationErrors.Add(new ValidationError("FolderId", "required"));        
         return _validationErrors;
     }
 

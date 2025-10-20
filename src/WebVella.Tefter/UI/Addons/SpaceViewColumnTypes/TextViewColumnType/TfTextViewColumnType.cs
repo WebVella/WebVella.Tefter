@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.UI.Addons;
+﻿using System.Diagnostics;
+
+namespace WebVella.Tefter.UI.Addons;
 
 public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 {
@@ -104,7 +106,6 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 		}
 		else
 			values.Add(columnData.ToString());
-
 		return values;
 	}
 

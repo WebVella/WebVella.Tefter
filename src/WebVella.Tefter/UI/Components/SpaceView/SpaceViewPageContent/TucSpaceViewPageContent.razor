@@ -40,7 +40,6 @@ else
 			<Toolbar>
 				<TucSpaceViewPageContentToolbar Context=Context SpaceView="_spaceView" Data=_data
 				                                SpaceData="_spaceData" SpaceViewPreset=_preset
-				                                SelectAllLoading="_selectAllLoading"
 				                                SelectedRows="_selectedDataRows"/>
 			</Toolbar>
 			<ChildContent>
@@ -65,7 +64,7 @@ else
 									@if (_allDataRowsSelected())
 									{
 										<FluentButton OnClick="@(() => _toggleSelectAll(false))"
-										              BackgroundColor="transparent" Color="transparent">
+										              BackgroundColor="transparent" Color="transparent" Loading="_selectAllLoading">
 											<FluentIcon
 												Value="@TfConstants.GetIcon("CheckboxChecked", variant: IconVariant.Filled)"
 												Color="@Color.Accent"/>
@@ -74,7 +73,7 @@ else
 									else
 									{
 										<FluentButton OnClick="@(() => _toggleSelectAll(true))"
-										              BackgroundColor="transparent" Color="transparent">
+										              BackgroundColor="transparent" Color="transparent" Loading="_selectAllLoading">
 											<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")"
 											            Color="@Color.Custom"
 											            CustomColor="var(--neutral-stroke-input-active)"/>

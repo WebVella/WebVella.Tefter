@@ -8,7 +8,7 @@
 		           Items="FolderOptions"
 		           OptionValue="(x=> x.Id.ToString())"
 		           OptionText="(x=> x.Name)"
-		           OptionSelected="@((x) => x.Id == Context.GetSettings<TfFolderAssetsCountViewColumnTypeSettings>().FolderId)"
+		           OptionSelected="@((x) => x.Id == _settings.FolderId)"
 		           SelectedOptionChanged="_folderSelectHandler"/>
 	</FluentGridItem>
 

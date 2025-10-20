@@ -2,6 +2,29 @@
 
 public static class ViewColumnTypeExt
 {
+	private const string _separator = "$$$";
+	private const string _innerSeparator = "$_$";
+
+	#region << ColumnType >>
+
+	public static string GetCompatabilityHash(this ITfSpaceViewColumnTypeAddon columnType)
+	{
+		var sb = new StringBuilder();
+		foreach (var definition in columnType.DataMappingDefinitions)
+		{
+			sb.Append(_separator);
+			sb.Append(definition.Alias);
+			sb.Append(_innerSeparator);
+			var support = _getMaxSupportLevel(definition);
+			sb.Append(support.GetHash());
+			sb.Append(_separator);
+		}
+
+		return sb.ToString();
+	}
+
+	#endregion
+
 	#region << DataColumn >>
 
 	public static object? ConvertStringToColumnObject(this TfDataColumn? column, string stringValue)
@@ -72,6 +95,17 @@ public static class ViewColumnTypeExt
 		if (column is null)
 			return (null, null);
 		return (column, dt.GetColumnData(rowId, column));
+	}
+
+	public static string GetStorageKey(this TfSpaceViewColumnBaseContext args, string suffix)
+	{
+		var sb = new StringBuilder();
+		sb.Append(args.ViewColumn.Id);
+		sb.Append("__");
+		sb.Append(args.ViewColumn.TypeId);
+		sb.Append("__");
+		sb.Append(suffix);
+		return sb.ToString();
 	}
 
 	public static (TfDataColumn, object?) GetColumnAndData(this TfSpaceViewColumnBaseContext args, string columnName)
@@ -198,7 +232,6 @@ public static class ViewColumnTypeExt
 		return value.ToString();
 	}
 
-
 	private static object? _getDataStruct<T>(this TfDataTable? dt, Guid rowId, string colDbName,
 		T? defaultValue = null) where T : struct
 	{
@@ -219,13 +252,11 @@ public static class ViewColumnTypeExt
 		return TfConverters.Convert<T>(value.ToString()!);
 	}
 
-
 	private static object? _getDataStringByAlias(this TfDataTable? dt, Guid rowId, TfDataColumn column,
 		string? defaultValue = null)
 	{
 		return dt._getDataString(rowId, column.Name, defaultValue);
 	}
-
 
 	private static object? _getDataStructByAlias<T>(this TfDataTable? dt, Guid rowId, TfDataColumn column,
 		T? defaultValue = null)
@@ -233,7 +264,6 @@ public static class ViewColumnTypeExt
 	{
 		return dt._getDataStruct(rowId, column.Name, defaultValue);
 	}
-
 
 	private static T? _getDataObjectFromJsonByAlias<T>(this TfDataTable? dt, Guid rowId, TfDataColumn column,
 		T? defaultValue = null) where T : class
@@ -252,6 +282,106 @@ public static class ViewColumnTypeExt
 			return JsonSerializer.Deserialize<T>(value.ToString()!);
 		}
 		catch { throw new Exception("Value cannot be parsed"); }
+	}
+
+	private record ComponentTypeSupportMaxLevel
+	{
+		public TfDatabaseColumnType? Number { get; set; } = null;
+		public TfDatabaseColumnType? Text { get; set; } = null;
+		public TfDatabaseColumnType? Boolean { get; set; } = null;
+		public TfDatabaseColumnType? DateTime { get; set; } = null;
+		public TfDatabaseColumnType? Guid { get; set; } = null;
+
+		public string GetHash()
+		{
+			var sb = new StringBuilder();
+			sb.Append(Number?.ToString());
+			sb.Append(_innerSeparator);
+			sb.Append(Text?.ToString());
+			sb.Append(_innerSeparator);
+			sb.Append(Boolean?.ToString());
+			sb.Append(_innerSeparator);
+			sb.Append(DateTime?.ToString());
+			sb.Append(_innerSeparator);
+			sb.Append(Guid?.ToString());
+			sb.Append(_innerSeparator);
+			return sb.ToString();
+		}
+	}
+
+	private static ComponentTypeSupportMaxLevel _getMaxSupportLevel(
+		this TfSpaceViewColumnDataMappingDefinition definition)
+	{
+		var support = new ComponentTypeSupportMaxLevel();
+		var numberSupportPriority = new List<TfDatabaseColumnType>
+		{
+			TfDatabaseColumnType.Number,
+			TfDatabaseColumnType.LongInteger,
+			TfDatabaseColumnType.Integer,
+			TfDatabaseColumnType.ShortInteger,
+		};
+		var textSupportPriority = new List<TfDatabaseColumnType>
+		{
+			TfDatabaseColumnType.Text, TfDatabaseColumnType.ShortText
+		};
+		var boolSupportPriority = new List<TfDatabaseColumnType> { TfDatabaseColumnType.Boolean };
+		var dateTimeSupportPriority = new List<TfDatabaseColumnType>
+		{
+			TfDatabaseColumnType.DateTime, TfDatabaseColumnType.DateOnly,
+		};
+		var guidSupportPriority = new List<TfDatabaseColumnType> { TfDatabaseColumnType.Guid };
+		//number
+		foreach (var dbType in numberSupportPriority)
+		{
+			if (definition.SupportedDatabaseColumnTypes.Contains(dbType))
+			{
+				support.Number = dbType;
+				break;
+			}
+		}
+
+		//text
+		foreach (var dbType in textSupportPriority)
+		{
+			if (definition.SupportedDatabaseColumnTypes.Contains(dbType))
+			{
+				support.Text = dbType;
+				break;
+			}
+		}
+
+		//boolean
+		foreach (var dbType in boolSupportPriority)
+		{
+			if (definition.SupportedDatabaseColumnTypes.Contains(dbType))
+			{
+				support.Boolean = dbType;
+				break;
+			}
+		}
+
+		//datetime
+		foreach (var dbType in dateTimeSupportPriority)
+		{
+			if (definition.SupportedDatabaseColumnTypes.Contains(dbType))
+			{
+				support.DateTime = dbType;
+				break;
+			}
+		}
+
+		//guid
+		foreach (var dbType in guidSupportPriority)
+		{
+			if (definition.SupportedDatabaseColumnTypes.Contains(dbType))
+			{
+				support.Guid = dbType;
+				break;
+			}
+		}
+
+
+		return support;
 	}
 
 	#endregion

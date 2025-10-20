@@ -120,7 +120,7 @@ else if (_navState.ManageTab == "columns")
 							</td>
 							<td class="tf-grid-td">
 								<div>
-									<div>@context.Title</div>
+									<div>@(!String.IsNullOrWhiteSpace(context.Title) ? context.Title : LOC("(no title)"))</div>
 									<div class="td-description">@context.QueryName</div>
 								</div>
 							</td>

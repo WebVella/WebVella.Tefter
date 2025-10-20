@@ -106,6 +106,9 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
+			var space = (TfSpace)result.Data;
+			Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl,space.Id));
+			await Dialog.CloseAsync();
 		}
 	}	
 	

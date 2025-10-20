@@ -3,9 +3,12 @@
 namespace WebVella.Tefter.Services;
 public partial interface ITfMetaService
 {
-	public ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypesMeta();
-	public ReadOnlyDictionary<Guid,ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypeDictionary();
-	public ITfSpaceViewColumnTypeAddon? GetSpaceViewColumnType(Guid addonId);
+	ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypesMeta();
+	ReadOnlyDictionary<Guid,ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypeDictionary();
+	ITfSpaceViewColumnTypeAddon? GetSpaceViewColumnType(Guid addonId);
+
+	ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetCompatibleViewColumnTypesMeta(
+		ITfSpaceViewColumnTypeAddon columnMeta);
 }
 
 public partial class TfMetaService : ITfMetaService
@@ -16,7 +19,7 @@ public partial class TfMetaService : ITfMetaService
 
 	public ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypesMeta()
 	{
-		return _columnTypeMetaList.AsReadOnly();
+		return _columnTypeMetaList.OrderBy(x=> x.AddonName).ToList().AsReadOnly();
 	}
 	public ReadOnlyDictionary<Guid,ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypeDictionary()
 	{
@@ -29,6 +32,27 @@ public partial class TfMetaService : ITfMetaService
 		return null;
 	}
 
+	/// <summary>
+	/// Gets view column types that can replace the current type. Includes the current type too
+	/// </summary>
+	/// <param name="columnMeta"></param>
+	/// <returns>the column type that is evaluated</returns>
+	public ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetCompatibleViewColumnTypesMeta(ITfSpaceViewColumnTypeAddon columnMeta)
+	{
+		var list = new List<ITfSpaceViewColumnTypeAddon>();
+		var sourceCompatabilityHash = columnMeta.GetCompatabilityHash();
+		foreach (var target in _columnTypeMetaList)
+		{
+			var targetCompatabilityHash = target.GetCompatabilityHash();
+			if (sourceCompatabilityHash.Equals(targetCompatabilityHash))
+			{
+				list.Add(target);
+			}
+		}
+		
+		return list.OrderBy(x=> x.AddonName).ToList().AsReadOnly();
+	}	
+	
 
 	//Private
 

@@ -414,10 +414,6 @@ public partial class TfService : ITfService
 					.NotEmpty()
 					.WithMessage("The query name is required.");
 
-				RuleFor(column => column.Title)
-					.NotEmpty()
-					.WithMessage("The query name is required.");
-
 				RuleFor(column => column.TypeId)
 					.NotEmpty()
 					.WithMessage("The column type is required.");

@@ -10,11 +10,17 @@ public partial class TucFolderAssetsCountViewColumnTypeOptions : TfLocalizedView
     [Parameter] public List<AssetsFolder> FolderOptions { get; set; } = new();
 
 
+    private TfFolderAssetsCountViewColumnTypeSettings _settings =  new ();
+
+    protected override void OnParametersSet()
+    {
+        _settings = Context.GetSettings<TfFolderAssetsCountViewColumnTypeSettings>();
+    }       
+    
     private async Task _folderSelectHandler(AssetsFolder? folder)
     {
-        var settings = Context.GetSettings<TfFolderAssetsCountViewColumnTypeSettings>();
-        settings.FolderId = folder?.Id;
-        await SettingsChanged.InvokeAsync(settings);
+        _settings.FolderId = folder?.Id;
+        await SettingsChanged.InvokeAsync(_settings);
         if (folder is not null)
             await DataMappingChanged.InvokeAsync(new Tuple<string, string?>("Value",
                 $"{folder.DataIdentity}.{folder.CountSharedColumnName}"));

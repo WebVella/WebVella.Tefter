@@ -32,7 +32,6 @@ public partial class TfService : ITfService
 			search = search.Trim().ToLowerInvariant();
 			return allIdentities.Where(x=> 
 				x.DataIdentity.ToLowerInvariant().Contains(search)
-				|| x.Label.ToLowerInvariant().Contains(search)
 				).ToList();
 		}
 		catch (Exception ex)
@@ -154,10 +153,6 @@ public partial class TfService : ITfService
 				RuleFor(dataIdentity => dataIdentity.DataIdentity)
 					.NotEmpty()
 					.WithMessage("The data identity is required.");
-
-				RuleFor(dataIdentity => dataIdentity.Label)
-					.NotEmpty()
-					.WithMessage("The data identity label is required.");
 
 				RuleFor(dataIdentity => dataIdentity.DataIdentity)
 					.Must((dataIdentity, dbName) =>

@@ -1,11 +1,14 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
+@{
+    var state = TfAuthLayout.GetState();
+}
 <div class="tf-page-topbar">
     <div class="tf-page-topbar__left">
         <TucPageTopbarBreadcrumb/>
     </div>
     <div class="tf-page-topbar__right">
-        @if (TfAuthLayout.GetState().Space is not null && TfAuthLayout.GetState().SpacePage is not null)
+        @if (state.Space is not null && state.SpacePage is not null)
         {
             <FluentButton Id="view-bookmark-selector" OnClick="_onBookmarkClick" IconStart="@_bookmarkIcon"
                           Appearance="@Appearance.Outline" Title="@_bookmarkTitle"/>
@@ -30,16 +33,23 @@
                     <FluentIcon Value="@TfConstants.GetIcon("Link")"/>
                 </FluentButton>
             }
+            @if (state.User.IsAdmin)
+            {
+                <TucAnchor Id="view-save-selector" Href="@(String.Format(TfConstants.SpacePagePageManageUrl,state.NavigationState.SpaceId, state.NavigationState.SpacePageId).GenerateWithLocalAsReturnUrl(Navigator.Uri))" Appearance="@Appearance.Outline">
+                    <FluentIcon Value="@TfConstants.GetIcon("Settings")"/>
+                </TucAnchor>                
+            }
+
             <FluentDivider Orientation="Orientation.Vertical"/>
         }
         <TucNotificationCenter/>
         <TucAnchor Href="#" OnClick="() => _userMenuVisible = !_userMenuVisible"
                    Id="user-menu-toggle" Appearance="@Appearance.Outline">
-            <TucAvatar User="TfAuthLayout.GetState().User" UseUserColor="false"/>
+            <TucAvatar User="state.User" UseUserColor="false"/>
         </TucAnchor>
         <FluentMenu Width="200px" @bind-Open="_userMenuVisible" Anchor="user-menu-toggle" UseMenuService="true" Class="tf-override">
             <FluentMenuItem Disabled="true">
-                @TfAuthLayout.GetState().User.FirstName @TfAuthLayout.GetState().User.LastName
+                @state.User.FirstName @state.User.LastName
             </FluentMenuItem>
             <FluentDivider Style="margin-top:10px"/>
             <FluentMenuItem OnClick="_visualPreferencesHandler">

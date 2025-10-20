@@ -8,7 +8,7 @@
 		           Items="ChannelOptions"
 		           OptionValue="(x=> x.Id.ToString())"
 		           OptionText="(x=> x.Name)"
-		           OptionSelected="@((x) => x.Id == Context.GetSettings<TfTalkCommentsCountViewColumnTypeSettings>().ChannelId)"
+		           OptionSelected="@((x) => x.Id == _settings.ChannelId)"
 		           SelectedOptionChanged="_folderSelectHandler"/>
 	</FluentGridItem>
 

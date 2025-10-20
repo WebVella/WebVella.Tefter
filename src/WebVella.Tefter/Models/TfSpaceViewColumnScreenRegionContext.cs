@@ -2,18 +2,19 @@
 
 namespace WebVella.Tefter.Models;
 
-public abstract class TfSpaceViewColumnBaseContext : TfBaseScreenRegionContext
+public abstract class TfSpaceViewColumnBaseContext(Dictionary<string, object> viewData) : TfBaseScreenRegionContext
 {
 	public TfSpaceViewColumn ViewColumn { get; set; } = null!;
 	public ITfService TfService { get; init; } = null!;
 	public IServiceProvider ServiceProvider { get; init; } = null!;
-}
-
-public class TfSpaceViewColumnReadModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext
-{
+	
 	//When columns need to share data between rows (optimization)
 	private Dictionary<string, object> _viewData = viewData;
-	public Dictionary<string, object> ViewData { get => _viewData; }
+	public Dictionary<string, object> ViewData { get => _viewData; }	
+}
+
+public class TfSpaceViewColumnReadModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext(viewData)
+{
 	public TfDataTable? DataTable { get; set; } = null;
 	public Guid RowId { get; set; } = default;
 
@@ -36,11 +37,8 @@ public class TfSpaceViewColumnReadModeContext(Dictionary<string, object> viewDat
 	}
 }
 
-public class TfSpaceViewColumnEditModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext
+public class TfSpaceViewColumnEditModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext(viewData)
 {
-	//When columns need to share data between rows (optimization)
-	private Dictionary<string, object> _viewData = viewData;
-	public Dictionary<string, object> ViewData { get => _viewData; }
 	public TfDataTable? DataTable { get; set; } = null;
 	public Guid RowId { get; set; } = default;
 	public EventCallback<TfSpaceViewColumnDataChange> DataChanged { get; set; }
@@ -63,14 +61,14 @@ public class TfSpaceViewColumnEditModeContext(Dictionary<string, object> viewDat
 	}
 }
 
-public class TfSpaceViewColumnOptionsModeContext : TfSpaceViewColumnBaseContext
+public class TfSpaceViewColumnOptionsModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext(viewData)
 {
 	public List<ValidationError> ValidationErrors { get; set; } = new();
 	public EventCallback<string> SettingsChanged { get; set; }
 	public EventCallback<Tuple<string, string?>> DataMappingChanged { get; set; }
 }
 
-public class TfSpaceViewColumnExportExcelModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext
+public class TfSpaceViewColumnExportExcelModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext(viewData)
 {
 	public TfDataTable? DataTable { get; set; } = null;
 
@@ -81,7 +79,7 @@ public class TfSpaceViewColumnExportExcelModeContext(Dictionary<string, object> 
 	public IXLCell ExcelCell { get; set; } = null!;
 }
 
-public class TfSpaceViewColumnExportCsvModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext
+public class TfSpaceViewColumnExportCsvModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext(viewData)
 {
 	public TfDataTable? DataTable { get; set; } = null;
 

@@ -14,6 +14,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposab
 	
 	private TfNavigationState _navState = null!;
 	private bool _hasViewPersonalization = false;
+	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;

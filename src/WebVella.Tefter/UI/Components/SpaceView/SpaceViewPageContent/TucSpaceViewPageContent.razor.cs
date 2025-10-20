@@ -496,26 +496,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		_generateMeta();
 	}
 
-	private void _toggleSelectAll(bool isChecked)
+	private async Task _toggleSelectAll(bool isChecked)
 	{
-		if (_data is null
-		    || _data.Rows is null
-		    || _data.Rows.Count == 0)
-			return;
-		for (int i = 0; i < _data.Rows.Count; i++)
-		{
-			var rowId = (Guid)_data.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-			if (!isChecked)
-			{
-				_selectedDataRows.RemoveAll(x => x == rowId);
-			}
-			else if (!_selectedDataRows.Any(x => x == rowId))
-			{
-				_selectedDataRows.Add(rowId);
-			}
-		}
-
-		_generateMeta();
+		if (isChecked)
+			await OnSelectAll();
+		else
+			await OnDeSelectAll();
+		
 	}
 
 	public bool _allDataRowsSelected()

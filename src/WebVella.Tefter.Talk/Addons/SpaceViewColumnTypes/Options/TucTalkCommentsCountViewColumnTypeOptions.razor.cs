@@ -10,12 +10,17 @@ public partial class TucTalkCommentsCountViewColumnTypeOptions : TfLocalizedView
     [Parameter] public EventCallback<Tuple<string, string?>> DataMappingChanged { get; set; }
     [Parameter] public List<TalkChannel> ChannelOptions { get; set; } = new();
 
+    private TfTalkCommentsCountViewColumnTypeSettings _settings =  new ();
+   
+    protected override void OnParametersSet()
+    {
+        _settings = Context.GetSettings<TfTalkCommentsCountViewColumnTypeSettings>();
+    }    
 
     private async Task _folderSelectHandler(TalkChannel? channel)
     {
-        var settings = Context.GetSettings<TfTalkCommentsCountViewColumnTypeSettings>();
-        settings.ChannelId = channel?.Id;
-        await SettingsChanged.InvokeAsync(settings);
+        _settings.ChannelId = channel?.Id;
+        await SettingsChanged.InvokeAsync(_settings);
         if (channel is not null)
             await DataMappingChanged.InvokeAsync(new Tuple<string, string?>("Value",
                 $"{channel.DataIdentity}.{channel.CountSharedColumnName}"));

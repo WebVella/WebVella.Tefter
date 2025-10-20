@@ -33,7 +33,7 @@ internal class TfSpaceViewColumnDbo
 	public string QueryName { get; set; } = null!;
 
 	[TfDboModelProperty("title")]
-	public string Title { get; set; } = null!;
+	public string? Title { get; set; } = null;
 
 	[TfDboModelProperty("icon")]
 	public string? Icon { get; set; }

@@ -77,6 +77,9 @@ public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnTypeAddon
     public List<ValidationError> ValidateTypeOptions(TfSpaceViewColumnOptionsModeContext args)
     {
         _validationErrors = new();
+        var settings = args.GetSettings<TfTalkCommentsCountViewColumnTypeSettings>();
+        if(settings.ChannelId is null || settings.ChannelId == Guid.Empty)
+            _validationErrors.Add(new ValidationError("ChannelId", "required"));
         return _validationErrors;
     }
 

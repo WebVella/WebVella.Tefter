@@ -684,7 +684,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
 					.AddGuidColumn("space_view_id", c => { c.NotNullable(); })
 					.AddShortTextColumn("query_name", c => { c.NotNullable(); })
-					.AddShortTextColumn("title", c => { c.NotNullable(); })
+					.AddShortTextColumn("title", c => { })
 					.AddShortIntegerColumn("position", c => { c.NotNullable(); })
 					.AddGuidColumn("type_id", c => { c.NotNullable(); })
 					.AddTextColumn("data_mapping_json", c => { c.NotNullable(); })
@@ -975,7 +975,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				columns
 					.AddShortTextColumn("data_identity", c => { c.NotNullable(); })
-					.AddTextColumn("label", c => { c.NotNullable().WithDefaultValue(""); });
+					.AddTextColumn("label", c => {  });
 			})
 			.WithConstraints(constraints =>
 			{
