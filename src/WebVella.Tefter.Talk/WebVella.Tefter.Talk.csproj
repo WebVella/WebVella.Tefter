@@ -17,4 +17,8 @@
 		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.9" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Addons\SpaceViewColumnComponents\CommentsCountComponent\TalkCommentsCountComponent.razor" />
+	</ItemGroup>
+
 </Project>

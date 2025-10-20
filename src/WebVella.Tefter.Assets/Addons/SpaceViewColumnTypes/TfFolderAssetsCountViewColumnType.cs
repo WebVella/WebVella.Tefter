@@ -49,7 +49,7 @@ public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnTypeAddon
         if (args is not TfSpaceViewColumnExportExcelModeContext)
             throw new Exception("Wrong context type. TfSpaceViewColumnExportExcelModeContext is expected");
         if (args is TfSpaceViewColumnExportExcelModeContext context)
-            context.ExcelCell.SetValue(XLCellValue.FromObject(String.Join(", ", _initValue(args).Item1)));
+            context.ExcelCell.SetValue(XLCellValue.FromObject(String.Join(", ", _initValue(args))));
     }
 
     //Returns Value/s as string usually for CSV export
@@ -58,7 +58,7 @@ public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnTypeAddon
         if (args is not TfSpaceViewColumnExportCsvModeContext)
             throw new Exception("Wrong context type. TfSpaceViewColumnExportCsvModeContext is expected");
 
-        return String.Join(", ", _initValue(args).Item1);
+        return String.Join(", ", _initValue(args));
     }
 
     public RenderFragment Render(TfSpaceViewColumnBaseContext args)
@@ -86,40 +86,12 @@ public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnTypeAddon
     #region << Private >>
 
     //Value
-    private (List<long?>, string?) _initValue(TfSpaceViewColumnBaseContext args)
+    private List<long?> _initValue(TfSpaceViewColumnBaseContext args)
     {
         var values = new List<long?>();
-        var settings = args.GetSettings<TfFolderAssetsCountViewColumnTypeSettings>();
-        if (settings.FolderId is null) return (values,null);        
 
-        string? sharedColumnName = null;
-        //Try get shareColumnName from ViewData
-        var storageKey = this.GetType().FullName + "_" + args.ViewColumn.Id;
-        Dictionary<string, object?>? viewData = null;
-        if (args is TfSpaceViewColumnReadModeContext readContext)
-            viewData = readContext.ViewData;
-        else if (args is TfSpaceViewColumnEditModeContext editContext)
-            viewData = editContext.ViewData;
-
-        if (viewData is not null && viewData.ContainsKey(storageKey))
-        {
-            if (!viewData.ContainsKey(storageKey) || viewData[storageKey] is not List<TfSelectOption>)
-                throw new Exception($"ViewData in the context is not List<TfSelectOption> for key: {storageKey}");
-            sharedColumnName = (string?)viewData[storageKey];
-        }        
-        
-        //try get from service
-        if (sharedColumnName is null)
-        {
-            var assetSrv = args.ServiceProvider.GetRequiredService<IAssetsService>();
-            var folder = assetSrv.GetFolder(settings.FolderId.Value);
-            sharedColumnName = folder?.CountSharedColumnName;
-        }
-        if(String.IsNullOrWhiteSpace(sharedColumnName))
-            return (values,sharedColumnName);
-        
-        var (column, columnData) = args.GetColumnAndData(sharedColumnName);
-        if (column is null) return (values,sharedColumnName);
+        var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
+        if (column is null) return values;
         if (columnData is null)
         {
             values.Add(null);
@@ -136,15 +108,19 @@ public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnTypeAddon
             }
         }
         else
-            values.Add((long?)columnData);
+            values.Add(Convert.ToInt64(columnData));
 
-        return (values,sharedColumnName);
+        return values;
     }
-
+    
     //Render
     private RenderFragment _renderReadMode(TfSpaceViewColumnReadModeContext context)
     {
-        var (values,columnName) = _initValue(context);
+        var values = _initValue(context);
+        string? columnName = null;
+        if (context.ViewColumn.DataMapping.TryGetValue(VALUE_ALIAS, out columnName))
+        {
+        }
         return builder =>
         {
             builder.OpenComponent<TucFolderAssetsCountViewColumnTypeRead>(0);
