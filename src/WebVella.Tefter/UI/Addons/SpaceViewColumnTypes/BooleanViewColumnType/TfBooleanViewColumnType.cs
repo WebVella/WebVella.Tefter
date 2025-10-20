@@ -22,10 +22,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 			Alias = VALUE_ALIAS,
 			Description =
 				"this column is compatible with the Boolean database column type",
-			SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType>
-			{
-				TfDatabaseColumnType.Boolean
-			}
+			SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> { TfDatabaseColumnType.Boolean }
 		}
 	};
 
@@ -34,8 +31,9 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 	#region << PRIVATE >>
 
 	private List<ValidationError> _validationErrors = new();
-	#endregion	
-	
+
+	#endregion
+
 	#region << PUBLIC >>
 
 	public void ProcessExcelCell(TfSpaceViewColumnBaseContext args)
@@ -44,7 +42,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 			throw new Exception("Wrong context type. TfSpaceViewColumnExportExcelModeContext is expected");
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfBooleanViewColumnTypeSettings());
+			var settings = context.GetSettings<TfBooleanViewColumnTypeSettings>();
 			var value = _initValue(args);
 			if (value.Count == 0)
 			{
@@ -70,6 +68,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 						valuesList.Add(TfConstants.ExcelNullWord);
 						continue;
 					}
+
 					if (!String.IsNullOrWhiteSpace(settings.TrueLabel))
 						valuesList.Add(settings.TrueLabel);
 					else if (!String.IsNullOrWhiteSpace(settings.FalseLabel))
@@ -77,11 +76,10 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 					else
 						valuesList.Add(item.Value.ToString());
 				}
-				context.ExcelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
-			}			
-		}
 
-		
+				context.ExcelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
+			}
+		}
 	}
 
 	//Returns Value/s as string usually for CSV export
@@ -92,7 +90,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfBooleanViewColumnTypeSettings());
+			var settings = context.GetSettings<TfBooleanViewColumnTypeSettings>();
 			var value = _initValue(args);
 			if (value.Count == 0)
 			{
@@ -118,6 +116,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 						valuesList.Add(TfConstants.ExcelNullWord);
 						continue;
 					}
+
 					if (!String.IsNullOrWhiteSpace(settings.TrueLabel))
 						valuesList.Add(settings.TrueLabel);
 					else if (!String.IsNullOrWhiteSpace(settings.FalseLabel))
@@ -125,8 +124,9 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 					else
 						valuesList.Add(item.Value.ToString());
 				}
+
 				return String.Join(", ", valuesList);
-			}			
+			}
 		}
 
 		return String.Empty;
@@ -152,8 +152,8 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 		return _validationErrors;
 	}
 
-	#endregion	
-	
+	#endregion
+
 	#region << Private >>
 
 	//Value
@@ -162,6 +162,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 		var values = new List<bool?>();
 
 		var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null) return values;
 		if (columnData is null)
 		{
 			values.Add(null);
@@ -190,8 +191,8 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucBooleanViewColumnTypeRead>(0);
-			builder.AddAttribute(1, "Value", values);
-			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfBooleanViewColumnTypeSettings()));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "Value", values);
 			builder.CloseComponent();
 		};
 	}
@@ -199,6 +200,12 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 	private RenderFragment _renderEditMode(TfSpaceViewColumnEditModeContext context)
 	{
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null)
+			return builder =>
+			{
+				builder.OpenElement(0, "span");
+				builder.CloseElement();
+			};
 		//Editable columns
 		if (column.Origin == TfDataColumnOriginType.CurrentProvider
 		    || column.Origin == TfDataColumnOriginType.SharedColumn)
@@ -208,8 +215,9 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 			return builder =>
 			{
 				builder.OpenComponent<TucBooleanViewColumnTypeEdit>(0);
-				builder.AddAttribute(1, "Value", values[0]);
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<bool?>(this, async (x) =>
+				builder.AddAttribute(1, "Context", context);
+				builder.AddAttribute(2, "Value", values[0]);
+				builder.AddAttribute(3, "ValueChanged", EventCallback.Factory.Create<bool?>(this, async (x) =>
 				{
 					var change = new TfSpaceViewColumnDataChange
 					{
@@ -217,7 +225,6 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
-				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfBooleanViewColumnTypeSettings()));
 				builder.AddAttribute(4, "IsNullableColumn", column.IsNullable);
 				builder.CloseComponent();
 			};
@@ -238,44 +245,39 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucBooleanViewColumnTypeOptions>(0);
-			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfBooleanViewColumnTypeSettings()));
-			builder.AddAttribute(2, "ValidationErrors", context.ValidationErrors);
-			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfBooleanViewColumnTypeSettings>(this, async (options) =>
-			{
-				context.SetColumnTypeOptions(options);
-				await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
-			}));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "SettingsChanged", EventCallback.Factory.Create<TfBooleanViewColumnTypeSettings>(
+				this, async (options) =>
+				{
+					context.SetColumnTypeOptions(options);
+					await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
+				}));
 			builder.CloseComponent();
 		};
 	}
 
-	#endregion	
+	#endregion
 }
 
 public class TfBooleanViewColumnTypeSettings
 {
-	[JsonPropertyName("ShowLabel")]
-	public bool ShowLabel { get; set; } = true;
-	
-	[JsonPropertyName("TrueLabel")]
-	public string? TrueLabel { get; set; }
+	[JsonPropertyName("ShowLabel")] public bool ShowLabel { get; set; } = true;
+
+	[JsonPropertyName("TrueLabel")] public string? TrueLabel { get; set; }
 
 	[JsonPropertyName("TrueValueShowAsIcon")]
 	public bool TrueValueShowAsIcon { get; set; }
 
-	[JsonPropertyName("FalseLabel")]
-	public string? FalseLabel { get; set; }
+	[JsonPropertyName("FalseLabel")] public string? FalseLabel { get; set; }
 
 	[JsonPropertyName("FalseValueShowAsIcon")]
 	public bool FalseValueShowAsIcon { get; set; }
 
-	[JsonPropertyName("NullLabel")]
-	public string? NullLabel { get; set; }
+	[JsonPropertyName("NullLabel")] public string? NullLabel { get; set; }
 
 	[JsonPropertyName("NullValueShowAsIcon")]
 	public bool NullValueShowAsIcon { get; set; }
-	
-	[JsonPropertyName("ChangeConfirmationMessage")]
-	public string? ChangeConfirmationMessage { get; set; }	
 
-}	
+	[JsonPropertyName("ChangeConfirmationMessage")]
+	public string? ChangeConfirmationMessage { get; set; }
+}

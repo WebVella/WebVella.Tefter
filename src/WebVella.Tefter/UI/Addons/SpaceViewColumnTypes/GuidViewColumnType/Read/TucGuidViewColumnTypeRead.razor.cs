@@ -2,6 +2,6 @@
 
 public partial class TucGuidViewColumnTypeRead : ComponentBase
 {
+	[Parameter] public TfSpaceViewColumnReadModeContext Context { get; set; } = null!;
 	[Parameter] public List<Guid?>? Value { get; set; }
-	[Parameter] public TfGuidViewColumnTypeSettings Settings { get; set; } = null!;
 }

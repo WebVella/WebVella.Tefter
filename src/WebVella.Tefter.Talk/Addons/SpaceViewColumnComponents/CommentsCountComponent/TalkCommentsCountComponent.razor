@@ -29,7 +29,8 @@
 @* 						  Items="_channels" *@
 @* 						  OptionValue="@((p)=> p.Id.ToString())" *@
 @* 						  OptionText="(x=> x.Name)" *@
-@* 						  SelectedOption="_selectedChannel" *@
+                            @* OptionSelected="@((x) => x.Id == _selectedChannel?.Id)" *@
+
 @* 						  SelectedOptionChanged="_channelSelectHandler" /> *@
 @* 		</FluentGridItem> *@
 @* *@

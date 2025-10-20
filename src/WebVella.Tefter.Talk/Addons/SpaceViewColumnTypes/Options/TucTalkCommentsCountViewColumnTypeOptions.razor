@@ -1,0 +1,15 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits TfLocalizedViewColumnComponent
+
+<FluentGrid>
+	<FluentGridItem xs="12">
+		<FluentInputLabel Label="@LOC("Channel")"/>
+		<TucSelect TOption="TalkChannel"
+		           Items="ChannelOptions"
+		           OptionValue="(x=> x.Id.ToString())"
+		           OptionText="(x=> x.Name)"
+		           OptionSelected="@((x) => x.Id == Context.GetSettings<TfTalkCommentsCountViewColumnTypeSettings>().ChannelId)"
+		           SelectedOptionChanged="_folderSelectHandler"/>
+	</FluentGridItem>
+
+</FluentGrid>

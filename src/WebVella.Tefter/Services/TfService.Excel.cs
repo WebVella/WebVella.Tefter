@@ -92,6 +92,7 @@ public partial class TfService
 				DataTable = dataset,
 				ViewColumn = null!,
 				TfService = this,
+				ServiceProvider = _serviceProvider,
 				RowId = Guid.Empty, //set in row loop
 				ExcelCell = null! //set in row loop
 			};
@@ -200,6 +201,7 @@ public partial class TfService
 		{
 			DataTable = dataset,
 			TfService = this,
+			ServiceProvider = _serviceProvider,
 			ViewColumn = null!, //set in row loop
 			RowId = Guid.Empty, //set in row loop
 		};

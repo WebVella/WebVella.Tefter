@@ -4,7 +4,7 @@ public partial class TucDateTimeViewColumnTypeEdit : TfLocalizedViewColumnCompon
 {
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
-
+	[Parameter] public TfSpaceViewColumnEditModeContext Context { get; set; } = null!;
 	[Parameter]
 	public DateTime? Value
 	{
@@ -17,18 +17,22 @@ public partial class TucDateTimeViewColumnTypeEdit : TfLocalizedViewColumnCompon
 	}
 
 	[Parameter] public EventCallback<DateTime?> ValueChanged { get; set; }
-	[Parameter] public TfDateTimeViewColumnTypeSettings Settings { get; set; } = null!;
 
 	private readonly string _valueInputId = "input-" + Guid.NewGuid();
 	private readonly string _valueTimeInputId = "input-" + Guid.NewGuid();
 
 	private DateTime? _original = null;
 	private DateTime? _value = null;
+	private TfDateTimeViewColumnTypeSettings _settings =  new ();
 
+	protected override void OnParametersSet()
+	{
+		_settings = Context.GetSettings<TfDateTimeViewColumnTypeSettings>();
+	}
 	private async Task _valueChanged()
 	{
-		if (!String.IsNullOrWhiteSpace(Settings.ChangeConfirmationMessage)
-		    && !await JsRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
+		if (!String.IsNullOrWhiteSpace(_settings.ChangeConfirmationMessage)
+		    && !await JsRuntime.InvokeAsync<bool>("confirm", _settings.ChangeConfirmationMessage))
 			return;
 		Value = _value;
 		await ValueChanged.InvokeAsync(Value);

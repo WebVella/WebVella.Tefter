@@ -42,7 +42,6 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnTypeAddon
 			throw new Exception("Wrong context type. TfSpaceViewColumnExportExcelModeContext is expected");
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfGuidViewColumnTypeSettings());
 			var value = _initValue(args);
 			if (value.Count == 0)
 			{
@@ -80,7 +79,6 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnTypeAddon
 
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfGuidViewColumnTypeSettings());
 			var value = _initValue(args);
 			if (value.Count == 0)
 			{
@@ -142,6 +140,7 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnTypeAddon
 		var values = new List<Guid?>();
 
 		var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null) return values;
 		if (columnData is null)
 		{
 			values.Add(null);
@@ -170,8 +169,8 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucGuidViewColumnTypeRead>(0);
-			builder.AddAttribute(1, "Value", values);
-			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfGuidViewColumnTypeSettings()));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "Value", values);
 			builder.CloseComponent();
 		};
 	}
@@ -179,6 +178,12 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnTypeAddon
 	private RenderFragment _renderEditMode(TfSpaceViewColumnEditModeContext context)
 	{
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null)
+			return builder =>
+			{
+				builder.OpenElement(0, "span");
+				builder.CloseElement();
+			};
 		//Editable columns
 		if (column.Origin == TfDataColumnOriginType.CurrentProvider
 		    || column.Origin == TfDataColumnOriginType.SharedColumn)
@@ -188,8 +193,9 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnTypeAddon
 			return builder =>
 			{
 				builder.OpenComponent<TucGuidViewColumnTypeEdit>(0);
-				builder.AddAttribute(1, "Value", values[0]);
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<Guid?>(this, async (x) =>
+				builder.AddAttribute(1, "Context", context);
+				builder.AddAttribute(2, "Value", values[0]);
+				builder.AddAttribute(3, "ValueChanged", EventCallback.Factory.Create<Guid?>(this, async (x) =>
 				{
 					var change = new TfSpaceViewColumnDataChange
 					{
@@ -197,7 +203,6 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
-				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfGuidViewColumnTypeSettings()));
 				builder.CloseComponent();
 			};
 		}
@@ -217,9 +222,8 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucGuidViewColumnTypeOptions>(0);
-			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfGuidViewColumnTypeSettings()));
-			builder.AddAttribute(2, "ValidationErrors", context.ValidationErrors);
-			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfGuidViewColumnTypeSettings>(this,
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "SettingsChanged", EventCallback.Factory.Create<TfGuidViewColumnTypeSettings>(this,
 				async (options) =>
 				{
 					context.SetColumnTypeOptions(options);

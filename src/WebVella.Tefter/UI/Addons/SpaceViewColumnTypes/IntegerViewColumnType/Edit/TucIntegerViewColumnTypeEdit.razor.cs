@@ -4,7 +4,7 @@ public partial class TucIntegerViewColumnTypeEdit : TfLocalizedViewColumnCompone
 {
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
-
+	[Parameter] public TfSpaceViewColumnEditModeContext Context { get; set; } = null!;
 	[Parameter]
 	public int? Value
 	{
@@ -17,7 +17,6 @@ public partial class TucIntegerViewColumnTypeEdit : TfLocalizedViewColumnCompone
 	}
 
 	[Parameter] public EventCallback<int?> ValueChanged { get; set; }
-	[Parameter] public TfIntegerViewColumnTypeSettings Settings { get; set; } = null!;
 
 	private readonly string _valueInputId = "input-" + Guid.NewGuid();
 
@@ -26,8 +25,9 @@ public partial class TucIntegerViewColumnTypeEdit : TfLocalizedViewColumnCompone
 
 	private async Task _valueChanged()
 	{
-		if (!String.IsNullOrWhiteSpace(Settings.ChangeConfirmationMessage)
-		    && !await JsRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
+		var settings = Context.GetSettings<TfIntegerViewColumnTypeSettings>();
+		if (!String.IsNullOrWhiteSpace(settings.ChangeConfirmationMessage)
+		    && !await JsRuntime.InvokeAsync<bool>("confirm", settings.ChangeConfirmationMessage))
 			return;
 
 		Value = _value;

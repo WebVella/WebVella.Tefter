@@ -4,27 +4,27 @@
 <FluentGrid>
 	<FluentGridItem xs="12">
 		<FluentTextField Label="@LOC("Confirmation message")"
-		                 Value="@Settings.ChangeConfirmationMessage" Style="width:100%"
-		                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(Settings.ChangeConfirmationMessage), x))
+		                 Value="@_form.ChangeConfirmationMessage" Style="width:100%"
+		                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(_form.ChangeConfirmationMessage), x))
 		                 Placeholder="@LOC("empty for no confirmation")"/>
-		<TucValidationMessage Field="@(nameof(Settings.ChangeConfirmationMessage))" Errors="ValidationErrors"/>
+		<TucValidationMessage Field="@(nameof(_form.ChangeConfirmationMessage))" Errors="Context.ValidationErrors"/>
 	</FluentGridItem>
 </FluentGrid>
 <FluentGrid>
 	<FluentGridItem xs="12">
 		<FluentTextField Label="@LOC("Not selected text")"
-		                 Value="@Settings.NotSelectedString" Style="width:100%"
-		                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(Settings.NotSelectedString), x))
+		                 Value="@_form.NotSelectedString" Style="width:100%"
+		                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(_form.NotSelectedString), x))
 		                 Placeholder="@LOC("empty for no confirmation")"/>
-		<TucValidationMessage Field="@(nameof(Settings.NotSelectedString))" Errors="ValidationErrors"/>
+		<TucValidationMessage Field="@(nameof(_form.NotSelectedString))" Errors="Context.ValidationErrors"/>
 	</FluentGridItem>
 </FluentGrid>
 <FluentDivider Style="margin:1rem 0"/>
 <FluentGrid>
 	<FluentGridItem xs="12">
 		<FluentInputLabel Label="@LOC("Options source type")"/>
-		<FluentRadioGroup Name="source" Value=@Settings.Source
-		                  ValueChanged="@((x) => _onSettingsChangedAsync(nameof(Settings.Source), x))"
+		<FluentRadioGroup Name="source" Value=@_form.Source
+		                  ValueChanged="@((x) => _onSettingsChangedAsync(nameof(_form.Source), x))"
 		                  TValue="TfSelectViewColumnTypeSettingsSourceType">
 			<FluentRadio Value="@TfSelectViewColumnTypeSettingsSourceType.ManuallySet">
 				@TfSelectViewColumnTypeSettingsSourceType.ManuallySet.ToDescriptionString()
@@ -35,14 +35,14 @@
 		</FluentRadioGroup>
 	</FluentGridItem>
 </FluentGrid>
-@if (Settings.Source == TfSelectViewColumnTypeSettingsSourceType.ManuallySet)
+@if (_form.Source == TfSelectViewColumnTypeSettingsSourceType.ManuallySet)
 {
 	<FluentGrid>
 		<FluentGridItem xs="12">
 			<FluentTextArea Label="@LOC("Options")" Resize="@TextAreaResize.Vertical"
-			                Value="@Settings.OptionsString" Style="width:100%;" Rows="7"
-			                ValueChanged=@((x) => _onSettingsChangedAsync(nameof(Settings.OptionsString), x))/>
-			<TucValidationMessage Field="@(nameof(Settings.OptionsString))" Errors="ValidationErrors"/>
+			                Value="@_form.OptionsString" Style="width:100%;" Rows="7"
+			                ValueChanged=@((x) => _onSettingsChangedAsync(nameof(_form.OptionsString), x))/>
+			<TucValidationMessage Field="@(nameof(_form.OptionsString))" Errors="Context.ValidationErrors"/>
 			<div class="tf-input-description">
 				@((MarkupString)LOC(@"Options separated by new line. Each option supports comma separated settings:
 		<br/>*value - required, text, converted automatically to column data type
@@ -55,7 +55,7 @@
 		</FluentGridItem>
 	</FluentGrid>
 }
-else if (Settings.Source == TfSelectViewColumnTypeSettingsSourceType.SpaceData)
+else if (_form.Source == TfSelectViewColumnTypeSettingsSourceType.SpaceData)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">
@@ -64,7 +64,7 @@ else if (Settings.Source == TfSelectViewColumnTypeSettingsSourceType.SpaceData)
 			           OptionSelected="@((x) => x?.Id == SelectedDataset?.Id)"
 			           OptionValue="((x)=> x?.Id.ToString())"
 			           OptionText="((x)=> x?.Name)" Items="@DatasetOptions"/>
-			<TucValidationMessage Field="@(nameof(Settings.DatasetId))" Errors="ValidationErrors"/>
+			<TucValidationMessage Field="@(nameof(_form.DatasetId))" Errors="Context.ValidationErrors"/>
 		</FluentGridItem>
 		<FluentGridItem xs="6">
 			@SelectedDataset?.Name
@@ -73,44 +73,44 @@ else if (Settings.Source == TfSelectViewColumnTypeSettingsSourceType.SpaceData)
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField Label="@LOC("Value column name")"
-			                 Value="@Settings.SpaceDataValueColumnName" Style="width:100%;"
-			                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(Settings.SpaceDataValueColumnName), x))/>
+			                 Value="@_form.SpaceDataValueColumnName" Style="width:100%;"
+			                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(_form.SpaceDataValueColumnName), x))/>
 			<div class="tf-input-description">@LOC("any column data")</div>
-			<TucValidationMessage Field="@(nameof(Settings.SpaceDataValueColumnName))" Errors="ValidationErrors"/>
+			<TucValidationMessage Field="@(nameof(_form.SpaceDataValueColumnName))" Errors="Context.ValidationErrors"/>
 		</FluentGridItem>
 		<FluentGridItem xs="6">
 			<FluentTextField Label="@LOC("Label column name")"
-			                 Value="@Settings.SpaceDataLabelColumnName" Style="width:100%;"
-			                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(Settings.SpaceDataLabelColumnName), x))/>
+			                 Value="@_form.SpaceDataLabelColumnName" Style="width:100%;"
+			                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(_form.SpaceDataLabelColumnName), x))/>
 			<div class="tf-input-description">@LOC("column data string or object that will be case to string")</div>
-			<TucValidationMessage Field="@(nameof(Settings.SpaceDataLabelColumnName))" Errors="ValidationErrors"/>
+			<TucValidationMessage Field="@(nameof(_form.SpaceDataLabelColumnName))" Errors="Context.ValidationErrors"/>
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField Label="@LOC("Color column name")"
-			                 Value="@Settings.SpaceDataColorColumnName" Style="width:100%;"
-			                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(Settings.SpaceDataColorColumnName), x))/>
+			                 Value="@_form.SpaceDataColorColumnName" Style="width:100%;"
+			                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(_form.SpaceDataColorColumnName), x))/>
 			<div
 				class="tf-input-description">@LOC("column data string or int. String is css color value. Int is converted to enum of TfColor")</div>
-			<TucValidationMessage Field="@(nameof(Settings.SpaceDataColorColumnName))" Errors="ValidationErrors"/>
+			<TucValidationMessage Field="@(nameof(_form.SpaceDataColorColumnName))" Errors="Context.ValidationErrors"/>
 		</FluentGridItem>
 		<FluentGridItem xs="6">
 			<FluentTextField Label="@LOC("Background color column name")"
-			                 Value="@Settings.SpaceDataBackgroundColorColumnName" Style="width:100%;"
-			                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(Settings.SpaceDataBackgroundColorColumnName), x))/>
+			                 Value="@_form.SpaceDataBackgroundColorColumnName" Style="width:100%;"
+			                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(_form.SpaceDataBackgroundColorColumnName), x))/>
 			<div
 				class="tf-input-description">@LOC("column datastring or int. String is css color value. Int is converted to enum of TfColor")</div>
-			<TucValidationMessage Field="@(nameof(Settings.SpaceDataBackgroundColorColumnName))" Errors="ValidationErrors"/>
+			<TucValidationMessage Field="@(nameof(_form.SpaceDataBackgroundColorColumnName))" Errors="Context.ValidationErrors"/>
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField Label="@LOC("Icon column name")"
-			                 Value="@Settings.SpaceDataIconColumnName" Style="width:100%;"
-			                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(Settings.SpaceDataIconColumnName), x))/>
+			                 Value="@_form.SpaceDataIconColumnName" Style="width:100%;"
+			                 ValueChanged=@((x) => _onSettingsChangedAsync(nameof(_form.SpaceDataIconColumnName), x))/>
 			<div class="tf-input-description">@LOC("column datastring, fluent icon name")</div>
-			<TucValidationMessage Field="@(nameof(Settings.SpaceDataIconColumnName))" Errors="ValidationErrors"/>
+			<TucValidationMessage Field="@(nameof(_form.SpaceDataIconColumnName))" Errors="Context.ValidationErrors"/>
 		</FluentGridItem>
 		<FluentGridItem xs="6"></FluentGridItem>
 	</FluentGrid>

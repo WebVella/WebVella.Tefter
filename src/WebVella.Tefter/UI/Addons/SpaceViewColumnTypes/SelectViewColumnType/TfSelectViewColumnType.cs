@@ -86,6 +86,7 @@ public class TfSelectViewColumnType : ITfSpaceViewColumnTypeAddon
 		var values = new List<object?>();
 
 		var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null) return values;
 		if (columnData is null)
 		{
 			values.Add(null);
@@ -141,7 +142,7 @@ public class TfSelectViewColumnType : ITfSpaceViewColumnTypeAddon
 			return (List<TfSelectOption>)viewData[storageKey];
 		}
 
-		var settings = args.GetColumnTypeOptions(new TfSelectViewColumnTypeSettings());
+		var settings = args.GetSettings<TfSelectViewColumnTypeSettings>();
 		var selectOptions = new List<TfSelectOption>();
 		if (settings.Source == TfSelectViewColumnTypeSettingsSourceType.ManuallySet)
 		{
@@ -317,14 +318,20 @@ public class TfSelectViewColumnType : ITfSpaceViewColumnTypeAddon
 	{
 		var values = _initValue(context);
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
-		var options = _initOptions(context,column);
+		if (column is null)
+			return builder =>
+			{
+				builder.OpenElement(0, "span");
+				builder.CloseElement();
+			};
+		var options = _initOptions(context, column);
 		var selectedOptions = new List<TfSelectOption?>();
-		values.ForEach(x=> selectedOptions.Add(_initSelectedOption(x,options)));
+		values.ForEach(x => selectedOptions.Add(_initSelectedOption(x, options)));
 		return builder =>
 		{
 			builder.OpenComponent<TucSelectViewColumnTypeRead>(0);
-			builder.AddAttribute(1, "Value", selectedOptions);
-			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfSelectViewColumnTypeSettings()));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "Value", selectedOptions);
 			builder.CloseComponent();
 		};
 	}
@@ -332,17 +339,24 @@ public class TfSelectViewColumnType : ITfSpaceViewColumnTypeAddon
 	private RenderFragment _renderEditMode(TfSpaceViewColumnEditModeContext context)
 	{
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null)
+			return builder =>
+			{
+				builder.OpenElement(0, "span");
+				builder.CloseElement();
+			};
 		//Editable columns
 		if (column.Origin == TfDataColumnOriginType.CurrentProvider
 		    || column.Origin == TfDataColumnOriginType.SharedColumn)
 		{
 			var values = _initValue(context);
-			var options = _initOptions(context,column);
+			var options = _initOptions(context, column);
 			return builder =>
 			{
 				builder.OpenComponent<TucSelectViewColumnTypeEdit>(0);
-				builder.AddAttribute(1, "Value", _initSelectedOption(values[0], options));
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<TfSelectOption?>(this, async (x) =>
+				builder.AddAttribute(1, "Context", context);
+				builder.AddAttribute(2, "Value", _initSelectedOption(values[0], options));
+				builder.AddAttribute(3, "ValueChanged", EventCallback.Factory.Create<TfSelectOption?>(this, async (x) =>
 				{
 					var change = new TfSpaceViewColumnDataChange
 					{
@@ -350,7 +364,6 @@ public class TfSelectViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
-				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfSelectViewColumnTypeSettings()));
 				builder.AddAttribute(4, "Options", options);
 				builder.CloseComponent();
 			};
@@ -369,27 +382,25 @@ public class TfSelectViewColumnType : ITfSpaceViewColumnTypeAddon
 	private RenderFragment _renderOptionsMode(TfSpaceViewColumnOptionsModeContext context)
 	{
 		List<TfDataset> datasets = context.TfService.GetDatasets();
-		var settings = context.GetColumnTypeOptions(new TfSelectViewColumnTypeSettings());
+		var settings = context.GetSettings<TfSelectViewColumnTypeSettings>();
 		TfDataset? dataset = null;
-		if(settings.DatasetId is not null)
+		if (settings.DatasetId is not null)
 			dataset = context.TfService.GetDataset(settings.DatasetId.Value);
 		if (dataset is null && datasets.Count > 0)
 			dataset = datasets[0];
-		
+
 		return builder =>
 		{
 			builder.OpenComponent<TucSelectViewColumnTypeOptions>(0);
-			builder.AddAttribute(1, "Settings", settings);
-			builder.AddAttribute(2, "ValidationErrors", context.ValidationErrors);
-			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfSelectViewColumnTypeSettings>(
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "SettingsChanged", EventCallback.Factory.Create<TfSelectViewColumnTypeSettings>(
 				this, async (options) =>
 				{
-					Console.WriteLine("SettingsChanged");
 					context.SetColumnTypeOptions(options);
 					await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
 				}));
-			builder.AddAttribute(5, "SelectedDataset", dataset);
-			builder.AddAttribute(6, "DatasetOptions", datasets);
+			builder.AddAttribute(3, "SelectedDataset", dataset);
+			builder.AddAttribute(4, "DatasetOptions", datasets);
 			builder.CloseComponent();
 		};
 	}
@@ -402,8 +413,9 @@ public class TfSelectViewColumnTypeSettings
 	[JsonPropertyName("ChangeConfirmationMessage")]
 	public string? ChangeConfirmationMessage { get; set; }
 
-	[JsonPropertyName("NotSelectedString")] public string? NotSelectedString { get; set; }	
-	
+	[JsonPropertyName("NotSelectedString")]
+	public string? NotSelectedString { get; set; }
+
 	[JsonPropertyName("Source")]
 	public TfSelectViewColumnTypeSettingsSourceType Source { get; set; } =
 		TfSelectViewColumnTypeSettingsSourceType.ManuallySet;

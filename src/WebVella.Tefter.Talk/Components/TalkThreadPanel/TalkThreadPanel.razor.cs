@@ -291,7 +291,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 public record TalkThreadPanelContext
 {
 	public Guid? ChannelId { get; set; }
-	public TfDataTable DataTable { get; set; } = null;
+	public TfDataTable? DataTable { get; set; } = null;
 	public Guid RowId { get; set; } = Guid.Empty;
 	public long CountChange { get; set; } = 0;
 }

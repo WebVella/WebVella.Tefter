@@ -4,23 +4,25 @@
 <TucCard Title="@Title" Style="@Style">
 	<ToolbarTemplate>
 		<FluentTextField @bind-Value="@_selectedName"
-						 Disabled="_submitting"
-						 Placeholder="@LOC("name")"
-						 Required="true" Style="width:180px" />
-		<TucSelect @bind-SelectedOption="@_selectedType"
-					  Disabled="_submitting"
-					  TOption="TfPresetFilterItemType" Required="true"
-					  Items="@(Enum.GetValues<TfPresetFilterItemType>())" Style="min-width:60px"
-					  OptionValue="@((p)=> ((int)p).ToString())"
-					  OptionText="@(x=> x.ToDescriptionString())" />
-		<TucSelect @bind-SelectedOption="@_selectedParent"
-					  Disabled="_submitting"
-					  TOption="TfSpaceViewPreset"
-					  Items="@_getParents()" Style="min-width:180px"
-					  OptionValue="@((p)=> p.Id.ToString())"
-					  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")" />
+		                 Disabled="_submitting"
+		                 Placeholder="@LOC("name")"
+		                 Required="true" Style="width:180px"/>
+		<TucSelect OptionSelected="@((x) => x == _selectedType)"
+		           SelectedOptionChanged="((x) => _selectedType = x)"
+		           Disabled="_submitting"
+		           TOption="TfPresetFilterItemType" Required="true"
+		           Items="@(Enum.GetValues<TfPresetFilterItemType>())" Style="min-width:60px"
+		           OptionValue="@((p) => ((int)p).ToString())"
+		           OptionText="@(x => x.ToDescriptionString())"/>
+		<TucSelect OptionSelected="@((x) => x.Id == _selectedParent?.Id)"
+		           SelectedOptionChanged="((x) => _selectedParent = x)"
+		           Disabled="_submitting"
+		           TOption="TfSpaceViewPreset"
+		           Items="@_getParents()" Style="min-width:180px"
+		           OptionValue="@((p) => p.Id.ToString())"
+		           OptionText="@(x => x.Name)" Placeholder="@LOC("without group")"/>
 		<FluentButton OnClick="_addPreset" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
-					  Disabled="@_submitting">@LOC("Add new")</FluentButton>
+		              Disabled="@_submitting">@LOC("Add new")</FluentButton>
 	</ToolbarTemplate>
 	<ChildContent>
 		@if (Items.Count == 0)
@@ -29,21 +31,21 @@
 		}
 		else
 		{
-				<table class="tf-grid">
-					<colgroup style="width:1%"></colgroup>
-					<colgroup></colgroup>
-					<colgroup style="width:120px;"></colgroup>
-					<colgroup style="width:120px;"></colgroup>
-					<tbody class="tf-grid-tbody">
-						@foreach (var context in Items)
-						{
-							var contextIndex = Items.FindIndex(x => x.Id == context.Id);
-							<TucPresetFiltersCardItem Item="context" Level="0" OnRemove="_removePreset" OnMove="_movePreset"
-													IsFirst="(contextIndex == 0)" IsLast="(contextIndex == Items.Count -1)"
-													OnEdit="_editPreset" OnCopy="_copyPreset" />
-						}
-					</tbody>
-				</table>
+			<table class="tf-grid">
+				<colgroup style="width:1%"></colgroup>
+				<colgroup></colgroup>
+				<colgroup style="width:120px;"></colgroup>
+				<colgroup style="width:120px;"></colgroup>
+				<tbody class="tf-grid-tbody">
+				@foreach (var context in Items)
+				{
+					var contextIndex = Items.FindIndex(x => x.Id == context.Id);
+					<TucPresetFiltersCardItem Item="context" Level="0" OnRemove="_removePreset" OnMove="_movePreset"
+					                          IsFirst="(contextIndex == 0)" IsLast="(contextIndex == Items.Count -1)"
+					                          OnEdit="_editPreset" OnCopy="_copyPreset"/>
+				}
+				</tbody>
+			</table>
 		}
 	</ChildContent>
 </TucCard>

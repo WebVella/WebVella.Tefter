@@ -2,6 +2,14 @@
 
 public partial class TucIntegerViewColumnTypeRead : ComponentBase
 {
+	[Parameter] public TfSpaceViewColumnReadModeContext Context { get; set; } = null!;
 	[Parameter] public List<int?>? Value { get; set; }
-	[Parameter] public TfIntegerViewColumnTypeSettings Settings { get; set; } = null!;
+	
+	private TfIntegerViewColumnTypeSettings _settings =  new ();
+
+	protected override void OnParametersSet()
+	{
+		_settings = Context.GetSettings<TfIntegerViewColumnTypeSettings>();
+	}	
+
 }

@@ -3,17 +3,18 @@
 public partial class TucImageViewColumnTypeEdit : TfLocalizedViewColumnComponent
 {
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;	
+	[Parameter] public TfSpaceViewColumnEditModeContext Context { get; set; } = null!;
 	[Parameter] public string? Value { get; set; }
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
-	[Parameter] public TfImageViewColumnTypeSettings Settings { get; set; } = null!;
 
 	private readonly string _valueInputId = "input-" + Guid.NewGuid();
 
 
 	private async Task _valueChanged(string? value)
 	{
-		if (!String.IsNullOrWhiteSpace(Settings.ChangeConfirmationMessage)
-		    && !await JsRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
+		var settings = Context.GetSettings<TfImageViewColumnTypeSettings>();
+		if (!String.IsNullOrWhiteSpace(settings.ChangeConfirmationMessage)
+		    && !await JsRuntime.InvokeAsync<bool>("confirm", settings.ChangeConfirmationMessage))
 			return;
 		
 		Value = value;

@@ -3,6 +3,7 @@
 public static class ViewColumnTypeExt
 {
 	#region << DataColumn >>
+
 	public static object? ConvertStringToColumnObject(this TfDataColumn? column, string stringValue)
 	{
 		if (column is null) return null;
@@ -27,18 +28,18 @@ public static class ViewColumnTypeExt
 			case TfDatabaseColumnType.Text:
 				return stringValue;
 			case TfDatabaseColumnType.Guid:
-				return TfConverters.Convert<Guid>(stringValue); ;
+				return TfConverters.Convert<Guid>(stringValue);
+				;
 			default:
 				throw new Exception("colDbType not supported");
 		}
 	}
-	
 
 	#endregion
-	
+
 	#region << Context >>
 
-	public static (TfDataColumn, object?) GetColumnAndDataByAlias(this TfSpaceViewColumnBaseContext args, string alias)
+	public static (TfDataColumn?, object?) GetColumnAndDataByAlias(this TfSpaceViewColumnBaseContext args, string alias)
 	{
 		TfDataTable? dt;
 		Guid rowId;
@@ -64,20 +65,55 @@ public static class ViewColumnTypeExt
 				throw new Exception("The requested mode has no value");
 		}
 
-		if (dt is null) 
+		if (dt is null)
 			throw new Exception("DataTable not provided");
 
 		TfDataColumn? column = dt.GetColumnByAlias(alias, args.ViewColumn.DataMapping);
+		if (column is null)
+			return (null, null);
+		return (column, dt.GetColumnData(rowId, column));
+	}
+
+	public static (TfDataColumn, object?) GetColumnAndData(this TfSpaceViewColumnBaseContext args, string columnName)
+	{
+		TfDataTable? dt;
+		Guid rowId;
+		switch (args)
+		{
+			case TfSpaceViewColumnReadModeContext context:
+				dt = context.DataTable;
+				rowId = context.RowId;
+				break;
+			case TfSpaceViewColumnEditModeContext context:
+				dt = context.DataTable;
+				rowId = context.RowId;
+				break;
+			case TfSpaceViewColumnExportExcelModeContext context:
+				dt = context.DataTable;
+				rowId = context.RowId;
+				break;
+			case TfSpaceViewColumnExportCsvModeContext context:
+				dt = context.DataTable;
+				rowId = context.RowId;
+				break;
+			default:
+				throw new Exception("The requested mode has no value");
+		}
+
+		if (dt is null)
+			throw new Exception("DataTable not provided");
+
+		TfDataColumn? column = dt.Columns[columnName];
 		if (column is null)
 			throw new Exception("Column not found");
 		return (column, dt.GetColumnData(rowId, column));
 	}
 
-	public static T GetColumnTypeOptions<T>(this TfSpaceViewColumnBaseContext args, T defaultValue)
+	public static T GetSettings<T>(this TfSpaceViewColumnBaseContext args)
 	{
-		if (args.ViewColumn.TypeOptionsJson is null) return defaultValue;
+		if (args.ViewColumn.TypeOptionsJson is null) return Activator.CreateInstance<T>();
 		var options = JsonSerializer.Deserialize<T>(args.ViewColumn.TypeOptionsJson);
-		if (options is null) return defaultValue;
+		if (options is null) return Activator.CreateInstance<T>();
 		return options;
 	}
 
@@ -88,8 +124,7 @@ public static class ViewColumnTypeExt
 
 		args.ViewColumn.TypeOptionsJson = JsonSerializer.Serialize(options);
 	}
-	
-	
+
 	#endregion
 
 	#region << DataTable >>

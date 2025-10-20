@@ -39,7 +39,7 @@ public partial class AssetSpaceViewSelectorAction : TfBaseComponent,
 					PreventScroll = true,
 					Width = TfConstants.DialogWidthLarge,
 					TrapFocus = false,
-					OnDialogClosing = EventCallback.Factory.Create<DialogInstance>(this, async (instance) =>
+					OnDialogClosing = EventCallback.Factory.Create<DialogInstance>(this, (instance) =>
 					{
 						var dataChange = TucSpaceViewPageContent.GetCurrentData().ApplyCountChange(
 							countChange: ((AssetsAttachModalContext)instance.Content).CountChange);

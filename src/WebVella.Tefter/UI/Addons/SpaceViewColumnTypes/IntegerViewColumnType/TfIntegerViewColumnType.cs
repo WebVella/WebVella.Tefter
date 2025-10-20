@@ -22,7 +22,8 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 			Alias = VALUE_ALIAS,
 			Description =
 				"this column is compatible with integer and short integer database column types",
-			SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> { TfDatabaseColumnType.ShortInteger, TfDatabaseColumnType.Integer }
+			SupportedDatabaseColumnTypes =
+				new List<TfDatabaseColumnType> { TfDatabaseColumnType.ShortInteger, TfDatabaseColumnType.Integer }
 		}
 	};
 
@@ -42,7 +43,7 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 			throw new Exception("Wrong context type. TfSpaceViewColumnExportExcelModeContext is expected");
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfIntegerViewColumnTypeSettings());
+			var settings = context.GetSettings<TfIntegerViewColumnTypeSettings>();
 			var value = _initValue(args);
 			if (value.Count == 0)
 			{
@@ -80,7 +81,7 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfIntegerViewColumnTypeSettings());
+			var settings = context.GetSettings<TfIntegerViewColumnTypeSettings>();
 			var value = _initValue(args);
 			if (value.Count == 0)
 			{
@@ -142,6 +143,7 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 		var values = new List<int?>();
 
 		var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null) return values;
 		if (columnData is null)
 		{
 			values.Add(null);
@@ -170,8 +172,8 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucIntegerViewColumnTypeRead>(0);
-			builder.AddAttribute(1, "Value", values);
-			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfIntegerViewColumnTypeSettings()));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "Value", values);
 			builder.CloseComponent();
 		};
 	}
@@ -179,6 +181,12 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 	private RenderFragment _renderEditMode(TfSpaceViewColumnEditModeContext context)
 	{
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null)
+			return builder =>
+			{
+				builder.OpenElement(0, "span");
+				builder.CloseElement();
+			};
 		//Editable columns
 		if (column.Origin == TfDataColumnOriginType.CurrentProvider
 		    || column.Origin == TfDataColumnOriginType.SharedColumn)
@@ -188,8 +196,9 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 			return builder =>
 			{
 				builder.OpenComponent<TucIntegerViewColumnTypeEdit>(0);
-				builder.AddAttribute(1, "Value", values[0]);
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<int?>(this, async (x) =>
+				builder.AddAttribute(1, "Context", context);
+				builder.AddAttribute(2, "Value", values[0]);
+				builder.AddAttribute(3, "ValueChanged", EventCallback.Factory.Create<int?>(this, async (x) =>
 				{
 					var change = new TfSpaceViewColumnDataChange
 					{
@@ -197,7 +206,6 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
-				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfIntegerViewColumnTypeSettings()));
 				builder.CloseComponent();
 			};
 		}
@@ -217,9 +225,9 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucIntegerViewColumnTypeOptions>(0);
-			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfIntegerViewColumnTypeSettings()));
-			builder.AddAttribute(2, "ValidationErrors", context.ValidationErrors);
-			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfIntegerViewColumnTypeSettings>(this,
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "SettingsChanged", EventCallback.Factory.Create<TfIntegerViewColumnTypeSettings>(
+				this,
 				async (options) =>
 				{
 					context.SetColumnTypeOptions(options);
@@ -236,7 +244,6 @@ public class TfIntegerViewColumnTypeSettings
 {
 	[JsonPropertyName("ChangeConfirmationMessage")]
 	public string? ChangeConfirmationMessage { get; set; }
-	
-	[JsonPropertyName("Format")]
-	public string? Format { get; set; }	
+
+	[JsonPropertyName("Format")] public string? Format { get; set; }
 }

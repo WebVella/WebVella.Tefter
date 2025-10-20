@@ -18,7 +18,8 @@
 						}
 						else
 						{
-							<TucSelect @bind-SelectedOption="@_selectedFilterColumn"
+							<TucSelect OptionSelected="@((x) => x == _selectedFilterColumn)"
+							           SelectedOptionChanged="((x) => _selectedFilterColumn = x)"							           
 									   TOption="string" Required="false"
 									   Items="@AllColumnOptions" Style="width:300px"
 									   Placeholder="@LOC("select to add...")" />

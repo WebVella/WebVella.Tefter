@@ -4,64 +4,64 @@
 <FluentGrid>
 	<FluentGridItem xs="4">
 		<FluentInputLabel Label="@LOC("Label")" />
-		<FluentCheckbox Value="@Settings.ShowLabel" Style="height:32px;"
-		                ValueChanged=@((x)=> _onSettingsChanged(nameof(Settings.ShowLabel),x))
+		<FluentCheckbox Value="@_settings.ShowLabel" Style="height:32px;"
+		                ValueChanged=@((x)=> _onSettingsChanged(nameof(_settings.ShowLabel),x))
 		                Label="@LOC("show label")" />
-		<TucValidationMessage Field="@(nameof(Settings.ShowLabel))" Errors="ValidationErrors"/>
+		<TucValidationMessage Field="@(nameof(_settings.ShowLabel))" Errors="Context.ValidationErrors"/>
 	</FluentGridItem>
 </FluentGrid>
 <FluentGrid>
 	<FluentGridItem xs="4">
 		<FluentTextField Label="@LOC("TRUE label")"
-		                 Value="@Settings.TrueLabel" Style="width:100%"
-		                 ValueChanged=@((x)=> _onSettingsChanged(nameof(Settings.TrueLabel),x))
+		                 Value="@_settings.TrueLabel" Style="width:100%"
+		                 ValueChanged=@((x)=> _onSettingsChanged(nameof(_settings.TrueLabel),x))
 		                 Placeholder="@LOC("empty shows a system one")" />
-		<TucValidationMessage Field="@(nameof(Settings.TrueLabel))" Errors="ValidationErrors"/>
+		<TucValidationMessage Field="@(nameof(_settings.TrueLabel))" Errors="Context.ValidationErrors"/>
 	</FluentGridItem>
 	<FluentGridItem xs="4">
 		<FluentTextField Label="@LOC("FALSE label")"
-		                 Value="@Settings.FalseLabel" Style="width:100%"
-		                 ValueChanged=@((x)=> _onSettingsChanged(nameof(Settings.FalseLabel),x))
+		                 Value="@_settings.FalseLabel" Style="width:100%"
+		                 ValueChanged=@((x)=> _onSettingsChanged(nameof(_settings.FalseLabel),x))
 		                 Placeholder="@LOC("empty shows a system one")" />
-		<TucValidationMessage Field="@(nameof(Settings.FalseLabel))" Errors="ValidationErrors"/>
+		<TucValidationMessage Field="@(nameof(_settings.FalseLabel))" Errors="Context.ValidationErrors"/>
 	</FluentGridItem>
 	<FluentGridItem xs="4">
 		<FluentTextField Label="@LOC("NULL label")"
-		                 Value="@Settings.NullLabel" Style="width:100%"
-		                 ValueChanged=@((x)=> _onSettingsChanged(nameof(Settings.NullLabel),x))
+		                 Value="@_settings.NullLabel" Style="width:100%"
+		                 ValueChanged=@((x)=> _onSettingsChanged(nameof(_settings.NullLabel),x))
 		                 Placeholder="@LOC("empty shows a system one")" />
-		<TucValidationMessage Field="@(nameof(Settings.NullLabel))" Errors="ValidationErrors"/>
+		<TucValidationMessage Field="@(nameof(_settings.NullLabel))" Errors="Context.ValidationErrors"/>
 	</FluentGridItem>
 </FluentGrid>
 <FluentGrid>
 	<FluentGridItem xs="4">
 		<FluentInputLabel Label="@LOC("Show TRUE as icon")"/>
-		<FluentCheckbox Value="@Settings.TrueValueShowAsIcon" Style="height:32px;"
-		                ValueChanged=@((x)=> _onSettingsChanged(nameof(Settings.TrueValueShowAsIcon),x))
+		<FluentCheckbox Value="@_settings.TrueValueShowAsIcon" Style="height:32px;"
+		                ValueChanged=@((x)=> _onSettingsChanged(nameof(_settings.TrueValueShowAsIcon),x))
 		                Label="@LOC("render as icon")" />
-		<TucValidationMessage Field="@(nameof(Settings.TrueValueShowAsIcon))" Errors="ValidationErrors"/>
+		<TucValidationMessage Field="@(nameof(_settings.TrueValueShowAsIcon))" Errors="Context.ValidationErrors"/>
 	</FluentGridItem>
 	<FluentGridItem xs="4">
 		<FluentInputLabel Label="@LOC("Show FALSE as icon")"/>
-		<FluentCheckbox Value="@Settings.FalseValueShowAsIcon" Style="height:32px;"
-		                ValueChanged=@((x)=> _onSettingsChanged(nameof(Settings.FalseValueShowAsIcon),x))
+		<FluentCheckbox Value="@_settings.FalseValueShowAsIcon" Style="height:32px;"
+		                ValueChanged=@((x)=> _onSettingsChanged(nameof(_settings.FalseValueShowAsIcon),x))
 		                Label="@LOC("render as icon")" />
-		<TucValidationMessage Field="@(nameof(Settings.FalseValueShowAsIcon))" Errors="ValidationErrors"/>
+		<TucValidationMessage Field="@(nameof(_settings.FalseValueShowAsIcon))" Errors="Context.ValidationErrors"/>
 	</FluentGridItem>
 	<FluentGridItem xs="4">
 		<FluentInputLabel Label="@LOC("Show NULL as icon")"/>
-		<FluentCheckbox Value="@Settings.NullValueShowAsIcon" Style="height:32px;"
-		                ValueChanged=@((x)=> _onSettingsChanged(nameof(Settings.NullValueShowAsIcon),x))
+		<FluentCheckbox Value="@_settings.NullValueShowAsIcon" Style="height:32px;"
+		                ValueChanged=@((x)=> _onSettingsChanged(nameof(_settings.NullValueShowAsIcon),x))
 		                Label="@LOC("render as icon")" />
-		<TucValidationMessage Field="@(nameof(Settings.NullValueShowAsIcon))" Errors="ValidationErrors"/>
+		<TucValidationMessage Field="@(nameof(_settings.NullValueShowAsIcon))" Errors="Context.ValidationErrors"/>
 	</FluentGridItem>
 </FluentGrid>
 <FluentGrid>
 	<FluentGridItem xs="12">
 		<FluentTextField Label="@LOC("Confirmation message")"
-		                 Value="@Settings.ChangeConfirmationMessage" Style="width:100%"
-		                 ValueChanged=@((x)=> _onSettingsChanged(nameof(Settings.ChangeConfirmationMessage),x))
+		                 Value="@_settings.ChangeConfirmationMessage" Style="width:100%"
+		                 ValueChanged=@((x)=> _onSettingsChanged(nameof(_settings.ChangeConfirmationMessage),x))
 		                 Placeholder="@LOC("empty shows a system one")" />
-		<TucValidationMessage Field="@(nameof(Settings.ChangeConfirmationMessage))" Errors="ValidationErrors"/>
+		<TucValidationMessage Field="@(nameof(_settings.ChangeConfirmationMessage))" Errors="Context.ValidationErrors"/>
 	</FluentGridItem>
 </FluentGrid>

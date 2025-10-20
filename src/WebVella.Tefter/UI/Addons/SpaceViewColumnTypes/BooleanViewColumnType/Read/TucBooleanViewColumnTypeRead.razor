@@ -5,11 +5,11 @@
 {
 	if (item is null)
 	{
-		if (!String.IsNullOrWhiteSpace(Settings.NullLabel))
+		if (!String.IsNullOrWhiteSpace(_settings.NullLabel))
 		{
-			<div>@Settings.NullLabel</div>
+			<div>@_settings.NullLabel</div>
 		}
-		else if (Settings.NullValueShowAsIcon)
+		else if (_settings.NullValueShowAsIcon)
 		{
 			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("SubtractSquare")" Color="@Color.FillInverse" /></div>
 		}
@@ -20,11 +20,11 @@
 	}
 	else if (item.Value)
 	{
-		if (!String.IsNullOrWhiteSpace(Settings.TrueLabel))
+		if (!String.IsNullOrWhiteSpace(_settings.TrueLabel))
 		{
-			<div>@Settings.TrueLabel</div>
+			<div>@_settings.TrueLabel</div>
 		}
-		else if (Settings.TrueValueShowAsIcon)
+		else if (_settings.TrueValueShowAsIcon)
 		{
 			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Checkmark",variant:IconVariant.Filled)" Color="@Color.Success" /></div>
 		}		
@@ -35,11 +35,11 @@
 	}
 	else
 	{
-		if (!String.IsNullOrWhiteSpace(Settings.FalseLabel))
+		if (!String.IsNullOrWhiteSpace(_settings.FalseLabel))
 		{
-			<div>@Settings.FalseLabel</div>
+			<div>@_settings.FalseLabel</div>
 		}
-		else if (Settings.FalseValueShowAsIcon)
+		else if (_settings.FalseValueShowAsIcon)
 		{
 			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Dismiss")" Color="@Color.Error" /></div>
 		}

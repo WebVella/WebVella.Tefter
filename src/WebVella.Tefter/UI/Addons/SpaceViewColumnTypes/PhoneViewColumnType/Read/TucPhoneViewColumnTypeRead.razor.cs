@@ -2,6 +2,6 @@
 
 public partial class TucPhoneViewColumnTypeRead : ComponentBase
 {
+	[Parameter] public TfSpaceViewColumnReadModeContext Context { get; set; } = null!;
 	[Parameter] public List<string?>? Value { get; set; }
-	[Parameter] public TfPhoneViewColumnTypeSettings Settings { get; set; } = null!;
 }

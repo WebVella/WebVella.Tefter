@@ -4,7 +4,7 @@ public partial class TucNumberViewColumnTypeEdit : TfLocalizedViewColumnComponen
 {
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
-
+	[Parameter] public TfSpaceViewColumnEditModeContext Context { get; set; } = null!;
 	[Parameter]
 	public decimal? Value
 	{
@@ -17,7 +17,6 @@ public partial class TucNumberViewColumnTypeEdit : TfLocalizedViewColumnComponen
 	}
 
 	[Parameter] public EventCallback<decimal?> ValueChanged { get; set; }
-	[Parameter] public TfNumberViewColumnTypeSettings Settings { get; set; } = null!;
 
 	private readonly string _valueInputId = "input-" + Guid.NewGuid();
 
@@ -26,8 +25,9 @@ public partial class TucNumberViewColumnTypeEdit : TfLocalizedViewColumnComponen
 
 	private async Task _valueChanged()
 	{
-		if (!String.IsNullOrWhiteSpace(Settings.ChangeConfirmationMessage)
-		    && !await JsRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
+		var settings = Context.GetSettings<TfNumberViewColumnTypeSettings>();
+		if (!String.IsNullOrWhiteSpace(settings.ChangeConfirmationMessage)
+		    && !await JsRuntime.InvokeAsync<bool>("confirm", settings.ChangeConfirmationMessage))
 			return;
 
 		Value = _value;

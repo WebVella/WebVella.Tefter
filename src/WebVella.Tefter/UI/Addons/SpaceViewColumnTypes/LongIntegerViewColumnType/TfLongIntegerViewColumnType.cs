@@ -22,10 +22,9 @@ public class TfLongIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 			Alias = VALUE_ALIAS,
 			Description =
 				"this column is compatible with all integer database column types",
-			SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> { 
-				TfDatabaseColumnType.ShortInteger, 
-				TfDatabaseColumnType.Integer,
-				TfDatabaseColumnType.LongInteger,
+			SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType>
+			{
+				TfDatabaseColumnType.ShortInteger, TfDatabaseColumnType.Integer, TfDatabaseColumnType.LongInteger,
 			}
 		}
 	};
@@ -46,7 +45,7 @@ public class TfLongIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 			throw new Exception("Wrong context type. TfSpaceViewColumnExportExcelModeContext is expected");
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfLongIntegerViewColumnTypeSettings());
+			var settings = context.GetSettings<TfLongIntegerViewColumnTypeSettings>();
 			var value = _initValue(args);
 			if (value.Count == 0)
 			{
@@ -84,7 +83,7 @@ public class TfLongIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfLongIntegerViewColumnTypeSettings());
+			var settings = context.GetSettings<TfLongIntegerViewColumnTypeSettings>();
 			var value = _initValue(args);
 			if (value.Count == 0)
 			{
@@ -146,6 +145,7 @@ public class TfLongIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 		var values = new List<long?>();
 
 		var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null) return values;
 		if (columnData is null)
 		{
 			values.Add(null);
@@ -174,8 +174,8 @@ public class TfLongIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucLongIntegerViewColumnTypeRead>(0);
-			builder.AddAttribute(1, "Value", values);
-			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfLongIntegerViewColumnTypeSettings()));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "Value", values);
 			builder.CloseComponent();
 		};
 	}
@@ -183,6 +183,12 @@ public class TfLongIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 	private RenderFragment _renderEditMode(TfSpaceViewColumnEditModeContext context)
 	{
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null)
+			return builder =>
+			{
+				builder.OpenElement(0, "span");
+				builder.CloseElement();
+			};
 		//Editable columns
 		if (column.Origin == TfDataColumnOriginType.CurrentProvider
 		    || column.Origin == TfDataColumnOriginType.SharedColumn)
@@ -192,8 +198,9 @@ public class TfLongIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 			return builder =>
 			{
 				builder.OpenComponent<TucLongIntegerViewColumnTypeEdit>(0);
-				builder.AddAttribute(1, "Value", values[0]);
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<long?>(this, async (x) =>
+				builder.AddAttribute(1, "Context", context);
+				builder.AddAttribute(2, "Value", values[0]);
+				builder.AddAttribute(3, "ValueChanged", EventCallback.Factory.Create<long?>(this, async (x) =>
 				{
 					var change = new TfSpaceViewColumnDataChange
 					{
@@ -201,7 +208,6 @@ public class TfLongIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
-				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfLongIntegerViewColumnTypeSettings()));
 				builder.CloseComponent();
 			};
 		}
@@ -221,14 +227,14 @@ public class TfLongIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucLongIntegerViewColumnTypeOptions>(0);
-			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfLongIntegerViewColumnTypeSettings()));
-			builder.AddAttribute(2, "ValidationErrors", context.ValidationErrors);
-			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfLongIntegerViewColumnTypeSettings>(this,
-				async (options) =>
-				{
-					context.SetColumnTypeOptions(options);
-					await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
-				}));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "SettingsChanged",
+				EventCallback.Factory.Create<TfLongIntegerViewColumnTypeSettings>(this,
+					async (options) =>
+					{
+						context.SetColumnTypeOptions(options);
+						await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
+					}));
 			builder.CloseComponent();
 		};
 	}
@@ -240,7 +246,6 @@ public class TfLongIntegerViewColumnTypeSettings
 {
 	[JsonPropertyName("ChangeConfirmationMessage")]
 	public string? ChangeConfirmationMessage { get; set; }
-	
-	[JsonPropertyName("Format")]
-	public string? Format { get; set; }	
+
+	[JsonPropertyName("Format")] public string? Format { get; set; }
 }

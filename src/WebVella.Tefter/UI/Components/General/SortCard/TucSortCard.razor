@@ -5,12 +5,14 @@
 	<ToolbarTemplate>
 		@if (_options.Count > 0)
 		{
-			<TucSelect @bind-SelectedOption="@_selectedColumn"
+			<TucSelect OptionSelected="@((x) => x == _selectedColumn)"
+			           SelectedOptionChanged="((x) => _selectedColumn = x)"			           
 					   Disabled="_submitting"
 					   TOption="string" Required="false"
 					   Items="@_options" Style="width:220px"
 					   Placeholder="@LOC("select provider column")" />
-			<TucSelect @bind-SelectedOption="@_selectedDirection"
+			<TucSelect OptionSelected="@((x) => x == _selectedDirection)"
+			           SelectedOptionChanged="((x) => _selectedDirection = x)"			           
 					   Disabled="_submitting"
 					   TOption="TfSortDirection"
 					   Items="@(Enum.GetValues<TfSortDirection>())"

@@ -1,0 +1,15 @@
+﻿@namespace WebVella.Tefter.UI.Addons
+@inherits TfLocalizedViewColumnComponent
+
+<FluentGrid>
+	<FluentGridItem xs="12">
+		<FluentInputLabel Label="@LOC("Folder")"/>
+		<TucSelect TOption="AssetsFolder"
+		           Items="FolderOptions"
+		           OptionValue="(x=> x.Id.ToString())"
+		           OptionText="(x=> x.Name)"
+		           OptionSelected="@((x) => x.Id == Context.GetSettings<TfFolderAssetsCountViewColumnTypeSettings>().FolderId)"
+		           SelectedOptionChanged="_folderSelectHandler"/>
+	</FluentGridItem>
+
+</FluentGrid>

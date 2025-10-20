@@ -2,6 +2,6 @@
 
 public partial class TucImageViewColumnTypeRead : ComponentBase
 {
+	[Parameter] public TfSpaceViewColumnReadModeContext Context { get; set; } = null!;
 	[Parameter] public List<string?>? Value { get; set; }
-	[Parameter] public TfImageViewColumnTypeSettings Settings { get; set; } = null!;
 }

@@ -44,7 +44,7 @@ public class TfDateViewColumnType : ITfSpaceViewColumnTypeAddon
 			throw new Exception("Wrong context type. TfSpaceViewColumnExportExcelModeContext is expected");
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfDateViewColumnTypeSettings());
+			var settings = context.GetSettings<TfDateViewColumnTypeSettings>();
 			var value = _initValue(args);
 			if (value.Count == 0)
 			{
@@ -83,7 +83,7 @@ public class TfDateViewColumnType : ITfSpaceViewColumnTypeAddon
 
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfDateViewColumnTypeSettings());
+			var settings = context.GetSettings<TfDateViewColumnTypeSettings>();
 			var value = _initValue(args);
 			var format = !String.IsNullOrWhiteSpace(settings.Format) ? settings.Format : _defaultFormat;
 			if (value.Count == 0)
@@ -146,6 +146,7 @@ public class TfDateViewColumnType : ITfSpaceViewColumnTypeAddon
 		var values = new List<DateOnly?>();
 
 		var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null) return values;
 		if (columnData is null)
 		{
 			values.Add(null);
@@ -189,8 +190,8 @@ public class TfDateViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucDateViewColumnTypeRead>(0);
-			builder.AddAttribute(1, "Value", values);
-			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfDateViewColumnTypeSettings()));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "Value", values);
 			builder.CloseComponent();
 		};
 	}
@@ -198,6 +199,12 @@ public class TfDateViewColumnType : ITfSpaceViewColumnTypeAddon
 	private RenderFragment _renderEditMode(TfSpaceViewColumnEditModeContext context)
 	{
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null)
+			return builder =>
+			{
+				builder.OpenElement(0, "span");
+				builder.CloseElement();
+			};
 		//Editable columns
 		if (column.Origin == TfDataColumnOriginType.CurrentProvider
 		    || column.Origin == TfDataColumnOriginType.SharedColumn)
@@ -207,8 +214,9 @@ public class TfDateViewColumnType : ITfSpaceViewColumnTypeAddon
 			return builder =>
 			{
 				builder.OpenComponent<TucDateViewColumnTypeEdit>(0);
-				builder.AddAttribute(1, "Value", values[0]);
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<DateOnly?>(this, async (x) =>
+				builder.AddAttribute(1, "Context", context);
+				builder.AddAttribute(2, "Value", values[0]);
+				builder.AddAttribute(3, "ValueChanged", EventCallback.Factory.Create<DateOnly?>(this, async (x) =>
 				{
 					var change = new TfSpaceViewColumnDataChange
 					{
@@ -216,7 +224,6 @@ public class TfDateViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
-				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfDateViewColumnTypeSettings()));
 				builder.CloseComponent();
 			};
 		}
@@ -236,9 +243,8 @@ public class TfDateViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucDateViewColumnTypeOptions>(0);
-			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfDateViewColumnTypeSettings()));
-			builder.AddAttribute(2, "ValidationErrors", context.ValidationErrors);
-			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfDateViewColumnTypeSettings>(this,
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "SettingsChanged", EventCallback.Factory.Create<TfDateViewColumnTypeSettings>(this,
 				async (options) =>
 				{
 					context.SetColumnTypeOptions(options);

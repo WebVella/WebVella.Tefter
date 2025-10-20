@@ -4,19 +4,19 @@
 <FluentGrid>
 	<FluentGridItem xs="12">
 		<FluentTextField Label="@LOC("Confirmation message")"
-		                 Value="@Settings.ChangeConfirmationMessage" Style="width:100%"
-		                 ValueChanged=@((x) => _onSettingsChanged(nameof(Settings.ChangeConfirmationMessage), x))
+		                 Value="@_form.ChangeConfirmationMessage" Style="width:100%"
+		                 ValueChanged=@((x) => _onSettingsChanged(nameof(_form.ChangeConfirmationMessage), x))
 		                 Placeholder="@LOC("empty for no confirmation")"/>
-		<TucValidationMessage Field="@(nameof(Settings.ChangeConfirmationMessage))" Errors="ValidationErrors"/>
+		<TucValidationMessage Field="@(nameof(_form.ChangeConfirmationMessage))" Errors="Context.ValidationErrors"/>
 	</FluentGridItem>
 </FluentGrid>
 <FluentGrid>
 	<FluentGridItem xs="6">
 		<FluentTextField Label="@LOC("Format")"
-		                 Value="@Settings.Format" Style="width:100%" Immediate ImmediateDelay="500"
-		                 ValueChanged=@((x)=> _onSettingsChanged(nameof(Settings.Format),x))
+		                 Value="@_form.Format" Style="width:100%" Immediate ImmediateDelay="500"
+		                 ValueChanged=@((x)=> _onSettingsChanged(nameof(_form.Format),x))
 		                 Placeholder="@LOC("eg. 'D10'")" />
-		<TucValidationMessage Field="@(nameof(Settings.Format))" Errors="ValidationErrors"/>		
+		<TucValidationMessage Field="@(nameof(_form.Format))" Errors="Context.ValidationErrors"/>		
 	</FluentGridItem>
 	<FluentGridItem xs="6"></FluentGridItem>
 </FluentGrid>

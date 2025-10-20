@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>disable</Nullable>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -15,12 +15,6 @@
 		<PackageReference Include="System.Formats.Asn1" Version="9.0.9" />
 		<PackageReference Include="System.IO.Packaging" Version="9.0.9" />
 		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.9" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Update="Components\TalkThreadModal\TalkThreadModal.razor">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		</Content>
 	</ItemGroup>
 
 </Project>

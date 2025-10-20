@@ -2,14 +2,15 @@
 
 public partial class TucDateViewColumnTypeRead : ComponentBase
 {
+	[Parameter] public TfSpaceViewColumnReadModeContext Context { get; set; } = null!;
 	[Parameter] public List<DateOnly?>? Value { get; set; }
-	[Parameter] public TfDateViewColumnTypeSettings Settings { get; set; } = null!;
 	
 	private string _format = null!;
 
-	protected override void OnInitialized()
+	protected override void OnParametersSet()
 	{
+		var settings = Context.GetSettings<TfDateViewColumnTypeSettings>();
 		string defaultFormat = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern;
-		_format = !String.IsNullOrWhiteSpace(Settings.Format) ? Settings.Format : defaultFormat;
+		_format = !String.IsNullOrWhiteSpace(settings.Format) ? settings.Format : defaultFormat;		
 	}
 }

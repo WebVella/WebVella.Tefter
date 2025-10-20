@@ -2,6 +2,6 @@
 
 public partial class TucEmailViewColumnTypeRead : ComponentBase
 {
+	[Parameter] public TfSpaceViewColumnReadModeContext Context { get; set; } = null!;
 	[Parameter] public List<string?>? Value { get; set; }
-	[Parameter] public TfEmailViewColumnTypeSettings Settings { get; set; } = null!;
 }

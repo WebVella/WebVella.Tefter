@@ -88,7 +88,8 @@
 						           Placeholder="@LOC("select role")"
 						           OptionValue="@(p => p.Id.ToString())"
 						           OptionText="@(p => p.Name)"
-						           @bind-SelectedOption="@_selectedRole"
+						           OptionSelected="@((x) => x.Id == _selectedRole?.Id)"
+						           SelectedOptionChanged="((x) => _selectedRole = x)"						           
 						           Disabled="_submitting"/>
 					}
 					else

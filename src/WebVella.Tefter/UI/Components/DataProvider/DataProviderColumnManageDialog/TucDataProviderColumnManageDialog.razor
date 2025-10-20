@@ -80,7 +80,8 @@
 							<FluentValidationMessage For="@(() => _form.SourceName)" />
 						</FluentGridItem>
 						<FluentGridItem xs="4">
-							<TucSelect @bind-SelectedOption="@_form.SourceType"
+							<TucSelect OptionSelected="@((x) => x == _form.SourceType)"
+							           SelectedOptionChanged="((x) => _form.SourceType = x)"
 									   TOption="string"
 									   Items="@_providerColumnTypeToSourceTypes[_form.DbType]"
 									   Style="width:100%"
@@ -108,7 +109,8 @@
 				</FluentGrid>
 				<FluentGrid>
 					<FluentGridItem xs="8">
-						<TucSelect @bind-SelectedOption="@_form.RuleSet"
+						<TucSelect OptionSelected="@((x) => x == _form.RuleSet)"
+						           SelectedOptionChanged="((x) => _form.RuleSet = x)"
 								   TOption="TfDataProviderColumnRuleSet"
 								   Items="@(Enum.GetValues<TfDataProviderColumnRuleSet>())"
 								   OptionValue="((p) => p.ToString())"

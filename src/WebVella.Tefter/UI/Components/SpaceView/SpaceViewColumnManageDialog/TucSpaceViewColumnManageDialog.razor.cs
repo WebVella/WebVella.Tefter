@@ -68,9 +68,11 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		_typeOptionsContext = new TfSpaceViewColumnOptionsModeContext()
 		{
 			TfService = TfService,
+			ServiceProvider = ServiceProvider,
 			ViewColumn = _form,
 			ValidationErrors = new(),
-			SettingsChanged = EventCallback.Factory.Create<string>(this, _customOptionsChangedHandler)
+			SettingsChanged = EventCallback.Factory.Create<string>(this, _columnTypeSettingsChangedHandler),
+			DataMappingChanged = EventCallback.Factory.Create<Tuple<string,string?>>(this, _dataMappingValueChanged),
 		};
 	}
 
@@ -199,9 +201,8 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		_form.DataMapping = dataMapping;
 	}
 
-	private async Task _customOptionsChangedHandler(string value)
+	private async Task _columnTypeSettingsChangedHandler(string value)
 	{
-		Console.WriteLine("_customOptionsChangedHandler");
 		if (String.IsNullOrWhiteSpace(value)) _form.TypeOptionsJson = null;
 
 		if (!(value.StartsWith("{") && value.StartsWith("{"))

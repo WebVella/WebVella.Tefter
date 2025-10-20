@@ -17,5 +17,7 @@ public record TfSpaceViewColumnDataMappingDefinition
 {
 	public string Alias { get; init; } = null!;
 	public string? Description { get; init; }
+
+	public bool IsHidden { get; init; } = false;
 	public List<TfDatabaseColumnType> SupportedDatabaseColumnTypes { get; init; } = new();
 }

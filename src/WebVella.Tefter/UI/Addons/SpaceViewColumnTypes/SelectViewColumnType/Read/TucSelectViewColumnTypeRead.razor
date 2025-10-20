@@ -21,7 +21,7 @@
 		}
 		else
 		{
-			<div>@(Settings.NotSelectedString ?? "n/a")</div>
+			<div>@(Context.GetSettings<TfSelectViewColumnTypeSettings>().NotSelectedString ?? "n/a")</div>
 		}
 	}
 </div>

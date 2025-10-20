@@ -2,6 +2,13 @@
 
 public partial class TucBooleanViewColumnTypeRead : ComponentBase
 {
+	[Parameter] public TfSpaceViewColumnReadModeContext Context { get; set; } = null!;
 	[Parameter] public List<bool?>? Value { get; set; }
-	[Parameter] public TfBooleanViewColumnTypeSettings Settings { get; set; } = null!;
+	
+	private TfBooleanViewColumnTypeSettings _settings =  new ();
+
+	protected override void OnParametersSet()
+	{
+		_settings = Context.GetSettings<TfBooleanViewColumnTypeSettings>();
+	}	
 }

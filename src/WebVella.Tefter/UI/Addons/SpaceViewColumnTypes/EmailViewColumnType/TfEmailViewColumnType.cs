@@ -4,7 +4,7 @@ public class TfEmailViewColumnType : ITfSpaceViewColumnTypeAddon
 {
 	#region << INIT >>
 
-	public const string ID ="0d059c8e-5701-466d-baed-fb1a19c58808";
+	public const string ID = "0d059c8e-5701-466d-baed-fb1a19c58808";
 	public const string NAME = "Email";
 	public const string DESCRIPTION = "displays an email";
 	public const string FLUENT_ICON_NAME = "Mail";
@@ -24,7 +24,7 @@ public class TfEmailViewColumnType : ITfSpaceViewColumnTypeAddon
 				"this column is compatible with short text",
 			SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType>
 			{
-				TfDatabaseColumnType.ShortText,TfDatabaseColumnType.Text
+				TfDatabaseColumnType.ShortText, TfDatabaseColumnType.Text
 			}
 		}
 	};
@@ -34,8 +34,9 @@ public class TfEmailViewColumnType : ITfSpaceViewColumnTypeAddon
 	#region << PRIVATE >>
 
 	private List<ValidationError> _validationErrors = new();
+
 	#endregion
-	
+
 	#region << PUBLIC >>
 
 	public void ProcessExcelCell(TfSpaceViewColumnBaseContext args)
@@ -85,6 +86,7 @@ public class TfEmailViewColumnType : ITfSpaceViewColumnTypeAddon
 		var values = new List<string?>();
 
 		var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null) return values;
 		if (columnData is null)
 		{
 			values.Add(String.Empty);
@@ -113,8 +115,8 @@ public class TfEmailViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucEmailViewColumnTypeRead>(0);
-			builder.AddAttribute(1, "Value", values);
-			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfEmailViewColumnTypeSettings()));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "Value", values);
 			builder.CloseComponent();
 		};
 	}
@@ -122,6 +124,12 @@ public class TfEmailViewColumnType : ITfSpaceViewColumnTypeAddon
 	private RenderFragment _renderEditMode(TfSpaceViewColumnEditModeContext context)
 	{
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null)
+			return builder =>
+			{
+				builder.OpenElement(0, "span");
+				builder.CloseElement();
+			};
 		//Editable columns
 		if (column.Origin == TfDataColumnOriginType.CurrentProvider
 		    || column.Origin == TfDataColumnOriginType.SharedColumn)
@@ -131,8 +139,9 @@ public class TfEmailViewColumnType : ITfSpaceViewColumnTypeAddon
 			return builder =>
 			{
 				builder.OpenComponent<TucEmailViewColumnTypeEdit>(0);
-				builder.AddAttribute(1, "Value", values[0]);
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<string?>(this, async (x) =>
+				builder.AddAttribute(1, "Context", context);
+				builder.AddAttribute(2, "Value", values[0]);
+				builder.AddAttribute(3, "ValueChanged", EventCallback.Factory.Create<string?>(this, async (x) =>
 				{
 					var change = new TfSpaceViewColumnDataChange
 					{
@@ -140,7 +149,6 @@ public class TfEmailViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
-				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfEmailViewColumnTypeSettings()));
 				builder.CloseComponent();
 			};
 		}
@@ -160,24 +168,22 @@ public class TfEmailViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucEmailViewColumnTypeOptions>(0);
-			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfEmailViewColumnTypeSettings()));
-			builder.AddAttribute(2, "ValidationErrors", context.ValidationErrors);
-			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfEmailViewColumnTypeSettings>(this, async (options) =>
-			{
-				context.SetColumnTypeOptions(options);
-				await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
-			}));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "SettingsChanged", EventCallback.Factory.Create<TfEmailViewColumnTypeSettings>(this,
+				async (options) =>
+				{
+					context.SetColumnTypeOptions(options);
+					await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
+				}));
 			builder.CloseComponent();
 		};
 	}
 
 	#endregion
-
 }
 
 public class TfEmailViewColumnTypeSettings
 {
-
 	[JsonPropertyName("ChangeConfirmationMessage")]
 	public string? ChangeConfirmationMessage { get; set; }
-}	
+}

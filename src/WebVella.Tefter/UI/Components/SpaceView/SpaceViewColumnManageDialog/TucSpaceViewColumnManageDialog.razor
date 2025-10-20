@@ -67,6 +67,7 @@
 			{
 				foreach (var item in _selectedColumnType.DataMappingDefinitions)
 				{
+					if(item.IsHidden) continue;
 					<FluentGrid>
 						<FluentGridItem xs="6">
 							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@item.Alias Immediate
@@ -85,13 +86,6 @@
 							                Label="@LOC("Data column name")" Style="width:100%"/>
 						</FluentGridItem>
 					</FluentGrid>
-				}
-
-				if (_selectedColumnType.DataMappingDefinitions.Count == 0)
-				{
-					<FluentMessageBar Intent="@MessageIntent.Info"
-					                  Title="@LOC("This component does not require data mapping")"
-					                  AllowDismiss="false"/>
 				}
 
 				<TucErrorBoundry>

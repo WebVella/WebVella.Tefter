@@ -1,21 +1,27 @@
 ﻿namespace WebVella.Tefter.UI.Addons;
 public partial class TucPhoneViewColumnTypeOptions : TfLocalizedViewColumnComponent
 {
-	[Parameter] public TfPhoneViewColumnTypeSettings Settings { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnOptionsModeContext Context { get; set; } = null!;
 	[Parameter] public EventCallback<TfPhoneViewColumnTypeSettings> SettingsChanged { get; set; }
-	[Parameter] public List<ValidationError> ValidationErrors { get; set; } = new();	
+	
+	private TfPhoneViewColumnTypeSettings _form =  new ();
+
+	protected override void OnParametersSet()
+	{
+		_form = Context.GetSettings<TfPhoneViewColumnTypeSettings>();
+	}	
 	
 
 	private async Task _onSettingsChanged(string propName, object? value)
 	{
 		switch (propName)
 		{
-			case nameof(Settings.ChangeConfirmationMessage):
-				Settings.ChangeConfirmationMessage = (string?)value;
+			case nameof(_form.ChangeConfirmationMessage):
+				_form.ChangeConfirmationMessage = (string?)value;
 				break;			
 		}
 	
-		await SettingsChanged.InvokeAsync(Settings);
+		await SettingsChanged.InvokeAsync(_form);
 	}
 
 }

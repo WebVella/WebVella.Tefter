@@ -34,8 +34,9 @@ public class TfUrlViewColumnType : ITfSpaceViewColumnTypeAddon
 	#region << PRIVATE >>
 
 	private List<ValidationError> _validationErrors = new();
+
 	#endregion
-	
+
 	#region << PUBLIC >>
 
 	public void ProcessExcelCell(TfSpaceViewColumnBaseContext args)
@@ -85,6 +86,7 @@ public class TfUrlViewColumnType : ITfSpaceViewColumnTypeAddon
 		var values = new List<string?>();
 
 		var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null) return values;
 		if (columnData is null)
 		{
 			values.Add(String.Empty);
@@ -113,8 +115,8 @@ public class TfUrlViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucUrlViewColumnTypeRead>(0);
-			builder.AddAttribute(1, "Value", values);
-			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfUrlViewColumnTypeSettings()));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "Value", values);
 			builder.CloseComponent();
 		};
 	}
@@ -122,6 +124,12 @@ public class TfUrlViewColumnType : ITfSpaceViewColumnTypeAddon
 	private RenderFragment _renderEditMode(TfSpaceViewColumnEditModeContext context)
 	{
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null)
+			return builder =>
+			{
+				builder.OpenElement(0, "span");
+				builder.CloseElement();
+			};
 		//Editable columns
 		if (column.Origin == TfDataColumnOriginType.CurrentProvider
 		    || column.Origin == TfDataColumnOriginType.SharedColumn)
@@ -131,8 +139,9 @@ public class TfUrlViewColumnType : ITfSpaceViewColumnTypeAddon
 			return builder =>
 			{
 				builder.OpenComponent<TucUrlViewColumnTypeEdit>(0);
-				builder.AddAttribute(1, "Value", values[0]);
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<string?>(this, async (x) =>
+				builder.AddAttribute(1, "Context", context);
+				builder.AddAttribute(2, "Value", values[0]);
+				builder.AddAttribute(3, "ValueChanged", EventCallback.Factory.Create<string?>(this, async (x) =>
 				{
 					var change = new TfSpaceViewColumnDataChange
 					{
@@ -140,7 +149,6 @@ public class TfUrlViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
-				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfUrlViewColumnTypeSettings()));
 				builder.CloseComponent();
 			};
 		}
@@ -160,24 +168,22 @@ public class TfUrlViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucUrlViewColumnTypeOptions>(0);
-			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfUrlViewColumnTypeSettings()));
-			builder.AddAttribute(2, "ValidationErrors", context.ValidationErrors);
-			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfUrlViewColumnTypeSettings>(this, async (options) =>
-			{
-				context.SetColumnTypeOptions(options);
-				await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
-			}));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "SettingsChanged", EventCallback.Factory.Create<TfUrlViewColumnTypeSettings>(this,
+				async (options) =>
+				{
+					context.SetColumnTypeOptions(options);
+					await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
+				}));
 			builder.CloseComponent();
 		};
 	}
 
 	#endregion
-
 }
 
 public class TfUrlViewColumnTypeSettings
 {
-
 	[JsonPropertyName("ChangeConfirmationMessage")]
 	public string? ChangeConfirmationMessage { get; set; }
-}	
+}

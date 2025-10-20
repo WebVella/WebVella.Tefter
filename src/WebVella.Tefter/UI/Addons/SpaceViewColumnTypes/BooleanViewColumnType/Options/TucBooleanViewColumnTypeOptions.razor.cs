@@ -4,42 +4,47 @@ namespace WebVella.Tefter.UI.Addons;
 
 public partial class TucBooleanViewColumnTypeOptions : TfLocalizedViewColumnComponent
 {
-	[Parameter] public TfBooleanViewColumnTypeSettings Settings { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnOptionsModeContext Context { get; set; } = null!;
 	[Parameter] public EventCallback<TfBooleanViewColumnTypeSettings> SettingsChanged { get; set; }
-	[Parameter] public List<ValidationError> ValidationErrors { get; set; } = new();	
 	
+	private TfBooleanViewColumnTypeSettings _settings =  new ();
+
+	protected override void OnParametersSet()
+	{
+		_settings = Context.GetSettings<TfBooleanViewColumnTypeSettings>();
+	}	
 
 	private async Task _onSettingsChanged(string propName, object? value)
 	{
 		switch (propName)
 		{
-			case nameof(Settings.ShowLabel):
-				Settings.ShowLabel = value is not null && (bool)value;
+			case nameof(_settings.ShowLabel):
+				_settings.ShowLabel = value is not null && (bool)value;
 				break;				
-			case nameof(Settings.TrueLabel):
-				Settings.TrueLabel = (string?)value;
+			case nameof(_settings.TrueLabel):
+				_settings.TrueLabel = (string?)value;
 				break;				
-			case nameof(Settings.FalseLabel):
-				Settings.FalseLabel = (string?)value;
+			case nameof(_settings.FalseLabel):
+				_settings.FalseLabel = (string?)value;
 				break;			
-			case nameof(Settings.NullLabel):
-				Settings.NullLabel = (string?)value;
+			case nameof(_settings.NullLabel):
+				_settings.NullLabel = (string?)value;
 				break;				
-			case nameof(Settings.TrueValueShowAsIcon):
-				Settings.TrueValueShowAsIcon = value is not null && (bool)value;
+			case nameof(_settings.TrueValueShowAsIcon):
+				_settings.TrueValueShowAsIcon = value is not null && (bool)value;
 				break;	
-			case nameof(Settings.FalseValueShowAsIcon):
-				Settings.FalseValueShowAsIcon = value is not null && (bool)value;
+			case nameof(_settings.FalseValueShowAsIcon):
+				_settings.FalseValueShowAsIcon = value is not null && (bool)value;
 				break;	
-			case nameof(Settings.NullValueShowAsIcon):
-				Settings.NullValueShowAsIcon = value is not null && (bool)value;
+			case nameof(_settings.NullValueShowAsIcon):
+				_settings.NullValueShowAsIcon = value is not null && (bool)value;
 				break;				
-			case nameof(Settings.ChangeConfirmationMessage):
-				Settings.ChangeConfirmationMessage = (string?)value;
+			case nameof(_settings.ChangeConfirmationMessage):
+				_settings.ChangeConfirmationMessage = (string?)value;
 				break;			
 		}
 	
-		await SettingsChanged.InvokeAsync(Settings);
+		await SettingsChanged.InvokeAsync(_settings);
 	}
 
 }

@@ -4,7 +4,7 @@ public partial class TucEmailViewColumnTypeEdit : TfLocalizedViewColumnComponent
 {
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
-
+	[Parameter] public TfSpaceViewColumnEditModeContext Context { get; set; } = null!;
 	[Parameter]
 	public string? Value
 	{
@@ -17,7 +17,6 @@ public partial class TucEmailViewColumnTypeEdit : TfLocalizedViewColumnComponent
 	}
 
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
-	[Parameter] public TfEmailViewColumnTypeSettings Settings { get; set; } = null!;
 
 	private readonly string _valueInputId = "input-" + Guid.NewGuid();
 
@@ -39,9 +38,9 @@ public partial class TucEmailViewColumnTypeEdit : TfLocalizedViewColumnComponent
 				return;
 			}
 		}
-
-		if (!String.IsNullOrWhiteSpace(Settings.ChangeConfirmationMessage)
-		    && !await JsRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
+		var settings = Context.GetSettings<TfEmailViewColumnTypeSettings>();
+		if (!String.IsNullOrWhiteSpace(settings.ChangeConfirmationMessage)
+		    && !await JsRuntime.InvokeAsync<bool>("confirm", settings.ChangeConfirmationMessage))
 			return;
 
 		Value = _valueString;

@@ -45,7 +45,8 @@
 			<ToolbarTemplate>
 				@if (_roleOptions.Count > 0)
 				{
-					<TucSelect @bind-SelectedOption="@_selectedRole"
+					<TucSelect OptionSelected="@((x) => x.Id == _selectedRole?.Id)"
+					           SelectedOptionChanged="((x) => _selectedRole = x)"					           
 							   Disabled="_submitting"
 							   TOption="TfRole" Required="false"
 							   OptionValue="@(x=> x.Id.ToString())"

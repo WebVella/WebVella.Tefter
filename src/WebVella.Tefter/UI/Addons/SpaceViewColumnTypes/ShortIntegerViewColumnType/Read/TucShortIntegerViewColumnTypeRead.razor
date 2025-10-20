@@ -3,5 +3,5 @@
 
 @foreach (var item in Value ?? new())
 {
-	<div>@item?.ToString(Settings.Format)</div>
+	<div>@item?.ToString(_settings.Format)</div>
 }

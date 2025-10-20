@@ -1,27 +1,31 @@
 ﻿namespace WebVella.Tefter.UI.Addons;
 public partial class TucDateViewColumnTypeOptions : TfLocalizedViewColumnComponent
 {
-	[Parameter] public TfDateViewColumnTypeSettings Settings { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnOptionsModeContext Context { get; set; } = null!;
 	[Parameter] public EventCallback<TfDateViewColumnTypeSettings> SettingsChanged { get; set; }
-	[Parameter] public List<ValidationError> ValidationErrors { get; set; } = new();	
+	private TfDateViewColumnTypeSettings _form =  new ();
+	protected override void OnParametersSet()
+	{
+		_form = Context.GetSettings<TfDateViewColumnTypeSettings>();
+	}
 	
 
 	private async Task _onSettingsChanged(string propName, object? value)
 	{
 		switch (propName)
 		{
-			case nameof(Settings.ChangeConfirmationMessage):
-				Settings.ChangeConfirmationMessage = (string?)value;
+			case nameof(_form.ChangeConfirmationMessage):
+				_form.ChangeConfirmationMessage = (string?)value;
 				break;			
-			case nameof(Settings.CalendarViewsSelection):
-				Settings.CalendarViewsSelection = (CalendarViews)value!;
+			case nameof(_form.CalendarViewsSelection):
+				_form.CalendarViewsSelection = (CalendarViews)value!;
 				break;				
-			case nameof(Settings.Format):
-				Settings.Format = (string?)value;
+			case nameof(_form.Format):
+				_form.Format = (string?)value;
 				break;				
 		}
 	
-		await SettingsChanged.InvokeAsync(Settings);
+		await SettingsChanged.InvokeAsync(_form);
 	}
 
 }

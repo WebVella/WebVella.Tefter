@@ -8,7 +8,7 @@
 @* Footer *@
 <FluentDialogFooter>
 	<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
-				  Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+	              Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
 
@@ -20,54 +20,58 @@
 				<FluentGrid>
 					<FluentGridItem xs="4">
 						<FluentTextField Required="true"
-										 TextFieldType="@TextFieldType.Text"
-										 @bind-Value=@_form.Name AutoComplete="off"
-										 Label="@LOC("Name")" Style="width:100%" />
-						<FluentValidationMessage For="@(() => _form.Name)" />
+						                 TextFieldType="@TextFieldType.Text"
+						                 @bind-Value=@_form.Name AutoComplete="off"
+						                 Label="@LOC("Name")" Style="width:100%"/>
+						<FluentValidationMessage For="@(() => _form.Name)"/>
 					</FluentGridItem>
 					<FluentGridItem xs="4">
 						<FluentTextField TextFieldType="@TextFieldType.Text"
-										 Value=@(_form.IsGroup ? LOC("group") : LOC("preset filter")) Disabled="true"
-										 Label="@LOC("Type")" Style="width:100%" />
-						<FluentValidationMessage For="@(() => _form.IsGroup)" />
+						                 Value=@(_form.IsGroup ? LOC("group") : LOC("preset filter")) Disabled="true"
+						                 Label="@LOC("Type")" Style="width:100%"/>
+						<FluentValidationMessage For="@(() => _form.IsGroup)"/>
 					</FluentGridItem>
 				</FluentGrid>
 				<FluentGrid>
 					<FluentGridItem xs="4">
-						<FluentInputLabel Label="@LOC("Parent Group")" />
+						<FluentInputLabel Label="@LOC("Parent Group")"/>
 						<FluentStack>
 							<TucSelect Required="false"
-										  @bind-SelectedOption="@_selectedParent"
-										  TOption="TfSpaceViewPreset"
-										  Items="@Content.Parents" Style="width:100%"
-										  OptionValue="@((p)=> p.Id.ToString())"
-										  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")" />
+							           OptionSelected="@((x) => x.Id == _selectedParent?.Id)"
+							           SelectedOptionChanged="((x) => _selectedParent = x)"
+							           TOption="TfSpaceViewPreset"
+							           Items="@Content.Parents" Style="width:100%"
+							           OptionValue="@((p) => p.Id.ToString())"
+							           OptionText="@(x => x.Name)" Placeholder="@LOC("without group")"/>
 							@if (_selectedParent is not null)
 							{
-								<FluentButton Disabled="@(_selectedParent is null)" IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)" OnClick="@(_ => _selectedParent = null)" />
+								<FluentButton Disabled="@(_selectedParent is null)"
+								              IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)"
+								              OnClick="@(_ => _selectedParent = null)"/>
 							}
 						</FluentStack>
 					</FluentGridItem>
 					<FluentGridItem xs="4">
-						<FluentInputLabel Label="@LOC("Color")" />
-						<TucSelectColor @bind-Value=@_form.Color />
-						<FluentValidationMessage For="@(() => _form.Color)" />
+						<FluentInputLabel Label="@LOC("Color")"/>
+						<TucSelectColor @bind-Value=@_form.Color/>
+						<FluentValidationMessage For="@(() => _form.Color)"/>
 					</FluentGridItem>
 					<FluentGridItem xs="4">
-						<FluentInputLabel Label="@LOC("Icon")" />
-						<TucSelectIcon @bind-Value=@_form.Icon />
-						<FluentValidationMessage For="@(() => _form.Icon)" />
+						<FluentInputLabel Label="@LOC("Icon")"/>
+						<TucSelectIcon @bind-Value=@_form.Icon/>
+						<FluentValidationMessage For="@(() => _form.Icon)"/>
 					</FluentGridItem>
 				</FluentGrid>
 			</TucCard>
 			@if (_form.IsGroup)
 			{
-				<FluentMessageBar Style="margin-top:2rem" AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("Groups do not have filter and sort selection.")</FluentMessageBar>
+				<FluentMessageBar Style="margin-top:2rem" AllowDismiss="false"
+				                  Intent="@MessageIntent.Info">@LOC("Groups do not have filter and sort selection.")</FluentMessageBar>
 			}
 			else
 			{
-				<TucFilterCard DatasetId="Content.DateSet!.Id" @bind-Items="_form.Filters" />
-				<TucSortCard DatasetId="Content.DateSet!.Id" @bind-Items="_form.SortOrders" />
+				<TucFilterCard DatasetId="Content.DateSet!.Id" @bind-Items="_form.Filters"/>
+				<TucSortCard DatasetId="Content.DateSet!.Id" @bind-Items="_form.SortOrders"/>
 			}
 		</FluentEditForm>
 	</div>

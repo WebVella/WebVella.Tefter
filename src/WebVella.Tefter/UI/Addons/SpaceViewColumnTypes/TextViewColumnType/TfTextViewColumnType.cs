@@ -34,8 +34,9 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 	#region << PRIVATE >>
 
 	private List<ValidationError> _validationErrors = new();
+
 	#endregion
-	
+
 	#region << PUBLIC >>
 
 	public void ProcessExcelCell(TfSpaceViewColumnBaseContext args)
@@ -85,6 +86,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 		var values = new List<string?>();
 
 		var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null) return values;
 		if (columnData is null)
 		{
 			values.Add(String.Empty);
@@ -113,8 +115,8 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucTextViewColumnTypeRead>(0);
-			builder.AddAttribute(1, "Value", values);
-			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfTextViewColumnTypeSettings()));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "Value", values);
 			builder.CloseComponent();
 		};
 	}
@@ -122,6 +124,12 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 	private RenderFragment _renderEditMode(TfSpaceViewColumnEditModeContext context)
 	{
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null)
+			return builder =>
+			{
+				builder.OpenElement(0, "span");
+				builder.CloseElement();
+			};
 		//Editable columns
 		if (column.Origin == TfDataColumnOriginType.CurrentProvider
 		    || column.Origin == TfDataColumnOriginType.SharedColumn)
@@ -131,8 +139,9 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 			return builder =>
 			{
 				builder.OpenComponent<TucTextViewColumnTypeEdit>(0);
-				builder.AddAttribute(1, "Value", values[0]);
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<string?>(this, async (x) =>
+				builder.AddAttribute(1, "Context", context);
+				builder.AddAttribute(2, "Value", values[0]);
+				builder.AddAttribute(3, "ValueChanged", EventCallback.Factory.Create<string?>(this, async (x) =>
 				{
 					var change = new TfSpaceViewColumnDataChange
 					{
@@ -140,7 +149,6 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
-				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfTextViewColumnTypeSettings()));
 				builder.CloseComponent();
 			};
 		}
@@ -160,24 +168,22 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucTextViewColumnTypeOptions>(0);
-			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfTextViewColumnTypeSettings()));
-			builder.AddAttribute(2, "ValidationErrors", context.ValidationErrors);
-			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfTextViewColumnTypeSettings>(this, async (options) =>
-			{
-				context.SetColumnTypeOptions(options);
-				await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
-			}));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "SettingsChanged", EventCallback.Factory.Create<TfTextViewColumnTypeSettings>(this,
+				async (options) =>
+				{
+					context.SetColumnTypeOptions(options);
+					await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
+				}));
 			builder.CloseComponent();
 		};
 	}
 
 	#endregion
-
 }
 
 public class TfTextViewColumnTypeSettings
 {
-
 	[JsonPropertyName("ChangeConfirmationMessage")]
 	public string? ChangeConfirmationMessage { get; set; }
-}	
+}

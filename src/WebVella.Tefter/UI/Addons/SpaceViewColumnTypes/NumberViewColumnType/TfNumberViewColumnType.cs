@@ -42,7 +42,7 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnTypeAddon
 			throw new Exception("Wrong context type. TfSpaceViewColumnExportExcelModeContext is expected");
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfNumberViewColumnTypeSettings());
+			var settings = context.GetSettings<TfNumberViewColumnTypeSettings>();
 			var value = _initValue(args);
 			if (value.Count == 0)
 			{
@@ -80,7 +80,7 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnTypeAddon
 
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfNumberViewColumnTypeSettings());
+			var settings = context.GetSettings<TfNumberViewColumnTypeSettings>();
 			var value = _initValue(args);
 			if (value.Count == 0)
 			{
@@ -142,6 +142,7 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnTypeAddon
 		var values = new List<decimal?>();
 
 		var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null) return values;
 		if (columnData is null)
 		{
 			values.Add(null);
@@ -170,8 +171,8 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucNumberViewColumnTypeRead>(0);
-			builder.AddAttribute(1, "Value", values);
-			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfNumberViewColumnTypeSettings()));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "Value", values);
 			builder.CloseComponent();
 		};
 	}
@@ -179,6 +180,12 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnTypeAddon
 	private RenderFragment _renderEditMode(TfSpaceViewColumnEditModeContext context)
 	{
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null)
+			return builder =>
+			{
+				builder.OpenElement(0, "span");
+				builder.CloseElement();
+			};
 		//Editable columns
 		if (column.Origin == TfDataColumnOriginType.CurrentProvider
 		    || column.Origin == TfDataColumnOriginType.SharedColumn)
@@ -188,8 +195,9 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnTypeAddon
 			return builder =>
 			{
 				builder.OpenComponent<TucNumberViewColumnTypeEdit>(0);
-				builder.AddAttribute(1, "Value", values[0]);
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<decimal?>(this, async (x) =>
+				builder.AddAttribute(1, "Context", context);
+				builder.AddAttribute(2, "Value", values[0]);
+				builder.AddAttribute(3, "ValueChanged", EventCallback.Factory.Create<decimal?>(this, async (x) =>
 				{
 					var change = new TfSpaceViewColumnDataChange
 					{
@@ -197,7 +205,6 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
-				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfNumberViewColumnTypeSettings()));
 				builder.CloseComponent();
 			};
 		}
@@ -217,9 +224,9 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucNumberViewColumnTypeOptions>(0);
-			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfNumberViewColumnTypeSettings()));
-			builder.AddAttribute(2, "ValidationErrors", context.ValidationErrors);
-			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfNumberViewColumnTypeSettings>(this,
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "SettingsChanged", EventCallback.Factory.Create<TfNumberViewColumnTypeSettings>(
+				this,
 				async (options) =>
 				{
 					context.SetColumnTypeOptions(options);
@@ -236,7 +243,6 @@ public class TfNumberViewColumnTypeSettings
 {
 	[JsonPropertyName("ChangeConfirmationMessage")]
 	public string? ChangeConfirmationMessage { get; set; }
-	
-	[JsonPropertyName("Format")]
-	public string? Format { get; set; }	
+
+	[JsonPropertyName("Format")] public string? Format { get; set; }
 }

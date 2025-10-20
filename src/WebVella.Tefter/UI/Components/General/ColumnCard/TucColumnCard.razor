@@ -6,17 +6,20 @@
 		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
 			@if (_columnOptions.Count > 0)
 			{
-				<TucSelect @bind-SelectedOption="@_selectedColumn"
-							  Disabled="_submitting"
-							  TOption="string" Required="false"
-							  Items="@_columnOptions" Style="width:200px"
-							  Placeholder="@LOC("select provider column")" />
+				<TucSelect OptionSelected="@((x) => x == _selectedColumn)"
+				           SelectedOptionChanged="((x) => _selectedColumn = x)"
+				           Disabled="_submitting"
+				           TOption="string" Required="false"
+				           Items="@_columnOptions" Style="width:200px"
+				           Placeholder="@LOC("select provider column")"/>
 			}
 			else
 			{
-				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px"
+				                 Disabled="true"/>
 			}
-			<FluentButton OnClick="_addColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline" Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+			<FluentButton OnClick="_addColumn" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
+			              Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
 		</FluentStack>
 	</ToolbarTemplate>
 	<ChildContent>
@@ -35,43 +38,48 @@
 		{
 			<table class="tf-grid">
 				<tbody class="tf-grid-tbody">
-					@foreach (var context in Items.Order())
-					{
-						var column = _getProviderColumnByName(context);
-						<tr @key=@Guid.NewGuid() class="tf-grid-tr">
-							<td class="tf-grid-td" style="width:90px;min-width:90px;vertical-align:middle">
-								<div>
-									@if (column is not null)
-									{
-										<FluentBadge Fill="somevalue" Color="white" BackgroundColor="var(--tf-green-700)" Style="width:100%">primary</FluentBadge>
-									}
-									else
-									{
-										<FluentBadge Fill="somevalue" Color="white" BackgroundColor="var(--tf-red-700)" Style="width:100%">not found</FluentBadge>
-									}
-								</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>@context</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>
-									@if (column is not null)
-									{
-										<span>@column.DbType.ToString()</span>
-									}
-								</div>
-							</td>
-							<td class="tf-grid-td" style="width:1%;">
-								<div>
-									<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteColumn(context))" Title="@LOC("Delete column")"
-												  Disabled="_submitting">
-										<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
-									</FluentButton>
-								</div>
-							</td>
-						</tr>
-					}
+				@foreach (var context in Items.Order())
+				{
+					var column = _getProviderColumnByName(context);
+					<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+						<td class="tf-grid-td" style="width:90px;min-width:90px;vertical-align:middle">
+							<div>
+								@if (column is not null)
+								{
+									<FluentBadge Fill="somevalue" Color="white" BackgroundColor="var(--tf-green-700)"
+									             Style="width:100%">primary
+									</FluentBadge>
+								}
+								else
+								{
+									<FluentBadge Fill="somevalue" Color="white" BackgroundColor="var(--tf-red-700)"
+									             Style="width:100%">not found
+									</FluentBadge>
+								}
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@context</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								@if (column is not null)
+								{
+									<span>@column.DbType.ToString()</span>
+								}
+							</div>
+						</td>
+						<td class="tf-grid-td" style="width:1%;">
+							<div>
+								<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteColumn(context))"
+								              Title="@LOC("Delete column")"
+								              Disabled="_submitting">
+									<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")"/>
+								</FluentButton>
+							</div>
+						</td>
+					</tr>
+				}
 				</tbody>
 			</table>
 		}

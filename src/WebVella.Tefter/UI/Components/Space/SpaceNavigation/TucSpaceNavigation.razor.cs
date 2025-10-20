@@ -14,7 +14,9 @@ public partial class TucSpaceNavigation : TfBaseComponent,IDisposable
 		_menu = TfAuthLayout.GetState().Menu;
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		TfEventProvider.SpaceUpdatedEvent += On_SpaceOrPageUpdated;
+		TfEventProvider.SpacePageCreatedEvent += On_SpaceOrPageUpdated;
 		TfEventProvider.SpacePageUpdatedEvent += On_SpaceOrPageUpdated;
+		TfEventProvider.SpacePageDeletedEvent += On_SpaceOrPageUpdated;
 	}
 	
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)

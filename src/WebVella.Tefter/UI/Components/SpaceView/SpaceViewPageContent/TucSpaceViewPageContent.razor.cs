@@ -94,12 +94,12 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
-		Console.WriteLine("OnAfterRenderAsync");
 		if (firstRender)
 		{
 			Navigator.LocationChanged += On_NavigationStateChanged;
 			TfEventProvider.UserUpdatedEvent += On_UserChanged;
-			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewUpdated;
+			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewColumnsChanged;
+			TfEventProvider.SpaceViewDataChangedEvent += On_SpaceViewDataChanged;
 			await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable", _tableId);
 			await JSRuntime.InvokeAsync<bool>("Tefter.addColumnResizeListener",
 				_objectRef, ComponentId, "OnColumnResized");
@@ -133,15 +133,26 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		});
 	}
 
-	private async Task On_SpaceViewUpdated(TfSpaceViewColumnsChangedEvent args)
+	private async Task On_SpaceViewColumnsChanged(TfSpaceViewColumnsChangedEvent args)
 	{
 		await InvokeAsync(async () =>
 		{
 			if (args.UserId != TfAuthLayout.GetState().User.Id) return;
+			if (args.SpaceViewId != _spaceView?.Id) return;
 			_spaceViewColumns = args.Payload;
 			await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
+	
+	private async Task On_SpaceViewDataChanged(TfSpaceViewDataChangedEvent args)
+	{
+		await InvokeAsync(async () =>
+		{
+			if (args.UserId != TfAuthLayout.GetState().User.Id) return;
+			if (args.SpaceViewId != _spaceView?.Id) return;
+			OnDataChange(args.Payload);
+		});
+	}	
 
 	private async Task _init(TfNavigationState navState, bool showLoading = true)
 	{
@@ -234,6 +245,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	#endregion
 
 	#region << Public methods >>
+
+	public TfDataTable? GetCurrentData() => _data;
 
 	// Search, Filter, Sort Handlers
 	public async Task OnSearch(string value)
@@ -344,25 +357,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-
-	public void OnDataChange(Dictionary<Guid, Dictionary<string, object>> change)
-	{
-		if (_data is null || change is null || change.Keys.Count == 0) return;
-		foreach (var rowId in change.Keys)
-		{
-			var row = _data.Rows[rowId];
-			if (row is null) continue;
-			foreach (var columnName in change[rowId].Keys)
-			{
-				var column = _data.Columns[columnName];
-				if (column is null) continue;
-				_data[rowId, columnName] = change[rowId][columnName];
-			}
-		}
-
-		StateHasChanged();
-	}
-
 	public void OnNewRow(TfDataTable dataTable)
 	{
 		if (_data is null) return;
@@ -380,9 +374,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	}
 
 	public bool GetEditAll() => _editAll;
-
-
-	public TfDataTable? GetCurrentData() => _data;
 
 	public void OnDeleteRows(List<Guid> tfIds)
 	{
@@ -404,6 +395,24 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		}
 	}
 
+	public void OnDataChange(Dictionary<Guid, Dictionary<string, object>> change)
+	{
+		if (_data is null || change is null || change.Keys.Count == 0) return;
+		foreach (var rowId in change.Keys)
+		{
+			var row = _data.Rows[rowId];
+			if (row is null) continue;
+			foreach (var columnName in change[rowId].Keys)
+			{
+				var column = _data.Columns[columnName];
+				if (column is null) continue;
+				_data[rowId, columnName] = change[rowId][columnName];
+			}
+		}
+	
+		StateHasChanged();
+	}		
+	
 	public void OnEditRows(List<Guid> tfIds)
 	{
 		if (tfIds is null || tfIds.Count == 0) return;
@@ -415,7 +424,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	#endregion
 
 	#region <<Utility Methods >>
-
+	
 	private string _getUserChangeHash(TfUser? user)
 	{
 		if (user is null) return "";
@@ -572,7 +581,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	[JSInvokable("OnColumnResized")]
 	public async Task OnColumnResized(int position, short width)
 	{
-		Console.WriteLine("Column Resize triggered");
 		var column = _spaceViewColumns.SingleOrDefault(x => x.Position == position);
 		if (column is null) return;
 		await TfService.SetViewPresetColumnPersonalization(
@@ -581,8 +589,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			presetId: _preset?.Id,
 			spaceViewColumnId: column.Id,
 			width: width);
-
-		Console.WriteLine("Column Resize finished");
 	}
 
 	private async Task _manageColumn(TfSpaceViewColumn column)

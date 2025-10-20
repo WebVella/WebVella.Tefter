@@ -16,7 +16,9 @@
 <FluentDialogBody>
 	<FluentGrid>
 		<FluentGridItem xs="12">
-			<TucSelect @bind-SelectedOption="@_mode" TOption="DesignThemeModes"
+			<TucSelect OptionSelected="@((x) => x == _mode)"
+			           SelectedOptionChanged="((x) => _mode = x)"
+			           TOption="DesignThemeModes"
 			           Items="@(Enum.GetValues<DesignThemeModes>())" Style="width:100%"
 			           OptionValue="@(p => ((int)p).ToString())"
 			           OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode [ctrl+Q]")"/>
@@ -24,7 +26,9 @@
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="12">
-			<TucSelect @bind-SelectedOption="@_culture" TOption="TfCultureOption"
+			<TucSelect OptionSelected="@((x) => x.CultureName == _culture.CultureName)"
+			           SelectedOptionChanged="((x) => _culture = x)"			           
+			           TOption="TfCultureOption"
 			           Items="@TfConstants.CultureOptions" Style="width:100%"
 			           OptionValue="@(p => p.CultureName)" Label="@LOC("Language")">
 				<OptionTemplate Context="option">

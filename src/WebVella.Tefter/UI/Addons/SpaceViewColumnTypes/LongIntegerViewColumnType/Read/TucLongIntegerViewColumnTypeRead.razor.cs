@@ -2,6 +2,13 @@
 
 public partial class TucLongIntegerViewColumnTypeRead : ComponentBase
 {
+	[Parameter] public TfSpaceViewColumnReadModeContext Context { get; set; } = null!;
 	[Parameter] public List<long?>? Value { get; set; }
-	[Parameter] public TfLongIntegerViewColumnTypeSettings Settings { get; set; } = null!;
+
+	private TfLongIntegerViewColumnTypeSettings _settings =  new ();
+
+	protected override void OnParametersSet()
+	{
+		_settings = Context.GetSettings<TfLongIntegerViewColumnTypeSettings>();
+	}	
 }

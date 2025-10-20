@@ -42,6 +42,8 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
+			var page = (TfSpacePage)result.Data;
+			Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl,page.SpaceId,page.Id));
 		}
 	}
 
@@ -51,9 +53,10 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 		if (state.SpacePage is null) return;
 		try
 		{
-			TfService.CopySpacePage(state.SpacePage.Id);
-
+			var(pageId,pages) = TfService.CopySpacePage(state.SpacePage.Id);
 			ToastService.ShowSuccess(LOC("Space page updated!"));
+			var page = pages.Single(x=> x.Id == pageId);
+			Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl,page.SpaceId,page.Id));
 		}
 		catch (Exception ex)
 		{
@@ -74,8 +77,17 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 
 		try
 		{
-			TfService.DeleteSpacePage(state.SpacePage);
+			var pages = TfService.DeleteSpacePage(state.SpacePage);
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
+			if (pages.Count > 0)
+			{
+				Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl,pages[0].SpaceId,pages[0].Id));
+			}
+			else
+			{
+				Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl,state.NavigationState.SpaceId));
+			}
+
 		}
 		catch (Exception ex)
 		{
@@ -131,6 +143,8 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
+			var space = (TfSpace)result.Data;
+			Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl,space.Id));
 		}
 	}		
 	

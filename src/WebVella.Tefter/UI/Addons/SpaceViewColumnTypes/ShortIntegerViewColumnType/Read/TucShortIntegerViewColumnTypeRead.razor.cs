@@ -2,6 +2,13 @@
 
 public partial class TucShortIntegerViewColumnTypeRead : ComponentBase
 {
+	[Parameter] public TfSpaceViewColumnReadModeContext Context { get; set; } = null!;
 	[Parameter] public List<short?>? Value { get; set; }
-	[Parameter] public TfShortIntegerViewColumnTypeSettings Settings { get; set; } = null!;
+	
+	private TfShortIntegerViewColumnTypeSettings _settings =  new ();
+
+	protected override void OnParametersSet()
+	{
+		_settings = Context.GetSettings<TfShortIntegerViewColumnTypeSettings>();
+	}	
 }

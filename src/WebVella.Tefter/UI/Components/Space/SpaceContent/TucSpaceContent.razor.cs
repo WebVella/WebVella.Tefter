@@ -58,6 +58,8 @@ public partial class TucSpaceContent : TfBaseComponent, IDisposable
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
+			var page = (TfSpacePage)result.Data;
+			Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl,page.SpaceId,page.Id));			
 		}
 	}	
 	

@@ -12,7 +12,8 @@
 				@if (!ReadOnly)
 				{
 					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
-						<TucSelect @bind-SelectedOption="@_selectedOption"
+						<TucSelect OptionSelected="@((x) => x.Name == _selectedOption?.Name)"
+						           SelectedOptionChanged="((x) => _selectedOption = x)"						           
 								   TOption="TfFilterQuery" Required="false"
 								   Items="@AllOptions" Style="width:300px"
 								   Placeholder="@LOC("select to add...")"

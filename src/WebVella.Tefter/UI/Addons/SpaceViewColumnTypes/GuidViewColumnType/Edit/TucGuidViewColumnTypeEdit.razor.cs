@@ -4,7 +4,7 @@ public partial class TucGuidViewColumnTypeEdit : TfLocalizedViewColumnComponent
 {
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
-
+	[Parameter] public TfSpaceViewColumnEditModeContext Context { get; set; } = null!;
 	[Parameter]
 	public Guid? Value
 	{
@@ -17,7 +17,6 @@ public partial class TucGuidViewColumnTypeEdit : TfLocalizedViewColumnComponent
 	}
 
 	[Parameter] public EventCallback<Guid?> ValueChanged { get; set; }
-	[Parameter] public TfGuidViewColumnTypeSettings Settings { get; set; } = null!;
 
 	private readonly string _valueInputId = "input-" + Guid.NewGuid();
 
@@ -43,9 +42,9 @@ public partial class TucGuidViewColumnTypeEdit : TfLocalizedViewColumnComponent
 				return;
 			}
 		}
-
-		if (!String.IsNullOrWhiteSpace(Settings.ChangeConfirmationMessage)
-		    && !await JsRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
+		var settings = Context.GetSettings<TfGuidViewColumnTypeSettings>();
+		if (!String.IsNullOrWhiteSpace(settings.ChangeConfirmationMessage)
+		    && !await JsRuntime.InvokeAsync<bool>("confirm", settings.ChangeConfirmationMessage))
 			return;
 
 		Value = value;

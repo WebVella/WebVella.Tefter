@@ -44,6 +44,7 @@ public partial class TucSpaceViewPageContent
 					_regionContextDict[tfId][column.Id] = new TfSpaceViewColumnEditModeContext(_contextViewData)
 					{
 						TfService = TfService,
+						ServiceProvider = ServiceProvider,
 						ViewColumn = column,
 						DataTable = _data,
 						RowId = tfId,
@@ -54,6 +55,7 @@ public partial class TucSpaceViewPageContent
 					_regionContextDict[tfId][column.Id] = new TfSpaceViewColumnReadModeContext(_contextViewData)
 					{
 						TfService = TfService,
+						ServiceProvider = ServiceProvider,
 						ViewColumn = column,
 						DataTable = _data,
 						RowId = tfId

@@ -6,7 +6,7 @@
 		<FluentDatePicker Id="@_valueInputId"
 		                  @bind-Value="@_value"
 		                  @bind-Value:after="_valueChanged"
-		                  View="@Settings.CalendarViewsSelection"
+		                  View="@_settings.CalendarViewsSelection"
 		                  Style="width:60%;min-width:120px;" />
 		<FluentTimePicker Id="@_valueTimeInputId"
 		                  @bind-Value="@_value"

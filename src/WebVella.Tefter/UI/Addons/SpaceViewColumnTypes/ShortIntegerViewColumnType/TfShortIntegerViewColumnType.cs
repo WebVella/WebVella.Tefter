@@ -42,7 +42,7 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 			throw new Exception("Wrong context type. TfSpaceViewColumnExportExcelModeContext is expected");
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfShortIntegerViewColumnTypeSettings());
+			var settings = context.GetSettings<TfShortIntegerViewColumnTypeSettings>();
 			var value = _initValue(args);
 			if (value.Count == 0)
 			{
@@ -80,7 +80,7 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 
 		if (args is TfSpaceViewColumnExportExcelModeContext context)
 		{
-			var settings = context.GetColumnTypeOptions(new TfShortIntegerViewColumnTypeSettings());
+			var settings = context.GetSettings<TfShortIntegerViewColumnTypeSettings>();
 			var value = _initValue(args);
 			if (value.Count == 0)
 			{
@@ -142,6 +142,7 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 		var values = new List<short?>();
 
 		var (column, columnData) = args.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null) return values;
 		if (columnData is null)
 		{
 			values.Add(null);
@@ -170,8 +171,8 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucShortIntegerViewColumnTypeRead>(0);
-			builder.AddAttribute(1, "Value", values);
-			builder.AddAttribute(2, "Settings", context.GetColumnTypeOptions(new TfShortIntegerViewColumnTypeSettings()));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "Value", values);
 			builder.CloseComponent();
 		};
 	}
@@ -179,6 +180,12 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 	private RenderFragment _renderEditMode(TfSpaceViewColumnEditModeContext context)
 	{
 		var (column, _) = context.GetColumnAndDataByAlias(VALUE_ALIAS);
+		if (column is null)
+			return builder =>
+			{
+				builder.OpenElement(0, "span");
+				builder.CloseElement();
+			};
 		//Editable columns
 		if (column.Origin == TfDataColumnOriginType.CurrentProvider
 		    || column.Origin == TfDataColumnOriginType.SharedColumn)
@@ -188,8 +195,9 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 			return builder =>
 			{
 				builder.OpenComponent<TucShortIntegerViewColumnTypeEdit>(0);
-				builder.AddAttribute(1, "Value", values[0]);
-				builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<short?>(this, async (x) =>
+				builder.AddAttribute(1, "Context", context);
+				builder.AddAttribute(2, "Value", values[0]);
+				builder.AddAttribute(3, "ValueChanged", EventCallback.Factory.Create<short?>(this, async (x) =>
 				{
 					var change = new TfSpaceViewColumnDataChange
 					{
@@ -197,7 +205,6 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 					};
 					await context.DataChanged.InvokeAsync(change);
 				}));
-				builder.AddAttribute(3, "Settings", context.GetColumnTypeOptions(new TfShortIntegerViewColumnTypeSettings()));
 				builder.CloseComponent();
 			};
 		}
@@ -217,14 +224,14 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 		return builder =>
 		{
 			builder.OpenComponent<TucShortIntegerViewColumnTypeOptions>(0);
-			builder.AddAttribute(1, "Settings", context.GetColumnTypeOptions(new TfShortIntegerViewColumnTypeSettings()));
-			builder.AddAttribute(2, "ValidationErrors", context.ValidationErrors);
-			builder.AddAttribute(4, "SettingsChanged", EventCallback.Factory.Create<TfShortIntegerViewColumnTypeSettings>(this,
-				async (options) =>
-				{
-					context.SetColumnTypeOptions(options);
-					await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
-				}));
+			builder.AddAttribute(1, "Context", context);
+			builder.AddAttribute(2, "SettingsChanged",
+				EventCallback.Factory.Create<TfShortIntegerViewColumnTypeSettings>(this,
+					async (options) =>
+					{
+						context.SetColumnTypeOptions(options);
+						await context.SettingsChanged.InvokeAsync(context.ViewColumn.TypeOptionsJson);
+					}));
 			builder.CloseComponent();
 		};
 	}
@@ -236,7 +243,6 @@ public class TfShortIntegerViewColumnTypeSettings
 {
 	[JsonPropertyName("ChangeConfirmationMessage")]
 	public string? ChangeConfirmationMessage { get; set; }
-	
-	[JsonPropertyName("Format")]
-	public string? Format { get; set; }	
+
+	[JsonPropertyName("Format")] public string? Format { get; set; }
 }

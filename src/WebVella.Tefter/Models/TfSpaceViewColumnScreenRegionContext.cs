@@ -6,6 +6,7 @@ public abstract class TfSpaceViewColumnBaseContext : TfBaseScreenRegionContext
 {
 	public TfSpaceViewColumn ViewColumn { get; set; } = null!;
 	public ITfService TfService { get; init; } = null!;
+	public IServiceProvider ServiceProvider { get; init; } = null!;
 }
 
 public class TfSpaceViewColumnReadModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext
@@ -15,8 +16,8 @@ public class TfSpaceViewColumnReadModeContext(Dictionary<string, object> viewDat
 	public Dictionary<string, object> ViewData { get => _viewData; }
 	public TfDataTable? DataTable { get; set; } = null;
 	public Guid RowId { get; set; } = default;
-	
-	
+
+
 	public string GetHash()
 	{
 		var sb = new StringBuilder();
@@ -43,6 +44,7 @@ public class TfSpaceViewColumnEditModeContext(Dictionary<string, object> viewDat
 	public TfDataTable? DataTable { get; set; } = null;
 	public Guid RowId { get; set; } = default;
 	public EventCallback<TfSpaceViewColumnDataChange> DataChanged { get; set; }
+
 	public string GetHash()
 	{
 		var sb = new StringBuilder();
@@ -64,9 +66,9 @@ public class TfSpaceViewColumnEditModeContext(Dictionary<string, object> viewDat
 public class TfSpaceViewColumnOptionsModeContext : TfSpaceViewColumnBaseContext
 {
 	public List<ValidationError> ValidationErrors { get; set; } = new();
-	 public EventCallback<string> SettingsChanged { get; set; }	
+	public EventCallback<string> SettingsChanged { get; set; }
+	public EventCallback<Tuple<string, string?>> DataMappingChanged { get; set; }
 }
-
 
 public class TfSpaceViewColumnExportExcelModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext
 {

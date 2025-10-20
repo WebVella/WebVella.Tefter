@@ -48,6 +48,9 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 	//space view column
 	public event Func<TfSpaceViewColumnsChangedEvent,Task> SpaceViewColumnsChangedEvent;
 	
+	//space view data
+	public event Func<TfSpaceViewDataChangedEvent,Task> SpaceViewDataChangedEvent;	
+	
 	//space view
 	public event Func<TfSpaceViewUpdatedEvent,Task> SpaceViewUpdatedEvent;
 	
@@ -162,6 +165,10 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 		//space view column
 		if (obj is TfSpaceViewColumnsChangedEvent)
 			SpaceViewColumnsChangedEvent?.Invoke((TfSpaceViewColumnsChangedEvent)obj);		
+		
+		//space view data
+		if (obj is TfSpaceViewDataChangedEvent)
+			SpaceViewDataChangedEvent?.Invoke((TfSpaceViewDataChangedEvent)obj);				
 		
 		//space view
 		if (obj is TfSpaceViewUpdatedEvent)

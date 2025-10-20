@@ -4,7 +4,7 @@ public partial class TucShortIntegerViewColumnTypeEdit : TfLocalizedViewColumnCo
 {
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
-
+	[Parameter] public TfSpaceViewColumnEditModeContext Context { get; set; } = null!;
 	[Parameter]
 	public short? Value
 	{
@@ -17,7 +17,6 @@ public partial class TucShortIntegerViewColumnTypeEdit : TfLocalizedViewColumnCo
 	}
 
 	[Parameter] public EventCallback<short?> ValueChanged { get; set; }
-	[Parameter] public TfShortIntegerViewColumnTypeSettings Settings { get; set; } = null!;
 
 	private readonly string _valueInputId = "input-" + Guid.NewGuid();
 
@@ -26,8 +25,9 @@ public partial class TucShortIntegerViewColumnTypeEdit : TfLocalizedViewColumnCo
 
 	private async Task _valueChanged()
 	{
-		if (!String.IsNullOrWhiteSpace(Settings.ChangeConfirmationMessage)
-		    && !await JsRuntime.InvokeAsync<bool>("confirm", Settings.ChangeConfirmationMessage))
+		var settings = Context.GetSettings<TfShortIntegerViewColumnTypeSettings>();
+		if (!String.IsNullOrWhiteSpace(settings.ChangeConfirmationMessage)
+		    && !await JsRuntime.InvokeAsync<bool>("confirm", settings.ChangeConfirmationMessage))
 			return;
 
 		Value = _value;

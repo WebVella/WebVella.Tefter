@@ -85,7 +85,9 @@
 			{
 				<FluentGrid>
 					<FluentGridItem xs="6">
-						<TucSelect TOption="Option<bool>" @bind-SelectedOption=@_copyOption
+						<TucSelect TOption="Option<bool>" 
+						           OptionSelected="@((x) => x.Value == _copyOption?.Value)"
+						           SelectedOptionChanged="((x) => _copyOption = x)"
 						           Label="@LOC("Creation Template")" Style="width:100%" Items="@_copyOptions"
 						           OptionValue="@((p) => p.Value.ToString())"
 						           OptionText="@(x => x.Text)"/>
@@ -93,7 +95,9 @@
 					<FluentGridItem xs="6">
 						@if (_copyOption.Value)
 						{
-							<TucSelect TOption="Option<Guid>" @bind-SelectedOption=@_copyPage
+							<TucSelect TOption="Option<Guid>" 
+							           OptionSelected="@((x) => x.Value == _copyPage?.Value)"
+							           SelectedOptionChanged="((x) => _copyPage = x)"
 							           Label="@LOC("Copy page")" Style="width:100%" Items="@_allPageOptions"
 							           OptionValue="@((p) => p.Value.ToString())"
 							           OptionText="@(x => x.Text)"/>

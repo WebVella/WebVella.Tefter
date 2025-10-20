@@ -38,7 +38,8 @@
 						<TucSelect Required="true" TOption="string" Disabled="!_isCreate"
 						           Items="_sharedColumnsOptions"
 						           Height="@TfConstants.ComboPanelHeight"
-						           @bind-SelectedOption=@_form.CountSharedColumnName
+						           OptionSelected="@((x) => x == _form.CountSharedColumnName)"
+						           SelectedOptionChanged="((x) => _form.CountSharedColumnName = x)"						           
 						           Placeholder="@LOC("select a number type shared column")"
 						           Label="@LOC("Shared column for count (number types only)")" Style="width:100%"/>
 					}
