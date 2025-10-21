@@ -24,6 +24,9 @@ public partial interface ITfService
 
 	public Task MoveSpaceViewColumnDown(
 		Guid id);
+
+	ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetCompatibleViewColumnTypesMeta(
+		TfSpaceViewColumn viewColumn);
 }
 
 public partial class TfService : ITfService
@@ -53,7 +56,6 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 	}
-
 
 	public TfSpaceViewColumn GetSpaceViewColumn(
 		Guid id)
@@ -349,6 +351,65 @@ public partial class TfService : ITfService
 		}
 	}
 
+	/// <summary>
+	/// Gets view column types that can replace the current type. Includes the current type too
+	/// </summary>
+	/// <param name="columnType"></param>
+	/// <returns>the column type that is evaluated</returns>
+	public ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetCompatibleViewColumnTypesMeta(
+		TfSpaceViewColumn viewColumn)
+	{
+		var list = new List<ITfSpaceViewColumnTypeAddon>();
+		var spaceView = GetSpaceView(viewColumn.SpaceViewId);
+		var dataset = GetDataset(spaceView!.DatasetId);
+		if(dataset is null) return list.AsReadOnly();
+		var sampleData = QueryDataset(dataset.Id, page: 1, pageSize: 1);
+		
+		var dataAliasTypeDict = new Dictionary<string, TfDatabaseColumnType?>();
+		foreach (var alias in viewColumn.DataMapping.Keys)
+		{
+			if (String.IsNullOrWhiteSpace(viewColumn.DataMapping[alias]))
+			{
+				dataAliasTypeDict[alias] = null;
+				continue;
+			}
+			var column = sampleData.Columns[viewColumn.DataMapping[alias]!];
+			dataAliasTypeDict[alias] = column?.DbType;
+		}
+		
+		//The logic is the following:
+		//1. The aliases must be matched
+		//2. Each alias dbtype must be supported by the components corresponding alias map definition
+		foreach (var target in _metaService.GetSpaceViewColumnTypesMeta())
+		{
+			var isSupported = true;
+			foreach (var definition in target.DataMappingDefinitions)
+			{
+				if (!dataAliasTypeDict.ContainsKey(definition.Alias))
+				{
+					isSupported = false;
+					break;
+				}
+					
+				if (dataAliasTypeDict[definition.Alias] is null)
+					continue;
+
+				var defDbSupport = new TfDbTypeSupportLevel(definition);
+				if (!defDbSupport.Supports(dataAliasTypeDict[definition.Alias]!.Value))
+				{
+					isSupported = false;
+					break;					
+				}
+			}
+			
+			if(isSupported)
+				list.Add(target);
+		}
+		
+		return list.OrderBy(x=> x.AddonName).ToList().AsReadOnly();
+	}		
+	
+	
 	private TfSpaceViewColumn ConvertDboToModel(TfSpaceViewColumnDbo dbo)
 	{
 		if (dbo == null)

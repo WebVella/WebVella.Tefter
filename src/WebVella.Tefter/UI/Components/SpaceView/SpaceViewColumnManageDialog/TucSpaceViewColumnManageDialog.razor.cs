@@ -21,7 +21,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	private Dictionary<string, object> _contextViewData = new();
 	private TfSpaceView _spaceView = new();
 	private TfDataTable _sampleData = null!;
-	private Dictionary<string,List<string>> _optionsDict = new();
+	private Dictionary<string, List<string>> _optionsDict = new();
 
 	protected override void OnInitialized()
 	{
@@ -44,7 +44,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			};
 			_selectedColumnType = TfMetaService.GetSpaceViewColumnType(_form.TypeId);
 			_availableColumnTypes = TfMetaService.GetSpaceViewColumnTypesMeta();
-	}
+		}
 		else
 		{
 			Content = TfService.GetSpaceViewColumn(Content.Id);
@@ -53,8 +53,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			if (_selectedColumnType == null)
 				_availableColumnTypes = TfMetaService.GetSpaceViewColumnTypesMeta();
 			else
-				_availableColumnTypes = TfMetaService.GetCompatibleViewColumnTypesMeta(_selectedColumnType);
-
+				_availableColumnTypes = TfService.GetCompatibleViewColumnTypesMeta(_form);
 		}
 
 		InitForm(_form);
@@ -77,7 +76,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			ViewColumn = _form,
 			ValidationErrors = new(),
 			SettingsChanged = EventCallback.Factory.Create<string>(this, _columnTypeSettingsChangedHandler),
-			DataMappingChanged = EventCallback.Factory.Create<Tuple<string,string?>>(this, _dataMappingValueChanged),
+			DataMappingChanged = EventCallback.Factory.Create<Tuple<string, string?>>(this, _dataMappingValueChanged),
 		};
 	}
 
@@ -98,7 +97,8 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 
 			foreach (var definition in _selectedColumnType.DataMappingDefinitions)
 			{
-				if(!_form.DataMapping.ContainsKey(definition.Alias) || String.IsNullOrWhiteSpace(_form.DataMapping[definition.Alias]))
+				if (!_form.DataMapping.ContainsKey(definition.Alias) ||
+				    String.IsNullOrWhiteSpace(_form.DataMapping[definition.Alias]))
 					MessageStore.Add(EditContext.Field(nameof(_form.DataMapping)), "required");
 			}
 
@@ -177,17 +177,15 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			_optionsDict[definition.Alias] = new();
 			foreach (var column in _sampleData.Columns)
 			{
-				if(column.Origin == TfDataColumnOriginType.System
-				   || column.Origin == TfDataColumnOriginType.Identity)
+				if (column.Origin == TfDataColumnOriginType.System
+				    || column.Origin == TfDataColumnOriginType.Identity)
 					continue;
 				if (!definition.SupportedDatabaseColumnTypes.Contains(column.DbType))
 					continue;
-				
+
 				_optionsDict[definition.Alias].Add(column.Name);
-			}			
+			}
 		}
-
-
 	}
 
 	private string? _getDataMappingValue(string alias)
@@ -236,11 +234,12 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		var typeOptionErrors = EditContext.GetValidationMessages(EditContext.Field(nameof(_form.TypeOptionsJson)))
 			.ToList();
 		var dataMappingErrors = EditContext.GetValidationMessages(EditContext.Field(nameof(_form.DataMapping)))
-			.ToList();		
+			.ToList();
 		var allErrors = EditContext.GetValidationMessages().ToList();
 		var tabValidationDict = new Dictionary<TucSpaceViewColumnManageDialogTab, bool>
 		{
-			[TucSpaceViewColumnManageDialogTab.General] = (allErrors.Count() - typeOptionErrors.Count() - dataMappingErrors.Count())  > 0,
+			[TucSpaceViewColumnManageDialogTab.General] =
+				(allErrors.Count() - typeOptionErrors.Count() - dataMappingErrors.Count()) > 0,
 			[TucSpaceViewColumnManageDialogTab.ColumnType] = typeOptionErrors.Any() || dataMappingErrors.Any()
 		};
 
