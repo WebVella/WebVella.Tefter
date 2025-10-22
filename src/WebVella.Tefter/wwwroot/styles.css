@@ -970,6 +970,8 @@ fluent-menu-item::part(start) {
   }
 }
 .tf-grid {
+  --tf-grid-td-color: var(--neutral-foreground-rest);
+  --tf-grid-td-fill: transparent;
   table-layout: fixed;
   min-width: 100%;
   border-width: 0;
@@ -1152,6 +1154,7 @@ fluent-menu-item::part(start) {
 }
 .tf-grid tbody tr > th,
 .tf-grid tbody tr > td {
+  color: var(--tf-grid-td-color);
   border-bottom-width: 0;
   border-left-width: 0;
   border-right-width: 1px;
@@ -1184,6 +1187,7 @@ fluent-menu-item::part(start) {
   bottom: 0;
   z-index: 0;
   border-radius: 0;
+  background: var(--tf-grid-td-fill);
 }
 .tf-grid tbody tr > th > .tf-grid-td-selection,
 .tf-grid tbody tr > td > .tf-grid-td-selection {

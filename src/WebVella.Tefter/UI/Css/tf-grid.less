@@ -27,6 +27,8 @@
 }
 
 .tf-grid {
+  --tf-grid-td-color: var(--neutral-foreground-rest);
+  --tf-grid-td-fill:transparent;
   table-layout: fixed;
   min-width: 100%;
   border-width: 0;
@@ -211,6 +213,7 @@
     & tr {
       & > th,
       & > td {
+        color:var(--tf-grid-td-color);
         border-bottom-width: 0;
         border-left-width: 0;
         border-right-width: 1px;
@@ -242,6 +245,7 @@
           bottom: 0;
           z-index: 0;
           border-radius: 0;
+          background: var(--tf-grid-td-fill);
         }
 
         & > .tf-grid-td-selection {

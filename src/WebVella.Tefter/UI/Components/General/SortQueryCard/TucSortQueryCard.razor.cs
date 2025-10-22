@@ -15,7 +15,6 @@ public partial class TucSortQueryCard : TfBaseComponent
 	[Parameter]
 	public List<TfSpaceViewColumn> ViewColumns { get; set; } = new();
 
-	
 	private TfSortQuery? _selectedOption = null;
 	private List<TfSortQuery> _allOptions = new();
 	private List<TfSortQuery> _options = new();

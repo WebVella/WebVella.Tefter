@@ -19,6 +19,18 @@ public partial class TucSpaceViewPageContent
 		if (_data is null) return;
 		
 		var queryNameToColumnNameDict = new Dictionary<string, string>();
+		foreach (var column in _spaceViewColumns)
+		{
+			if (column.DataMapping.Keys.Count > 0)
+			{
+				var firstmappedValue = column.DataMapping[column.DataMapping.Keys.First()];
+				if (String.IsNullOrWhiteSpace(firstmappedValue)) continue;
+				var dataColumn = _data.Columns[firstmappedValue];
+				if(dataColumn is null) continue;
+				queryNameToColumnNameDict[column.QueryName] = dataColumn.Name;
+			}
+		}
+		
 		
 		foreach (TfDataRow row in _data.Rows)
 		{
@@ -42,7 +54,7 @@ public partial class TucSpaceViewPageContent
 			var coloringDict = _data.GenerateColoring(tfId,_spaceView!.Settings.ColoringRules,queryNameToColumnNameDict);
 			if (coloringDict.ContainsKey(tfId.ToString()))
 			{
-				_rowMeta[tfId].ForegroudColor = coloringDict[tfId.ToString()].Item1;
+				_rowMeta[tfId].ForegroundColor = coloringDict[tfId.ToString()].Item1;
 				_rowMeta[tfId].BackgroundColor = coloringDict[tfId.ToString()].Item2;
 			}
 

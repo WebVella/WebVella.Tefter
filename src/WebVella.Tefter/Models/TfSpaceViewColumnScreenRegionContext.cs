@@ -13,7 +13,20 @@ public abstract class TfSpaceViewColumnBaseContext(Dictionary<string, object> vi
 	public Dictionary<string, object> ViewData { get => _viewData; }	
 	
 	public TfColor? ForegroundColor { get; set; }	
-	public TfColor? BackgroundColor { get; set; }	
+	public TfColor? BackgroundColor { get; set; }
+
+	public string BodyCellStyles
+	{
+		get
+		{
+			var sb = new StringBuilder();
+			if(ForegroundColor is not null)
+				sb.Append($"--tf-grid-td-color: var(--tf-{ForegroundColor.GetColor().Name}-500);");
+			if (BackgroundColor is not null)
+				sb.Append($"--tf-grid-td-fill: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-{BackgroundColor.GetColor().Name}-500) 5%);");
+			return sb.ToString();
+		}		
+	}
 }
 
 public class TfSpaceViewColumnReadModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext(viewData)

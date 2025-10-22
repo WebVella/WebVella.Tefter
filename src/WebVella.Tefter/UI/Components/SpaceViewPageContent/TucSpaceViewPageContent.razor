@@ -144,7 +144,7 @@ else
 							    style="@_rowMeta[tfId].RowStyles"
 							    @ondblclick="@row.OnDblClick"
 							    id="@($"row-{tfId}")">
-								<td>
+								<td class="@_columnsMeta[Guid.Empty].BodyCellClass">
 									<div class="tf-grid-td-color"></div>
 									<div class="tf-grid-td-selection"></div>
 									<div class="tf-grid-td-hover"></div>
@@ -200,8 +200,7 @@ else
 								@foreach (var column in _spaceViewColumns)
 								{
 									<td @key=@($"{tfId}__{column.Id}") class="@_columnsMeta[column.Id].BodyCellClass"
-									    style="">
-									    @* style="@_columnsMeta[column.Id].BodyCellStyles"> *@
+									    style="@_regionContextDict[tfId][column.Id].BodyCellStyles">
 										<div class="tf-grid-td-color"
 										     style=""></div>
 										     @* style="@_columnsMeta[column.Id].BodyFillCellStyles"></div> *@

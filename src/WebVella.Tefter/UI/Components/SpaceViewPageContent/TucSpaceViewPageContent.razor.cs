@@ -85,6 +85,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		{
 			Navigator.LocationChanged += On_NavigationStateChanged;
 			TfEventProvider.UserUpdatedEvent += On_UserChanged;
+			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewUpdated;
 			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewColumnsChanged;
 			TfEventProvider.SpaceViewDataChangedEvent += On_SpaceViewDataChanged;
 			await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable", _tableId);
@@ -130,6 +131,16 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
+	private async Task On_SpaceViewUpdated(TfSpaceViewUpdatedEvent args)
+	{
+		await InvokeAsync(async () =>
+		{
+			if (args.Payload.Id != _spaceView?.Id) return;
+			_spaceView = args.Payload;
+			_generateMeta();
+			await InvokeAsync(StateHasChanged);
+		});
+	}	
 	
 	private async Task On_SpaceViewDataChanged(TfSpaceViewDataChangedEvent args)
 	{

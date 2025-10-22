@@ -6,7 +6,7 @@ public record TfSpaceViewRowPresentationMeta
 {
 	public bool EditMode { get; set; } = false;
 	public bool Selected { get; set; } = false;
-	public TfColor? ForegroudColor { get; set; } = null;
+	public TfColor? ForegroundColor { get; set; } = null;
 	public TfColor? BackgroundColor { get; set; } = null;
 
 	public string RowClass
@@ -28,10 +28,10 @@ public record TfSpaceViewRowPresentationMeta
 		get
 		{
 			var sb = new StringBuilder();
-			if(ForegroudColor is not null)
-				sb.Append($"color: var(--tf-td-color-{ForegroudColor.GetColor().Name});");
+			if(ForegroundColor is not null)
+				sb.Append($"--tf-grid-td-color: var(--tf-{ForegroundColor.GetColor().Name}-500);");
 			if (BackgroundColor is not null)
-				sb.Append($"background-color: var(--tf-td-fill-{ForegroudColor.GetColor().Name});");
+				sb.Append($"--tf-grid-td-fill: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-{BackgroundColor.GetColor().Name}-500) 5%);");
 			return sb.ToString();
 		}		
 	}
