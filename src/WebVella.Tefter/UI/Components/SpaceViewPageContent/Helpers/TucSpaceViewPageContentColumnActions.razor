@@ -1,0 +1,19 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent;
+@if (User.IsAdmin)
+{
+    <div class="@($"tf-column-action tf-column-manage {(_open ? "tf-column-action--open" : "")}")"
+         id="@Column.AnchorId"
+         @onclick="@_clickHandler">
+        <FluentIcon Value="@TfConstants.GetIcon("MoreHorizontal",IconSize.Size16, IconVariant.Filled)"/>
+    </div>
+    <FluentMenu UseMenuService="true"
+                Anchor="@Column.AnchorId"
+                @bind-Open="_open"
+                VerticalThreshold="170">
+        <FluentMenuItem OnClick="_manageColumn">
+            <span>@LOC("ManageColumn")</span>
+            <FluentIcon Slot="start" Value="@TfConstants.GetIcon("Settings")"/>
+        </FluentMenuItem>
+    </FluentMenu>	    
+}

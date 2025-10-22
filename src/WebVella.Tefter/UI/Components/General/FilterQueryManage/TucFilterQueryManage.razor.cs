@@ -57,9 +57,9 @@ public partial class TucFilterQueryManage : TfBaseComponent
 
 	private async Task _addColumnFilterHandler()
 	{
-		if (_selectedOption is null || String.IsNullOrWhiteSpace(_selectedOption.Value)) return;
+		if (_selectedOption is null) return;
 		if (Item is null) return;
-		await AddFilter.InvokeAsync((_selectedOption.Value, Item.Path));
+		await AddFilter.InvokeAsync((_selectedOption.Name, Item.Path));
 		_selectedOption = new(); //do not clear for convenience
 	}
 

@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <TucLayoutPageContent Title="@_role?.Name" Icon="Key">
-	<div style="padding:var(--tfui-padding)">
+	<div style="padding:var(--tf-padding)">
 		@if (String.IsNullOrWhiteSpace(UriInitialized))
 		{
 			<TucSkeletonPageHeader/>
@@ -52,7 +52,7 @@
 				</ChildContent>
 			</TucCard>
 
-			<TucCard Title="@LOC("Users with the role")" Style="margin-top:var(--tfui-card-space)">
+			<TucCard Title="@LOC("Users with the role")" Style="margin-top:var(--tf-card-space)">
 				<ToolbarTemplate>
 					@if (_userOptions.Count > 0)
 					{
@@ -63,7 +63,7 @@
 						           Placeholder="@LOC("select user")"
 						           OptionValue="@(p => p.Id.ToString())"
 						           OptionText="@(p => p.Names)"
-						           OptionSelected="@((x) => x.Id == _selectedUser?.Id)"
+						           SelectedOption="@_selectedUser"
 						           SelectedOptionChanged="((x) => _selectedUser = x)"						           
 						           Disabled="_submitting"/>
 					}
@@ -136,7 +136,7 @@
 				</ChildContent>
 			</TucCard>
 
-			<TucCard Style="margin-top:var(--tfui-card-space)">
+			<TucCard Style="margin-top:var(--tf-card-space)">
 				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween"
 				             VerticalAlignment="@VerticalAlignment.Center">
 					<div>@LOC("Before you can delete the role, you need to remove all assigned users first")</div>

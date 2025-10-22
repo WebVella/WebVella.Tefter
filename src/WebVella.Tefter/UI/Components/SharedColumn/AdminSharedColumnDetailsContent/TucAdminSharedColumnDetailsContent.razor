@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <TucLayoutPageContent Title="@_column?.DbName" Icon="DatabaseLink">
-	<div style="padding:var(--tfui-padding)">
+	<div style="padding:var(--tf-padding)">
 		@if (String.IsNullOrWhiteSpace(UriInitialized))
 		{
 			<TucSkeletonPageHeader/>
@@ -39,13 +39,13 @@
 								@if (_column.IncludeInTableSearch)
 								{
 									<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetColor().OKLCH"
-									             Color="white" Class="input-badge">ON
+									             Color="white" Class="tf-input-badge">ON
 									</FluentBadge>
 								}
 								else
 								{
 									<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetColor().OKLCH"
-									             Color="white" Class="input-badge">OFF
+									             Color="white" Class="tf-input-badge">OFF
 									</FluentBadge>
 								}
 							</div>
@@ -54,7 +54,7 @@
 				</ChildContent>
 			</TucCard>
 
-			<TucCard Title="@LOC("Connected Data Providers")" Style="margin-top: var(--tfui-card-space)">
+			<TucCard Title="@LOC("Connected Data Providers")" Style="margin-top: var(--tf-card-space)">
 				<ChildContent>
 					@if (_dataProviders.Count == 0)
 					{
@@ -91,7 +91,7 @@
 				</ChildContent>
 			</TucCard>
 
-			<TucCard Style="margin-top: var(--tfui-card-space)">
+			<TucCard Style="margin-top: var(--tf-card-space)">
 				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween"
 				             VerticalAlignment="@VerticalAlignment.Center">
 					<div>@LOC("Deleting this shared column will remove all its data, but will not alter the data of any related data providers or applications ")</div>

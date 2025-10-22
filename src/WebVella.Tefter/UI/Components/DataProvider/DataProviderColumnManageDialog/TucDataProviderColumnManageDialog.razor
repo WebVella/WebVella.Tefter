@@ -52,7 +52,7 @@
 						}
 					</FluentGridItem>
 					<FluentGridItem xs="4">
-						<TucSelect OptionSelected="@((x) => x == _form.DbType)"
+						<TucSelect SelectedOption="@_form.DbType"
 								   SelectedOptionChanged="_dbTypeChanged"
 								   TOption="TfDatabaseColumnType"
 								   Items="@_providerColumnTypeToSourceTypes.Keys"
@@ -80,7 +80,7 @@
 							<FluentValidationMessage For="@(() => _form.SourceName)" />
 						</FluentGridItem>
 						<FluentGridItem xs="4">
-							<TucSelect OptionSelected="@((x) => x == _form.SourceType)"
+							<TucSelect SelectedOption="@_form.SourceType"
 							           SelectedOptionChanged="((x) => _form.SourceType = x)"
 									   TOption="string"
 									   Items="@_providerColumnTypeToSourceTypes[_form.DbType]"
@@ -109,7 +109,7 @@
 				</FluentGrid>
 				<FluentGrid>
 					<FluentGridItem xs="8">
-						<TucSelect OptionSelected="@((x) => x == _form.RuleSet)"
+						<TucSelect SelectedOption="@_form.RuleSet"
 						           SelectedOptionChanged="((x) => _form.RuleSet = x)"
 								   TOption="TfDataProviderColumnRuleSet"
 								   Items="@(Enum.GetValues<TfDataProviderColumnRuleSet>())"

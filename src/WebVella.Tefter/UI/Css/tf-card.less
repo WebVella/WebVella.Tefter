@@ -2,7 +2,7 @@
   border: 1px solid var(--neutral-stroke-rest);
   border-radius: calc(var(--layer-corner-radius) * 1px);
   background: var(--neutral-fill-secondary-active);
-  padding: var(--tfui-padding);
+  padding: var(--tf-padding);
   box-shadow: var(--elevation-shadow-card-active);
   display: flex;
   flex-flow: column;
@@ -42,7 +42,7 @@
   }
 
   &__title + &__content {
-    padding-top: calc(var(--tfui-padding) * 2);
+    padding-top: calc(var(--tf-padding) * 2);
   }
 
   & + & {
@@ -73,43 +73,63 @@
 }
 
 
-.tf-filter-manage .card-logical.tf-card {
-  border: 1px solid var(--tf-blue-200);
-  padding: 0;
-  border-radius: 0;
+.tf-card--filter{
 
-  & > .tf-card__title {
-    background: var(--tf-blue-100);
-    border-radius: 0;
+  .tf-card > .tf-card__title{
+    padding:5px 10px;
+  }
+  
+  .tf-filter-manage{
+    &__item{
+      &__title{
+        font-size: var(--type-ramp-base-font-size);
+        font-weight: normal;
+      }
+      &__suffix{
+        color:var(--neutral-foreground-hint);
+        font-size: var(--type-ramp-base-font-size);
+        font-weight: normal;
+      }
+    }
+
+    .card-logical.tf-card {
+      padding: 0;
+      border-radius: 0;
+
+      & > .tf-card__title {
+        background: var(--fill-color);
+        border-bottom: 1px solid var(--neutral-stroke-rest);
+        border-radius: 0;
+      }
+
+      & > .tf-card__content {
+        margin: 10px;
+        padding: 0;
+      }
+    }
+    .card-rule.tf-card {
+      padding: 0;
+      border-radius: 0;
+
+      & > .tf-card__title {
+        background: var(--fill-color);
+        border-radius: 0;
+      }
+
+      & > .tf-card__content {
+        margin: 10px;
+        padding: 0;
+      }
+    }
+    .tf-card--no-body {
+      .tf-card__content {
+        display: none;
+      }
+    }
   }
 
-  & > .tf-card__content {
-    margin: 10px;
-    padding: 0;
-  }
 }
 
-.tf-filter-manage .card-rule.tf-card {
-  border: 1px solid var(--tf-orange-200);
-  padding: 0;
-  border-radius: 0;
-
-  & > .tf-card__title {
-    background: var(--tf-orange-100);
-    border-radius: 0;
-  }
-
-  & > .tf-card__content {
-    margin: 10px;
-    padding: 0;
-  }
-}
-
-.tf-filter-manage .tf-card--no-body {
-  .tf-card__content {
-    display: none;
-  }
-}
 
 .tf-card fluent-badge{
 

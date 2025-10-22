@@ -32,10 +32,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private RenderFragment _caretDownInactive = null!;
 	private RenderFragment _caretDown = null!;
 	private RenderFragment _caretUp = null!;
-	private RenderFragment _manageIcon = null!;
-	private string? _managePageUrl = null;
-	private Dictionary<string, object>? _manageBtnAttributes = new();
-	private string _userChangeCheckHash = String.Empty;
 
 	public async ValueTask DisposeAsync()
 	{
@@ -62,33 +58,24 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
 			builder.AddAttribute(1, "Value",
-				TfConstants.GetIcon("ArrowSortUpLines", IconSize.Size16)!.WithColor("var(--neutral-stroke-rest)"));
+				TfConstants.GetIcon("ArrowSortUpLines", IconSize.Size16));
 			builder.CloseComponent();
 		};
 		_caretDown = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
 			builder.AddAttribute(1, "Value",
-				TfConstants.GetIcon("ArrowSortDownLines", IconSize.Size16)!.WithColor("var(--neutral-stroke-rest)"));
+				TfConstants.GetIcon("ArrowSortDownLines", IconSize.Size16));
 			builder.CloseComponent();
 		};
 		_caretUp = builder =>
 		{
 			builder.OpenComponent<FluentIcon<Icon>>(0);
 			builder.AddAttribute(1, "Value",
-				TfConstants.GetIcon("ArrowSortUpLines", IconSize.Size16)!.WithColor("var(--neutral-stroke-rest)"));
+				TfConstants.GetIcon("ArrowSortUpLines", IconSize.Size16));
 			builder.CloseComponent();
 		};
-		_manageIcon = builder =>
-		{
-			builder.OpenComponent<FluentIcon<Icon>>(0);
-			builder.AddAttribute(1, "Value",
-				TfConstants.GetIcon("Settings", IconSize.Size16)!.WithColor("var(--neutral-stroke-rest)"));
-			builder.CloseComponent();
-		};
-		_manageBtnAttributes!.Add("title", LOC("Manage Page"));
-		_managePageUrl = string.Format(TfConstants.SpacePagePageManageUrl, Context.SpacePage.SpaceId,
-			Context.SpacePage.Id).GenerateWithLocalAsReturnUrl(Navigator.Uri);
+
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -576,20 +563,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			presetId: _preset?.Id,
 			spaceViewColumnId: column.Id,
 			width: width);
-	}
-
-	private async Task _manageColumn(TfSpaceViewColumn column)
-	{
-		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewColumnManageDialog>(
-			column,
-			new()
-			{
-				PreventDismissOnOverlayClick = true,
-				PreventScroll = true,
-				Width = TfConstants.DialogWidthLarge,
-				TrapFocus = false
-			});
-		_ = await dialog.Result;
 	}
 
 	#endregion

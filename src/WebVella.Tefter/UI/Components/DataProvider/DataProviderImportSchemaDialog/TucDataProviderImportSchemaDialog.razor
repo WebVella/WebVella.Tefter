@@ -88,7 +88,7 @@
 								</td>
 								<td class="tf-grid-td">
 									<div>
-										<TucSelect OptionSelected="@((x) => x == context.DbType)"
+										<TucSelect SelectedOption="@context.DbType"
 										           SelectedOptionChanged="((x) => context.DbType = x)"
 										           TOption="TfDatabaseColumnType"
 										           Style="width:100%"
@@ -105,8 +105,8 @@
 								</td>
 								<td class="tf-grid-td">
 									<div>
-										<TucSelect OptionSelected="@((x) => x == context.SourceType)"
-										           TOption="string"
+										<TucSelect TOption="string"
+										           SelectedOption="@context.SourceType"
 										           SelectedOptionChanged="@(x => _sourceTypeChanged(x, context))"
 										           Style="width:100%"
 										           Class="@_getValidationCssClass(context.SourceName, nameof(context.SourceType))"
@@ -117,7 +117,7 @@
 								</td>
 								<td class="tf-grid-td">
 									<div>
-										<TucSelect OptionSelected="@((x) => x == context.RuleSet)"
+										<TucSelect SelectedOption="@context.RuleSet"
 										           SelectedOptionChanged="((x) => context.RuleSet = x)"
 										           TOption="TfDataProviderColumnRuleSet"
 										           OptionValue="((p) => p.ToString())"

@@ -37,7 +37,7 @@
 						<FluentInputLabel Label="@LOC("Parent Group")"/>
 						<FluentStack>
 							<TucSelect Required="false"
-							           OptionSelected="@((x) => x.Id == _selectedParent?.Id)"
+							           SelectedOption="@_selectedParent"
 							           SelectedOptionChanged="((x) => _selectedParent = x)"
 							           TOption="TfSpaceViewPreset"
 							           Items="@Content.Parents" Style="width:100%"

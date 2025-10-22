@@ -1,4 +1,4 @@
-﻿global using FluentAssertions;
+﻿global using AwesomeAssertions;
 global using FluentValidation;
 global using FluentValidation.Results;
 global using System;

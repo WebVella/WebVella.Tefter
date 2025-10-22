@@ -17,12 +17,15 @@ public partial class TucSpaceViewPageContent
 		_rowMeta = new();
 		_regionContextDict = new();
 		if (_data is null) return;
+		
+		var queryNameToColumnNameDict = new Dictionary<string, string>();
+		
 		foreach (TfDataRow row in _data.Rows)
 		{
-			var tfId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+			var tfId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME]!;
 			_rowMeta[tfId] = new();
 			_regionContextDict[tfId] = new();
-
+			
 			#region << Selected >>
 
 			_rowMeta[tfId].Selected = _selectedDataRows is not null && _selectedDataRows.Contains(tfId);
@@ -35,6 +38,16 @@ public partial class TucSpaceViewPageContent
 
 			#endregion
 
+			#region << Coloring rules >>
+			var coloringDict = _data.GenerateColoring(tfId,_spaceView!.Settings.ColoringRules,queryNameToColumnNameDict);
+			if (coloringDict.ContainsKey(tfId.ToString()))
+			{
+				_rowMeta[tfId].ForegroudColor = coloringDict[tfId.ToString()].Item1;
+				_rowMeta[tfId].BackgroundColor = coloringDict[tfId.ToString()].Item2;
+			}
+
+			#endregion
+			
 			#region << Column Context >>
 
 			foreach (TfSpaceViewColumn column in _spaceViewColumns)
@@ -52,13 +65,23 @@ public partial class TucSpaceViewPageContent
 					};					
 				}
 				else{
+					TfColor? color = null;
+					TfColor? backgroundColor = null;
+					if (coloringDict.ContainsKey(column.QueryName))
+					{
+						color = coloringDict[column.QueryName].Item1;
+						backgroundColor = coloringDict[column.QueryName].Item2;
+					}
+
 					_regionContextDict[tfId][column.Id] = new TfSpaceViewColumnReadModeContext(_contextViewData)
 					{
 						TfService = TfService,
 						ServiceProvider = ServiceProvider,
 						ViewColumn = column,
 						DataTable = _data,
-						RowId = tfId
+						RowId = tfId,
+						ForegroundColor = color,
+						BackgroundColor = backgroundColor,
 					};						
 				}
 
@@ -167,21 +190,22 @@ public partial class TucSpaceViewPageContent
 
 			#endregion
 
-			#region << Color >>
-
-			_columnsMeta[column.Id].Color = column.Settings.Color is not null
-				? $"var(--tf-td-color-{column.Settings.Color.Value.GetColor().Name})"
-				: null;
-
-			#endregion
-
-			#region << BackgroundColor >>
-
-			_columnsMeta[column.Id].BackgroundColor = column.Settings.BackgroundColor is not null
-				? $"var(--tf-td-fill-{column.Settings.BackgroundColor.Value.GetColor().Name})"
-				: null;
-
-			#endregion
+			//TODO BOZ: Remove
+			// #region << Color >>
+			//
+			// _columnsMeta[column.Id].Color = column.Settings.Color is not null
+			// 	? $"var(--tf-td-color-{column.Settings.Color.Value.GetColor().Name})"
+			// 	: null;
+			//
+			// #endregion
+			//
+			// #region << BackgroundColor >>
+			//
+			// _columnsMeta[column.Id].BackgroundColor = column.Settings.BackgroundColor is not null
+			// 	? $"var(--tf-td-fill-{column.Settings.BackgroundColor.Value.GetColor().Name})"
+			// 	: null;
+			//
+			// #endregion
 		}
 
 		foreach (var column in _spaceViewColumns.Reverse<TfSpaceViewColumn>())

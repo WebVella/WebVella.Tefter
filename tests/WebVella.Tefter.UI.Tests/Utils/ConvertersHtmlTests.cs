@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using System;
-
-namespace WebVella.Tefter.UI.Tests.Utils;
+﻿namespace WebVella.Tefter.UI.Tests.Utils;
 public class ConvertersHtmlTests
 {
 	[Fact]

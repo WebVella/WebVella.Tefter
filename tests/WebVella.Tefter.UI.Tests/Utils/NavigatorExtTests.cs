@@ -1,9 +1,4 @@
-﻿using FluentAssertions;
-using System;
-using System.Collections.Generic;
-
-
-namespace WebVella.Tefter.UI.Tests.Utils;
+﻿namespace WebVella.Tefter.UI.Tests.Utils;
 public class NavigatorExtTests
 {
 	[Fact]

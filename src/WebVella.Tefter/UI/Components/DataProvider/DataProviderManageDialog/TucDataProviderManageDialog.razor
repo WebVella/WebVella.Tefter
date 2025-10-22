@@ -40,7 +40,7 @@
 				<FluentGrid>
 					<FluentGridItem xs="6">
 						<TucSelect TOption="bool"
-						           OptionSelected="@((x) => x == _form.AutoInitialize)"
+						           SelectedOption="@_form.AutoInitialize"
 						           SelectedOptionChanged="((x) => _form.AutoInitialize = x)"
 						           Items="@(new List<bool> { true, false })"
 						           Label="@LOC("Initialization")" Style="width:100%"
@@ -50,7 +50,7 @@
 					</FluentGridItem>
 					<FluentGridItem xs="6">
 						<TucSelect TOption="bool"
-						           OptionSelected="@((x) => x == _form.SynchScheduleEnabled)"
+						           SelectedOption="@_form.SynchScheduleEnabled"
 						           SelectedOptionChanged="((x) => _form.SynchScheduleEnabled = x)"						           
 						           Items="@(new List<bool> { true, false })"
 						           Label="@LOC("Data synchronization")" Style="width:100%"

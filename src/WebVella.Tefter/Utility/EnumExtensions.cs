@@ -34,6 +34,15 @@ public static class EnumExtensions
 		return defaultValue;
 	}
 
+	public static TEnum? TryParseEnum<TEnum>(this int value) where TEnum : struct, Enum
+	{
+		if (Enum.IsDefined(typeof(TEnum), value))
+		{
+			return (TEnum)Enum.ToObject(typeof(TEnum), value);
+		}
+		return null;
+	}	
+
 	public static TEnum ConvertStringToEnum<TEnum>(this string value, TEnum defaultValue) where TEnum : IConvertible
 	{
 		if (String.IsNullOrEmpty(value)) return defaultValue;

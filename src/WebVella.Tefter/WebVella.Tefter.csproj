@@ -94,4 +94,16 @@
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <AdditionalFiles Include="UI\Components\SpaceViewPageContent\Helpers\TucSpaceViewPageContentColumnActions.razor" />
+	  <AdditionalFiles Include="UI\Components\SpaceViewPageContent\Helpers\TucSpaceViewPageContentTabs.razor" />
+	  <AdditionalFiles Include="UI\Components\SpaceViewPageContent\Helpers\TucSpaceViewSettingsSelector.razor" />
+	  <AdditionalFiles Include="UI\Components\SpaceViewPageContent\TucSpaceViewPageContent.razor" />
+	  <AdditionalFiles Include="UI\Components\SpaceView\SpaceViewManageColorRuleDialog\TucSpaceViewColorRulesDialog.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="UI\Components\SpaceView\SpaceViewPageContentToolbar\TucSpaceViewPageContentToolbar.razor" />
+	</ItemGroup>
+
 </Project>

@@ -59,7 +59,9 @@ else
 				</Header>
 				<ChildContent>
 					<FluentInputLabel Label="@LOC("Applicable Templates")" />
-					<TucSelect Style="width:100%" TOption="TfTemplate" OptionSelected="@((x) => x.Id == _selectedOption?.Id)" SelectedOptionChanged="_selectedOptionChanged"
+					<TucSelect Style="width:100%" TOption="TfTemplate"
+					           SelectedOption="@_selectedOption"
+									SelectedOptionChanged="_selectedOptionChanged"
 								  Placeholder="@LOC("select template to add...")"
 								  OptionValue="@((p)=> p.Id.ToString())"
 								  Items="_templatesOptions">

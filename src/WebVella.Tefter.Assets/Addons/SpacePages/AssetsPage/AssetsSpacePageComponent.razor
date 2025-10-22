@@ -14,7 +14,7 @@
 	{
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<TucSelect OptionSelected="@((x) => x.Id == _optionsFolder?.Id)"
+				<TucSelect SelectedOption="@_optionsFolder"
 				           SelectedOptionChanged="_optionsFolderChangeHandler"
 				           TOption="AssetsFolder"
 				           Items="@_folders" Style="width:100%"
@@ -25,7 +25,7 @@
 				<TucValidationMessage Field="@(nameof(_options.FolderId))" Errors="ValidationErrors"/>
 			</FluentGridItem>
 			<FluentGridItem xs="6">
-				<TucSelect OptionSelected="@((x) => x == _options.ViewType)"
+				<TucSelect SelectedOption="@_options.ViewType"
 				           SelectedOptionChanged="((x) => _options.ViewType = x)"
 				           TOption="AssetsFolderViewType"
 				           Items="@(Enum.GetValues<AssetsFolderViewType>())" Style="width:100%"
@@ -38,7 +38,7 @@
 
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<TucSelect OptionSelected="@((x) => x == _options.DataIdentityValueType)"
+				<TucSelect SelectedOption="@_options.DataIdentityValueType"
 				           SelectedOptionChanged="((x) => _options.DataIdentityValueType = x)"
 				           TOption="AssetsFolderDataIdentityValueType"
 				           Items="@(Enum.GetValues<AssetsFolderDataIdentityValueType>())" Style="width:100%"

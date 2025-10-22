@@ -80,7 +80,7 @@ else if (DbType == TfDatabaseColumnType.Boolean)
 		throw new Exception("value is not bool");
 	}
 	<TucSelect TOption="string"
-	           OptionSelected="@((x) => x == _getBoolLabel((bool?)Value))"
+	           SelectedOption="@_getBoolLabel((bool?)Value)"
 			   SelectedOptionChanged="(x=> _valueChanged(x))"
 			   Items="@(new List<string>{"TRUE","FALSE","NULL"})"
 			   Required="false"

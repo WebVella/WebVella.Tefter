@@ -2,132 +2,149 @@
 @inherits TfFormBaseComponent
 @if (_isLoading)
 {
-	<TucLoadingPane />
+	<TucLoadingPane/>
 }
 else if (RegionContext is null || RegionContext.Template is null || RegionContext.SpaceData is null)
 {
-	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("Preview cannot be generated as arguments are missing from the provided context")</FluentMessageBar>
+	<FluentMessageBar Intent="@MessageIntent.Error"
+	                  AllowDismiss="false">@LOC("Preview cannot be generated as arguments are missing from the provided context")</FluentMessageBar>
 }
 else if (_preview is null)
 {
-	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("Preview is from the wrong object type")</FluentMessageBar>
+	<FluentMessageBar Intent="@MessageIntent.Error"
+	                  AllowDismiss="false">@LOC("Preview is from the wrong object type")</FluentMessageBar>
 }
 else if (_previewValidationErrors.Count > 0)
 {
 	<h4>@LOC("Errors")</h4>
-	<TucValidationErrors Errors="_previewValidationErrors" Message="@LOC("Errors occurred while validation the preview")" />
+	<TucValidationErrors Errors="_previewValidationErrors"
+	                     Message="@LOC("Errors occurred while validation the preview")"/>
 }
 else if (_preview.Errors.Count > 0)
 {
 	<h4>@LOC("Errors")</h4>
-	<TucValidationErrors Errors="_preview.Errors" Message="@LOC("Errors occurred while generating the preview")" />
+	<TucValidationErrors Errors="_preview.Errors" Message="@LOC("Errors occurred while generating the preview")"/>
 }
 
 else if (_preview.Items.Count == 0)
 {
-	<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("No files will be generated")</FluentMessageBar>
+	<FluentMessageBar Intent="@MessageIntent.Warning"
+	                  AllowDismiss="false">@LOC("No files will be generated")</FluentMessageBar>
 }
 else
 {
 	@if (_preview.ItemWithErrorsCount > 0)
 	{
-		<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("{0} files have errors", _preview.ItemWithErrorsCount)</FluentMessageBar>
+		<FluentMessageBar Intent="@MessageIntent.Warning"
+		                  AllowDismiss="false">@LOC("{0} files have errors", _preview.ItemWithErrorsCount)</FluentMessageBar>
 	}
+
 	<FluentStack>
-		<h4 style="flex:0 0 33%">@LOC("Emails to be generated") <FluentBadge Appearance="Appearance.Accent">@_preview.Items.Count</FluentBadge></h4>
+		<h4 style="flex:0 0 33%">@LOC("Emails to be generated") <FluentBadge
+				Appearance="Appearance.Accent">@_preview.Items.Count</FluentBadge>
+		</h4>
 		<FluentStack Style="flex:1 1 auto" HorizontalGap="5">
-			<FluentButton IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="@Appearance.Outline" Style="flex:0 0 80px" OnClick="_prevItem" Disabled="@(_preview.Items.Count == 1)" />
+			<FluentButton IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="@Appearance.Outline"
+			              Style="flex:0 0 80px" OnClick="_prevItem" Disabled="@(_preview.Items.Count == 1)"/>
 			<TucSelect TOption="EmailTemplateResultItem" Style="flex:1 1 auto"
-						OptionSelected="@((x) => x.Id == _form?.Id)"
-						  SelectedOptionChanged="_selectedOptionChanged"
-						  Disabled="@(_preview.Items.Count == 1)"
-						  OptionValue="@((p)=> p.Id.ToString())"
-						  Items="_preview.Items">
+			           SelectedOption="@_form"
+			           SelectedOptionChanged="_selectedOptionChanged"
+			           Disabled="@(_preview.Items.Count == 1)"
+			           OptionValue="@((p) => p.Id.ToString())"
+			           Items="_preview.Items">
 				<OptionTemplate Context="p">
 					<span style="margin-right:5px">@_itemPositionDict[p.Id]:</span>
 					<span>@String.Join(";", p.Recipients)</span>
 				</OptionTemplate>
 			</TucSelect>
-			<FluentButton IconStart="@TfConstants.GetIcon("ArrowRight")" Appearance="@Appearance.Outline" Style="flex:0 0 80px" OnClick="_nextItem" Disabled="@(_preview.Items.Count == 1)" />
+			<FluentButton IconStart="@TfConstants.GetIcon("ArrowRight")" Appearance="@Appearance.Outline"
+			              Style="flex:0 0 80px" OnClick="_nextItem" Disabled="@(_preview.Items.Count == 1)"/>
 		</FluentStack>
 	</FluentStack>
-	<FluentDivider Style="margin:10px 0" />
+	<FluentDivider Style="margin:10px 0"/>
 	<FluentEditForm EditContext="EditContext" FormName="dp-settings" class="tf-form" novalidate>
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<FluentInputLabel Label="@LOC("From")" />
+				<FluentInputLabel Label="@LOC("From")"/>
 				<FluentTextField @bind-Value=@_form.Sender
-								 TextFieldType="TextFieldType.Text" Style="width:100%" />
-				<FluentValidationMessage For="@(() => _form.Sender)" />
+				                 TextFieldType="TextFieldType.Text" Style="width:100%"/>
+				<FluentValidationMessage For="@(() => _form.Sender)"/>
 			</FluentGridItem>
 			<FluentGridItem xs="6">
-				<FluentInputLabel Label="@LOC("To")" />
-				<FluentTextField Value=@(String.Join(";", _form.Recipients)) ValueChanged="@((v) => _emailListChanged(v, nameof(_form.Recipients)))" TextFieldType="TextFieldType.Text" Style="width:100%" />
-				<FluentValidationMessage For="@(() => _form.Recipients)" />
+				<FluentInputLabel Label="@LOC("To")"/>
+				<FluentTextField Value=@(String.Join(";", _form.Recipients))
+				                 ValueChanged="@((v) => _emailListChanged(v, nameof(_form.Recipients)))"
+				                 TextFieldType="TextFieldType.Text" Style="width:100%"/>
+				<FluentValidationMessage For="@(() => _form.Recipients)"/>
 			</FluentGridItem>
 		</FluentGrid>
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<FluentInputLabel Label="@LOC("Cc")" />
-				<FluentTextField Value=@(String.Join(";", _form.CcRecipients)) ValueChanged="@((v) => _emailListChanged(v, nameof(_form.CcRecipients)))" TextFieldType="TextFieldType.Text" Style="width:100%" />
-				<FluentValidationMessage For="@(() => _form.CcRecipients)" />
+				<FluentInputLabel Label="@LOC("Cc")"/>
+				<FluentTextField Value=@(String.Join(";", _form.CcRecipients))
+				                 ValueChanged="@((v) => _emailListChanged(v, nameof(_form.CcRecipients)))"
+				                 TextFieldType="TextFieldType.Text" Style="width:100%"/>
+				<FluentValidationMessage For="@(() => _form.CcRecipients)"/>
 			</FluentGridItem>
 			<FluentGridItem xs="6">
-				<FluentInputLabel Label="@LOC("Bcc")" />
-				<FluentTextField Value=@(String.Join(";", _form.BccRecipients)) ValueChanged="@((v) => _emailListChanged(v, nameof(_form.BccRecipients)))" TextFieldType="TextFieldType.Text" Style="width:100%" />
-				<FluentValidationMessage For="@(() => _form.BccRecipients)" />
+				<FluentInputLabel Label="@LOC("Bcc")"/>
+				<FluentTextField Value=@(String.Join(";", _form.BccRecipients))
+				                 ValueChanged="@((v) => _emailListChanged(v, nameof(_form.BccRecipients)))"
+				                 TextFieldType="TextFieldType.Text" Style="width:100%"/>
+				<FluentValidationMessage For="@(() => _form.BccRecipients)"/>
 			</FluentGridItem>
 		</FluentGrid>
 		<FluentGrid>
 			<FluentGridItem xs="12">
-				<FluentInputLabel Label="@LOC("Subject")" />
-				<FluentTextField @bind-Value=@_form.Subject TextFieldType="TextFieldType.Text" Style="width:100%" />
-				<FluentValidationMessage For="@(() => _form.Subject)" />
+				<FluentInputLabel Label="@LOC("Subject")"/>
+				<FluentTextField @bind-Value=@_form.Subject TextFieldType="TextFieldType.Text" Style="width:100%"/>
+				<FluentValidationMessage For="@(() => _form.Subject)"/>
 			</FluentGridItem>
 		</FluentGrid>
 		<FluentGrid>
 			<FluentGridItem xs="12">
-				<FluentInputLabel Label="@LOC("Content")" />
-				<TucEditor @bind-Value=@_form.HtmlContent Size="TfEditorSize.Large" />
-				<FluentValidationMessage For="@(() => _form.HtmlContent)" />
+				<FluentInputLabel Label="@LOC("Content")"/>
+				<TucEditor @bind-Value=@_form.HtmlContent Size="TfEditorSize.Large"/>
+				<FluentValidationMessage For="@(() => _form.HtmlContent)"/>
 			</FluentGridItem>
 		</FluentGrid>
 	</FluentEditForm>
 	<table class="tf-grid" style="margin-top:15px;">
 		<thead class="tf-grid-thead">
-			<tr class="tf-grid-thead-bkg"></tr>
-			<tr class="tf-grid-tr">
-				<th class="tf-grid-th">attachments</th>
-			</tr>
+		<tr class="tf-grid-thead-bkg"></tr>
+		<tr class="tf-grid-tr">
+			<th class="tf-grid-th">attachments</th>
+		</tr>
 		</thead>
 		<tbody class="tf-grid-tbody">
-			@foreach (var row in _form.Attachments)
-			{
-				<tr @key=(Guid.NewGuid()) class="tf-grid-tr">
-					<td class="tf-grid-td">
-						<div>
-							@if (String.IsNullOrWhiteSpace(row.FileName) || String.IsNullOrWhiteSpace(row.DownloadUrl))
-							{
-								<span style="color:var(--error)">attachment generated with error (no name or download url)</span>
-							}
-							else
-							{
-								<a href="@row.DownloadUrl" target="_blank">@row.FileName</a>
-							}
-						</div>
-					</td>
-				</tr>
-			}
-			@if (_form.Attachments.Count == 0)
-			{
-				<tr class="tf-grid-tr">
-					<td class="tf-grid-td">
-						<div>
-							@LOC("No attachments added")
-						</div>
-					</td>
-				</tr>
-			}
+		@foreach (var row in _form.Attachments)
+		{
+			<tr @key=(Guid.NewGuid()) class="tf-grid-tr">
+				<td class="tf-grid-td">
+					<div>
+						@if (String.IsNullOrWhiteSpace(row.FileName) || String.IsNullOrWhiteSpace(row.DownloadUrl))
+						{
+							<span
+								style="color:var(--error)">attachment generated with error (no name or download url)</span>
+						}
+						else
+						{
+							<a href="@row.DownloadUrl" target="_blank">@row.FileName</a>
+						}
+					</div>
+				</td>
+			</tr>
+		}
+		@if (_form.Attachments.Count == 0)
+		{
+			<tr class="tf-grid-tr">
+				<td class="tf-grid-td">
+					<div>
+						@LOC("No attachments added")
+					</div>
+				</td>
+			</tr>
+		}
 		</tbody>
 	</table>
 }

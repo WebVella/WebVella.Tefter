@@ -90,7 +90,8 @@
       }
 
       .tf-column-action {
-        display: none;
+        display: flex;
+        visibility: hidden;
         position: absolute;
         right: 0;
         top: 50%;
@@ -105,15 +106,24 @@
         --tf-caret-color: var(--neutral-foreground-focus);
         justify-content: center;
         align-items: center;
-
+        
+        svg{
+          --accent-fill-rest: var(--neutral-foreground-focus);
+        }
+        
         &:hover {
+          visibility: visible;
           background: var(--accent-fill-rest) !important;
           --tf-caret-color: var(--tf-white);
         }
+
+        &--open{
+          visibility: visible;
+        }        
       }
 
-      &:hover .tf-column-action {
-        display: flex;
+      &:hover .tf-column-action{
+        visibility: visible;
         background: var(--neutral-fill-layer-alt-rest);
       }
 
@@ -125,7 +135,7 @@
         }
 
         &--descending, &--ascending {
-          display: flex;
+          visibility: visible;
         }
 
         &__caret, &__caret-down, &__caret-up {

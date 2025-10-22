@@ -1,0 +1,118 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true" Style="display: none">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Color rules")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
+		              Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save Roles")</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+	}
+	else
+	{
+		<TucCard Title="@LOC("Coloring Rules")">
+			<ToolbarTemplate>
+				<FluentButton Appearance="Appearance.Outline" OnClick="@_addRule" IconStart="@TfConstants.GetIcon("Add")">@LOC("Add Rule")</FluentButton>
+			</ToolbarTemplate>
+			<ChildContent>
+				<table class="tf-grid">
+					<tbody class="tf-grid-tbody">
+					@foreach (var context in _rules)
+					{
+						<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+							<td class="tf-grid-td" style="width:1%;vertical-align:middle">
+								<div>
+									<FluentStack Wrap="false">
+										<FluentButton Appearance="@Appearance.Outline"
+										              OnClick="@(()=> _editRule(context))"
+										              Title="@LOC("Edit column")"
+										              IconStart="@TfConstants.GetIcon("Edit")"/>
+										<FluentButton Appearance="@Appearance.Outline"
+										              OnClick="@(()=> _deleteRule(context))"
+										              Title="@LOC("Delete column")">
+											<FluentIcon Color="@Color.Error"
+											            Value="@TfConstants.GetIcon("Delete")"/>
+										</FluentButton>
+										<FluentButton Appearance="@Appearance.Outline"
+										              OnClick="@(()=> _moveRule(context,true))"
+										              Title="@LOC("Move up")"
+										              IconStart="@TfConstants.GetIcon("ArrowUp")"/>
+										<FluentButton Appearance="@Appearance.Outline"
+										              OnClick="@(()=> _moveRule(context,false))"
+										              Title="@LOC("Move down")"
+										              IconStart="@TfConstants.GetIcon("ArrowDown")"/>
+									</FluentStack>
+								</div>
+							</td>
+							<td class="tf-grid-td" style="width:1%;vertical-align: middle;">
+								<div>@context.Position</div>
+							</td>							
+							<td class="tf-grid-td" style="width:30px;vertical-align: middle;">
+								<div>
+								@if (context.ForegroundColor is not null)
+								{
+									<FluentIcon
+										Value="@TfConstants.GetIcon("Square", IconSize.Size24, IconVariant.Filled)!.WithColor(context.ForegroundColor.GetColor().HEX)"></FluentIcon>
+								}
+								else
+								{
+									<FluentIcon
+										Value="@TfConstants.GetIcon("Square", IconSize.Size24)!.WithColor("var(--neutral-stroke-rest)")"></FluentIcon>
+								}
+								</div>
+							</td>
+							<td class="tf-grid-td" style="width:30px;vertical-align: middle;">
+								<div>
+								@if (context.BackgroundColor is not null)
+								{
+									<FluentIcon
+										Value="@TfConstants.GetIcon("Square", IconSize.Size24, IconVariant.Filled)!.WithColor(context.BackgroundColor.GetColor().HEX)"></FluentIcon>
+								}
+								else
+								{
+									<FluentIcon
+										Value="@TfConstants.GetIcon("Square", IconSize.Size24)!.WithColor("var(--neutral-stroke-rest)")"></FluentIcon>
+								}
+								</div>
+							</td>
+							<td class="tf-grid-td" style="vertical-align: middle;">
+								@if (context.Columns.Count == 0)
+								{
+									<div>row</div>
+								}
+								else
+								{
+									<div>@context.Columns.Count columns</div>
+								}
+							</td>
+						</tr>
+					}
+					@if (_rules.Count == 0)
+					{
+						<tr class="tf-grid-tr">
+							<td class="tf-grid-td" colspan="4">
+								<div>
+									<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("No rules created yet")</FluentMessageBar>									
+								</div>
+							</td>
+						</tr>
+					}
+					</tbody>
+				</table>
+			</ChildContent>
+		</TucCard>
+	}
+</FluentDialogBody>

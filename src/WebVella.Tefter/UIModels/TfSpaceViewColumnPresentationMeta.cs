@@ -11,8 +11,6 @@ public record TfSpaceViewColumnPresentationMeta
 	public short? FreezeRightWidth { get; set; } = null;
 	public bool IsFirstFreezeRight { get; set; } = false;
 	public TfSortDirection? SortDirection { get; set; } = null;
-	public string? Color { get; set; } = null;
-	public string? BackgroundColor { get; set; } = null;
 	public string TableColStyles
 	{
 		get
@@ -106,36 +104,4 @@ public record TfSpaceViewColumnPresentationMeta
 			return sb.ToString();
 		}
 	}
-
-	public string BodyCellStyles
-	{
-		get
-		{
-			var sb = new StringBuilder();
-			if (FreezeLeftWidth is not null)
-				sb.Append($"left:{(FreezeLeftWidth.Value)}px;");
-
-			if (FreezeRightWidth is not null)
-				sb.Append($"right:{(FreezeRightWidth.Value)}px;");
-
-			if(!String.IsNullOrWhiteSpace(Color))
-				sb.Append($"color:{Color};");
-			return sb.ToString();
-		}
-	}
-
-	public string BodyFillCellStyles
-	{
-		get
-		{
-			var sb = new StringBuilder();
-
-			if (!String.IsNullOrWhiteSpace(BackgroundColor))
-				sb.Append($"background:{BackgroundColor};");
-
-			if (sb.Length == 0) sb.Append("background:transparent;");
-			return sb.ToString();
-		}
-	}
-
 }

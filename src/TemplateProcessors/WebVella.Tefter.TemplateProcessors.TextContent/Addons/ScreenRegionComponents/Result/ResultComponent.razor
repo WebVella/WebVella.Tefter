@@ -117,7 +117,7 @@ else
 			              Style="flex:0 0 80px" OnClick="_prevItem"
 			              Disabled="@(_result.Items.Count == 1)"/>
 			<TucSelect TOption="TextContentTemplateResultItem" Style="flex:1 1 auto"
-			           OptionSelected="@((x) => x.Id == _form?.Id)"
+			           SelectedOption="@_form"
 			           SelectedOptionChanged="_selectedOptionChanged"
 			           Disabled="@(_result.Items.Count == 1)"
 			           OptionValue="@((p) => p.Id.ToString())"

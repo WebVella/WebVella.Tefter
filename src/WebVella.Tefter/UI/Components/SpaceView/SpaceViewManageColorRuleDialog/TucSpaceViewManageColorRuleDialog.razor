@@ -1,0 +1,76 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Coloring Rule")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Add")"
+		              Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Add rule")</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+	}
+	else
+	{
+		<FluentGrid>
+			<FluentGridItem xs="4">
+				<FluentInputLabel Label="@("Foreground color")"/>
+				<TucSelectColor @bind-Value="@_form.ForegroundColor"/>
+				<TucValidationMessage Field="@(nameof(_form.ForegroundColor))" Errors="_validationErrors"/>
+			</FluentGridItem>
+			<FluentGridItem xs="4">
+				<FluentInputLabel Label="@("Background color")"/>
+				<TucSelectColor @bind-Value="@_form.BackgroundColor"/>
+				<TucValidationMessage Field="@(nameof(_form.BackgroundColor))" Errors="_validationErrors"/>
+			</FluentGridItem>
+		</FluentGrid>		
+		<FluentGrid>
+			<FluentGridItem xs="4">
+				<FluentInputLabel Label="@("Add column")"/>
+				<TucSelect SelectedOption="@_selectedOption"
+				           SelectedOptionChanged="(x=> _addColumnHandler(x))"
+				           TOption="TfSpaceViewColumn" Required="false"
+				           Items="@_options" Style="width:100%"
+				           Placeholder="@LOC("select to add...")"
+				           OptionValue="(x=> x.QueryName)"
+				           OptionText="@(x=> x.Title ?? "no title")"/>
+				<TucValidationMessage Field="@(nameof(_form.Columns))" Errors="_validationErrors"/>
+
+			</FluentGridItem>
+			<FluentGridItem xs="8" >
+				<FluentInputLabel Label="@("Apply to columns")"/>
+				@if (_selectedOptions.Count == 0)
+				{
+					<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("applies to the whole row")</FluentMessageBar>
+				}
+				else
+				{
+					<FluentStack HorizontalGap="5">
+						@foreach (var column in _selectedOptions)
+						{
+							<FluentBadge Class="tf-input-badge" OnDismissClick="@(()=> _removeColumnHandler(column))">@(column.Title ?? "no title")</FluentBadge>
+						}						
+					</FluentStack>
+				}
+			</FluentGridItem>
+		</FluentGrid>
+		<FluentGrid>
+			<FluentGridItem xs="12">
+				<FluentInputLabel Label="@("Filter rows by")"/>
+				<TucFilterQueryCard @bind-Items="_form.Filters" ViewColumns="@Content.Columns" Provider="@Content.Provider" AllProviders="@Content.AllProvider" 
+				                    AllSharedColumns="@Content.AllSharedColumns" OneLevelOnly="true"/>
+			</FluentGridItem>
+		</FluentGrid>
+	}
+</FluentDialogBody>

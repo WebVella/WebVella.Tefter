@@ -4,7 +4,7 @@
 <TucScreenRegionComponent RegionContext="@(new TfSpaceViewToolBarActionScreenRegionContext())" />
 @if (SpaceView.Settings.CanCreateRows)
 {
-	<FluentButton OnClick="_onAddRowClick" Appearance="@Appearance.Outline">
+	<FluentButton OnClick="_onAddRowClick" Appearance="@Appearance.Outline" Title="@LOC("Add new row")">
 		<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" />
 	</FluentButton>
 }
@@ -13,25 +13,31 @@
 {
 	@if (TucSpaceViewPageContent.GetEditAll())
 	{
-		<FluentButton OnClick="_onEditAllClick" BackgroundColor="var(--warning)" Color="transparent">
+		<FluentButton OnClick="_onEditAllClick" BackgroundColor="var(--warning)" Color="transparent" Title="@LOC("Disable Edit Mode")">
 			<FluentIcon Value="@TfConstants.GetIcon("Edit")!.WithColor("white")" />
 		</FluentButton>
 	}
 	else
 	{
-		<FluentButton OnClick="_onEditAllClick" Appearance="@Appearance.Outline">
+		<FluentButton OnClick="_onEditAllClick" Appearance="@Appearance.Outline" Title="@LOC("Enable Edit Mode")">
 			<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" />
 		</FluentButton>
 	}
 	<FluentDivider Orientation="Orientation.Vertical"/>
 }
 
-<FluentButton Id="view-actions-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
+<FluentButton Id="view-actions-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline" Title="@LOC("Actions")">
 	<FluentIcon Value="@TfConstants.GetIcon("Connector")" Color="@Color.Accent" />
 </FluentButton>
-<FluentButton Id="view-share-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
+<FluentButton Id="view-share-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline" Title="@LOC("Shared")">
 	<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Accent" />
 </FluentButton>
+@if (Context.CurrentUser.IsAdmin)
+{
+	<FluentButton Id="view-settings-selector" OnClick="OnSettingsClick" Appearance="@Appearance.Outline" Title="@LOC("Grid Properties")">
+		<FluentIcon Value="@TfConstants.GetIcon("MoreHorizontal",IconSize.Size16, IconVariant.Filled)"/>
+	</FluentButton>
+}
 @if (_hasViewPersonalization)
 {
 	<div class="tf-hover-switch">
@@ -86,3 +92,4 @@
 
 <TucSpaceViewActionSelector @ref="_actionSelector" SpaceView="SpaceView" SpaceData="SpaceData" User=Context.CurrentUser Data="Data" SelectedRows="SelectedRows" />
 <TucSpaceViewShareSelector @ref="_shareSelector" SpaceView="SpaceView" Data="Data" SelectedRows="SelectedRows" />
+<TucSpaceViewSettingsSelector @ref="_settingsSelector" SpaceView="SpaceView" SpaceData="SpaceData" User=Context.CurrentUser Data="Data" SelectedRows="SelectedRows"  />

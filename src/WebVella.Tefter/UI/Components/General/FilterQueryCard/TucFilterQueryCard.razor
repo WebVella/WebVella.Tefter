@@ -3,17 +3,20 @@
 
 <TucCard Title="@Title" Class="tf-card--filter">
 	<TitleTemplate>
-		<FluentButton OnClick="@(() => AddFilter(new TfFilterAnd().GetColumnName(), null))"
-		              IconStart="@TfConstants.GetIcon("Add")"
-		              Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
-		<FluentButton OnClick="@(() => AddFilter(new TfFilterOr().GetColumnName(), null))"
-		              IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+		@if (!OneLevelOnly)
+		{
+			<FluentButton OnClick="@(() => AddFilter(new TfFilterAnd().GetColumnName(), null))"
+			              IconStart="@TfConstants.GetIcon("Add")"
+			              Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+			<FluentButton OnClick="@(() => AddFilter(new TfFilterOr().GetColumnName(), null))"
+			              IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+		}
 	</TitleTemplate>
 	<ToolbarTemplate>
 		<FluentStack VerticalAlignment="@VerticalAlignment.Center" HorizontalAlignment="@HorizontalAlignment.Right">
 			<FluentLabel Typo="@Typography.Body"
 			             Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">@LOC("Columns:")</FluentLabel>
-			<TucSelect OptionSelected="@((x) => x.Name == _selectedOption?.Name)"
+			<TucSelect SelectedOption="@_selectedOption"
 			           SelectedOptionChanged="(x=> _addColumnFilterHandler(x))"
 			           TOption="TfFilterQuery" Required="false"
 			           Items="@_allOptions" Style="width:300px"

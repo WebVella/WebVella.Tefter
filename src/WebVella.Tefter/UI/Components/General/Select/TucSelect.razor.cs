@@ -6,6 +6,11 @@
 /// <typeparam name="TOption">The type of the options in the select component.</typeparam>
 public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption : notnull
 {
+	/// <summary>
+	/// Event callback that is triggered when the selected option changes.
+	/// </summary>
+	[Parameter]
+	public TOption? SelectedOption { get; set; }
 
 	/// <summary>
 	/// Event callback that is triggered when the selected option changes.
@@ -19,14 +24,11 @@ public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption :
 	[Parameter]
 	public IEnumerable<TOption> Items { get; set; } = Enumerable.Empty<TOption>();
 
-	[Parameter]
-	public Func<TOption, bool> OptionSelected { get; set; } = null!;
-
 	/// <summary>
 	/// Function that defines how to display each option's text. If not provided, ToString() is used by default.
 	/// </summary>
 	[Parameter]
-	public Func<TOption, string?> OptionText { get; set; } = null!;
+	public Func<TOption, string?>? OptionText { get; set; } = null!;
 
 	/// <summary>
 	/// Optional function that defines how to extract the value from each option. If not provided, no value extraction is performed.
@@ -105,17 +107,21 @@ public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption :
 	/// </summary>
 	bool _shouldRender = true;
 
+	private string? _value = null;
+
 	/// <summary>
 	/// Called after component parameters have been set. This method handles logic for updating the component when items or selected option changes occur, particularly addressing a potential issue where both parameters change simultaneously.
 	/// </summary>
 	/// <returns>A Task representing the asynchronous operation.</returns>
 	protected override async Task OnParametersSetAsync()
 	{
-		
 		// If OptionText is not provided, default to using ToString() on the option
 		if (OptionText is null && OptionTemplate is null)
 			OptionText = x => x.ToString();
-
+		if (SelectedOption is null)
+			_value = null;
+		else
+			_value = OptionValue?.Invoke(SelectedOption) ?? SelectedOption?.ToString();
 		// Generate hashes for items and selected option to detect changes
 		var itemsCount = Items is not null ? Items.Count() : 0;
 
@@ -130,13 +136,6 @@ public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption :
 			await Task.Delay(1);
 			await InvokeAsync(StateHasChanged);
 		}
-
-	}
-
-	async Task _selectedOptionChanged(TOption? option)
-	{
-		if (SelectedOptionChanged.HasDelegate)
-			await SelectedOptionChanged.InvokeAsync(option);
 	}
 
 	private string? _getPlacehoder()
@@ -145,5 +144,22 @@ public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption :
 		if (!String.IsNullOrWhiteSpace(Placeholder)) return Placeholder;
 
 		return LOC("select...");
+	}
+
+	private async Task _valueChanged(string newValue)
+	{
+		_value = newValue;
+		if (!SelectedOptionChanged.HasDelegate) return;
+
+		if (OptionValue is null)
+		{
+			SelectedOption = Items.FirstOrDefault(x => x.ToString() == newValue);
+		}
+		else
+		{
+			SelectedOption = Items.FirstOrDefault(x => OptionValue(x) == newValue);
+		}
+
+		await SelectedOptionChanged.InvokeAsync(SelectedOption);
 	}
 }

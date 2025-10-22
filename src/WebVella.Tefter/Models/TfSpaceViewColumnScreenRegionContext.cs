@@ -11,6 +11,9 @@ public abstract class TfSpaceViewColumnBaseContext(Dictionary<string, object> vi
 	//When columns need to share data between rows (optimization)
 	private Dictionary<string, object> _viewData = viewData;
 	public Dictionary<string, object> ViewData { get => _viewData; }	
+	
+	public TfColor? ForegroundColor { get; set; }	
+	public TfColor? BackgroundColor { get; set; }	
 }
 
 public class TfSpaceViewColumnReadModeContext(Dictionary<string, object> viewData) : TfSpaceViewColumnBaseContext(viewData)

@@ -8,7 +8,7 @@
 		           Items="FolderOptions"
 		           OptionValue="(x=> x.Id.ToString())"
 		           OptionText="(x=> x.Name)"
-		           OptionSelected="@((x) => x.Id == _settings.FolderId)"
+		           SelectedOption="@(FolderOptions.FirstOrDefault(x=> x.Id == _settings.FolderId))"
 		           SelectedOptionChanged="_folderSelectHandler"/>
 	</FluentGridItem>
 

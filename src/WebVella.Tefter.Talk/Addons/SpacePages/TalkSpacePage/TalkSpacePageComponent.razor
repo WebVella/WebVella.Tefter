@@ -8,13 +8,13 @@
 	{
 		<TalkThreadComponent Channel="_channel" Context="@Context"
 		                     DataIdentityValue="@_dataIdentityValue"
-		                     Style="height:100%;margin:calc(-1 * var(--tf-body-content-padding));display:flex;"/>
+		                     Style="height:100%;margin:calc(-1 * var(--tf-padding));display:flex;"/>
 	}
 	else if (Context.Mode == TfComponentMode.Create || Context.Mode == TfComponentMode.Update)
 	{
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<TucSelect OptionSelected="@((x) => x.Id == _optionsChannel?.Id)"
+				<TucSelect SelectedOption="@_optionsChannel"
 				           SelectedOptionChanged="_optionsChannelChangeHandler"
 				           TOption="TalkChannel"
 				           Items="@_channels" Style="width:100%"
@@ -27,7 +27,7 @@
 		</FluentGrid>
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<TucSelect OptionSelected="@((x) => x == _options.DataIdentityValueType)"
+				<TucSelect SelectedOption="@_options.DataIdentityValueType"
 				           SelectedOptionChanged="((x) => _options.DataIdentityValueType = x)"
 				           TOption="TalkChannelDataIdentityValueType"
 				           Items="@(Enum.GetValues<TalkChannelDataIdentityValueType>())" Style="width:100%"

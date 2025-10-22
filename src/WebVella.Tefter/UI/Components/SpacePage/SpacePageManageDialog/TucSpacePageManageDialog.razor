@@ -41,7 +41,7 @@
 					{
 						<FluentStack>
 							<TucSelect TOption="TfSpacePage" 
-							           OptionSelected="@((x) => x.Id == _parentNode?.Id)"
+							           SelectedOption="_parentNode"
 							           SelectedOptionChanged="_selectedParentChanged"
 							           Style="width:100%" Items="@parentItems" Placeholder="@LOC("select...")"
 							           OptionValue="@(x => x.Id.ToString())">
@@ -73,7 +73,7 @@
 				</FluentGridItem>				
 				<FluentGridItem xs="6">
 					<TucSelect TOption="TfSpacePageType"
-					           OptionSelected="@((x) => x == _form?.Type)"
+					           SelectedOption="_form.Type"
 					           SelectedOptionChanged="_typeChanged"
 					           Label="@LOC("Type")" Style="width:100%" Items="@(Enum.GetValues<TfSpacePageType>())"
 					           OptionValue="@((p) => ((int)p).ToString())"
@@ -86,7 +86,7 @@
 				<FluentGrid>
 					<FluentGridItem xs="6">
 						<TucSelect TOption="Option<bool>" 
-						           OptionSelected="@((x) => x.Value == _copyOption?.Value)"
+						           SelectedOption="@_copyOption"
 						           SelectedOptionChanged="((x) => _copyOption = x)"
 						           Label="@LOC("Creation Template")" Style="width:100%" Items="@_copyOptions"
 						           OptionValue="@((p) => p.Value.ToString())"
@@ -96,7 +96,7 @@
 						@if (_copyOption.Value)
 						{
 							<TucSelect TOption="Option<Guid>" 
-							           OptionSelected="@((x) => x.Value == _copyPage?.Value)"
+							           SelectedOption="@_copyPage"
 							           SelectedOptionChanged="((x) => _copyPage = x)"
 							           Label="@LOC("Copy page")" Style="width:100%" Items="@_allPageOptions"
 							           OptionValue="@((p) => p.Value.ToString())"

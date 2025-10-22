@@ -60,8 +60,8 @@ else if (_form.Source == TfSelectViewColumnTypeSettingsSourceType.SpaceData)
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<TucSelect TOption="TfDataset?"
+			           SelectedOption="@SelectedDataset"
 			           SelectedOptionChanged="@((x) => _datasetChangedAsync(x))"
-			           OptionSelected="@((x) => x?.Id == SelectedDataset?.Id)"
 			           OptionValue="((x)=> x?.Id.ToString())"
 			           OptionText="((x)=> x?.Name)" Items="@DatasetOptions"/>
 			<TucValidationMessage Field="@(nameof(_form.DatasetId))" Errors="Context.ValidationErrors"/>

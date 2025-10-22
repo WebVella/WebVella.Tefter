@@ -52,76 +52,70 @@ else
 						}
 					</colgroup>
 					<thead class="tf-grid-thead">
-						<tr class="tf-grid-thead-bkg"></tr>
-						@if (_isDataLoading)
+					<tr class="tf-grid-thead-bkg"></tr>
+					@if (_isDataLoading)
+					{
+						<tr class="tf-grid-thead-loading"></tr>
+					}
+					<tr class="tf-grid-tr">
+						<th class="@_columnsMeta[Guid.Empty].HeaderCellClass"
+						    style="@_columnsMeta[Guid.Empty].HeaderCellStyles">
+							<div class="check-content check">
+								@if (_allDataRowsSelected())
+								{
+									<FluentButton OnClick="@(() => _toggleSelectAll(false))"
+									              BackgroundColor="transparent" Color="transparent" Loading="_selectAllLoading">
+										<FluentIcon
+											Value="@TfConstants.GetIcon("CheckboxChecked", variant: IconVariant.Filled)"
+											Color="@Color.Accent"/>
+									</FluentButton>
+								}
+								else
+								{
+									<FluentButton OnClick="@(() => _toggleSelectAll(true))"
+									              BackgroundColor="transparent" Color="transparent" Loading="_selectAllLoading">
+										<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")"
+										            Color="@Color.Custom"
+										            CustomColor="var(--neutral-stroke-input-active)"/>
+									</FluentButton>
+								}
+							</div>
+						</th>
+						@foreach (var column in _spaceViewColumns.OrderBy(x => x.Position))
 						{
-							<tr class="tf-grid-thead-loading"></tr>
-						}
-						<tr class="tf-grid-tr">
-							<th class="@_columnsMeta[Guid.Empty].HeaderCellClass"
-							    style="@_columnsMeta[Guid.Empty].HeaderCellStyles">
-								<div class="check-content check">
-									@if (_allDataRowsSelected())
+							<th data-query-name="@column.QueryName" class="@_columnsMeta[column.Id].HeaderCellClass"
+							    style="@_columnsMeta[column.Id].HeaderCellStyles">
+								<div>
+									@if (String.IsNullOrWhiteSpace(column.Icon))
 									{
-										<FluentButton OnClick="@(() => _toggleSelectAll(false))"
-										              BackgroundColor="transparent" Color="transparent" Loading="_selectAllLoading">
-											<FluentIcon
-												Value="@TfConstants.GetIcon("CheckboxChecked", variant: IconVariant.Filled)"
-												Color="@Color.Accent"/>
-										</FluentButton>
+										<div>@column.Title</div>
+									}
+									else if (column.OnlyIcon)
+									{
+										<div style="display:flex;">
+											<FluentIcon Value="@TfConstants.GetIcon(column.Icon)"/>
+										</div>
 									}
 									else
 									{
-										<FluentButton OnClick="@(() => _toggleSelectAll(true))"
-										              BackgroundColor="transparent" Color="transparent" Loading="_selectAllLoading">
-											<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")"
-											            Color="@Color.Custom"
-											            CustomColor="var(--neutral-stroke-input-active)"/>
-										</FluentButton>
-									}
-								</div>
-							</th>
-							@foreach (var column in _spaceViewColumns.OrderBy(x => x.Position))
-							{
-								<th data-query-name="@column.QueryName" class="@_columnsMeta[column.Id].HeaderCellClass"
-								    style="@_columnsMeta[column.Id].HeaderCellStyles">
-									<div>
-										@if (String.IsNullOrWhiteSpace(column.Icon))
-										{
-											<div>@column.Title</div>
-										}
-										else if (column.OnlyIcon)
-										{
-											<div style="display:flex;">
-												<FluentIcon Value="@TfConstants.GetIcon(column.Icon)"/>
-											</div>
-										}
-										else
-										{
-											<div style="display:flex">
-												<FluentIcon Value="@TfConstants.GetIcon(column.Icon)"/>
-												<div style="padding-left:5px;">@column.Title</div>
-											</div>
-										}
-									</div>
-									<div class="resize-handle" data-column="@column.Position"></div>
-									@if (_currentUser.IsAdmin)
-									{
-										<div class="tf-column-action tf-column-manage"
-										     @onclick="@(() => _manageColumn(column))">
-											@_manageIcon
+										<div style="display:flex">
+											<FluentIcon Value="@TfConstants.GetIcon(column.Icon)"/>
+											<div style="padding-left:5px;">@column.Title</div>
 										</div>
 									}
-									<div class="@_columnsMeta[column.Id].HeaderSortActionClass"
-									     data-column="@column.Position"
-									     title="@LOC("Click to sort. SHIFT+click for multiple sort")">
-										<div class="tf-column-sort__caret-down">@_caretDown</div>
-										<div class="tf-column-sort__caret-up">@_caretUp</div>
-										<div class="tf-column-sort__caret">@_caretDownInactive</div>
-									</div>
-								</th>
-							}
-						</tr>
+								</div>
+								<div class="resize-handle" data-column="@column.Position"></div>
+								<TucSpaceViewPageContentColumnActions Column="column" User="_currentUser"/>
+								<div class="@_columnsMeta[column.Id].HeaderSortActionClass"
+								     data-column="@column.Position"
+								     title="@LOC("Click to sort. SHIFT+click for multiple sort")">
+									<div class="tf-column-sort__caret-down">@_caretDown</div>
+									<div class="tf-column-sort__caret-up">@_caretUp</div>
+									<div class="tf-column-sort__caret">@_caretDownInactive</div>
+								</div>
+							</th>
+						}
+					</tr>
 					</thead>
 					<tbody class="tf-grid-tbody">
 					@if (_data is null)
@@ -146,12 +140,12 @@ else
 							@{
 								var tfId = row.GetRowId();
 							}
-							<tr @key=@tfId class="@_rowMeta[tfId].RowClass" @ondblclick="@row.OnDblClick"
+							<tr @key=@tfId class="@_rowMeta[tfId].RowClass"
+							    style="@_rowMeta[tfId].RowStyles"
+							    @ondblclick="@row.OnDblClick"
 							    id="@($"row-{tfId}")">
-								<td class="@_columnsMeta[Guid.Empty].BodyCellClass"
-								    style="@_columnsMeta[Guid.Empty].BodyCellStyles">
-									<div class="tf-grid-td-color"
-									     style="@_columnsMeta[Guid.Empty].BodyFillCellStyles"></div>
+								<td>
+									<div class="tf-grid-td-color"></div>
 									<div class="tf-grid-td-selection"></div>
 									<div class="tf-grid-td-hover"></div>
 									@if (_rowMeta[tfId].EditMode)
@@ -206,9 +200,11 @@ else
 								@foreach (var column in _spaceViewColumns)
 								{
 									<td @key=@($"{tfId}__{column.Id}") class="@_columnsMeta[column.Id].BodyCellClass"
-									    style="@_columnsMeta[column.Id].BodyCellStyles">
+									    style="">
+									    @* style="@_columnsMeta[column.Id].BodyCellStyles"> *@
 										<div class="tf-grid-td-color"
-										     style="@_columnsMeta[column.Id].BodyFillCellStyles"></div>
+										     style=""></div>
+										     @* style="@_columnsMeta[column.Id].BodyFillCellStyles"></div> *@
 										<div class="tf-grid-td-selection"></div>
 										<div class="tf-grid-td-hover"></div>
 										@if (_columnTypeMetaDict.ContainsKey(column.TypeId))

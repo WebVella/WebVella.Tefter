@@ -19,7 +19,7 @@
 			}
 			else
 			{
-				<TucSelect OptionSelected="@((x) => x == _selectedColumn)"
+				<TucSelect SelectedOption="@_selectedColumn"
 				           SelectedOptionChanged="@((x) => AddColumnFilter(x, null))"
 				           TOption="string" Required="false"
 				           Items="@_allOptions" Style="width:300px"

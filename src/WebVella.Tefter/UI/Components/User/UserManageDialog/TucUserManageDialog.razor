@@ -75,7 +75,7 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<TucSelect OptionSelected="@((x) => x == _form.ThemeMode)"
+					<TucSelect SelectedOption="@_form.ThemeMode"
 					           SelectedOptionChanged="((x) => _form.ThemeMode = x)"
 					           TOption="DesignThemeModes"
 					           Items="@(Enum.GetValues<DesignThemeModes>())" Style="width:100%"
@@ -84,7 +84,7 @@
 					<FluentValidationMessage For="@(() => _form.ThemeMode)"/>
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<TucSelect OptionSelected="@((x) => x.CultureName == _form.Culture?.CultureName)"
+					<TucSelect SelectedOption="@_form.Culture"
 					           SelectedOptionChanged="((x) => _form.Culture = x)"					           
 					           TOption="TfCultureOption"
 					           Items="@TfConstants.CultureOptions" Style="width:100%"

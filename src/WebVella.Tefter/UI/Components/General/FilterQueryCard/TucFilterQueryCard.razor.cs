@@ -23,6 +23,9 @@ public partial class TucFilterQueryCard : TfBaseComponent
 
 	[Parameter]
 	public List<TfSharedColumn> AllSharedColumns { get; set; } = new();
+	
+	[Parameter]
+	public bool OneLevelOnly { get;set; } = false;
 
 	private TfFilterQuery? _selectedOption = null;
 	private List<TfFilterQuery> _allOptions = new();
@@ -37,7 +40,7 @@ public partial class TucFilterQueryCard : TfBaseComponent
 		foreach (var column in ViewColumns)
 		{
 			_allOptions.Add(new TfFilterQuery { Name = column.QueryName });
-			_columnDict[column.QueryName] = column.Title;
+			_columnDict[column.QueryName] = column.Title ?? "no title";
 		}
 
 		_typeDict = ViewColumns.ToQueryNameTypeDictionary(dataProviders:AllProviders,sharedColumns:AllSharedColumns);

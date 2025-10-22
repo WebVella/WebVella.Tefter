@@ -17,6 +17,8 @@ public record TfSpaceViewColumn
 		if(DataMapping.Keys.Count == 0) return null;
 		return DataMapping[DataMapping.Keys.First()];
 	}
+
+	public string AnchorId => $"tf-column-action-{Id}";
 }
 
 [DboCacheModel]

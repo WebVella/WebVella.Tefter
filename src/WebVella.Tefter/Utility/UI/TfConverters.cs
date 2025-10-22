@@ -6,13 +6,15 @@ public static partial class TfConverters
 	private static List<string> _allIcons = null;
 
 	#region << String >>
+
 	public static string StringOverflow(string? input, int? charCount)
 	{
 		if (charCount is null
-		|| String.IsNullOrWhiteSpace(input)
-		|| input.Length <= charCount) return input ?? String.Empty;
+		    || String.IsNullOrWhiteSpace(input)
+		    || input.Length <= charCount) return input ?? String.Empty;
 		return input.Substring(0, charCount.Value) + "...";
 	}
+
 	public static List<string> GetUniqueTagsFromText(
 		string text)
 	{
@@ -32,6 +34,7 @@ public static partial class TfConverters
 
 		return result;
 	}
+
 	public static T Convert<T>(string input)
 	{
 		try
@@ -42,6 +45,7 @@ public static partial class TfConverters
 				// Cast ConvertFromString(string text) : object to (T)
 				return (T)converter.ConvertFromString(input);
 			}
+
 			return default(T);
 		}
 		catch (NotSupportedException)
@@ -49,6 +53,7 @@ public static partial class TfConverters
 			return default(T);
 		}
 	}
+
 	public static string Slugify(this string phrase)
 	{
 		string str = phrase.RemoveDiacritics().ToLower();
@@ -61,6 +66,7 @@ public static partial class TfConverters
 		str = Regex.Replace(str, @"\s", "-"); // hyphens   
 		return str;
 	}
+
 	public static string GenerateDbNameFromText(this string text)
 	{
 		if (String.IsNullOrEmpty(text)) return text;
@@ -77,6 +83,7 @@ public static partial class TfConverters
 			text = text.Substring(0, text.Length - 1);
 		return text;
 	}
+
 	public static string RemoveDiacritics(this string text)
 	{
 		var normalizedString = text.Normalize(NormalizationForm.FormD);
@@ -99,73 +106,74 @@ public static partial class TfConverters
 
 	public static readonly Dictionary<char, string> ConvertedLetters = new Dictionary<char, string>
 	{
-		{'а', "a"},
-		{'б', "b"},
-		{'в', "v"},
-		{'г', "g"},
-		{'д', "d"},
-		{'е', "e"},
-		{'ё', "yo"},
-		{'ж', "zh"},
-		{'з', "z"},
-		{'и', "i"},
-		{'й', "j"},
-		{'к', "k"},
-		{'л', "l"},
-		{'м', "m"},
-		{'н', "n"},
-		{'о', "o"},
-		{'п', "p"},
-		{'р', "r"},
-		{'с', "s"},
-		{'т', "t"},
-		{'у', "u"},
-		{'ф', "f"},
-		{'х', "h"},
-		{'ц', "c"},
-		{'ч', "ch"},
-		{'ш', "sh"},
-		{'щ', "sch"},
-		{'ъ', "j"},
-		{'ы', "i"},
-		{'ь', "j"},
-		{'э', "e"},
-		{'ю', "yu"},
-		{'я', "ya"},
-		{'А', "A"},
-		{'Б', "B"},
-		{'В', "V"},
-		{'Г', "G"},
-		{'Д', "D"},
-		{'Е', "E"},
-		{'Ё', "Yo"},
-		{'Ж', "Zh"},
-		{'З', "Z"},
-		{'И', "I"},
-		{'Й', "J"},
-		{'К', "K"},
-		{'Л', "L"},
-		{'М', "M"},
-		{'Н', "N"},
-		{'О', "O"},
-		{'П', "P"},
-		{'Р', "R"},
-		{'С', "S"},
-		{'Т', "T"},
-		{'У', "U"},
-		{'Ф', "F"},
-		{'Х', "H"},
-		{'Ц', "C"},
-		{'Ч', "Ch"},
-		{'Ш', "Sh"},
-		{'Щ', "Sch"},
-		{'Ъ', "J"},
-		{'Ы', "I"},
-		{'Ь', "J"},
-		{'Э', "E"},
-		{'Ю', "Yu"},
-		{'Я', "Ya"}
+		{ 'а', "a" },
+		{ 'б', "b" },
+		{ 'в', "v" },
+		{ 'г', "g" },
+		{ 'д', "d" },
+		{ 'е', "e" },
+		{ 'ё', "yo" },
+		{ 'ж', "zh" },
+		{ 'з', "z" },
+		{ 'и', "i" },
+		{ 'й', "j" },
+		{ 'к', "k" },
+		{ 'л', "l" },
+		{ 'м', "m" },
+		{ 'н', "n" },
+		{ 'о', "o" },
+		{ 'п', "p" },
+		{ 'р', "r" },
+		{ 'с', "s" },
+		{ 'т', "t" },
+		{ 'у', "u" },
+		{ 'ф', "f" },
+		{ 'х', "h" },
+		{ 'ц', "c" },
+		{ 'ч', "ch" },
+		{ 'ш', "sh" },
+		{ 'щ', "sch" },
+		{ 'ъ', "j" },
+		{ 'ы', "i" },
+		{ 'ь', "j" },
+		{ 'э', "e" },
+		{ 'ю', "yu" },
+		{ 'я', "ya" },
+		{ 'А', "A" },
+		{ 'Б', "B" },
+		{ 'В', "V" },
+		{ 'Г', "G" },
+		{ 'Д', "D" },
+		{ 'Е', "E" },
+		{ 'Ё', "Yo" },
+		{ 'Ж', "Zh" },
+		{ 'З', "Z" },
+		{ 'И', "I" },
+		{ 'Й', "J" },
+		{ 'К', "K" },
+		{ 'Л', "L" },
+		{ 'М', "M" },
+		{ 'Н', "N" },
+		{ 'О', "O" },
+		{ 'П', "P" },
+		{ 'Р', "R" },
+		{ 'С', "S" },
+		{ 'Т', "T" },
+		{ 'У', "U" },
+		{ 'Ф', "F" },
+		{ 'Х', "H" },
+		{ 'Ц', "C" },
+		{ 'Ч', "Ch" },
+		{ 'Ш', "Sh" },
+		{ 'Щ', "Sch" },
+		{ 'Ъ', "J" },
+		{ 'Ы', "I" },
+		{ 'Ь', "J" },
+		{ 'Э', "E" },
+		{ 'Ю', "Yu" },
+		{ 'Я', "Ya" }
 	};
+
 	public static string ConvertToLatin(string source)
 	{
 		var result = new StringBuilder();
@@ -176,17 +184,20 @@ public static partial class TfConverters
 			else
 				result.Append(letter);
 		}
+
 		return result.ToString();
 	}
 
 	#endregion
 
 	#region << Guid >>
+
 	public static string ConvertGuidToHtmlElementId(Guid? guid = null, string prefix = "")
 	{
 		if (guid == null) guid = Guid.NewGuid();
 		return $"{conversionPrefix}{(String.IsNullOrWhiteSpace(prefix) ? "" : $"{prefix}-")}{guid}";
 	}
+
 	public static Guid? ConvertHtmlElementIdToGuid(string htmlId)
 	{
 		if (String.IsNullOrWhiteSpace(htmlId)) return null;
@@ -200,10 +211,414 @@ public static partial class TfConverters
 		return null;
 	}
 
+	public static Guid? ParseToGuid(this object? value)
+	{
+		if (value == null || value == DBNull.Value)
+			return null;
+
+		if (value is Guid guid)
+			return guid;
+
+		if (value is string str && !string.IsNullOrWhiteSpace(str))
+		{
+			return Guid.TryParse(str.Trim(), out Guid result) ? result : null;
+		}
+
+		return null;
+	}
+
+	#endregion
+
+	#region << Boolean >>
+
+	public static bool? ParseToBool(this object? value)
+	{
+		// Handle null input
+		if (value == null || value == DBNull.Value)
+			return null;
+
+		// Handle already boolean values
+		if (value is bool boolValue)
+			return boolValue;
+
+		// Handle string values
+		if (value is string stringValue)
+		{
+			return ParseStringToBool(stringValue);
+		}
+
+		// Handle numeric values
+		if (value is int intValue)
+			return intValue != 0;
+
+		if (value is long longValue)
+			return longValue != 0;
+
+		if (value is short shortValue)
+			return shortValue != 0;
+
+		if (value is byte byteValue)
+			return byteValue != 0;
+
+		if (value is decimal decimalValue)
+			return decimalValue != 0m;
+
+		if (value is float floatValue)
+			return floatValue != 0f;
+
+		if (value is double doubleValue)
+			return doubleValue != 0.0;
+
+		// Try to parse as string first (handles cases like "True", "False", "1", "0")
+		try
+		{
+			return value?.ToString().ParseStringToBool();
+		}
+		catch
+		{
+			return null;
+		}
+	}
+
+	private static bool? ParseStringToBool(this string? value)
+	{
+		if (string.IsNullOrWhiteSpace(value))
+			return null;
+
+		// Handle common boolean string representations
+		switch (value.Trim().ToLowerInvariant())
+		{
+			case "true":
+			case "1":
+			case "yes":
+			case "on":
+				return true;
+			case "false":
+			case "0":
+			case "no":
+			case "off":
+				return false;
+			default:
+				// Try to parse as boolean
+				if (bool.TryParse(value, out bool result))
+					return result;
+				break;
+		}
+
+		return null;
+	}
+
+	#endregion
+
+	#region << DateTime >>
+
+	public static DateTime? ParseToDateTime(this object? value)
+	{
+		try
+		{
+			// Handle null and DBNull
+			if (value == null || value == DBNull.Value)
+				return null;
+
+			// Handle already DateTime values
+			if (value is DateTime dateTimeValue)
+				return dateTimeValue;
+
+			// Handle DateTimeOffset values
+			if (value is DateTimeOffset dateTimeOffsetValue)
+				return dateTimeOffsetValue.DateTime;
+
+			// Handle string values
+			if (value is string stringValue)
+			{
+				return ParseStringToDateTime(stringValue);
+			}
+
+			// Handle numeric values (assuming they're Unix timestamps or ticks)
+			if (value is int intValue)
+				return ParseNumericToDateTime(intValue);
+
+			if (value is long longValue)
+				return ParseNumericToDateTime(longValue);
+
+			if (value is decimal decimalValue)
+				return ParseNumericToDateTime(decimalValue);
+
+			// Handle TimeSpan values (convert to DateTime)
+			if (value is TimeSpan timeSpanValue)
+				return DateTime.MinValue.Add(timeSpanValue);
+
+			// Try to parse as string first (most flexible approach)
+			return value?.ToString().ParseStringToDateTime();
+		}
+		catch
+		{
+			return null;
+		}
+	}
+
+	private static DateTime? ParseStringToDateTime(this string? value)
+	{
+		if (string.IsNullOrWhiteSpace(value))
+			return null;
+
+		string trimmedValue = value.Trim();
+
+		// Try direct parsing with different formats
+		var formats = new[]
+		{
+			"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss.fff", "yyyy-MM-ddTHH:mm:ss",
+			"yyyy-MM-ddTHH:mm:ss.fff", "MM/dd/yyyy", "MM/dd/yyyy HH:mm:ss", "dd/MM/yyyy", "dd/MM/yyyy HH:mm:ss",
+			"yyyy/M/d", "yyyy/M/d H:m:s", "yyyyMMdd", "yyyyMMddHHmmss", "yyyyMMddHHmmss.fff",
+			"yyyy-MM-ddTHH:mm:ss.fffffffZ", "yyyy-MM-ddTHH:mm:ssZ"
+		};
+
+		// Try standard DateTime parsing first
+		if (DateTime.TryParse(trimmedValue, out DateTime result))
+			return result;
+
+		// Try with specific culture
+		if (DateTime.TryParse(trimmedValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+			return result;
+
+		// Try with different formats
+		foreach (string format in formats)
+		{
+			if (DateTime.TryParseExact(trimmedValue, format, CultureInfo.InvariantCulture, DateTimeStyles.None,
+				    out result))
+				return result;
+		}
+
+		// Try parsing as Unix timestamp (seconds or milliseconds)
+		if (long.TryParse(trimmedValue, out long timestamp))
+		{
+			try
+			{
+				// Check if it's in seconds or milliseconds
+				if (timestamp > 9999999999) // Likely milliseconds
+					return DateTimeOffset.FromUnixTimeMilliseconds(timestamp).DateTime;
+				else // Likely seconds
+					return DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime;
+			}
+			catch
+			{
+				// If conversion fails, continue to other methods
+			}
+		}
+
+		return null;
+	}
+
+	private static DateTime? ParseNumericToDateTime(object? value)
+	{
+		if (value == null) return null;
+		try
+		{
+			// Handle different numeric types
+			switch (value)
+			{
+				case int intValue:
+					// Likely seconds
+					return DateTimeOffset.FromUnixTimeSeconds(intValue).DateTime;
+
+				case long longValue:
+					if (longValue > 9999999999) // Likely milliseconds
+						return DateTimeOffset.FromUnixTimeMilliseconds(longValue).DateTime;
+					else // Likely seconds
+						return DateTimeOffset.FromUnixTimeSeconds(longValue).DateTime;
+
+				case decimal decimalValue:
+					// Convert to long for timestamp check
+					long timestamp = (long)decimalValue;
+					if (timestamp > 9999999999) // Likely milliseconds
+						return DateTimeOffset.FromUnixTimeMilliseconds(timestamp).DateTime;
+					else // Likely seconds
+						return DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime;
+
+				default:
+					return null;
+			}
+		}
+		catch
+		{
+			return null;
+		}
+	}
+
+	#endregion
+
+	#region << Decimal >>
+
+	/// <summary>
+	/// Parses an object to decimal? if it can be parsed, otherwise returns null
+	/// </summary>
+	/// <param name="value">The object to parse</param>
+	/// <returns>decimal? if parsing succeeds, null otherwise</returns>
+	public static decimal? ParseToDecimal(this object? value)
+	{
+		// Handle null input
+		if (value == null || value == DBNull.Value)
+			return null;
+
+		// Handle already decimal values
+		if (value is decimal decimalValue)
+			return decimalValue;
+
+		// Handle numeric types that can be converted to decimal
+		if (value is byte byteValue)
+			return (decimal)byteValue;
+		if (value is sbyte sbyteValue)
+			return (decimal)sbyteValue;
+		if (value is short shortValue)
+			return (decimal)shortValue;
+		if (value is ushort ushortValue)
+			return (decimal)ushortValue;
+		if (value is int intValue)
+			return (decimal)intValue;
+		if (value is uint uintValue)
+			return (decimal)uintValue;
+		if (value is long longValue)
+			return (decimal)longValue;
+		if (value is ulong ulongValue)
+			return (decimal)ulongValue;
+		if (value is float floatValue)
+			return (decimal)floatValue;
+		if (value is double doubleValue)
+			return (decimal)doubleValue;
+
+		// Handle string values
+		if (value is string stringValue)
+		{
+			return ParseStringToDecimal(stringValue);
+		}
+
+		// Try to convert using Convert.ChangeType for other types
+		try
+		{
+			if (value is IConvertible convertible)
+			{
+				var converted = convertible.ToDecimal(CultureInfo.InvariantCulture);
+				return converted;
+			}
+		}
+		catch
+		{
+			// If conversion fails, continue to next approach
+		}
+
+		// Try direct string conversion and parse
+		try
+		{
+			return value?.ToString().ParseStringToDecimal();
+		}
+		catch
+		{
+			// If all parsing attempts fail, return null
+			return null;
+		}
+	}
+
+	/// <summary>
+	/// Parses a string to decimal? with proper validation
+	/// </summary>
+	/// <param name="input">The string to parse</param>
+	/// <returns>decimal? if parsing succeeds, null otherwise</returns>
+	private static decimal? ParseStringToDecimal(this string? input)
+	{
+		// Handle null or empty strings
+		if (string.IsNullOrWhiteSpace(input))
+			return null;
+
+		// Trim whitespace
+		input = input.Trim();
+
+		// Try to parse the decimal
+		if (decimal.TryParse(input, NumberStyles.Number | NumberStyles.AllowExponent, CultureInfo.InvariantCulture,
+			    out decimal result))
+		{
+			return result;
+		}
+
+		// Try with different number styles for edge cases
+		try
+		{
+			if (decimal.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture,
+				    out result))
+				return result;
+		}
+		catch
+		{
+			// Continue to next approach
+		}
+
+		return null;
+	}
+
+	#endregion
+
+	#region << String >>
+
+	public static string? ParseToString(this object? value)
+	{
+		// Handle null input
+		if (value == null || value == DBNull.Value)
+			return null;
+
+		// Handle already string values
+		if (value is string stringValue)
+			return stringValue;
+
+		// Handle common types that can be easily converted to string
+		switch (value)
+		{
+			case bool boolValue:
+				return boolValue.ToString();
+			case DateTime dateTimeValue:
+				return dateTimeValue.ToString("O"); // ISO 8601 format
+			case Guid guidValue:
+				return guidValue.ToString();
+			case TimeSpan timeSpanValue:
+				return timeSpanValue.ToString();
+			case decimal decimalValue:
+				return decimalValue.ToString(CultureInfo.InvariantCulture);
+			case double doubleValue:
+				return doubleValue.ToString(CultureInfo.InvariantCulture);
+			case float floatValue:
+				return floatValue.ToString(CultureInfo.InvariantCulture);
+			case int intValue:
+				return intValue.ToString(CultureInfo.InvariantCulture);
+			case long longValue:
+				return longValue.ToString(CultureInfo.InvariantCulture);
+			case short shortValue:
+				return shortValue.ToString(CultureInfo.InvariantCulture);
+			case byte byteValue:
+				return byteValue.ToString(CultureInfo.InvariantCulture);
+			case sbyte sbyteValue:
+				return sbyteValue.ToString(CultureInfo.InvariantCulture);
+			case ushort ushortValue:
+				return ushortValue.ToString(CultureInfo.InvariantCulture);
+			case uint uintValue:
+				return uintValue.ToString(CultureInfo.InvariantCulture);
+			case ulong ulongValue:
+				return ulongValue.ToString(CultureInfo.InvariantCulture);
+			default:
+				// Try to convert using ToString() method
+				try
+				{
+					return value.ToString();
+				}
+				catch
+				{
+					// If ToString() fails, return null
+					return null;
+				}
+		}
+	}
 
 	#endregion
 
 	#region << User >>
+
 	public static string GetUserInitials(TfUser user)
 	{
 		var list = new List<string>();
@@ -211,6 +626,7 @@ public static partial class TfConverters
 		{
 			list.Add(user.FirstName.Substring(0, 1));
 		}
+
 		if (!String.IsNullOrWhiteSpace(user.LastName))
 		{
 			list.Add(user.LastName.Substring(0, 1));
@@ -224,10 +640,13 @@ public static partial class TfConverters
 	#endregion
 
 	#region << int >>
+
 	public static int CalcSkip(int page, int pageSize) => (page - 1) * pageSize;
+
 	#endregion
 
 	#region << Icon >>
+
 	public static List<string> GetSpaceIconLibrary()
 	{
 		if (_allIcons is not null) return _allIcons;
@@ -236,12 +655,14 @@ public static partial class TfConverters
 		foreach (var item in IconsExtensions.AllIcons)
 		{
 			if (item.Size == TfConstants.IconSize
-			&& item.Variant == TfConstants.IconVariant)
+			    && item.Variant == TfConstants.IconVariant)
 				result.Add(item.Name);
 		}
+
 		_allIcons = result.ToList();
 		return _allIcons;
 	}
+
 	public static Icon ConvertFileNameToIcon(string fileName)
 	{
 		Icon result = TfConstants.GetIcon("Document");
@@ -372,25 +793,30 @@ public static partial class TfConverters
 				return TfConstants.GetIcon("Document");
 		}
 	}
+
 	#endregion
 
 	#region << Dictionary >>
+
 	public static Dictionary<TKey, TValue> CloneDictionaryCloningValues<TKey, TValue>
-		   (Dictionary<TKey, TValue> original) where TValue : ICloneable
+		(Dictionary<TKey, TValue> original) where TValue : ICloneable
 	{
 		Dictionary<TKey, TValue> ret = new Dictionary<TKey, TValue>(original.Count,
-																original.Comparer);
+			original.Comparer);
 		foreach (KeyValuePair<TKey, TValue> entry in original)
 		{
 			ret.Add(entry.Key, (TValue)entry.Value.Clone());
 		}
+
 		return ret;
 	}
 
 	#endregion
 
 	#region << List >>
-	public static TItem FindItemByMatch<TItem>(this IEnumerable<TItem> items, Func<TItem, bool> matcher, Func<TItem, IEnumerable<TItem>> childGetter) where TItem : class
+
+	public static TItem FindItemByMatch<TItem>(this IEnumerable<TItem> items, Func<TItem, bool> matcher,
+		Func<TItem, IEnumerable<TItem>> childGetter) where TItem : class
 	{
 		if (items == null)
 		{
@@ -446,8 +872,9 @@ public static partial class TfConverters
 		return result;
 	}
 
-	public static Dictionary<string, TfDatabaseColumnType> ToQueryNameTypeDictionary(this List<TfSpaceViewColumn> viewColumns,
-			List<TfDataProvider> dataProviders, List<TfSharedColumn> sharedColumns)
+	public static Dictionary<string, TfDatabaseColumnType> ToQueryNameTypeDictionary(
+		this List<TfSpaceViewColumn> viewColumns,
+		List<TfDataProvider> dataProviders, List<TfSharedColumn> sharedColumns)
 	{
 		Dictionary<string, TfDatabaseColumnType> typeDict = new();
 
@@ -492,6 +919,7 @@ public static partial class TfConverters
 	#endregion
 
 	#region << Color >>
+
 	public static void GenerateColorsFromVariables()
 	{
 		var colorJSON = @"
@@ -2209,7 +2637,8 @@ public static partial class TfConverters
 		var colorSB = new StringBuilder();
 		colorSB.AppendLine("#region << Generated >>");
 
-		var colorDefinitions = JsonSerializer.Deserialize<List<TfConvertersColor>>(colorJSON) ?? new List<TfConvertersColor>();
+		var colorDefinitions = JsonSerializer.Deserialize<List<TfConvertersColor>>(colorJSON) ??
+		                       new List<TfConvertersColor>();
 		colorDefinitions = colorDefinitions.OrderBy(x => x.ColorType).ToList();
 		CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
 		TextInfo textInfo = cultureInfo.TextInfo;
@@ -2222,21 +2651,23 @@ public static partial class TfConverters
 			if (!colorCountHash.Contains(def.ColorType))
 				colorCountHash.Add(def.ColorType);
 
-			var colorCount = colorCountHash.Count;			
-			
+			var colorCount = colorCountHash.Count;
+
 			var selectable = "false";
 			if (
-				!nonSelectableList.Any(x=> def.VariableName.Contains(x))
+				!nonSelectableList.Any(x => def.VariableName.Contains(x))
 				&& def.ColorIntValue == "500")
 				selectable = "true";
 
 			if (def.ColorType == "white")
 				def.ColorIntValue = "1";
 			else if (def.ColorType == "black")
-				def.ColorIntValue = "0";			
-			
-			colorSB.AppendLine($"[TfColor(name: \"{def.ColorType}\",variable:\"--tf-{def.ColorType}-{def.ColorIntValue}\",oklch:\"{def.OKLCH}\",hex:\"{def.HEX}\",number:{def.ColorIntValue}, selectable: {selectable})]");
-			colorSB.AppendLine($"{textInfo.ToTitleCase(def.ColorType)}{def.ColorIntValue} = {colorCount}{def.ColorIntValue},");
+				def.ColorIntValue = "0";
+
+			colorSB.AppendLine(
+				$"[TfColor(name: \"{def.ColorType}\",variable:\"--tf-{def.ColorType}-{def.ColorIntValue}\",oklch:\"{def.OKLCH}\",hex:\"{def.HEX}\",number:{def.ColorIntValue}, selectable: {selectable})]");
+			colorSB.AppendLine(
+				$"{textInfo.ToTitleCase(def.ColorType)}{def.ColorIntValue} = {colorCount}{def.ColorIntValue},");
 		}
 
 		colorSB.AppendLine("#endregion << Generated >>");
@@ -2252,6 +2683,7 @@ public static partial class TfConverters
 	#endregion
 
 	#region << Exception >>
+
 	public static List<string> GetDataAsErrorList(Exception ex)
 	{
 		List<string> result = new List<string>();
@@ -2269,29 +2701,28 @@ public static partial class TfConverters
 					result.Add(valEx.Message);
 				}
 			}
+
 			if (ex.Data[key] is List<string>)
 			{
 				result.AddRange((List<string>)ex.Data[key]!);
 			}
 		}
+
 		return result;
 	}
+
 	#endregion
 
 	private class TfConvertersColor
 	{
-		[JsonPropertyName("color_type")]
-		public string ColorType { get; set; }		
-		
-		[JsonPropertyName("color_int_value")]
-		public string ColorIntValue { get; set; }			
-		
-		[JsonPropertyName("variable_name")]
-		public string VariableName { get; set; }
-		[JsonPropertyName("oklch_value")]
-		public string OKLCH { get; set; }
+		[JsonPropertyName("color_type")] public string ColorType { get; set; }
+
+		[JsonPropertyName("color_int_value")] public string ColorIntValue { get; set; }
+
+		[JsonPropertyName("variable_name")] public string VariableName { get; set; }
+		[JsonPropertyName("oklch_value")] public string OKLCH { get; set; }
+
 		[JsonPropertyName("closest_hex_value")]
 		public string HEX { get; set; }
-	}	
+	}
 }
-

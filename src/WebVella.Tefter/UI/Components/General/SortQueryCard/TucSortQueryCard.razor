@@ -64,11 +64,11 @@
 						</td>
 						<td class="tf-grid-td">
 							<div>
-								<TucSelect OptionSelected="@((x) => x == (TfSortDirection)context.Direction)"
-								           Items="@(Enum.GetValues<TfSortDirection>())"
+								<TucSelect Items="@(Enum.GetValues<TfSortDirection>())"
 								           OptionValue="@((p) => ((int)p).ToString())"
 								           OptionText="@((p) => p.ToDescriptionString())"
 								           TOption="TfSortDirection"
+								           SelectedOption="(TfSortDirection)context.Direction"
 								           SelectedOptionChanged="@(x => _directionChanged(context, x))"
 								           Style="width:100px"/>
 							</div>

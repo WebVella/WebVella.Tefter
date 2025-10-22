@@ -182,6 +182,78 @@ public static class ViewColumnTypeExt
 
 	#endregion
 
+	#region << DataRow >>
+
+	public static Dictionary<string, Tuple<TfColor?, TfColor?>> GenerateColoring(this TfDataTable dt,
+		Guid rowId,
+		List<TfColoringRule> rules, Dictionary<string, string> queryNameToColumnNameDict)
+	{
+		var dict = new Dictionary<string, Tuple<TfColor?, TfColor?>>();
+		TfDataRow? row = dt.Rows[rowId];
+		if(row is null) return dict;
+		if (rules.Count == 0) return dict;
+		if (queryNameToColumnNameDict.Keys.Count == 0) return dict;
+
+		var tfId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME]!;
+
+		Tuple<TfColor?, TfColor?>? rowColorRule = null;
+
+		foreach (var rule in rules)
+		{
+			var ruleMatch = true;
+
+			foreach (var filter in rule.Filters)
+			{
+				//logical filters cannot be applied
+				if (filter.Name == new TfFilterAnd().GetColumnName()
+				    || filter.Name == new TfFilterOr().GetColumnName())
+				{
+					ruleMatch = false;
+					break;
+				}
+				
+				//Filter could not be applied as one column is missing
+				if (!queryNameToColumnNameDict.ContainsKey(filter.Name))
+				{
+					ruleMatch = false;
+					break;
+				}
+
+				//Filter could not be applied as one column is missing
+				var columnName = queryNameToColumnNameDict[filter.Name];
+				var column = dt.Columns[columnName];
+				if(column is null)
+				{
+					ruleMatch = false;
+					break;
+				}
+
+				if (!filter._filterIsMatched(column,dt[rowId,columnName]))
+				{
+					ruleMatch = false;
+				}
+			}
+			if (!ruleMatch) continue;
+
+			if (rule.Columns.Count == 0)
+			{
+				rowColorRule = new Tuple<TfColor?, TfColor?>(rule.ForegroundColor, rule.BackgroundColor);
+				continue;
+			}
+
+			foreach (var column in rule.Columns)
+			{
+				dict[column] = new Tuple<TfColor?, TfColor?>(rule.ForegroundColor, rule.BackgroundColor);
+			}
+		}
+
+		if (rowColorRule is not null)
+			dict[tfId.ToString()] = rowColorRule;
+		return dict;
+	}
+
+	#endregion
+
 	#region << Private >>
 
 	private static string? _getColumnNameFromAlias(this Dictionary<string, string?> dataMapping, string alias)
@@ -261,5 +333,180 @@ public static class ViewColumnTypeExt
 		catch { throw new Exception("Value cannot be parsed"); }
 	}
 
+	private static bool _filterIsMatched(this TfFilterQuery filterQuery, TfDataColumn column, object? value)
+	{
+		switch (column.DbType)
+		{
+			case TfDatabaseColumnType.Boolean:
+				return filterQuery._matchBooleanFilter(value);
+			case TfDatabaseColumnType.DateOnly:
+			case TfDatabaseColumnType.DateTime:
+				return filterQuery._matchDateTimeFilter(value);			
+			case TfDatabaseColumnType.Guid:
+				return filterQuery._matchGuidFilter(value);				
+			case TfDatabaseColumnType.ShortInteger:
+			case TfDatabaseColumnType.Integer:
+			case TfDatabaseColumnType.LongInteger:
+			case TfDatabaseColumnType.Number:
+				return filterQuery._matchNumericFilter(value);			
+			case TfDatabaseColumnType.ShortText:
+			case TfDatabaseColumnType.Text:
+				return filterQuery._matchTextFilter(value);				
+		}
+
+		return false;
+	}
+
+	private static bool _matchBooleanFilter(this TfFilterQuery filterQuery, object? value)
+	{
+		var matchMethod = filterQuery.Method.TryParseEnum<TfFilterBooleanComparisonMethod>();
+		if(matchMethod is null)
+			throw new Exception("Comparison method cannot be determined");
+
+		bool? columnValue = value.ParseToBool();		
+		bool? filterValue = filterQuery.Value.ParseToBool();
+
+		
+		switch (matchMethod)
+		{
+			case TfFilterBooleanComparisonMethod.Equal:
+				return columnValue == filterValue;
+			case TfFilterBooleanComparisonMethod.NotEqual:
+				return columnValue != filterValue;
+			case TfFilterBooleanComparisonMethod.IsTrue:
+				return columnValue is true;
+			case TfFilterBooleanComparisonMethod.IsFalse:
+				return columnValue is false;
+			case TfFilterBooleanComparisonMethod.HasValue:
+				return columnValue is not null;
+			case TfFilterBooleanComparisonMethod.HasNoValue:
+				return columnValue is null;
+			default:
+				throw new Exception("Not supported filter comparison method");
+		}		
+	}
+	
+	private static bool _matchDateTimeFilter(this TfFilterQuery filterQuery, object? value)
+	{
+		var matchMethod = filterQuery.Method.TryParseEnum<TfFilterDateTimeComparisonMethod>();
+		if(matchMethod is null)
+			throw new Exception("Comparison method cannot be determined");
+
+		DateTime? columnValue = value.ParseToDateTime();				
+		DateTime? filterValue = filterQuery.Value.ParseToDateTime();
+
+		
+		switch (matchMethod)
+		{
+			case TfFilterDateTimeComparisonMethod.Equal:
+				return  columnValue.Equals(filterValue);
+			case TfFilterDateTimeComparisonMethod.NotEqual:
+				return !columnValue.Equals(filterValue);
+			case TfFilterDateTimeComparisonMethod.GreaterOrEqual:
+				return  columnValue > filterValue || columnValue.Equals(filterValue);
+			case TfFilterDateTimeComparisonMethod.Greater:
+				return columnValue > filterValue;
+			case TfFilterDateTimeComparisonMethod.LowerOrEqual:
+				return columnValue <= filterValue || columnValue.Equals(filterValue);
+			case TfFilterDateTimeComparisonMethod.Lower:
+				return columnValue <= filterValue;
+			case TfFilterDateTimeComparisonMethod.HasValue:
+				return columnValue is not null;
+			case TfFilterDateTimeComparisonMethod.HasNoValue:
+				return columnValue is null;
+			default:
+				throw new Exception("Not supported filter comparison method");
+		}		
+	}	
+	
+	private static bool _matchGuidFilter(this TfFilterQuery filterQuery, object? value)
+	{
+		var matchMethod = filterQuery.Method.TryParseEnum<TfFilterGuidComparisonMethod>();
+		if(matchMethod is null)
+			throw new Exception("Comparison method cannot be determined");
+		
+		Guid? columnValue = value.ParseToGuid();				
+		Guid? filterValue = filterQuery.Value.ParseToGuid();		
+		
+		switch (matchMethod)
+		{
+			case TfFilterGuidComparisonMethod.Equal:
+				return columnValue == filterValue;
+			case TfFilterGuidComparisonMethod.NotEqual:
+				return columnValue != filterValue;
+			case TfFilterGuidComparisonMethod.IsEmpty:
+				return columnValue == Guid.Empty;
+			case TfFilterGuidComparisonMethod.IsNotEmpty:
+				return columnValue == Guid.Empty;
+			case TfFilterGuidComparisonMethod.HasValue:
+				return columnValue is not null;
+			case TfFilterGuidComparisonMethod.HasNoValue:
+				return columnValue is null;
+			default:
+				throw new Exception("Not supported filter comparison method");
+		}		
+	}		
+
+	private static bool _matchNumericFilter(this TfFilterQuery filterQuery, object? value)
+	{
+		var matchMethod = filterQuery.Method.TryParseEnum<TfFilterNumericComparisonMethod>();
+		if(matchMethod is null)
+			throw new Exception("Comparison method cannot be determined");
+		
+		decimal? columnValue = value.ParseToDecimal();				
+		decimal? filterValue = filterQuery.Value.ParseToDecimal();		
+		switch (matchMethod)
+		{
+			case TfFilterNumericComparisonMethod.Equal:
+				return columnValue == filterValue;
+			case TfFilterNumericComparisonMethod.NotEqual:
+				return columnValue != filterValue;
+			case TfFilterNumericComparisonMethod.GreaterOrEqual:
+				return columnValue >= filterValue;
+			case TfFilterNumericComparisonMethod.Greater:
+				return columnValue > filterValue;
+			case TfFilterNumericComparisonMethod.LowerOrEqual:
+				return columnValue <= filterValue;
+			case TfFilterNumericComparisonMethod.Lower:
+				return columnValue < filterValue;
+			case TfFilterNumericComparisonMethod.HasValue:
+				return  columnValue is not null;
+			case TfFilterNumericComparisonMethod.HasNoValue:
+				return columnValue is null;
+			default:
+				throw new Exception("Not supported filter comparison method");
+		}		
+	}		
+	private static bool _matchTextFilter(this TfFilterQuery filterQuery, object? value)
+	{
+		var matchMethod = filterQuery.Method.TryParseEnum<TfFilterTextComparisonMethod>();
+		if(matchMethod is null)
+			throw new Exception("Comparison method cannot be determined");
+		
+		string? columnValue = value.ParseToString()?.ToLowerInvariant();				
+		string? filterValue = filterQuery.Value.ParseToString()?.ToLowerInvariant();		
+		switch (matchMethod)
+		{
+			case TfFilterTextComparisonMethod.Equal:
+				return columnValue == filterValue;
+			case TfFilterTextComparisonMethod.NotEqual:
+				return columnValue != filterValue;
+			case TfFilterTextComparisonMethod.StartsWith:
+				return columnValue is not null && filterValue is not null && columnValue.StartsWith(filterValue);
+			case TfFilterTextComparisonMethod.EndsWith:
+				return columnValue is not null && filterValue is not null && columnValue.EndsWith(filterValue);
+			case TfFilterTextComparisonMethod.Contains:
+				return columnValue is not null && filterValue is not null && columnValue.Contains(filterValue);
+			case TfFilterTextComparisonMethod.Fts:
+				return columnValue is not null && filterValue is not null && columnValue.Contains(filterValue);
+			case TfFilterTextComparisonMethod.HasValue:
+				return columnValue is not null;
+			case TfFilterTextComparisonMethod.HasNoValue:
+				return columnValue is null;
+			default:
+				throw new Exception("Not supported filter comparison method");
+		}		
+	}		
+	
 	#endregion
 }

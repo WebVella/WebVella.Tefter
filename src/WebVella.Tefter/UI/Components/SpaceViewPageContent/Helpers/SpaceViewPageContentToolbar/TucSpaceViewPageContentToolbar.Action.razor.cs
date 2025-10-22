@@ -6,9 +6,4 @@ public partial class TucSpaceViewPageContentToolbar
 	{
 		await _actionSelector.ToggleSelector();
 	}
-
-	//private void OnActionChange(SpaceViewActionChangedEventArgs args)
-	//{
-
-	//}
 }

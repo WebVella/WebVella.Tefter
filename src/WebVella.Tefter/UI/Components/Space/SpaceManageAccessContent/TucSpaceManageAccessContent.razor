@@ -6,7 +6,7 @@
 	</Tabs>
 	<ChildContent>
 		<TucErrorBoundry>
-			<div style="padding:var(--tfui-padding)">
+			<div style="padding:var(--tf-padding)">
 				@if (String.IsNullOrWhiteSpace(UriInitialized))
 				{
 					<TucSkeletonPageHeader/>
@@ -49,7 +49,7 @@
 						<ToolbarTemplate>
 							@if (_roleOptions.Count > 0)
 							{
-								<TucSelect OptionSelected="@((x) => x.Id == _selectedRole?.Id)"
+								<TucSelect SelectedOption="@_selectedRole"
 								           SelectedOptionChanged="((x) => _selectedRole = x)"
 								           Disabled="_submitting"
 								           TOption="TfRole" Required="false"

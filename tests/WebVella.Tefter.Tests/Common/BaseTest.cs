@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using FluentAssertions.Common;
+using AwesomeAssertions.Common;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using WebVella.Tefter.Jobs;

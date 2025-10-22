@@ -16,7 +16,7 @@ else if (Context.Mode == TfComponentMode.Create)
 			}
 			else
 			{
-				<TucSelect OptionSelected="@((x) => x.Id == _selectedDataset?.Id)"
+				<TucSelect SelectedOption="@_selectedDataset"
 						   SelectedOptionChanged="@(async (x) => await _valueChanged(nameof(_options.DatasetId),x))"
 						   TOption="TfDataset" Placeholder="@LOC("select dataset ...")"
 						   Items="@_allDatasets" Style="width:100%"

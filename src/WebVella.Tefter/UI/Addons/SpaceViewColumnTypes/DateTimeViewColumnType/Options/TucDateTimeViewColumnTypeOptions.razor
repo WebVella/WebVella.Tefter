@@ -16,7 +16,7 @@
 			           OptionValue="@((p)=> ((int)p).ToString())"
 			           OptionText="@((x)=>x.ToString())"
 			           TOption="CalendarViews"
-			           OptionSelected="@((x) => x == _form.CalendarViewsSelection)"
+			           SelectedOption="@_form.CalendarViewsSelection"
 			           SelectedOptionChanged=@((x)=> _onSettingsChanged(nameof(_form.CalendarViewsSelection),x)) />
 			<TucValidationMessage Field="@(nameof(_form.CalendarViewsSelection))" Errors="Context.ValidationErrors"/>			
 		</FluentGridItem>

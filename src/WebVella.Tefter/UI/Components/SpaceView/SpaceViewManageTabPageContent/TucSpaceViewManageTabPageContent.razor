@@ -33,17 +33,17 @@ else if (_navState.ManageTab == "columns")
 						@if (_spaceView.Settings.CanCreateRows)
 						{
 							<FluentBadge Appearance="Appearance.Neutral"
-							             Class="input-badge">@LOC("Create")</FluentBadge>
+							             Class="tf-input-badge">@LOC("Create")</FluentBadge>
 						}
 						@if (_spaceView.Settings.CanUpdateRows)
 						{
 							<FluentBadge Appearance="Appearance.Neutral"
-							             Class="input-badge">@LOC("Update")</FluentBadge>
+							             Class="tf-input-badge">@LOC("Update")</FluentBadge>
 						}
 						@if (_spaceView.Settings.CanDeleteRows)
 						{
 							<FluentBadge Appearance="Appearance.Neutral"
-							             Class="input-badge">@LOC("Delete")</FluentBadge>
+							             Class="tf-input-badge">@LOC("Delete")</FluentBadge>
 						}
 					</FluentStack>
 					@if (_spaceView.Settings is { CanCreateRows: false, CanUpdateRows: false, CanDeleteRows: false })
@@ -67,7 +67,7 @@ else if (_navState.ManageTab == "columns")
 			</FluentGrid>
 		</ChildContent>
 	</TucCard>
-	<TucCard Title="@LOC("Presented Columns")" Style="margin-top:var(--tfui-card-space)">
+	<TucCard Title="@LOC("Presented Columns")" Style="margin-top:var(--tf-card-space)">
 		<ToolbarTemplate>
 			<FluentButton OnClick="_addColumn" Appearance="@Appearance.Outline">
 				<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start"/>
@@ -180,7 +180,7 @@ else if (_navState.ManageTab == "presets")
 		</ChildContent>
 	</TucCard>
 	<TucPresetFiltersCard Title="@LOC("Preset Filters Navigation")" Dataset="_spaceData" Items="_spaceView.Presets"
-	                      ItemsChanged="_onPresetsChanged"  Style="margin-top:var(--tfui-card-space)"/>
+	                      ItemsChanged="_onPresetsChanged"  Style="margin-top:var(--tf-card-space)"/>
 }
 else
 {

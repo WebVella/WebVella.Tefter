@@ -5,7 +5,7 @@ global using System.Data;
 global using System.Linq;
 global using System.Threading.Tasks;
 global using Bunit;
-global using FluentAssertions;
+global using AwesomeAssertions;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;

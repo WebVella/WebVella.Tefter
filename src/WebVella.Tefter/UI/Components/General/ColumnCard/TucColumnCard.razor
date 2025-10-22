@@ -6,7 +6,7 @@
 		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
 			@if (_columnOptions.Count > 0)
 			{
-				<TucSelect OptionSelected="@((x) => x == _selectedColumn)"
+				<TucSelect SelectedOption="@_selectedColumn"
 				           SelectedOptionChanged="((x) => _selectedColumn = x)"
 				           Disabled="_submitting"
 				           TOption="string" Required="false"

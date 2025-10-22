@@ -43,7 +43,7 @@ fluent-select{
 }
 
 /*Badge*/
-.input-badge {
+.tf-input-badge {
   border-radius: calc(var(--control-corner-radius) * 1px);
 
   &::part(control) {
@@ -127,6 +127,9 @@ fluent-menu-item{
 }
 
 /*Dialog*/
+.fluent-dialog-main::part(control){
+  --dialog-padding: var(--tf-padding) !important;
+}
 .fluent-dialog-main.right::part(control),
 .fluent-dialog-main.left::part(control) {
   --dialog-padding: 0px;

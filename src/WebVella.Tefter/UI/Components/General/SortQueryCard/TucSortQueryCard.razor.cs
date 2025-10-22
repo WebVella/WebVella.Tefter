@@ -15,6 +15,8 @@ public partial class TucSortQueryCard : TfBaseComponent
 	[Parameter]
 	public List<TfSpaceViewColumn> ViewColumns { get; set; } = new();
 
+	
+	private TfSortQuery? _selectedOption = null;
 	private List<TfSortQuery> _allOptions = new();
 	private List<TfSortQuery> _options = new();
 	private Dictionary<string, string> _columnDict = new();
@@ -26,7 +28,7 @@ public partial class TucSortQueryCard : TfBaseComponent
 		foreach (var column in ViewColumns)
 		{
 			_allOptions.Add(new TfSortQuery { Name = column.QueryName });
-			_columnDict[column.QueryName] = column.Title;
+			_columnDict[column.QueryName] = column.Title ?? "no title";
 		}
 		_regenOptionsAsync();
 
