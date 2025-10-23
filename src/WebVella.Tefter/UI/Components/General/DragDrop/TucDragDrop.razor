@@ -1,68 +1,18 @@
 ﻿@namespace WebVella.Tefter.UI.Components
-
-<FluentInputFile Id="my-file-uploader"
+@inherits TfBaseComponent
+<FluentInputFile Id="@_elementId"
+                 Class="tf-drag-drop-input"
                  Mode="InputFileMode.SaveToTemporaryFolder"
                  Multiple="true"
-                 MaximumFileCount="4"
-                 MaximumFileSize="@(10*1024*1024)"
-                 Accept="image/*"
-                 @bind-ProgressPercent="@ProgressPercent"
-                 OnCompleted="@OnCompletedAsync"
-                 Style="height: 300px;">
+                 MaximumFileSize="@(100*1024*1024)"
+                 @bind-ProgressPercent="@_progressPercent"
+                 OnCompleted="@OnCompletedAsync">
     <ChildContent>
-        <label for="my-file-uploader">
-            <FluentIcon Value="@(new @Icons.Regular.Size24.ArrowUpload())" />
+        <label for="@_elementId">
+            <FluentIcon Value="@TfConstants.GetIcon("ArrowDownload")" />
         </label>
-
         <div>
-            Drag files here you wish to upload,
-            or <label for="my-file-uploader">browse</label>
-            for them<span style="color: red;">*</span>.
-            <br />
-            <em>Maximum of 4 files allowed.</em>
-        </div>
-
-        <div>
-            <br />
-            <a href="#">Read more about our supported file formats.</a>
+            @LOC("Drop the files you want to be created as Pages"),
         </div>
     </ChildContent>
 </FluentInputFile>
-
-@if (Files.Any())
-{
-    <h4>File(s) uploaded:</h4>
-    <ul>
-        @foreach (var file in Files)
-        {
-            <li>
-                <b>@file.Name</b> 🔹
-                @($"{Decimal.Divide(file.Size, 1024):N} KB") 🔹
-                @file.ContentType 🔹
-                @file.LocalFile?.FullName
-                @file.ErrorMessage
-            </li>
-        }
-    </ul>
-}
-
-@code
-{
-    int ProgressPercent = 0;
-    FluentInputFileEventArgs[] Files = Array.Empty<FluentInputFileEventArgs>();
-
-    private async Task OnCompletedAsync(IEnumerable<FluentInputFileEventArgs> files)
-    {
-        Files = files.ToArray();
-
-        // For the demo, delete these files.
-        foreach (var file in Files)
-        {
-            file.LocalFile?.Delete();
-        }
-
-        // Wait 3 seconds before to reset the progress bar.
-        await Task.Delay(3000);
-        ProgressPercent = 0;
-    }
-}

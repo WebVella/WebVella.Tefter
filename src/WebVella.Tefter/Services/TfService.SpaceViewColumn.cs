@@ -27,6 +27,9 @@ public partial interface ITfService
 
 	ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetCompatibleViewColumnTypesMeta(
 		TfSpaceViewColumn viewColumn);
+
+	Task<(bool, List<TfSpaceViewColumn>)> ImportMissingColumnsFromDataset(
+		Guid spaceViewId);
 }
 
 public partial class TfService : ITfService
@@ -123,7 +126,8 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
-				await PublishEventWithScopeAsync(new TfSpaceViewColumnsChangedEvent(spaceViewColumn.SpaceViewId,viewColumns));
+				await PublishEventWithScopeAsync(
+					new TfSpaceViewColumnsChangedEvent(spaceViewColumn.SpaceViewId, viewColumns));
 				return viewColumns.Single(x => x.Id == spaceViewColumn.Id);
 			}
 		}
@@ -196,7 +200,8 @@ public partial class TfService : ITfService
 			if (!success)
 				throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
 			var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
-			await PublishEventWithScopeAsync(new TfSpaceViewColumnsChangedEvent(spaceViewColumn.SpaceViewId,viewColumns));
+			await PublishEventWithScopeAsync(
+				new TfSpaceViewColumnsChangedEvent(spaceViewColumn.SpaceViewId, viewColumns));
 			return viewColumns.Single(x => x.Id == spaceViewColumn.Id);
 		}
 		catch (Exception ex)
@@ -247,7 +252,8 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 				var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
-				await PublishEventWithScopeAsync(new TfSpaceViewColumnsChangedEvent(spaceViewColumn.SpaceViewId,viewColumns));
+				await PublishEventWithScopeAsync(
+					new TfSpaceViewColumnsChangedEvent(spaceViewColumn.SpaceViewId, viewColumns));
 			}
 		}
 		catch (Exception ex)
@@ -297,7 +303,8 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
-				await PublishEventWithScopeAsync(new TfSpaceViewColumnsChangedEvent(spaceViewColumn.SpaceViewId,viewColumns));
+				await PublishEventWithScopeAsync(
+					new TfSpaceViewColumnsChangedEvent(spaceViewColumn.SpaceViewId, viewColumns));
 			}
 		}
 		catch (Exception ex)
@@ -342,7 +349,8 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
-				await PublishEventWithScopeAsync(new TfSpaceViewColumnsChangedEvent(spaceViewColumn.SpaceViewId,viewColumns));
+				await PublishEventWithScopeAsync(
+					new TfSpaceViewColumnsChangedEvent(spaceViewColumn.SpaceViewId, viewColumns));
 			}
 		}
 		catch (Exception ex)
@@ -351,20 +359,15 @@ public partial class TfService : ITfService
 		}
 	}
 
-	/// <summary>
-	/// Gets view column types that can replace the current type. Includes the current type too
-	/// </summary>
-	/// <param name="columnType"></param>
-	/// <returns>the column type that is evaluated</returns>
 	public ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetCompatibleViewColumnTypesMeta(
 		TfSpaceViewColumn viewColumn)
 	{
 		var list = new List<ITfSpaceViewColumnTypeAddon>();
 		var spaceView = GetSpaceView(viewColumn.SpaceViewId);
 		var dataset = GetDataset(spaceView!.DatasetId);
-		if(dataset is null) return list.AsReadOnly();
+		if (dataset is null) return list.AsReadOnly();
 		var sampleData = QueryDataset(dataset.Id, page: 1, pageSize: 1);
-		
+
 		var dataAliasTypeDict = new Dictionary<string, TfDatabaseColumnType?>();
 		foreach (var alias in viewColumn.DataMapping.Keys)
 		{
@@ -373,10 +376,11 @@ public partial class TfService : ITfService
 				dataAliasTypeDict[alias] = null;
 				continue;
 			}
+
 			var column = sampleData.Columns[viewColumn.DataMapping[alias]!];
 			dataAliasTypeDict[alias] = column?.DbType;
 		}
-		
+
 		//The logic is the following:
 		//1. The aliases must be matched
 		//2. Each alias dbtype must be supported by the components corresponding alias map definition
@@ -390,7 +394,7 @@ public partial class TfService : ITfService
 					isSupported = false;
 					break;
 				}
-					
+
 				if (dataAliasTypeDict[definition.Alias] is null)
 					continue;
 
@@ -398,18 +402,99 @@ public partial class TfService : ITfService
 				if (!defDbSupport.Supports(dataAliasTypeDict[definition.Alias]!.Value))
 				{
 					isSupported = false;
-					break;					
+					break;
 				}
 			}
-			
-			if(isSupported)
+
+			if (isSupported)
 				list.Add(target);
 		}
-		
-		return list.OrderBy(x=> x.AddonName).ToList().AsReadOnly();
-	}		
-	
-	
+
+		return list.OrderBy(x => x.AddonName).ToList().AsReadOnly();
+	}
+
+	public async Task<(bool, List<TfSpaceViewColumn>)> ImportMissingColumnsFromDataset(
+		Guid spaceViewId)
+	{
+		var spaceView = GetSpaceView(spaceViewId) ?? throw new TfServiceException("Space view not found");
+		var dataset = GetDataset(spaceView.DatasetId) ?? throw new TfServiceException("Dataset not found");
+		var spaceViewColumns = GetSpaceViewColumnsList(spaceViewId);
+		var usedColumns = new HashSet<string>();
+		foreach (var column in spaceViewColumns)
+		{
+			foreach (var alias in column.DataMapping.Keys)
+			{
+				var columnName = column.DataMapping[alias];
+				if (!String.IsNullOrWhiteSpace(columnName))
+					usedColumns.Add(columnName);
+			}
+		}
+
+		var columnNamesToBeCreated = dataset.Columns.Where(x => !usedColumns.Contains(x)).ToList();
+		foreach (var identity in dataset.Identities)
+		{
+			foreach (var column in identity.Columns)
+			{
+				var columnName = $"{identity.DataIdentity}.{column}";
+				if(!usedColumns.Contains(columnName))
+					columnNamesToBeCreated.Add(columnName);
+			}
+		}
+
+		if (columnNamesToBeCreated.Count == 0)
+			return (false, spaceViewColumns);
+
+		var dt = QueryDataset(datasetId:dataset.Id, page: 1, pageSize: 1);
+		List<TfDataColumn> dataColumnsToBeCreate = new();
+		foreach (var columnName in columnNamesToBeCreated)
+		{
+			var column = dt.Columns[columnName];
+			if(column is not null)
+				dataColumnsToBeCreate.Add(column);
+		}
+
+		var viewColumnTypes = _metaService.GetSpaceViewColumnTypesMeta();
+		List<TfSpaceViewColumn> viewColumnsToBeCreated = new();
+		foreach (var dbColumn in dataColumnsToBeCreate)
+		{
+			var viewColumnType = dbColumn.DbType.GetColumnTypeForDbType(viewColumnTypes);
+			var dataMapping = new Dictionary<string, string?>();
+			if (viewColumnType.DataMappingDefinitions.Count > 0)
+			{
+				dataMapping[viewColumnType.DataMappingDefinitions[0].Alias] = dbColumn.Name;
+			}
+
+			var viewColumn = new TfSpaceViewColumn()
+			{
+				Id = Guid.NewGuid(),
+				Icon = null,
+				OnlyIcon = false,
+				Position = 0,
+				QueryName = NavigatorExt.GenerateQueryName(),
+				Settings = new(),
+				SpaceViewId = spaceViewId,
+				Title = NavigatorExt.ProcessForTitle(dbColumn.Name),
+				TypeId = viewColumnType.AddonId,
+				TypeOptionsJson = "{}",
+				DataMapping = dataMapping
+			};
+			viewColumnsToBeCreated.Add(viewColumn);
+		}
+
+		using (var scope = _dbService.CreateTransactionScope())
+		{
+			foreach (var column in viewColumnsToBeCreated)
+			{
+				await CreateSpaceViewColumn(column);
+			}
+			scope.Complete();
+		}
+
+		return (true, GetSpaceViewColumnsList(spaceViewId));
+	}
+
+	#region << Private >>
+
 	private TfSpaceViewColumn ConvertDboToModel(TfSpaceViewColumnDbo dbo)
 	{
 		if (dbo == null)
@@ -622,6 +707,8 @@ public partial class TfService : ITfService
 			});
 		}
 	}
+
+	#endregion
 
 	#endregion
 }

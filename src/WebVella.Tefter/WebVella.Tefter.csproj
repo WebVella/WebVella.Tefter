@@ -95,6 +95,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AdditionalFiles Include="UI\Components\Page\PageImportFromFilesDialog\TucSpaceManageDialog.razor" />
 	  <AdditionalFiles Include="UI\Components\SpaceViewPageContent\Helpers\TucSpaceViewPageContentColumnActions.razor" />
 	  <AdditionalFiles Include="UI\Components\SpaceViewPageContent\Helpers\TucSpaceViewPageContentTabs.razor" />
 	  <AdditionalFiles Include="UI\Components\SpaceViewPageContent\Helpers\TucSpaceViewSettingsSelector.razor" />

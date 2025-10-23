@@ -1,19 +1,6 @@
 ﻿.tf-drag-container {
   position: relative;
   &__nodrag {
-  }
-
-  &__drag {
-    display: none;
-  }
-
-  &--dragging &__nodrag {
-    opacity: 0;
-    z-index: 1;
-  }
-
-  &--dragging &__drag {
-    display: block;
     position: absolute;
     top: 0;
     left: 0;
@@ -21,8 +8,44 @@
     right: 0;
     width: 100%;
     height: 100%;
-    z-index: 100;
-    border:1px dashed var(--accent-fill-rest);
-    background: var(--neutral-fill-hover);
+    z-index: 9;    
+  }
+
+  &__drag {
+    visibility: hidden;
+    display:none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+    
+    .tf-drag-drop-input{
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;      
+    }
+  }
+
+  &--dragging &__nodrag {
+    visibility: hidden;
+    display: none;
+    z-index: 1;
+    overflow: hidden;
+    left:-100000px !important;
+  }
+
+  &--dragging &__drag {
+    display:block;
+    visibility: visible;
+    z-index: 9;
   }
 }

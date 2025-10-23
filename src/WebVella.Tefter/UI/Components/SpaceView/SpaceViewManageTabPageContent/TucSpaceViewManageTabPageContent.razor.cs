@@ -75,6 +75,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 			if (options is null || options.SpaceViewId is null)
 				return;
 			_spaceView = TfService.GetSpaceView(options.SpaceViewId.Value);
+			if(_spaceView is null) throw new Exception("View no longer exists");
 			_spaceViewColumns = TfService.GetSpaceViewColumnsList(_spaceView.Id);
 			_spaceData = TfService.GetDataset(_spaceView.DatasetId);
 			if (_spaceData is null) throw new Exception("Dataset no longer exists");
@@ -91,7 +92,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	private async Task _editSpaceView()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewManageDialog>(
-			_spaceView,
+			_spaceView!,
 			new ()
 			{
 				PreventDismissOnOverlayClick = true,
@@ -100,13 +101,13 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}	
 
 	private async Task _editMainTab()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewManageMainTabDialog>(
-			_spaceView,
+			_spaceView!,
 			new ()
 			{
 				PreventDismissOnOverlayClick = true,
@@ -115,14 +116,40 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
-	}		
+		if (result is { Cancelled: false, Data: not null }) { }
+	}
+
+	private async Task _importColumns()
+	{
+		if (_submitting) return;
+		try
+		{
+			_submitting = true;
+			var (added, viewColumns) = await TfService.ImportMissingColumnsFromDataset(_spaceView!.Id);
+			if (!added)
+			{
+				ToastService.ShowSuccess(LOC("No new columns found in dataset"));
+				return;
+			}
+			_spaceViewColumns =  viewColumns;
+			ToastService.ShowSuccess(LOC("View columns were added!"));
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_submitting = false;
+			await InvokeAsync(StateHasChanged);
+		}		
 		
-	
+	}
+
 	private async Task _addColumn()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewColumnManageDialog>(
-			new TfSpaceViewColumn() with { SpaceViewId = _spaceView.Id },
+			new TfSpaceViewColumn() with { SpaceViewId = _spaceView!.Id },
 			new ()
 			{
 				PreventDismissOnOverlayClick = true,
@@ -131,7 +158,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
+		if (result is { Cancelled: false, Data: not null })
 		{
 		}
 	}
@@ -149,7 +176,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
+		if (result is { Cancelled: false, Data: not null })
 		{
 		}
 	}
@@ -207,7 +234,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		try
 		{
 			await TfService.UpdateSpaceViewPresets(
-				spaceViewId: _spaceView.Id,
+				spaceViewId: _spaceView!.Id,
 				presets: presets);
 		}
 		catch (Exception ex)

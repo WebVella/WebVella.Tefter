@@ -24,7 +24,7 @@ else if (_navState.ManageTab == "columns")
 		<ChildContent>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField Label="@LOC("Dataset")" ReadOnly="true" Value="@_spaceData.Name"
+					<FluentTextField Label="@LOC("Dataset")" ReadOnly="true" Value="@_spaceData!.Name"
 					                 Style="width:100%"></FluentTextField>
 				</FluentGridItem>
 				<FluentGridItem xs="6">
@@ -69,7 +69,11 @@ else if (_navState.ManageTab == "columns")
 	</TucCard>
 	<TucCard Title="@LOC("Presented Columns")" Style="margin-top:var(--tf-card-space)">
 		<ToolbarTemplate>
-			<FluentButton OnClick="_addColumn" Appearance="@Appearance.Outline">
+			<FluentButton OnClick="_importColumns" Appearance="@Appearance.Outline" Disabled="_submitting">
+				<FluentIcon Value="@TfConstants.GetIcon("ArrowDownload")" Color="@Color.Accent" Slot="start"/>
+				@LOC("Import Missing from Dataset")
+			</FluentButton>			
+			<FluentButton OnClick="_addColumn" Appearance="@Appearance.Outline" Disabled="_submitting">
 				<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start"/>
 				@LOC("Add new")
 			</FluentButton>

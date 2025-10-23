@@ -1,0 +1,19 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader Style="display: none"></FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter Style="display: none"></FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+    <div class="tf-import-wizard">
+        <div class="tf-import-wizard__aside">
+            <div class="tf-import-wizard__content"></div>
+            <div class="tf-import-wizard__footer">
+                <FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>                
+            </div>
+        </div>
+    </div>
+</FluentDialogBody>

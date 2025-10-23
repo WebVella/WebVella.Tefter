@@ -228,7 +228,6 @@ public partial class TucSpaceViewPageContent
 		if (_rowColoringCacheDictionary.ContainsKey(tfId))
 		{
 			coloringDict = _rowColoringCacheDictionary[tfId];
-			Console.WriteLine("Cache hit");
 		}
 		else
 		{

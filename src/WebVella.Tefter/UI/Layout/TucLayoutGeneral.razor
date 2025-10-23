@@ -10,19 +10,12 @@
 			<div class="tflg__space-actions">
 				@SpaceActions
 			</div>
-			<div class="tflg__sidenav tf-drag-container @_dragClass" @ondragover="_dragOver" @ondragleave="_dragLeave" @ondragover:preventDefault="true" @ondragleave:preventDefault="true">
-				<div class="tf-drag-container__nodrag">
-					@SideNav
-				</div>
-				<div class="tf-drag-container__drag fluent-inputfile-container">
-					<div class="inputfile-content">
-						Drag
-					</div>
-				</div>				
+			<div class="tflg__sidenav">
+				@SideNav
 			</div>
 			<div class="tflg__aside__footer">
 				<TucAsideFooter/>
-			</div>			
+			</div>
 		</div>
 	}
 	<div class="tflg__wrapper">
