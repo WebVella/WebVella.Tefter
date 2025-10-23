@@ -1,11 +1,15 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using System.Diagnostics;
+
+namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceViewPageContent
 {
 	private Dictionary<Guid, TfSpaceViewRowPresentationMeta> _rowMeta = new();
 	private Dictionary<Guid, TfSpaceViewColumnPresentationMeta> _columnsMeta = new();
 	private Dictionary<Guid, Dictionary<Guid, TfSpaceViewColumnBaseContext>> _regionContextDict = new();
-
+	private Dictionary<string, string> _queryNameToColumnNameDict = new();
+	private Dictionary<Guid, Dictionary<string, Tuple<TfColor?, TfColor?>>> _rowColoringDictionary = new();
+	private long _milliseconds = 0;
 	private void _generateMeta()
 	{
 		_generateColumnsMeta();
@@ -17,8 +21,8 @@ public partial class TucSpaceViewPageContent
 		_rowMeta = new();
 		_regionContextDict = new();
 		if (_data is null) return;
-		
-		var queryNameToColumnNameDict = new Dictionary<string, string>();
+
+		_queryNameToColumnNameDict = new Dictionary<string, string>();
 		foreach (var column in _spaceViewColumns)
 		{
 			if (column.DataMapping.Keys.Count > 0)
@@ -26,18 +30,18 @@ public partial class TucSpaceViewPageContent
 				var firstmappedValue = column.DataMapping[column.DataMapping.Keys.First()];
 				if (String.IsNullOrWhiteSpace(firstmappedValue)) continue;
 				var dataColumn = _data.Columns[firstmappedValue];
-				if(dataColumn is null) continue;
-				queryNameToColumnNameDict[column.QueryName] = dataColumn.Name;
+				if (dataColumn is null) continue;
+				_queryNameToColumnNameDict[column.QueryName] = dataColumn.Name;
 			}
 		}
-		
-		
+
+
 		foreach (TfDataRow row in _data.Rows)
 		{
 			var tfId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME]!;
 			_rowMeta[tfId] = new();
 			_regionContextDict[tfId] = new();
-			
+
 			#region << Selected >>
 
 			_rowMeta[tfId].Selected = _selectedDataRows is not null && _selectedDataRows.Contains(tfId);
@@ -51,15 +55,9 @@ public partial class TucSpaceViewPageContent
 			#endregion
 
 			#region << Coloring rules >>
-			var coloringDict = _data.GenerateColoring(tfId,_spaceView!.Settings.ColoringRules,queryNameToColumnNameDict);
-			if (coloringDict.ContainsKey(tfId.ToString()))
-			{
-				_rowMeta[tfId].ForegroundColor = coloringDict[tfId.ToString()].Item1;
-				_rowMeta[tfId].BackgroundColor = coloringDict[tfId.ToString()].Item2;
-			}
-
+			//For optimization purposes it is generated adhoc for each row and filled in a cache dict for this component instance
 			#endregion
-			
+
 			#region << Column Context >>
 
 			foreach (TfSpaceViewColumn column in _spaceViewColumns)
@@ -74,17 +72,10 @@ public partial class TucSpaceViewPageContent
 						DataTable = _data,
 						RowId = tfId,
 						DataChanged = EventCallback.Factory.Create<TfSpaceViewColumnDataChange>(this, _onRowChanged)
-					};					
+					};
 				}
-				else{
-					TfColor? color = null;
-					TfColor? backgroundColor = null;
-					if (coloringDict.ContainsKey(column.QueryName))
-					{
-						color = coloringDict[column.QueryName].Item1;
-						backgroundColor = coloringDict[column.QueryName].Item2;
-					}
-
+				else
+				{
 					_regionContextDict[tfId][column.Id] = new TfSpaceViewColumnReadModeContext(_contextViewData)
 					{
 						TfService = TfService,
@@ -92,12 +83,10 @@ public partial class TucSpaceViewPageContent
 						ViewColumn = column,
 						DataTable = _data,
 						RowId = tfId,
-						ForegroundColor = color,
-						BackgroundColor = backgroundColor,
-					};						
+						ForegroundColor = null,
+						BackgroundColor = null,
+					};
 				}
-
-
 			}
 
 			#endregion
@@ -233,6 +222,71 @@ public partial class TucSpaceViewPageContent
 			}
 
 			#endregion
+		}
+	}
+
+	private void _generateRowColoringDict(Guid tfId)
+	{
+		var sw = new Stopwatch();
+		sw.Start();
+		try
+		{
+			if (_rowMeta[tfId].EditMode)
+			{
+				//remove all generated coloring from context
+				_rowMeta[tfId].ForegroundColor = null;
+				_rowMeta[tfId].BackgroundColor = null;
+				foreach (TfSpaceViewColumn column in _spaceViewColumns)
+				{
+					_regionContextDict[tfId][column.Id].ForegroundColor = null;
+					_regionContextDict[tfId][column.Id].BackgroundColor = null;
+				}
+
+				return;
+			}
+
+			var coloringDict = new Dictionary<string, Tuple<TfColor?, TfColor?>>();
+
+			if (_rowColoringDictionary.ContainsKey(tfId))
+			{
+				coloringDict = _rowColoringDictionary[tfId];
+			}
+			else
+			{
+				coloringDict =
+					_data!.GenerateColoring(tfId, _spaceView!.Settings.ColoringRules, _queryNameToColumnNameDict);
+				if (coloringDict.ContainsKey(tfId.ToString()))
+				{
+					_rowMeta[tfId].ForegroundColor = coloringDict[tfId.ToString()].Item1;
+					_rowMeta[tfId].BackgroundColor = coloringDict[tfId.ToString()].Item2;
+				}
+			}
+
+			if (coloringDict.ContainsKey(tfId.ToString()))
+			{
+				_rowMeta[tfId].ForegroundColor = coloringDict[tfId.ToString()].Item1;
+				_rowMeta[tfId].BackgroundColor = coloringDict[tfId.ToString()].Item2;
+			}
+
+			foreach (TfSpaceViewColumn column in _spaceViewColumns)
+			{
+				TfColor? color = null;
+				TfColor? backgroundColor = null;
+				if (coloringDict.ContainsKey(column.QueryName))
+				{
+					color = coloringDict[column.QueryName].Item1;
+					backgroundColor = coloringDict[column.QueryName].Item2;
+				}
+
+				_regionContextDict[tfId][column.Id].ForegroundColor = color;
+				_regionContextDict[tfId][column.Id].BackgroundColor = backgroundColor;
+			}
+		}
+		finally
+		{
+			sw.Stop();
+			_milliseconds += sw.ElapsedMilliseconds;
+			Console.WriteLine("+++++ Total milliseconds: {0}", _milliseconds);
 		}
 	}
 }

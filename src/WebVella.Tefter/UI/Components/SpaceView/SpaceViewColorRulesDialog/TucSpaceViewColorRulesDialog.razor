@@ -23,9 +23,14 @@
 	}
 	else
 	{
-		<TucCard Title="@LOC("Coloring Rules")">
+		<TucCard>
+			<TitleTemplate>
+				@LOC("Coloring Rules")
+				<span style="color: var(--neutral-foreground-hint)">(applied in order)</span>
+			</TitleTemplate>
 			<ToolbarTemplate>
-				<FluentButton Appearance="Appearance.Outline" OnClick="@_addRule" IconStart="@TfConstants.GetIcon("Add")">@LOC("Add Rule")</FluentButton>
+				<FluentButton Appearance="Appearance.Outline" OnClick="@_addRule"
+				              IconStart="@TfConstants.GetIcon("Add")">@LOC("Add Rule")</FluentButton>
 			</ToolbarTemplate>
 			<ChildContent>
 				<table class="tf-grid">
@@ -37,21 +42,21 @@
 								<div>
 									<FluentStack Wrap="false">
 										<FluentButton Appearance="@Appearance.Outline"
-										              OnClick="@(()=> _editRule(context))"
+										              OnClick="@(() => _editRule(context))"
 										              Title="@LOC("Edit column")"
 										              IconStart="@TfConstants.GetIcon("Edit")"/>
 										<FluentButton Appearance="@Appearance.Outline"
-										              OnClick="@(()=> _deleteRule(context))"
+										              OnClick="@(() => _deleteRule(context))"
 										              Title="@LOC("Delete column")">
 											<FluentIcon Color="@Color.Error"
 											            Value="@TfConstants.GetIcon("Delete")"/>
 										</FluentButton>
 										<FluentButton Appearance="@Appearance.Outline"
-										              OnClick="@(()=> _moveRule(context,true))"
+										              OnClick="@(() => _moveRule(context, true))"
 										              Title="@LOC("Move up")"
 										              IconStart="@TfConstants.GetIcon("ArrowUp")"/>
 										<FluentButton Appearance="@Appearance.Outline"
-										              OnClick="@(()=> _moveRule(context,false))"
+										              OnClick="@(() => _moveRule(context, false))"
 										              Title="@LOC("Move down")"
 										              IconStart="@TfConstants.GetIcon("ArrowDown")"/>
 									</FluentStack>
@@ -59,33 +64,33 @@
 							</td>
 							<td class="tf-grid-td" style="width:1%;vertical-align: middle;">
 								<div>@context.Position</div>
-							</td>							
+							</td>
 							<td class="tf-grid-td" style="width:30px;vertical-align: middle;">
 								<div>
-								@if (context.ForegroundColor is not null)
-								{
-									<FluentIcon
-										Value="@TfConstants.GetIcon("Square", IconSize.Size24, IconVariant.Filled)!.WithColor(context.ForegroundColor.GetColor().HEX)"></FluentIcon>
-								}
-								else
-								{
-									<FluentIcon
-										Value="@TfConstants.GetIcon("Square", IconSize.Size24)!.WithColor("var(--neutral-stroke-rest)")"></FluentIcon>
-								}
+									@if (context.ForegroundColor is not null)
+									{
+										<FluentIcon
+											Value="@TfConstants.GetIcon("Square", IconSize.Size24, IconVariant.Filled)!.WithColor(context.ForegroundColor.GetColor().HEX)"></FluentIcon>
+									}
+									else
+									{
+										<FluentIcon
+											Value="@TfConstants.GetIcon("Square", IconSize.Size24)!.WithColor("var(--neutral-stroke-rest)")"></FluentIcon>
+									}
 								</div>
 							</td>
 							<td class="tf-grid-td" style="width:30px;vertical-align: middle;">
 								<div>
-								@if (context.BackgroundColor is not null)
-								{
-									<FluentIcon
-										Value="@TfConstants.GetIcon("Square", IconSize.Size24, IconVariant.Filled)!.WithColor(context.BackgroundColor.GetColor().HEX)"></FluentIcon>
-								}
-								else
-								{
-									<FluentIcon
-										Value="@TfConstants.GetIcon("Square", IconSize.Size24)!.WithColor("var(--neutral-stroke-rest)")"></FluentIcon>
-								}
+									@if (context.BackgroundColor is not null)
+									{
+										<FluentIcon
+											Value="@TfConstants.GetIcon("Square", IconSize.Size24, IconVariant.Filled)!.WithColor(context.BackgroundColor.GetColor().HEX)"></FluentIcon>
+									}
+									else
+									{
+										<FluentIcon
+											Value="@TfConstants.GetIcon("Square", IconSize.Size24)!.WithColor("var(--neutral-stroke-rest)")"></FluentIcon>
+									}
 								</div>
 							</td>
 							<td class="tf-grid-td" style="vertical-align: middle;">
@@ -105,7 +110,8 @@
 						<tr class="tf-grid-tr">
 							<td class="tf-grid-td" colspan="4">
 								<div>
-									<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("No rules created yet")</FluentMessageBar>									
+									<FluentMessageBar Intent="@MessageIntent.Info"
+									                  AllowDismiss="false">@LOC("No rules created yet")</FluentMessageBar>
 								</div>
 							</td>
 						</tr>
