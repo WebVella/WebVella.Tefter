@@ -32,10 +32,21 @@ public partial interface ITfService
 	public void DeleteSpaceView(
 		Guid id);
 
+	long ClearRenderTimeTotal();
+	long GetRenderTimeTotal();
+	long IncrementRenderTimeTotal(long time);
 }
 
 public partial class TfService : ITfService
 {
+	private static long _renderTimeTotal = 0;
+	
+	public long ClearRenderTimeTotal() => _renderTimeTotal = 0;
+
+	public long GetRenderTimeTotal() => _renderTimeTotal;
+	public long IncrementRenderTimeTotal(long time) => _renderTimeTotal+=time;
+	
+	
 	public List<TfSpaceView> GetAllSpaceViews(string? search = null)
 	{
 		try

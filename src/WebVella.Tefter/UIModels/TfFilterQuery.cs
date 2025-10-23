@@ -2,6 +2,10 @@
 
 public record TfFilterQuery
 {
+	//for calculation purposes
+	[JsonIgnore]
+	public Guid Id { get; set; } = Guid.NewGuid();	
+	
 	[JsonPropertyName("n")]
 	public string Name { get; set; } = string.Empty;
 
