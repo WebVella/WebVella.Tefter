@@ -7,12 +7,57 @@
 <FluentDialogFooter Style="display: none"></FluentDialogFooter>
 
 @* Body *@
-<FluentDialogBody>
+<FluentDialogBody Style="padding:0 !important;">
     <div class="tf-import-wizard">
         <div class="tf-import-wizard__aside">
-            <div class="tf-import-wizard__content"></div>
-            <div class="tf-import-wizard__footer">
-                <FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>                
+            <div class="tf-import-wizard__aside__header">
+                @LOC("Processed Files:")
+            </div>
+            <div class="tf-import-wizard__aside__content">
+                <TucTreeView Items="_menu"/>
+            </div>
+            <div class="tf-import-wizard__aside__footer">
+                <FluentButton Appearance="Appearance.Outline" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+            </div>
+        </div>
+        <div class="tf-import-wizard__content">
+            <div class="tf-import-wizard__content__header">
+                <div class="tf-import-wizard__content__header__left">
+                    <FluentIcon Value="@_selectedItem.GetStatusIcon()"/>
+                    <div style="padding-left:5px">@_selectedItem.FileName</div>
+                </div>
+                <div class="tf-import-wizard__content__header__center">
+                    @if (_selectedItem.Status != TfImportFileToPageContextItemStatus.NotStarted)
+                    {
+                        <div style="color:@_selectedItem.GetStatusColor().GetColor().HEX">@LOC(_selectedItem.Status.ToDescriptionString())</div>
+                    }
+                </div>
+                <div class="tf-import-wizard__content__header__right">
+                    <FluentButton Appearance="Appearance.Outline" Title="@LOC("Remove File")"
+                                  IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Neutral)"
+                                  OnClick="_removeCurrent"/>
+                </div>
+            </div>
+            <div class="tf-import-wizard__content__subheader"></div>
+            <div class="tf-import-wizard__content__body">
+                @if (_context.Items.Count == 0)
+                {
+                    <FluentMessageBar AllowDismiss="false"
+                                      Intent="MessageIntent.Info">@LOC("No files are found for import")</FluentMessageBar>
+                }
+                else if (_selectedItem.IsError)
+                {
+                    <FluentMessageBar AllowDismiss="false"
+                                      Intent="MessageIntent.Error">@_selectedItem.Message</FluentMessageBar>
+                }
+                else
+                {
+                    <TucPath Items="_steps"/>
+                }
+            </div>
+            <div class="tf-import-wizard__content__footer">
+                <div class="tf-import-wizard__content__footer__left"></div>
+                <div class="tf-import-wizard__content__footer__right"><FluentButton Appearance="Appearance.Accent" IconStart="@TfConstants.GetIcon("Play")">@LOC("Create page")</FluentButton></div>
             </div>
         </div>
     </div>

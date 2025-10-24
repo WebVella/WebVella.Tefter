@@ -8,6 +8,7 @@ public record TfMenuItem
 	public string? Description { get; set; }
 	public string? Abbriviation { get; set; }
 	public bool Disabled { get; set; } = false;
+	public bool Completed { get; set; } = false;
 	public Icon? IconCollapsed { get; set; }
 	public Icon? IconExpanded { get; set; }
 	public TfColor? Color { get; set; }
@@ -124,6 +125,7 @@ public record TfMenuItemData
 	public Guid? SpaceId { get; set; }
 	public TfMenuItemType MenuType { get; set; } = TfMenuItemType.None;
 	public TfSpacePageType SpacePageType { get; set; } = TfSpacePageType.Page;
+	public TfImportFileToPageContextItem? ImportFileContext { get; set; } = null;
 }
 
 public enum TfMenuItemType

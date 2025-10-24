@@ -1,31 +1,97 @@
 ﻿@import '_variables.less';
 
-.tf-welcome {
-  padding-left:var(--tf-padding);
-  padding-right:var(--tf-padding);
-  padding-top:3rem;
-  h1,h3{
-    text-align: center;
-  }
-  
-  &__grid{
-    justify-content: center;
-    max-width: 1000px;
-    margin:0 auto;
-    margin-top:3rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: calc(var(--tf-padding) * 2);
-  }
-  
-  .tf-card{
-    height:100%;
-    &__title em{
-      font-style: normal;
-      color:var(--accent-fill-rest);
+.tf-import-wizard {
+  display: flex;
+  --tf-wizard-padding: 10px;
+
+  &__aside {
+    flex: 0 0 300px;
+    display: flex;
+    flex-flow: column;
+    border-radius: calc(var(--layer-corner-radius) * 1px) 0 0 calc(var(--layer-corner-radius) * 1px);
+    background: var(--neutral-layer-2);
+    border-right: 1px solid var(--neutral-stroke-rest);
+
+    &__header {
+      flex: 0 0 auto;
+      padding: var(--tf-wizard-padding);
+      color: var(--neutral-foreground-hint);
+    }
+
+    &__content {
+      flex: 1 1 auto;
+      //padding-left: calc( var(--tf-wizard-padding) / 2);
+      //padding-right: calc( var(--tf-wizard-padding) / 2);
+      padding-bottom: calc(var(--tf-wizard-padding) * 3);
+    }
+
+    &__footer {
+      flex: 0 0 auto;
+      padding: var(--tf-wizard-padding);
+
+      fluent-button {
+        width: 100%;
+      }
     }
   }
-  
 
+  &__content {
+    flex: 1 1 auto;
+    min-height: 300px;
+    display: flex;
+    flex-flow: column;
+
+    &__header {
+      flex: 0 0 auto;
+      display: flex;
+      justify-items: center;
+
+      &__left {
+        flex: 1 1 auto;
+        display: flex;
+        padding-left: var(--tf-wizard-padding);
+        padding-right: var(--tf-wizard-padding);
+        align-items: center;
+        font-size: var(--type-ramp-plus-2-font-size);
+        line-height: var(--type-ramp-plus-2-line-height);
+      }
+
+      &__center {
+        flex: 0 0 auto;
+        padding-right: calc( var(--tf-wizard-padding) * 2);
+        display: flex;
+        align-items: center;
+        font-size: var(--type-ramp-base-font-size);
+
+        &__text{
+          padding-left:1px;
+          padding-right:1px;
+        }
+      }
+
+      &__right {
+        flex: 0 0 auto;
+        padding: var(--tf-wizard-padding);
+      }
+
+    }
+    
+    &__body{
+      flex: 1 1 auto;
+    }
+    &__footer{
+      flex: 0 0 auto;
+      display: flex;
+      justify-content: space-between;
+      &__left{
+        padding: var(--tf-wizard-padding);
+        flex:0 0 auto;
+      }
+      &__right{
+        padding: var(--tf-wizard-padding);
+        flex:0 0 auto;
+      }      
+    }    
+  }
 }
 

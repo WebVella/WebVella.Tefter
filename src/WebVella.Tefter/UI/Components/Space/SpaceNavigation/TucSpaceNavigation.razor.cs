@@ -81,7 +81,11 @@ public partial class TucSpaceNavigation : TfBaseComponent, IDisposable
 	private async Task _onFileDrop(List<FluentInputFileEventArgs> files)
 	{
 		if (TfAuthLayout.GetState().NavigationState.SpaceId is null) return;
-		if (files.Count == 0) return;
+		if (files.Count == 0)
+		{
+			ToastService.ShowInfo(LOC("No files found for import"));
+			return;
+		}
 		_dragClass = null;
 		RegenRenderLock();
 		await InvokeAsync(StateHasChanged);		
@@ -91,9 +95,10 @@ public partial class TucSpaceNavigation : TfBaseComponent, IDisposable
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
-				Width = TfConstants.DialogWidthLarge,
-				TrapFocus = false
+				Width = TfConstants.DialogWidthExtraLarge,
+				TrapFocus = false,
 			});
+		
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{

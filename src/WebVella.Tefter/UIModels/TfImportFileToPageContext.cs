@@ -9,14 +9,32 @@ public record TfImportFileToPageContext
 	{
 		foreach (var file in files)
 		{
+			if (file.LocalFile is null)
+				throw new Exception("one or more files have no content");
+
+			byte[] fileContent;
+			using (var fileStream =
+			       new FileStream(file.LocalFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
+			{
+				fileContent = fileStream.ReadFully();
+			}
+
+			if (Items.Any(x => x.LocalPath == file.LocalFile.FullName)) continue;
+
 			Items.Add(new TfImportFileToPageContextItem()
 			{
-				File = file
+				File = file, FileName = file.Name, LocalPath = file.LocalFile!.FullName, FileContent = fileContent,
 			});
+			try
+			{
+				File.Delete(file.LocalFile.FullName);
+			}
+			catch (Exception ex)
+			{
+			}
 		}
 	}
 }
-
 
 public record TfImportFileToPageContextItem
 {
@@ -25,4 +43,58 @@ public record TfImportFileToPageContextItem
 	public string LocalPath { get; set; } = String.Empty;
 	public byte[] FileContent { get; set; } = [];
 	public ITfDataProviderAddon? DataProvider { get; set; } = null;
+	public TfImportFileToPageContextItemStatus Status { get; set; } = TfImportFileToPageContextItemStatus.NotStarted;
+	public TfImportFileToPageContextItemStep Step { get; set; } = TfImportFileToPageContextItemStep.DataProviderSelection;
+
+	public Icon GetStatusIcon()
+	{
+		switch (Status)
+		{
+			case TfImportFileToPageContextItemStatus.Processed:
+				return TfConstants.GetIcon("CheckmarkCircle")!.WithColor(TfColor.Green500.GetColor().HEX);
+			case TfImportFileToPageContextItemStatus.ProcessedWithWarning:
+				return TfConstants.GetIcon("Warning")!.WithColor(TfColor.Orange500.GetColor().HEX);
+			case TfImportFileToPageContextItemStatus.ProcessedWithError:
+				return TfConstants.GetIcon("ErrorCircle")!.WithColor(TfColor.Red500.GetColor().HEX);
+			default:
+				return TfConstants.GetIcon("PauseCircle")!.WithColor(TfColor.Gray500.GetColor().HEX);
+		}
+	}
+
+	public TfColor GetStatusColor()
+	{
+		switch (Status)
+		{
+			case TfImportFileToPageContextItemStatus.Processed:
+				return TfColor.Green500;
+			case TfImportFileToPageContextItemStatus.ProcessedWithWarning:
+				return TfColor.Orange500;
+			case TfImportFileToPageContextItemStatus.ProcessedWithError:
+				return TfColor.Red500;
+			default:
+				return TfColor.Gray500;
+		}
+	}
+
+	public bool IsSelected { get; set; } = false;
+	public string? Message { get; set; } = null;
+	public bool IsError { get; set; } = false;
+}
+
+public enum TfImportFileToPageContextItemStatus
+{
+	[Description("Not Started")] NotStarted = 0,
+	[Description("Processed")] Processed = 1,
+
+	[Description("Processed with Warning")]
+	ProcessedWithWarning = 2,
+	[Description("Processed with Error")] ProcessedWithError = 3
+}
+
+public enum TfImportFileToPageContextItemStep
+{
+	DataProviderSelection = 0,
+	DataProviderOptions = 1,
+	PageCreation = 2,
+	Finished = 3
 }
