@@ -376,6 +376,37 @@ public class CsvDataProvider : ITfDataProviderAddon
         return errors;
     }
 
+    public Task<bool> CanBeCreatedFromFile(
+        TfImportFileToPageContextItem item)
+    {
+        return Task.FromResult(true);
+    }
+
+    public async Task<TfImportFileToPageResult> CreatedFromFile(
+        TfImportFileToPageContextItem item)
+    {
+        for (int i = 0; i < 7; i++)
+        {
+            await Task.Delay(500);
+            var type = TfProgressStreamItemType.Normal;
+            if(i%3 == 0)
+                type = TfProgressStreamItemType.Warning;
+            
+            if(i%4 == 0)
+                type = TfProgressStreamItemType.Error;
+            if(i == 6)
+                type = TfProgressStreamItemType.Success;
+            item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+            {
+                Message = $"message {i}",
+                Type = type
+            });
+        }
+        
+        
+        return new TfImportFileToPageResult();
+    }
+
 
     private ReadOnlyCollection<TfDataProviderDataRow> ReadCSVStream(
         Stream stream,

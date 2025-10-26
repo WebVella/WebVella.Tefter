@@ -16,9 +16,9 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="System.Formats.Asn1" Version="9.0.9" />
-		<PackageReference Include="System.IO.Packaging" Version="9.0.9" />
-		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.9" />
+		<PackageReference Include="System.Formats.Asn1" Version="9.0.10" />
+		<PackageReference Include="System.IO.Packaging" Version="9.0.10" />
+		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.10" />
 	</ItemGroup>
 
 	<ItemGroup>

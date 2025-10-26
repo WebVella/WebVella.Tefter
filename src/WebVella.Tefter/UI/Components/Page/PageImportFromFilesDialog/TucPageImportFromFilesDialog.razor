@@ -11,31 +11,73 @@
     <div class="tf-import-wizard">
         <div class="tf-import-wizard__aside">
             <div class="tf-import-wizard__aside__header">
-                @LOC("Processed Files:")
+                <div class="tf-import-wizard__aside__header__left">@LOC("Files:")</div>
+                <div class="tf-import-wizard__aside__header__right">
+                    @if (_statDict[Guid.Empty.ToString()].ProcessedError > 0)
+                    {
+                        <div class="tf-import-wizard__aside__header__right__count">
+                            <FluentIcon
+                                Value="@TfConstants.GetIcon("ErrorCircle")!.WithColor(TfColor.Red500.GetColor().HEX)"/>
+                            <span
+                                class="tf-import-wizard__aside__header__right__count__number">@_statDict[Guid.Empty.ToString()].ProcessedError</span>
+                        </div>
+                    }
+                    @if (_statDict[Guid.Empty.ToString()].ProcessedWarning > 0)
+                    {
+                        <div class="tf-import-wizard__aside__header__right__count">
+                            <FluentIcon
+                                Value="@TfConstants.GetIcon("Warning")!.WithColor(TfColor.Orange500.GetColor().HEX)"/>
+                            <span
+                                class="tf-import-wizard__aside__header__right__count__number">@_statDict[Guid.Empty.ToString()].ProcessedWarning</span>
+                        </div>
+                    }
+                    @if (_statDict[Guid.Empty.ToString()].ProcessedSuccess > 0)
+                    {
+                        <div class="tf-import-wizard__aside__header__right__count">
+                            <FluentIcon
+                                Value="@TfConstants.GetIcon("CheckmarkCircle")!.WithColor(TfColor.Green500.GetColor().HEX)"/>
+                            <span
+                                class="tf-import-wizard__aside__header__right__count__number">@_statDict[Guid.Empty.ToString()].ProcessedSuccess</span>
+                        </div>
+                    }
+                </div>
             </div>
             <div class="tf-import-wizard__aside__content">
                 <TucTreeView Items="_menu"/>
             </div>
             <div class="tf-import-wizard__aside__footer">
-                <FluentButton Appearance="Appearance.Outline" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+                <FluentButton Appearance="Appearance.Outline" OnClick="@_cancel" Disabled="@_isProcessing">@LOC("Close")</FluentButton>
             </div>
         </div>
         <div class="tf-import-wizard__content">
             <div class="tf-import-wizard__content__header">
                 <div class="tf-import-wizard__content__header__left">
-                    <FluentIcon Value="@_selectedItem.GetStatusIcon()"/>
                     <div style="padding-left:5px">@_selectedItem.FileName</div>
                 </div>
                 <div class="tf-import-wizard__content__header__center">
-                    @if (_selectedItem.Status != TfImportFileToPageContextItemStatus.NotStarted)
+                    @if (_selectedItem.Status == TfImportFileToPageContextItemStatus.Processing)
                     {
-                        <div style="color:@_selectedItem.GetStatusColor().GetColor().HEX">@LOC(_selectedItem.Status.ToDescriptionString())</div>
+                        <div
+                            style="color:@_selectedItem.GetStatusColor().GetColor().HEX">@LOC(_selectedItem.Status.ToDescriptionString())</div>
                     }
                 </div>
                 <div class="tf-import-wizard__content__header__right">
-                    <FluentButton Appearance="Appearance.Outline" Title="@LOC("Remove File")"
-                                  IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Neutral)"
-                                  OnClick="_removeCurrent"/>
+                    @if (_statDict[_selectedItem.LocalPath].ProcessedError > 0)
+                    {
+                        <div class="tf-import-wizard__aside__header__right__count">
+                            <FluentIcon
+                                Value="@TfConstants.GetIcon("ErrorCircle")!.WithColor(TfColor.Red500.GetColor().HEX)"/>
+                            <span class="tf-import-wizard__aside__header__right__count__number">@_statDict[_selectedItem.LocalPath].ProcessedError</span>
+                        </div>
+                    }
+                    @if (_statDict[_selectedItem.LocalPath].ProcessedWarning > 0)
+                    {
+                        <div class="tf-import-wizard__aside__header__right__count">
+                            <FluentIcon
+                                Value="@TfConstants.GetIcon("Warning")!.WithColor(TfColor.Orange500.GetColor().HEX)"/>
+                            <span class="tf-import-wizard__aside__header__right__count__number">@_statDict[_selectedItem.LocalPath].ProcessedWarning</span>
+                        </div>
+                    }
                 </div>
             </div>
             <div class="tf-import-wizard__content__subheader"></div>
@@ -50,14 +92,39 @@
                     <FluentMessageBar AllowDismiss="false"
                                       Intent="MessageIntent.Error">@_selectedItem.Message</FluentMessageBar>
                 }
+                else if (_selectedItem.ProcessLog.Count > 0)
+                {
+                    <div class="tf-console-box">
+                        @foreach (var context in _selectedItem.ProcessLog)
+                        {
+                            <div class="tf-console-box__row" id="@context.Id">
+                                <div class="tf-console-box__row__date">
+                                    [@context.Timestamp.ToString(TfConstants.DateTimeFormat)]
+                                </div>
+                                <div class="tf-console-box__row__message" style="@(context.Color is null ? "" : $"color:{context.Color.GetColor().HEX}")">
+                                    @if (context.Type == TfProgressStreamItemType.Error)
+                                    {
+                                        <span style="@($"color:{context.Color.GetColor().HEX}")">[ERROR] </span>
+                                    }
+                                    else if (context.Type == TfProgressStreamItemType.Warning)
+                                    {
+                                        <span style="@($"color:{context.Color.GetColor().HEX}")">[WARNING] </span>
+                                    }                       
+                                    else if (context.Type == TfProgressStreamItemType.Success)
+                                    {
+                                        <span style="@($"color:{context.Color.GetColor().HEX}")">[SUCCESS] </span>
+                                    }                                                
+                                    <span
+                                        style="@(context.Color is null ? "" : context.Color.Value.GetColor().HEX)">@context.Message</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
                 else
                 {
-                    <TucPath Items="_steps"/>
+                    <div>@LOC("Processing the file about to start...")</div>
                 }
-            </div>
-            <div class="tf-import-wizard__content__footer">
-                <div class="tf-import-wizard__content__footer__left"></div>
-                <div class="tf-import-wizard__content__footer__right"><FluentButton Appearance="Appearance.Accent" IconStart="@TfConstants.GetIcon("Play")">@LOC("Create page")</FluentButton></div>
             </div>
         </div>
     </div>

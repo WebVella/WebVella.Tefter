@@ -4,7 +4,8 @@
                  Class="tf-drag-drop-input"
                  Mode="InputFileMode.SaveToTemporaryFolder"
                  Multiple="true"
-                 MaximumFileSize="@(100*1024*1024)"
+                 MaximumFileCount="100"
+                 MaximumFileSize="@(1000*1024*1024)"
                  @bind-ProgressPercent="@_progressPercent"
                  OnCompleted="@OnCompletedAsync">
     <ChildContent>

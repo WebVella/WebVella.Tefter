@@ -43,18 +43,41 @@ public record TfImportFileToPageContextItem
 	public string LocalPath { get; set; } = String.Empty;
 	public byte[] FileContent { get; set; } = [];
 	public ITfDataProviderAddon? DataProvider { get; set; } = null;
-	public TfImportFileToPageContextItemStatus Status { get; set; } = TfImportFileToPageContextItemStatus.NotStarted;
-	public TfImportFileToPageContextItemStep Step { get; set; } = TfImportFileToPageContextItemStep.DataProviderSelection;
+	public Guid? SpacePageId { get; set; } = null;
+	public bool IsProcessed { get; set; } = false;	
+	public TfImportFileToPageContextItemStatus Status
+	{
+		get
+		{
+			if (IsProcessed) 
+				return TfImportFileToPageContextItemStatus.Processing;
+				
+			if(ProcessLog.Count == 0)
+				return TfImportFileToPageContextItemStatus.NotStarted;
+			
+			if(ProcessLog.Any(x=> x.Type == TfProgressStreamItemType.Error))
+				return TfImportFileToPageContextItemStatus.ProcessedWithErrors;
+			
+			if(ProcessLog.Any(x=> x.Type == TfProgressStreamItemType.Warning))
+				return TfImportFileToPageContextItemStatus.ProcessedWithWarnings;
+			
+			return TfImportFileToPageContextItemStatus.ProcessedSuccess;	
+		}
+	}
+	public TfProgressStream ProcessStream { get; set; } = new();
+	public List<TfProgressStreamItem> ProcessLog { get; set; } = new();
 
 	public Icon GetStatusIcon()
 	{
 		switch (Status)
 		{
-			case TfImportFileToPageContextItemStatus.Processed:
+			case TfImportFileToPageContextItemStatus.Processing:
+				return TfConstants.GetIcon("SpinnerIos",variant:IconVariant.Filled)!.WithColor(TfColor.Green500.GetColor().HEX);			
+			case TfImportFileToPageContextItemStatus.ProcessedSuccess:
 				return TfConstants.GetIcon("CheckmarkCircle")!.WithColor(TfColor.Green500.GetColor().HEX);
-			case TfImportFileToPageContextItemStatus.ProcessedWithWarning:
+			case TfImportFileToPageContextItemStatus.ProcessedWithWarnings:
 				return TfConstants.GetIcon("Warning")!.WithColor(TfColor.Orange500.GetColor().HEX);
-			case TfImportFileToPageContextItemStatus.ProcessedWithError:
+			case TfImportFileToPageContextItemStatus.ProcessedWithErrors:
 				return TfConstants.GetIcon("ErrorCircle")!.WithColor(TfColor.Red500.GetColor().HEX);
 			default:
 				return TfConstants.GetIcon("PauseCircle")!.WithColor(TfColor.Gray500.GetColor().HEX);
@@ -65,11 +88,13 @@ public record TfImportFileToPageContextItem
 	{
 		switch (Status)
 		{
-			case TfImportFileToPageContextItemStatus.Processed:
+			case TfImportFileToPageContextItemStatus.Processing:
+				return TfColor.Cyan500;			
+			case TfImportFileToPageContextItemStatus.ProcessedSuccess:
 				return TfColor.Green500;
-			case TfImportFileToPageContextItemStatus.ProcessedWithWarning:
+			case TfImportFileToPageContextItemStatus.ProcessedWithWarnings:
 				return TfColor.Orange500;
-			case TfImportFileToPageContextItemStatus.ProcessedWithError:
+			case TfImportFileToPageContextItemStatus.ProcessedWithErrors:
 				return TfColor.Red500;
 			default:
 				return TfColor.Gray500;
@@ -84,17 +109,14 @@ public record TfImportFileToPageContextItem
 public enum TfImportFileToPageContextItemStatus
 {
 	[Description("Not Started")] NotStarted = 0,
-	[Description("Processed")] Processed = 1,
+	[Description("Processing")] Processing = 1,
+	[Description("Processed")] ProcessedSuccess = 2,
 
 	[Description("Processed with Warning")]
-	ProcessedWithWarning = 2,
-	[Description("Processed with Error")] ProcessedWithError = 3
+	ProcessedWithWarnings = 3,
+	[Description("Processed with Error")] ProcessedWithErrors = 4
 }
 
-public enum TfImportFileToPageContextItemStep
+public record TfImportFileToPageResult
 {
-	DataProviderSelection = 0,
-	DataProviderOptions = 1,
-	PageCreation = 2,
-	Finished = 3
 }

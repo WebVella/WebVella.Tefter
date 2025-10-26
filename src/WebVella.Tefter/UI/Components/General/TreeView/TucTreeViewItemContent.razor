@@ -4,7 +4,7 @@
 <span class=tf-treemenu__item__content>
 	@if (Item.Icon is not null)
 	{
-		<span class="tf-treemenu__item__icon"><FluentIcon Value="@Item.Icon" /></span>
+		<span class="@($"tf-treemenu__item__icon {(Item.SpinIcon ? "spin" : "")}")"><FluentIcon Value="@Item.Icon" /></span>
 	}
 	@if (!String.IsNullOrWhiteSpace(Item.Text) && !String.IsNullOrWhiteSpace(Item.Description))
 	{

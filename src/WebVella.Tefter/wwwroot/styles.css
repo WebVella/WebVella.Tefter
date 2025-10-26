@@ -852,6 +852,28 @@ fluent-menu-item::part(start) {
 .tf-card fluent-badge {
   --neutral-fill-secondary-rest: light-dark(var(--neutral-layer-4), var(--neutral-layer-2));
 }
+.tf-console-box {
+  padding: 10px;
+  background: var(--neutral-layer-3);
+  max-height: 350px;
+  overflow-y: auto;
+  font-family: monospace;
+}
+.tf-console-box__row {
+  display: flex;
+  margin-bottom: 5px;
+}
+.tf-console-box__row__date {
+  flex: 0 0 auto;
+  padding-right: 10px;
+  color: var(--neutral-base-color);
+}
+.tf-console-box__row__message .error {
+  color: var(--error);
+}
+.tf-console-box__row__message .warning {
+  color: var(--warning);
+}
 .tf-drag-container {
   position: relative;
 }
@@ -1621,10 +1643,35 @@ fluent-menu-item::part(start) {
   flex: 0 0 auto;
   padding: var(--tf-wizard-padding);
   color: var(--neutral-foreground-hint);
+  display: flex;
+  align-items: center;
+}
+.tf-import-wizard__aside__header__left {
+  flex: 0 0 auto;
+}
+.tf-import-wizard__aside__header__right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+.tf-import-wizard__aside__header__right__count {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  margin-left: var(--tf-wizard-padding);
+}
+.tf-import-wizard__aside__header__right__count__number {
+  display: flex;
+  align-items: center;
+  padding-left: 3px;
 }
 .tf-import-wizard__aside__content {
   flex: 1 1 auto;
   padding-bottom: calc(var(--tf-wizard-padding) * 3);
+  max-height: 80vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 .tf-import-wizard__aside__footer {
   flex: 0 0 auto;
@@ -1642,7 +1689,10 @@ fluent-menu-item::part(start) {
 .tf-import-wizard__content__header {
   flex: 0 0 auto;
   display: flex;
-  justify-items: center;
+  align-items: center;
+  padding-top: var(--tf-wizard-padding);
+  padding-bottom: var(--tf-wizard-padding);
+  border-bottom: 1px solid var(--neutral-stroke-rest);
 }
 .tf-import-wizard__content__header__left {
   flex: 1 1 auto;
@@ -1666,10 +1716,26 @@ fluent-menu-item::part(start) {
 }
 .tf-import-wizard__content__header__right {
   flex: 0 0 auto;
-  padding: var(--tf-wizard-padding);
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  padding-right: var(--tf-wizard-padding);
+}
+.tf-import-wizard__content__header__right__count {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  padding-right: var(--tf-wizard-padding);
+}
+.tf-import-wizard__content__header__right__count__number {
+  display: flex;
+  align-items: center;
+  padding-left: 3px;
 }
 .tf-import-wizard__content__body {
   flex: 1 1 auto;
+  min-height: 400px;
+  padding: var(--tf-wizard-padding);
 }
 .tf-import-wizard__content__footer {
   flex: 0 0 auto;
@@ -1994,12 +2060,14 @@ fluent-menu-item::part(start) {
 .tf-path__item {
   --tf-path-item-height: 50px;
   --tf-path-item-arrow-width: 20px;
+  --tf-path-item-color: var(--fill-color);
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   position: relative;
   height: var(--tf-path-item-height);
   padding: 0 0 0 calc(var(--tf-path-item-arrow-width) + 10px);
+  background: var(--tf-path-item-color);
 }
 .tf-path__item:first-child {
   padding-left: 10px;
@@ -2026,7 +2094,7 @@ fluent-menu-item::part(start) {
   height: 0;
   border-top: var(--tf-path-item-height) solid transparent;
   border-bottom: var(--tf-path-item-height) solid transparent;
-  border-left: var(--tf-path-item-arrow-width) solid var(--fill-color);
+  border-left: var(--tf-path-item-arrow-width) solid var(--tf-path-item-color);
   position: absolute;
   top: 50%;
   margin-top: calc(-1 * var(--tf-path-item-height));
@@ -2038,12 +2106,36 @@ fluent-menu-item::part(start) {
   padding-right: 5px;
   color: var(--accent-foreground-rest);
 }
+.tf-path__item__count > * {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.tf-path__item__count__icon {
+  display: none;
+}
 .tf-path__item__meta {
   flex: 1 1 auto;
 }
 .tf-path__item__meta__subtitle {
   color: var(--neutral-foreground-hint);
   font-size: var(--type-ramp-minus-1-font-size);
+}
+.tf-path__item:hover {
+  --tf-path-item-color: var(--neutral-layer-2);
+  cursor: pointer;
+}
+.tf-path__item--selected {
+  --tf-path-item-color: var(--neutral-layer-2);
+}
+.tf-path__item--completed {
+  --tf-path-item-color: var(--tf-green-950);
+}
+.tf-path__item--completed .tf-path__item__count__icon {
+  display: flex;
+}
+.tf-path__item--completed .tf-path__item__count__number {
+  display: none;
 }
 .tf-plaintext-field {
   display: flex;
@@ -2357,12 +2449,14 @@ fluent-menu-item::part(start) {
   align-items: center;
 }
 .tf-treemenu__item__icon {
-  flex: 0 0 30px;
+  flex: 0 0 20px;
   display: flex;
   align-items: center;
-  justify-content: start;
-  padding-top: 2px;
+  justify-content: center;
   --accent-fill-rest: var(--neutral-foreground-hover);
+}
+.tf-treemenu__item__icon.spin {
+  animation: tree-icon-rotation 2s infinite linear;
 }
 .tf-treemenu__item__icon svg {
   width: 20px;
@@ -2380,6 +2474,9 @@ fluent-menu-item::part(start) {
   overflow: hidden;
   text-overflow: ellipsis;
   display: inline-block;
+}
+.tf-treemenu__item__icon + .tf-treemenu__item__title {
+  padding-left: 7px;
 }
 .tf-treemenu__item__description {
   font-size: 0.85em;
@@ -2410,6 +2507,14 @@ fluent-menu-item::part(start) {
 .tf-treemenu__item__expander svg {
   --accent-fill-rest: var(--neutral-foreground-hover);
   width: 16px !important;
+}
+@keyframes tree-icon-rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 .tf-welcome {
   padding-left: var(--tf-padding);

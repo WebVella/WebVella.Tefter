@@ -70,10 +70,10 @@
   }
 
   &.tf-active + .tf-submenu:before,
-  &.tf-child-active + .tf-submenu:before{
+  &.tf-child-active + .tf-submenu:before {
     background: linear-gradient(to bottom, var(--neutral-layer-2) 10%, var(--accent-fill-rest) 50%, var(--neutral-layer-2) 90%);
   }
-  
+
   //&.tf-expanded  &__expander{
   //  display: none;
   //}
@@ -85,12 +85,15 @@
   }
 
   &__icon {
-    flex: 0 0 30px;
+    flex: 0 0 20px;
     display: flex;
     align-items: center;
-    justify-content: start;
-    padding-top: 2px;
+    justify-content: center;
     --accent-fill-rest: var(--neutral-foreground-hover);
+
+    &.spin {
+      animation: tree-icon-rotation 2s infinite linear;
+    }
 
     svg {
       width: 20px;
@@ -111,6 +114,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block;
+  }
+
+  &__icon + &__title {
+    padding-left: 7px;
   }
 
   &__description {
@@ -148,5 +155,13 @@
     }
   }
 
+  @keyframes tree-icon-rotation {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
 
 }

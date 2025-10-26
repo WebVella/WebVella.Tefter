@@ -8,21 +8,24 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 	private TfImportFileToPageContext _context = null!;
 	private TfImportFileToPageContextItem _selectedItem = null!;
 	private List<TfMenuItem> _menu = new();
-	private List<TfMenuItem> _steps = new();
+	private Dictionary<string, TucPageImportFromFilesDialogStats> _statDict = new();
+	private ReadOnlyCollection<ITfDataProviderAddon> _providers = null!;
+	private bool _isProcessing = true;
+
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
-
+		_providers = TfMetaService.GetDataProviderTypes();
 		_context = new(Content);
-
 		if (_context.Items.Count > 0)
 			_selectedItem = _context.Items[0];
 #pragma warning disable BL0005
 		Dialog.Class = "tf-modal-no-body-padding";
 #pragma warning restore BL0005
 		_initMenu();
+		await _importItem(_selectedItem);
 	}
 
 	private async Task _cancel()
@@ -33,6 +36,7 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 	private void _initMenu()
 	{
 		_menu = new();
+		_statDict = new();
 		foreach (var item in _context.Items)
 		{
 			_menu.Add(new TfMenuItem()
@@ -41,71 +45,96 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 				Text = item.FileName,
 				Selected = _selectedItem.LocalPath == item.LocalPath,
 				Data = new TfMenuItemData() { ImportFileContext = item },
-				OnClick = EventCallback.Factory.Create(this, async () => await _menuItemClickHandler(item)),
-				IconCollapsed = item.GetStatusIcon()
+				OnClick = EventCallback.Factory.Create(this, async () => await _selectItem(item)),
+				IconCollapsed = item.GetStatusIcon(),
+				IconColor = item.GetStatusColor(),
+				SpinIcon = item.IsProcessed
 			});
+			_statDict[item.LocalPath] = new TucPageImportFromFilesDialogStats()
+			{
+				ProcessedWarning = item.ProcessLog.Count(x => x.Type == TfProgressStreamItemType.Warning),
+				ProcessedError = item.ProcessLog.Count(x => x.Type == TfProgressStreamItemType.Error)
+			};
 		}
 
-		_steps = new();
-		_steps.Add(new TfMenuItem()
+		_statDict[Guid.Empty.ToString()] = new TucPageImportFromFilesDialogStats()
 		{
-			Id= $"tf-{Guid.NewGuid()}",
-			Text = LOC("Data Provider"),
-			Description = LOC("data processing method"),
-			Selected = TfImportFileToPageContextItemStep.DataProviderSelection == _selectedItem.Step,
-			Abbriviation = "1",
-		});
-		_steps.Add(new TfMenuItem()
-		{
-			Id= $"tf-{Guid.NewGuid()}",
-			Text = LOC("Provider Options"),
-			Description = LOC("method configuration"),
-			Selected = TfImportFileToPageContextItemStep.DataProviderOptions == _selectedItem.Step,
-			Abbriviation = "2",
-		});		
-		_steps.Add(new TfMenuItem()
-		{
-			Id= $"tf-{Guid.NewGuid()}",
-			Text = LOC("Create Page"),
-			Description = LOC("required items creation"),
-			Selected = TfImportFileToPageContextItemStep.PageCreation == _selectedItem.Step,
-			Abbriviation = "3",
-		});				
-		_steps.Add(new TfMenuItem()
-		{
-			Id= $"tf-{Guid.NewGuid()}",
-			Text = LOC("Completed"),
-			Description = LOC("process complete"),
-			Selected = TfImportFileToPageContextItemStep.Finished == _selectedItem.Step,
-			Abbriviation = "4",
-		});				
+			ProcessedSuccess =
+				_context.Items.Count(x => x.Status == TfImportFileToPageContextItemStatus.ProcessedSuccess),
+			ProcessedError =
+				_context.Items.Count(x => x.Status == TfImportFileToPageContextItemStatus.ProcessedWithErrors),
+			ProcessedWarning =
+				_context.Items.Count(x => x.Status == TfImportFileToPageContextItemStatus.ProcessedWithWarnings)
+		};
 	}
 
-	private async Task _menuItemClickHandler(TfImportFileToPageContextItem item)
+	private async Task _selectItem(TfImportFileToPageContextItem item, bool fromProcess = false)
 	{
+		if(!fromProcess && _isProcessing) return;
 		_selectedItem = item;
-		if (item.Status == TfImportFileToPageContextItemStatus.ProcessedWithError)
-			item.Status = TfImportFileToPageContextItemStatus.NotStarted;
+		_initMenu();
+		await InvokeAsync(StateHasChanged);
+	}
+
+	private async Task _importItem(TfImportFileToPageContextItem item)
+	{
+		item.ProcessStream.OnProgress += (message) =>
+		{
+			InvokeAsync(async () =>
+			{
+				await _updateProgress(item, message);
+			});
+		};
+
+		foreach (var provider in _providers)
+		{
+			if (!await provider.CanBeCreatedFromFile(item))
+				continue;
+
+			item.IsProcessed = true;
+			await InvokeAsync(StateHasChanged);
+			await Task.Delay(1);
+			await provider.CreatedFromFile(item);
+		}
+
+		item.IsProcessed = false;
+		await InvokeAsync(StateHasChanged);
+		await Task.Delay(1000);
+		var selectedIndex = _context.Items.FindIndex(x => x.LocalPath == _selectedItem.LocalPath);
+		if (selectedIndex < _context.Items.Count - 1)
+		{
+			await _selectItem(_context.Items[selectedIndex + 1], true);
+			await _importItem(_selectedItem);
+		}
 		else
 		{
-			item.Status = (TfImportFileToPageContextItemStatus)((int)item.Status + 1);
+			_initMenu();
+			_isProcessing = false;
+			await InvokeAsync(StateHasChanged);			
 		}
-
-		_initMenu();
-		await InvokeAsync(StateHasChanged);
 	}
 
-	private async Task _removeCurrent()
+	private async Task _updateProgress(TfImportFileToPageContextItem item, TfProgressStreamItem message)
 	{
-		_context.Items.Remove(_selectedItem);
-		if (_context.Items.Count == 0)
-		{
-			await _cancel();
-			return;
-		}
-
-		_selectedItem = _context.Items[0];
+		item.ProcessLog.Add(message);
 		_initMenu();
 		await InvokeAsync(StateHasChanged);
+		await Task.Delay(1);
+		try
+		{
+			await JSRuntime.InvokeVoidAsync("Tefter.scrollToElement", message.Id);
+		}
+		catch
+		{
+			// Ignore errors if element is not found or JS is not available
+		}
+	}
+
+
+	private record TucPageImportFromFilesDialogStats
+	{
+		public int ProcessedSuccess { get; set; } = 0;
+		public int ProcessedWarning { get; set; } = 0;
+		public int ProcessedError { get; set; } = 0;
 	}
 }

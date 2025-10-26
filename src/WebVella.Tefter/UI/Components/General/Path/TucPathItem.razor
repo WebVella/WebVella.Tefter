@@ -1,10 +1,10 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-<div class="tf-path__item">
+<div class="@_css">
     <div class="tf-path__item__count">
         <div class="tf-path__item__count__icon">
-            <FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")"/>
+            <FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")!.WithColor(Color.Success)"/>
         </div>
         <div class="tf-path__item__count__number">
             @Item.Abbriviation

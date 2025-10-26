@@ -13,6 +13,7 @@ public record TfMenuItem
 	public Icon? IconExpanded { get; set; }
 	public TfColor? Color { get; set; }
 	public TfColor? IconColor { get; set; }
+	public bool SpinIcon { get; set; } = false;
 
 	public Icon? Icon
 	{
