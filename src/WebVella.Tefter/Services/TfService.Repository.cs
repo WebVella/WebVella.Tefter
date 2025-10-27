@@ -4,10 +4,10 @@ namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
-	TfRepositoryFile GetRepositoryFileByUri(
+	TfRepositoryFile? GetRepositoryFileByUri(
 	   string uriString);
 
-	public TfRepositoryFile GetRepositoryFile(
+	public TfRepositoryFile? GetRepositoryFile(
 		string filename);
 
 	public List<TfRepositoryFile> GetRepositoryFiles(
@@ -40,7 +40,7 @@ public partial interface ITfService
 
 public partial class TfService : ITfService
 {
-	public TfRepositoryFile GetRepositoryFileByUri(
+	public TfRepositoryFile? GetRepositoryFileByUri(
 		string uriString)
 	{
 		try
@@ -86,7 +86,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfRepositoryFile GetRepositoryFile(
+	public TfRepositoryFile? GetRepositoryFile(
 		string filename)
 	{
 		try

@@ -105,4 +105,63 @@ public static class StringExtensions
 		// 4️⃣ Parsing failed – return null.
 		return null;
 	}
+	
+	/// <summary>
+    /// Validates a string to ensure it only contains printable Unicode characters 
+    /// and does not contain unpaired surrogate code points.
+    /// </summary>
+    /// <param name="text">The string to validate.</param>
+    /// <returns>True if the string contains only valid, printable characters; otherwise, False.</returns>
+    public static bool ContainsOnlyPrintableAndValidChars(this string text)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            return true;
+        }
+
+        // --- 1. Check for Non-Printable/Control Characters ---
+
+        // \p{C} is the 'Other' category, which includes:
+        // - \p{Cc} (Control characters, e.g., \0, \n, \t)
+        // - \p{Cf} (Format characters, e.g., Right-to-Left marks)
+        // - \p{Cs} (Surrogates, checked more strictly below, but good as a first pass)
+        // - \p{Co} (Private Use)
+        // - \p{Cn} (Not Assigned)
+        // We generally want to exclude the Control Characters (\p{Cc}). 
+        // We'll use a specific check for control chars for clarity and completeness.
+
+        // Check for common non-printable control characters (\p{Cc}) 
+        // *excluding* tabs (\t, U+0009) and newlines (\n, U+000A) which might be allowed 
+        // in some contexts, but this method excludes them by default.
+        // We use LINQ's Char.IsControl method.
+        if (text.Any(c => char.IsControl(c) && c != '\r' && c != '\n' && c != '\t'))
+        {
+            return false;
+        }
+
+        // --- 2. Check for Invalid Unicode Code Points (Unpaired Surrogates) ---
+
+        // In C#, a string is UTF-16. 'Non-UTF-8' often refers to invalid byte sequences.
+        // In the context of a C# string, the closest equivalent to "invalid character" 
+        // is an **unpaired surrogate**. A surrogate pair (two char U+D800-U+DFFF) is 
+        // used to represent characters outside the Basic Multilingual Plane (BMP, U+0000-U+FFFF).
+        // A *lone* surrogate is an invalid code point.
+
+        // We use a regular expression to detect unpaired surrogates.
+        // It looks for a high surrogate not followed by a low surrogate, 
+        // OR a low surrogate not preceded by a high surrogate.
+
+        // The pattern is: 
+        // '[\uD800-\uDBFF](?![\uDC00-\uDFFF])'  <-- High surrogate NOT followed by low surrogate
+        // '|'                                  <-- OR
+        // '(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]' <-- Low surrogate NOT preceded by high surrogate
+        string unpairedSurrogatePattern = @"[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]";
+
+        if (Regex.IsMatch(text, unpairedSurrogatePattern))
+        {
+            return false;
+        }
+
+        return true;
+    }	
 }

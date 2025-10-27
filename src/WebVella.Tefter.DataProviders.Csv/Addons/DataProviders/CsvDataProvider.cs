@@ -1,10 +1,6 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using System.Diagnostics;
-using System.Globalization;
 using System.Text;
-using WebVella.Tefter.Exceptions;
-using WebVella.Tefter.Models;
 using WebVella.Tefter.Services;
 using WebVella.Tefter.Utility;
 
@@ -12,11 +8,15 @@ namespace WebVella.Tefter.DataProviders.Csv.Addons;
 
 public class CsvDataProvider : ITfDataProviderAddon
 {
-
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable MemberCanBePrivate.Global
     public const string ID = "82883b60-197f-4f5a-8c6a-2bec16508816";
     public const string NAME = "Csv Data Provider";
     public const string DESCRIPTION = "Provide data from CSV formated file";
+
     public const string FLUENT_ICON_NAME = "DocumentTable";
+    // ReSharper restore InconsistentNaming
+    // ReSharper restore MemberCanBePrivate.Global
 
     public Guid AddonId { get; init; } = new Guid(ID);
     public string AddonName { get; init; } = NAME;
@@ -29,9 +29,10 @@ public class CsvDataProvider : ITfDataProviderAddon
     public ReadOnlyCollection<string> GetSupportedSourceDataTypes()
     {
         //sample only
-        return new List<string> {
+        return new List<string>
+        {
             "TEXT", //Keep text on first place as the first place is used as default type
-			"SHORT_TEXT",
+            "SHORT_TEXT",
             "BOOLEAN",
             "DATE",
             "DATETIME",
@@ -42,6 +43,7 @@ public class CsvDataProvider : ITfDataProviderAddon
             "GUID"
         }.AsReadOnly();
     }
+
     /// <summary>
     /// Returns mapping between source data types and Tefter data types
     /// </summary>
@@ -59,9 +61,11 @@ public class CsvDataProvider : ITfDataProviderAddon
             case "NUMBER":
                 return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Number }.AsReadOnly();
             case "DATE":
-                return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateOnly, TfDatabaseColumnType.DateTime }.AsReadOnly();
+                return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateOnly, TfDatabaseColumnType.DateTime }
+                    .AsReadOnly();
             case "DATETIME":
-                return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateTime, TfDatabaseColumnType.DateOnly }.AsReadOnly();
+                return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateTime, TfDatabaseColumnType.DateOnly }
+                    .AsReadOnly();
             case "SHORT_INTEGER":
                 return new List<TfDatabaseColumnType> { TfDatabaseColumnType.ShortInteger }.AsReadOnly();
             case "INTEGER":
@@ -70,8 +74,8 @@ public class CsvDataProvider : ITfDataProviderAddon
                 return new List<TfDatabaseColumnType> { TfDatabaseColumnType.LongInteger }.AsReadOnly();
             case "GUID":
                 return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Guid }.AsReadOnly();
-
         }
+
         return new List<TfDatabaseColumnType>().AsReadOnly();
     }
 
@@ -82,12 +86,11 @@ public class CsvDataProvider : ITfDataProviderAddon
         TfDataProvider provider,
         ITfDataProviderSychronizationLog synchLog)
     {
-
         var currentCulture = Thread.CurrentThread.CurrentCulture;
-        var currentUICulture = Thread.CurrentThread.CurrentUICulture;
+        var currentUiCulture = Thread.CurrentThread.CurrentUICulture;
         try
         {
-            CsvDataProviderSettings? settings = null;
+            CsvDataProviderSettings? settings;
 
             try
             {
@@ -100,8 +103,8 @@ public class CsvDataProvider : ITfDataProviderAddon
                 synchLog.Log("failed loading provider settings", ex);
                 throw;
             }
-            if (settings is null)
-                settings = new();
+
+            settings ??= new();
 
             var culture = new CultureInfo(settings.CultureName);
 
@@ -139,10 +142,10 @@ public class CsvDataProvider : ITfDataProviderAddon
             {
                 var tfService = provider.ServiceProvider.GetService<ITfService>();
 
-                TfRepositoryFile file = null;
+                TfRepositoryFile? file;
                 try
                 {
-                    file = tfService.GetRepositoryFileByUri(settings.Filepath);
+                    file = tfService!.GetRepositoryFileByUri(settings.Filepath);
 
                     if (file is null)
                     {
@@ -157,7 +160,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 
                 using (var stream = tfService.GetRepositoryFileContentAsFileStream(file.Filename))
                 {
-                    return ReadCSVStream(stream, provider, config, settings, culture, synchLog);
+                    return ReadCsvStream(stream, provider, config, settings, culture, synchLog);
                 }
             }
             else
@@ -169,17 +172,17 @@ public class CsvDataProvider : ITfDataProviderAddon
                     throw ex;
                 }
 
-                using (var stream = new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var stream =
+                       new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    return ReadCSVStream(stream, provider, config, settings, culture, synchLog);
+                    return ReadCsvStream(stream, provider, config, settings, culture, synchLog);
                 }
             }
-
         }
         finally
         {
             Thread.CurrentThread.CurrentCulture = currentCulture;
-            Thread.CurrentThread.CurrentUICulture = currentUICulture;
+            Thread.CurrentThread.CurrentUICulture = currentUiCulture;
         }
     }
 
@@ -215,6 +218,7 @@ public class CsvDataProvider : ITfDataProviderAddon
                 config.Delimiter = ",";
                 break;
         }
+
         if (string.IsNullOrWhiteSpace(settings.Filepath))
             return result;
 
@@ -223,7 +227,7 @@ public class CsvDataProvider : ITfDataProviderAddon
         {
             var tfService = provider.ServiceProvider.GetService<ITfService>();
 
-            var file = tfService.GetRepositoryFileByUri(settings.Filepath);
+            var file = tfService!.GetRepositoryFileByUri(settings.Filepath);
 
             if (file is null)
                 return result;
@@ -247,6 +251,7 @@ public class CsvDataProvider : ITfDataProviderAddon
                 {
                     ++totalRecords;
                 }
+
                 //restart reader
                 stream.Position = 0;
                 reader.DiscardBufferedData();
@@ -254,24 +259,33 @@ public class CsvDataProvider : ITfDataProviderAddon
                 if (totalRecords <= 1)
                     return result;
 
-                HashSet<int> rowIndexToReadHS = totalRecords.GenerateSampleIndexesForList(maxSampleSize, skipCount: 1);
+                HashSet<int> rowIndexToReadHs = totalRecords.GenerateSampleIndexesForList(maxSampleSize, skipCount: 1);
 
                 using (var csvReader = new CsvReader(reader, config))
                 {
                     csvReader.Read();
                     csvReader.ReadHeader();
-                    foreach (var item in csvReader.HeaderRecord)
+                    if (csvReader.HeaderRecord is not null)
                     {
-                        var columnName = item.ToSourceColumnName();
-                        if (result.SourceColumnDefaultDbType.ContainsKey(columnName))
-                            throw new Exception($"Column with the name '{columnName}' is found multiple times in the source");
-                        result.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.Text;
+                        foreach (var item in csvReader.HeaderRecord)
+                        {
+                            var columnName = item.ToSourceColumnName();
+                            if (result.SourceColumnDefaultDbType.ContainsKey(columnName))
+                                throw new Exception(
+                                    $"Column with the name '{columnName}' is found multiple times in the source");
+                            result.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.Text;
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(
+                            $"Header row not found");
                     }
 
                     var counter = 0;
                     while (csvReader.Read())
                     {
-                        if (!rowIndexToReadHS.Contains(counter))
+                        if (!rowIndexToReadHs.Contains(counter))
                         {
                             counter++;
                             continue;
@@ -279,9 +293,8 @@ public class CsvDataProvider : ITfDataProviderAddon
 
                         foreach (var columnNameUnprocessed in csvReader.HeaderRecord)
                         {
-                            var fieldValue = csvReader.GetField(columnNameUnprocessed)?.ToString();
-                            var columnName = columnNameUnprocessed.ToSourceColumnName()
-                                ;
+                            var fieldValue = csvReader.GetField(columnNameUnprocessed);
+                            var columnName = columnNameUnprocessed.ToSourceColumnName();
                             if (!result.SourceColumnDefaultValue.ContainsKey(columnName)
                                 && !String.IsNullOrWhiteSpace(fieldValue))
                                 result.SourceColumnDefaultValue[columnName] = fieldValue;
@@ -294,11 +307,15 @@ public class CsvDataProvider : ITfDataProviderAddon
                                 importFormat = settings.AdvancedSetting.ColumnImportParseFormat[columnName];
                             }
 
-                            TfDatabaseColumnType type = SourceToColumnTypeConverter.GetDataTypeFromString(fieldValue, culture, importFormat);
+                            TfDatabaseColumnType type = TfDatabaseColumnType.Text;
+                            if (fieldValue is not null)
+                                type = SourceToColumnTypeConverter.GetDataTypeFromString(fieldValue, culture,
+                                    importFormat);
 
                             if (!suggestedColumnTypes.ContainsKey(columnName)) suggestedColumnTypes[columnName] = new();
                             suggestedColumnTypes[columnName].Add(type);
                         }
+
                         counter++;
                     }
                 }
@@ -313,17 +330,19 @@ public class CsvDataProvider : ITfDataProviderAddon
 
             result.SourceColumnDefaultDbType[key] = columnType;
         }
+
         var preferredSourceTypeForDbType = new Dictionary<TfDatabaseColumnType, string>();
         foreach (var providerDataType in provider.ProviderType.GetSupportedSourceDataTypes())
         {
-            var supportedDBList = provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(providerDataType);
+            var supportedDbList = provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(providerDataType);
             //var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
-            result.SourceTypeSupportedDbTypes[providerDataType] = supportedDBList.ToList();
-            if (supportedDBList.Count > 0)
+            result.SourceTypeSupportedDbTypes[providerDataType] = supportedDbList.ToList();
+            if (supportedDbList.Count > 0)
             {
-                preferredSourceTypeForDbType[supportedDBList.First()] = providerDataType;
+                preferredSourceTypeForDbType[supportedDbList.First()] = providerDataType;
             }
         }
+
         foreach (var columnName in result.SourceColumnDefaultDbType.Keys)
         {
             var dbType = result.SourceColumnDefaultDbType[columnName];
@@ -341,16 +360,19 @@ public class CsvDataProvider : ITfDataProviderAddon
     /// </summary>
     public List<ValidationError> Validate(string settingsJson)
     {
-
         CsvDataProviderSettings settings = new();
         if (!String.IsNullOrWhiteSpace(settingsJson))
         {
             try
             {
-                settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(settingsJson);
+                settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(settingsJson) ?? new();
             }
-            catch { }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
+
         var errors = new List<ValidationError>();
 
         if (String.IsNullOrWhiteSpace(settings.Filepath))
@@ -362,53 +384,95 @@ public class CsvDataProvider : ITfDataProviderAddon
             string extension = Path.GetExtension(settings.Filepath);
             if (extension != ".csv")
             {
-                errors.Add(new ValidationError(nameof(CsvDataProviderSettings.Filepath), LOC("'csv' file extension is required")));
+                errors.Add(new ValidationError(nameof(CsvDataProviderSettings.Filepath),
+                    LOC("'csv' file extension is required")));
             }
         }
 
         if (!String.IsNullOrWhiteSpace(settings.CultureName))
         {
             CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures & ~CultureTypes.NeutralCultures);
-            var culture = cultures.FirstOrDefault(c => c.Name.Equals(settings.CultureName, StringComparison.OrdinalIgnoreCase));
+            var culture = cultures.FirstOrDefault(c =>
+                c.Name.Equals(settings.CultureName, StringComparison.OrdinalIgnoreCase));
             if (culture == null)
-                errors.Add(new ValidationError(nameof(CsvDataProviderSettings.CultureName), LOC("invalid. format like 'en-US'")));
+                errors.Add(new ValidationError(nameof(CsvDataProviderSettings.CultureName),
+                    LOC("invalid. format like 'en-US'")));
         }
+
         return errors;
     }
 
-    public Task<bool> CanBeCreatedFromFile(
+    public async Task<bool> CanBeCreatedFromFile(
         TfImportFileToPageContextItem item)
     {
-        return Task.FromResult(true);
+        var (result, log) = await _checkCsvFile(item);
+        item.ProcessLog.AddRange(log);
+        return result;
     }
+
 
     public async Task<TfImportFileToPageResult> CreatedFromFile(
         TfImportFileToPageContextItem item)
     {
-        for (int i = 0; i < 7; i++)
+        var result = new TfImportFileToPageResult();
+        try
         {
-            await Task.Delay(500);
-            var type = TfProgressStreamItemType.Normal;
-            if(i%3 == 0)
-                type = TfProgressStreamItemType.Warning;
-            
-            if(i%4 == 0)
-                type = TfProgressStreamItemType.Error;
-            if(i == 6)
-                type = TfProgressStreamItemType.Success;
             item.ProcessStream.ReportProgress(new TfProgressStreamItem()
             {
-                Message = $"message {i}",
-                Type = type
+                Message = "CsvDataProvider provider creation started...",
+                Type = TfProgressStreamItemType.Normal,
+            });
+            var (checkResult, checkLog) = await _checkCsvFile(item);
+            if (!checkResult)
+            {
+                item.ProcessStream.ReportProgress(checkLog);
+                item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+                {
+                    Message = "CsvDataProvider cannot process this file",
+                    Type = TfProgressStreamItemType.Error,
+                });
+                return result;
+            }
+
+            var culture = Thread.CurrentThread.CurrentCulture;
+            var config = new CsvConfiguration(culture)
+            {
+                PrepareHeaderForMatch = args => args.Header.ToLower(),
+                Encoding = Encoding.UTF8,
+                IgnoreBlankLines = true,
+                BadDataFound = null,
+                TrimOptions = TrimOptions.Trim,
+                HasHeaderRecord = true,
+                MissingFieldFound = null
+            };
+            using (var stream = new MemoryStream(item.FileContent))
+            {
+                using (var csvReader = new CsvReader(new StreamReader(stream), config))
+                {
+                    await Task.Delay(500);
+                }
+            }
+
+            item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+            {
+                Message = "CsvDataProvider created!",
+                Type = TfProgressStreamItemType.Normal,
             });
         }
-        
-        
-        return new TfImportFileToPageResult();
+        catch (Exception ex)
+        {
+            item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+            {
+                Message = $"CsvDataProvider creation failed! Message: {ex.Message}",
+                Type = TfProgressStreamItemType.Error,
+            });
+        }
+
+        return result;
     }
 
 
-    private ReadOnlyCollection<TfDataProviderDataRow> ReadCSVStream(
+    private ReadOnlyCollection<TfDataProviderDataRow> ReadCsvStream(
         Stream stream,
         TfDataProvider provider,
         CsvConfiguration config,
@@ -436,22 +500,29 @@ public class CsvDataProvider : ITfDataProviderAddon
                 throw;
             }
 
-            var sourceColumns = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
+            var sourceColumns = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName)).ToList();
 
             int rowCounter = 1;
             while (csvReader.Read())
             {
-                Dictionary<string, string> sourceRow = new Dictionary<string, string>();
-
-                try
+                Dictionary<string, string?> sourceRow = new Dictionary<string, string?>();
+                if (csvReader.HeaderRecord is not null)
                 {
-                    foreach (var column in csvReader.HeaderRecord)
-                        sourceRow[column.ToSourceColumnName()] = csvReader.GetField(column);
+                    try
+                    {
+                        foreach (var column in csvReader.HeaderRecord)
+                            sourceRow[column.ToSourceColumnName()] = csvReader.GetField(column);
+                    }
+                    catch (Exception ex)
+                    {
+                        synchLog.Log($"failed to read row[{rowCounter}] data from csv file", ex);
+                        throw;
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    synchLog.Log($"failed to read row[{rowCounter}] data from csv file", ex);
-                    throw;
+                    throw new Exception(
+                        $"Header row not found");
                 }
 
 
@@ -478,12 +549,14 @@ public class CsvDataProvider : ITfDataProviderAddon
                     catch (Exception ex)
                     {
                         var value = sourceRow[sourceName];
-                        synchLog.Log($"failed to process value for row index={rowCounter}, source column='{sourceName}'," +
+                        synchLog.Log(
+                            $"failed to process value for row index={rowCounter}, source column='{sourceName}'," +
                             $" provider column='{providerColumnWithSource.DbName}', provider column type='{providerColumnWithSource.DbType}'," +
                             $"  value='{value}'", ex);
                         throw;
                     }
                 }
+
                 result.Add(row);
                 rowCounter++;
             }
@@ -508,8 +581,8 @@ public class CsvDataProvider : ITfDataProviderAddon
 
         string columnImportParseFormat = null;
         if (settings is not null && settings.AdvancedSetting is not null
-            && settings.AdvancedSetting.ColumnImportParseFormat is not null
-            && settings.AdvancedSetting.ColumnImportParseFormat.ContainsKey(column.DbName))
+                                 && settings.AdvancedSetting.ColumnImportParseFormat is not null
+                                 && settings.AdvancedSetting.ColumnImportParseFormat.ContainsKey(column.DbName))
         {
             columnImportParseFormat = settings.AdvancedSetting.ColumnImportParseFormat[column.DbName];
         }
@@ -521,77 +594,87 @@ public class CsvDataProvider : ITfDataProviderAddon
                 return stringValue;
 
             case TfDatabaseColumnType.Boolean:
-                {
-                    if (Boolean.TryParse(value?.ToString(), out bool parsedValue))
-                        return parsedValue;
+            {
+                if (Boolean.TryParse(value?.ToString(), out bool parsedValue))
+                    return parsedValue;
 
-                    throw new Exception($"Cannot convert value='{value?.ToString()}' to boolean value for column {column.SourceName}");
-                }
+                throw new Exception(
+                    $"Cannot convert value='{value?.ToString()}' to boolean value for column {column.SourceName}");
+            }
 
             case TfDatabaseColumnType.Guid:
-                {
-                    if (Guid.TryParse(value?.ToString(), out Guid parsedValue))
-                        return parsedValue;
+            {
+                if (Guid.TryParse(value?.ToString(), out Guid parsedValue))
+                    return parsedValue;
 
-                    throw new Exception($"Cannot convert value='{value?.ToString()}' to GUID value for column {column.SourceName}");
-                }
+                throw new Exception(
+                    $"Cannot convert value='{value?.ToString()}' to GUID value for column {column.SourceName}");
+            }
 
             case TfDatabaseColumnType.DateTime:
-                {
-                    if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
-                        && DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, culture, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
-                        return parsedValueExact;
-                    else if (DateTime.TryParse(value?.ToString(), out DateTime parsedValue))
-                        return parsedValue;
+            {
+                if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
+                    && DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, culture,
+                        DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
+                    return parsedValueExact;
+                else if (DateTime.TryParse(value?.ToString(), out DateTime parsedValue))
+                    return parsedValue;
 
-                    throw new Exception($"Cannot convert value='{value?.ToString()}' to DateTime value for column {column.SourceName}");
-                }
+                throw new Exception(
+                    $"Cannot convert value='{value?.ToString()}' to DateTime value for column {column.SourceName}");
+            }
 
             case TfDatabaseColumnType.DateOnly:
+            {
+                if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
+                    && DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, culture,
+                        DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
                 {
-                    if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
-                        && DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, culture, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
-                    {
-                        //There are problems with DateOnly parse exact, so we use DateTime
-                        return new DateOnly(parsedValueExact.Year, parsedValueExact.Month, parsedValueExact.Day);
-                    }
-                    else if (DateOnly.TryParse(value?.ToString(), out DateOnly parsedValue))
-                        return parsedValue;
-
-                    throw new Exception($"Cannot convert value='{value?.ToString()}' to DateOnly value for column {column.SourceName}");
+                    //There are problems with DateOnly parse exact, so we use DateTime
+                    return new DateOnly(parsedValueExact.Year, parsedValueExact.Month, parsedValueExact.Day);
                 }
+                else if (DateOnly.TryParse(value?.ToString(), out DateOnly parsedValue))
+                    return parsedValue;
+
+                throw new Exception(
+                    $"Cannot convert value='{value?.ToString()}' to DateOnly value for column {column.SourceName}");
+            }
 
             case TfDatabaseColumnType.ShortInteger:
-                {
-                    if (short.TryParse(value?.ToString(), out short parsedValue))
-                        return parsedValue;
+            {
+                if (short.TryParse(value?.ToString(), out short parsedValue))
+                    return parsedValue;
 
-                    throw new Exception($"Cannot convert value='{value?.ToString()}' to ShortInteger value for column {column.SourceName}");
-                }
+                throw new Exception(
+                    $"Cannot convert value='{value?.ToString()}' to ShortInteger value for column {column.SourceName}");
+            }
 
             case TfDatabaseColumnType.Integer:
-                {
-                    if (int.TryParse(value?.ToString(), out int parsedValue))
-                        return parsedValue;
+            {
+                if (int.TryParse(value?.ToString(), out int parsedValue))
+                    return parsedValue;
 
-                    throw new Exception($"Cannot convert value='{value?.ToString()}' to Integer value for column {column.SourceName}");
-                }
+                throw new Exception(
+                    $"Cannot convert value='{value?.ToString()}' to Integer value for column {column.SourceName}");
+            }
 
             case TfDatabaseColumnType.LongInteger:
-                {
-                    if (long.TryParse(value?.ToString(), out long parsedValue))
-                        return parsedValue;
+            {
+                if (long.TryParse(value?.ToString(), out long parsedValue))
+                    return parsedValue;
 
-                    throw new Exception($"Cannot convert value='{value?.ToString()}' to LongInteger value for column {column.SourceName}");
-                }
+                throw new Exception(
+                    $"Cannot convert value='{value?.ToString()}' to LongInteger value for column {column.SourceName}");
+            }
 
             case TfDatabaseColumnType.Number:
-                {
-                    if (decimal.TryParse(value?.ToString(), out decimal parsedValue))
-                        return parsedValue;
+            {
+                if (decimal.TryParse(value?.ToString(), out decimal parsedValue))
+                    return parsedValue;
 
-                    throw new Exception($"Cannot convert value='{value?.ToString()}' to Number value for column {column.SourceName}");
-                }
+                throw new Exception(
+                    $"Cannot convert value='{value?.ToString()}' to Number value for column {column.SourceName}");
+            }
 
             default:
                 throw new Exception($"Not supported source type for column {column.SourceName}");
@@ -599,4 +682,135 @@ public class CsvDataProvider : ITfDataProviderAddon
     }
 
     private string LOC(string name) => name;
+
+    private async Task<(bool,List<TfProgressStreamItem>)> _checkCsvFile(TfImportFileToPageContextItem item)
+    {
+
+        var log = new List<TfProgressStreamItem>();
+        await Task.Delay(1);
+        if (Path.GetExtension(item.File.Name).ToLower() != ".csv")
+        {
+            log.Add(new TfProgressStreamItem()
+            {
+                Type = TfProgressStreamItemType.Log,
+                Message = "[CsvDataProvider] Can process only files with '.csv' extension"
+            });
+            return (false,log);
+        }
+
+        var culture = Thread.CurrentThread.CurrentCulture;
+
+        //Check UTF8 encoding
+        // Check if file has BOM
+        var encoding = Encoding.UTF8;
+        if (item.FileContent.Length >= 3 && item.FileContent[0] == 0xEF && item.FileContent[1] == 0xBB &&
+            item.FileContent[2] == 0xBF)
+        {
+            encoding = Encoding.UTF8;
+        }
+
+        if (!encoding.Equals(Encoding.UTF8))
+        {
+            log.Add(new TfProgressStreamItem()
+            {
+                Type = TfProgressStreamItemType.Log,
+                Message = "[CsvDataProvider] Can process only files with UTF-8 encoding"
+            });
+            return (false,log);
+        }
+
+        string? fileContentAsText = null;
+        try
+        {
+            fileContentAsText = Encoding.UTF8.GetString(item.FileContent);
+        }
+        catch (Exception)
+        {
+            log.Add(new TfProgressStreamItem()
+            {
+                Type = TfProgressStreamItemType.Log,
+                Message = "[CsvDataProvider] File contents are not text"
+            });
+            return (false,log);
+        }
+
+        if (String.IsNullOrWhiteSpace(fileContentAsText))
+        {
+            log.Add(new TfProgressStreamItem()
+            {
+                Type = TfProgressStreamItemType.Log,
+                Message = "[CsvDataProvider] File contents are empty"
+            });
+            return (false,log);
+        }
+
+        if (!fileContentAsText.ContainsOnlyPrintableAndValidChars())
+        {
+            log.Add(new TfProgressStreamItem()
+            {
+                Type = TfProgressStreamItemType.Log,
+                Message = "[CsvDataProvider] File contents contain non printable or invalid characters"
+            });
+            return (false,log);
+        }
+
+
+        var config = new CsvConfiguration(culture)
+        {
+            PrepareHeaderForMatch = args => args.Header.ToLower(),
+            Encoding = Encoding.UTF8,
+            IgnoreBlankLines = true,
+            BadDataFound = null,
+            TrimOptions = TrimOptions.Trim,
+            MissingFieldFound = null,
+            DetectDelimiter = true
+        };
+        using (var reader = new StringReader(fileContentAsText))
+        {
+            using (var csvReader = new CsvReader(reader, config))
+            {
+                try
+                {
+                    var delimiter = csvReader.Context.Configuration.Delimiter;
+                    if (String.IsNullOrWhiteSpace(delimiter))
+                    {
+                        log.Add(new TfProgressStreamItem()
+                        {
+                            Type = TfProgressStreamItemType.Log,
+                            Message = "[CsvDataProvider] CSV delimiter cannot be determined"
+                        });
+                        return (false,log);                        
+                    }
+                    try
+                    {
+                        csvReader.Read();
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Add(new TfProgressStreamItem()
+                        {
+                            Type = TfProgressStreamItemType.Log,
+                            Message = "[CsvDataProvider] CSV file cannot be red"
+                        });
+                        return (false,log);      
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Add(new TfProgressStreamItem()
+                    {
+                        Type = TfProgressStreamItemType.Log,
+                        Message = $"[CsvDataProvider] CSV file parsing ended with error: {ex.Message}"
+                    });
+                    return (false,log);   
+                }
+            }
+        }
+        log.Add(new TfProgressStreamItem()
+        {
+            Type = TfProgressStreamItemType.Log,
+            Message = $"[CsvDataProvider] CSV file successfully parsed"
+        });
+        return (true,log);        
+    }
 }

@@ -1666,6 +1666,12 @@ fluent-menu-item::part(start) {
   align-items: center;
   padding-left: 3px;
 }
+.tf-import-wizard__aside__header__right__switch {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  margin-left: var(--tf-wizard-padding);
+}
 .tf-import-wizard__aside__content {
   flex: 1 1 auto;
   padding-bottom: calc(var(--tf-wizard-padding) * 3);

@@ -78,6 +78,9 @@
                             <span class="tf-import-wizard__aside__header__right__count__number">@_statDict[_selectedItem.LocalPath].ProcessedWarning</span>
                         </div>
                     }
+                    <div class="tf-import-wizard__aside__header__right__switch" title="@LOC("view log details")">
+                        <FluentSwitch @bind-Value="_showLogMessages"/>
+                    </div>
                 </div>
             </div>
             <div class="tf-import-wizard__content__subheader"></div>
@@ -95,7 +98,7 @@
                 else if (_selectedItem.ProcessLog.Count > 0)
                 {
                     <div class="tf-console-box">
-                        @foreach (var context in _selectedItem.ProcessLog)
+                        @foreach (var context in _selectedItem.ProcessLog.Where(x=> _showLogMessages || x.Type != TfProgressStreamItemType.Log))
                         {
                             <div class="tf-console-box__row" id="@context.Id">
                                 <div class="tf-console-box__row__date">

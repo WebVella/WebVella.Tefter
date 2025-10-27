@@ -26,6 +26,14 @@ public class TfProgressStream
 	{
 		_channel.Writer.TryWrite(message);
 	}
+	
+	public void ReportProgress(List<TfProgressStreamItem> messages)
+	{
+		foreach (var message in messages)
+		{
+			_channel.Writer.TryWrite(message);	
+		}
+	}	
 }
 
 public record TfProgressStreamItem
@@ -57,4 +65,5 @@ public enum TfProgressStreamItemType
 	Warning = 1,
 	Error = 2,
 	Success = 3,
+	Log = 4,
 }

@@ -11,6 +11,7 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 	private Dictionary<string, TucPageImportFromFilesDialogStats> _statDict = new();
 	private ReadOnlyCollection<ITfDataProviderAddon> _providers = null!;
 	private bool _isProcessing = true;
+	private bool _showLogMessages = false;
 
 
 	protected override async Task OnInitializedAsync()
@@ -85,7 +86,11 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 				await _updateProgress(item, message);
 			});
 		};
-
+		item.ProcessLog.Add(new TfProgressStreamItem
+		{
+			Message = LOC("Checking for suitable Data Processor type..."),
+			Type = TfProgressStreamItemType.Normal
+		});
 		foreach (var provider in _providers)
 		{
 			if (!await provider.CanBeCreatedFromFile(item))
@@ -94,7 +99,22 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 			item.IsProcessed = true;
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
+			item.DataProvider = provider;
+			item.ProcessLog.Add(new TfProgressStreamItem
+			{
+				Message = LOC("Suitable Data Provider type found: {0}",provider.AddonName),
+				Type = TfProgressStreamItemType.Normal
+			});			
 			await provider.CreatedFromFile(item);
+		}
+
+		if (item.DataProvider is null)
+		{
+			item.ProcessLog.Add(new TfProgressStreamItem
+			{
+				Message = LOC("No suitable Data Provider that can process the file was found"),
+				Type = TfProgressStreamItemType.Error
+			});
 		}
 
 		item.IsProcessed = false;
