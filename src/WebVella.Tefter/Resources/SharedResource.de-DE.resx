@@ -180,7 +180,7 @@
   <data name="Are you sure that you need this key deleted?" xml:space="preserve">
     <value>Bist du sicher, dass du diesen Schlüssel löschen musst?</value>
   </data>
-  <data name="The implementation is successfully deleted!" xml:space="preserve">
+  <data name="The implementation was successfully deleted!" xml:space="preserve">
     <value>Die Implementierung wurde erfolgreich gelöscht!</value>
   </data>
   <data name="Are you sure that you need all data deleted? This operation can take minutes!" xml:space="preserve">
@@ -222,7 +222,7 @@
   <data name="This will delete all related data too!" xml:space="preserve">
     <value>Dies wird auch alle zugehörigen Daten löschen!</value>
   </data>
-  <data name="The column is successfully deleted!" xml:space="preserve">
+  <data name="The column was successfully deleted!" xml:space="preserve">
     <value>Die Spalte wurde erfolgreich gelöscht!</value>
   </data>
   <data name="Column successfully created!" xml:space="preserve">

@@ -5,7 +5,9 @@ namespace WebVella.Tefter.Models;
 public class TfProgressStream
 {
 	private readonly Channel<TfProgressStreamItem> _channel;
+	private List<TfProgressStreamItem> _items = new();
 
+	
 	public event Action<TfProgressStreamItem> OnProgress = null!;
 
 	public TfProgressStream()
@@ -25,15 +27,20 @@ public class TfProgressStream
 	public void ReportProgress(TfProgressStreamItem message)
 	{
 		_channel.Writer.TryWrite(message);
+		_items.Add(message);
 	}
 	
 	public void ReportProgress(List<TfProgressStreamItem> messages)
 	{
 		foreach (var message in messages)
 		{
-			_channel.Writer.TryWrite(message);	
+			_channel.Writer.TryWrite(message);
+			_items.Add(message);
 		}
-	}	
+	}
+
+	public ReadOnlyCollection<TfProgressStreamItem> GetProgressLog()
+		=> _items.AsReadOnly();
 }
 
 public record TfProgressStreamItem
@@ -54,6 +61,8 @@ public record TfProgressStreamItem
 				return TfColor.Orange500;
 			if (Type == TfProgressStreamItemType.Success)
 				return TfColor.Green500;
+			if (Type == TfProgressStreamItemType.Debug)
+				return TfColor.Gray500;			
 			return null;
 		}
 	}
@@ -65,5 +74,5 @@ public enum TfProgressStreamItemType
 	Warning = 1,
 	Error = 2,
 	Success = 3,
-	Log = 4,
+	Debug = 4,
 }

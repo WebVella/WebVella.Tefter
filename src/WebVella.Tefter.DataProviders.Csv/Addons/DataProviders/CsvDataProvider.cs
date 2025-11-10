@@ -191,31 +191,20 @@ public class CsvDataProvider : ITfDataProviderAddon
     /// </summary>
     public TfDataProviderSourceSchemaInfo GetDataProviderSourceSchema(TfDataProvider provider)
     {
-        int maxSampleSize = 200;
-        var settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(provider.SettingsJson);
-        if (settings is null) settings = new();
+        var settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(provider.SettingsJson) ?? new();
         var culture = new CultureInfo(settings.CultureName);
         var result = new TfDataProviderSourceSchemaInfo();
-        var config = new CsvConfiguration(culture)
-        {
-            PrepareHeaderForMatch = args => args.Header.ToLower(),
-            Encoding = Encoding.UTF8,
-            IgnoreBlankLines = true,
-            BadDataFound = null,
-            TrimOptions = TrimOptions.Trim,
-            HasHeaderRecord = true,
-            MissingFieldFound = null
-        };
+        string? delimiter = null;
         switch (settings.Delimter)
         {
             case CsvDataProviderSettingsDelimiter.Semicolon:
-                config.Delimiter = ";";
+                delimiter = ";";
                 break;
             case CsvDataProviderSettingsDelimiter.Tab:
-                config.Delimiter = "\t";
+                delimiter = "\t";
                 break;
             default:
-                config.Delimiter = ",";
+                delimiter = ",";
                 break;
         }
 
@@ -239,120 +228,23 @@ public class CsvDataProvider : ITfDataProviderAddon
             stream = new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         }
 
-        Dictionary<string, List<TfDatabaseColumnType>> suggestedColumnTypes = new();
-        using (stream)
-        {
-            using (var reader = new StreamReader(stream))
-            {
-                //for dealing with auto=generation indexes
-                //we need to split the sample between the first and the last records
-                int totalRecords = 0;
-                while (reader.ReadLine() != null)
-                {
-                    ++totalRecords;
-                }
-
-                //restart reader
-                stream.Position = 0;
-                reader.DiscardBufferedData();
-
-                if (totalRecords <= 1)
-                    return result;
-
-                HashSet<int> rowIndexToReadHs = totalRecords.GenerateSampleIndexesForList(maxSampleSize, skipCount: 1);
-
-                using (var csvReader = new CsvReader(reader, config))
-                {
-                    csvReader.Read();
-                    csvReader.ReadHeader();
-                    if (csvReader.HeaderRecord is not null)
-                    {
-                        foreach (var item in csvReader.HeaderRecord)
-                        {
-                            var columnName = item.ToSourceColumnName();
-                            if (result.SourceColumnDefaultDbType.ContainsKey(columnName))
-                                throw new Exception(
-                                    $"Column with the name '{columnName}' is found multiple times in the source");
-                            result.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.Text;
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception(
-                            $"Header row not found");
-                    }
-
-                    var counter = 0;
-                    while (csvReader.Read())
-                    {
-                        if (!rowIndexToReadHs.Contains(counter))
-                        {
-                            counter++;
-                            continue;
-                        }
-
-                        foreach (var columnNameUnprocessed in csvReader.HeaderRecord)
-                        {
-                            var fieldValue = csvReader.GetField(columnNameUnprocessed);
-                            var columnName = columnNameUnprocessed.ToSourceColumnName();
-                            if (!result.SourceColumnDefaultValue.ContainsKey(columnName)
-                                && !String.IsNullOrWhiteSpace(fieldValue))
-                                result.SourceColumnDefaultValue[columnName] = fieldValue;
-
-                            string? importFormat = null;
-                            if (settings.AdvancedSetting is not null
-                                && settings.AdvancedSetting.ColumnImportParseFormat is not null
-                                && settings.AdvancedSetting.ColumnImportParseFormat.ContainsKey(columnName))
-                            {
-                                importFormat = settings.AdvancedSetting.ColumnImportParseFormat[columnName];
-                            }
-
-                            TfDatabaseColumnType type = TfDatabaseColumnType.Text;
-                            if (fieldValue is not null)
-                                type = SourceToColumnTypeConverter.GetDataTypeFromString(fieldValue, culture,
-                                    importFormat);
-
-                            if (!suggestedColumnTypes.ContainsKey(columnName)) suggestedColumnTypes[columnName] = new();
-                            suggestedColumnTypes[columnName].Add(type);
-                        }
-
-                        counter++;
-                    }
-                }
-            }
-        }
-
-        foreach (var key in result.SourceColumnDefaultDbType.Keys)
-        {
-            var columnType = TfDatabaseColumnType.Text;
-            if (suggestedColumnTypes.ContainsKey(key))
-                columnType = suggestedColumnTypes[key].GetTypeFromOptions();
-
-            result.SourceColumnDefaultDbType[key] = columnType;
-        }
-
-        var preferredSourceTypeForDbType = new Dictionary<TfDatabaseColumnType, string>();
-        foreach (var providerDataType in provider.ProviderType.GetSupportedSourceDataTypes())
-        {
-            var supportedDbList = provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(providerDataType);
-            //var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
-            result.SourceTypeSupportedDbTypes[providerDataType] = supportedDbList.ToList();
-            if (supportedDbList.Count > 0)
-            {
-                preferredSourceTypeForDbType[supportedDbList.First()] = providerDataType;
-            }
-        }
-
-        foreach (var columnName in result.SourceColumnDefaultDbType.Keys)
-        {
-            var dbType = result.SourceColumnDefaultDbType[columnName];
-            if (preferredSourceTypeForDbType.ContainsKey(dbType))
-                result.SourceColumnDefaultSourceType[columnName] = preferredSourceTypeForDbType[dbType];
-            else
-                result.SourceColumnDefaultSourceType[columnName] = GetSupportedSourceDataTypes().First();
-        }
-
-        return result;
+        using var memoryStream = new MemoryStream();
+        stream.Position = 0;
+        stream.CopyTo(memoryStream);
+        memoryStream.Position = 0;
+       
+        var (isSuccess, message) = memoryStream.CheckCsvFile(filepath: settings.Filepath).GetAwaiter().GetResult();
+        if (!isSuccess)
+            throw new Exception(message);
+        
+        memoryStream.Position = 0;
+        return memoryStream.GetSchemaInfo(
+            getDatabaseColumnTypesForSourceDataType: GetDatabaseColumnTypesForSourceDataType,
+            culture: culture,
+            delimiter: delimiter,
+            columnImportParseFormat: settings.AdvancedSetting.ColumnImportParseFormat,
+            supportedSourceDataTypes: GetSupportedSourceDataTypes()
+        );
     }
 
     /// <summary>
@@ -402,73 +294,17 @@ public class CsvDataProvider : ITfDataProviderAddon
         return errors;
     }
 
-    public async Task<bool> CanBeCreatedFromFile(
+    public async Task CanBeCreatedFromFile(
         TfImportFileToPageContextItem item)
     {
-        var (result, log) = await _checkCsvFile(item);
-        item.ProcessLog.AddRange(log);
-        return result;
+        await item.CheckCsvFile();
     }
 
 
-    public async Task<TfImportFileToPageResult> CreatedFromFile(
+    public async Task CreateFromFile(
         TfImportFileToPageContextItem item)
     {
-        var result = new TfImportFileToPageResult();
-        try
-        {
-            item.ProcessStream.ReportProgress(new TfProgressStreamItem()
-            {
-                Message = "CsvDataProvider provider creation started...",
-                Type = TfProgressStreamItemType.Normal,
-            });
-            var (checkResult, checkLog) = await _checkCsvFile(item);
-            if (!checkResult)
-            {
-                item.ProcessStream.ReportProgress(checkLog);
-                item.ProcessStream.ReportProgress(new TfProgressStreamItem()
-                {
-                    Message = "CsvDataProvider cannot process this file",
-                    Type = TfProgressStreamItemType.Error,
-                });
-                return result;
-            }
-
-            var culture = Thread.CurrentThread.CurrentCulture;
-            var config = new CsvConfiguration(culture)
-            {
-                PrepareHeaderForMatch = args => args.Header.ToLower(),
-                Encoding = Encoding.UTF8,
-                IgnoreBlankLines = true,
-                BadDataFound = null,
-                TrimOptions = TrimOptions.Trim,
-                HasHeaderRecord = true,
-                MissingFieldFound = null
-            };
-            using (var stream = new MemoryStream(item.FileContent))
-            {
-                using (var csvReader = new CsvReader(new StreamReader(stream), config))
-                {
-                    await Task.Delay(500);
-                }
-            }
-
-            item.ProcessStream.ReportProgress(new TfProgressStreamItem()
-            {
-                Message = "CsvDataProvider created!",
-                Type = TfProgressStreamItemType.Normal,
-            });
-        }
-        catch (Exception ex)
-        {
-            item.ProcessStream.ReportProgress(new TfProgressStreamItem()
-            {
-                Message = $"CsvDataProvider creation failed! Message: {ex.Message}",
-                Type = TfProgressStreamItemType.Error,
-            });
-        }
-
-        return result;
+        await item.CreateFromCsvFile();
     }
 
 
@@ -682,135 +518,4 @@ public class CsvDataProvider : ITfDataProviderAddon
     }
 
     private string LOC(string name) => name;
-
-    private async Task<(bool,List<TfProgressStreamItem>)> _checkCsvFile(TfImportFileToPageContextItem item)
-    {
-
-        var log = new List<TfProgressStreamItem>();
-        await Task.Delay(1);
-        if (Path.GetExtension(item.File.Name).ToLower() != ".csv")
-        {
-            log.Add(new TfProgressStreamItem()
-            {
-                Type = TfProgressStreamItemType.Log,
-                Message = "[CsvDataProvider] Can process only files with '.csv' extension"
-            });
-            return (false,log);
-        }
-
-        var culture = Thread.CurrentThread.CurrentCulture;
-
-        //Check UTF8 encoding
-        // Check if file has BOM
-        var encoding = Encoding.UTF8;
-        if (item.FileContent.Length >= 3 && item.FileContent[0] == 0xEF && item.FileContent[1] == 0xBB &&
-            item.FileContent[2] == 0xBF)
-        {
-            encoding = Encoding.UTF8;
-        }
-
-        if (!encoding.Equals(Encoding.UTF8))
-        {
-            log.Add(new TfProgressStreamItem()
-            {
-                Type = TfProgressStreamItemType.Log,
-                Message = "[CsvDataProvider] Can process only files with UTF-8 encoding"
-            });
-            return (false,log);
-        }
-
-        string? fileContentAsText = null;
-        try
-        {
-            fileContentAsText = Encoding.UTF8.GetString(item.FileContent);
-        }
-        catch (Exception)
-        {
-            log.Add(new TfProgressStreamItem()
-            {
-                Type = TfProgressStreamItemType.Log,
-                Message = "[CsvDataProvider] File contents are not text"
-            });
-            return (false,log);
-        }
-
-        if (String.IsNullOrWhiteSpace(fileContentAsText))
-        {
-            log.Add(new TfProgressStreamItem()
-            {
-                Type = TfProgressStreamItemType.Log,
-                Message = "[CsvDataProvider] File contents are empty"
-            });
-            return (false,log);
-        }
-
-        if (!fileContentAsText.ContainsOnlyPrintableAndValidChars())
-        {
-            log.Add(new TfProgressStreamItem()
-            {
-                Type = TfProgressStreamItemType.Log,
-                Message = "[CsvDataProvider] File contents contain non printable or invalid characters"
-            });
-            return (false,log);
-        }
-
-
-        var config = new CsvConfiguration(culture)
-        {
-            PrepareHeaderForMatch = args => args.Header.ToLower(),
-            Encoding = Encoding.UTF8,
-            IgnoreBlankLines = true,
-            BadDataFound = null,
-            TrimOptions = TrimOptions.Trim,
-            MissingFieldFound = null,
-            DetectDelimiter = true
-        };
-        using (var reader = new StringReader(fileContentAsText))
-        {
-            using (var csvReader = new CsvReader(reader, config))
-            {
-                try
-                {
-                    var delimiter = csvReader.Context.Configuration.Delimiter;
-                    if (String.IsNullOrWhiteSpace(delimiter))
-                    {
-                        log.Add(new TfProgressStreamItem()
-                        {
-                            Type = TfProgressStreamItemType.Log,
-                            Message = "[CsvDataProvider] CSV delimiter cannot be determined"
-                        });
-                        return (false,log);                        
-                    }
-                    try
-                    {
-                        csvReader.Read();
-                    }
-                    catch (Exception ex)
-                    {
-                        log.Add(new TfProgressStreamItem()
-                        {
-                            Type = TfProgressStreamItemType.Log,
-                            Message = "[CsvDataProvider] CSV file cannot be red"
-                        });
-                        return (false,log);      
-                    }
-                }
-                catch (Exception ex)
-                {
-                    log.Add(new TfProgressStreamItem()
-                    {
-                        Type = TfProgressStreamItemType.Log,
-                        Message = $"[CsvDataProvider] CSV file parsing ended with error: {ex.Message}"
-                    });
-                    return (false,log);   
-                }
-            }
-        }
-        log.Add(new TfProgressStreamItem()
-        {
-            Type = TfProgressStreamItemType.Log,
-            Message = $"[CsvDataProvider] CSV file successfully parsed"
-        });
-        return (true,log);        
-    }
 }

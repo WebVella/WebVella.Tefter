@@ -95,15 +95,15 @@ public class BlankDataProvider : ITfDataProviderAddon
         return new List<ValidationError>();
     }
     
-    public Task<bool> CanBeCreatedFromFile(
+    public Task CanBeCreatedFromFile(
         TfImportFileToPageContextItem item)
     {
         return Task.FromResult(false);
     }
 
-    public Task<TfImportFileToPageResult> CreatedFromFile(
+    public Task CreateFromFile(
         TfImportFileToPageContextItem item)
     {
-        return Task.FromResult(new TfImportFileToPageResult());
+        return Task.CompletedTask;
     }
 }

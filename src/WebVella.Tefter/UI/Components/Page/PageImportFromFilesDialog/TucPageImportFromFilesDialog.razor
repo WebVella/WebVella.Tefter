@@ -79,7 +79,7 @@
                         </div>
                     }
                     <div class="tf-import-wizard__aside__header__right__switch" title="@LOC("view log details")">
-                        <FluentSwitch @bind-Value="_showLogMessages"/>
+                        <FluentSwitch @bind-Value="_showLogMessages" CheckedMessage="less info" UncheckedMessage="more info"/>
                     </div>
                 </div>
             </div>
@@ -90,15 +90,15 @@
                     <FluentMessageBar AllowDismiss="false"
                                       Intent="MessageIntent.Info">@LOC("No files are found for import")</FluentMessageBar>
                 }
-                else if (_selectedItem.IsError)
+                else if (!_selectedItem.IsSuccess)
                 {
                     <FluentMessageBar AllowDismiss="false"
                                       Intent="MessageIntent.Error">@_selectedItem.Message</FluentMessageBar>
                 }
-                else if (_selectedItem.ProcessLog.Count > 0)
+                else if (_selectedItem.ProcessStream.GetProgressLog().Count > 0)
                 {
                     <div class="tf-console-box">
-                        @foreach (var context in _selectedItem.ProcessLog.Where(x=> _showLogMessages || x.Type != TfProgressStreamItemType.Log))
+                        @foreach (var context in _selectedItem.ProcessStream.GetProgressLog().Where(x=> _showLogMessages || x.Type != TfProgressStreamItemType.Debug))
                         {
                             <div class="tf-console-box__row" id="@context.Id">
                                 <div class="tf-console-box__row__date">

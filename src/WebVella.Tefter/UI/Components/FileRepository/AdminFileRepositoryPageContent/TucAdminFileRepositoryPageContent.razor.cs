@@ -134,7 +134,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 		try
 		{
 			TfService.DeleteRepositoryFile(file.Filename);
-			ToastService.ShowSuccess(LOC("The file is successfully deleted!"));
+			ToastService.ShowSuccess(LOC("The file was successfully deleted!"));
 		}
 		catch (Exception ex)
 		{

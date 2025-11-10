@@ -18,6 +18,7 @@ public static class AssemblyExtensions
 			// Write the stream to a file in the temporary folder
 			using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
 			{
+				stream.Position = 0;
 				stream.CopyTo(fileStream);
 			}
 

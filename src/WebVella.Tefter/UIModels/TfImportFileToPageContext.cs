@@ -12,25 +12,27 @@ public record TfImportFileToPageContext
 			if (file.LocalFile is null)
 				throw new Exception("one or more files have no content");
 
-			byte[] fileContent;
-			using (var fileStream =
-			       new FileStream(file.LocalFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
-			{
-				fileContent = fileStream.ReadFully();
-			}
+			using var fileStream =
+				new FileStream(file.LocalFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
+			using var memoryStream = new MemoryStream();
+			fileStream.Position = 0;
+			fileStream.CopyTo(memoryStream);
+			memoryStream.Position = 0;
+			
 			if (Items.Any(x => x.LocalPath == file.LocalFile.FullName)) continue;
 
 			Items.Add(new TfImportFileToPageContextItem()
 			{
-				File = file, FileName = file.Name, LocalPath = file.LocalFile!.FullName, FileContent = fileContent,
+				File = file, FileName = file.Name, LocalPath = file.LocalFile!.FullName, FileContent = memoryStream,
 			});
 			try
 			{
 				File.Delete(file.LocalFile.FullName);
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
+				// ignored
 			}
 		}
 	}
@@ -41,38 +43,40 @@ public record TfImportFileToPageContextItem
 	public FluentInputFileEventArgs File { get; set; } = null!;
 	public string FileName { get; set; } = String.Empty;
 	public string LocalPath { get; set; } = String.Empty;
-	public byte[] FileContent { get; set; } = [];
+	public MemoryStream? FileContent { get; set; } = null;
 	public ITfDataProviderAddon? DataProvider { get; set; } = null;
 	public Guid? SpacePageId { get; set; } = null;
-	public bool IsProcessed { get; set; } = false;	
+	public bool IsProcessed { get; set; } = false;
+
 	public TfImportFileToPageContextItemStatus Status
 	{
 		get
 		{
-			if (IsProcessed) 
+			if (IsProcessed)
 				return TfImportFileToPageContextItemStatus.Processing;
-				
-			if(ProcessLog.Count == 0)
+
+			if (ProcessStream.GetProgressLog().Count == 0)
 				return TfImportFileToPageContextItemStatus.NotStarted;
-			
-			if(ProcessLog.Any(x=> x.Type == TfProgressStreamItemType.Error))
+
+			if (ProcessStream.GetProgressLog().Any(x => x.Type == TfProgressStreamItemType.Error))
 				return TfImportFileToPageContextItemStatus.ProcessedWithErrors;
-			
-			if(ProcessLog.Any(x=> x.Type == TfProgressStreamItemType.Warning))
+
+			if (ProcessStream.GetProgressLog().Any(x => x.Type == TfProgressStreamItemType.Warning))
 				return TfImportFileToPageContextItemStatus.ProcessedWithWarnings;
-			
-			return TfImportFileToPageContextItemStatus.ProcessedSuccess;	
+
+			return TfImportFileToPageContextItemStatus.ProcessedSuccess;
 		}
 	}
+
 	public TfProgressStream ProcessStream { get; set; } = new();
-	public List<TfProgressStreamItem> ProcessLog { get; set; } = new();
 
 	public Icon GetStatusIcon()
 	{
 		switch (Status)
 		{
 			case TfImportFileToPageContextItemStatus.Processing:
-				return TfConstants.GetIcon("SpinnerIos",variant:IconVariant.Filled)!.WithColor(TfColor.Green500.GetColor().HEX);			
+				return TfConstants.GetIcon("SpinnerIos", variant: IconVariant.Filled)!.WithColor(TfColor.Green500
+					.GetColor().HEX);
 			case TfImportFileToPageContextItemStatus.ProcessedSuccess:
 				return TfConstants.GetIcon("CheckmarkCircle")!.WithColor(TfColor.Green500.GetColor().HEX);
 			case TfImportFileToPageContextItemStatus.ProcessedWithWarnings:
@@ -89,7 +93,7 @@ public record TfImportFileToPageContextItem
 		switch (Status)
 		{
 			case TfImportFileToPageContextItemStatus.Processing:
-				return TfColor.Cyan500;			
+				return TfColor.Cyan500;
 			case TfImportFileToPageContextItemStatus.ProcessedSuccess:
 				return TfColor.Green500;
 			case TfImportFileToPageContextItemStatus.ProcessedWithWarnings:
@@ -103,7 +107,8 @@ public record TfImportFileToPageContextItem
 
 	public bool IsSelected { get; set; } = false;
 	public string? Message { get; set; } = null;
-	public bool IsError { get; set; } = false;
+	public bool IsSuccess { get; set; } = true;
+	public TfImportFileToPageResult? ImportResult { get; set; } = null;
 }
 
 public enum TfImportFileToPageContextItemStatus
@@ -119,4 +124,5 @@ public enum TfImportFileToPageContextItemStatus
 
 public record TfImportFileToPageResult
 {
+	public TfDataProviderSourceSchemaInfo SchemaInfo { get; set; } = new();
 }

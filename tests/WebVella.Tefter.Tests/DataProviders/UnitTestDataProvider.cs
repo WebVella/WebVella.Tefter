@@ -132,15 +132,15 @@ public class UnitTestDataProvider : ITfDataProviderAddon
 		throw new NotImplementedException();
 	}
 	
-	public Task<bool> CanBeCreatedFromFile(
+	public Task CanBeCreatedFromFile(
 		TfImportFileToPageContextItem item)
 	{
-		return Task.FromResult(false);
+		return Task.CompletedTask;
 	}
 
-	public Task<TfImportFileToPageResult> CreatedFromFile(
+	public Task CreateFromFile(
 		TfImportFileToPageContextItem item)
 	{
-		return Task.FromResult(new TfImportFileToPageResult());
+		return Task.CompletedTask;
 	}
 }

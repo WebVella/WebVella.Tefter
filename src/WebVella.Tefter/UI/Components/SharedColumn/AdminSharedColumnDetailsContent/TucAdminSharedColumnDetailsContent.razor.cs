@@ -87,7 +87,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 			_isDeleting = true;
 			await InvokeAsync(StateHasChanged);
 			TfService.DeleteSharedColumn(_column.Id);
-			ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
+			ToastService.ShowSuccess(LOC("The column was successfully deleted!"));
 			var allColumns = TfService.GetSharedColumns();
 			if (allColumns.Count > 0)
 				Navigator.NavigateTo(String.Format(TfConstants.AdminSharedColumnDetailsPageUrl, allColumns[0].Id));

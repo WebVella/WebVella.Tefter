@@ -53,8 +53,8 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 			});
 			_statDict[item.LocalPath] = new TucPageImportFromFilesDialogStats()
 			{
-				ProcessedWarning = item.ProcessLog.Count(x => x.Type == TfProgressStreamItemType.Warning),
-				ProcessedError = item.ProcessLog.Count(x => x.Type == TfProgressStreamItemType.Error)
+				ProcessedWarning = item.ProcessStream.GetProgressLog().Count(x => x.Type == TfProgressStreamItemType.Warning),
+				ProcessedError = item.ProcessStream.GetProgressLog().Count(x => x.Type == TfProgressStreamItemType.Error)
 			};
 		}
 
@@ -86,31 +86,32 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 				await _updateProgress(item, message);
 			});
 		};
-		item.ProcessLog.Add(new TfProgressStreamItem
+		item.ProcessStream.ReportProgress(new TfProgressStreamItem
 		{
 			Message = LOC("Checking for suitable Data Processor type..."),
 			Type = TfProgressStreamItemType.Normal
 		});
 		foreach (var provider in _providers)
 		{
-			if (!await provider.CanBeCreatedFromFile(item))
+			await provider.CanBeCreatedFromFile(item);
+			if (!item.IsSuccess)
 				continue;
 
 			item.IsProcessed = true;
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
 			item.DataProvider = provider;
-			item.ProcessLog.Add(new TfProgressStreamItem
+			item.ProcessStream.ReportProgress(new TfProgressStreamItem
 			{
 				Message = LOC("Suitable Data Provider type found: {0}",provider.AddonName),
 				Type = TfProgressStreamItemType.Normal
 			});			
-			await provider.CreatedFromFile(item);
+			await provider.CreateFromFile(item);
 		}
 
 		if (item.DataProvider is null)
 		{
-			item.ProcessLog.Add(new TfProgressStreamItem
+			item.ProcessStream.ReportProgress(new TfProgressStreamItem
 			{
 				Message = LOC("No suitable Data Provider that can process the file was found"),
 				Type = TfProgressStreamItemType.Error
@@ -136,7 +137,6 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 
 	private async Task _updateProgress(TfImportFileToPageContextItem item, TfProgressStreamItem message)
 	{
-		item.ProcessLog.Add(message);
 		_initMenu();
 		await InvokeAsync(StateHasChanged);
 		await Task.Delay(1);

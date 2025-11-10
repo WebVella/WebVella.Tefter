@@ -54,6 +54,8 @@ public static class SourceToColumnTypeConverter
 	public static HashSet<int> GenerateSampleIndexesForList(this int itemsCount, int maxSampleSize, int? skipCount = null)
 	{
 		var result = new HashSet<int>();
+		if(itemsCount <= 0) return result;
+		
 		int totalItems = itemsCount;
 		int startIndex = 0;
 		if (skipCount is not null && skipCount.Value > 0)

@@ -96,7 +96,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 		try
 		{
 			TfService.DeleteDataset(dataset.Id);
-			ToastService.ShowSuccess(LOC("The implementation is successfully deleted!"));
+			ToastService.ShowSuccess(LOC("The implementation was successfully deleted!"));
 
 		}
 		catch (Exception ex)

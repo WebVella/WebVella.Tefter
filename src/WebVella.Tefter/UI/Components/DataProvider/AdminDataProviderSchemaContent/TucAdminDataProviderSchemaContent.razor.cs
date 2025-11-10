@@ -83,7 +83,8 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
+			TfService.DeleteDataProviderColumn(_deletedColumnId.Value);
+			ToastService.ShowSuccess(LOC("The column was successfully deleted!"));
 		}
 		catch (Exception ex)
 		{

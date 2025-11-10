@@ -180,7 +180,7 @@
   <data name="Are you sure that you need this key deleted?" xml:space="preserve">
     <value>Сигурни ли сте, че искате да изтриете този ключ?</value>
   </data>
-  <data name="The implementation is successfully deleted!" xml:space="preserve">
+  <data name="The implementation was successfully deleted!" xml:space="preserve">
     <value>Реализацията е успешно изтрита!</value>
   </data>
   <data name="Are you sure that you need all data deleted? This operation can take minutes!" xml:space="preserve">
