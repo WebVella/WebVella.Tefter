@@ -7,9 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Formats.Asn1" Version="10.0.0" />
 		<PackageReference Include="System.IO.Packaging" Version="10.0.0" />
-		<PackageReference Include="System.Text.Encodings.Web" Version="10.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
