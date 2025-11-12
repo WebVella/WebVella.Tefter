@@ -16,7 +16,7 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
-		if(TfAuthLayout.GetState().Space is null) throw new Exception("No current Space initialized");
+		if (TfAuthLayout.GetState().Space is null) throw new Exception("No current Space initialized");
 		_context = new(Content);
 		if (_context.Items.Count > 0)
 			_selectedItem = _context.Items[0];
@@ -24,7 +24,15 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 		Dialog.Class = "tf-modal-no-body-padding";
 #pragma warning restore BL0005
 		_initMenu();
-		await _importItem(_selectedItem);
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+		if (firstRender)
+		{
+			await _importItem(_selectedItem);
+		}
 	}
 
 	private async Task _cancel()
@@ -47,7 +55,7 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 				OnClick = EventCallback.Factory.Create(this, async () => await _selectItem(item)),
 				IconCollapsed = item.GetStatusIcon(),
 				IconColor = item.GetStatusColor(),
-				SpinIcon = item.Status == TfImportFileToPageContextItemStatus.Processing 
+				SpinIcon = item.Status == TfImportFileToPageContextItemStatus.Processing
 			});
 			_statDict[item.LocalPath] = new TucPageImportFromFilesDialogStats()
 			{
@@ -88,6 +96,7 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 		};
 		item.User = TfAuthLayout.GetState().User;
 		item.Space = TfAuthLayout.GetState().Space!;
+
 		await TfService.SpacePageCreateFromFileAsync(item);
 
 		await InvokeAsync(StateHasChanged);
@@ -103,6 +112,23 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 			_initMenu();
 			_isProcessing = false;
 			await InvokeAsync(StateHasChanged);
+			var state = TfAuthLayout.GetState();
+			if (state.NavigationState.SpacePageId is not null) 
+			{
+				await _cancel();
+				return;
+			}
+
+			var spaceId = TfAuthLayout.GetState().Space!.Id;
+			var spacePages = TfService.GetSpacePages(spaceId);
+			if (spacePages.Any())
+			{
+				Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl,
+					spaceId,spacePages[0].Id
+				));				
+			}
+			await _cancel();
+		
 		}
 	}
 
@@ -111,6 +137,7 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 		_initMenu();
 		await InvokeAsync(StateHasChanged);
 		await Task.Delay(1);
+		await InvokeAsync(StateHasChanged);
 		try
 		{
 			await JSRuntime.InvokeVoidAsync("Tefter.scrollToElement", message.Id);

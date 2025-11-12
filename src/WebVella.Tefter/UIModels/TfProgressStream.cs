@@ -12,7 +12,7 @@ public class TfProgressStream
 
 	public TfProgressStream()
 	{
-		_channel = Channel.CreateBounded<TfProgressStreamItem>(50);
+		_channel = Channel.CreateBounded<TfProgressStreamItem>(200);
 
 		// Start listening to the channel
 		Task.Run(async () =>

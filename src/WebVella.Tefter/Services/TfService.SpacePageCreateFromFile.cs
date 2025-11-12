@@ -74,67 +74,89 @@ public partial class TfService
 			return;
 		}
 
-		using var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY);
-		try
+		using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
-			//Create Provider
-			var providerName = item.ProcessContext.DataProviderCreationRequest.Name;
-			if (!String.IsNullOrWhiteSpace(providerName))
+			try
 			{
-				providerName = providerName.ConvertFileNameToDataProviderName();
-				var dataProviders = GetDataProviders();
-				for (int i = 0; i < Int32.MaxValue; i++)
+				//Create Provider, Dateset
+				var providerName = item.ProcessContext.DataProviderCreationRequest.Name;
+				if (!String.IsNullOrWhiteSpace(providerName))
 				{
-					var checkedName = providerName;
-					if (i > 0)
-						checkedName = $"{checkedName}-{i}";
-
-					if (!dataProviders.Any(x => x.Name == checkedName))
+					providerName = providerName.ConvertFileNameToDataProviderName();
+					var dataProviders = GetDataProviders();
+					for (int i = 0; i < Int32.MaxValue; i++)
 					{
-						providerName = checkedName;
-						break;
+						var checkedName = providerName;
+						if (i > 0)
+							checkedName = $"{checkedName}-{i}";
+
+						if (!dataProviders.Any(x => x.Name == checkedName))
+						{
+							providerName = checkedName;
+							break;
+						}
 					}
 				}
+				else
+				{
+					providerName = $"Data provider {Guid.NewGuid()}".ConvertFileNameToDataProviderName();
+				}
+
+				item.ProcessContext.DataProvider = CreateDataProvider(new TfCreateDataProvider()
+				{
+					Id = Guid.NewGuid(),
+					Name = providerName,
+					Index = -1,
+					ProviderType = item.ProcessContext.UsedDataProviderAddon!,
+					SettingsJson = item.ProcessContext.DataProviderCreationRequest.SettingsJson ?? "{}",
+					SynchPrimaryKeyColumns =
+						item.ProcessContext.DataProviderCreationRequest.SynchPrimaryKeyColumns ?? new(),
+					SynchScheduleMinutes = item.ProcessContext.DataProviderCreationRequest.SynchScheduleMinutes,
+					SynchScheduleEnabled = false,
+					AutoInitialize = true,
+				});
+				var providerDataSets = GetDatasets(providerId: item.ProcessContext.DataProvider.Id);
+				//Create space page
+				var (pageId, pages) = CreateSpacePage(new TfSpacePage()
+				{
+					Id = Guid.NewGuid(),
+					Name = item.ProcessContext.DataProvider.Name,
+					SpaceId = item.Space.Id,
+					ComponentId = new TucSpaceViewSpacePageAddon().AddonId,
+					ComponentOptionsJson = JsonSerializer.Serialize(new TfSpaceViewSpacePageAddonOptions()
+					{
+						DatasetId = providerDataSets[0].Id
+					}),
+					Type = TfSpacePageType.Page,
+					FluentIconName = "Table"
+				});
+				item.ProcessContext.SpacePage = pages.FirstOrDefault(x => x.Id == pageId);
+
+				scope.Complete();
+
+				item.IsProcessed = true;
+				item.IsSuccess = true;
+				item.ProcessStream.ReportProgress(new TfProgressStreamItem
+				{
+					Message = $"Page successfully created!", Type = TfProgressStreamItemType.Success
+				});
 			}
-			else
+			catch (Exception ex)
 			{
-				providerName = $"Data provider {Guid.NewGuid()}".ConvertFileNameToDataProviderName();
+				item.IsProcessed = true;
+				item.IsSuccess = false;
+				item.ProcessStream.ReportProgress(new TfProgressStreamItem
+				{
+					Message = ex.InnerException is not null && !String.IsNullOrWhiteSpace(ex.Message)
+						? $"Space page creation failed with error: {ex.InnerException.Message}!"
+						: $"Space page creation failed with error: {ex.Message}!",
+					Type = TfProgressStreamItemType.Error
+				});
 			}
-
-			item.ProcessContext.DataProvider = CreateDataProvider(new TfCreateDataProvider()
-			{
-				Id = Guid.NewGuid(),
-				Name = providerName,
-				Index = -1,
-				ProviderType = item.ProcessContext.UsedDataProviderAddon!,
-				SettingsJson = item.ProcessContext.DataProviderCreationRequest.SettingsJson ?? "{}",
-				SynchPrimaryKeyColumns =
-					item.ProcessContext.DataProviderCreationRequest.SynchPrimaryKeyColumns ?? new(),
-				SynchScheduleMinutes = item.ProcessContext.DataProviderCreationRequest.SynchScheduleMinutes,
-				SynchScheduleEnabled = false,
-				AutoInitialize = true,
-			});
-
-
-			scope.Complete();
-
-			item.IsProcessed = true;
-			item.ProcessStream.ReportProgress(new TfProgressStreamItem
-			{
-				Message = $"Page successfully created!", Type = TfProgressStreamItemType.Success
-			});
-			return;
 		}
-		catch (Exception ex)
+
+		if (!item.IsSuccess)
 		{
-			item.IsProcessed = true;
-			item.ProcessStream.ReportProgress(new TfProgressStreamItem
-			{
-				Message = ex.InnerException is not null
-					? $"Space page creation failed with error: {ex.InnerException.Message}!"
-					: $"Space page creation failed with error: {ex.Message}!",
-				Type = TfProgressStreamItemType.Error
-			});
 			//Delete created repository files
 			foreach (var fileName in item.ProcessContext.CreatedRepositoryFiles)
 			{
@@ -143,9 +165,7 @@ public partial class TfService
 					DeleteRepositoryFile(fileName);
 				}
 				catch (Exception) { }
-			}
-
-			return;
+			}			
 		}
 	}
 }

@@ -75,7 +75,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				TfConstants.GetIcon("ArrowSortUpLines", IconSize.Size16));
 			builder.CloseComponent();
 		};
-
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -131,6 +130,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
+
 	private async Task On_SpaceViewUpdated(TfSpaceViewUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
@@ -140,8 +140,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			_generateMeta();
 			await InvokeAsync(StateHasChanged);
 		});
-	}	
-	
+	}
+
 	private async Task On_SpaceViewDataChanged(TfSpaceViewDataChangedEvent args)
 	{
 		await InvokeAsync(async () =>
@@ -150,7 +150,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			if (args.SpaceViewId != _spaceView?.Id) return;
 			OnDataChange(args.Payload);
 		});
-	}	
+	}
 
 	private async Task _init(TfNavigationState navState, bool showLoading = true)
 	{
@@ -187,10 +187,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			if (_spaceView is null)
 				return;
 
-			if (_allDataProviders is null)
-				_allDataProviders = TfService.GetDataProviders().ToList();
-			if (_allSharedColumns is null)
-				_allSharedColumns = TfService.GetSharedColumns();
+			_allDataProviders = TfService.GetDataProviders().ToList();
+			_allSharedColumns = TfService.GetSharedColumns();
 
 			if (oldViewId != options.SpaceViewId.Value)
 			{
@@ -360,6 +358,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			await InvokeAsync(StateHasChanged);
 		}
 	}
+
 	public void OnNewRow(TfDataTable dataTable)
 	{
 		if (_data is null) return;
@@ -412,10 +411,10 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				_data[rowId, columnName] = change[rowId][columnName];
 			}
 		}
-	
+
 		StateHasChanged();
-	}		
-	
+	}
+
 	public void OnEditRows(List<Guid> tfIds)
 	{
 		if (tfIds is null || tfIds.Count == 0) return;
@@ -427,7 +426,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	#endregion
 
 	#region <<Utility Methods >>
-	
+
 	private string _getUserChangeHash(TfUser? user)
 	{
 		if (user is null) return "";
@@ -474,6 +473,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 					row[column.Name] = changedRow[column.Name];
 				}
 			}
+
 			_generateMeta();
 			await InvokeAsync(StateHasChanged);
 			ToastService.ShowSuccess(LOC("Data was updated"));
@@ -505,7 +505,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			await OnSelectAll();
 		else
 			await OnDeSelectAll();
-		
 	}
 
 	public bool _allDataRowsSelected()
@@ -549,10 +548,11 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		{
 			_editedDataRows.Add(rowId);
 		}
+
 		_generateMeta();
-	}	
-	
-	
+	}
+
+
 	[JSInvokable("OnColumnSort")]
 	public async void OnColumnSort(int position, bool hasShift)
 	{

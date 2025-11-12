@@ -129,6 +129,7 @@ public record TfImportFileToPageResultProcessContext
 	public TfImportFileToPageDataProviderCreationRequest? DataProviderCreationRequest { get; set; } = null;
 	public TfRepositoryFile? RepositoryFile { get; set; } = null;
 	public TfDataProvider? DataProvider { get; set; } = null;
+	public TfSpacePage? SpacePage { get; set; } = null;
 	public List<string> CreatedRepositoryFiles { get; set; } = new();
 }
 
