@@ -14,7 +14,7 @@ public class GenerateSampleRowIndexHashsetTests
         var maxSampleSize = 200;
         var skipCount = 0;
         
-        var result = memStream.GenerateSampleRowIndexHashset(maxSampleSize,skipCount);
+        var result = new CsvDataProviderUtility().GenerateSampleRowIndexHashset(memStream,maxSampleSize,skipCount);
         result.Count.Should().Be(0);
     }   
     
@@ -25,7 +25,7 @@ public class GenerateSampleRowIndexHashsetTests
         var maxSampleSize = 200;
         var skipCount = 5;
         
-        var result = memStream.GenerateSampleRowIndexHashset(maxSampleSize,skipCount);
+        var result = new CsvDataProviderUtility().GenerateSampleRowIndexHashset(memStream,maxSampleSize,skipCount);
         result.Count.Should().Be(0);
     }      
     
@@ -36,7 +36,7 @@ public class GenerateSampleRowIndexHashsetTests
         var maxSampleSize = 0;
         var skipCount = 0;
         
-        var result = memStream.GenerateSampleRowIndexHashset(maxSampleSize,skipCount);
+        var result = new CsvDataProviderUtility().GenerateSampleRowIndexHashset(memStream,maxSampleSize,skipCount);
         result.Count.Should().Be(0);
     }       
  
@@ -48,7 +48,7 @@ public class GenerateSampleRowIndexHashsetTests
         var maxSampleSize = 100;
         var skipCount = 0;
         
-        var result = memStream.GenerateSampleRowIndexHashset(maxSampleSize,skipCount);
+        var result = new CsvDataProviderUtility().GenerateSampleRowIndexHashset(memStream,maxSampleSize,skipCount);
         result.Count.Should().Be(2);
     }          
     
@@ -59,7 +59,7 @@ public class GenerateSampleRowIndexHashsetTests
         var maxSampleSize = 100;
         var skipCount = 0;
         
-        var result = memStream.GenerateSampleRowIndexHashset(maxSampleSize,skipCount);
+        var result = new CsvDataProviderUtility().GenerateSampleRowIndexHashset(memStream,maxSampleSize,skipCount);
         result.Count.Should().Be(1);
     }        
     
@@ -70,7 +70,7 @@ public class GenerateSampleRowIndexHashsetTests
         var maxSampleSize = 100;
         var skipCount = 1;
         
-        var result = memStream.GenerateSampleRowIndexHashset(maxSampleSize,skipCount);
+        var result = new CsvDataProviderUtility().GenerateSampleRowIndexHashset(memStream,maxSampleSize,skipCount);
         result.Count.Should().Be(0);
     }     
     

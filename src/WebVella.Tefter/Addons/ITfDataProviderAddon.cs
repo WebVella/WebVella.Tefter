@@ -17,9 +17,7 @@ public interface ITfDataProviderAddon : ITfAddon
 	public List<ValidationError> Validate(
 		string settingsJson);
 	
-	public abstract Task CanBeCreatedFromFile(
-		TfImportFileToPageContextItem item);	
-
-	public abstract Task CreateFromFile(
-		TfImportFileToPageContextItem item);
+	public abstract Task GenerateDataProviderCreationRequest(
+		TfSpacePageCreateFromFileContextItem item,
+		ITfService tfService);
 }

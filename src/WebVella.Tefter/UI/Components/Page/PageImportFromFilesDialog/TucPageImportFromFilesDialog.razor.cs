@@ -5,20 +5,18 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 {
 	[Parameter] public List<FluentInputFileEventArgs>? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
-	private TfImportFileToPageContext _context = null!;
-	private TfImportFileToPageContextItem _selectedItem = null!;
+	private TfSpacePageCreateFromFileContext _context = null!;
+	private TfSpacePageCreateFromFileContextItem _selectedItem = null!;
 	private List<TfMenuItem> _menu = new();
 	private Dictionary<string, TucPageImportFromFilesDialogStats> _statDict = new();
-	private ReadOnlyCollection<ITfDataProviderAddon> _providers = null!;
 	private bool _isProcessing = true;
 	private bool _showLogMessages = false;
-
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
-		_providers = TfMetaService.GetDataProviderTypes();
+		if(TfAuthLayout.GetState().Space is null) throw new Exception("No current Space initialized");
 		_context = new(Content);
 		if (_context.Items.Count > 0)
 			_selectedItem = _context.Items[0];
@@ -49,12 +47,14 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 				OnClick = EventCallback.Factory.Create(this, async () => await _selectItem(item)),
 				IconCollapsed = item.GetStatusIcon(),
 				IconColor = item.GetStatusColor(),
-				SpinIcon = item.IsProcessed
+				SpinIcon = item.Status == TfImportFileToPageContextItemStatus.Processing 
 			});
 			_statDict[item.LocalPath] = new TucPageImportFromFilesDialogStats()
 			{
-				ProcessedWarning = item.ProcessStream.GetProgressLog().Count(x => x.Type == TfProgressStreamItemType.Warning),
-				ProcessedError = item.ProcessStream.GetProgressLog().Count(x => x.Type == TfProgressStreamItemType.Error)
+				ProcessedWarning =
+					item.ProcessStream.GetProgressLog().Count(x => x.Type == TfProgressStreamItemType.Warning),
+				ProcessedError = item.ProcessStream.GetProgressLog()
+					.Count(x => x.Type == TfProgressStreamItemType.Error)
 			};
 		}
 
@@ -69,15 +69,15 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 		};
 	}
 
-	private async Task _selectItem(TfImportFileToPageContextItem item, bool fromProcess = false)
+	private async Task _selectItem(TfSpacePageCreateFromFileContextItem item, bool fromProcess = false)
 	{
-		if(!fromProcess && _isProcessing) return;
+		if (!fromProcess && _isProcessing) return;
 		_selectedItem = item;
 		_initMenu();
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private async Task _importItem(TfImportFileToPageContextItem item)
+	private async Task _importItem(TfSpacePageCreateFromFileContextItem item)
 	{
 		item.ProcessStream.OnProgress += (message) =>
 		{
@@ -86,41 +86,12 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 				await _updateProgress(item, message);
 			});
 		};
-		item.ProcessStream.ReportProgress(new TfProgressStreamItem
-		{
-			Message = LOC("Checking for suitable Data Processor type..."),
-			Type = TfProgressStreamItemType.Normal
-		});
-		foreach (var provider in _providers)
-		{
-			await provider.CanBeCreatedFromFile(item);
-			if (!item.IsSuccess)
-				continue;
+		item.User = TfAuthLayout.GetState().User;
+		item.Space = TfAuthLayout.GetState().Space!;
+		await TfService.SpacePageCreateFromFileAsync(item);
 
-			item.IsProcessed = true;
-			await InvokeAsync(StateHasChanged);
-			await Task.Delay(1);
-			item.DataProvider = provider;
-			item.ProcessStream.ReportProgress(new TfProgressStreamItem
-			{
-				Message = LOC("Suitable Data Provider type found: {0}",provider.AddonName),
-				Type = TfProgressStreamItemType.Normal
-			});			
-			await provider.CreateFromFile(item);
-		}
-
-		if (item.DataProvider is null)
-		{
-			item.ProcessStream.ReportProgress(new TfProgressStreamItem
-			{
-				Message = LOC("No suitable Data Provider that can process the file was found"),
-				Type = TfProgressStreamItemType.Error
-			});
-		}
-
-		item.IsProcessed = false;
 		await InvokeAsync(StateHasChanged);
-		await Task.Delay(1000);
+		await Task.Delay(100);
 		var selectedIndex = _context.Items.FindIndex(x => x.LocalPath == _selectedItem.LocalPath);
 		if (selectedIndex < _context.Items.Count - 1)
 		{
@@ -131,11 +102,11 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 		{
 			_initMenu();
 			_isProcessing = false;
-			await InvokeAsync(StateHasChanged);			
+			await InvokeAsync(StateHasChanged);
 		}
 	}
 
-	private async Task _updateProgress(TfImportFileToPageContextItem item, TfProgressStreamItem message)
+	private async Task _updateProgress(TfSpacePageCreateFromFileContextItem item, TfProgressStreamItem message)
 	{
 		_initMenu();
 		await InvokeAsync(StateHasChanged);

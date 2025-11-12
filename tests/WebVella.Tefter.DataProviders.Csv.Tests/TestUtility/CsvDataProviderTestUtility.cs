@@ -7,21 +7,23 @@ namespace WebVella.Tefter.DataProviders.Csv.Tests.Utils;
 
 public class CsvDataProviderTestUtility
 {
-    public TfImportFileToPageContextItem CreateFileContext(string fileName)
+    public TfSpacePageCreateFromFileContextItem CreateFileContext(string fileName)
     {
-        var result = new TfImportFileToPageContextItem
+        var result = new TfSpacePageCreateFromFileContextItem
         {
+            User = new(),
             File = new FluentInputFileEventArgs(),
             FileName = fileName,
             LocalPath = "",
             FileContent = LoadFileAsStream(fileName),
-            DataProvider = new CsvDataProvider(),
-            SpacePageId = null,
             IsProcessed = false,
             ProcessStream = new(),
             IsSelected = false,
-            Message = null,
-            IsSuccess = true
+            IsSuccess = true,
+            ProcessContext = new TfImportFileToPageResultProcessContext()
+            {
+                UsedDataProviderAddon = new CsvDataProvider()
+            }
         };
         return result; 
     }    

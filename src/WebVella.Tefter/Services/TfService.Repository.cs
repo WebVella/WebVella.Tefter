@@ -21,6 +21,12 @@ public partial interface ITfService
 		string filename,
 		string localPath,
 		Guid? createdBy = null);
+	
+	public TfRepositoryFile CreateRepositoryFile(
+		string filename,
+		MemoryStream fileContent,
+		Guid? createdBy = null);
+	
 	TfRepositoryFile CreateRepositoryFile(TfFileForm form);
 	public TfRepositoryFile UpdateRepositoryFile(
 		string filename,
@@ -176,6 +182,8 @@ public partial class TfService : ITfService
 	{
 		try
 		{
+			filename = GenerateAvailableName(filename);
+			
 			new TfRepositoryServiceValidator(this)
 				.ValidateCreate(filename, localPath)
 				.ToValidationException()
@@ -213,6 +221,53 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 	}
+	
+	public TfRepositoryFile CreateRepositoryFile(
+		string filename,
+		MemoryStream fileContent,
+		Guid? createdBy = null)
+	{
+		try
+		{
+			filename = GenerateAvailableName(filename);
+			
+			new TfRepositoryServiceValidator(this)
+				.ValidateCreate(filename, fileContent)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
+
+			DateTime now = DateTime.Now;
+
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+
+				var blobId = CreateBlob(fileContent.ToArray());
+
+
+				TfRepositoryFile file = new TfRepositoryFile
+				{
+					Id = blobId,
+					Filename = filename,
+					CreatedBy = createdBy,
+					CreatedOn = now,
+					LastModifiedBy = createdBy,
+					LastModifiedOn = now
+				};
+
+				var insertResult = _dboManager.Insert<TfRepositoryFile>(file);
+				if (!insertResult)
+					throw new TfDboServiceException("Insert repository file record into database failed");
+
+				scope.Complete();
+				PublishEventWithScope(new TfRepositoryFileCreatedEvent(file));
+				return file;
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}	
 
 	public TfRepositoryFile CreateRepositoryFile(TfFileForm form)
 	{
@@ -340,6 +395,26 @@ public partial class TfService : ITfService
 
 	#region <--- private methods --->
 
+	private string GenerateAvailableName(string fileName)
+	{
+		var fileNameBase = Path.GetFileNameWithoutExtension(fileName);;
+		var fileNameExtension = Path.GetExtension(fileName);
+		for (int i = 0; i < int.MaxValue; i++)
+		{
+			var checkedName = $"{fileNameBase}{fileNameExtension}";
+			if (i > 0)
+			{
+				checkedName = $"{fileNameBase}-{i}{fileNameExtension}";
+			}
+
+			var file = GetRepositoryFile(checkedName);
+			if (file is null)
+				return checkedName;
+		}
+
+		return fileName;
+	}
+
 	private string GeneratePagingSql(int? page, int? pageSize)
 	{
 		if (!page.HasValue || !pageSize.HasValue)
@@ -391,6 +466,34 @@ public partial class TfService : ITfService
 
 			return new ValidationResult();
 		}
+		
+		public ValidationResult ValidateCreate(
+			string filename,
+			MemoryStream fileContent)
+		{
+
+			if (string.IsNullOrWhiteSpace(filename))
+			{
+				return new ValidationResult(new[] { new ValidationFailure(nameof(TfFileForm.Filename),
+					"File name is not provided") });
+			}
+
+			if (fileContent.Length == 0)
+			{
+				return new ValidationResult(new[] { new ValidationFailure(nameof(TfFileForm.LocalFilePath),
+					"File content stream is empty") });
+			}
+
+			var fileExists = _tfService.GetRepositoryFile(filename) != null;
+
+			if (fileExists)
+			{
+				return new ValidationResult(new[] { new ValidationFailure(nameof(TfFileForm.LocalFilePath),
+					"File with same name already exists") });
+			}
+
+			return new ValidationResult();
+		}		
 
 		public ValidationResult ValidateUpdate(
 			string filename,

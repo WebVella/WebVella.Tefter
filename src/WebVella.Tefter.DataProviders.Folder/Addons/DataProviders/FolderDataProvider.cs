@@ -3,6 +3,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Principal;
+using WebVella.Tefter.Services;
 using WebVella.Tefter.Utility;
 
 
@@ -267,14 +268,8 @@ public class FolderDataProvider : ITfDataProviderAddon
         return new List<ValidationError>();
     }
 
-    public Task CanBeCreatedFromFile(
-        TfImportFileToPageContextItem item)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task CreateFromFile(
-        TfImportFileToPageContextItem item)
+    public Task GenerateDataProviderCreationRequest(
+        TfSpacePageCreateFromFileContextItem item,ITfService tfService)
     {
         return Task.CompletedTask;
     }

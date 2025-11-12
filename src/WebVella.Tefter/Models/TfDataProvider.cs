@@ -30,14 +30,14 @@ public class TfDataProvider
 public record TfCreateDataProvider
 {
 	[Required]
-	public Guid Id { get; internal set; }
+	public Guid Id { get; set; }
 	[Required]
-	public string Name { get; internal set; }
+	public string Name { get; set; }
 	[Required]
-	public int Index { get; internal set; } = -1;
+	public int Index { get; set; } = -1;
 	[Required]
-	public ITfDataProviderAddon ProviderType { get; internal set; }
-	public string SettingsJson { get; internal set; } = null;
+	public ITfDataProviderAddon ProviderType { get;  set; }
+	public string? SettingsJson { get; set; } = null;
 	public List<string> SynchPrimaryKeyColumns { get; set; } = new();
 	[Required]
 	public short SynchScheduleMinutes { get; set; } = 60;
@@ -48,11 +48,11 @@ public record TfCreateDataProvider
 public record TfUpdateDataProvider
 {
 	[Required]
-	public Guid Id { get; internal set; }
+	public Guid Id { get; set; }
 	[Required]
-	public string Name { get; internal set; }
+	public string Name { get; set; }
 	[Required]
-	public string SettingsJson { get; internal set; } = null;
+	public string? SettingsJson { get; set; } = null;
 	public List<string> SynchPrimaryKeyColumns { get; set; } = new();
 	[Required]
 	public short SynchScheduleMinutes { get; set; } = 60;

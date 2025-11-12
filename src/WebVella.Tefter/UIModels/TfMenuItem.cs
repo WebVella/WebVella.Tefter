@@ -126,7 +126,7 @@ public record TfMenuItemData
 	public Guid? SpaceId { get; set; }
 	public TfMenuItemType MenuType { get; set; } = TfMenuItemType.None;
 	public TfSpacePageType SpacePageType { get; set; } = TfSpacePageType.Page;
-	public TfImportFileToPageContextItem? ImportFileContext { get; set; } = null;
+	public TfSpacePageCreateFromFileContextItem? ImportFileContext { get; set; } = null;
 }
 
 public enum TfMenuItemType

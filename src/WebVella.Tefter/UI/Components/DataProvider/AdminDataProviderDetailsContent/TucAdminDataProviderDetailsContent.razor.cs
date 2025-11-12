@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisposable
 {
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
@@ -6,17 +7,20 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 	private TfDataProviderDisplaySettingsScreenRegionContext? _dynamicComponentContext = null;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private bool _isDeleting = false;
+
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 		TfEventProvider.Dispose();
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
 	}
+
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
 		InvokeAsync(async () =>
@@ -44,6 +48,7 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 				await InvokeAsync(StateHasChanged);
 				return;
 			}
+
 			_provider = TfService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
@@ -64,14 +69,14 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 	{
 		if (_provider is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderManageDialog>(
-		_provider,
-		new ()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			_provider,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
@@ -80,7 +85,9 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 
 	private async Task _deleteProvider()
 	{
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this data provider deleted?") + "\r\n" + LOC("Will proceeed only if there are not existing columns attached")))
+		if (!await JSRuntime.InvokeAsync<bool>("confirm",
+			    LOC("Are you sure that you need this data provider deleted?") + "\r\n" +
+			    LOC("Will proceeed only if there are not existing columns attached")))
 			return;
 
 		if (_provider is null) return;
@@ -92,14 +99,7 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 			var providers = TfService.GetDataProviders();
 			_provider = null;
 			ToastService.ShowSuccess(LOC("Data provider was successfully deleted"));
-			if (providers.Count > 0)
-			{
-				Navigator.NavigateTo(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, providers[0].Id));
-			}
-			else
-			{
-				Navigator.NavigateTo(TfConstants.AdminDataProvidersPageUrl, true);
-			}
+			Navigator.NavigateTo(TfConstants.AdminDataProvidersPageUrl, true);
 		}
 		catch (Exception ex)
 		{
@@ -110,6 +110,5 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 			_isDeleting = false;
 			await InvokeAsync(StateHasChanged);
 		}
-
 	}
 }

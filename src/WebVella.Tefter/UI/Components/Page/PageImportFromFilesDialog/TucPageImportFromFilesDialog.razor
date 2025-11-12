@@ -90,11 +90,6 @@
                     <FluentMessageBar AllowDismiss="false"
                                       Intent="MessageIntent.Info">@LOC("No files are found for import")</FluentMessageBar>
                 }
-                else if (!_selectedItem.IsSuccess)
-                {
-                    <FluentMessageBar AllowDismiss="false"
-                                      Intent="MessageIntent.Error">@_selectedItem.Message</FluentMessageBar>
-                }
                 else if (_selectedItem.ProcessStream.GetProgressLog().Count > 0)
                 {
                     <div class="tf-console-box">

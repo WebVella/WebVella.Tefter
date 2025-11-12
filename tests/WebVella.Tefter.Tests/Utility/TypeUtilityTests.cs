@@ -297,14 +297,9 @@ public class UtilityTestsDataProviderTypeClass : ITfDataProviderAddon
 		throw new NotImplementedException();
 	}
 	
-	public Task CanBeCreatedFromFile(
-		TfImportFileToPageContextItem item)
-	{
-		return Task.CompletedTask;
-	}
 
-	public Task CreateFromFile(
-		TfImportFileToPageContextItem item)
+	public Task GenerateDataProviderCreationRequest(
+		TfSpacePageCreateFromFileContextItem item,ITfService tfService)
 	{
 		return Task.CompletedTask;
 	}

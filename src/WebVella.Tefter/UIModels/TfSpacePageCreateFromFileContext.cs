@@ -1,11 +1,11 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public record TfImportFileToPageContext
+public record TfSpacePageCreateFromFileContext
 {
 	public List<ITfDataProviderAddon> DataProviderOptions { get; set; } = new();
-	public List<TfImportFileToPageContextItem> Items { get; set; } = new();
+	public List<TfSpacePageCreateFromFileContextItem> Items { get; set; } = new();
 
-	public TfImportFileToPageContext(List<FluentInputFileEventArgs> files)
+	public TfSpacePageCreateFromFileContext(List<FluentInputFileEventArgs> files)
 	{
 		foreach (var file in files)
 		{
@@ -19,10 +19,10 @@ public record TfImportFileToPageContext
 			fileStream.Position = 0;
 			fileStream.CopyTo(memoryStream);
 			memoryStream.Position = 0;
-			
+
 			if (Items.Any(x => x.LocalPath == file.LocalFile.FullName)) continue;
 
-			Items.Add(new TfImportFileToPageContextItem()
+			Items.Add(new TfSpacePageCreateFromFileContextItem()
 			{
 				File = file, FileName = file.Name, LocalPath = file.LocalFile!.FullName, FileContent = memoryStream,
 			});
@@ -38,21 +38,22 @@ public record TfImportFileToPageContext
 	}
 }
 
-public record TfImportFileToPageContextItem
+public record TfSpacePageCreateFromFileContextItem
 {
+	public TfUser User { get; set; } = null!;
+	public TfSpace Space { get; set; } = null!;
 	public FluentInputFileEventArgs File { get; set; } = null!;
 	public string FileName { get; set; } = String.Empty;
 	public string LocalPath { get; set; } = String.Empty;
 	public MemoryStream? FileContent { get; set; } = null;
-	public ITfDataProviderAddon? DataProvider { get; set; } = null;
-	public TfDataProviderSourceSchemaInfo? SchemaInfo { get; set; } = null;
-	public Guid? SpacePageId { get; set; } = null;
+	public bool IsSuccess { get; set; } = false;
 	public bool IsProcessed { get; set; } = false;
+
 	public TfImportFileToPageContextItemStatus Status
 	{
 		get
 		{
-			if (IsProcessed)
+			if (!IsProcessed)
 				return TfImportFileToPageContextItemStatus.Processing;
 
 			if (ProcessStream.GetProgressLog().Count == 0)
@@ -67,6 +68,7 @@ public record TfImportFileToPageContextItem
 			return TfImportFileToPageContextItemStatus.ProcessedSuccess;
 		}
 	}
+
 	public TfProgressStream ProcessStream { get; set; } = new();
 
 	public Icon GetStatusIcon()
@@ -105,9 +107,8 @@ public record TfImportFileToPageContextItem
 	}
 
 	public bool IsSelected { get; set; } = false;
-	public string? Message { get; set; } = "Cannot be processed by provider";
-	public bool IsSuccess { get; set; } = false;
-	public TfImportFileToPageResult? ImportResult { get; set; } = null;
+
+	public TfImportFileToPageResultProcessContext ProcessContext { get; set; } = new();
 }
 
 public enum TfImportFileToPageContextItemStatus
@@ -121,7 +122,21 @@ public enum TfImportFileToPageContextItemStatus
 	[Description("Processed with Error")] ProcessedWithErrors = 4
 }
 
-public record TfImportFileToPageResult
+public record TfImportFileToPageResultProcessContext
 {
-	public TfDataProviderSourceSchemaInfo SchemaInfo { get; set; } = new();
+	public ITfDataProviderAddon? UsedDataProviderAddon { get; set; } = null;
+	public TfDataProviderSourceSchemaInfo? DataSchemaInfo { get; set; } = null;
+	public TfImportFileToPageDataProviderCreationRequest? DataProviderCreationRequest { get; set; } = null;
+	public TfRepositoryFile? RepositoryFile { get; set; } = null;
+	public TfDataProvider? DataProvider { get; set; } = null;
+	public List<string> CreatedRepositoryFiles { get; set; } = new();
+}
+
+public record TfImportFileToPageDataProviderCreationRequest
+{
+	public string? Name { get; set; } = null;
+	public string? SettingsJson { get; set; } = null;
+	public List<string> SynchPrimaryKeyColumns { get; set; } = new();
+	public short SynchScheduleMinutes { get; set; } = 60;
+	public bool SynchScheduleEnabled { get; set; } = false;
 }

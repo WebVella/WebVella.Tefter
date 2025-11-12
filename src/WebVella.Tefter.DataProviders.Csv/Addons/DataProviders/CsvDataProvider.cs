@@ -23,6 +23,8 @@ public class CsvDataProvider : ITfDataProviderAddon
     public string AddonDescription { get; init; } = DESCRIPTION;
     public string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 
+    #region << PUBLIC >>
+
     /// <summary>
     /// Return what types of data types it can process from the data source
     /// </summary>
@@ -158,10 +160,8 @@ public class CsvDataProvider : ITfDataProviderAddon
                     throw;
                 }
 
-                using (var stream = tfService.GetRepositoryFileContentAsFileStream(file.Filename))
-                {
-                    return ReadCsvStream(stream, provider, config, settings, culture, synchLog);
-                }
+                using var stream = tfService.GetRepositoryFileContentAsFileStream(file.Filename);
+                return ReadCsvStream(stream, provider, config, settings, culture, synchLog);
             }
             else
             {
@@ -172,11 +172,9 @@ public class CsvDataProvider : ITfDataProviderAddon
                     throw ex;
                 }
 
-                using (var stream =
-                       new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    return ReadCsvStream(stream, provider, config, settings, culture, synchLog);
-                }
+                using var stream =
+                    new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                return ReadCsvStream(stream, provider, config, settings, culture, synchLog);
             }
         }
         finally
@@ -192,9 +190,8 @@ public class CsvDataProvider : ITfDataProviderAddon
     public TfDataProviderSourceSchemaInfo GetDataProviderSourceSchema(TfDataProvider provider)
     {
         var settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(provider.SettingsJson) ?? new();
-        var culture = new CultureInfo(settings.CultureName);
         var result = new TfDataProviderSourceSchemaInfo();
-        string? delimiter = null;
+        string? delimiter;
         switch (settings.Delimter)
         {
             case CsvDataProviderSettingsDelimiter.Semicolon:
@@ -233,15 +230,16 @@ public class CsvDataProvider : ITfDataProviderAddon
         stream.CopyTo(memoryStream);
         memoryStream.Position = 0;
 
-        var (isSuccess, message, schemaInfo) = memoryStream.CheckCsvFile(
+        var (isSuccess, message, schemaInfo, _) = new CsvDataProviderUtility().CheckCsvFile(memoryStream,
             filepath: settings.Filepath,
-            provider: this).GetAwaiter().GetResult();
+            delimiter: delimiter,
+            provider: this);
         if (!isSuccess)
             throw new Exception(message);
 
-        if(schemaInfo is null)
+        if (schemaInfo is null)
             throw new Exception("File Schema cannot be parsed");
-        
+
         memoryStream.Position = 0;
         return schemaInfo;
     }
@@ -293,21 +291,107 @@ public class CsvDataProvider : ITfDataProviderAddon
         return errors;
     }
 
-    public async Task CanBeCreatedFromFile(
-        TfImportFileToPageContextItem item)
+
+    public async Task GenerateDataProviderCreationRequest(
+        TfSpacePageCreateFromFileContextItem item,
+        ITfService tfService)
     {
-        item.DataProvider = this;
-        await item.CheckCsvFile();
+        await Task.Delay(0);
+        item.ProcessContext.UsedDataProviderAddon = this;
+        item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+        {
+            Message = "CsvDataProvider is validating file and discovering its data schema...",
+            Type = TfProgressStreamItemType.Debug,
+        });
+        var culture = Thread.CurrentThread.CurrentCulture;
+        #region << Validate >>
+
+        if (item.FileContent is null)
+        {
+            item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+            {
+                Message = "CsvDataProvider cannot process this file as it is empty!",
+                Type = TfProgressStreamItemType.Debug,
+            });
+            item.IsSuccess = false;
+            return;
+        }
+
+        var (checkResult,schema, delimiterFound) = new CsvDataProviderUtility().CheckCsvFile(item);
+        if (!checkResult)
+        {
+            item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+            {
+                Message = "CsvDataProvider cannot process this file, due to parse error!",
+                Type = TfProgressStreamItemType.Debug,
+            });
+            return;
+        }
+
+        if (item.ProcessContext.DataSchemaInfo is null)
+        {
+            item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+            {
+                Message = "CsvDataProvider cannot process this file, schema cannot be evaluated!",
+                Type = TfProgressStreamItemType.Debug,
+            });
+            return;
+        }
+
+        #endregion
+
+        item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+        {
+            Message = "Files validation is successful for CsvDataProvider!",
+            Type = TfProgressStreamItemType.Debug,
+        });
+        item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+        {
+            Message = "CsvDataProvider is preparing model for creation...",
+            Type = TfProgressStreamItemType.Debug,
+        });
+        //Create Repository File
+        var repFile = tfService.CreateRepositoryFile(item.FileName, item.FileContent, item.User.Id);
+        item.ProcessContext.CreatedRepositoryFiles.Add(repFile.Filename);
+
+        var delimiter = CsvDataProviderSettingsDelimiter.Comma;
+        switch (delimiterFound)
+        {
+            case ";":
+                delimiter = CsvDataProviderSettingsDelimiter.Semicolon;
+                break;
+            case "\t":
+                delimiter = CsvDataProviderSettingsDelimiter.Tab;               
+                break;
+        }
+
+        item.ProcessContext.DataProviderCreationRequest = new TfImportFileToPageDataProviderCreationRequest()
+        {
+            Name = repFile.Filename,
+            SettingsJson = JsonSerializer.Serialize(new CsvDataProviderSettings
+            {
+                Delimter = delimiter,
+                Filepath = repFile.Uri.ToString(),
+                AdvancedSetting = new CsvDataProviderSettingsAdvanced()
+                {
+                    ColumnImportParseFormat = new()
+                },
+                CultureName = culture.Name,
+            }),
+            SynchPrimaryKeyColumns = new(),
+            SynchScheduleEnabled = false,
+            SynchScheduleMinutes = 60
+        };
+        item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+        {
+            Message = "CsvDataProvider model preparation done!",
+            Type = TfProgressStreamItemType.Debug,
+        });
     }
 
+    #endregion
 
-    public async Task CreateFromFile(
-        TfImportFileToPageContextItem item)
-    {
-        item.DataProvider = this;
-        await item.CreateFromCsvFile();
-    }
-
+    #region << PRIVATE >>
 
     private ReadOnlyCollection<TfDataProviderDataRow> ReadCsvStream(
         Stream stream,
@@ -366,6 +450,9 @@ public class CsvDataProvider : ITfDataProviderAddon
                 TfDataProviderDataRow row = new TfDataProviderDataRow();
                 foreach (var providerColumnWithSource in sourceColumns)
                 {
+                    if (String.IsNullOrWhiteSpace(providerColumnWithSource.SourceName)
+                        || String.IsNullOrWhiteSpace(providerColumnWithSource.DbName))
+                        continue;
                     var sourceName = providerColumnWithSource.SourceName.ToSourceColumnName();
 
                     if (!sourceRow.ContainsKey(sourceName))
@@ -379,7 +466,7 @@ public class CsvDataProvider : ITfDataProviderAddon
                     {
                         row[providerColumnWithSource.DbName] = ConvertValue(
                             providerColumnWithSource,
-                            sourceRow[sourceName],
+                            sourceRow[sourceName] ?? String.Empty,
                             settings: settings,
                             culture: culture);
                     }
@@ -519,4 +606,6 @@ public class CsvDataProvider : ITfDataProviderAddon
     }
 
     private string LOC(string name) => name;
+
+    #endregion
 }
