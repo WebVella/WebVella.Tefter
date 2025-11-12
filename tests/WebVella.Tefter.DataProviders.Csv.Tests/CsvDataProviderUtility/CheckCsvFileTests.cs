@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using AwesomeAssertions;
+using WebVella.Tefter.DataProviders.Csv.Addons;
 using WebVella.Tefter.DataProviders.Csv.Tests.Utils;
 
 namespace WebVella.Tefter.DataProviders.Csv.Tests;
@@ -10,11 +11,12 @@ public class CsvDataProviderUtilityTests
     [Fact]
     public async Task CheckCsvFile_MemoryStream_Success()
     {
-        var fileName = "100-rows.csv";
+        var fileName = "1000-rows.csv";
         MemoryStream inputContext = new CsvDataProviderTestUtility().LoadFileStream(fileName);
-        var (isSuccess, message) = await inputContext.CheckCsvFile(filepath:fileName);
+        var (isSuccess, message,schemaInfo) = await inputContext.CheckCsvFile(filepath:fileName, provider:new CsvDataProvider());
         isSuccess.Should().BeTrue();
         message.Should().Be("File check successful");
+        schemaInfo.Should().NotBeNull();
     }    
     
     [Fact]
@@ -22,9 +24,10 @@ public class CsvDataProviderUtilityTests
     {
         var fileName = "empty.csv";
         MemoryStream inputContext = new CsvDataProviderTestUtility().LoadFileStream(fileName);
-        var (isSuccess, message) = await inputContext.CheckCsvFile(filepath:fileName);
+        var (isSuccess, message,schemaInfo) = await inputContext.CheckCsvFile(filepath:fileName, provider:new CsvDataProvider());
         isSuccess.Should().BeFalse();
         message.Should().Be("File content is empty");
+        schemaInfo.Should().BeNull();
     }      
     
     [Fact]
@@ -32,8 +35,9 @@ public class CsvDataProviderUtilityTests
     {
         var fileName = "image-as-csv.csv";
         MemoryStream inputContext = new CsvDataProviderTestUtility().LoadFileStream(fileName);
-        var (isSuccess, message) = await inputContext.CheckCsvFile(filepath:fileName);
+        var (isSuccess, message,schemaInfo) = await inputContext.CheckCsvFile(filepath:fileName, provider:new CsvDataProvider());
         isSuccess.Should().BeFalse();
+        schemaInfo.Should().BeNull();
     }          
     #endregion
 
@@ -43,7 +47,7 @@ public class CsvDataProviderUtilityTests
     [Fact]
     public async Task CheckCsvFile_Success()
     {
-        var inputContext = new CsvDataProviderTestUtility().CreateFileContext("csv-header.csv");
+        var inputContext = new CsvDataProviderTestUtility().CreateFileContext("1000-rows.csv");
         await inputContext.CheckCsvFile();
         inputContext.IsSuccess.Should().BeTrue();
         var progressLog = inputContext.ProcessStream.GetProgressLog();
@@ -55,10 +59,13 @@ public class CsvDataProviderUtilityTests
     {
         var inputContext = new CsvDataProviderTestUtility().CreateFileContext("csv-no-header.csv");
         await inputContext.CheckCsvFile();
-        inputContext.IsSuccess.Should().BeTrue();
+        inputContext.IsSuccess.Should().BeFalse();
         var progressLog = inputContext.ProcessStream.GetProgressLog();
         progressLog.Should().NotBeNull();
         progressLog.Should().NotBeEmpty();
+        var hasMessage = progressLog.Any(x =>
+            x.Message == "Cannot evaluate the file schema. Error: A header row is required for the file");
+        hasMessage.Should().BeTrue();
     }    
     [Fact]
     public async Task CheckCsvFile_Failure()

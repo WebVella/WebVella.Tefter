@@ -11,14 +11,14 @@ public class AvatarComponentTests : BaseTest
 			var Context = GetTestContext();
 			var cssClass = "test-avatar";
 			// Act
-			var cut = Context.RenderComponent<TucAvatar>(parameters => parameters
+			var cut = Context.Render<TucAvatar>(parameters => parameters
 			.Add(p => p.Class, cssClass)
 			);
 
 			// Assert
 			cut.Find($".{cssClass}");
 
-			Context.DisposeComponents();
+			Context.Dispose();
 		}
 	}
 

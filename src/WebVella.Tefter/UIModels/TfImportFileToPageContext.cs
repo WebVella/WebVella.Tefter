@@ -15,7 +15,7 @@ public record TfImportFileToPageContext
 			using var fileStream =
 				new FileStream(file.LocalFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-			using var memoryStream = new MemoryStream();
+			var memoryStream = new MemoryStream();
 			fileStream.Position = 0;
 			fileStream.CopyTo(memoryStream);
 			memoryStream.Position = 0;
@@ -45,9 +45,9 @@ public record TfImportFileToPageContextItem
 	public string LocalPath { get; set; } = String.Empty;
 	public MemoryStream? FileContent { get; set; } = null;
 	public ITfDataProviderAddon? DataProvider { get; set; } = null;
+	public TfDataProviderSourceSchemaInfo? SchemaInfo { get; set; } = null;
 	public Guid? SpacePageId { get; set; } = null;
 	public bool IsProcessed { get; set; } = false;
-
 	public TfImportFileToPageContextItemStatus Status
 	{
 		get
@@ -67,7 +67,6 @@ public record TfImportFileToPageContextItem
 			return TfImportFileToPageContextItemStatus.ProcessedSuccess;
 		}
 	}
-
 	public TfProgressStream ProcessStream { get; set; } = new();
 
 	public Icon GetStatusIcon()
@@ -106,8 +105,8 @@ public record TfImportFileToPageContextItem
 	}
 
 	public bool IsSelected { get; set; } = false;
-	public string? Message { get; set; } = null;
-	public bool IsSuccess { get; set; } = true;
+	public string? Message { get; set; } = "Cannot be processed by provider";
+	public bool IsSuccess { get; set; } = false;
 	public TfImportFileToPageResult? ImportResult { get; set; } = null;
 }
 

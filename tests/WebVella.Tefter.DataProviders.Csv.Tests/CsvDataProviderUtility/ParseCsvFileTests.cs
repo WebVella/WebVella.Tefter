@@ -1,4 +1,5 @@
 ﻿using AwesomeAssertions;
+using WebVella.Tefter.DataProviders.Csv.Addons;
 using WebVella.Tefter.DataProviders.Csv.Tests.Utils;
 
 namespace WebVella.Tefter.DataProviders.Csv.Tests;
@@ -15,26 +16,21 @@ public class ParseCsvFileTests
         inputContext.IsSuccess.Should().BeFalse();
         var progressLog = inputContext.ProcessStream.GetProgressLog();
        
-        var message = progressLog.FirstOrDefault(x =>
-            x.Message == "[CsvDataProvider] File contents contain non printable or invalid characters");
-        message.Should().NotBeNull();
+        var hasMessage = progressLog.Any(x =>
+            x.Message == "File contents contain non printable or invalid characters");
+        hasMessage.Should().BeTrue();
     }   
     
     [Fact]
     public async Task ParseCsvFile_WithHeader()
     {
-        var inputContext = new CsvDataProviderTestUtility().CreateFileContext("csv-header.csv");
+        var inputContext = new CsvDataProviderTestUtility().CreateFileContext("1000-rows.csv");
         await inputContext.CreateFromCsvFile();
+        var progressLog = inputContext.ProcessStream.GetProgressLog();
         inputContext.IsSuccess.Should().BeTrue();
         
     }    
     
-    [Fact]
-    public async Task ParseCsvFile_NoHeader()
-    {
-        var inputContext = new CsvDataProviderTestUtility().LoadFileStream("1000-rows.csv");
-        var result = await inputContext.InferSchemaAsync();
-        
-    }        
+   
     
 }

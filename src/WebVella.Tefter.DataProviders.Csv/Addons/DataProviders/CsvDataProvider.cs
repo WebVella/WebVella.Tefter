@@ -232,19 +232,18 @@ public class CsvDataProvider : ITfDataProviderAddon
         stream.Position = 0;
         stream.CopyTo(memoryStream);
         memoryStream.Position = 0;
-       
-        var (isSuccess, message) = memoryStream.CheckCsvFile(filepath: settings.Filepath).GetAwaiter().GetResult();
+
+        var (isSuccess, message, schemaInfo) = memoryStream.CheckCsvFile(
+            filepath: settings.Filepath,
+            provider: this).GetAwaiter().GetResult();
         if (!isSuccess)
             throw new Exception(message);
+
+        if(schemaInfo is null)
+            throw new Exception("File Schema cannot be parsed");
         
         memoryStream.Position = 0;
-        return memoryStream.GetSchemaInfo(
-            getDatabaseColumnTypesForSourceDataType: GetDatabaseColumnTypesForSourceDataType,
-            culture: culture,
-            delimiter: delimiter,
-            columnImportParseFormat: settings.AdvancedSetting.ColumnImportParseFormat,
-            supportedSourceDataTypes: GetSupportedSourceDataTypes()
-        );
+        return schemaInfo;
     }
 
     /// <summary>
@@ -297,6 +296,7 @@ public class CsvDataProvider : ITfDataProviderAddon
     public async Task CanBeCreatedFromFile(
         TfImportFileToPageContextItem item)
     {
+        item.DataProvider = this;
         await item.CheckCsvFile();
     }
 
@@ -304,6 +304,7 @@ public class CsvDataProvider : ITfDataProviderAddon
     public async Task CreateFromFile(
         TfImportFileToPageContextItem item)
     {
+        item.DataProvider = this;
         await item.CreateFromCsvFile();
     }
 

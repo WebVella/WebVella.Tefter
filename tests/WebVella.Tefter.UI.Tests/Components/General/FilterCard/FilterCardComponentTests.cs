@@ -9,13 +9,13 @@ public class FilterCardComponentTests : BaseTest
 		var Context = GetTestContext();
 		TfServiceMock.Setup(s => s.GetDatasetColumnOptions(It.IsAny<Guid>())).Returns(new List<TfDatasetColumn>());
 		// Act
-		var cut = Context.RenderComponent<TucFilterCard>(parameters => parameters
+		var cut = Context.Render<TucFilterCard>(parameters => parameters
 			.Add(p => p.DatasetId, (new TfDataset()).Id));
 
 		// Assert
 		cut.Find(".tf-card");
 
-		Context.DisposeComponents();
+		Context.Dispose();
 	}
 
 }

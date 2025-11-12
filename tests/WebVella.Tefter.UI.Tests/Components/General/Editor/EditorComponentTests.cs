@@ -11,12 +11,12 @@ public class EditorComponentTests : BaseTest
 			//Given
 			var Context = GetTestContext();
 			// Act
-			var cut = Context.RenderComponent<TucEditor>();
+			var cut = Context.Render<TucEditor>();
 
 			// Assert
 			cut.Find(".tf-editor");
 
-			Context.DisposeComponents();
+			Context.Dispose();
 		}
 	}
 

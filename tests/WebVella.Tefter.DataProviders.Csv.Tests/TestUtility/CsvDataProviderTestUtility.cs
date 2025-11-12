@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Microsoft.FluentUI.AspNetCore.Components;
+using WebVella.Tefter.DataProviders.Csv.Addons;
 using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.DataProviders.Csv.Tests.Utils;
@@ -14,7 +15,7 @@ public class CsvDataProviderTestUtility
             FileName = fileName,
             LocalPath = "",
             FileContent = LoadFileAsStream(fileName),
-            DataProvider = null,
+            DataProvider = new CsvDataProvider(),
             SpacePageId = null,
             IsProcessed = false,
             ProcessStream = new(),

@@ -85,13 +85,14 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 		if (!result.Cancelled && result.Data != null) { }
 	}
 
-	private async Task _deleteIdentity(TfDataProviderIdentity key)
+	private async Task _deleteIdentity(TfDataProviderIdentity identity)
 	{
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this key deleted?")))
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this identity deleted?")))
 			return;
 		try
 		{
-			ToastService.ShowSuccess(LOC("The implementation is successfully deleted!"));
+			TfService.DeleteDataProviderIdentity(identity.Id);
+			ToastService.ShowSuccess(LOC("The identity is successfully deleted!"));
 		}
 		catch (Exception ex)
 		{

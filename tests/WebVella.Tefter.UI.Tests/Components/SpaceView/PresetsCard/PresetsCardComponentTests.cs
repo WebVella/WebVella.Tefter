@@ -11,12 +11,12 @@ public class PresetsCardComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TucPresetFiltersCard>();
+		var cut = Context.Render<TucPresetFiltersCard>();
 
 		// Assert
 		cut.Find(".tf-card");
 
-		Context.DisposeComponents();
+		Context.Dispose();
 	}
 
 }

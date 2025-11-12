@@ -10,12 +10,12 @@ public class ErrorBoundryComponentTests : BaseTest
 			//Given
 			var Context = GetTestContext();
 			// Act
-			var cut = Context.RenderComponent<TucErrorBoundry>();
+			var cut = Context.Render<TucErrorBoundry>();
 
 			// Assert
 			cut.Nodes.Length.Should().Be(0);
 
-			Context.DisposeComponents();
+			Context.Dispose();
 		}
 	}
 

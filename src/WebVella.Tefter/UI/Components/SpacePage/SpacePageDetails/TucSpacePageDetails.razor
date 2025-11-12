@@ -21,7 +21,7 @@ else if (_spacePage is null)
 }
 else if (_spacePage.ComponentType is not null)
 {
-	<TucErrorBoundry>
+	<TucErrorBoundry ShowAsAlert="true" Style="padding:var(--tf-padding)">
 		<DynamicComponent Type="@_spacePage.ComponentType" Parameters="@_getDynamicComponentParams()" />
 	</TucErrorBoundry>
 }

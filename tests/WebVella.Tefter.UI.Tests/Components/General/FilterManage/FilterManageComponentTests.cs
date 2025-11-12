@@ -8,14 +8,14 @@ public class FilterManageComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TucFilterManage>(parameters => parameters
+		var cut = Context.Render<TucFilterManage>(parameters => parameters
 		.Add(p => p.Item, new TfFilterAnd { })
 		);
 
 		// Assert
 		cut.Find(".tf-filter-manage");
 
-		Context.DisposeComponents();
+		Context.Dispose();
 	}
 
 }

@@ -14,7 +14,7 @@ public class SpaceViewPageComponentTests : BaseTest
 		var Context = GetTestContext();
 		// Act
 		var authLayout = new TfAuthLayout();
-		var cut = Context.RenderComponent<TucSpaceViewSpacePageAddon>(args => args
+		var cut = Context.Render<TucSpaceViewSpacePageAddon>(args => args
 		.Add(x => x.Context, new TfSpacePageAddonContext()
 		{
 			ComponentOptionsJson = JsonSerializer.Serialize(new TfSpaceViewSpacePageAddonOptions())
@@ -25,7 +25,7 @@ public class SpaceViewPageComponentTests : BaseTest
 		// Assert
 		cut.Find(".fluent-messagebar");
 
-		Context.DisposeComponents();
+		Context.Dispose();
 	}
 
 }

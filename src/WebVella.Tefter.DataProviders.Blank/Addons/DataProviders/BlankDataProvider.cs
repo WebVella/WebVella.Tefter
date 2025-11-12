@@ -98,7 +98,7 @@ public class BlankDataProvider : ITfDataProviderAddon
     public Task CanBeCreatedFromFile(
         TfImportFileToPageContextItem item)
     {
-        return Task.FromResult(false);
+        return Task.CompletedTask;
     }
 
     public Task CreateFromFile(

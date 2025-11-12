@@ -8,13 +8,13 @@ public class LoginComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TucLogin>();
+		var cut = Context.Render<TucLogin>();
 
 		// Assert
 		cut.Find(".login-logo");
 		cut.Find(".fluent-input-label[for='email']").TextContent.Equals("Email");
 
-		Context.DisposeComponents();
+		Context.Dispose();
 	}
 
 	[Fact]
@@ -26,12 +26,12 @@ public class LoginComponentTests : BaseTest
 		CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("bg-BG");
 
 		// Act
-		var cut = Context.RenderComponent<TucLogin>();
+		var cut = Context.Render<TucLogin>();
 
 		// Assert
 		cut.Find(".login-logo");
 		cut.Find(".fluent-input-label[for='email']").TextContent.Equals("Имейл");
 
-		Context.DisposeComponents();
+		Context.Dispose();
 	}
 }

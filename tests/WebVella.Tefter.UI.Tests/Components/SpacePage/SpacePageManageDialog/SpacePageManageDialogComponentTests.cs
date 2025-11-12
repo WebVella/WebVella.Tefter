@@ -7,7 +7,7 @@ public class SpacePageManageDialogComponentTests : BaseTest
 	{
 		//Given
 		var Context = GetTestContext();
-		var dialogProvider = Context.RenderComponent<FluentDialogProvider>();
+		var dialogProvider = Context.Render<FluentDialogProvider>();
 		// Act
 		var dialogService = Context.Services.GetRequiredService<IDialogService>();
 		var dialog = await dialogService.ShowDialogAsync<TucSpacePageManageDialog>(new TfSpacePage(),new ());
@@ -15,6 +15,6 @@ public class SpacePageManageDialogComponentTests : BaseTest
 		dialogProvider.Find(".fluent-dialog-main");
 		dialog.Dismiss(null);
 
-		Context.DisposeComponents();
+		Context.Dispose();
 	}
 }

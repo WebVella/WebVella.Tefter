@@ -8,11 +8,11 @@ public class LoadingPaneComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TucLoadingPane>();
+		var cut = Context.Render<TucLoadingPane>();
 
 		// Assert
 		cut.WaitForElements(".loading", 1, TimeSpan.FromSeconds(2));
 
-		Context.DisposeComponents();
+		Context.Dispose();
 	}
 }

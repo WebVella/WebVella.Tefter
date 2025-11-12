@@ -1,34 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <UserSecretsId>7eb2be1f-bb3d-463b-8a81-767f85d97fd6</UserSecretsId>
-    </PropertyGroup>
+		<RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>
+	</PropertyGroup>
     <PropertyGroup>
         <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <SatelliteResourceLanguages>en,bg</SatelliteResourceLanguages>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="System.Formats.Asn1" Version="9.0.10"/>
-        <PackageReference Include="System.IO.Packaging" Version="9.0.10"/>
-        <PackageReference Include="System.Text.Encodings.Web" Version="9.0.10"/>
-        <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.DocumentFile\WebVella.Tefter.TemplateProcessors.DocumentFile.csproj"/>
-        <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.Email\WebVella.Tefter.TemplateProcessors.Email.csproj"/>
-        <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.ExcelFile\WebVella.Tefter.TemplateProcessors.ExcelFile.csproj"/>
-        <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.TextContent\WebVella.Tefter.TemplateProcessors.TextContent.csproj"/>
-        <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.TextFile\WebVella.Tefter.TemplateProcessors.TextFile.csproj"/>
-        <ProjectReference Include="..\WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj"/>
-        <ProjectReference Include="..\WebVella.Tefter.DataProviders.Blank\WebVella.Tefter.DataProviders.Blank.csproj"/>
-        <ProjectReference Include="..\WebVella.Tefter.DataProviders.Excel\WebVella.Tefter.DataProviders.Excel.csproj"/>
-        <ProjectReference Include="..\WebVella.Tefter.DataProviders.Folder\WebVella.Tefter.DataProviders.Folder.csproj"/>
-        <ProjectReference Include="..\WebVella.Tefter.DataProviders.MsSql\WebVella.Tefter.DataProviders.MsSql.csproj"/>
-        <ProjectReference Include="..\WebVella.Tefter.DataProviders.Csv\WebVella.Tefter.DataProviders.Csv.csproj"/>
-        <ProjectReference Include="..\WebVella.Tefter.Recipes\WebVella.Tefter.Recipes.csproj"/>
-        <ProjectReference Include="..\WebVella.Tefter.Talk\WebVella.Tefter.Talk.csproj"/>
-        <ProjectReference Include="..\WebVella.Tefter\WebVella.Tefter.csproj"/>
+        <PackageReference Include="System.Formats.Asn1" Version="10.0.0" />
+        <PackageReference Include="System.IO.Packaging" Version="10.0.0" />
+        <PackageReference Include="System.Text.Encodings.Web" Version="10.0.0" />
+        <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.DocumentFile\WebVella.Tefter.TemplateProcessors.DocumentFile.csproj" />
+        <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.Email\WebVella.Tefter.TemplateProcessors.Email.csproj" />
+        <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.ExcelFile\WebVella.Tefter.TemplateProcessors.ExcelFile.csproj" />
+        <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.TextContent\WebVella.Tefter.TemplateProcessors.TextContent.csproj" />
+        <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.TextFile\WebVella.Tefter.TemplateProcessors.TextFile.csproj" />
+        <ProjectReference Include="..\WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj" />
+        <ProjectReference Include="..\WebVella.Tefter.DataProviders.Blank\WebVella.Tefter.DataProviders.Blank.csproj" />
+        <ProjectReference Include="..\WebVella.Tefter.DataProviders.Excel\WebVella.Tefter.DataProviders.Excel.csproj" />
+        <ProjectReference Include="..\WebVella.Tefter.DataProviders.Folder\WebVella.Tefter.DataProviders.Folder.csproj" />
+        <ProjectReference Include="..\WebVella.Tefter.DataProviders.MsSql\WebVella.Tefter.DataProviders.MsSql.csproj" />
+        <ProjectReference Include="..\WebVella.Tefter.DataProviders.Csv\WebVella.Tefter.DataProviders.Csv.csproj" />
+        <ProjectReference Include="..\WebVella.Tefter.Recipes\WebVella.Tefter.Recipes.csproj" />
+        <ProjectReference Include="..\WebVella.Tefter.Talk\WebVella.Tefter.Talk.csproj" />
+        <ProjectReference Include="..\WebVella.Tefter\WebVella.Tefter.csproj" />
     </ItemGroup>
     <ItemGroup>
         <Content Update="appsettings.DESKTOP-KU8LRG2.json">

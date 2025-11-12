@@ -11,14 +11,14 @@ public class ColumnCardComponentTests : BaseTest
 			var Context = GetTestContext();
 			var items = new List<string> { "col1", "col2" };
 			// Act
-			var cut = Context.RenderComponent<TucColumnCard>(parameters => parameters
+			var cut = Context.Render<TucColumnCard>(parameters => parameters
 			.Add(p => p.Items, items)
 			);
 
 			// Assert
 			var mainWrapper = cut.Find($".tf-card");
 
-			Context.DisposeComponents();
+			Context.Dispose();
 		}
 	}
 

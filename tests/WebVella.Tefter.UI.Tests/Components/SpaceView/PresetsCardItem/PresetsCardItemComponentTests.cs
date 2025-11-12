@@ -11,13 +11,13 @@ public class PresetsCardItemComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TucPresetFiltersCardItem>(args => args
+		var cut = Context.Render<TucPresetFiltersCardItem>(args => args
 		.Add(x=> x.Item, new TfSpaceViewPreset()));
 
 		// Assert
 		cut.Find(".tf-grid-tr");
 
-		Context.DisposeComponents();
+		Context.Dispose();
 	}
 
 }

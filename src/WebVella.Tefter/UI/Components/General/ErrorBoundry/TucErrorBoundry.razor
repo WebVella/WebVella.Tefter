@@ -4,12 +4,23 @@
 		@ChildContent
 	</ChildContent>
 	<ErrorContent>
-		<div style="color:var(--error);" title="@context.Message">error!</div>
-		<table style="display: none">@context.StackTrace</table>
+		<div style="@Style">
+			@if (!ShowAsAlert)
+			{
+				<div style="color:var(--error);" title="@context.Message">error!</div>
+			}
+			else
+			{
+				<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Error">@context.Message</FluentMessageBar>
+			}
+			<table style="display: none">@context.StackTrace</table>
+		</div>
 	</ErrorContent>
 </ErrorBoundary>
 
 
 @code {
 	[Parameter] public RenderFragment ChildContent { get; set; }
+	[Parameter] public bool ShowAsAlert { get; set; } = false;
+	[Parameter] public string Style { get; set; } = "";
 }

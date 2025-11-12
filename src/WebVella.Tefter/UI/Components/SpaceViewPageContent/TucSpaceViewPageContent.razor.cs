@@ -201,6 +201,11 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				_editedDataRows = new();
 			}
 
+			if (_spaceData is null || _dataProvider is null)
+			{
+				throw new Exception("Dataset or DataProvider was not found");
+			}
+
 			_currentUser = Context!.CurrentUser;
 			_preset = null;
 			if (_navState.SpaceViewPresetId is not null)
