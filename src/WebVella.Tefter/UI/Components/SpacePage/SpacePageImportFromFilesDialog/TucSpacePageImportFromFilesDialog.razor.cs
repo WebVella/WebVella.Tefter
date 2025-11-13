@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucPageImportFromFilesDialog : TfBaseComponent,
+public partial class TucSpacePageImportFromFilesDialog : TfBaseComponent,
 	IDialogContentComponent<List<FluentInputFileEventArgs>?>
 {
 	[Parameter] public List<FluentInputFileEventArgs>? Content { get; set; }
@@ -37,7 +37,20 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 
 	private async Task _cancel()
 	{
+		var state = TfAuthLayout.GetState();
+		if (state.NavigationState.SpacePageId is null)
+		{
+			var spaceId = TfAuthLayout.GetState().Space!.Id;
+			var spacePages = TfService.GetSpacePages(spaceId);
+			if (spacePages.Any())
+			{
+				Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl,
+					spaceId, spacePages[0].Id
+				));
+			}
+		}
 		await Dialog.CancelAsync();
+
 	}
 
 	private void _initMenu()
@@ -112,23 +125,6 @@ public partial class TucPageImportFromFilesDialog : TfBaseComponent,
 			_initMenu();
 			_isProcessing = false;
 			await InvokeAsync(StateHasChanged);
-			var state = TfAuthLayout.GetState();
-			if (state.NavigationState.SpacePageId is not null) 
-			{
-				await _cancel();
-				return;
-			}
-
-			var spaceId = TfAuthLayout.GetState().Space!.Id;
-			var spacePages = TfService.GetSpacePages(spaceId);
-			if (spacePages.Any())
-			{
-				Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl,
-					spaceId,spacePages[0].Id
-				));				
-			}
-			await _cancel();
-		
 		}
 	}
 

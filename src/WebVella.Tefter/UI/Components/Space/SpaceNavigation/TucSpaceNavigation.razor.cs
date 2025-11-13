@@ -89,7 +89,7 @@ public partial class TucSpaceNavigation : TfBaseComponent, IDisposable
 		_dragClass = null;
 		RegenRenderLock();
 		await InvokeAsync(StateHasChanged);		
-		var dialog = await DialogService.ShowDialogAsync<TucPageImportFromFilesDialog>(
+		var dialog = await DialogService.ShowDialogAsync<TucSpacePageImportFromFilesDialog>(
 			files,
 			new()
 			{

@@ -168,7 +168,7 @@ public class CsvDataProviderUtility
         return headerColumns;
     }
 
-    public (bool,TfDataProviderSourceSchemaInfo?,string?) CheckCsvFile(TfSpacePageCreateFromFileContextItem item)
+    public (bool,string?) CheckCsvFile(TfSpacePageCreateFromFileContextItem item)
     {
         if (item.FileContent is null)
         {
@@ -177,7 +177,7 @@ public class CsvDataProviderUtility
                 Message = "CSVDataProvider cannot process this file: No file content",
                 Type = TfProgressStreamItemType.Debug
             });
-            return (false,null,null);
+            return (false,null);
         }
 
         item.FileContent.Position = 0;
@@ -196,7 +196,7 @@ public class CsvDataProviderUtility
             Message = message
         });
 
-        return (isSuccess,schema,delimiterFound);
+        return (isSuccess,delimiterFound);
     }
 
     private TfDataProviderSourceSchemaInfo GetSchemaInfo(MemoryStream stream,

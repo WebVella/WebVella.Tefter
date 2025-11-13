@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using CsvHelper;
 using CsvHelper.Configuration;
+using DocumentFormat.OpenXml.Math;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Diagnostics;
 using System.Globalization;
@@ -165,11 +166,9 @@ public class ExcelDataProvider : ITfDataProviderAddon
     /// </summary>
     public TfDataProviderSourceSchemaInfo GetDataProviderSourceSchema(TfDataProvider provider)
     {
-        int maxSampleSize = 200;
         var settings = JsonSerializer.Deserialize<ExcelDataProviderSettings>(provider.SettingsJson);
         if (settings is null) settings = new();
         var culture = new CultureInfo(settings.CultureName);
-        var result = new TfDataProviderSourceSchemaInfo();
 
         Stream stream;
         if (string.IsNullOrWhiteSpace(settings.Filepath))
@@ -190,112 +189,21 @@ public class ExcelDataProvider : ITfDataProviderAddon
         {
             stream = new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         }
-        Dictionary<string, List<TfDatabaseColumnType>> suggestedColumnTypes = new();
-        Dictionary<string, List<TfExcelColumnType>> suggestedSourceColumnTypes = new();
+        using var memoryStream = new MemoryStream();
+        stream.Position = 0;
+        stream.CopyTo(memoryStream);
+        memoryStream.Position = 0;
 
-        using (stream)
-        {
-            using (var wb = new XLWorkbook(stream))
-            {
-                if (wb.Worksheets.Count == 0) return result;
-                var ws = wb.Worksheets.First();
-                var totalRecords = ws.Rows().Count();
-                if (totalRecords <= 1) return result;
-                if (ws.LastColumnUsed() is null) return result;
-                int totalColumns = ws.LastColumnUsed()!.ColumnNumber();
-                var colNameDict = new Dictionary<int, string>();
-                #region << Process Header >>
-                {
-                    var row = ws.Rows().First();
-                    for (int i = 1; i <= totalColumns; i++)
-                    {
-                        var value = ws.Cell(1, i).Value.ToString();
-                        var columnName = value.ToSourceColumnName();
-                        if (result.SourceColumnDefaultDbType.ContainsKey(columnName))
-                            throw new Exception($"Column with the name '{columnName}' is found multiple times in the source");
+        var (isSuccess, message, schemaInfo) = new ExcelDataProviderUtility().CheckExcelFile(memoryStream,
+            filepath: settings.Filepath,
+            provider: this);
+        if (!isSuccess)
+            throw new Exception(message);
 
-                        result.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.Text;
-                        colNameDict[i] = columnName;
-                    }
-                }
-                #endregion
+        if (schemaInfo is null)
+            throw new Exception("File Schema cannot be parsed");
 
-                #region << Process Rows >>
-                HashSet<int> rowIndexToReadHS = totalRecords.GenerateSampleIndexesForList(maxSampleSize, skipCount: 1);
-                var rowIndex = 0;
-                foreach (var row in ws.Rows())
-                {
-                    if (!rowIndexToReadHS.Contains(rowIndex))
-                    {
-                        rowIndex++;
-                        continue;
-                    }
-
-                    for (int i = 1; i <= totalColumns; i++)
-                    {
-                        if (!colNameDict.ContainsKey(i))
-                            throw new Exception($"Column with the index '{i}' was not initialized");
-                        var columnName = colNameDict[i];
-                        if (!result.SourceColumnDefaultDbType.ContainsKey(columnName))
-                            throw new Exception($"Column with the name '{columnName}' was not initialized");
-                        var cell = ws.Cell(row.RowNumber(), i);
-                        var cellValue = cell.Value.ToString();
-
-                        if (!result.SourceColumnDefaultValue.ContainsKey(columnName)
-                            && !String.IsNullOrWhiteSpace(cellValue))
-                            result.SourceColumnDefaultValue[columnName] = cellValue;
-
-                        string? importFormat = null;
-                        if (cell.Style is not null)
-                        {
-                            if (cell.Style.DateFormat is not null
-                                && String.IsNullOrWhiteSpace(cell.Style.DateFormat.Format))
-                            {
-                                importFormat = cell.Style.DateFormat.Format;
-                            }
-                        }
-                        TfDatabaseColumnType type = SourceToColumnTypeConverter.GetDataTypeFromString(cellValue, culture, importFormat);
-
-                        if (!suggestedColumnTypes.ContainsKey(columnName)) suggestedColumnTypes[columnName] = new();
-                        suggestedColumnTypes[columnName].Add(type);
-
-                        if (!suggestedSourceColumnTypes.ContainsKey(columnName)) suggestedSourceColumnTypes[columnName] = new();
-                        suggestedSourceColumnTypes[columnName].Add(GetSourceTypeFromCell(cell));
-                    }
-
-                    rowIndex++;
-
-                }
-                #endregion
-            }
-        }
-
-        foreach (var key in result.SourceColumnDefaultDbType.Keys)
-        {
-            var columnType = TfDatabaseColumnType.Text;
-            if (suggestedColumnTypes.ContainsKey(key))
-                columnType = suggestedColumnTypes[key].GetTypeFromOptions();
-
-            result.SourceColumnDefaultDbType[key] = columnType;
-        }
-
-        var preferredSourceTypeForDbType = new Dictionary<TfDatabaseColumnType, string>();
-        foreach (var providerDataType in provider.ProviderType.GetSupportedSourceDataTypes())
-        {
-            var supportedDBList = provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(providerDataType);
-            var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
-            result.SourceTypeSupportedDbTypes[providerDataType] = supportedDBList.ToList();
-            if (supportedDBList.Count > 0)
-            {
-                preferredSourceTypeForDbType[supportedDBList.First()] = providerDataType;
-            }
-        }
-        foreach (var columnName in suggestedSourceColumnTypes.Keys)
-        {
-            result.SourceColumnDefaultSourceType[columnName] = GetTypeFromOptions(suggestedSourceColumnTypes[columnName]).ToDescriptionString();
-        }
-
-        return result;
+        return schemaInfo;
     }
 
     /// <summary>
@@ -338,10 +246,97 @@ public class ExcelDataProvider : ITfDataProviderAddon
         return errors;
     }
 
-    public Task GenerateDataProviderCreationRequest(
+    public async Task GenerateDataProviderCreationRequest(
         TfSpacePageCreateFromFileContextItem item,ITfService tfService)
     {
-        return Task.CompletedTask;
+        await Task.Delay(0);
+        item.ProcessContext.UsedDataProviderAddon = this;
+        item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+        {
+            Message = "ExcelDataProvider is validating file and discovering its data schema...",
+            Type = TfProgressStreamItemType.Debug,
+        });
+        var culture = Thread.CurrentThread.CurrentCulture;
+        #region << Validate >>
+
+        if (item.FileContent is null)
+        {
+            item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+            {
+                Message = "ExcelDataProvider cannot process this file as it is empty!",
+                Type = TfProgressStreamItemType.Debug,
+            });
+            item.IsSuccess = false;
+            return;
+        }
+
+        var checkResult = new ExcelDataProviderUtility().CheckExcelFile(item);
+        if (!checkResult)
+        {
+            item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+            {
+                Message = "ExcelDataProvider cannot process this file, due to parse error!",
+                Type = TfProgressStreamItemType.Debug,
+            });
+            return;
+        }
+
+        if (item.ProcessContext.DataSchemaInfo is null)
+        {
+            item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+            {
+                Message = "ExcelDataProvider cannot process this file, schema cannot be evaluated!",
+                Type = TfProgressStreamItemType.Debug,
+            });
+            return;
+        }
+        var columnsData = new List<string>();
+        foreach (var columnName in item.ProcessContext.DataSchemaInfo.SourceColumnDefaultDbType.Keys)
+        {
+            columnsData.Add($"{columnName}({item.ProcessContext.DataSchemaInfo.SourceColumnDefaultDbType[columnName]})");
+        }
+        item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+        {
+            Message = $"Columns found: {String.Join(", ", columnsData)}",
+            Type = TfProgressStreamItemType.Debug,
+        });
+        #endregion
+
+
+        item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+        {
+            Message = "File validation is successful for ExcelDataProvider!",
+            Type = TfProgressStreamItemType.Debug,
+        });
+        item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+        {
+            Message = "ExcelDataProvider is preparing model for creation...",
+            Type = TfProgressStreamItemType.Debug,
+        });
+        //Create Repository File
+        var repFile = tfService.CreateRepositoryFile(item.FileName, item.FileContent, item.User.Id);
+        item.ProcessContext.CreatedRepositoryFiles.Add(repFile.Filename);
+        item.ProcessContext.DataProviderCreationRequest = new TfImportFileToPageDataProviderCreationRequest()
+        {
+            Name = repFile.Filename,
+            SettingsJson = JsonSerializer.Serialize(new ExcelDataProviderSettings
+            {
+                Filepath = repFile.Uri.ToString(),
+                AdvancedSetting = new ExcelDataProviderSettingsAdvanced()
+                {
+                    ColumnImportParseFormat = new()
+                },
+                CultureName = culture.Name,
+            }),
+            SynchPrimaryKeyColumns = new(),
+            SynchScheduleEnabled = false,
+            SynchScheduleMinutes = 60
+        };
+        item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+        {
+            Message = "ExcelDataProvider model preparation done!",
+            Type = TfProgressStreamItemType.Debug,
+        });
     }
 
     private ReadOnlyCollection<TfDataProviderDataRow> ReadExcelStream(
@@ -355,7 +350,11 @@ public class ExcelDataProvider : ITfDataProviderAddon
 
         synchLog.Log($"start processing Excel file");
 
-        using (var wb = new XLWorkbook(stream))
+        using var copy = new MemoryStream();
+        stream.CopyTo(copy);
+        copy.Position = 0;
+
+        using (var wb = new XLWorkbook(copy))
         {
             if (wb.Worksheets.Count == 0) return result.AsReadOnly();
             var ws = wb.Worksheets.First();
@@ -584,32 +583,7 @@ public class ExcelDataProvider : ITfDataProviderAddon
 
     private string LOC(string name) => name;
 
-    private TfExcelColumnType GetSourceTypeFromCell(IXLCell cell)
-    {
-        switch (cell.DataType)
-        {
-            case XLDataType.Boolean:
-                return TfExcelColumnType.Boolean;
-            case XLDataType.Number:
-                return TfExcelColumnType.Number;
-            case XLDataType.DateTime:
-                return TfExcelColumnType.DateTime;
-            default:
-                return TfExcelColumnType.Text;
-        }
-    }
+    
 
-    private TfExcelColumnType GetTypeFromOptions(List<TfExcelColumnType> options)
-    {
-        if (options.Count == 0) return TfExcelColumnType.Text;
-        var distinctOptions = options.Distinct().ToList();
-        if (distinctOptions.Count == 1) return distinctOptions[0];
 
-        if (distinctOptions.Contains(TfExcelColumnType.Text)) return TfExcelColumnType.Text;
-        if (distinctOptions.Contains(TfExcelColumnType.Number)) return TfExcelColumnType.Number;
-        if (distinctOptions.Contains(TfExcelColumnType.DateTime)) return TfExcelColumnType.DateTime;
-        if (distinctOptions.Contains(TfExcelColumnType.Boolean)) return TfExcelColumnType.Boolean;
-        return TfExcelColumnType.Text;
-
-    }
 }

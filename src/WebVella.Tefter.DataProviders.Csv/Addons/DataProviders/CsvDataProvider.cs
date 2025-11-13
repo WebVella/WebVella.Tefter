@@ -317,7 +317,7 @@ public class CsvDataProvider : ITfDataProviderAddon
             return;
         }
 
-        var (checkResult,schema, delimiterFound) = new CsvDataProviderUtility().CheckCsvFile(item);
+        var (checkResult, delimiterFound) = new CsvDataProviderUtility().CheckCsvFile(item);
         if (!checkResult)
         {
             item.ProcessStream.ReportProgress(new TfProgressStreamItem()
@@ -337,7 +337,16 @@ public class CsvDataProvider : ITfDataProviderAddon
             });
             return;
         }
-
+        var columnsData = new List<string>();
+        foreach (var columnName in item.ProcessContext.DataSchemaInfo.SourceColumnDefaultDbType.Keys)
+        {
+            columnsData.Add($"{columnName}({item.ProcessContext.DataSchemaInfo.SourceColumnDefaultDbType[columnName]})");
+        }
+        item.ProcessStream.ReportProgress(new TfProgressStreamItem()
+        {
+            Message = $"Columns found: {String.Join(", ", columnsData)}",
+            Type = TfProgressStreamItemType.Debug,
+        });
         #endregion
 
         item.ProcessStream.ReportProgress(new TfProgressStreamItem()
