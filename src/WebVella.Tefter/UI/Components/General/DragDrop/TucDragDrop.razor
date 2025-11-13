@@ -9,11 +9,21 @@
                  @bind-ProgressPercent="@_progressPercent"
                  OnCompleted="@OnCompletedAsync">
     <ChildContent>
-        <label for="@_elementId">
-            <FluentIcon Value="@TfConstants.GetIcon("ArrowDownload")" />
-        </label>
-        <div>
-            @LOC("Drop the files you want to be created as Pages"),
+        <div style="padding:var(--tf-padding)">
+            <div>
+                <label for="@_elementId">
+                    <FluentIcon Value="@TfConstants.GetIcon("ArrowDownload",IconSize.Size48)" />
+                </label>
+            </div>
+            <div>
+                @LOC("Drop the files you want to be created as Pages."),
+            </div>
+            <div style="margin-top:30px;text-align:left; font-size:var(--type-ramp-minus-1-font-size)">
+                <div style="color:var(--neutral-foreground-hint)">@LOC("File formats")</div>
+                <div>@LOC("CSV and Spreadsheets should contain a header row with columns names immediately after the start.")</div>
+                <div style="margin-top:10px;color:var(--neutral-foreground-hint)">@LOC("File Extensions")</div>
+                <div>@LOC(".csv, .xls, .xlsx")</div>
+            </div>
         </div>
     </ChildContent>
 </FluentInputFile>

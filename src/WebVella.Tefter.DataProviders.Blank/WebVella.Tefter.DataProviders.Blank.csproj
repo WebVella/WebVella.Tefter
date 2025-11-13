@@ -11,6 +11,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter\WebVella.Tefter.csproj" />
 	</ItemGroup>
 

@@ -1,199 +1,211 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <TucLayoutPageContent Title="@_provider?.Name" Icon="Database">
-	<Tabs>
-		<TucAdminDataProviderDetailsContentToolbar/>
-	</Tabs>
-	<ChildContent>
-		<TucErrorBoundry>
-			<div style="padding:var(--tf-padding)">
-				@if (String.IsNullOrWhiteSpace(UriInitialized))
-				{
-					<TucSkeletonPageHeader/>
-				}
-				else if (_provider is null)
-				{
-					<FluentMessageBar AllowDismiss=false
-					                  Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-				}
-				else
-				{
-					<TucCard Title="@LOC("Implemented Data Identities")"
-					         SubTitle="@LOC("Data Identities are used to generate keys for joining auxilary data. Each record can have several data identities.")">
-						<ToolbarTemplate>
-							<FluentButton Appearance="@Appearance.Outline" OnClick="_implementDataIdentity">
-								@LOC("Data identity")
-								<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start"/>
-							</FluentButton>
-						</ToolbarTemplate>
-						<ChildContent>
-							<table class="tf-grid">
-								<thead class="tf-grid-thead">
-								<tr class="tf-grid-thead-bkg"></tr>
-								<tr class="tf-grid-tr">
-									<th class="tf-grid-th" style="width:110px;min-width:110px;"></th>
-									<th class="tf-grid-th">name</th>
-									<th class="tf-grid-th">columns</th>
-								</tr>
-								</thead>
-								<tbody class="tf-grid-tbody">
-								@foreach (var context in _provider.Identities)
-								{
-									<tr @key=context.Id class="tf-grid-tr">
-										<td class="tf-grid-td">
-											<div>
-												<FluentStack Wrap="false">
-													<FluentButton Appearance="@Appearance.Outline"
-													              IconStart="@TfConstants.GetIcon("Edit")"
-													              Title="@LOC("Edit column")"
-													              OnClick="@(() => _editIdentity(context))"/>
-													<FluentButton Appearance="@Appearance.Outline"
-													              OnClick="@(() => _deleteIdentity(context))"
-													              Title="@LOC("Delete")">
-														<FluentIcon Color="@Color.Error"
-														            Value="@TfConstants.GetIcon("Delete")"/>
-													</FluentButton>
-												</FluentStack>
-											</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>
-												@context.DataIdentity
-											</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>
-												<FluentStack>
-													@foreach (var item in context.Columns)
-													{
-														<FluentBadge
-															Appearance="@Appearance.Neutral">@item</FluentBadge>
-													}
-												</FluentStack>
-											</div>
-										</td>
-									</tr>
-								}
-								@if (_provider.Identities.Count == 0)
-								{
-									<tr class="tf-grid-tr">
-										<td class="tf-grid-td" colspan="3">
-											<div>
-												@LOC("No items")
-											</div>
-										</td>
-									</tr>
-								}
-								</tbody>
-							</table>
-						</ChildContent>
-					</TucCard>
-					<FluentGrid Style="margin-top:1rem;">
-						<FluentGridItem xs="12" md="6">
-							<TucCard Title="@LOC("Connected Shared columns")"
-							         SubTitle="@LOC("Shared Columns that match one of the implemented data identities")">
-								<ChildContent>
-									@if (_provider.SharedColumns is null || _provider.SharedColumns.Count == 0)
-									{
-										<FluentMessageBar Title="@LOC("No shared columns matched")" AllowDismiss="false"
-										                  Intent="@MessageIntent.Info">@LOC("No shared columns are matching any of the join keys for this data source")</FluentMessageBar>
-									}
-									else
-									{
-										<table class="tf-grid">
-											<thead class="tf-grid-thead">
-											<tr class="tf-grid-thead-bkg"></tr>
-											<tr class="tf-grid-tr">
-												<th class="tf-grid-th">name</th>
-												<th class="tf-grid-th">type</th>
-												<th class="tf-grid-th" style="width:80px">in search</th>
-												<th class="tf-grid-th">common identity</th>
-											</tr>
-											</thead>
-											<tbody class="tf-grid-tbody">
-											@foreach (var context in _provider.SharedColumns)
-											{
-												<tr @key=context.Id class="tf-grid-tr">
-													<td class="tf-grid-td">
-														<div>@context.DbName</div>
-													</td>
-													<td class="tf-grid-td">
-														<div>@context.DbType.ToString()</div>
-													</td>
-													<td class="tf-grid-td">
-														<div>
-															@if (context.IncludeInTableSearch)
-															{
-																<FluentBadge Appearance="@Appearance.Neutral">yes
-																</FluentBadge>
-															}
-															else
-															{
-																<FluentBadge>no</FluentBadge>
-															}
-														</div>
-													</td>
-													<td class="tf-grid-td">
-														<div>@context.DataIdentity</div>
-													</td>
-												</tr>
-											}
-											</tbody>
-										</table>
-									}
-								</ChildContent>
-							</TucCard>
-						</FluentGridItem>
-						<FluentGridItem xs="12" md="6">
-							<TucCard Title="@LOC("Connected Data providers")"
-							         SubTitle="@LOC("Providers have a common data identity implementated. Only the primary provider's data is modifiable.")">
-								<ChildContent>
-									@if (_connectedProviders.Count == 0)
-									{
-										<FluentMessageBar Title="@LOC("No data providers are connected")"
-										                  AllowDismiss="false"
-										                  Intent="@MessageIntent.Info">@LOC("For data from different providers to be connected, they must implement at least one common join key.")</FluentMessageBar>
-									}
-									else
-									{
-										<table class="tf-grid">
-											<thead class="tf-grid-thead">
-											<tr class="tf-grid-thead-bkg"></tr>
-											<tr class="tf-grid-tr">
-												<th class="tf-grid-th" style="width:80px;min-width:80px;">code</th>
-												<th class="tf-grid-th">name</th>
-												<th class="tf-grid-th">type</th>
-												<th class="tf-grid-th">common identities</th>
-											</tr>
-											</thead>
-											<tbody class="tf-grid-tbody">
-											@foreach (var context in _connectedProviders)
-											{
-												<tr @key=context.Id class="tf-grid-tr">
-													<td class="tf-grid-td">
-														<div>@context.Code</div>
-													</td>
-													<td class="tf-grid-td">
-														<div>@context.Name</div>
-													</td>
-													<td class="tf-grid-td">
-														<div>@context.ProviderType.AddonName</div>
-													</td>
-													<td class="tf-grid-td">
-														<div>@_showCommonIdentities(context)</div>
-													</td>
-												</tr>
-											}
-											</tbody>
-										</table>
-									}
-								</ChildContent>
-							</TucCard>
-						</FluentGridItem>
+    <Tabs>
+        <TucAdminDataProviderDetailsContentToolbar />
+    </Tabs>
+    <ChildContent>
+        <TucErrorBoundry>
+            <div style="padding:var(--tf-padding)">
+                @if (String.IsNullOrWhiteSpace(UriInitialized))
+                {
+                    <TucSkeletonPageHeader />
+                }
+                else if (_provider is null)
+                {
+                    <FluentMessageBar AllowDismiss=false
+                                      Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+                }
+                else
+                {
+                    <TucCard Title="@LOC("Implemented Data Identities")"
+                             SubTitle="@LOC("Data Identities are used to generate keys for joining auxilary data. Each record can have several data identities.")">
+                        <ToolbarTemplate>
+                            <FluentButton Appearance="@Appearance.Outline" OnClick="_implementDataIdentity">
+                                @LOC("Data identity")
+                                <FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start" />
+                            </FluentButton>
+                        </ToolbarTemplate>
+                        <ChildContent>
+                            <table class="tf-grid">
+                                <thead class="tf-grid-thead">
+                                    <tr class="tf-grid-thead-bkg"></tr>
+                                    <tr class="tf-grid-tr">
+                                        <th class="tf-grid-th" style="width:110px;min-width:110px;"></th>
+                                        <th class="tf-grid-th">name</th>
+                                        <th class="tf-grid-th">columns</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="tf-grid-tbody">
+                                    @foreach (var context in _provider.Identities)
+                                    {
+                                        <tr @key=context.Id class="tf-grid-tr">
+                                            <td class="tf-grid-td">
+                                                <div>
+                                                    <FluentStack Wrap="false">
+                                                        @if (context.Id == _provider.Id)
+                                                        {
+                                                            <FluentButton Appearance="@Appearance.Outline"
+                                                                          IconStart="@TfConstants.GetIcon("LockClosed")"
+                                                                          Title="@LOC("default identity")" Disabled="true"/>
+                                                            <FluentButton Appearance="@Appearance.Outline"
+                                                                          IconStart="@TfConstants.GetIcon("LockClosed")"
+                                                                          Title="@LOC("default identity")" Disabled="true" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <FluentButton Appearance="@Appearance.Outline"
+                                                                          IconStart="@TfConstants.GetIcon("Edit")"
+                                                                          Title="@LOC("Edit column")"
+                                                                          OnClick="@(() => _editIdentity(context))" />
+                                                            <FluentButton Appearance="@Appearance.Outline"
+                                                                          OnClick="@(() => _deleteIdentity(context))"
+                                                                          Title="@LOC("Delete")">
+                                                                <FluentIcon Color="@Color.Error"
+                                                                            Value="@TfConstants.GetIcon("Delete")" />
+                                                            </FluentButton>
+                                                        }
+                                                    </FluentStack>
+                                                </div>
+                                            </td>
+                                            <td class="tf-grid-td">
+                                                <div>
+                                                    @context.DataIdentity
+                                                </div>
+                                            </td>
+                                            <td class="tf-grid-td">
+                                                <div>
+                                                    <FluentStack>
+                                                        @foreach (var item in context.Columns)
+                                                        {
+                                                            <FluentBadge Appearance="@Appearance.Neutral">@item</FluentBadge>
+                                                        }
+                                                    </FluentStack>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    @if (_provider.Identities.Count == 0)
+                                    {
+                                        <tr class="tf-grid-tr">
+                                            <td class="tf-grid-td" colspan="3">
+                                                <div>
+                                                    @LOC("No items")
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </ChildContent>
+                    </TucCard>
+                    <FluentGrid Style="margin-top:1rem;">
+                        <FluentGridItem xs="12" md="6">
+                            <TucCard Title="@LOC("Connected Shared columns")"
+                                     SubTitle="@LOC("Shared Columns that match one of the implemented data identities")">
+                                <ChildContent>
+                                    @if (_provider.SharedColumns is null || _provider.SharedColumns.Count == 0)
+                                    {
+                                        <FluentMessageBar Title="@LOC("No shared columns matched")" AllowDismiss="false"
+                                                          Intent="@MessageIntent.Info">@LOC("No shared columns are matching any of the join keys for this data source")</FluentMessageBar>
+                                    }
+                                    else
+                                    {
+                                        <table class="tf-grid">
+                                            <thead class="tf-grid-thead">
+                                                <tr class="tf-grid-thead-bkg"></tr>
+                                                <tr class="tf-grid-tr">
+                                                    <th class="tf-grid-th">name</th>
+                                                    <th class="tf-grid-th">type</th>
+                                                    <th class="tf-grid-th" style="width:80px">in search</th>
+                                                    <th class="tf-grid-th">common identity</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="tf-grid-tbody">
+                                                @foreach (var context in _provider.SharedColumns)
+                                                {
+                                                    <tr @key=context.Id class="tf-grid-tr">
+                                                        <td class="tf-grid-td">
+                                                            <div>@context.DbName</div>
+                                                        </td>
+                                                        <td class="tf-grid-td">
+                                                            <div>@context.DbType.ToString()</div>
+                                                        </td>
+                                                        <td class="tf-grid-td">
+                                                            <div>
+                                                                @if (context.IncludeInTableSearch)
+                                                                {
+                                                                    <FluentBadge Appearance="@Appearance.Neutral">
+                                                                        yes
+                                                                    </FluentBadge>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <FluentBadge>no</FluentBadge>
+                                                                }
+                                                            </div>
+                                                        </td>
+                                                        <td class="tf-grid-td">
+                                                            <div>@context.DataIdentity</div>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+                                </ChildContent>
+                            </TucCard>
+                        </FluentGridItem>
+                        <FluentGridItem xs="12" md="6">
+                            <TucCard Title="@LOC("Connected Data providers")"
+                                     SubTitle="@LOC("Providers have a common data identity implementated. Only the primary provider's data is modifiable.")">
+                                <ChildContent>
+                                    @if (_connectedProviders.Count == 0)
+                                    {
+                                        <FluentMessageBar Title="@LOC("No data providers are connected")"
+                                                          AllowDismiss="false"
+                                                          Intent="@MessageIntent.Info">@LOC("For data from different providers to be connected, they must implement at least one common join key.")</FluentMessageBar>
+                                    }
+                                    else
+                                    {
+                                        <table class="tf-grid">
+                                            <thead class="tf-grid-thead">
+                                                <tr class="tf-grid-thead-bkg"></tr>
+                                                <tr class="tf-grid-tr">
+                                                    <th class="tf-grid-th" style="width:80px;min-width:80px;">code</th>
+                                                    <th class="tf-grid-th">name</th>
+                                                    <th class="tf-grid-th">type</th>
+                                                    <th class="tf-grid-th">common identities</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="tf-grid-tbody">
+                                                @foreach (var context in _connectedProviders)
+                                                {
+                                                    <tr @key=context.Id class="tf-grid-tr">
+                                                        <td class="tf-grid-td">
+                                                            <div>@context.Code</div>
+                                                        </td>
+                                                        <td class="tf-grid-td">
+                                                            <div>@context.Name</div>
+                                                        </td>
+                                                        <td class="tf-grid-td">
+                                                            <div>@context.ProviderType.AddonName</div>
+                                                        </td>
+                                                        <td class="tf-grid-td">
+                                                            <div>@_showCommonIdentities(context)</div>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+                                </ChildContent>
+                            </TucCard>
+                        </FluentGridItem>
 
-					</FluentGrid>
-				}
-			</div>
-		</TucErrorBoundry>
-	</ChildContent>
+                    </FluentGrid>
+                }
+            </div>
+        </TucErrorBoundry>
+    </ChildContent>
 </TucLayoutPageContent>

@@ -99,7 +99,7 @@ public partial class TfService : ITfService
 				{
 					spaceViewColumn.Position = (short)(spaceViewColumns.Count + 1);
 				}
-				else if (spaceViewColumn.Position.Value < 0)
+				else if (spaceViewColumn.Position.Value <= 0)
 				{
 					spaceViewColumn.Position = 1;
 				}

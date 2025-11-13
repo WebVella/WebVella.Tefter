@@ -11,8 +11,4 @@ public partial class TucAdminDashboard : TfBaseComponent
 		_data = await TfService.GetAdminDashboardData();
 	}
 
-	private async Task _onFileDrop(List<FluentInputFileEventArgs> files)
-	{
-		await TfService.ImportFilesAsSpacePages(Guid.NewGuid(), files);
-	}
 }

@@ -1,7 +1,7 @@
 ﻿/*Layout*/
 
 ::deep .talk-panel {
-	height: 100vh;
+	height: calc(100vh - 20px);
 	width: 100%;
 	display: flex;
 }
@@ -57,7 +57,7 @@
 
 /*Layout Right*/
 ::deep .talk-panel__right {
-	flex: 0 0 25vw;
+	flex: 0 0 35vw;
 	border-left: 1px solid var(--neutral-stroke-rest);
 	display: flex;
 	flex-flow: column;

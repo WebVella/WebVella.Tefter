@@ -30,16 +30,19 @@ fluent-switch::part(label){
   margin-inline-end:0;
 }
 
-fluent-select{
-  fluent-option{
-    --neutral-fill-stealth-rest:transparent;
-    --neutral-fill-stealth-hover:color-mix(in srgb, var(--fill-color), var(--accent-fill-rest) 10%);
-  }
+fluent-select {
+    --max-height:200px;
+    fluent-option {
+        --neutral-fill-stealth-rest: transparent;
+        --neutral-fill-stealth-hover: color-mix(in srgb, var(--fill-color), var(--accent-fill-rest) 10%);
+    }
+
 }
 
-.listbox{
-  z-index: 20;
-  position: relative;
+.listbox {
+    z-index: 20;
+    position: relative;
+    --max-height: 200px;
 }
 
 /*Badge*/

@@ -373,6 +373,10 @@ internal partial class TalkService : ITalkService
                 return new ValidationResult(new[] { new ValidationFailure("",
                     "A channel with specified identifier is not found.") });
 
+            if (channel.Id == new TalkApp().AddonId)
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "The default channel cannot be deleted.") });
+
             return this.Validate(channel, options =>
             {
                 options.IncludeRuleSets("delete");
@@ -413,6 +417,10 @@ internal partial class TalkService : ITalkService
             if (channel == null)
                 return new ValidationResult(new[] { new ValidationFailure("",
                     "The channel object is null.") });
+
+            if (channel.Id == new TalkApp().AddonId)
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "The default channel cannot be updated.") });
 
             return this.Validate(channel, options =>
             {

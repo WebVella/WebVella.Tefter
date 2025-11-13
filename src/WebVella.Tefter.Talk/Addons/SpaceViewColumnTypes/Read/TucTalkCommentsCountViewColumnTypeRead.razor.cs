@@ -26,7 +26,7 @@ public partial class TucTalkCommentsCountViewColumnTypeRead : ComponentBase
 			ShowDismiss = false,
 			PrimaryAction = null,
 			SecondaryAction = null,
-			Width = "25vw",
+			Width = "35vw",
 			TrapFocus = false,
 			OnDialogClosing = EventCallback.Factory.Create<DialogInstance>(this, async (instance) =>
 			{

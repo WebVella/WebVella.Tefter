@@ -48,6 +48,8 @@ public record TfSpacePageCreateFromFileContextItem
 	public MemoryStream? FileContent { get; set; } = null;
 	public bool IsSuccess { get; set; } = false;
 	public bool IsProcessed { get; set; } = false;
+	public bool CreateTalkColumn { get; set; } = true;
+	public bool CreateAssetsColumn { get; set; } = true;
 
 	public TfImportFileToPageContextItemStatus Status
 	{
@@ -128,8 +130,12 @@ public record TfImportFileToPageResultProcessContext
 	public TfDataProviderSourceSchemaInfo? DataSchemaInfo { get; set; } = null;
 	public TfImportFileToPageDataProviderCreationRequest? DataProviderCreationRequest { get; set; } = null;
 	public TfRepositoryFile? RepositoryFile { get; set; } = null;
+	public TfDataIdentity? DataIdentity { get; set; } = null;
 	public TfDataProvider? DataProvider { get; set; } = null;
+	public TfDataset? Dataset { get; set; } = null;
+	public TfSpace? Space { get; set; } = null;
 	public TfSpacePage? SpacePage { get; set; } = null;
+	public TfSpaceView? SpaceView { get; set; } = null;
 	public List<string> CreatedRepositoryFiles { get; set; } = new();
 }
 

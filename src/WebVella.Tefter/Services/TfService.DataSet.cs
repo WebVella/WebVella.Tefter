@@ -429,6 +429,9 @@ public partial class TfService : ITfService
 				}
 				else if (schemaColumn.DataProvider is not null && schemaColumn.DataProviderColumn is not null)
 				{
+					if(implementedIdentity.DataIdentity.DataIdentity == TfConstants.TEFTER_DEFAULT_OBJECT_NAME)
+						continue;
+
 					item.SourceColumnName = schemaColumn.DataProviderColumn.DbName;
 					item.SourceName = schemaColumn.DataProvider.Name;
 					item.SourceCode = $"dp{schemaColumn.DataProvider.Index}";

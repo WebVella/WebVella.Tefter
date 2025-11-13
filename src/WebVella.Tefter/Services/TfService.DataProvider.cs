@@ -382,6 +382,15 @@ public partial class TfService : ITfService
 				if (!success)
 					throw new TfDboServiceException("Insert<TfDataProviderIdentityDbo> failed");
 
+				//Create default identity
+				_ = CreateDataProviderIdentity(new TfDataProviderIdentity
+				{
+					Id = createModel.Id,
+					DataIdentity = TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
+					DataProviderId = createModel.Id,
+					Columns = new List<string> { TfConstants.TEFTER_ID_COLUMN_NAME }
+				});
+
 				if (createModel.AutoInitialize)
 				{
 					//Import schema

@@ -9,14 +9,14 @@
 		<div class="tf-welcome__grid__item">
 			<TucCard>
 				<TitleTemplate>
-					<div><em>A.</em> @LOC("Data Drop")</div>
+					<div><em>C.</em> @LOC("Manual Setup")</div>
 				</TitleTemplate>
 				<ChildContent>
-					<p>@LOC("The system will try to automatically setup everything based on your data with no or few questions")</p>
+					<p>@LOC("If you are experienced with Tefter or just looking for a precision in the outcome, you can start setting up the system yourself.")</p>
 				</ChildContent>
 				<FooterTemplate>
-					<TucAnchor Style="width: 100%" Appearance="Appearance.Outline" Href="@TfConstants.InstallDataDropPage">Choose this option</TucAnchor>
-				</FooterTemplate>	
+					<TucAnchor Style="width: 100%" Appearance="Appearance.Outline" Href="@(String.Format(TfConstants.InstallRecipeDetailsPage, new BlankRecipeAddon().AddonId))">Choose this option</TucAnchor>
+				</FooterTemplate>
 			</TucCard>
 		</div>
 		<div class="tf-welcome__grid__item">
@@ -29,19 +29,6 @@
 				</ChildContent>
 				<FooterTemplate>
 					<TucAnchor Style="width: 100%" Appearance="Appearance.Outline" Href="@TfConstants.InstallRecipesPage">Choose this option</TucAnchor>
-				</FooterTemplate>
-			</TucCard>
-		</div>
-		<div class="tf-welcome__grid__item">
-			<TucCard>
-				<TitleTemplate>
-					<div><em>C.</em> @LOC("Manual Setup")</div>
-				</TitleTemplate>					
-				<ChildContent>
-					<p>@LOC("If you are experienced with Tefter or just looking for a precision in the outcome, you can start setting up the system yourself.")</p>
-				</ChildContent>
-				<FooterTemplate>
-					<TucAnchor Style="width: 100%" Appearance="Appearance.Outline" Href="@(String.Format(TfConstants.InstallRecipeDetailsPage,new BlankRecipeAddon().AddonId))">Choose this option</TucAnchor>
 				</FooterTemplate>
 			</TucCard>
 		</div>

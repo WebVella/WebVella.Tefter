@@ -531,6 +531,10 @@ public partial class TfService : ITfService
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"The data provider identity is null.") });
 
+			if (dataIdentity.DataIdentity == TfConstants.TEFTER_DEFAULT_OBJECT_NAME)
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The default data provider identity cannot be edited.") });
+
 			return this.Validate(dataIdentity, options =>
 			{
 				options.IncludeRuleSets("general", "update");
@@ -543,6 +547,10 @@ public partial class TfService : ITfService
 			if (dataIdentity == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"The data provider identity is null.") });
+
+			if (dataIdentity.DataIdentity == TfConstants.TEFTER_DEFAULT_OBJECT_NAME)
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The default data provider identity cannot be deleted.") });
 
 			return new ValidationResult();
 		}

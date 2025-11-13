@@ -178,7 +178,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			if (_space is null)
 				return;
 			if (_spacePage.Type != TfSpacePageType.Page &&
-			    _spacePage.ComponentType.FullName != typeof(TucSpaceViewSpacePageAddon).FullName)
+				_spacePage.ComponentType.FullName != typeof(TucSpaceViewSpacePageAddon).FullName)
 				return;
 			var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(_spacePage.ComponentOptionsJson);
 			if (options is null || options.SpaceViewId is null)
@@ -427,11 +427,20 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 	#region <<Utility Methods >>
 
+	private string _getNoDataString()
+	{
+		var last30Jobs = TfService.GetDataProviderSynchronizationTasks(_data.QueryInfo.DataProviderId, page: 1, pageSize: 30);
+		var syncRunning = last30Jobs.Any(x=> x.Status == TfSynchronizationStatus.Pending || x.Status == TfSynchronizationStatus.InProgress);
+		if (syncRunning)
+			return LOC("Data import is currently running. Please try again in a minute.");
+		return LOC("No data");
+	}
+
 	private string _getUserChangeHash(TfUser? user)
 	{
 		if (user is null) return "";
 		return JsonSerializer.Serialize(user.Settings.ViewPresetColumnPersonalizations)
-		       + JsonSerializer.Serialize(user.Settings.ViewPresetSortPersonalizations);
+			   + JsonSerializer.Serialize(user.Settings.ViewPresetSortPersonalizations);
 	}
 
 	private async Task _onRowChanged(TfSpaceViewColumnDataChange change)
@@ -469,7 +478,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				{
 					TfDataColumn column = _data.Columns[j];
 					if (column.Origin == TfDataColumnOriginType.System ||
-					    column.Origin == TfDataColumnOriginType.Identity) continue;
+						column.Origin == TfDataColumnOriginType.Identity) continue;
 					row[column.Name] = changedRow[column.Name];
 				}
 			}

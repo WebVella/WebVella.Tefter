@@ -375,6 +375,10 @@ internal partial class AssetsService : IAssetsService
                 return new ValidationResult(new[] { new ValidationFailure("",
                     "The folder object is null.") });
 
+            if (folder.Id == new AssetsApp().AddonId)
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "The default folder cannot be updated.") });
+
             return this.Validate(folder, options =>
             {
                 options.IncludeRuleSets("general", "update");
@@ -387,6 +391,11 @@ internal partial class AssetsService : IAssetsService
             if (folder == null)
                 return new ValidationResult(new[] { new ValidationFailure("",
                     "A folder with specified identifier is not found.") });
+
+            if (folder.Id == new AssetsApp().AddonId)
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "The default folder cannot be deleted.") });
+
 
             return this.Validate(folder, options =>
             {
@@ -426,6 +435,10 @@ internal partial class AssetsService : IAssetsService
             if (folder == null)
                 return new ValidationResult(new[] { new ValidationFailure("",
                     "The folder object is null.") });
+
+            if (folder.Id == new AssetsApp().AddonId)
+                return new ValidationResult(new[] { new ValidationFailure("",
+                    "The default folder cannot be updated.") });
 
             return this.Validate(folder, options =>
             {

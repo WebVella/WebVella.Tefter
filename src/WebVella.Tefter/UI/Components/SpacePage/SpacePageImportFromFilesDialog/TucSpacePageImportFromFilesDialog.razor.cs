@@ -16,7 +16,6 @@ public partial class TucSpacePageImportFromFilesDialog : TfBaseComponent,
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
-		if (TfAuthLayout.GetState().Space is null) throw new Exception("No current Space initialized");
 		_context = new(Content);
 		if (_context.Items.Count > 0)
 			_selectedItem = _context.Items[0];
@@ -108,7 +107,7 @@ public partial class TucSpacePageImportFromFilesDialog : TfBaseComponent,
 			});
 		};
 		item.User = TfAuthLayout.GetState().User;
-		item.Space = TfAuthLayout.GetState().Space!;
+		item.Space = TfAuthLayout.GetState().Space;
 
 		await TfService.SpacePageCreateFromFileAsync(item);
 

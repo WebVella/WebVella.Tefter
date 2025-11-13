@@ -9,6 +9,16 @@ public partial class TucSpaceNavigation : TfBaseComponent, IDisposable
 	private string? _dragClass = null;
 	CancellationTokenSource? _cancellationTokenSource = null!;
 	private int _throttleMS = 500;
+	private string _dragStaticOpenClass
+	{
+		get
+		{
+			if(_menu.Count == 0)
+				return "tf-drag-container--dragging";
+			return "";
+		}
+	}
+
 
 	public void Dispose()
 	{
@@ -88,7 +98,7 @@ public partial class TucSpaceNavigation : TfBaseComponent, IDisposable
 		}
 		_dragClass = null;
 		RegenRenderLock();
-		await InvokeAsync(StateHasChanged);		
+		await InvokeAsync(StateHasChanged);
 		var dialog = await DialogService.ShowDialogAsync<TucSpacePageImportFromFilesDialog>(
 			files,
 			new()
@@ -98,12 +108,12 @@ public partial class TucSpaceNavigation : TfBaseComponent, IDisposable
 				Width = TfConstants.DialogWidthExtraLarge,
 				TrapFocus = false,
 			});
-		
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			TfService.DeleteFiles(files);	
-		}
+
+		//var result = await dialog.Result;
+		//if (!result.Cancelled && result.Data != null)
+		//{
+		//	TfService.DeleteFiles(files);
+		//}
 
 	}
 }

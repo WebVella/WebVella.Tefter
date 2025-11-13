@@ -1,5 +1,7 @@
-﻿using WebVella.Tefter.Database;
+﻿using Microsoft.Extensions.DependencyInjection;
+using WebVella.Tefter.Database;
 using WebVella.Tefter.Migrations;
+using WebVella.Tefter.Services;
 using WebVella.Tefter.Talk.Services;
 
 namespace WebVella.Tefter.Talk.Migrations;
@@ -8,10 +10,34 @@ namespace WebVella.Tefter.Talk.Migrations;
 [TfApplicationMigration(TalkApp.ID, "2024.10.1.1")]
 public class TalkMigration2024100101 : ITfApplicationMigration
 {
-	public async Task MigrateDataAsync(ITfApplicationAddon app, IServiceProvider serviceprovider, ITfDatabaseService dbService)
+	public async Task MigrateDataAsync(ITfApplicationAddon app, IServiceProvider serviceProvider, ITfDatabaseService dbService)
 	{
 		await Task.Delay(0);
-	}
+		var counterColumn = $"{TfConstants.TF_SHARED_COLUMN_PREFIX}{TfConstants.TEFTER_DEFAULT_OBJECT_NAME}_talk_counter";
+        //CREATE DEFAULT LONG SHARED COLUMN
+        ITfService tfService = serviceProvider.GetService<ITfService>()!;
+        _ = tfService.CreateSharedColumn(
+                new TfSharedColumn
+                {
+                    Id = new TalkApp().AddonId,
+                    DataIdentity = TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
+                    DbName = counterColumn,
+                    DbType = TfDatabaseColumnType.LongInteger,
+                    IncludeInTableSearch = false
+                }
+            );
+
+        ITalkService assetService = serviceProvider.GetService<ITalkService>()!;
+        _ = assetService.CreateChannel(new TalkChannel
+        {
+            Id = new TalkApp().AddonId,
+            Name = TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
+            DataIdentity = TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
+            CountSharedColumnName = counterColumn
+        });
+
+
+    }
 
 	public async Task MigrateStructureAsync(ITfApplicationAddon app, TfDatabaseBuilder dbBuilder)
 	{

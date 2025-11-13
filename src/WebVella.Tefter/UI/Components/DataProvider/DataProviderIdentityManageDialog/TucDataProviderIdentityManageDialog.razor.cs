@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using System.Reflection.Metadata;
+
+namespace WebVella.Tefter.UI.Components;
 public partial class TucDataProviderIdentityManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProviderIdentity?>
 {
 	[Parameter] public TfDataProviderIdentity? Content { get; set; }
@@ -34,7 +36,9 @@ public partial class TucDataProviderIdentityManageDialog : TfFormBaseComponent, 
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 		_allDataIdentities = TfService.GetDataIdentities();
 
-		_providerColumns = _provider.Columns.OrderBy(x => x.DbName).Select(x => x.DbName).ToList();
+		_providerColumns.Add("tf_id");
+		_providerColumns.AddRange(_provider.Columns.OrderBy(x => x.DbName).Select(x => x.DbName).ToList());
+
 		_identityOptions = _allDataIdentities
 			.Where(x=> !_provider.Identities.Any(y=> y.DataIdentity == x.DataIdentity))
 			.Select(x=> x.DataIdentity).ToList();

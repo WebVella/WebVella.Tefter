@@ -351,7 +351,6 @@ public partial class TfService : ITfService
 			if (column == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"The shared column object is null.") });
-
 			return this.Validate(column, options =>
 			{
 				options.IncludeRuleSets("delete");

@@ -54,10 +54,13 @@
 						}
 					</ChildContent>
 				</TucCard>
+				
+			</FluentGridItem>
+			<FluentGridItem xs="6">
 				<TucCard Style="margin-top: var(--tf-card-space)">
 					<TitleTemplate>
 						<FluentStack VerticalAlignment="@VerticalAlignment.Center"
-						             HorizontalAlignment="@HorizontalAlignment.Left">
+									 HorizontalAlignment="@HorizontalAlignment.Left">
 							<div>@LOC("Next Data Synchronizations")</div>
 						</FluentStack>
 					</TitleTemplate>
@@ -75,36 +78,31 @@
 						{
 							<table class="tf-grid">
 								<tbody class="tf-grid-tbody">
-								@foreach (var context in _data.SyncInfo)
-								{
-									<tr @key=@context.Id class="tf-grid-tr">
-										<td class="tf-grid-td">
-											<div>
-												@context.Name
-											</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>@context.ProviderType.AddonName</div>
-										</td>
-										<td class="tf-grid-td">
-											<div>@context.NextSyncOn!.Value.ToString(TfConstants.DateTimeFormat)</div>
-										</td>
-									</tr>
-								}
+									@foreach (var context in _data.SyncInfo)
+									{
+										<tr @key=@context.Id class="tf-grid-tr">
+											<td class="tf-grid-td">
+												<div>
+													@context.Name
+												</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@context.ProviderType.AddonName</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@context.NextSyncOn!.Value.ToString(TfConstants.DateTimeFormat)</div>
+											</td>
+										</tr>
+									}
 								</tbody>
 							</table>
 						}
 						else
 						{
 							<FluentMessageBar AllowDismiss="false"
-							                  Intent="@MessageIntent.Info">@LOC("No pending synchronization tasks")</FluentMessageBar>
+											  Intent="@MessageIntent.Info">@LOC("No pending synchronization tasks")</FluentMessageBar>
 						}
 					</ChildContent>
-				</TucCard>
-			</FluentGridItem>
-			<FluentGridItem xs="6">
-				<TucCard>
-					<TucDragDrop OnFileDroped="_onFileDrop"/>
 				</TucCard>
 			</FluentGridItem>
 		</FluentGrid>

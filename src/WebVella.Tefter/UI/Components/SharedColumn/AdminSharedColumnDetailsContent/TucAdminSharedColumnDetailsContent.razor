@@ -1,109 +1,111 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <TucLayoutPageContent Title="@_column?.DbName" Icon="DatabaseLink">
-	<div style="padding:var(--tf-padding)">
-		@if (String.IsNullOrWhiteSpace(UriInitialized))
-		{
-			<TucSkeletonPageHeader/>
-		}
-		else if (_column is null)
-		{
-			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
-		}
-		else
-		{
-			<TucCard Title="@LOC("Details")">
-				<ToolbarTemplate>
-					<FluentButton Appearance="@Appearance.Outline" OnClick="_editItem">
-						@LOC("Edit")
-						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start"/>
-					</FluentButton>
-				</ToolbarTemplate>
-				<ChildContent>
-					<FluentGrid>
-						<FluentGridItem xs="3">
-							<FluentTextField Value="@(_column.DbName)"
-							                 Label="@LOC("Name")" Style="width:100%" ReadOnly="true"/>
-						</FluentGridItem>
-						<FluentGridItem xs="3">
-							<FluentTextField Value="@(_column.DbType.ToString())"
-							                 Label="@LOC("Data type")" Style="width:100%" ReadOnly="true"/>
-						</FluentGridItem>
-						<FluentGridItem xs="3">
-							<FluentTextField Value="@(_column.DataIdentity)"
-							                 Label="@LOC("Data Identity")" Style="width:100%" ReadOnly="true"/>
-						</FluentGridItem>
-						<FluentGridItem xs="3">
-							<FluentInputLabel Label="@LOC("Global search")"/>
-							<div>
-								@if (_column.IncludeInTableSearch)
-								{
-									<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetColor().OKLCH"
-									             Color="white" Class="tf-input-badge">ON
-									</FluentBadge>
-								}
-								else
-								{
-									<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetColor().OKLCH"
-									             Color="white" Class="tf-input-badge">OFF
-									</FluentBadge>
-								}
-							</div>
-						</FluentGridItem>
-					</FluentGrid>
-				</ChildContent>
-			</TucCard>
+    <div style="padding:var(--tf-padding)">
+        @if (String.IsNullOrWhiteSpace(UriInitialized))
+        {
+            <TucSkeletonPageHeader />
+        }
+        else if (_column is null)
+        {
+            <FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Item not found")</FluentMessageBar>
+        }
+        else
+        {
+            <TucCard Title="@LOC("Details")">
+                <ToolbarTemplate>
+                    <FluentButton Appearance="@Appearance.Outline" OnClick="_editItem">
+                        @LOC("Edit")
+                        <FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
+                    </FluentButton>
+                </ToolbarTemplate>
+                <ChildContent>
+                    <FluentGrid>
+                        <FluentGridItem xs="3">
+                            <FluentTextField Value="@(_column.DbName)"
+                                             Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+                        </FluentGridItem>
+                        <FluentGridItem xs="3">
+                            <FluentTextField Value="@(_column.DbType.ToString())"
+                                             Label="@LOC("Data type")" Style="width:100%" ReadOnly="true" />
+                        </FluentGridItem>
+                        <FluentGridItem xs="3">
+                            <FluentTextField Value="@(_column.DataIdentity)"
+                                             Label="@LOC("Data Identity")" Style="width:100%" ReadOnly="true" />
+                        </FluentGridItem>
+                        <FluentGridItem xs="3">
+                            <FluentInputLabel Label="@LOC("Global search")" />
+                            <div>
+                                @if (_column.IncludeInTableSearch)
+                                {
+                                    <FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetColor().OKLCH"
+                                                 Color="white" Class="tf-input-badge">
+                                        ON
+                                    </FluentBadge>
+                                }
+                                else
+                                {
+                                    <FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetColor().OKLCH"
+                                                 Color="white" Class="tf-input-badge">
+                                        OFF
+                                    </FluentBadge>
+                                }
+                            </div>
+                        </FluentGridItem>
+                    </FluentGrid>
+                </ChildContent>
+            </TucCard>
 
-			<TucCard Title="@LOC("Connected Data Providers")" Style="margin-top: var(--tf-card-space)">
-				<ChildContent>
-					@if (_dataProviders.Count == 0)
-					{
-						<FluentMessageBar Intent="@MessageIntent.Info"
-						                  AllowDismiss=false>@LOC("No data providers implement the identity of the column")</FluentMessageBar>
-					}
-					else
-					{
-						<table class="tf-grid">
-							<thead class="tf-grid-thead">
-							<tr class="tf-grid-thead-bkg"></tr>
-							<tr class="tf-grid-tr">
-								<th class="tf-grid-th">name</th>
-								<th class="tf-grid-th">columns</th>
-							</tr>
-							</thead>
-							<tbody class="tf-grid-tbody">
-							@foreach (var context in _dataProviders)
-							{
-								<tr @key=@Guid.NewGuid() class="tf-grid-tr">
-									<td class="tf-grid-td">
-										<div>@context.Name</div>
-									</td>
-									<td class="tf-grid-td">
-										<div>
-											@_getProviderImplementation(context)
-										</div>
-									</td>
-								</tr>
-							}
-							</tbody>
-						</table>
-					}
-				</ChildContent>
-			</TucCard>
+            <TucCard Title="@LOC("Connected Data Providers")" Style="margin-top: var(--tf-card-space)">
+                <ChildContent>
+                    @if (_dataProviders.Count == 0)
+                    {
+                        <FluentMessageBar Intent="@MessageIntent.Info"
+                                          AllowDismiss=false>@LOC("No data providers implement the identity of the column")</FluentMessageBar>
+                    }
+                    else
+                    {
+                        <table class="tf-grid">
+                            <thead class="tf-grid-thead">
+                                <tr class="tf-grid-thead-bkg"></tr>
+                                <tr class="tf-grid-tr">
+                                    <th class="tf-grid-th">name</th>
+                                    <th class="tf-grid-th">columns</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tf-grid-tbody">
+                                @foreach (var context in _dataProviders)
+                                {
+                                    <tr @key=@Guid.NewGuid() class="tf-grid-tr">
+                                        <td class="tf-grid-td">
+                                            <div>@context.Name</div>
+                                        </td>
+                                        <td class="tf-grid-td">
+                                            <div>
+                                                @_getProviderImplementation(context)
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </ChildContent>
+            </TucCard>
 
-			<TucCard Style="margin-top: var(--tf-card-space)">
-				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween"
-				             VerticalAlignment="@VerticalAlignment.Center">
-					<div>@LOC("Deleting this shared column will remove all its data, but will not alter the data of any related data providers or applications ")</div>
-					<div>
-						<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white"
-						              OnClick="_deleteItem">
-							@LOC("Delete this Shared column")
-							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start"/>
-						</FluentButton>
-					</div>
-				</FluentStack>
-			</TucCard>
-		}
-	</div>
+            <TucCard Style="margin-top: var(--tf-card-space)">
+                <FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween"
+                             VerticalAlignment="@VerticalAlignment.Center">
+                    <div>@LOC("Deleting this shared column will remove all its data, but will not alter the data of any related data providers or applications.")</div>
+                    <div>
+                        <FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white"
+                                      OnClick="_deleteItem">
+                            @LOC("Delete this Shared column")
+                            <FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
+                        </FluentButton>
+                    </div>
+                </FluentStack>
+            </TucCard>
+        }
+    </div>
 </TucLayoutPageContent>

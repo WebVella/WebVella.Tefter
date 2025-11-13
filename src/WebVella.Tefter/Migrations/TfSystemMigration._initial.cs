@@ -636,7 +636,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithConstraints(constraints =>
 			{
 				constraints
-					.AddPrimaryKeyConstraint("pk_space_data_id", c => { c.WithColumns("id"); });					
+					.AddPrimaryKeyConstraint("pk_space_data_id", c => { c.WithColumns("id"); });
 			})
 			.WithIndexes(indexes =>
 			{
@@ -975,7 +975,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				columns
 					.AddShortTextColumn("data_identity", c => { c.NotNullable(); })
-					.AddTextColumn("label", c => {  });
+					.AddTextColumn("label", c => { });
 			})
 			.WithConstraints(constraints =>
 			{
@@ -1056,8 +1056,10 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithIndexes(indexes =>
 			{
 				indexes
-					.AddBTreeIndex("ix_data_identity_connection_all_columns", i => { 
-						i.WithColumns("data_identity_1","value_1","data_identity_2","value_2"); })
+					.AddBTreeIndex("ix_data_identity_connection_all_columns", i =>
+					{
+						i.WithColumns("data_identity_1", "value_1", "data_identity_2", "value_2");
+					})
 					.AddBTreeIndex("ix_data_identity_connection_data_identity_1", i => { i.WithColumns("data_identity_1"); })
 					.AddBTreeIndex("ix_data_identity_connection_value_1", i => { i.WithColumns("value_1"); })
 					.AddBTreeIndex("ix_data_identity_connection_data_identity_2", i => { i.WithColumns("data_identity_2"); })
@@ -1118,5 +1120,13 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 		.Build();
 
 		adminRole = await tfService.SaveRoleAsync(adminRole);
+
+		//CREATE DEFAULT IDENTITY
+		_ = tfService.CreateDataIdentity(new TfDataIdentity
+		{
+			DataIdentity = TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
+			Label = TfConstants.TEFTER_DEFAULT_OBJECT_NAME
+		});
+
 	}
 }
