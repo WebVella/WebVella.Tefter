@@ -63,11 +63,8 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 					Width = TfConstants.DialogWidthLarge,
 					TrapFocus = false
 				});
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			ToastService.ShowSuccess(LOC("Column successfully updated!"));
-		}
+		_ = await dialog.Result;
+
 	}
 
 	private async Task _deleteColumn(TfDataProviderColumn column)
@@ -107,8 +104,8 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 			Width = TfConstants.DialogWidthLarge,
 			TrapFocus = false
 		});
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		_ = await dialog.Result;
+
 	}
 
 	private async Task _importFromSource()

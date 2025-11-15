@@ -127,7 +127,7 @@
 													<FluentButton Appearance="@Appearance.Outline"
 													              IconStart="@TfConstants.GetIcon("Edit")"
 													              Title="@LOC("Edit Row")" OnClick="row.OnEdit"/>
-													<FluentButton Appearance="@Appearance.Outline"
+													<FluentButton Appearance="@Appearance.Outline" Loading="_deletedRowId is not null"
 													              OnClick="row.OnDelete" Title="@LOC("Delete Row")"
 													              IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)"/>
 												</FluentStack>

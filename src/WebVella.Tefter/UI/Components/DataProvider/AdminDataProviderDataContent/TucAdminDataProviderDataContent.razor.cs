@@ -12,17 +12,21 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	private long _totalRows = 0;
 	private TfDataTable? _data = null;
 	private bool _syncRunning = false;
+	private Guid? _deletedRowId = null;
+
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 		TfEventProvider.Dispose();
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
 	}
+
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
 		InvokeAsync(async () =>
@@ -50,11 +54,14 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 				await InvokeAsync(StateHasChanged);
 				return;
 			}
+
 			_navState = navState;
 			_provider = TfService.GetDataProvider(_navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
-			_syncRunning = TfService.GetDataProviderSynchronizationTasks(_provider.Id, status: TfSynchronizationStatus.InProgress).Count > 0;
+			_syncRunning =
+				TfService.GetDataProviderSynchronizationTasks(_provider.Id, status: TfSynchronizationStatus.InProgress)
+					.Count > 0;
 
 			_isDataLoading = true;
 			await InvokeAsync(StateHasChanged);
@@ -67,10 +74,21 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 
 			foreach (TfDataRow row in _data.Rows)
 			{
-				row.OnEdit = async () => await _editRow(row);
-				row.OnDelete = async () => await _deleteRow(row);
+				row.OnEdit = () =>
+				{
+					InvokeAsync(async () =>
+					{
+						await _editRow(row);
+					});
+				};
+				row.OnDelete = () =>
+				{
+					InvokeAsync(async () =>
+					{
+						await _deleteRow(row);
+					});
+				};				
 			}
-
 		}
 		finally
 		{
@@ -85,6 +103,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		_showSystemColumns = !_showSystemColumns;
 		StateHasChanged();
 	}
+
 	private void _toggleCustomColumns()
 	{
 		_showProviderColumns = !_showProviderColumns;
@@ -93,7 +112,8 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 
 	private async Task _deleteAllData()
 	{
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need all data deleted? This operation can take minutes!")))
+		if (!await JSRuntime.InvokeAsync<bool>("confirm",
+			    LOC("Are you sure that you need all data deleted? This operation can take minutes!")))
 			return;
 		TfService.DeleteAllProviderRows(_provider!.Id);
 		ToastService.ShowSuccess(LOC("Data provider data deletion is triggered!"));
@@ -104,19 +124,14 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	{
 		if (_provider is null || _data is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderManageDataDialog>(
-			new TfManageDataProviderRowContext
+			new TfManageDataProviderRowContext { Provider = _provider, RowId = null, Data = _data },
+			new()
 			{
-				Provider = _provider,
-				RowId = null,
-				Data = _data
-			},
-				new ()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge,
-					TrapFocus = false
-				});
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
@@ -129,19 +144,14 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	{
 		if (_provider is null || _data is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderManageDataDialog>(
-			new TfManageDataProviderRowContext
+			new TfManageDataProviderRowContext { Provider = _provider, RowId = row.GetRowId(), Data = _data },
+			new()
 			{
-				Provider = _provider,
-				RowId = row.GetRowId(),
-				Data = _data
-			},
-				new ()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge,
-					TrapFocus = false
-				});
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
@@ -149,10 +159,31 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			await InvokeAsync(StateHasChanged);
 		}
 	}
+
 	private async Task _deleteRow(TfDataRow row)
 	{
-		//TODO BOZ: implement
-		throw new NotImplementedException();
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this record deleted?")))
+			return;		
+		if(_deletedRowId is not null)
+			return;
+		try
+		{
+			_deletedRowId = row.GetRowId();
+			await InvokeAsync(StateHasChanged);
+			await Task.Delay(1);
+			
+			TfService.DeleteDataProviderRowByTfId(_provider!, _deletedRowId.Value);
+			await _init(TfAuthLayout.GetState().NavigationState);
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_deletedRowId = null;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 
 
@@ -160,9 +191,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	{
 		if (_isDataLoading) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object?>{
-			{ TfConstants.SearchQueryName, value}
-		};
+		var queryDict = new Dictionary<string, object?> { { TfConstants.SearchQueryName, value } };
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
@@ -171,8 +200,8 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		if (column.Origin == TfDataColumnOriginType.System
 		    || column.Origin == TfDataColumnOriginType.Identity)
 			return _showSystemColumns;
-		else if(column.Origin == TfDataColumnOriginType.SharedColumn
-		        || column.Origin == TfDataColumnOriginType.JoinedProviderColumn)
+		else if (column.Origin == TfDataColumnOriginType.SharedColumn
+		         || column.Origin == TfDataColumnOriginType.JoinedProviderColumn)
 			return _showJoinKeyColumns;
 		return _showProviderColumns;
 	}
@@ -185,6 +214,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		{
 			if (_columnIsVisible(column)) return true;
 		}
+
 		return false;
 	}
 }

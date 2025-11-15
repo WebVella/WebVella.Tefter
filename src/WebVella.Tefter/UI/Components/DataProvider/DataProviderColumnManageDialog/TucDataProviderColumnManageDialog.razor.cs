@@ -170,6 +170,13 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 				ToastService.ShowSuccess(LOC("Data provider column was updated successfully"));
 			}
 
+			if (
+				(_isCreate && submit.IncludeInTableSearch)
+				|| Content?.IncludeInTableSearch != submit.IncludeInTableSearch)
+			{
+				TfService.TriggerSynchronization(_provider.Id);
+			}
+
 			await Dialog.CloseAsync(_provider);
 		}
 		catch (Exception ex)
