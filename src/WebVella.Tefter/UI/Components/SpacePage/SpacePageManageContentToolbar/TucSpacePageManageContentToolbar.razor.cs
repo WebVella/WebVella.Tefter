@@ -35,7 +35,7 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 				throw new Exception("Space page Id not found in URL");
 			_spacePage = TfService.GetSpacePage(navState.SpacePageId.Value);
 			if (_spacePage is null)
-				return;
+				return; 
 			var pageMeta = TfMetaService.GetSpacePagesComponentsMeta();
 			var component = pageMeta.FirstOrDefault(x => x.Instance.AddonId == _spacePage.ComponentId);
 			if(component is null)
@@ -45,10 +45,10 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 			{
 				Id = Guid.NewGuid().ToString(),
 				Url = string.Format(TfConstants.SpacePagePageManageUrl, navState.SpaceId, navState.SpacePageId)
-					.GenerateWithLocalAsReturnUrl(navState.ReturnUrl),
+					.GenerateWithLocalAndQueryAsReturnUrl(navState.ReturnUrl),
 				Selected = navState.NodesDict.Keys.Count == 5 && navState.HasNode(RouteDataNode.Manage, 4),
-				Text = LOC("Page"),
-				IconCollapsed = TfConstants.GetIcon(_spacePage.FluentIconName)
+				Text = LOC("Details"),
+				IconCollapsed = TfConstants.GetIcon("Info")
 			});
 			foreach (var tab in component.Instance.GetManagementTabs())
 			{
@@ -57,7 +57,7 @@ public partial class TucSpacePageManageContentToolbar : TfBaseComponent, IDispos
 					Id = Guid.NewGuid().ToString(),
 					Url = string.Format(TfConstants.SpacePagePageManageTabUrl, navState.SpaceId, navState.SpacePageId,
 							tab.Slug)
-						.GenerateWithLocalAsReturnUrl(navState.ReturnUrl),
+						.GenerateWithLocalAndQueryAsReturnUrl(navState.ReturnUrl),
 					Selected =
 						navState.NodesDict.Keys.Count == 5 && navState.HasNode(RouteDataNode.ManageTab, 4) &&
 						navState.ManageTab == tab.Slug,

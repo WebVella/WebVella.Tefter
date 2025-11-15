@@ -1,0 +1,30 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true" Style="display: none">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Rename Page")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
+		              Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+	}
+	else
+	{
+		<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_name
+		                 Label="@LOC("Name")" Style="width:100%" AutoComplete="off" @ref="_ref"/>
+		<TucValidationMessage Field="@(nameof(_name))" Errors="_validationErrors"/>
+	}
+</FluentDialogBody>

@@ -1,8 +1,9 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IDisposable
+public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDisposable
 {
 	// Dependency Injection
+	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
 	[Parameter] public TfSpacePage SpacePage { get; set; } = null!;
 
@@ -10,22 +11,31 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IDisposable
 	private TfNavigationState? _navState = null!;
 	private Guid _initedViewId = Guid.Empty;
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
+		await TfEventProvider.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init(TfAuthLayout.GetState().NavigationState);
+		_init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 	}
 
-	protected override async Task OnParametersSetAsync()
+	protected override void OnParametersSet()
 	{
 		if (_initedViewId != SpaceView.Id)
-			await _init(TfAuthLayout.GetState().NavigationState);
+			_init(TfAuthLayout.GetState().NavigationState);
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewUpdated;
+		}
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -34,13 +44,22 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IDisposable
 		{
 			if (UriInitialized != args.Location)
 			{
-				await _init(TfAuthLayout.GetState().NavigationState);
+				_init(TfAuthLayout.GetState().NavigationState);
 				await InvokeAsync(StateHasChanged);
 			}
 		});
 	}
+	
+	private async Task On_SpaceViewUpdated(TfSpaceViewUpdatedEvent args)
+	{
+		await InvokeAsync(async () =>
+		{
+			_init(TfAuthLayout.GetState().NavigationState);
+			await InvokeAsync(StateHasChanged);
+		});
+	}	
 
-	private async Task _init(TfNavigationState navState)
+	private void _init(TfNavigationState navState)
 	{
 		_navState = navState;
 		try
@@ -50,13 +69,14 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IDisposable
 			Icon? mainIcon = String.IsNullOrWhiteSpace(SpaceView.Settings.MainTabFluentIcon)
 				? null
 				: TfConstants.GetIcon(SpaceView.Settings.MainTabFluentIcon);
-			if (SpaceView.Presets.Count > 0)
+
+if (SpaceView.Presets.Count > 0)
 			{
 				_menu.Add(new TfMenuItem
 				{
 					Id = "tf-main",
 					Text = String.IsNullOrWhiteSpace(SpaceView.Settings.MainTabLabel) ?  "Main" : SpaceView.Settings.MainTabLabel,
-					Url = NavigatorExt.AddQueryValueToUri(Navigator.Uri, TfConstants.PresetIdQueryName, null),
+					Url = NavigatorExt.AddQueryValueToUri(Navigator.GetLocalUrl(), TfConstants.PresetIdQueryName, null),
 					Selected = currentPresetId is null,
 					IconCollapsed = mainIcon,
 					IconExpanded = mainIcon
@@ -89,7 +109,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IDisposable
 			Text = preset.Name,
 			Url = preset.IsGroup
 				? null
-				: NavigatorExt.AddQueryValueToUri(Navigator.Uri, TfConstants.PresetIdQueryName, preset.Id.ToString()),
+				: NavigatorExt.AddQueryValueToUri(Navigator.GetLocalUrl(), TfConstants.PresetIdQueryName, preset.Id.ToString()),
 			Color = preset.Color,
 			IconExpanded = TfConstants.GetIcon(preset.Icon),
 			IconCollapsed = TfConstants.GetIcon(preset.Icon),

@@ -30,8 +30,7 @@
 	<ChildContent>
 		@if (_items.Count == 0)
 		{
-			<FluentMessageBar AllowDismiss="false"
-			                  Intent="@MessageIntent.Info">@LOC("No filters added yet")</FluentMessageBar>
+			<div style="color:var(--neutral-foreground-hint)">@LOC("No filters added yet")</div>
 		}
 		@foreach (var item in _items)
 		{

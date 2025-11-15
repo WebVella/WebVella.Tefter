@@ -18,6 +18,10 @@ public partial interface ITfService
 	public List<TfSpacePage> UpdateSpacePage(
 		TfSpacePage spacePage);
 
+	public void RenameSpacePage(
+		Guid pageId,
+		string name);
+
 	public List<TfSpacePage> DeleteSpacePage(
 		TfSpacePage spacePage);
 
@@ -35,8 +39,8 @@ public partial class TfService : ITfService
 		try
 		{
 			var spacePagesList = _dboManager.GetList<TfSpacePageDbo>()
-			.Select(x => ConvertDboToModel(x))
-			.ToList();
+				.Select(x => ConvertDboToModel(x))
+				.ToList();
 
 			var rootPages = spacePagesList
 				.Where(x => x.ParentId is null)
@@ -51,6 +55,7 @@ public partial class TfService : ITfService
 					?.Instance.GetType();
 				InitSpacePageChildPages(rootPage, spacePagesList, components);
 			}
+
 			return rootPages;
 		}
 		catch (Exception ex)
@@ -65,10 +70,10 @@ public partial class TfService : ITfService
 		try
 		{
 			var spacePagesList = _dboManager.GetList<TfSpacePageDbo>(
-				spaceId,
-				nameof(TfSpacePageDbo.SpaceId))
-			.Select(x => ConvertDboToModel(x))
-			.ToList();
+					spaceId,
+					nameof(TfSpacePageDbo.SpaceId))
+				.Select(x => ConvertDboToModel(x))
+				.ToList();
 
 			var rootPages = spacePagesList
 				.Where(x => x.ParentId is null)
@@ -93,7 +98,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfSpacePage GetSpacePage(Guid pageId)
+	public TfSpacePage? GetSpacePage(Guid pageId)
 	{
 		try
 		{
@@ -123,12 +128,13 @@ public partial class TfService : ITfService
 			childPage.ParentPage = page;
 			childPage.ComponentType = components
 				.SingleOrDefault(x => x.ComponentId == childPage.ComponentId)
-				?.Instance.GetType();;
+				?.Instance.GetType();
+			;
 			InitSpacePageChildPages(childPage, allPages, components);
 		}
 	}
 
-	private TfSpacePage FindPageById(
+	private TfSpacePage? FindPageById(
 		Guid id,
 		List<TfSpacePage> pages)
 	{
@@ -168,7 +174,6 @@ public partial class TfService : ITfService
 
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-
 				var allPages = GetSpacePages(spacePage.SpaceId);
 				var space = GetSpace(spacePage.SpaceId);
 
@@ -197,6 +202,7 @@ public partial class TfService : ITfService
 						.Select(x => (short?)x.Position.Value)
 						.Max(x => x);
 				}
+
 				if (maxPosition is null)
 					maxPosition = 0;
 
@@ -236,7 +242,8 @@ public partial class TfService : ITfService
 				//update pages which position is changed
 				foreach (var pageToUpdate in pagesToUpdate)
 				{
-					if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(pageToUpdate), nameof(TfSpacePageDbo.Position)))
+					if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(pageToUpdate),
+						    nameof(TfSpacePageDbo.Position)))
 						throw new TfDboServiceException("Update<TfSpacePageDbo> failed.");
 				}
 
@@ -244,10 +251,11 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Insert<TfSpacePageDbo> failed.");
 
 
-				if (spacePage.Type == TfSpacePageType.Page && spacePage.ComponentId.HasValue )
+				if (spacePage.Type == TfSpacePageType.Page && spacePage.ComponentId.HasValue)
 				{
 					var spacePageComponents = _metaService.GetSpacePagesComponentsMeta();
-					var pageComponent = spacePageComponents.SingleOrDefault(x => x.ComponentId == spacePage.ComponentId);
+					var pageComponent =
+						spacePageComponents.SingleOrDefault(x => x.ComponentId == spacePage.ComponentId);
 					if (pageComponent is not null)
 					{
 						var task = Task.Run(async () =>
@@ -266,7 +274,8 @@ public partial class TfService : ITfService
 							if (optionsJson != spacePage.ComponentOptionsJson)
 							{
 								spacePage.ComponentOptionsJson = optionsJson;
-								if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(spacePage), nameof(TfSpacePageDbo.ComponentSettingsJson)))
+								if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(spacePage),
+									    nameof(TfSpacePageDbo.ComponentSettingsJson)))
 									throw new Exception("Space page update failed");
 							}
 						});
@@ -286,6 +295,25 @@ public partial class TfService : ITfService
 		{
 			throw ProcessException(ex);
 		}
+	}
+
+	public void RenameSpacePage(
+		Guid pageId,
+		string name)
+	{
+		var page = GetSpacePage(pageId);
+		if (page is null)
+		{
+			new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The space page is null.")
+				}).ToValidationException()
+				.ThrowIfContainsErrors();
+		}
+
+		page.Name = name;
+		_ = UpdateSpacePage(page);
 	}
 
 	public List<TfSpacePage> UpdateSpacePage(
@@ -364,6 +392,7 @@ public partial class TfService : ITfService
 							.Select(x => (short?)x.Position.Value)
 							.Max(x => x);
 					}
+
 					if (maxPosition is null)
 						maxPosition = 0;
 
@@ -401,11 +430,9 @@ public partial class TfService : ITfService
 								pagesToUpdate.Add(childPage);
 						}
 					}
-
 				}
 				else if (spacePage.Position != existingSpacePage.Position)
 				{
-
 					TfSpacePage parentPage = null;
 					if (spacePage.ParentId is not null)
 						parentPage = FindPageById(spacePage.ParentId.Value, allPages);
@@ -431,6 +458,7 @@ public partial class TfService : ITfService
 							.Select(x => (short?)x.Position.Value)
 							.Max(x => x);
 					}
+
 					if (maxPosition is null)
 						maxPosition = 1;
 
@@ -492,7 +520,6 @@ public partial class TfService : ITfService
 								if (!pagesToUpdate.Any(x => x.Id == childPage.Id))
 									pagesToUpdate.Add(childPage);
 							}
-
 						}
 						else
 						{
@@ -523,7 +550,8 @@ public partial class TfService : ITfService
 				if (spacePage.Type == TfSpacePageType.Page && spacePage.ComponentId.HasValue)
 				{
 					var spacePageComponents = _metaService.GetSpacePagesComponentsMeta();
-					var pageComponent = spacePageComponents.SingleOrDefault(x => x.ComponentId == spacePage.ComponentId);
+					var pageComponent =
+						spacePageComponents.SingleOrDefault(x => x.ComponentId == spacePage.ComponentId);
 					if (pageComponent is not null)
 					{
 						var task = Task.Run(async () =>
@@ -541,7 +569,8 @@ public partial class TfService : ITfService
 							if (optionsJson != spacePage.ComponentOptionsJson)
 							{
 								spacePage.ComponentOptionsJson = optionsJson;
-								if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(spacePage), nameof(TfSpacePageDbo.ComponentSettingsJson)))
+								if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(spacePage),
+									    nameof(TfSpacePageDbo.ComponentSettingsJson)))
 									throw new TfDboServiceException("Update<TfSpacePageDbo> failed");
 							}
 						});
@@ -602,9 +631,9 @@ public partial class TfService : ITfService
 				{
 					childPage.Position--;
 
-					if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(childPage), nameof(TfSpacePageDbo.Position)))
+					if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(childPage),
+						    nameof(TfSpacePageDbo.Position)))
 						throw new TfDboServiceException("Update<TfSpacePageDbo> failed");
-
 				}
 
 				List<TfSpacePage> pagesToDelete = new List<TfSpacePage>();
@@ -634,7 +663,8 @@ public partial class TfService : ITfService
 
 					if (pageToDelete.Type == TfSpacePageType.Page && pageToDelete.ComponentId.HasValue)
 					{
-						var pageComponent = spacePageComponents.SingleOrDefault(x => x.ComponentId == pageToDelete.ComponentId);
+						var pageComponent =
+							spacePageComponents.SingleOrDefault(x => x.ComponentId == pageToDelete.ComponentId);
 						if (pageComponent is not null)
 						{
 							var task = Task.Run(async () =>
@@ -712,7 +742,6 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				return (pageToCopy.Id, GetSpacePages(pageToCopy.SpaceId));
-
 			}
 		}
 		catch (Exception ex)
@@ -728,14 +757,14 @@ public partial class TfService : ITfService
 		else
 			page.Position++;
 		var pageList = UpdateSpacePage(page);
-	}	
+	}
 
 	public TfSpacePage? GetSpacePageBySpaceViewId(Guid spaceViewId)
 	{
 		var allPages = GetAllSpacePages();
 		return allPages.FirstOrDefault(x => x.ComponentOptionsJson.Contains(spaceViewId.ToString()));
-	}	
-	
+	}
+
 	private TfSpacePage ConvertDboToModel(
 		TfSpacePageDbo dbo)
 	{
@@ -779,9 +808,10 @@ public partial class TfService : ITfService
 	#region <--- validation --->
 
 	internal class TfSpacePageValidator
-	: AbstractValidator<TfSpacePage>
+		: AbstractValidator<TfSpacePage>
 	{
 		private readonly List<TfSpacePage> _allPages;
+
 		public TfSpacePageValidator(
 			List<TfSpacePage> allPages)
 		{
@@ -805,49 +835,50 @@ public partial class TfService : ITfService
 			RuleSet("create", () =>
 			{
 				RuleFor(spacePage => spacePage.Id)
-						.Must((spacePage, id) => { return FindPageById(id, allPages) == null; })
-						.WithMessage("There is already existing space page with specified identifier.");
+					.Must((spacePage, id) => { return FindPageById(id, allPages) == null; })
+					.WithMessage("There is already existing space page with specified identifier.");
 
 				RuleFor(spacePage => spacePage.ParentId)
-						.Must((spacePage, parentId) => { return spacePage.Id != parentId; })
-						.WithMessage("Space page cannot be parent to itself.");
+					.Must((spacePage, parentId) => { return spacePage.Id != parentId; })
+					.WithMessage("Space page cannot be parent to itself.");
 			});
 
 			RuleSet("update", () =>
 			{
 				RuleFor(spacePage => spacePage.Id)
-						.Must((spacePage, id) => { return FindPageById(id, allPages) != null; })
-						.WithMessage("There is not existing space page with specified identifier.");
+					.Must((spacePage, id) => { return FindPageById(id, allPages) != null; })
+					.WithMessage("There is not existing space page with specified identifier.");
 
 				RuleFor(spacePage => spacePage.ParentId)
-						.Must((spacePage, parentId) => { return spacePage.Id != parentId; })
-						.WithMessage("Space page cannot be parent to itself.");
+					.Must((spacePage, parentId) => { return spacePage.Id != parentId; })
+					.WithMessage("Space page cannot be parent to itself.");
 
 				RuleFor(spacePage => spacePage.ParentId)
-						.Must((spacePage, parentId) =>
-						{
-							var existingPage = FindPageById(spacePage.Id, allPages);
+					.Must((spacePage, parentId) =>
+					{
+						var existingPage = FindPageById(spacePage.Id, allPages);
 
-							return existingPage
-									.GetChildPagesPlainList()
-									.Count(x => x.ParentId == parentId) == 0;
-						})
-						.WithMessage("Space page cannot be moved inside its child tree.");
-
+						return existingPage
+							.GetChildPagesPlainList()
+							.Count(x => x.ParentId == parentId) == 0;
+					})
+					.WithMessage("Space page cannot be moved inside its child tree.");
 			});
 
 			RuleSet("delete", () =>
 			{
 			});
-
 		}
 
 		public ValidationResult ValidateCreate(
 			TfSpacePage spacePage)
 		{
 			if (spacePage == null)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The space page is null.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The space page is null.")
+				});
 
 			return this.Validate(spacePage, options =>
 			{
@@ -859,8 +890,11 @@ public partial class TfService : ITfService
 			TfSpacePage spacePage)
 		{
 			if (spacePage == null)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The space page is null.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The space page is null.")
+				});
 
 			return this.Validate(spacePage, options =>
 			{
@@ -872,8 +906,11 @@ public partial class TfService : ITfService
 			TfSpacePage spacePage)
 		{
 			if (spacePage == null)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The space page is null.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The space page is null.")
+				});
 
 			return this.Validate(spacePage, options =>
 			{
@@ -913,5 +950,4 @@ public partial class TfService : ITfService
 	}
 
 	#endregion
-
 }

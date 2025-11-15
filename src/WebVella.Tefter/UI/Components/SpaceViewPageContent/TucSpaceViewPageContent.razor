@@ -35,7 +35,7 @@ else
     //var columnIndex = 1;
     <CascadingValue IsFixed="true" TValue="TucSpaceViewPageContent" Value="this" Name="TucSpaceViewPageContent">
         <TucLayoutPageContent Icon="@_spacePage!.FluentIconName" Title="@_spacePage!.Name"
-                              ShowTabs="_spaceView.Presets.Count > 0">
+                              ShowTabs="_spaceView.Presets.Count > 0" OnEdit="_renamePage">
             <Tabs>
                 <TucSpaceViewPageContentTabs SpaceView="_spaceView" SpacePage="_spacePage" />
             </Tabs>

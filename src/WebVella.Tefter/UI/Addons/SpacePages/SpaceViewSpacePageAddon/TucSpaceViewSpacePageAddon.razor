@@ -19,7 +19,7 @@ else if (Context.Mode == TfComponentMode.Create)
 				<TucSelect SelectedOption="@_selectedDataset"
 						   SelectedOptionChanged="@(async (x) => await _valueChanged(nameof(_options.DatasetId),x))"
 						   TOption="TfDataset" Placeholder="@LOC("select dataset ...")"
-						   Items="@_allDatasets" Style="width:100%"
+						   Items="@_allDatasets" Style="width:100%" 
 						   OptionValue="@((p)=> p.Id.ToString())"
 						   OptionText="@(p => p.Name)" Label="@LOC("Dataset")" />
 				<TucValidationMessage Field="@(nameof(_options.DatasetId))" Errors="ValidationErrors" />

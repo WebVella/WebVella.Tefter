@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewPageContentToolbar
 {
-	private bool _showClearFilter
+	private bool _isFilteredOrSorted
 	{
 		get
 		{

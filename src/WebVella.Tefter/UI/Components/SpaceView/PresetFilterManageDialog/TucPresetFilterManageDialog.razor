@@ -70,7 +70,28 @@
 			}
 			else
 			{
+				<div class="tf-divider tf-divider--with-title" style="margin:15px 0">
+					<div class="tf-divider__title">@LOC("SEARCH")</div>
+					<div class="tf-divider__hr"></div>
+				</div>
+				<TucCard>
+					<FluentGrid>
+						<FluentGridItem xs="4">
+							<FluentTextField TextFieldType="@TextFieldType.Text" Label="@LOC("GLOBAL SEARCH")"
+							                 @bind-Value=@_form.Search AutoComplete="off" Style="width:100%"/>
+							<FluentValidationMessage For="@(() => _form.Search)"/>
+						</FluentGridItem>
+					</FluentGrid>					
+				</TucCard>
+				<div class="tf-divider tf-divider--with-title" style="margin:15px 0">
+					<div class="tf-divider__title">@LOC("FILTERS")</div>
+					<div class="tf-divider__hr"></div>
+				</div>				
 				<TucFilterCard DatasetId="Content.DateSet!.Id" @bind-Items="_form.Filters"/>
+				<div class="tf-divider tf-divider--with-title" style="margin:15px 0">
+					<div class="tf-divider__title">@LOC("SORT ORDER")</div>
+					<div class="tf-divider__hr"></div>
+				</div>
 				<TucSortCard DatasetId="Content.DateSet!.Id" @bind-Items="_form.SortOrders"/>
 			}
 		</FluentEditForm>

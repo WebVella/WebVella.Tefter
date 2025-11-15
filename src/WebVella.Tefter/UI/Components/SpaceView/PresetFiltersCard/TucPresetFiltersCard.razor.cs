@@ -1,6 +1,8 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucPresetFiltersCard : TfBaseComponent
 {
+	[Parameter]
+	public TfSpaceView SpaceView { get; set; } = null!;
 	
 	[Parameter]
 	public TfDataset Dataset { get; set; } = null!;	
@@ -117,17 +119,18 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 		{
 			Item = ModelHelpers.GetPresetById(Items, presetId),
 			Parents = _getParents().ToList(),
-			DateSet = Dataset
+			DateSet = Dataset,
+			SpaceView = SpaceView
 		};
 		var dialog = await DialogService.ShowDialogAsync<TucPresetFilterManageDialog>(
-		context,
-		new ()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthExtraLarge,
-			TrapFocus = false
-		});
+			context,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthExtraLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{

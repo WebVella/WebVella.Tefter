@@ -120,13 +120,13 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 	{
 		var pageManageUrl = String.Format(TfConstants.SpacePagePageManageUrl, TfAuthLayout.GetState().Space!.Id,
 			TfAuthLayout.GetState().SpacePage!.Id);
-		Navigator.NavigateTo(pageManageUrl.GenerateWithLocalAsReturnUrl(Navigator.Uri)!);
+		Navigator.NavigateTo(pageManageUrl.GenerateWithLocalAndQueryAsReturnUrl(Navigator.Uri)!);
 	}
 
 	private void _manageCurrentSpace()
 	{
 		var pageManageUrl = String.Format(TfConstants.SpaceManagePageUrl, TfAuthLayout.GetState().Space!.Id);
-		Navigator.NavigateTo(pageManageUrl.GenerateWithLocalAsReturnUrl(Navigator.Uri)!);
+		Navigator.NavigateTo(pageManageUrl.GenerateWithLocalAndQueryAsReturnUrl(Navigator.Uri)!);
 	}
 
 	private async Task _addSpace()

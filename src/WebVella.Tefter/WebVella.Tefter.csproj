@@ -53,6 +53,7 @@
 			<PackagePath>\</PackagePath>
 		</None>
 		<None Include="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\.editorconfig" />
+		<None Include="compilerconfig.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -88,7 +89,7 @@
 		<PackageReference Include="System.Drawing.Common" Version="10.0.0" />
 		<PackageReference Include="System.IO.Packaging" Version="10.0.0" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
-		<PackageReference Include="WebVella.BlazorTrace" Version="1.1.0" />
-		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
+		<PackageReference Include="WebVella.BlazorTrace" Version="1.2.0" />
+		<PackageReference Include="WebVella.DocumentTemplates" Version="1.2.2" />
 	</ItemGroup>
 </Project>

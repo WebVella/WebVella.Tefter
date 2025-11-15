@@ -55,15 +55,30 @@ public partial class TfService
 		var viewColumns = GetSpaceViewColumnsList(view.Id);
 		var allDataProviders = GetDataProviders().ToList();
 		var allSharedColumns = GetSharedColumns();
-		List<TfFilterBase> filters =
+		string? presetSearch = null;
+		List<TfFilterBase> presetFilters = new();
+		List<TfSort> presetSorts = new();
+		if (data.RouteState.SpaceViewPresetId is not null &&
+		    view.Presets.Any(x => x.Id == data.RouteState.SpaceViewPresetId.Value))
+		{
+			var preset = view.Presets.First(x => x.Id == data.RouteState.SpaceViewPresetId.Value);
+			presetSearch = preset.Search;
+			presetFilters = preset.Filters;
+			presetSorts = preset.SortOrders;
+		}		
+		
+		List<TfFilterBase> userFilters =
 			data.RouteState.Filters.ConvertQueryFilterToList(viewColumns, allDataProviders, allSharedColumns);
-		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns);
+		List<TfSort> userSorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns);
 
 		var dataset = QueryDataset(
 			datasetId: view.DatasetId,
-			userFilters: filters,
-			userSorts: sorts,
-			search: data.RouteState.Search,
+			presetSearch:presetSearch,
+			presetFilters:presetFilters,
+			presetSorts:presetSorts,
+			userFilters: userFilters,
+			userSorts: userSorts,
+			userSearch: data.RouteState.Search,
 			page: null,
 			pageSize: null
 		);
@@ -172,15 +187,30 @@ public partial class TfService
 		var viewColumns = GetSpaceViewColumnsList(view.Id);
 		var allDataProviders = GetDataProviders().ToList();
 		var allSharedColumns = GetSharedColumns();
-		List<TfFilterBase> filters =
+		string? presetSearch = null;
+		List<TfFilterBase> presetFilters = new();
+		List<TfSort> presetSorts = new();
+		if (data.RouteState.SpaceViewPresetId is not null &&
+		    view.Presets.Any(x => x.Id == data.RouteState.SpaceViewPresetId.Value))
+		{
+			var preset = view.Presets.First(x => x.Id == data.RouteState.SpaceViewPresetId.Value);
+			presetSearch = preset.Search;
+			presetFilters = preset.Filters;
+			presetSorts = preset.SortOrders;
+		}
+
+		List<TfFilterBase> userFilters =
 			data.RouteState.Filters.ConvertQueryFilterToList(viewColumns, allDataProviders, allSharedColumns);
-		List<TfSort> sorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns);
+		List<TfSort> userSorts = data.RouteState.Sorts.ConvertQuerySortToList(viewColumns);
 
 		var dataset = QueryDataset(
 			datasetId: view.DatasetId,
-			userFilters: filters,
-			userSorts: sorts,
-			search: data.RouteState.Search,
+			presetSearch:presetSearch,
+			presetFilters:presetFilters,
+			presetSorts:presetSorts,
+			userFilters: userFilters,
+			userSorts: userSorts,
+			userSearch: data.RouteState.Search,
 			page: null,
 			pageSize: null
 		);

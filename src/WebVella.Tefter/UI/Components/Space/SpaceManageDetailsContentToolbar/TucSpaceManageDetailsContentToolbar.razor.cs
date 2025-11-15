@@ -47,7 +47,7 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDis
 			var spacePages = TfService.GetSpacePages(space.Id);
 			_menu.Add(new TfMenuItem
 			{
-				Url = string.Format(TfConstants.SpaceManagePageUrl, navState.SpaceId).GenerateWithLocalAsReturnUrl(navState.ReturnUrl),
+				Url = string.Format(TfConstants.SpaceManagePageUrl, navState.SpaceId).GenerateWithLocalAndQueryAsReturnUrl(navState.ReturnUrl),
 				Selected = navState.RouteNodes.Count == 3,
 				IconCollapsed = TfConstants.GetIcon("Info"),
 				Text = LOC("Details")
@@ -55,7 +55,7 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDis
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),
-				Url = string.Format(TfConstants.SpaceManageAccessPageUrl, navState.SpaceId).GenerateWithLocalAsReturnUrl(navState.ReturnUrl),
+				Url = string.Format(TfConstants.SpaceManageAccessPageUrl, navState.SpaceId).GenerateWithLocalAndQueryAsReturnUrl(navState.ReturnUrl),
 				Selected = navState.RouteNodes.Count == 4 && navState.RouteNodes[3] == RouteDataNode.Access,
 				Text = LOC("Access"),
 				IconCollapsed = TfConstants.GetIcon("Table"),
@@ -71,7 +71,7 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IDis
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),
-				Url = string.Format(TfConstants.SpaceManagePagesPageUrl, navState.SpaceId, navState.SpaceViewId).GenerateWithLocalAsReturnUrl(navState.ReturnUrl),
+				Url = string.Format(TfConstants.SpaceManagePagesPageUrl, navState.SpaceId, navState.SpaceViewId).GenerateWithLocalAndQueryAsReturnUrl(navState.ReturnUrl),
 				Selected = navState.HasNode(RouteDataNode.Pages, 3),
 				Text = LOC("Pages"),
 				IconCollapsed = TfConstants.GetIcon("Document"),

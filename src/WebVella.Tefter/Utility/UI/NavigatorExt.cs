@@ -370,7 +370,7 @@ public static partial class NavigatorExt
 		return result;
 	}
 
-	public static string AddQueryValueToUri(string url, string paramName, string value)
+	public static string AddQueryValueToUri(string url, string paramName, string? value)
 	{
 		var uri = new Uri($"http://localhost{url}");
 		var queryDictionary = System.Web.HttpUtility.ParseQueryString(uri.Query);
@@ -476,6 +476,12 @@ public static partial class NavigatorExt
 	public static string GetLocalUrl(this NavigationManager navigator)
 	{
 		var uri = new Uri(navigator.Uri);
+		return uri.LocalPath;
+	}	
+	
+	public static string GetLocalAndQueryUrl(this NavigationManager navigator)
+	{
+		var uri = new Uri(navigator.Uri);
 		var localUrl = uri.LocalPath;
 		if (!String.IsNullOrWhiteSpace(uri.Query))
 			localUrl = localUrl + uri.Query;
@@ -483,7 +489,7 @@ public static partial class NavigatorExt
 		return localUrl;
 	}
 
-	public static string? GenerateWithLocalAsReturnUrl(this string mainUrl, string? returnUrl)
+	public static string? GenerateWithLocalAndQueryAsReturnUrl(this string mainUrl, string? returnUrl)
 	{
 		if (String.IsNullOrWhiteSpace(mainUrl)) return null;
 		if (String.IsNullOrWhiteSpace(returnUrl)) return mainUrl;

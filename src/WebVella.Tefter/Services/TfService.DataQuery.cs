@@ -25,11 +25,12 @@ public partial interface ITfService
 
 	public TfDataTable QueryDataset(
 		Guid datasetId,
-		List<TfFilterBase>? userFilters = null,
-		List<TfSort>? userSorts = null,
+		string? presetSearch = null,
 		List<TfFilterBase>? presetFilters = null,
 		List<TfSort>? presetSorts = null,
-		string? search = null,
+		string? userSearch = null,
+		List<TfFilterBase>? userFilters = null,
+		List<TfSort>? userSorts = null,
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false,
@@ -41,11 +42,12 @@ public partial interface ITfService
 
 	public List<Guid> QueryDatasetIdList(
 		Guid datasetId,
+		string? userSearch = null,
 		List<TfFilterBase>? userFilters = null,
 		List<TfSort>? userSorts = null,
+		string? presetSearch = null,
 		List<TfFilterBase>? presetFilters = null,
-		List<TfSort>? presetSorts = null,
-		string? search = null
+		List<TfSort>? presetSorts = null
 	);
 	TfDataTable InsertRowInDataTable(TfDataTable dt);
 
@@ -143,7 +145,7 @@ public partial class TfService : ITfService
 				spaceData: null,
 				userFilters: null,
 				userSorts: null,
-				search: search,
+				userSearch: search,
 				page: page,
 				pageSize: pageSize);
 
@@ -290,11 +292,12 @@ public partial class TfService : ITfService
 
 	public TfDataTable QueryDataset(
 		Guid datasetId,
-		List<TfFilterBase>? userFilters = null,
-		List<TfSort>? userSorts = null,
+		string? presetSearch = null,
 		List<TfFilterBase>? presetFilters = null,
 		List<TfSort>? presetSorts = null,
-		string? search = null,
+		string? userSearch = null,
+		List<TfFilterBase>? userFilters = null,
+		List<TfSort>? userSorts = null,
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false,
@@ -323,11 +326,12 @@ public partial class TfService : ITfService
 				dataProvider: provider,
 				dataProviders: allDataProviders,
 				spaceData: spaceData,
-				userFilters: userFilters,
-				userSorts: userSorts,
+				presetSearch:presetSearch,
 				presetFilters: presetFilters,
 				presetSorts: presetSorts,
-				search: search,
+				userSearch: userSearch,
+				userFilters: userFilters,
+				userSorts: userSorts,
 				page: page,
 				pageSize: pageSize,
 				returnOnlyTfIds: returnOnlyTfIds);
@@ -349,7 +353,7 @@ public partial class TfService : ITfService
 				sqlBuilder.SharedColumnsData,
 				new TfDataTableQuery
 				{
-					Search = search,
+					Search = userSearch,
 					Page = usedPage,
 					PageSize = usedPageSize,
 					DataProviderId = provider.Id,
@@ -562,25 +566,28 @@ public partial class TfService : ITfService
 
 	public List<Guid> QueryDatasetIdList(
 		Guid datasetId,
+		string? userSearch = null,
 		List<TfFilterBase>? userFilters = null,
 		List<TfSort>? userSorts = null,
+		string? presetSearch = null,
 		List<TfFilterBase>? presetFilters = null,
-		List<TfSort>? presetSorts = null,
-		string? search = null)
+		List<TfSort>? presetSorts = null
+		)
 	{
 		var result = new List<Guid>();
 		var dt = QueryDataset(
 			datasetId: datasetId,
+			userSearch: userSearch,
 			userFilters: userFilters,
 			userSorts: userSorts,
+			presetSearch:presetSearch,
 			presetFilters: presetFilters,
 			presetSorts: presetSorts,
-			search: search,
 			page: null,
 			pageSize: null,
 			noRows: false,
 			returnOnlyTfIds: true);
-
+	
 		for (int i = 0; i < dt.Rows.Count; i++)
 		{
 			result.Add((Guid)dt.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME]);

@@ -30,7 +30,7 @@
 	<ChildContent>
 		@if (_items.Count == 0)
 		{
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No data sort order defined yet")</FluentMessageBar>
+			<div style="color:var(--neutral-foreground-hint)">@LOC("No sort order defined yet")</div>
 		}
 		else
 		{

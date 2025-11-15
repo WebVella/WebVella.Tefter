@@ -36,7 +36,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider?.DisposeAsync();
+		await TfEventProvider.DisposeAsync();
 		_objectRef?.Dispose();
 		try
 		{
@@ -87,6 +87,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewUpdated;
 			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewColumnsChanged;
 			TfEventProvider.SpaceViewDataChangedEvent += On_SpaceViewDataChanged;
+			TfEventProvider.SpacePageUpdatedEvent += On_SpacePageUpdated;
 			await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable", _tableId);
 			await JSRuntime.InvokeAsync<bool>("Tefter.addColumnResizeListener",
 				_objectRef, ComponentId, "OnColumnResized");
@@ -152,6 +153,16 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		});
 	}
 
+	private async Task On_SpacePageUpdated(TfSpacePageUpdatedEvent args)
+	{
+		await InvokeAsync(async () =>
+		{
+			if (args.Payload.Id != _spacePage?.Id) return;
+			_spacePage = args.Payload;
+			await InvokeAsync(StateHasChanged);
+		});
+	}	
+	
 	private async Task _init(TfNavigationState navState, bool showLoading = true)
 	{
 		try
@@ -213,12 +224,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 			_data = TfService.QueryDataset(
 				datasetId: _spaceView!.DatasetId,
-				presetFilters: _preset is not null ? _preset.Filters : null,
-				presetSorts: _preset is not null ? _preset.SortOrders : null,
+				presetSearch:_preset?.Search,
+				presetFilters: _preset?.Filters,
+				presetSorts: _preset?.SortOrders,
+				userSearch: _navState.Search,
 				userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _allDataProviders,
 					_allSharedColumns),
 				userSorts: _navState.Sorts.ConvertQuerySortToList(_spaceViewColumns),
-				search: _navState.Search,
 				page: 1,
 				pageSize: TfConstants.ItemsMaxLimit
 			);
@@ -243,6 +255,19 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		}
 	}
 
+	private async Task _renamePage(){
+		_ = await DialogService.ShowDialogAsync<TucSpacePageRenameDialog>(
+			_spacePage!,
+			new ()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthSmall,
+				TrapFocus = false,
+				ShowTitle = false
+			});
+	}
+	
 	#endregion
 
 	#region << Public methods >>
@@ -329,7 +354,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _allDataProviders,
 					_allSharedColumns),
 				userSorts: _navState.Sorts.ConvertQuerySortToList(_spaceViewColumns),
-				search: _navState.Search
+				userSearch: _navState.Search
 			);
 		}
 		catch { }

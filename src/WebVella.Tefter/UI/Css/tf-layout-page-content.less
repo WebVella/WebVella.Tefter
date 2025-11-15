@@ -21,7 +21,6 @@
 
       &__title {
         flex: 1 1 auto;
-        
         font-weight: 600;
         font-size: var(--type-ramp-plus-3-font-size);
         line-height: var(--type-ramp-plus-3-line-height);
@@ -32,14 +31,33 @@
         display: flex;
         align-items: center;
         padding-right: var(--tf-padding);
-
       }
-      
-      
+
+
       &__return {
         flex: 0 0 auto;
         padding-right: var(--tf-padding);
+      }
 
+      &__action {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        padding-left: var(--tf-padding);
+        visibility: hidden;
+        
+        fluent-button {
+          --neutral-fill-stealth-rest: var(--neutral-fill-layer-rest);
+          --accent-fill-rest: var(--neutral-foreground-hint);
+
+          &:hover {
+            --accent-fill-rest: var(--neutral-foreground-rest);
+          }
+        }
+      }
+      &:hover &__action{
+        visibility: visible;
       }
     }
 
@@ -49,16 +67,17 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      fluent-search{
-        &::part(root){
-          background:padding-box linear-gradient(var(--neutral-fill-input-active),var(--neutral-fill-input-active)),border-box var(--neutral-stroke-input-active);
+
+      fluent-search {
+        &::part(root) {
+          background: padding-box linear-gradient(var(--neutral-fill-input-active), var(--neutral-fill-input-active)), border-box var(--neutral-stroke-input-active);
         }
       }
     }
 
-    fluent-divider{
-      height:1rem;
-      --neutral-stroke-divider-rest:var(--neutral-stroke-rest);
+    fluent-divider {
+      height: 1rem;
+      --neutral-stroke-divider-rest: var(--neutral-stroke-rest);
     }
   }
 

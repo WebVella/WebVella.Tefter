@@ -7,7 +7,7 @@
 			<FluentStack Wrap="false">
 				<TucAnchor Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Edit")"
 								Title="@LOC("edit")"
-							  Href="@(String.Format(TfConstants.SpacePagePageManageUrl,Item.SpaceId,Item.Id).GenerateWithLocalAsReturnUrl(TfAuthLayout.GetState().NavigationState.Uri))" />
+							  Href="@(String.Format(TfConstants.SpacePagePageManageUrl,Item.SpaceId,Item.Id).GenerateWithLocalAndQueryAsReturnUrl(TfAuthLayout.GetState().NavigationState.Uri))" />
 				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Copy")"
 							  Title="@LOC("copy")"
 							  OnClick="_onCopy" />

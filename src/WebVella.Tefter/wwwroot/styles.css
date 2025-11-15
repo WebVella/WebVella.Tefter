@@ -664,6 +664,9 @@ fluent-text-field.with-prefix::part(control) {
 fluent-switch::part(label) {
   margin-inline-end: 0;
 }
+fluent-select {
+  --max-height: 200px;
+}
 fluent-select fluent-option {
   --neutral-fill-stealth-rest: transparent;
   --neutral-fill-stealth-hover: color-mix(in srgb, var(--fill-color), var(--accent-fill-rest) 10%);
@@ -671,6 +674,7 @@ fluent-select fluent-option {
 .listbox {
   z-index: 20;
   position: relative;
+  --max-height: 200px;
 }
 /*Badge*/
 .tf-input-badge {
@@ -874,6 +878,21 @@ fluent-menu-item::part(start) {
 .tf-console-box__row__message .warning {
   color: var(--warning);
 }
+.tf-divider {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.tf-divider__title {
+  flex: 0 0 auto;
+  padding-right: var(--tf-padding);
+  color: var(--neutral-foreground-hint);
+}
+.tf-divider__hr {
+  flex: 1 1 auto;
+  height: 1px;
+  border-bottom: 1px solid var(--neutral-fill-rest);
+}
 .tf-drag-container {
   position: relative;
 }
@@ -987,15 +1006,14 @@ fluent-menu-item::part(start) {
   left: 10px;
   right: 10px;
 }
-/*	::deep .ql-editor ol > li[data-list=bullet] {
-		list-style: none;
-		margin-left: -10px;
-	}
-
-		::deep .ql-editor ol > li[data-list=bullet]:before {
-			content: '\2022';
-			padding-right: 5px;
-		}*/
+::deep .ql-editor ol > li[data-list=bullet] {
+  list-style: none;
+  margin-left: -10px;
+}
+::deep .ql-editor ol > li[data-list=bullet]:before {
+  content: '\2022';
+  padding-right: 5px;
+}
 @keyframes gridLoadingBar {
   0% {
     left: 0%;
@@ -1879,6 +1897,24 @@ fluent-menu-item::part(start) {
 .tflpc__header__left__return {
   flex: 0 0 auto;
   padding-right: var(--tf-padding);
+}
+.tflpc__header__left__action {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  padding-left: var(--tf-padding);
+  visibility: hidden;
+}
+.tflpc__header__left__action fluent-button {
+  --neutral-fill-stealth-rest: var(--neutral-fill-layer-rest);
+  --accent-fill-rest: var(--neutral-foreground-hint);
+}
+.tflpc__header__left__action fluent-button:hover {
+  --accent-fill-rest: var(--neutral-foreground-rest);
+}
+.tflpc__header__left:hover .tflpc__header__left__action {
+  visibility: visible;
 }
 .tflpc__header__right {
   flex: 0 0 auto;

@@ -9,7 +9,7 @@
                 <div class="tflpc__header__left__return">
                     <TucAnchor Appearance="@Appearance.Outline" Href="@TfAuthLayout.GetState().NavigationState.ReturnUrl"
                                IconStart="@TfConstants.GetIcon("ArrowLeft")"/>
-                </div>
+                </div> 
             }
             @if(!String.IsNullOrWhiteSpace(Icon))
             {
@@ -18,6 +18,12 @@
                 </div>
             }
             <div class="tflpc__header__left__title">@Title</div>
+            <div class="tflpc__header__left__action">
+                @if (OnEdit.HasDelegate) 
+                {
+                    <FluentButton Appearance="Appearance.Stealth" IconStart="@TfConstants.GetIcon("Edit", IconSize.Size16)" OnClick="@(async() => await OnEdit.InvokeAsync())"/>
+                }
+            </div>
         </div>
         @if (Toolbar is not null)
         {

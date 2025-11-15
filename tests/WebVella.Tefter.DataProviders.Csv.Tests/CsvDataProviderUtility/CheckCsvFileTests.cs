@@ -58,20 +58,20 @@ public class CsvDataProviderUtilityTests
     public void CheckCsvFile_Success()
     {
         var inputContext = new CsvDataProviderTestUtility().CreateFileContext("1000-rows.csv");
-        var (result,schema,delimiterFound) = new CsvDataProviderUtility().CheckCsvFile(inputContext);
+        var (result,schema) = new CsvDataProviderUtility().CheckCsvFile(inputContext);
         result.Should().BeTrue();
         var progressLog = inputContext.ProcessStream.GetProgressLog();
         progressLog.Should().NotBeNull();
         progressLog.Should().NotBeEmpty();
         schema.Should().NotBeNull();
-        delimiterFound.Should().Be(",");
+
     }
 
     [Fact]
     public void CheckCsvFile_Success2()
     {
         var inputContext = new CsvDataProviderTestUtility().CreateFileContext("csv-no-header.csv");
-        var (result,schema,delimiterFound) = new CsvDataProviderUtility().CheckCsvFile(inputContext);
+        var (result,schema) = new CsvDataProviderUtility().CheckCsvFile(inputContext);
         result.Should().BeFalse();
         var progressLog = inputContext.ProcessStream.GetProgressLog();
         progressLog.Should().NotBeNull();
@@ -80,14 +80,14 @@ public class CsvDataProviderUtilityTests
             x.Message == "Cannot evaluate the file schema. Error: A header row is required for the file");
         hasMessage.Should().BeTrue();
         schema.Should().BeNull();
-        delimiterFound.Should().BeNull();        
+       
     }
 
     [Fact]
     public void CheckCsvFile_Failure()
     {
         var inputContext = new CsvDataProviderTestUtility().CreateFileContext("image-as-csv.csv");
-        var (result,schema,delimiterFound) = new CsvDataProviderUtility().CheckCsvFile(inputContext);
+        var (result,schema) = new CsvDataProviderUtility().CheckCsvFile(inputContext);
         result.Should().BeFalse();
         var progressLog = inputContext.ProcessStream.GetProgressLog();
         progressLog.Should().NotBeNull();
@@ -96,7 +96,7 @@ public class CsvDataProviderUtilityTests
             x.Message == "[CsvDataProvider] File contents contain non printable or invalid characters");
         errorMessage.Should().BeNull();
         schema.Should().BeNull();
-        delimiterFound.Should().BeNull();        
+        
     }
 
     #endregion

@@ -38,7 +38,8 @@ public partial class TfService : ITfService
 		private List<TfSort> _userSorts = null;
 		private List<TfFilterBase> _presetFilters = new();
 		private List<TfSort> _presetSorts = null;
-		private string _search = null;
+		private string _presetSearch = null;
+		private string _userSearch = null;
 		private int? _page = null;
 		private int? _pageSize = null;
 		private List<Guid> _tfIds = null;
@@ -51,12 +52,15 @@ public partial class TfService : ITfService
 			ITfDatabaseService dbService,
 			TfDataProvider dataProvider,
 			ReadOnlyCollection<TfDataProvider> dataProviders,
-			TfDataset spaceData = null,
-			List<TfFilterBase> userFilters = null,
-			List<TfSort> userSorts = null,
-			List<TfFilterBase> presetFilters = null,
-			List<TfSort> presetSorts = null,
-			string search = null,
+			TfDataset? spaceData = null,
+			string? presetSearch = null,
+			List<TfFilterBase>? presetFilters = null,
+			List<TfSort>? presetSorts = null,
+			string? userSearch = null,
+			List<TfFilterBase>? userFilters = null,
+			List<TfSort>? userSorts = null,
+
+
 			int? page = null,
 			int? pageSize = null,
 			bool returnOnlyTfIds = false)
@@ -85,7 +89,8 @@ public partial class TfService : ITfService
 
 			_presetSorts = presetSorts;
 
-			_search = search;
+			_presetSearch = presetSearch;
+			_userSearch = userSearch;
 
 			_page = page;
 
@@ -144,7 +149,8 @@ public partial class TfService : ITfService
 
 			_presetSorts = new List<TfSort>();
 
-			_search = null;
+			_presetSearch = null;
+			_userSearch = null;
 
 			_page = null;
 
@@ -678,12 +684,24 @@ public partial class TfService : ITfService
 			}
 			else
 			{
-				if (!string.IsNullOrWhiteSpace(_search?.Trim()))
+				if (!string.IsNullOrWhiteSpace(_presetSearch?.Trim()))
 				{
-					parameters.Add(new NpgsqlParameter("@tf_search", _search?.Trim()));
-					sb.Append(Environment.NewLine);
-					sb.Append($"\t( {_tableAlias}.tf_search ILIKE CONCAT ('%', @tf_search , '%') )");
+					parameters.Add(new NpgsqlParameter("@tf_preset_search", _presetSearch?.Trim()));
+					if (sb.Length > 0)
+						sb.Append($" AND {Environment.NewLine}");
+					else
+						sb.Append(Environment.NewLine);
+					sb.Append($"\t( {_tableAlias}.tf_search ILIKE CONCAT ('%', @tf_preset_search , '%') )");
 				}
+				if (!string.IsNullOrWhiteSpace(_userSearch?.Trim()))
+				{
+					parameters.Add(new NpgsqlParameter("@tf_search", _userSearch?.Trim()));
+					if (sb.Length > 0)
+						sb.Append($" AND {Environment.NewLine}");
+					else
+						sb.Append(Environment.NewLine);
+					sb.Append($"\t( {_tableAlias}.tf_search ILIKE CONCAT ('%', @tf_search , '%') )");
+				}				
 
 
 				var filterSql = GenerateFiltersSql(_mainFilter, parameters);

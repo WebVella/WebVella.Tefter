@@ -35,7 +35,7 @@
             }
             @if (state.User.IsAdmin)
             {
-                <TucAnchor Id="view-save-selector" Href="@(String.Format(TfConstants.SpacePagePageManageUrl,state.NavigationState.SpaceId, state.NavigationState.SpacePageId).GenerateWithLocalAsReturnUrl(Navigator.Uri))" Appearance="@Appearance.Outline">
+                <TucAnchor Id="view-save-selector" Href="@(String.Format(TfConstants.SpacePagePageManageUrl,state.NavigationState.SpaceId, state.NavigationState.SpacePageId).GenerateWithLocalAndQueryAsReturnUrl(Navigator.Uri))" Appearance="@Appearance.Outline">
                     <FluentIcon Value="@TfConstants.GetIcon("Settings")"/>
                 </TucAnchor>                
             }

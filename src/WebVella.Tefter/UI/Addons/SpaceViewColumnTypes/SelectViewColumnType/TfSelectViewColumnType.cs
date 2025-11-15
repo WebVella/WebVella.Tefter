@@ -154,9 +154,6 @@ public class TfSelectViewColumnType : ITfSpaceViewColumnTypeAddon
 			{
 				var optionsDt = args.TfService.QueryDataset(
 					datasetId: settings.DatasetId.Value,
-					userFilters: null,
-					userSorts: null,
-					search: null,
 					page: 1,
 					pageSize: TfConstants.SelectOptionsMaxLimit
 				);

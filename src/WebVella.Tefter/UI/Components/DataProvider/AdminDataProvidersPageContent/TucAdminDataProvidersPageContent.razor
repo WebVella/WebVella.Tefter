@@ -40,7 +40,7 @@
                         <div class="tf-grid-td-hover"></div>
                         <div>
                             <TucAnchor Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Open")"
-                                       Href="@String.Format(TfConstants.AdminDataProviderDetailsPageUrl, item.Id).GenerateWithLocalAsReturnUrl(TfAuthLayout.GetState().NavigationState.Uri)"/>
+                                       Href="@String.Format(TfConstants.AdminDataProviderDetailsPageUrl, item.Id).GenerateWithLocalAndQueryAsReturnUrl(TfAuthLayout.GetState().NavigationState.Uri)"/>
                         </div>
                     </td>
                     <td>

@@ -61,8 +61,11 @@ public record TfSpaceViewPreset
 	public Guid? ParentId { get; set; }
 
 	[JsonPropertyName("name")]
-	public string Name { get; set; }
+	public string? Name { get; set; }
 
+	[JsonPropertyName("search")]
+	public string? Search { get; set; }	
+	
 	[JsonPropertyName("filters")]
 	public List<TfFilterBase> Filters { get; set; } = new();
 
