@@ -10,8 +10,8 @@ public partial class TucDataProviderManageDataDialog : TfBaseComponent, IDialogC
 	private bool _isSubmitting = false;
 
 	private Dictionary<string, object?> _form = new();
-	private Dictionary<string, string?> _errors = new();
 	private Dictionary<string, string?> _placeholders = new();
+	private List<ValidationError> _validationErrors = new();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -23,8 +23,7 @@ public partial class TucDataProviderManageDataDialog : TfBaseComponent, IDialogC
 		if (Content is null) throw new Exception("Content is required");
 		if (Content.Provider is null) throw new Exception("Provider is required");
 		if (Content.Data is null) throw new Exception("Data is required");
-
-		_errors = new();
+		_validationErrors = new();
 		_form = new();
 		foreach (var column in Content.Provider.Columns)
 		{
@@ -63,7 +62,7 @@ public partial class TucDataProviderManageDataDialog : TfBaseComponent, IDialogC
 		try
 		{
 
-			_errors = new();
+			_validationErrors = new();
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
@@ -84,18 +83,22 @@ public partial class TucDataProviderManageDataDialog : TfBaseComponent, IDialogC
 			{
 				result = TfService.InsertProviderRow(
 					Content.Provider.Id,
-					_form);				
+					_form);
 			}
 			else
 			{
 				result = TfService.UpdateProviderRow(
 					Content.RowId.Value,
 					Content.Provider.Id,
-					_form);				
+					_form);
 			}
 
 
 			await Dialog.CloseAsync(result);
+		}
+		catch (TfException valEx)
+		{
+			_validationErrors = valEx.GetDataAsValidationErrorList();
 		}
 		catch (Exception ex)
 		{

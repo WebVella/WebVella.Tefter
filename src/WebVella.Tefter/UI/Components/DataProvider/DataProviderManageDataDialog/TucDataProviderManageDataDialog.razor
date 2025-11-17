@@ -18,7 +18,7 @@
 	{
 		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false" Style="margin-bottom:1rem;">@_error</FluentMessageBar>
 	}
-	else if (_errors.Keys.Count > 0)
+	else if (_validationErrors.Count > 0)
 	{
 		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false" Title="@LOC("Validation error")" Style="margin-bottom:1rem;" />
 	}
@@ -29,8 +29,9 @@
 			<FluentGridItem xs="12">
 				<FluentInputLabel Label="@column.DbName" />
 				<TucDbTypeInput DbType=@column.DbType Placeholder="@_placeholders[column.DbName!]" Value="@_form[column.DbName!]"
-								ValueChanged="@((x)=> _valueChanged(x,column))" Class="@(_errors.ContainsKey(column.DbName!) ? "invalid" : "")" Style="width:100%"
-								Error="@(_errors.ContainsKey(column.DbName!) ? _errors[column.DbName!] : null)" />
+				                ValueChanged="@((x)=> _valueChanged(x,column))" Style="width:100%"
+				                Class="@(_validationErrors.Any(x=> x.PropertyName == column.DbName) ? "invalid" : "")" />
+				<TucValidationMessage Field="@(column.DbName)" Errors="_validationErrors"/>
 			</FluentGridItem>
 		</FluentGrid>
 	}

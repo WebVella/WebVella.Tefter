@@ -21,7 +21,6 @@ public partial interface ITfService
 		Guid tfId,
 		Guid datasetId,
 		Dictionary<string, object> rowDict);
-
 }
 
 public partial class TfService : ITfService
@@ -30,8 +29,15 @@ public partial class TfService : ITfService
 		Guid providerId,
 		Dictionary<string, object>? rowDict = null)
 	{
-		var tfId = InsertRow(providerId, rowDict);
-		return GetProviderRow(GetDataProvider(providerId), tfId);
+		try
+		{
+			var tfId = InsertRow(providerId, rowDict);
+			return GetProviderRow(GetDataProvider(providerId), tfId);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public TfDataRow InsertDatasetRow(
@@ -83,8 +89,8 @@ public partial class TfService : ITfService
 	#region <--- private methods --->
 
 	private Guid InsertRow(
-	Guid providerId,
-	Dictionary<string, object>? rowDict = null)
+		Guid providerId,
+		Dictionary<string, object>? rowDict = null)
 	{
 		using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
@@ -288,6 +294,7 @@ public partial class TfService : ITfService
 				if (!IsUniqueValue(provider, column, processedValueObject, tfId))
 					errors.Add(column.DbName!, "Value must be unique");
 			}
+
 			return processedValueObject;
 		}
 
@@ -348,6 +355,7 @@ public partial class TfService : ITfService
 					{
 						errors.Add(column.DbName!, ex.Message);
 					}
+
 					break;
 				}
 			case TfDatabaseColumnType.Boolean:
@@ -366,7 +374,8 @@ public partial class TfService : ITfService
 					if (value is DateTime)
 						return value;
 
-					if (value is string && DateTime.TryParse((string)value, CultureInfo.InvariantCulture, out DateTime result))
+					if (value is string &&
+					    DateTime.TryParse((string)value, CultureInfo.InvariantCulture, out DateTime result))
 						return result;
 
 					errors.Add(column.DbName!, "Value is not valid");
@@ -380,7 +389,8 @@ public partial class TfService : ITfService
 					if (value is DateTime)
 						return DateOnly.FromDateTime((DateTime)value);
 
-					if (value is string && DateOnly.TryParse((string)value, CultureInfo.InvariantCulture, out DateOnly result))
+					if (value is string &&
+					    DateOnly.TryParse((string)value, CultureInfo.InvariantCulture, out DateOnly result))
 						return result;
 
 					errors.Add(column.DbName!, "Value is not valid");
@@ -422,9 +432,11 @@ public partial class TfService : ITfService
 					}
 					else
 					{
-						throw new TfValidationException($"Provided value should be within range {short.MinValue} and {short.MaxValue}.");
+						throw new TfValidationException(
+							$"Provided value should be within range {short.MinValue} and {short.MaxValue}.");
 					}
 				}
+
 				break;
 
 			case TfDatabaseColumnType.Integer:
@@ -439,9 +451,11 @@ public partial class TfService : ITfService
 					}
 					else
 					{
-						throw new TfValidationException($"Provided value should be within range {int.MinValue} and {int.MaxValue}.");
+						throw new TfValidationException(
+							$"Provided value should be within range {int.MinValue} and {int.MaxValue}.");
 					}
 				}
+
 				break;
 
 			case TfDatabaseColumnType.LongInteger:
@@ -456,9 +470,11 @@ public partial class TfService : ITfService
 					}
 					else
 					{
-						throw new TfValidationException($"Provided value should be within range {long.MinValue} and {long.MaxValue}.");
+						throw new TfValidationException(
+							$"Provided value should be within range {long.MinValue} and {long.MaxValue}.");
 					}
 				}
+
 				break;
 
 			case TfDatabaseColumnType.Number:
@@ -475,7 +491,8 @@ public partial class TfService : ITfService
 			return convertedValue;
 
 		if (!value.Equals(convertedObject))
-			throw new TfValidationException("Provided value cannot be set to specified column because data loss occur.");
+			throw new TfValidationException(
+				"Provided value cannot be set to specified column because data loss occur.");
 
 		return convertedValue;
 	}
@@ -536,32 +553,38 @@ public partial class TfService : ITfService
 		{
 			case TfDatabaseColumnType.DateOnly:
 				{
-					var dt = _dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), CURRENT_DATE) AS result FROM dp{provider.Index};");
+					var dt = _dbService.ExecuteSqlQueryCommand(
+						$"SELECT COALESCE(MAX(\"{column.DbName}\"), CURRENT_DATE) AS result FROM dp{provider.Index};");
 					return DateOnly.FromDateTime((DateTime)dt.Rows[0]["result"]).ToDateTime();
 				}
 			case TfDatabaseColumnType.DateTime:
 				{
-					var dt = _dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), CURRENT_DATE) AS result FROM dp{provider.Index};");
+					var dt = _dbService.ExecuteSqlQueryCommand(
+						$"SELECT COALESCE(MAX(\"{column.DbName}\"), CURRENT_DATE) AS result FROM dp{provider.Index};");
 					return (DateTime)dt.Rows[0]["result"];
 				}
 			case TfDatabaseColumnType.ShortInteger:
 				{
-					var dt = _dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), 0) AS result FROM dp{provider.Index};");
+					var dt = _dbService.ExecuteSqlQueryCommand(
+						$"SELECT COALESCE(MAX(\"{column.DbName}\"), 0) AS result FROM dp{provider.Index};");
 					return ((short)(int)dt.Rows[0]["result"]);
 				}
 			case TfDatabaseColumnType.Integer:
 				{
-					var dt = _dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), 0) AS result FROM dp{provider.Index};");
+					var dt = _dbService.ExecuteSqlQueryCommand(
+						$"SELECT COALESCE(MAX(\"{column.DbName}\"), 0) AS result FROM dp{provider.Index};");
 					return ((int)dt.Rows[0]["result"]);
 				}
 			case TfDatabaseColumnType.LongInteger:
 				{
-					var dt = _dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), 0) AS result FROM dp{provider.Index};");
+					var dt = _dbService.ExecuteSqlQueryCommand(
+						$"SELECT COALESCE(MAX(\"{column.DbName}\"), 0) AS result FROM dp{provider.Index};");
 					return ((long)dt.Rows[0]["result"]);
 				}
 			case TfDatabaseColumnType.Number:
 				{
-					var dt = _dbService.ExecuteSqlQueryCommand($"SELECT COALESCE(MAX(\"{column.DbName}\"), 0) AS result FROM dp{provider.Index};");
+					var dt = _dbService.ExecuteSqlQueryCommand(
+						$"SELECT COALESCE(MAX(\"{column.DbName}\"), 0) AS result FROM dp{provider.Index};");
 					return ((decimal)dt.Rows[0]["result"]);
 				}
 			default:
@@ -591,6 +614,7 @@ public partial class TfService : ITfService
 					{
 						return Guid.NewGuid();
 					}
+
 					return Guid.Parse(column.DefaultValue);
 				}
 			case TfDatabaseColumnType.DateOnly:
@@ -599,6 +623,7 @@ public partial class TfService : ITfService
 					{
 						return DateOnly.FromDateTime(DateTime.Now).ToDateTime();
 					}
+
 					return DateOnly.Parse(column.DefaultValue, CultureInfo.InvariantCulture).ToDateTime();
 				}
 			case TfDatabaseColumnType.DateTime:
@@ -607,6 +632,7 @@ public partial class TfService : ITfService
 					{
 						return DateTime.Now;
 					}
+
 					return DateOnly.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
 				}
 			case TfDatabaseColumnType.Number:
@@ -630,9 +656,11 @@ public partial class TfService : ITfService
 	{
 		var parameters = new List<NpgsqlParameter>();
 
-		var sql = $"SELECT COUNT(*) FROM dp{provider.Index} WHERE \"{column.DbName}\" = @value AND ( @tf_id IS NULL OR @tf_id <> tf_id ) ";
+		var sql =
+			$"SELECT COUNT(*) FROM dp{provider.Index} WHERE \"{column.DbName}\" = @value AND ( @tf_id IS NULL OR @tf_id <> tf_id ) ";
 		if (value is null)
-			sql = $"SELECT COUNT(*) FROM dp{provider.Index} WHERE \"{column.DbName}\" IS NULL AND ( @tf_id IS NULL OR @tf_id <> tf_id ) ";
+			sql =
+				$"SELECT COUNT(*) FROM dp{provider.Index} WHERE \"{column.DbName}\" IS NULL AND ( @tf_id IS NULL OR @tf_id <> tf_id ) ";
 
 		NpgsqlParameter tfIdParameter = new NpgsqlParameter("tf_id", NpgsqlDbType.Uuid);
 		if (tfId is not null)
@@ -752,6 +780,7 @@ public partial class TfService : ITfService
 					{
 						errors.Add(sharedColumnFullName, ex.Message);
 					}
+
 					break;
 				}
 			case TfDatabaseColumnType.Boolean:
@@ -770,7 +799,8 @@ public partial class TfService : ITfService
 					if (value is DateTime)
 						return value;
 
-					if (value is string && DateTime.TryParse((string)value, CultureInfo.InvariantCulture, out DateTime result))
+					if (value is string &&
+					    DateTime.TryParse((string)value, CultureInfo.InvariantCulture, out DateTime result))
 						return result;
 
 					errors.Add(sharedColumnFullName, "Value is not valid");
@@ -784,7 +814,8 @@ public partial class TfService : ITfService
 					if (value is DateTime)
 						return DateOnly.FromDateTime((DateTime)value);
 
-					if (value is string && DateOnly.TryParse((string)value, CultureInfo.InvariantCulture, out DateOnly result))
+					if (value is string &&
+					    DateOnly.TryParse((string)value, CultureInfo.InvariantCulture, out DateOnly result))
 						return result;
 
 					errors.Add(sharedColumnFullName, "Value is not valid");
@@ -806,7 +837,6 @@ public partial class TfService : ITfService
 		string identityValue,
 		TfDatabaseColumnType dbType)
 	{
-
 		var parameterType = GetDbTypeForDatabaseColumnType(dbType);
 
 		NpgsqlParameter valueParameter = new NpgsqlParameter("@value", parameterType);
@@ -823,17 +853,13 @@ public partial class TfService : ITfService
 		var tableName = GetSharedColumnValueTableNameByType(dbType);
 
 		var sql = $"DELETE FROM {tableName} WHERE " +
-			$"data_identity_value =  @data_identity_value AND shared_column_id = @shared_column_id;";
+		          $"data_identity_value =  @data_identity_value AND shared_column_id = @shared_column_id;";
 
 		sql += $"{Environment.NewLine}INSERT INTO {tableName}(data_identity_value, shared_column_id, value) " +
-			$"VALUES( @data_identity_value, @shared_column_id, @value );";
+		       $"VALUES( @data_identity_value, @shared_column_id, @value );";
 
 		_dbService.ExecuteSqlNonQueryCommand(sql,
-			new List<NpgsqlParameter> {
-				valueParameter,
-				sharedColumnIdParameter,
-				dataIdentityValueParameter
-			});
+			new List<NpgsqlParameter> { valueParameter, sharedColumnIdParameter, dataIdentityValueParameter });
 	}
 
 	private void CheckProcessValidationErrors(Dictionary<string, string> validationErrors)
@@ -845,6 +871,7 @@ public partial class TfService : ITfService
 			{
 				validationResult.Errors.Add(new ValidationFailure(key, validationErrors[key]));
 			}
+
 			validationResult
 				.ToValidationException()
 				.ThrowIfContainsErrors();
