@@ -45,7 +45,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 		}
 		finally
 		{
-			UriInitialized = _navState.Uri;
+			UriInitialized = _navState?.Uri ?? String.Empty;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

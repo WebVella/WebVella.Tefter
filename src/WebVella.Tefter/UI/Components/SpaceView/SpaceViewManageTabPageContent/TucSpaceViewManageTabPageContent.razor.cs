@@ -64,11 +64,11 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 
 	private async Task _init(TfNavigationState navState)
 	{
+		_isDataLoading = true;
+		await InvokeAsync(StateHasChanged);
+		_navState = navState;
 		try
 		{
-			_isDataLoading = true;
-			await InvokeAsync(StateHasChanged);
-			_navState = navState;
 			_spaceView = null;
 			var options =
 				JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(Context!.SpacePage.ComponentOptionsJson);
@@ -84,7 +84,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		finally
 		{
 			_isDataLoading = false;
-			UriInitialized = _navState.Uri;
+			UriInitialized = _navState?.Uri ?? String.Empty;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

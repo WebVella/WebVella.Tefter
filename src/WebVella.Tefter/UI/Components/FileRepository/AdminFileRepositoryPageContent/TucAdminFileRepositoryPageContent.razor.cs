@@ -58,14 +58,14 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 
 	private async Task _init(TfNavigationState navState)
 	{
+		_navState = navState;
 		try
 		{
-			_navState = navState;
 			_items = TfService.GetRepositoryFiles(filenameContains: _search);
 		}
 		finally
 		{
-			UriInitialized = _navState.Uri;
+			UriInitialized = _navState?.Uri ?? String.Empty;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

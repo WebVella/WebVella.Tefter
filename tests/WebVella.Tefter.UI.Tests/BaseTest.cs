@@ -87,7 +87,10 @@ public class BaseTest
 		Context.Services.AddTransient(typeof(TfUserEventProvider), Services => TfUserEventProviderMock.Object);
 
 		TfGlobalEventProviderMock = new Mock<TfGlobalEventProvider>(TfEventBusMock.Object);
-		Context.Services.AddSingleton(typeof(TfGlobalEventProvider), Services => TfGlobalEventProviderMock.Object);
+		TfGlobalEventProvider globalProvider = new TfGlobalEventProvider(
+			TfEventBusMock.Object,
+			AuthenticationStateProviderMock.Object);		
+		Context.Services.AddSingleton(typeof(TfGlobalEventProvider), Services => globalProvider);
 		#endregion
 
 		TfCryptoServiceMock = new Mock<ITfCryptoService>();

@@ -38,7 +38,7 @@ public partial class TfServiceTest : BaseTest
 				task = Task.Run(() => { dataIdentities = tfService.GetDataIdentities(); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				dataIdentities.Should().NotBeNull();
-				dataIdentities.Count.Should().Be(1);	
+				dataIdentities.Count.Should().Be(2);//default should be created
 
 				TfDataIdentity model2 = new TfDataIdentity
 				{
@@ -62,7 +62,7 @@ public partial class TfServiceTest : BaseTest
 				task = Task.Run(() => { dataIdentities = tfService.GetDataIdentities(); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				dataIdentities.Should().NotBeNull();
-				dataIdentities.Count.Should().Be(0);
+				dataIdentities.Count.Should().Be(1); //default should stay
 
 			}
 		}

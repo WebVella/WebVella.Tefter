@@ -49,7 +49,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 			}
 		});
 	}
-	
+
 	private async Task On_SpaceViewUpdated(TfSpaceViewUpdatedEvent args)
 	{
 		await InvokeAsync(async () =>
@@ -57,7 +57,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 			_init(TfAuthLayout.GetState().NavigationState);
 			await InvokeAsync(StateHasChanged);
 		});
-	}	
+	}
 
 	private void _init(TfNavigationState navState)
 	{
@@ -70,13 +70,17 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 				? null
 				: TfConstants.GetIcon(SpaceView.Settings.MainTabFluentIcon);
 
-if (SpaceView.Presets.Count > 0)
+			if (SpaceView.Presets.Count > 0)
 			{
 				_menu.Add(new TfMenuItem
 				{
 					Id = "tf-main",
-					Text = String.IsNullOrWhiteSpace(SpaceView.Settings.MainTabLabel) ?  "Main" : SpaceView.Settings.MainTabLabel,
-					Url = NavigatorExt.AddQueryValueToUri(Navigator.GetLocalUrl(), TfConstants.PresetIdQueryName, null),
+					Text =
+						String.IsNullOrWhiteSpace(SpaceView.Settings.MainTabLabel)
+							? "Main"
+							: SpaceView.Settings.MainTabLabel,
+					Url = NavigatorExt.AddQueryValueToUri(Navigator.GetLocalUrl(), TfConstants.PresetIdQueryName,
+						null),
 					Selected = currentPresetId is null,
 					IconCollapsed = mainIcon,
 					IconExpanded = mainIcon
@@ -96,7 +100,7 @@ if (SpaceView.Presets.Count > 0)
 		}
 		finally
 		{
-			UriInitialized = _navState.Uri;
+			UriInitialized = _navState?.Uri ?? String.Empty;
 			_initedViewId = SpaceView.Id;
 		}
 	}
@@ -109,7 +113,8 @@ if (SpaceView.Presets.Count > 0)
 			Text = preset.Name,
 			Url = preset.IsGroup
 				? null
-				: NavigatorExt.AddQueryValueToUri(Navigator.GetLocalUrl(), TfConstants.PresetIdQueryName, preset.Id.ToString()),
+				: NavigatorExt.AddQueryValueToUri(Navigator.GetLocalUrl(), TfConstants.PresetIdQueryName,
+					preset.Id.ToString()),
 			Color = preset.Color,
 			IconExpanded = TfConstants.GetIcon(preset.Icon),
 			IconCollapsed = TfConstants.GetIcon(preset.Icon),

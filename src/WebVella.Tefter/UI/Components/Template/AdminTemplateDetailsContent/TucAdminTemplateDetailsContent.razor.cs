@@ -72,7 +72,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 		}
 		finally
 		{
-			UriInitialized = _navState.Uri;
+			UriInitialized = _navState?.Uri ?? String.Empty;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

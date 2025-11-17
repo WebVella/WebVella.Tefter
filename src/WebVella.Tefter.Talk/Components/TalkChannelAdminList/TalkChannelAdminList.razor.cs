@@ -49,7 +49,7 @@ public partial class TalkChannelAdminList : TfBaseComponent
         }
         finally
         {
-            UriInitialized = _navState.Uri;
+            UriInitialized = _navState?.Uri ?? String.Empty;
             await InvokeAsync(StateHasChanged);
         }
     }

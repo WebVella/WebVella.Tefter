@@ -62,7 +62,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposab
 		}
 		finally
 		{
-			UriInitialized = _navState.Uri;
+			UriInitialized = _navState?.Uri ?? String.Empty;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

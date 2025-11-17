@@ -62,7 +62,7 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
         }
         finally
         {
-            UriInitialized = _navState.Uri;
+            UriInitialized = _navState?.Uri ?? String.Empty;
             await InvokeAsync(StateHasChanged);
         }
     }

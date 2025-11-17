@@ -56,12 +56,13 @@ public partial class TfServiceTest : BaseTest
 				exception.Should().BeNull();
 				sharedColumns.Should().NotBeNull();
 
-				sharedColumns.Count().Should().Be(1);
-				sharedColumns[0].Id.Should().Be(sharedColumn.Id);
-				sharedColumns[0].DbName.Should().Be(sharedColumn.DbName);
-				sharedColumns[0].DbType.Should().Be(sharedColumn.DbType);
-				sharedColumns[0].IncludeInTableSearch.Should().Be(sharedColumn.IncludeInTableSearch);
-				sharedColumns[0].DataIdentity.Should().Be(sharedColumn.DataIdentity);
+				sharedColumns.Count().Should().Be(3);// +2 -> addons create default shared columns
+				var checkedColumn = sharedColumns.FirstOrDefault(x => x.Id == sharedColumn.Id);
+				checkedColumn.Should().NotBeNull();
+				checkedColumn.DbName.Should().Be(sharedColumn.DbName);
+				checkedColumn.DbType.Should().Be(sharedColumn.DbType);
+				checkedColumn.IncludeInTableSearch.Should().Be(sharedColumn.IncludeInTableSearch);
+				checkedColumn.DataIdentity.Should().Be(sharedColumn.DataIdentity);
 
 				sharedColumn.DbType = TfDatabaseColumnType.Integer;
 				sharedColumn.IncludeInTableSearch = !sharedColumn.IncludeInTableSearch;
@@ -77,12 +78,13 @@ public partial class TfServiceTest : BaseTest
 				exception.Should().BeNull();
 				sharedColumns.Should().NotBeNull();
 
-				sharedColumns.Count().Should().Be(1);
-				sharedColumns[0].Id.Should().Be(sharedColumn.Id);
-				sharedColumns[0].DbName.Should().Be(sharedColumn.DbName);
-				sharedColumns[0].DbType.Should().Be(sharedColumn.DbType);
-				sharedColumns[0].IncludeInTableSearch.Should().Be(sharedColumn.IncludeInTableSearch);
-				sharedColumns[0].DataIdentity.Should().Be(sharedColumn.DataIdentity);
+				sharedColumns.Count().Should().Be(3);// +2 -> addons create default shared columns
+				checkedColumn = sharedColumns.FirstOrDefault(x => x.Id == sharedColumn.Id);
+				checkedColumn.Should().NotBeNull();
+				checkedColumn.DbName.Should().Be(sharedColumn.DbName);
+				checkedColumn.DbType.Should().Be(sharedColumn.DbType);
+				checkedColumn.IncludeInTableSearch.Should().Be(sharedColumn.IncludeInTableSearch);
+				checkedColumn.DataIdentity.Should().Be(sharedColumn.DataIdentity);
 
 				task = Task.Run(() => { tfService.DeleteSharedColumn(sharedColumn.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
@@ -93,7 +95,7 @@ public partial class TfServiceTest : BaseTest
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				sharedColumns.Should().NotBeNull();
-				sharedColumns.Count().Should().Be(0);
+				sharedColumns.Count().Should().Be(2);// +2 -> addons create default shared columns
 			}
 		}
 	}
@@ -198,7 +200,7 @@ public partial class TfServiceTest : BaseTest
 				task = Task.Run(() => { provider = tfService.GetDataProvider(provider.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				provider.SharedColumns.Count.Should().Be(1);
+				provider.SharedColumns.Count.Should().Be(3);// +2 -> addons create default shared columns
 			}
 		}
 	}

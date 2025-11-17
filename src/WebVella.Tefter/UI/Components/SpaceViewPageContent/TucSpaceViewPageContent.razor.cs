@@ -165,6 +165,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	
 	private async Task _init(TfNavigationState navState, bool showLoading = true)
 	{
+		_navState = navState;
 		try
 		{
 			if (showLoading)
@@ -173,7 +174,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				await InvokeAsync(StateHasChanged);
 			}
 
-			_navState = navState;
 
 			Guid? oldViewId = _spaceView is not null ? _spaceView.Id : null;
 			_spaceView = null;
@@ -246,7 +246,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		}
 		finally
 		{
-			UriInitialized = _navState.Uri;
+			UriInitialized = _navState?.Uri ?? String.Empty;
 			if (showLoading)
 			{
 				_isDataLoading = false;

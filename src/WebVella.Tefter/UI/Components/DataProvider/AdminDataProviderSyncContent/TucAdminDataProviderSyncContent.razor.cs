@@ -39,15 +39,15 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 
 	private async Task _init(TfNavigationState navState)
 	{
+		if (navState.DataProviderId is null)
+		{
+			_provider = null;
+			await InvokeAsync(StateHasChanged);
+			return;
+		}
+		_navState = navState;
 		try
 		{
-			if (navState.DataProviderId is null)
-			{
-				_provider = null;
-				await InvokeAsync(StateHasChanged);
-				return;
-			}
-			_navState = navState;
 			_provider = TfService.GetDataProvider(_navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
@@ -61,7 +61,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 		}
 		finally
 		{
-			UriInitialized = _navState.Uri;
+			UriInitialized = _navState?.Uri ?? String.Empty;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
