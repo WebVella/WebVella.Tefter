@@ -19,11 +19,11 @@ public partial class TfService : ITfService
 		private string _tableAlias = "t1";
 
 		private ITfService _tfService;
-		private TfDataProvider _dataProvider = null;
-		private ReadOnlyCollection<TfDataProvider> _allDataProviders = null;
-		private TfDataset _spaceData = null;
+		private TfDataProvider? _dataProvider = null;
+		private ReadOnlyCollection<TfDataProvider>? _allDataProviders = null;
+		private TfDataset? _spaceData = null;
 
-		private ITfDatabaseService _dbService = null;
+		private ITfDatabaseService? _dbService = null;
 		private List<SqlBuilderColumn> _availableColumns = new();
 		private List<SqlBuilderColumn> _selectColumns = new();
 		private List<SqlBuilderColumn> _filterColumns = new();
@@ -33,16 +33,16 @@ public partial class TfService : ITfService
 
 		private TfFilterAnd _mainFilter;
 		private List<TfFilterBase> _filters = new();
-		private List<TfSort> _sorts = null;
+		private List<TfSort>? _sorts = null;
 		private List<TfFilterBase> _userFilters = new();
-		private List<TfSort> _userSorts = null;
+		private List<TfSort>? _userSorts = null;
 		private List<TfFilterBase> _presetFilters = new();
-		private List<TfSort> _presetSorts = null;
-		private string _presetSearch = null;
-		private string _userSearch = null;
+		private List<TfSort>? _presetSorts = null;
+		private string? _presetSearch = null;
+		private string? _userSearch = null;
 		private int? _page = null;
 		private int? _pageSize = null;
-		private List<Guid> _tfIds = null;
+		private List<Guid>? _tfIds = null;
 		private bool _returnOnlyTfIds = false;
 		public List<SqlBuilderJoinData> JoinData { get { return _joinData; } }
 		public List<SqlBuilderSharedColumnData> SharedColumnsData { get { return _sharedColumnsData; } }
@@ -59,8 +59,6 @@ public partial class TfService : ITfService
 			string? userSearch = null,
 			List<TfFilterBase>? userFilters = null,
 			List<TfSort>? userSorts = null,
-
-
 			int? page = null,
 			int? pageSize = null,
 			bool returnOnlyTfIds = false)
@@ -684,25 +682,27 @@ public partial class TfService : ITfService
 			}
 			else
 			{
-				if (!string.IsNullOrWhiteSpace(_presetSearch?.Trim()))
-				{
-					parameters.Add(new NpgsqlParameter("@tf_preset_search", _presetSearch?.Trim()));
-					if (sb.Length > 0)
-						sb.Append($" AND {Environment.NewLine}");
-					else
-						sb.Append(Environment.NewLine);
-					sb.Append($"\t( {_tableAlias}.tf_search ILIKE CONCAT ('%', @tf_preset_search , '%') )");
-				}
-				if (!string.IsNullOrWhiteSpace(_userSearch?.Trim()))
-				{
-					parameters.Add(new NpgsqlParameter("@tf_search", _userSearch?.Trim()));
-					if (sb.Length > 0)
-						sb.Append($" AND {Environment.NewLine}");
-					else
-						sb.Append(Environment.NewLine);
-					sb.Append($"\t( {_tableAlias}.tf_search ILIKE CONCAT ('%', @tf_search , '%') )");
-				}				
+				var sbSearch = new List<string>();
+				string? searchStringSum = null; 
+				_presetSearch = _presetSearch?.Trim();
+				_userSearch = _userSearch?.Trim();
+				if (!string.IsNullOrWhiteSpace(_presetSearch))
+					sbSearch.Add(_presetSearch);
+				if (!string.IsNullOrWhiteSpace(_userSearch))
+					sbSearch.Add(_userSearch);
 
+				if (sbSearch.Count == 1)
+					searchStringSum = sbSearch[0];
+				else if(sbSearch.Count == 2)
+					searchStringSum = $"({sbSearch[0]}) AND ({sbSearch[1]})";
+
+				if (!String.IsNullOrWhiteSpace(searchStringSum))
+				{
+					sb.Append(searchStringSum.GeneratePostgresSearchScript(
+						fieldName:$"{_tableAlias}.tf_search",
+						parameters:parameters
+						));
+				}
 
 				var filterSql = GenerateFiltersSql(_mainFilter, parameters);
 				if (!string.IsNullOrWhiteSpace(filterSql))

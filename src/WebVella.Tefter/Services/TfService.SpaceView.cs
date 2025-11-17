@@ -310,10 +310,12 @@ public partial class TfService
 			preset.Id = Guid.NewGuid();
 		var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceViewId);
 		if (existingSpaceView == null)
-		{
 			throw new TfValidationException("spaceViewId", "SpaceView not found.");
-		}
-
+		
+		
+		if(string.IsNullOrWhiteSpace(preset.Name) && string.IsNullOrWhiteSpace(preset.Icon))
+			throw new TfValidationException(nameof(TfSpaceViewPreset.Name), "Name is required when icon is not provided.");
+		
 		var presets = new List<TfSpaceViewPreset>();
 		if (!String.IsNullOrWhiteSpace(existingSpaceView.PresetsJson) && existingSpaceView.PresetsJson != "[]")
 			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(existingSpaceView.PresetsJson) ?? new();
@@ -344,6 +346,12 @@ public partial class TfService
 			throw new TfValidationException("spaceViewId", "SpaceView not found.");
 		}
 
+		foreach (var preset in presets)
+		{
+			if(string.IsNullOrWhiteSpace(preset.Name) && string.IsNullOrWhiteSpace(preset.Icon))
+				throw new TfValidationException(nameof(TfSpaceViewPreset.Name), "Name is required when icon is not provided.");			
+		}
+		
 		// var jsonOptions = new JsonSerializerOptions
 		// {
 		// 	TypeInfoResolver = new DefaultJsonTypeInfoResolver
