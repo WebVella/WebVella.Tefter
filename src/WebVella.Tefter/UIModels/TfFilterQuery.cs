@@ -26,9 +26,9 @@ public record TfFilterQuery
 	{
 		get
 		{
-			if (Parent is null) return new List<string>() { Name };
+			if (Parent is null) return new List<string>() { Id.ToString() };
 			var parentPath = Parent.Path.ToList();
-			parentPath.Add(Name);
+			parentPath.Add(Id.ToString());
 			return parentPath;
 		}
 	}

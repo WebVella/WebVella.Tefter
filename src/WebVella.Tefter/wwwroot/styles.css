@@ -656,7 +656,7 @@ html:root {
   color: var(--neutral-foreground-hint) !important;
 }
 fluent-text-field.with-prefix::part(start) {
-  color: var(--tf-font-color-mute);
+  color: var(--neutral-foreground-hint);
 }
 fluent-text-field.with-prefix::part(control) {
   padding-left: 0;
@@ -833,6 +833,7 @@ fluent-menu-item::part(start) {
   background: var(--fill-color);
   border-bottom: 1px solid var(--neutral-stroke-rest);
   border-radius: 0;
+  font-size: var(--type-ramp-base-font-size);
 }
 .tf-card--filter .tf-filter-manage .card-logical.tf-card > .tf-card__content {
   margin: 10px;

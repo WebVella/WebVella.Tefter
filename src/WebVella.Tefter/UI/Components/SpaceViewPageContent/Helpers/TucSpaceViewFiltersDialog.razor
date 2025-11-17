@@ -17,37 +17,6 @@
 	{
 		<TucFilterQueryCard Items="@_items" ItemsChanged="_onFiltersChangeHandler"
 							ViewColumns="@_viewColumns" Provider="@_dataProvider" AllProviders="_dataProviders" AllSharedColumns="_sharedColumns" />
-@* 		<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
-			<FluentTab Label="@LOC("Current")" Id="current">
-				<TucFilterQueryCard Items="@_items" ItemsChanged="_onFiltersChangeHandler"
-									ViewColumns="@_viewColumns" Provider="@_dataProvider" AllProviders="_dataProviders" AllSharedColumns="_sharedColumns" />
-			</FluentTab>
-			<FluentTab Label="@LOC("Always applied")" Id="default">
-				@if (_spaceData.Filters.Count == 0)
-				{
-					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("There are no filters that are always applied")</FluentMessageBar>
-				}
-				else
-				{
-					<TucCard Style="margin-top:1rem">
-						<ToolbarTemplate>
-							<FluentStack VerticalAlignment="@VerticalAlignment.Center">
-								<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
-									<FluentLabel Typo="@Typography.Body">AND</FluentLabel>
-									<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">rule</FluentLabel>
-								</FluentStack>
-							</FluentStack>
-						</ToolbarTemplate>
-						<ChildContent>
-							@foreach (var item in _spaceData.Filters)
-							{
-								<TucFilterManage Item="item" SelectedProvider="_dataProvider" ReadOnly="true" />
-							}
-						</ChildContent>
-					</TucCard>
-				}
-			</FluentTab>
-		</FluentTabs> *@
 	}
 	else
 	{

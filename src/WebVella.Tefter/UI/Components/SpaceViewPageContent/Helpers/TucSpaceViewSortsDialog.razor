@@ -14,40 +14,4 @@
 @* Body *@
 <FluentDialogBody>
 	<TucSortQueryCard @bind-Items="_items" ViewColumns="_viewColumns" />
-@* 	<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
-		<FluentTab Label="@LOC("Current")" Id="current" Style="padding-top:1rem">
-			<TucSortQueryCard @bind-Items="_items" ViewColumns="_viewColumns" />
-		</FluentTab>
-		<FluentTab Label="@LOC("Default")" Id="default" Style="padding-top:1rem">
-			<TucCard>
-				@if (_spaceData is not null && _spaceData.SortOrders.Count > 0)
-				{
-					<table class="tf-grid">
-						<tbody class="tf-grid-tbody">
-							@foreach (var context in _spaceData.SortOrders)
-							{
-								<tr @key=@Guid.NewGuid() class="tf-grid-tr">
-									<td class="tf-grid-td" style="width:1%;vertical-align:middle">
-										<div>
-											<FluentIcon Value="@TfConstants.GetIcon("Database")" Color="@Color.Accent"></FluentIcon>
-										</div>
-									</td>
-									<td class="tf-grid-td" style="width:300px;">
-										<div>@context.ColumnName</div>
-									</td>
-									<td class="tf-grid-td">
-										<div>@context.Direction.ToDescriptionString()</div>
-									</td>
-								</tr>
-							}
-						</tbody>
-					</table>
-				}
-				else
-				{
-					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No default sort is applied in data source")</FluentMessageBar>
-				}
-			</TucCard>
-		</FluentTab>
-	</FluentTabs> *@
 </FluentDialogBody>

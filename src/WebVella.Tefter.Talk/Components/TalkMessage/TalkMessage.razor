@@ -9,7 +9,7 @@
 			@if (Item.DeletedOn is null)
 			{
 				<TucAvatar User="Item?.User" Class="talk-avatar" />
-				<div class="talk-timestamp" style="color:var(--tf-font-color-mute)">
+				<div class="talk-timestamp" style="color:var(--neutral-foreground-hint)">
 					@Item.CreatedOn.ToString("HH:mm")
 				</div>
 			}
@@ -111,7 +111,7 @@
 				</div>
 				<div class="tf_message_editor_actions">
 					<div class="tf_message_editor_actions_left">
-						<span style="color:var(--tf-font-color-mute)">Shift + Enter for new line. Enter to send.</span>
+						<span style="color:var(--neutral-foreground-hint)">Shift + Enter for new line. Enter to send.</span>
 					</div>
 					<div class="tf_message_editor_actions_right">
 						<FluentButton IconStart="@TfConstants.GetIcon("Save").WithColor(Color.Neutral)" OnClick="_onUpdate"

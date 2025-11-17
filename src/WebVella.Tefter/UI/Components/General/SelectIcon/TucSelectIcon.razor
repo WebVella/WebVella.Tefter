@@ -32,11 +32,11 @@ else
 				}
 				else if (!String.IsNullOrWhiteSpace(Placeholder))
 				{
-					<span style="color:var(--tf-font-color-mute)">@Placeholder</span>
+					<span style="color:var(--neutral-foreground-hint)">@Placeholder</span>
 				}
 				else
 				{
-					<span style="color:var(--tf-font-color-mute)">@LOC("select...")</span>
+					<span style="color:var(--neutral-foreground-hint)">@LOC("select...")</span>
 				}
 				<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-fill-strong-focus)" Color="@Color.Custom" />
 			</FluentButton>

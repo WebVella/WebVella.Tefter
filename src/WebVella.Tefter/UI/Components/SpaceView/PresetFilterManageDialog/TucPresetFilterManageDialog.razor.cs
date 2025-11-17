@@ -48,7 +48,7 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent,
 				sharedColumns: sharedColumns
 			);
 			var sorts = navState.Sorts.ConvertQuerySortToList(columns: viewColumns);
-			
+
 			//join any preset settings
 			if (navState.SpaceViewPresetId is not null)
 			{
@@ -77,11 +77,28 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent,
 							];
 						}
 					}
-					foreach (var item in preset.SortOrders)
+
+					if (preset.SortOrders.Count > 0)
 					{
-						if(sorts.All(x => x.ColumnName != item.ColumnName))
-							sorts.Add(item);
-					}					
+						if (sorts.Count == 0)
+						{
+							sorts = preset.SortOrders;
+						}
+						else
+						{
+							var newSorts = new List<TfSort>();
+							foreach (var item in preset.SortOrders)
+							{
+								//new order can override the old one
+								if (sorts.All(x => x.ColumnName != item.ColumnName))
+									newSorts.Add(item);
+							}
+
+							foreach (var item in sorts)
+								newSorts.Add(item);
+							sorts = newSorts;
+						}
+					}
 				}
 			}
 
@@ -112,22 +129,21 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent,
 	private async Task _save()
 	{
 		MessageStore.Clear();
-		if(string.IsNullOrWhiteSpace(_form.Name) && string.IsNullOrWhiteSpace(_form.Icon))
+		if (string.IsNullOrWhiteSpace(_form.Name) && string.IsNullOrWhiteSpace(_form.Icon))
 			MessageStore.Add(EditContext.Field(nameof(_form.Name)), LOC("required when icon is not provided"));
 
-		if (!EditContext.Validate()) return;	
-		
+		if (!EditContext.Validate()) return;
+
 		if (_form.Id != Guid.Empty)
 		{
 			_form.ParentId = _selectedParent?.Id;
-			
+
 			await Dialog.CloseAsync(_form);
 			return;
 		}
 
 		try
 		{
-			
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);

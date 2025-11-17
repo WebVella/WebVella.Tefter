@@ -2,7 +2,7 @@
 
 public record TfFilterOr : TfFilterBase
 {
-	[JsonIncludePrivateProperty]
+	[JsonInclude]
 	[JsonPropertyName("ft")]
 	private List<TfFilterBase> _filters { get; set; }
 
