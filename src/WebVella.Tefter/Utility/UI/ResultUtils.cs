@@ -164,7 +164,7 @@ internal static class ResultUtils
 			if (validationErrorList.Count > 0)
 			{
 
-				errorMessage = $"{validationErrorList[0].PropertyName}:{validationErrorList[0].Message}";
+				errorMessage = $"{validationErrorList[0].PropertyName}: {validationErrorList[0].Message}";
 			}
 
 			toastService.ShowWarning(errorMessage);

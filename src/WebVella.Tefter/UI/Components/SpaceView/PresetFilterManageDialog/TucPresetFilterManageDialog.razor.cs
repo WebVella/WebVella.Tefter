@@ -8,6 +8,7 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent,
 	private TfSpaceViewPreset _form = new();
 	private TfSpaceViewPreset? _selectedParent = null;
 	private bool _isSubmitting = false;
+	private bool _isCreate = false;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -37,6 +38,7 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent,
 		}
 		else
 		{
+			_isCreate = true;
 			var navState = TfAuthLayout.GetState().NavigationState;
 			var viewColumns = TfService.GetSpaceViewColumnsList(Content.SpaceView!.Id);
 			var providers = TfService.GetDataProviders();
