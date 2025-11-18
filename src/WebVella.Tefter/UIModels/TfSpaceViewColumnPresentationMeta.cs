@@ -52,6 +52,7 @@ public record TfSpaceViewColumnPresentationMeta
 		get
 		{
 			var sb = new StringBuilder();
+
 			if(FreezeLeftWidth is not null)
 				sb.Append($"left:{(FreezeLeftWidth.Value)}px;");
 
@@ -104,4 +105,18 @@ public record TfSpaceViewColumnPresentationMeta
 			return sb.ToString();
 		}
 	}
+	
+	public string BodyCellStyles
+	{
+		get
+		{
+			var sb = new StringBuilder();
+			if(FreezeLeftWidth is not null)
+				sb.Append($"left:{(FreezeLeftWidth.Value)}px;");
+
+			if (FreezeRightWidth is not null)
+				sb.Append($"right:{(FreezeRightWidth.Value)}px;");
+			return sb.ToString();
+		}
+	}	
 }

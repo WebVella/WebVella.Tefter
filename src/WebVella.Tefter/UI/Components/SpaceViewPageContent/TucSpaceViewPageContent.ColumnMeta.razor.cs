@@ -177,7 +177,7 @@ public partial class TucSpaceViewPageContent
 			}
 
 			#endregion
-
+ 
 			#region << Freeze Left >>
 
 			if (freezeLeftColumnIdList.Contains(column.Id))

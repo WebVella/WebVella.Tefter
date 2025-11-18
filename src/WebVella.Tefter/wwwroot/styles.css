@@ -1475,6 +1475,14 @@ fluent-menu-item::part(start) {
   position: sticky;
   z-index: 2;
 }
+.tf-grid thead th.tf--sticky,
+.tf-grid tbody th.tf--sticky {
+  background: var(--fill-color);
+}
+.tf-grid thead td.tf--sticky,
+.tf-grid tbody td.tf--sticky {
+  --tf-grid-td-fill: var(--neutral-fill-rest);
+}
 .tf-grid thead .tf--sticky-first::after,
 .tf-grid tbody .tf--sticky-first::after {
   border-right-width: 1px;
