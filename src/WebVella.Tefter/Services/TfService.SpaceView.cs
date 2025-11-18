@@ -320,7 +320,17 @@ public partial class TfService
 		if (!String.IsNullOrWhiteSpace(existingSpaceView.PresetsJson) && existingSpaceView.PresetsJson != "[]")
 			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(existingSpaceView.PresetsJson) ?? new();
 
-		presets.Add(preset);
+		if (preset.ParentId is not null)
+		{
+			TfSpaceViewPreset? parentNode = ModelHelpers.GetPresetById(presets, preset.ParentId.Value);
+			if (parentNode is not null)
+				parentNode.Presets.Add(preset);
+		}
+		else
+		{
+			presets.Add(preset);
+		}		
+		
 
 		existingSpaceView.PresetsJson =
 			JsonSerializer.Serialize(presets);

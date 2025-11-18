@@ -20,7 +20,7 @@
 		           TOption="TfSpaceViewPreset"
 		           Items="@SpaceView.PresetsWithParents" Style="min-width:180px"
 		           OptionValue="@((p) => p.Id.ToString())"
-		           OptionText="@(x => x.Name)" Placeholder="@LOC("without group")"/>
+		           OptionText="@(x => x.Name)" Placeholder="@LOC("no parent")"/>
 		<FluentButton OnClick="_addPreset" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
 		              Disabled="@_submitting">@LOC("Add new")</FluentButton>
 	</ToolbarTemplate>

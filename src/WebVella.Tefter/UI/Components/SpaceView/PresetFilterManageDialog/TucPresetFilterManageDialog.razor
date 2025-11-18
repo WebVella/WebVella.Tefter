@@ -42,7 +42,7 @@
 							           TOption="TfSpaceViewPreset"
 							           Items="@Content.SpaceView!.PresetsWithParents" Style="width:100%"
 							           OptionValue="@((p) => p.Id.ToString())"
-							           OptionText="@(x => x.Name)" Placeholder="@LOC("without group")"/>
+							           OptionText="@(x => x.Name)" Placeholder="@LOC("no parent")"/>
 							@if (_selectedParent is not null)
 							{
 								<FluentButton Disabled="@(_selectedParent is null)"

@@ -1,0 +1,77 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true" Style="display: none">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Pin columns")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
+		              Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+	}
+	else
+	{
+		<FluentGrid>
+			<FluentGridItem Xs="6">
+				<TucCard>
+					<TitleTemplate>@LOC("From Left")</TitleTemplate>
+					<ChildContent>
+						@foreach (var column in _viewColumns)
+						{
+							<div style="padding:5px 0">
+								<FluentCheckbox Value="@_columnFromLeftMeta[column.Id].Item2" ValueChanged="@(() => _columnSelected(column,true))">
+									<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+										@if (!String.IsNullOrWhiteSpace(column.Icon))
+										{
+											<FluentIcon Value="TfConstants.GetIcon(column.Icon)"/>
+										}
+										@if (!column.OnlyIcon)
+										{
+											<div>@column.Title</div>
+										}
+									</FluentStack>
+								</FluentCheckbox>
+							</div>
+						}
+					</ChildContent>
+				</TucCard>
+			</FluentGridItem>
+			<FluentGridItem Xs="6">
+				<TucCard>
+					<TitleTemplate>@LOC("From Right")</TitleTemplate>
+					<ChildContent>
+						@foreach (var column in _reverseColumns)
+						{
+							<div style="padding:5px 0">
+								<FluentCheckbox Value="@_columnFromRightMeta[column.Id].Item2" ValueChanged="@(() => _columnSelected(column,false))">
+									<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+										@if (!String.IsNullOrWhiteSpace(column.Icon))
+										{
+											<FluentIcon Value="TfConstants.GetIcon(column.Icon)"/>
+										}
+										@if (!column.OnlyIcon)
+										{
+											<div>@column.Title</div>
+										}
+									</FluentStack>
+								</FluentCheckbox>
+							</div>
+						}
+					</ChildContent>
+				</TucCard>
+			</FluentGridItem>
+		</FluentGrid>
+	}
+</FluentDialogBody>

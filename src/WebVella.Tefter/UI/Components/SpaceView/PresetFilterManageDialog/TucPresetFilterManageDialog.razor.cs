@@ -134,14 +134,14 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent,
 
 		if (!EditContext.Validate()) return;
 
+		_form.ParentId = _selectedParent?.Id;
+		
 		if (_form.Id != Guid.Empty)
 		{
-			_form.ParentId = _selectedParent?.Id;
-
 			await Dialog.CloseAsync(_form);
 			return;
 		}
-
+		
 		try
 		{
 			_isSubmitting = true;

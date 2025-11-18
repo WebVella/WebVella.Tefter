@@ -41,5 +41,19 @@ public partial class TucSpaceViewSettingsSelector : TfBaseComponent
 			});
 		_ = await dialog.Result;
 	}
+	
+	private async Task _pinColumnsHandler()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewPinColumnsDialog>(
+			SpaceView,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
+		_ = await dialog.Result;
+	}	
 
 }
