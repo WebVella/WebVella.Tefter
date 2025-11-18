@@ -156,19 +156,36 @@ internal static class ResultUtils
 		IMessageService messageService
 		)
 	{
-		string errorMessage = toastErrorMessage;
-		toastService.ShowToast(ToastIntent.Error, errorMessage);
-		var errors = new List<string> { };
-		if (!String.IsNullOrWhiteSpace(exception.Message))
-			errors.Add(exception.Message);
-		if (exception.InnerException is not null)
+		if (exception is TfValidationException)
 		{
-			errors.Add(exception.InnerException.Message);
-		}
-		errors.AddRange(TfConverters.GetDataAsErrorList(exception));
-		SendErrorsToNotifications(notificationErrorTitle, errors, exception.StackTrace, messageService);
+			var valEx = (TfValidationException)exception;
+			string errorMessage = valEx.Message;
+			var validationErrorList = valEx.GetDataAsValidationErrorList();
+			if (validationErrorList.Count > 0)
+			{
 
-		return errorMessage;
+				errorMessage = $"{validationErrorList[0].PropertyName}:{validationErrorList[0].Message}";
+			}
+
+			toastService.ShowWarning(errorMessage);
+			return errorMessage;
+		}
+		else
+		{
+			string errorMessage = toastErrorMessage;
+			toastService.ShowToast(ToastIntent.Error, errorMessage);
+			var errors = new List<string> { };
+			if (!String.IsNullOrWhiteSpace(exception.Message))
+				errors.Add(exception.Message);
+			if (exception.InnerException is not null)
+			{
+				errors.Add(exception.InnerException.Message);
+			}
+
+			errors.AddRange(TfConverters.GetDataAsErrorList(exception));
+			SendErrorsToNotifications(notificationErrorTitle, errors, exception.StackTrace, messageService);
+			return errorMessage;
+		}
 	}
 
 	internal static void ProcessFormSubmitException(
