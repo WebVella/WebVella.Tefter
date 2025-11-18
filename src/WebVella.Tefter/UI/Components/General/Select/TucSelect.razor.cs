@@ -118,6 +118,7 @@ public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption :
 		// If OptionText is not provided, default to using ToString() on the option
 		if (OptionText is null && OptionTemplate is null)
 			OptionText = x => x.ToString();
+		
 		if (SelectedOption is null)
 			_value = null;
 		else
@@ -149,6 +150,8 @@ public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption :
 	private async Task _valueChanged(string newValue)
 	{
 		_value = newValue;
+		await InvokeAsync(StateHasChanged);
+		await Task.Delay(1);
 		if (!SelectedOptionChanged.HasDelegate) return;
 
 		if (OptionValue is null)
