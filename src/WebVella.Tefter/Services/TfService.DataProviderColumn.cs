@@ -1145,12 +1145,17 @@ public partial class TfService : ITfService
 	internal class TfDataProviderColumnValidator
 		: AbstractValidator<TfDataProviderColumn>
 	{
+		private readonly ITfService _tfService;
+		private readonly TfDataProvider _provider;
 		private readonly string _requiredColumnNamePrefix = string.Empty;
 
 		public TfDataProviderColumnValidator(
 			ITfService tfService,
 			TfDataProvider provider)
 		{
+			_provider = provider;
+			_tfService = tfService;
+
 			if (provider is not null)
 				_requiredColumnNamePrefix = $"dp{provider.Index}_";
 
@@ -1470,6 +1475,26 @@ public partial class TfService : ITfService
 
 			RuleSet("delete", () =>
 			{
+				RuleFor(column => column.Id)
+					.Must((column, id) =>
+					{
+						var existingColumn = tfService.GetDataProviderColumn(column.Id);
+						if(existingColumn is null)
+							return true;
+
+						bool identityFound = false;
+						foreach(var identity in _provider.Identities)
+						{
+							if (identity.Columns.Contains(existingColumn.DbName))
+								identityFound = true;
+						}
+
+						if (identityFound)
+							return false;
+
+						return false;
+					})
+					.WithMessage("The column cannot be deleted because is part of data identity");
 			});
 		}
 
