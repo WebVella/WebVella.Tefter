@@ -1495,6 +1495,34 @@ public partial class TfService : ITfService
 						return false;
 					})
 					.WithMessage("The column cannot be deleted because is part of data identity");
+
+				RuleFor(column => column.Id)
+					.Must((column, id) =>
+					{
+						var existingColumn = tfService.GetDataProviderColumn(column.Id);
+						if (existingColumn is null)
+							return true;
+
+						foreach (var sysColumn in _provider.SystemColumns)
+						{
+							if (sysColumn.DbName == existingColumn.DbName)
+								return false;
+						}
+
+						return true;
+					})
+					.WithMessage("The column cannot be deleted because is system column");
+
+				RuleFor(column => column.Id)
+					.Must((column, id) =>
+					{
+						var existingColumn = tfService.GetDataProviderColumn(column.Id);
+						if (existingColumn is null)
+							return true;
+
+						return !existingColumn.DbName!.StartsWith("tf_ide_");
+					})
+					.WithMessage("The column cannot be deleted because is system column");
 			});
 		}
 
