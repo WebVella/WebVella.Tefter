@@ -26,9 +26,17 @@
 						<FluentValidationMessage For="@(() => _form.Name)"/>
 					</FluentGridItem>
 					<FluentGridItem xs="4">
-						<FluentTextField TextFieldType="@TextFieldType.Text"
-						                 Value=@(_form.IsGroup ? LOC("group") : LOC("preset filter")) Disabled="true"
-						                 Label="@LOC("Type")" Style="width:100%"/>
+						<FluentInputLabel Label="@LOC("Preset type")" Required="true"/>
+						@if (_isCreate)
+						{
+							<FluentCheckbox @bind-Value="@_form.IsGroup" Label="@LOC("make as a group for holding presets")"/>
+						}
+						else
+						{
+							<FluentTextField TextFieldType="@TextFieldType.Text"
+							                 Value=@(_form.IsGroup ? LOC("group") : LOC("preset filter")) Disabled="true"
+							                 Style="width:100%"/>
+						}
 						<FluentValidationMessage For="@(() => _form.IsGroup)"/>
 					</FluentGridItem>
 				</FluentGrid>
