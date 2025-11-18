@@ -34,43 +34,43 @@
 				<TucSelectColor @bind-Value="@_form.BackgroundColor"/>
 				<TucValidationMessage Field="@(nameof(_form.BackgroundColor))" Errors="_validationErrors"/>
 			</FluentGridItem>
-		</FluentGrid>		
-		<FluentGrid>
-			<FluentGridItem xs="4">
-				<FluentInputLabel Label="@("Add column")"/>
-				<TucSelect SelectedOption="@_selectedOption"
-				           SelectedOptionChanged="(x=> _addColumnHandler(x))"
-				           TOption="TfSpaceViewColumn" Required="false"
-				           Items="@_options" Style="width:100%"
-				           Placeholder="@LOC("select to add...")"
-				           OptionValue="(x=> x.QueryName)"
-				           OptionText="@(x=> x.Title ?? "no title")"/>
-				<TucValidationMessage Field="@(nameof(_form.Columns))" Errors="_validationErrors"/>
+		</FluentGrid>
+		<TucDivider Style="margin:15px 0" Title="ROW FILTER"/>
+		<TucFilterQueryCard @bind-Items="_form.Filters" ViewColumns="@Content.Columns" Provider="@Content.Provider"
+		                    AllProviders="@Content.AllProvider"
+		                    AllSharedColumns="@Content.AllSharedColumns" OneLevelOnly="true"/>
 
-			</FluentGridItem>
-			<FluentGridItem xs="8" >
-				<FluentInputLabel Label="@("Apply to columns")"/>
+		<TucDivider Style="margin:15px 0" Title="APPLICABLE COLUMNS"/>
+		<TucCard>
+			<ToolbarTemplate>
+				<FluentStack VerticalAlignment="VerticalAlignment.Center">
+					<div style="color:var(--neutral-foreground-hint)">Columns:</div>
+					<TucSelect SelectedOption="@_selectedOption"
+					           SelectedOptionChanged="(x => _addColumnHandler(x))"
+					           TOption="TfSpaceViewColumn" Required="false"
+					           Items="@_options" Style="width:100%"
+					           Placeholder="@LOC("select a add...")"
+					           OptionValue="(x => x.QueryName)"
+					           OptionText="@(x => x.Title ?? "no title")"/>
+				</FluentStack>
+			</ToolbarTemplate>
+			<ChildContent>
 				@if (_selectedOptions.Count == 0)
 				{
-					<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("applies to the whole row")</FluentMessageBar>
+					<div
+						style="color:var(--neutral-foreground-hint);">@LOC("Applies to all columns")</div>
 				}
 				else
 				{
 					<FluentStack HorizontalGap="5">
 						@foreach (var column in _selectedOptions)
 						{
-							<FluentBadge Class="tf-input-badge" OnDismissClick="@(()=> _removeColumnHandler(column))">@(column.Title ?? "no title")</FluentBadge>
-						}						
+							<FluentBadge Class="tf-input-badge"
+							             OnDismissClick="@(() => _removeColumnHandler(column))">@(column.Title ?? "no title")</FluentBadge>
+						}
 					</FluentStack>
 				}
-			</FluentGridItem>
-		</FluentGrid>
-		<FluentGrid>
-			<FluentGridItem xs="12">
-				<FluentInputLabel Label="@("Filter rows by")"/>
-				<TucFilterQueryCard @bind-Items="_form.Filters" ViewColumns="@Content.Columns" Provider="@Content.Provider" AllProviders="@Content.AllProvider" 
-				                    AllSharedColumns="@Content.AllSharedColumns" OneLevelOnly="true"/>
-			</FluentGridItem>
-		</FluentGrid>
+			</ChildContent>
+		</TucCard>
 	}
 </FluentDialogBody>

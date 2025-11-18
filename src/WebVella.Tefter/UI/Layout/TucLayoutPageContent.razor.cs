@@ -8,6 +8,9 @@ public partial class TucLayoutPageContent : TfBaseComponent
 	[Parameter] public RenderFragment? Toolbar { get; set; }
 	[Parameter] public RenderFragment? ChildContent { get; set; }
 	[Parameter] public EventCallback OnEdit { get; set; }
+	[Parameter] public string? OnEditTooltop { get; set; } = null;
+	[Parameter] public EventCallback OnAdd { get; set; }
+	[Parameter] public string? OnAddTooltop { get; set; } = null;
 
 	[Parameter] public bool ShowTabs { get; set; } = true;
 

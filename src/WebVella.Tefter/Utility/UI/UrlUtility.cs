@@ -18,7 +18,7 @@ public class UrlUtility
 		using (HttpClient httpClient = new HttpClient())
 		{
 			httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Tefter App");
-			httpClient.Timeout = TimeSpan.FromSeconds(20);
+			httpClient.Timeout = TimeSpan.FromSeconds(200);
 
 			using (HttpResponseMessage response = await httpClient.GetAsync(uri).ConfigureAwait(false))
 			{

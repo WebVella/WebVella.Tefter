@@ -118,7 +118,6 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 		var context = new TfPresetFilterManagementContext
 		{
 			Item = ModelHelpers.GetPresetById(Items, presetId),
-			Parents = _getParents().ToList(),
 			DateSet = Dataset,
 			SpaceView = SpaceView
 		};
@@ -182,22 +181,6 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 			ToastService.ShowSuccess(LOC("Preset Filter updated!"));
 
 		}
-	}
-
-	private IEnumerable<TfSpaceViewPreset> _getParents()
-	{
-		var parents = new List<TfSpaceViewPreset>();
-		foreach (var item in Items)
-		{
-			_fillParents(parents, item);
-		}
-		return parents.AsEnumerable();
-	}
-
-	private void _fillParents(List<TfSpaceViewPreset> parents, TfSpaceViewPreset current)
-	{
-		if (current.IsGroup) parents.Add(current);
-		foreach (var item in current.Presets) _fillParents(parents, item);
 	}
 
 	private List<TfSpaceViewPreset> _removeNode(List<TfSpaceViewPreset> nodes, Guid nodeId)

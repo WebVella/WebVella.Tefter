@@ -32,7 +32,7 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent,
 			};
 			if (_form.ParentId != null)
 			{
-				_selectedParent = Content.Parents.FirstOrDefault(x => x.Id == _form.ParentId);
+				_selectedParent = Content.SpaceView.PresetsWithParents.FirstOrDefault(x => x.Id == _form.ParentId);
 			}
 		}
 		else

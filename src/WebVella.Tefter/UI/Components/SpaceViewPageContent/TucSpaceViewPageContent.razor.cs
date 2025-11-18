@@ -268,6 +268,25 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			});
 	}
 	
+	private async Task _addPreset(){
+		var context = new TfPresetFilterManagementContext
+		{
+			Item = null,
+			DateSet = _spaceData,
+			SpaceView = _spaceView
+		};
+		var dialog = await DialogService.ShowDialogAsync<TucPresetFilterManageDialog>(
+			context,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthExtraLarge,
+				TrapFocus = false
+			});
+		_ = await dialog.Result;
+	}	
+	
 	#endregion
 
 	#region << Public methods >>

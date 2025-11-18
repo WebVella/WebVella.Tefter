@@ -753,6 +753,9 @@ fluent-menu-item::part(start) {
 .tf-modal-no-body-padding::part(control) {
   --dialog-padding: 0px !important;
 }
+.fluent-dialog-footer {
+  padding-top: 30px !important;
+}
 .tf-card {
   border: 1px solid var(--neutral-stroke-rest);
   border-radius: calc(var(--layer-corner-radius) * 1px);
@@ -767,8 +770,6 @@ fluent-menu-item::part(start) {
   background: transparent;
   border-radius: 0.5rem;
   margin-bottom: 0;
-  font-size: var(--type-ramp-plus-2-font-size);
-  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -778,6 +779,8 @@ fluent-menu-item::part(start) {
   display: grid;
   grid-gap: 10px;
   grid-auto-flow: column;
+  font-size: var(--type-ramp-plus-2-font-size);
+  font-weight: 600;
 }
 .tf-card__title__right {
   flex: 0 0 auto;

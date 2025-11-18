@@ -14,6 +14,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposab
 	
 	private TfNavigationState _navState = null!;
 	private bool _hasViewPersonalization = false;
+	private Guid _initedSpaceViewId = Guid.Empty;
 	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
 	public void Dispose()
 	{
@@ -28,6 +29,12 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposab
 		await _init(_navState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		TfEventProvider.UserUpdatedEvent += On_UserChanged;
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if(_initedSpaceViewId != SpaceView.Id)
+			await _init(TfAuthLayout.GetState().NavigationState);
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -63,6 +70,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposab
 		finally
 		{
 			UriInitialized = _navState?.Uri ?? String.Empty;
+			_initedSpaceViewId = SpaceView.Id;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

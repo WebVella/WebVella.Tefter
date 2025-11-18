@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-
+<PageTitle>@Title</PageTitle>
 <div class="@_cssClass">
     <div class="tflpc__header">
         <div class="tflpc__header__left">
@@ -21,8 +21,18 @@
             <div class="tflpc__header__left__action">
                 @if (OnEdit.HasDelegate) 
                 {
-                    <FluentButton Appearance="Appearance.Stealth" IconStart="@TfConstants.GetIcon("Edit", IconSize.Size16)" OnClick="@(async() => await OnEdit.InvokeAsync())"/>
+                    <FluentButton Appearance="Appearance.Stealth" 
+                                  IconStart="@TfConstants.GetIcon("Edit", IconSize.Size16)" 
+                                  OnClick="@(async() => await OnEdit.InvokeAsync())"
+                                  AdditionalAttributes="@(new Dictionary<string, object?>(){{"title",@OnEditTooltop}})"/>
                 }
+                @if (OnAdd.HasDelegate) 
+                {
+                    <FluentButton Appearance="Appearance.Stealth" 
+                                  IconStart="@TfConstants.GetIcon("Add", IconSize.Size16)" 
+                                  OnClick="@(async() => await OnAdd.InvokeAsync())"
+                                  AdditionalAttributes="@(new Dictionary<string, object?>(){{"title",@OnAddTooltop}})"/>
+                }                
             </div>
         </div>
         @if (Toolbar is not null)

@@ -41,40 +41,5 @@ public partial class TucSpaceViewSettingsSelector : TfBaseComponent
 			});
 		_ = await dialog.Result;
 	}
-	
-	private async Task _createPresetHandler()
-	{
-		var context = new TfPresetFilterManagementContext
-		{
-			Item = null,
-			Parents = _getParents().ToList(),
-			DateSet = SpaceData,
-			SpaceView = SpaceView
-		};
-		var dialog = await DialogService.ShowDialogAsync<TucPresetFilterManageDialog>(
-			context,
-			new()
-			{
-				PreventDismissOnOverlayClick = true,
-				PreventScroll = true,
-				Width = TfConstants.DialogWidthExtraLarge,
-				TrapFocus = false
-			});
-		_ = await dialog.Result;
-	}	
-	
-	private IEnumerable<TfSpaceViewPreset> _getParents()
-	{
-		var parents = new List<TfSpaceViewPreset>();
-		foreach (var item in SpaceView.Presets)
-		{
-			_fillParents(parents, item);
-		}
-		return parents.AsEnumerable();
-	}	
-	private void _fillParents(List<TfSpaceViewPreset> parents, TfSpaceViewPreset current)
-	{
-		if (current.IsGroup) parents.Add(current);
-		foreach (var item in current.Presets) _fillParents(parents, item);
-	}	
+
 }

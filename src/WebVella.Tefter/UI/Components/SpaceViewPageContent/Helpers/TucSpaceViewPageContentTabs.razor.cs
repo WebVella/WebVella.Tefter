@@ -20,20 +20,20 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_init(TfAuthLayout.GetState().NavigationState);
-		Navigator.LocationChanged += On_NavigationStateChanged;
+		_init();
 	}
 
 	protected override void OnParametersSet()
 	{
 		if (_initedViewId != SpaceView.Id)
-			_init(TfAuthLayout.GetState().NavigationState);
+			_init();
 	}
 
 	protected override void OnAfterRender(bool firstRender)
 	{
 		if (firstRender)
 		{
+			Navigator.LocationChanged += On_NavigationStateChanged;
 			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewUpdated;
 		}
 	}
@@ -44,7 +44,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 		{
 			if (UriInitialized != args.Location)
 			{
-				_init(TfAuthLayout.GetState().NavigationState);
+				_init();
 				await InvokeAsync(StateHasChanged);
 			}
 		});
@@ -54,31 +54,32 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 	{
 		await InvokeAsync(async () =>
 		{
-			_init(TfAuthLayout.GetState().NavigationState);
+			_init(newView:args.Payload);
 			await InvokeAsync(StateHasChanged);
 		});
 	}
 
-	private void _init(TfNavigationState navState)
+	private void _init(TfSpaceView? newView = null)
 	{
-		_navState = navState;
+		_navState = TfAuthLayout.GetState().NavigationState;
+		TfSpaceView spaceView = newView ?? SpaceView;
 		try
 		{
 			_menu = new();
 			Guid? currentPresetId = Navigator.GetGuidFromQuery(TfConstants.PresetIdQueryName);
-			Icon? mainIcon = String.IsNullOrWhiteSpace(SpaceView.Settings.MainTabFluentIcon)
+			Icon? mainIcon = String.IsNullOrWhiteSpace(spaceView.Settings.MainTabFluentIcon)
 				? null
-				: TfConstants.GetIcon(SpaceView.Settings.MainTabFluentIcon);
+				: TfConstants.GetIcon(spaceView.Settings.MainTabFluentIcon);
 
-			if (SpaceView.Presets.Count > 0)
+			if (spaceView.Presets.Count > 0)
 			{
 				_menu.Add(new TfMenuItem
 				{
 					Id = "tf-main",
 					Text =
-						String.IsNullOrWhiteSpace(SpaceView.Settings.MainTabLabel)
+						String.IsNullOrWhiteSpace(spaceView.Settings.MainTabLabel)
 							? "Main"
-							: SpaceView.Settings.MainTabLabel,
+							: spaceView.Settings.MainTabLabel,
 					Url = NavigatorExt.AddQueryValueToUri(Navigator.GetLocalUrl(), TfConstants.PresetIdQueryName,
 						null),
 					Selected = currentPresetId is null,
@@ -86,7 +87,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 					IconExpanded = mainIcon
 				});
 
-				foreach (var prItem in SpaceView.Presets)
+				foreach (var prItem in spaceView.Presets)
 				{
 					_menu.Add(_getMenuItem(prItem));
 				}
@@ -101,7 +102,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 		finally
 		{
 			UriInitialized = _navState?.Uri ?? String.Empty;
-			_initedViewId = SpaceView.Id;
+			_initedViewId = spaceView.Id;
 		}
 	}
 

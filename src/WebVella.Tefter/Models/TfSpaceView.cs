@@ -20,6 +20,8 @@ public class TfSpaceView
 		}
 	}
 	public List<TfSpaceViewPreset> Presets { get; set; } = new();
+	
+	public List<TfSpaceViewPreset> PresetsWithParents => Presets.FillSpaceViewPresetParents();
 }
 
 [DboCacheModel]

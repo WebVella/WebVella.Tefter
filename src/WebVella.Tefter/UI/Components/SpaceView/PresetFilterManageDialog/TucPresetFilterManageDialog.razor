@@ -40,7 +40,7 @@
 							           SelectedOption="@_selectedParent"
 							           SelectedOptionChanged="((x) => _selectedParent = x)"
 							           TOption="TfSpaceViewPreset"
-							           Items="@Content.Parents" Style="width:100%"
+							           Items="@Content.SpaceView!.PresetsWithParents" Style="width:100%"
 							           OptionValue="@((p) => p.Id.ToString())"
 							           OptionText="@(x => x.Name)" Placeholder="@LOC("without group")"/>
 							@if (_selectedParent is not null)
