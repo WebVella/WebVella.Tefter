@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11205.157 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter", "src\WebVella.Tefter\WebVella.Tefter.csproj", "{488533C5-7E51-4222-AD4C-3B3109B006A3}"
 EndProject
@@ -99,23 +99,18 @@ Global
 		{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BE0B1C3E-D793-DF94-4E45-08924EE577E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BE0B1C3E-D793-DF94-4E45-08924EE577E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE0B1C3E-D793-DF94-4E45-08924EE577E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE0B1C3E-D793-DF94-4E45-08924EE577E0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DC264655-ACE2-4C82-88A6-0C9E6248E35D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC264655-ACE2-4C82-88A6-0C9E6248E35D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC264655-ACE2-4C82-88A6-0C9E6248E35D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC264655-ACE2-4C82-88A6-0C9E6248E35D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E95B6CAB-5261-4660-BD58-EFB0D9C72218}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E95B6CAB-5261-4660-BD58-EFB0D9C72218}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E95B6CAB-5261-4660-BD58-EFB0D9C72218}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E95B6CAB-5261-4660-BD58-EFB0D9C72218}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B48DF26-790D-C28B-E21C-0CF642871453}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B48DF26-790D-C28B-E21C-0CF642871453}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B48DF26-790D-C28B-E21C-0CF642871453}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B48DF26-790D-C28B-E21C-0CF642871453}.Release|Any CPU.Build.0 = Release|Any CPU
 		{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B9123F6E-0B53-D607-0FF2-F744099DECFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

@@ -4,7 +4,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 {
 	#region << Base Overrides >>
 
-	private static readonly string Id = "68afeecc-6ca9-4102-831d-ef4028057128";
+	public static readonly string Id = "68afeecc-6ca9-4102-831d-ef4028057128";
 	public override Guid AddonId { get; init; } = new Guid(Id);
 	public override string AddonName { get; init; } = "Data Grid";
 	public override string AddonDescription { get; init; } = "present the selected dataset in a grid";
@@ -104,7 +104,11 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		if (jsonOptions is null) throw new Exception("TfSpaceViewPageComponent error: options cannot be deserialized");
 		var tfService = serviceProvider.GetService<ITfService>();
 		if (jsonOptions.SpaceViewId.HasValue)
-			tfService.DeleteSpaceView(jsonOptions.SpaceViewId.Value);
+		{
+			var view = tfService.GetSpaceView(jsonOptions.SpaceViewId.Value);
+			if(view is not null)
+				tfService.DeleteSpaceView(jsonOptions.SpaceViewId.Value);
+		}
 	}
 
 	public override List<TfScreenRegionTab> GetManagementTabs()

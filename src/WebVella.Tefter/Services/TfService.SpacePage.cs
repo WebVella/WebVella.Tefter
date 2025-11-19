@@ -1,4 +1,5 @@
-﻿using Nito.AsyncEx.Synchronous;
+﻿using Microsoft.AspNetCore.Routing.Template;
+using Nito.AsyncEx.Synchronous;
 
 namespace WebVella.Tefter.Services;
 
@@ -165,7 +166,7 @@ public partial class TfService : ITfService
 	}
 
 	public (Guid, List<TfSpacePage>) CreateSpacePage(
-		TfSpacePage spacePage)
+		TfSpacePage spacePage )
 	{
 		try
 		{
@@ -736,6 +737,20 @@ public partial class TfService : ITfService
 
 				foreach (var pageToCreate in pagesToCreate)
 				{
+					//if page is space view page, remove the space view id from options
+					//in order to create a new space view when creating the page
+					if (pageToCreate.ComponentId == new Guid(TucSpaceViewSpacePageAddon.Id))
+					{
+						var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(
+							pageToCreate.ComponentOptionsJson); 
+
+						if(options.SpaceViewId.HasValue)
+						{
+							options.SpaceViewId = null;
+							pageToCreate.ComponentOptionsJson = JsonSerializer.Serialize(options);
+						}
+					}
+
 					CreateSpacePage(pageToCreate);
 				}
 
