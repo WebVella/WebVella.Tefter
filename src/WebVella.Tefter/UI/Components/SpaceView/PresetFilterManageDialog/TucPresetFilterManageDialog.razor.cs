@@ -137,22 +137,28 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent,
 		if (!EditContext.Validate()) return;
 
 		_form.ParentId = _selectedParent?.Id;
-		
-		if (_form.Id != Guid.Empty)
-		{
-			await Dialog.CloseAsync(_form);
-			return;
-		}
-		
 		try
 		{
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
-			_form.Id = Guid.NewGuid();
-			await TfService.AddSpaceViewPreset(
-				spaceViewId: Content.SpaceView!.Id,
-				preset: _form);
+			//Create
+			if (_form.Id == Guid.Empty)
+			{
+				_form.Id = Guid.NewGuid();
+				await TfService.AddSpaceViewPreset(
+					spaceViewId: Content.SpaceView!.Id,
+					preset: _form);
+				ToastService.ShowSuccess(LOC("Preset Filter created!"));
+			}
+			//Update
+			else
+			{
+				await TfService.UpdateSpaceViewPreset(
+					spaceViewId: Content.SpaceView!.Id,
+					preset: _form);					
+				ToastService.ShowSuccess(LOC("Preset Filter updated!"));
+			}
 			await Dialog.CloseAsync(_form);
 		}
 		catch (Exception ex)

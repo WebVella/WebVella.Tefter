@@ -233,9 +233,9 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		if (_submitting) return;
 		try
 		{
-			await TfService.UpdateSpaceViewPresets(
-				spaceViewId: _spaceView!.Id,
-				presets: presets);
+			// await TfService.UpdateSpaceViewPresets(
+			// 	spaceViewId: _spaceView!.Id,
+			// 	presets: presets);
 		}
 		catch (Exception ex)
 		{

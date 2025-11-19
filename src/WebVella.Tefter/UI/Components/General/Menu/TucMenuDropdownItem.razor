@@ -90,3 +90,19 @@ else
 
 	</FluentMenuItem>
 }
+@if (Item.Actions.Count > 0)
+{
+	<FluentMenu Anchor="@Item.Id" Trigger="MouseButton.Right" Anchored="true" UseMenuService="false">
+		<FluentMenuItem Disabled="true">
+			<span>@(String.IsNullOrWhiteSpace(Item.Text) ? "no title" : Item.Text)</span>
+			<FluentIcon Slot="start" Value="@TfConstants.GetIcon("Navigation")!.WithColor("var(--neutral-foreground-hint)")"/>
+		</FluentMenuItem>		
+		@foreach (var action in Item.Actions)
+		{
+			<FluentMenuItem>
+				<span>@(String.IsNullOrWhiteSpace(action.Text) ? "no title" : action.Text)</span>
+				<FluentIcon Slot="start" Value="action.IconCollapsed"/>
+			</FluentMenuItem>				
+		}
+	</FluentMenu>
+}

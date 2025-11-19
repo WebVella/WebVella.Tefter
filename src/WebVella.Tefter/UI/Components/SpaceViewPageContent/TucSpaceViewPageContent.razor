@@ -87,7 +87,7 @@ else
                             @foreach (var column in _spaceViewColumns.OrderBy(x => x.Position))
                             {
                                 <th data-query-name="@column.QueryName" class="@_columnsMeta[column.Id].HeaderCellClass"
-                                    style="@_columnsMeta[column.Id].HeaderCellStyles">
+                                    style="@_columnsMeta[column.Id].HeaderCellStyles" id="@column.AnchorId">
                                     <div>
                                         @if (String.IsNullOrWhiteSpace(column.Icon))
                                         {

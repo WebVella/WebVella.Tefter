@@ -2,7 +2,7 @@
 
 public record TfMenuItem
 {
-	public string? Id { get; set; }
+	public string? Id { get; set; } = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 	public string? Text { get; set; }
 	public string? Tooltip { get; set; }
 	public string? Description { get; set; }
@@ -98,6 +98,7 @@ public record TfMenuItem
 
 	public TfMenuItemData? Data { get; set; } = null;
 	public List<TfMenuItem> Items { get; set; } = new();
+	public List<TfMenuItem> Actions { get; set; } = new();
 	public ElementReference Reference { get; set; }
 
 	public string Hash
@@ -119,6 +120,7 @@ public record TfMenuItem
 	[JsonIgnore] public EventCallback OnClick { get; set; }
 
 	[JsonIgnore] public EventCallback<bool> OnExpand { get; set; }
+	[JsonIgnore] public EventCallback OnActions { get; set; }
 }
 
 public record TfMenuItemData

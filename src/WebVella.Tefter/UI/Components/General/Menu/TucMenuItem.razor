@@ -3,8 +3,8 @@
 
 <div class="@_css">
 	<TucAnchor Href="@Item.Href" 
-				  Id="@Item.Id" AdditionalAttributes=@_attributes
-				  OnClick="@Item.OnClick" Appearance="@Appearance.Hypertext">
+	           Id="@Item.Id" AdditionalAttributes=@_attributes
+	           OnClick="@Item.OnClick" Appearance="@Appearance.Hypertext">
 		@if (Item.Icon is not null && !String.IsNullOrWhiteSpace(Item.Text))
 		{
 			<span slot="start">
@@ -38,7 +38,7 @@
 			</span>
 		}
 		@if ((Item.IsSeparateChevron.HasValue && !Item.IsSeparateChevron.Value)
-				|| Item.BadgeContent is not null)
+		     || Item.BadgeContent is not null)
 		{
 			<span slot="end">
 				@if (Item.BadgeContent is not null)
@@ -59,9 +59,9 @@
 	@if (!Item.Disabled && Item.Items.Count > 0)
 	{
 		<FluentMenu UseMenuService="false"
-					Open="@Item.Expanded"
-					OpenChanged="@(async (x) => await Item.OnExpand.InvokeAsync(x))"
-					Anchor="@Item.Id">
+		            Open="@Item.Expanded"
+		            OpenChanged="@(async (x) => await Item.OnExpand.InvokeAsync(x))"
+		            Anchor="@Item.Id">
 			@foreach (var node in Item.Items)
 			{
 				<TucMenuDropdownItem Item="node" EllipsesLimit="@EllipsesLimit" />
@@ -69,9 +69,26 @@
 		</FluentMenu>
 	}
 </div>
+@if (Item.Actions.Count > 0)
+{
+	<FluentMenu Anchor="@Item.Id" Trigger="MouseButton.Right" Anchored="true" UseMenuService="false">
+		<FluentMenuItem Disabled="true">
+			<span>@(String.IsNullOrWhiteSpace(Item.Text) ? "no title" : Item.Text)</span>
+			<FluentIcon Slot="start" Value="@TfConstants.GetIcon("Navigation")!.WithColor("var(--neutral-foreground-hint)")"/>
+		</FluentMenuItem>		
+		@foreach (var action in Item.Actions)
+		{
+			<FluentMenuItem>
+				<span>@(String.IsNullOrWhiteSpace(action.Text) ? "no title" : action.Text)</span>
+				<FluentIcon Slot="start" Value="action.IconCollapsed"/>
+			</FluentMenuItem>				
+		}
+	</FluentMenu>
+}
 @if (_expandItem is not null)
 {
 	<TucMenuItem Item="_expandItem" Class="@_expandItemCss" />
 }
+
 
 

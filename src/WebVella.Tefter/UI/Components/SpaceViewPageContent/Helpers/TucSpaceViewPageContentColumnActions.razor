@@ -1,16 +1,21 @@
 ﻿@namespace WebVella.Tefter.UI.Components
+@using DocumentFormat.OpenXml.Office2010.CustomUI
 @inherits TfBaseComponent;
 @if (User.IsAdmin)
 {
-    <div class="@($"tf-column-action tf-column-manage {(_open ? "tf-column-action--open" : "")}")"
-         id="@Column.AnchorId"
-         @onclick="@_clickHandler">
-        <FluentIcon Value="@TfConstants.GetIcon("MoreHorizontal",IconSize.Size16, IconVariant.Filled)"/>
-    </div>
+    @* <div class="@($"tf-column-action tf-column-manage {(_open ? "tf-column-action--open" : "")}")" *@
+    @*      id="@Column.AnchorId" *@
+    @*      @onclick="@_clickHandler"> *@
+    @*     <FluentIcon Value="@TfConstants.GetIcon("MoreHorizontal",IconSize.Size16, IconVariant.Filled)"/> *@
+    @* </div> *@
     <FluentMenu UseMenuService="true"
                 Anchor="@Column.AnchorId"
-                @bind-Open="_open"
-                VerticalThreshold="170">
+                Trigger="MouseButton.Right"
+                Anchored="false">
+        <FluentMenuItem Disabled="true">
+            <span>@(String.IsNullOrWhiteSpace(Column.Title) ? "no title" : Column.Title)</span>
+            <FluentIcon Slot="start" Value="@TfConstants.GetIcon("Navigation")!.WithColor("var(--neutral-foreground-hint)")"/>
+        </FluentMenuItem>
         <FluentMenuItem OnClick="_manageColumn">
             <span>@LOC("Manage Column")</span>
             <FluentIcon Slot="start" Value="@TfConstants.GetIcon("Settings")"/>

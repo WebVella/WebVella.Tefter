@@ -3,24 +3,6 @@
 
 <TucCard Title="@Title" Style="@Style">
 	<ToolbarTemplate>
-		<FluentTextField @bind-Value="@_selectedName"
-		                 Disabled="_submitting"
-		                 Placeholder="@LOC("name")"
-		                 Required="true" Style="width:180px"/>
-		<TucSelect SelectedOption="@_selectedType"
-		           SelectedOptionChanged="((x) => _selectedType = x)"
-		           Disabled="_submitting"
-		           TOption="TfPresetFilterItemType" Required="true"
-		           Items="@(Enum.GetValues<TfPresetFilterItemType>())" Style="min-width:60px"
-		           OptionValue="@((p) => ((int)p).ToString())"
-		           OptionText="@(x => x.ToDescriptionString())"/>
-		<TucSelect SelectedOption="@_selectedParent"
-		           SelectedOptionChanged="((x) => _selectedParent = x)"
-		           Disabled="_submitting"
-		           TOption="TfSpaceViewPreset"
-		           Items="@SpaceView.PresetsWithParents" Style="min-width:180px"
-		           OptionValue="@((p) => p.Id.ToString())"
-		           OptionText="@(x => x.Name)" Placeholder="@LOC("no parent")"/>
 		<FluentButton OnClick="_addPreset" IconStart="@TfConstants.GetIcon("Add")" Appearance="@Appearance.Outline"
 		              Disabled="@_submitting">@LOC("Add new")</FluentButton>
 	</ToolbarTemplate>

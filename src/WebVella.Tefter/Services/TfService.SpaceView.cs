@@ -25,16 +25,29 @@ public partial interface ITfService
 		Guid spaceViewId,
 		TfSpaceViewSettings settings);
 
+	public void DeleteSpaceView(
+		Guid id);
+	
 	public Task AddSpaceViewPreset(
 		Guid spaceViewId,
 		TfSpaceViewPreset preset);
 
-	public Task UpdateSpaceViewPresets(
+	public Task UpdateSpaceViewPreset(
 		Guid spaceViewId,
-		List<TfSpaceViewPreset> presets);
+		TfSpaceViewPreset preset);
 
-	public void DeleteSpaceView(
-		Guid id);
+	public Task CopySpaceViewPreset(
+		Guid spaceViewId,
+		Guid presetId);	
+	
+	public Task MoveSpaceViewPreset(
+		Guid spaceViewId,
+		Guid presetId,
+		bool isUp);		
+	
+	public Task RemoveSpaceViewPreset(
+		Guid spaceViewId,
+		Guid presetId);		
 }
 
 public partial class TfService
@@ -302,88 +315,6 @@ public partial class TfService
 		}
 	}
 
-	public async Task AddSpaceViewPreset(
-		Guid spaceViewId,
-		TfSpaceViewPreset preset)
-	{
-		if (preset.Id == Guid.Empty)
-			preset.Id = Guid.NewGuid();
-		var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceViewId);
-		if (existingSpaceView == null)
-			throw new TfValidationException("spaceViewId", "SpaceView not found.");
-		
-		
-		if(string.IsNullOrWhiteSpace(preset.Name) && string.IsNullOrWhiteSpace(preset.Icon))
-			throw new TfValidationException(nameof(TfSpaceViewPreset.Name), "Name is required when icon is not provided.");
-		
-		var presets = new List<TfSpaceViewPreset>();
-		if (!String.IsNullOrWhiteSpace(existingSpaceView.PresetsJson) && existingSpaceView.PresetsJson != "[]")
-			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(existingSpaceView.PresetsJson) ?? new();
-
-		if (preset.ParentId is not null)
-		{
-			TfSpaceViewPreset? parentNode = ModelHelpers.GetPresetById(presets, preset.ParentId.Value);
-			if (parentNode is not null)
-				parentNode.Presets.Add(preset);
-		}
-		else
-		{
-			presets.Add(preset);
-		}		
-		
-
-		existingSpaceView.PresetsJson =
-			JsonSerializer.Serialize(presets);
-
-		var success = _dboManager.Update<TfSpaceViewDbo>(
-			existingSpaceView,
-			nameof(TfSpaceViewDbo.PresetsJson));
-
-		if (!success)
-			throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
-
-		var spaceView = GetSpaceView(spaceViewId);
-		await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView));
-	}
-
-	public async Task UpdateSpaceViewPresets(
-		Guid spaceViewId,
-		List<TfSpaceViewPreset> presets)
-	{
-		var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceViewId);
-		if (existingSpaceView == null)
-		{
-			throw new TfValidationException("spaceViewId", "SpaceView not found.");
-		}
-
-		foreach (var preset in presets)
-		{
-			if(string.IsNullOrWhiteSpace(preset.Name) && string.IsNullOrWhiteSpace(preset.Icon))
-				throw new TfValidationException(nameof(TfSpaceViewPreset.Name), "Name is required when icon is not provided.");			
-		}
-		
-		// var jsonOptions = new JsonSerializerOptions
-		// {
-		// 	TypeInfoResolver = new DefaultJsonTypeInfoResolver
-		// 	{
-		// 		Modifiers = { JsonExtensions.AddPrivateProperties<JsonIncludePrivatePropertyAttribute>() },
-		// 	},
-		// };
-
-		//existingSpaceView.PresetsJson = JsonSerializer.Serialize(presets ?? new List<TfSpaceViewPreset>(), jsonOptions);
-		existingSpaceView.PresetsJson = JsonSerializer.Serialize(presets ?? new List<TfSpaceViewPreset>());
-
-		var success = _dboManager.Update<TfSpaceViewDbo>(
-			existingSpaceView,
-			nameof(TfSpaceViewDbo.PresetsJson));
-
-		if (!success)
-			throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
-
-		var spaceView = GetSpaceView(spaceViewId);
-		await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView));
-	}
-
 	public TfSpaceView UpdateSpaceView(
 		TfSpaceView spaceView)
 	{
@@ -436,6 +367,235 @@ public partial class TfService
 		}
 	}
 
+	public async Task AddSpaceViewPreset(
+		Guid spaceViewId,
+		TfSpaceViewPreset preset)
+	{
+		if (preset.Id == Guid.Empty)
+			preset.Id = Guid.NewGuid();
+		var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceViewId);
+		if (existingSpaceView == null)
+			throw new TfValidationException("spaceViewId", "SpaceView not found.");
+
+
+		if (string.IsNullOrWhiteSpace(preset.Name) && string.IsNullOrWhiteSpace(preset.Icon))
+			throw new TfValidationException(nameof(TfSpaceViewPreset.Name),
+				"Name is required when icon is not provided.");
+
+		var presets = new List<TfSpaceViewPreset>();
+		if (!String.IsNullOrWhiteSpace(existingSpaceView.PresetsJson) && existingSpaceView.PresetsJson != "[]")
+			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(existingSpaceView.PresetsJson) ?? new();
+
+		if (preset.ParentId is not null)
+		{
+			TfSpaceViewPreset? parentNode = ModelHelpers.GetPresetById(presets, preset.ParentId.Value);
+			if (parentNode is not null)
+				parentNode.Presets.Add(preset);
+		}
+		else
+		{
+			presets.Add(preset);
+		}
+
+
+		existingSpaceView.PresetsJson =
+			JsonSerializer.Serialize(presets);
+
+		var success = _dboManager.Update<TfSpaceViewDbo>(
+			existingSpaceView,
+			nameof(TfSpaceViewDbo.PresetsJson));
+
+		if (!success)
+			throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
+
+		var spaceView = GetSpaceView(spaceViewId);
+		await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView));
+	}
+
+	public async Task UpdateSpaceViewPreset(
+		Guid spaceViewId,
+		TfSpaceViewPreset preset)
+	{
+		var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceViewId);
+		if (existingSpaceView == null)
+			throw new TfValidationException("spaceViewId", "SpaceView not found.");
+
+		if (string.IsNullOrWhiteSpace(preset.Name) && string.IsNullOrWhiteSpace(preset.Icon))
+			throw new TfValidationException(nameof(TfSpaceViewPreset.Name),
+				"Name is required when icon is not provided.");
+
+		var presets = new List<TfSpaceViewPreset>();
+		if (!String.IsNullOrWhiteSpace(existingSpaceView.PresetsJson) && existingSpaceView.PresetsJson != "[]")
+			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(existingSpaceView.PresetsJson) ?? new();
+
+		var currentPreset = presets.GetPresetById(preset.Id);
+		if (currentPreset is null)
+			throw new TfValidationException("preset", "Preset with this ID was not found.");
+		Guid? currentParentId = currentPreset.ParentId;
+
+
+		currentPreset.Name = preset.Name;
+		currentPreset.Icon = preset.Icon;
+		currentPreset.ParentId = preset.ParentId;
+		currentPreset.Color = preset.Color;
+		currentPreset.Search = preset.Search;
+		currentPreset.Filters = preset.Filters;
+		currentPreset.SortOrders = preset.SortOrders;
+
+		if (currentParentId != preset.ParentId)
+		{
+			TfSpaceViewPreset? currentParent = null;
+			TfSpaceViewPreset? newParent = null;
+			if (currentParentId.HasValue) currentParent = presets.GetPresetById(currentParentId.Value);
+			if (preset.ParentId.HasValue) newParent = presets.GetPresetById(preset.ParentId.Value);
+
+			if (currentParent is not null)
+			{
+				var findIndex = currentParent.Presets.FindIndex(x => x.Id == preset.Id);
+				if (findIndex > -1) currentParent.Presets.RemoveAt(findIndex);
+			}
+			else
+			{
+				var findIndex = presets.FindIndex(x => x.Id == preset.Id);
+				if (findIndex > -1) presets.RemoveAt(findIndex);
+			}
+
+			if (newParent is not null)
+			{
+				newParent.Presets.Add(currentPreset);
+			}
+			else
+			{
+				presets.Add(currentPreset);
+			}
+		}
+
+
+		existingSpaceView.PresetsJson =
+			JsonSerializer.Serialize(presets);
+
+		var success = _dboManager.Update<TfSpaceViewDbo>(
+			existingSpaceView,
+			nameof(TfSpaceViewDbo.PresetsJson));
+
+		if (!success)
+			throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
+
+		var spaceView = GetSpaceView(spaceViewId);
+		await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView));
+	}
+
+	public async Task CopySpaceViewPreset(
+		Guid spaceViewId,
+		Guid presetId)
+	{
+		var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceViewId);
+		if (existingSpaceView == null)
+			throw new TfValidationException("spaceViewId", "SpaceView not found.");		
+		var presets = new List<TfSpaceViewPreset>();
+		if (!String.IsNullOrWhiteSpace(existingSpaceView.PresetsJson) && existingSpaceView.PresetsJson != "[]")
+			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(existingSpaceView.PresetsJson) ?? new();
+
+		var sourcePreset = presets.GetPresetById(presetId);
+		if (sourcePreset is null)
+			throw new TfValidationException("preset", "Preset with this ID was not found.");		
+		
+		if (sourcePreset.ParentId is not null)
+		{
+			var parent = presets.GetPresetById(sourcePreset.ParentId.Value);
+			if (parent is null) return;
+
+			var sourceIndex = parent.Presets.FindIndex(x => x.Id == sourcePreset.Id);
+			if (sourceIndex > -1)
+			{
+				parent.Presets.Insert(sourceIndex + 1, _copyPreset(sourcePreset, parent.Id));
+			}
+		}
+		else
+		{
+			var sourceIndex = presets.FindIndex(x => x.Id == sourcePreset.Id);
+			if (sourceIndex > -1)
+			{
+				presets.Insert(sourceIndex + 1, _copyPreset(sourcePreset, null));
+			}
+		}		
+		
+		existingSpaceView.PresetsJson =
+			JsonSerializer.Serialize(presets);
+
+		var success = _dboManager.Update<TfSpaceViewDbo>(
+			existingSpaceView,
+			nameof(TfSpaceViewDbo.PresetsJson));
+
+		if (!success)
+			throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
+
+		var spaceView = GetSpaceView(spaceViewId);
+		await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView));		
+	}
+	
+	public async Task MoveSpaceViewPreset(
+		Guid spaceViewId,
+		Guid presetId,
+		bool isUp)
+	{
+		var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceViewId);
+		if (existingSpaceView == null)
+			throw new TfValidationException("spaceViewId", "SpaceView not found.");		
+		var presets = new List<TfSpaceViewPreset>();
+		if (!String.IsNullOrWhiteSpace(existingSpaceView.PresetsJson) && existingSpaceView.PresetsJson != "[]")
+			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(existingSpaceView.PresetsJson) ?? new();
+
+		var sourcePreset = presets.GetPresetById(presetId);
+		if (sourcePreset is null)
+			throw new TfValidationException("preset", "Preset with this ID was not found.");		
+		
+		presets = _movePreset(presets, presetId, isUp);
+		
+		existingSpaceView.PresetsJson =
+			JsonSerializer.Serialize(presets);
+
+		var success = _dboManager.Update<TfSpaceViewDbo>(
+			existingSpaceView,
+			nameof(TfSpaceViewDbo.PresetsJson));
+
+		if (!success)
+			throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
+
+		var spaceView = GetSpaceView(spaceViewId);
+		await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView));		
+	}	
+	
+	public async Task RemoveSpaceViewPreset(
+		Guid spaceViewId,
+		Guid presetId)
+	{
+		var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceViewId);
+		if (existingSpaceView == null)
+			throw new TfValidationException("spaceViewId", "SpaceView not found.");		
+		var presets = new List<TfSpaceViewPreset>();
+		if (!String.IsNullOrWhiteSpace(existingSpaceView.PresetsJson) && existingSpaceView.PresetsJson != "[]")
+			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(existingSpaceView.PresetsJson) ?? new();
+
+		var sourcePreset = presets.GetPresetById(presetId);
+		if (sourcePreset is null)
+			throw new TfValidationException("preset", "Preset with this ID was not found.");		
+		
+		presets = _removePreset(presets, presetId);
+		existingSpaceView.PresetsJson =
+			JsonSerializer.Serialize(presets);
+
+		var success = _dboManager.Update<TfSpaceViewDbo>(
+			existingSpaceView,
+			nameof(TfSpaceViewDbo.PresetsJson));
+
+		if (!success)
+			throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
+
+		var spaceView = GetSpaceView(spaceViewId);
+		await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView));		
+	}	
+	
 	private TfSpaceView? ConvertDboToModel(
 		TfSpaceViewDbo? dbo)
 	{
@@ -482,6 +642,59 @@ public partial class TfService
 		};
 	}
 
+	#region << private >>
+	private TfSpaceViewPreset _copyPreset(TfSpaceViewPreset item,Guid? parentId = null)
+	{
+		var newItem = item with { Id = Guid.NewGuid(), ParentId = parentId };
+		var newNodes = new List<TfSpaceViewPreset>();
+		foreach (var node in item.Presets)
+		{
+			newNodes.Add(_copyPreset(node, newItem.Id));
+		}
+		newItem.Presets = newNodes;
+		return newItem;
+	}	
+	
+	private List<TfSpaceViewPreset> _movePreset(List<TfSpaceViewPreset> nodes, Guid nodeId, bool isUp)
+	{
+		if (nodes.Count == 0) return nodes;
+
+		var nodeIndex = nodes.FindIndex(x => x.Id == nodeId);
+		if (nodeIndex > -1)
+		{
+			var list = nodes.Where(x => x.Id != nodeId).ToList();
+			var newIndex = isUp ? nodeIndex - 1 : nodeIndex + 1;
+			if (newIndex < 0 || newIndex > nodes.Count - 1) return nodes;
+
+			list.Insert(newIndex, nodes[nodeIndex]);
+			return list;
+		}
+
+		foreach (var item in nodes)
+		{
+			item.Presets = _movePreset(item.Presets, nodeId, isUp);
+		}
+
+		return nodes;
+	}	
+	
+	private List<TfSpaceViewPreset> _removePreset(List<TfSpaceViewPreset> nodes, Guid nodeId)
+	{
+		if (nodes.Count == 0) return nodes;
+		if (nodes.Any(x => x.Id == nodeId))
+		{
+			return nodes.Where(x => x.Id != nodeId).ToList();
+		}
+
+		foreach (var item in nodes)
+		{
+			item.Presets = _removePreset(item.Presets, nodeId);
+		}
+
+		return nodes;
+	}	
+	#endregion
+	
 	#region <--- validation --->
 
 	internal class TfSpaceViewValidator

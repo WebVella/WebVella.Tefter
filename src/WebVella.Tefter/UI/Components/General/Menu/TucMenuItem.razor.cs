@@ -69,4 +69,8 @@ public partial class TucMenuItem : TfBaseComponent
 
 	}
 
+	private void _rightClick()
+	{
+		Console.WriteLine("Right Click");
+	}
 }

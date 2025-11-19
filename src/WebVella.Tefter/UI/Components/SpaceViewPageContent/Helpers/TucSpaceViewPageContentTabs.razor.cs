@@ -6,6 +6,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
 	[Parameter] public TfSpacePage SpacePage { get; set; } = null!;
+	[Parameter] public EventCallback<TfSpaceViewPreset> ManagePreset { get; set; }
 
 	private List<TfMenuItem> _menu = new();
 	private TfNavigationState? _navState = null!;
@@ -117,10 +118,17 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 				: NavigatorExt.AddQueryValueToUri(Navigator.GetLocalUrl(), TfConstants.PresetIdQueryName,
 					preset.Id.ToString()),
 			Color = preset.Color,
-			IconExpanded = TfConstants.GetIcon(preset.Icon),
 			IconCollapsed = TfConstants.GetIcon(preset.Icon),
+			IconExpanded = TfConstants.GetIcon(preset.Icon)
 		};
-
+		item.Actions.Add(new TfMenuItem()
+		{
+			Text = "Settings",
+			IconCollapsed = TfConstants.GetIcon("Settings"),
+			IconExpanded = TfConstants.GetIcon("Settings"),
+			OnClick = EventCallback.Factory.Create(this, async () => await _managePresetHandler(preset))
+		});
+		
 		foreach (var child in preset.Presets)
 		{
 			item.Items.Add(_getMenuItem(child));
@@ -139,4 +147,10 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 			_setSelection(child, currrentPresetId);
 		}
 	}
+
+	private async Task _managePresetHandler(TfSpaceViewPreset preset)
+	{
+		await ManagePreset.InvokeAsync(preset);
+	}
+
 }
