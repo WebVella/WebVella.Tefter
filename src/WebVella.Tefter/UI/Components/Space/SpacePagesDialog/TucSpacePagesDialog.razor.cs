@@ -62,7 +62,7 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 
 		try
 		{
-			TfService.DeleteSpacePage(node);
+			TfService.DeleteSpacePage(node.Id);
 			_init();
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
 		}
@@ -85,7 +85,7 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 
 		try
 		{
-			TfService.MoveSpacePage(args.Item1, args.Item2);
+			TfService.MoveSpacePage(args.Item1.Id, args.Item2);
 			_init();
 			ToastService.ShowSuccess(LOC("Space page updated!"));
 		}

@@ -136,9 +136,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		await InvokeAsync(async () =>
 		{
+			if (args.UserId != TfAuthLayout.GetState().User.Id) return;
 			if (args.Payload.Id != _spaceView?.Id) return;
+			_isDataLoading = true;
+			await InvokeAsync(StateHasChanged);
 			_spaceView = args.Payload;
 			_generateMeta();
+			_isDataLoading = false;
 			await InvokeAsync(StateHasChanged);
 		});
 	}

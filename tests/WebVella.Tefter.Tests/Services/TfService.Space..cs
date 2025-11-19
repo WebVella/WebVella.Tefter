@@ -993,16 +993,16 @@ public partial class TfServiceTest : BaseTest
 				copiedNode.Position.Value.Should().Be(newPosition);
 				copiedNode.ChildPages.Count.Should().Be(spaceNode1_0_0.ChildPages.Count);
 
-				tfService.DeleteSpacePage(copiedNode);
+				tfService.DeleteSpacePage(copiedNode.Id);
 
 				#endregion
 
 				#region delete node
 
-				tfService.DeleteSpacePage(spaceNode1_0_0);
-				tfService.DeleteSpacePage(spaceNode2_0_0);
-				tfService.DeleteSpacePage(spaceNode3_3_0);
-				tfService.DeleteSpacePage(spaceNode3_0_0);
+				tfService.DeleteSpacePage(spaceNode1_0_0.Id);
+				tfService.DeleteSpacePage(spaceNode2_0_0.Id);
+				tfService.DeleteSpacePage(spaceNode3_3_0.Id);
+				tfService.DeleteSpacePage(spaceNode3_0_0.Id);
 
 				#endregion
 			}

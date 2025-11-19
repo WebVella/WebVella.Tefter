@@ -41,6 +41,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 				QueryName = NavigatorExt.GenerateQueryName(),
 				SpaceViewId = Content.SpaceViewId,
 				TypeId = new Guid(TfTextViewColumnType.ID),
+				Position = Content.Position
 			};
 			_selectedColumnType = TfMetaService.GetSpaceViewColumnType(_form.TypeId);
 			_availableColumnTypes = TfMetaService.GetSpaceViewColumnTypesMeta();

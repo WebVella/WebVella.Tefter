@@ -77,7 +77,7 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 
 		try
 		{
-			var pages = TfService.DeleteSpacePage(state.SpacePage);
+			var pages = TfService.DeleteSpacePage(state.SpacePage.Id);
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
 			if (pages.Count > 0)
 			{

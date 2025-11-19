@@ -130,6 +130,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 				IconExpanded = TfConstants.GetIcon("Settings"),
 				OnClick = EventCallback.Factory.Create(this, async () => await _managePresetHandler(preset))
 			});
+			item.Actions.Add(new TfMenuItem(){IsDivider = true});
 			item.Actions.Add(new TfMenuItem()
 			{
 				Text = preset.ParentId is null ? "Move left" : "Move up",

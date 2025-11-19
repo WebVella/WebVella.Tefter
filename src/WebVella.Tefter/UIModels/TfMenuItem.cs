@@ -78,6 +78,7 @@ public record TfMenuItem
 
 	public RenderFragment? BadgeContent { get; set; } = null;
 
+	[JsonIgnore] 
 	public string IdTree
 	{
 		get
@@ -96,9 +97,13 @@ public record TfMenuItem
 		}
 	}
 
+	[JsonIgnore] 
 	public TfMenuItemData? Data { get; set; } = null;
 	public List<TfMenuItem> Items { get; set; } = new();
 	public List<TfMenuItem> Actions { get; set; } = new();
+	
+	public bool IsDivider { get; set; } = false;
+	
 	public ElementReference Reference { get; set; }
 
 	public string Hash
@@ -126,6 +131,7 @@ public record TfMenuItem
 public record TfMenuItemData
 {
 	public Guid? SpaceId { get; set; }
+	public Guid? PageId { get; set; }
 	public TfMenuItemType MenuType { get; set; } = TfMenuItemType.None;
 	public TfSpacePageType SpacePageType { get; set; } = TfSpacePageType.Page;
 	public TfSpacePageCreateFromFileContextItem? ImportFileContext { get; set; } = null;

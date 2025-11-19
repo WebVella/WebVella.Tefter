@@ -12,13 +12,34 @@
                 Anchor="@Column.AnchorId"
                 Trigger="MouseButton.Right"
                 Anchored="false">
+        
         <FluentMenuItem Disabled="true">
             <span>@(String.IsNullOrWhiteSpace(Column.Title) ? "no title" : Column.Title)</span>
             <FluentIcon Slot="start" Value="@TfConstants.GetIcon("Navigation")!.WithColor("var(--neutral-foreground-hint)")"/>
         </FluentMenuItem>
+        <FluentDivider/>
         <FluentMenuItem OnClick="_manageColumn">
             <span>@LOC("Manage Column")</span>
             <FluentIcon Slot="start" Value="@TfConstants.GetIcon("Settings")"/>
+        </FluentMenuItem>
+        <FluentDivider/>
+        <FluentMenuItem OnClick="@(() => _moveColumn(true))">
+            <span>@LOC("Move Left")</span>
+            <FluentIcon Slot="start" Value="@TfConstants.GetIcon("ArrowLeft")"/>
+        </FluentMenuItem>
+        <FluentMenuItem OnClick="@(() => _moveColumn(false))">
+            <span>@LOC("Move Right")</span>
+            <FluentIcon Slot="start" Value="@TfConstants.GetIcon("ArrowRight")"/>
+        </FluentMenuItem>
+        <FluentDivider/>
+        <FluentMenuItem OnClick="@(() => _addColumn())">
+            <span>@LOC("Add Column")</span>
+            <FluentIcon Slot="start" Value="@TfConstants.GetIcon("Add")"/>
+        </FluentMenuItem>          
+        <FluentDivider/>        
+        <FluentMenuItem OnClick="@(() => _deleteColumn())">
+            <span>@LOC("Remove Column")</span>
+            <FluentIcon Slot="start" Value="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)"/>
         </FluentMenuItem>
     </FluentMenu>	    
 }

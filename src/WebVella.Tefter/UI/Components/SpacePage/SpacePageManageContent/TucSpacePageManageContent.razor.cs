@@ -81,7 +81,7 @@ public partial class TucSpacePageManageContent : TfBaseComponent, IDisposable
 		{
 			_isDeleting = true;
 			await InvokeAsync(StateHasChanged);
-			TfService.DeleteSpacePage(_spacePage);
+			TfService.DeleteSpacePage(_spacePage.Id);
 			var pages = TfService.GetSpacePages(_space.Id);
 			ToastService.ShowSuccess(LOC("Page was successfully deleted"));
 			if (pages.Count > 0)

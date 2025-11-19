@@ -24,12 +24,12 @@ public partial interface ITfService
 		string name);
 
 	public List<TfSpacePage> DeleteSpacePage(
-		TfSpacePage spacePage);
+		Guid pageId);
 
 	public (Guid, List<TfSpacePage>) CopySpacePage(
 		Guid pageId);
 
-	public void MoveSpacePage(TfSpacePage page, bool isMoveUp);
+	public void MoveSpacePage(Guid pageId, bool isMoveUp);
 	TfSpacePage? GetSpacePageBySpaceViewId(Guid spaceViewId);
 }
 
@@ -595,12 +595,16 @@ public partial class TfService : ITfService
 	}
 
 	public List<TfSpacePage> DeleteSpacePage(
-		TfSpacePage spacePage)
+		Guid pageId)
 	{
 		try
 		{
+			var spacePage = GetSpacePage(pageId);
+			if (spacePage is null)
+				throw new ValidationException("Page not found");			
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
+
 				var allPages = GetSpacePages(spacePage.SpaceId);
 				var space = GetSpace(spacePage.SpaceId);
 				new TfSpacePageValidator(allPages)
@@ -765,8 +769,11 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void MoveSpacePage(TfSpacePage page, bool isMoveUp)
+	public void MoveSpacePage(Guid pageId, bool isMoveUp)
 	{
+		var page = GetSpacePage(pageId);
+		if (page is null)
+			throw new ValidationException("Page not found");
 		if (isMoveUp)
 			page.Position--;
 		else

@@ -282,7 +282,8 @@ public static partial class NavigatorExt
 				? null
 				: String.Format(TfConstants.SpacePagePageUrl, page.SpaceId, page.Id),
 			Text = page.Name,
-			Tooltip = page.Name
+			Tooltip = page.Name,
+			Data = new TfMenuItemData(){PageId = page.Id}
 		};
 
 		foreach (var childPage in page.ChildPages)

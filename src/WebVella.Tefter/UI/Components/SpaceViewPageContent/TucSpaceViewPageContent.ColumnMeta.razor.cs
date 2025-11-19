@@ -254,8 +254,27 @@ public partial class TucSpaceViewPageContent
 				backgroundColor = coloringDict[column.QueryName].Item2;
 			}
 
-			_regionContextDict[tfId][column.Id].ForegroundColor = color;
-			_regionContextDict[tfId][column.Id].BackgroundColor = backgroundColor;
+			if (_regionContextDict[tfId].ContainsKey(column.Id))
+			{
+				_regionContextDict[tfId][column.Id].ForegroundColor = color;
+				_regionContextDict[tfId][column.Id].BackgroundColor = backgroundColor;
+			}
 		}
 	}
+
+	private string? _getSafeColumnMetaString(Guid columnId, string propName)
+	{
+		if (!_columnsMeta.ContainsKey(columnId)) return String.Empty;
+		object value = _columnsMeta[columnId].GetPropertyByName(propName) ?? String.Empty;
+		return value.ToString();
+	}
+	
+	private string? _getSafeRegionContextString(Guid rowId, Guid columnId, string propName)
+	{
+		if (!_regionContextDict.ContainsKey(rowId)) return String.Empty;
+		if (!_regionContextDict[rowId].ContainsKey(columnId)) return String.Empty;
+		object value = _regionContextDict[rowId][columnId].GetPropertyByName(propName) ?? String.Empty;
+		return value.ToString();
+	}	
+	
 }

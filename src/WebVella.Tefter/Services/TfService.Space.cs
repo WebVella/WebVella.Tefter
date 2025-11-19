@@ -442,7 +442,7 @@ public partial class TfService : ITfService
 				var spacePages = GetSpacePages(id);
 				foreach (var spacePage in spacePages.OrderByDescending(x => x.Position))
 				{
-					DeleteSpacePage(spacePage);
+					DeleteSpacePage(spacePage.Id);
 				}
 
 				success = _dboManager.Delete<TfSpaceDbo>(id);

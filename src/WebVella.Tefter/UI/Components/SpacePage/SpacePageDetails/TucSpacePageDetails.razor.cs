@@ -91,7 +91,7 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 
 		try
 		{
-			TfService.DeleteSpacePage(_spacePage);
+			TfService.DeleteSpacePage(_spacePage.Id);
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
 			var spacePages = TfService.GetSpacePages(_spacePage.SpaceId);
 			Guid? firstPageId = null;

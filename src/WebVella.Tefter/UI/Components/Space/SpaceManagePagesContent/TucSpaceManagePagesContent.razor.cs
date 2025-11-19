@@ -85,7 +85,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 
 		try
 		{
-			TfService.DeleteSpacePage(node);
+			TfService.DeleteSpacePage(node.Id);
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
 		}
 		catch (Exception ex)
@@ -108,7 +108,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 
 		try
 		{
-			TfService.MoveSpacePage(args.Item1, args.Item2);
+			TfService.MoveSpacePage(args.Item1.Id, args.Item2);
 
 			ToastService.ShowSuccess(LOC("Space page updated!"));
 		}
