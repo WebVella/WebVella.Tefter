@@ -64,7 +64,7 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 		try
 		{
 			await TfService.MoveSpaceViewPreset(SpaceView.Id, args.Item1, args.Item2);
-			ToastService.ShowSuccess(LOC("Preset successfully copied!"));
+			ToastService.ShowSuccess(LOC("Preset successfully moved!"));
 		}
 		catch (Exception ex)
 		{

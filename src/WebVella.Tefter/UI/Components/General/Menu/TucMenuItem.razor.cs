@@ -25,6 +25,7 @@ public partial class TucMenuItem : TfBaseComponent
 		{
 			_hash = hash;
 			_init();
+			StateHasChanged();
 		}
 	}
 

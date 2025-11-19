@@ -9,6 +9,10 @@
 		{
 			<span class="tf-tabs__item__text" title="@Item.Text">
 				@TfConverters.StringOverflow(Item.Text, EllipsesLimit)
+				@if (Item.Actions.Count > 0)
+				{
+					<span>*</span>
+				}				
 			</span>
 			@if (Item.Icon is not null)
 			{
@@ -84,7 +88,7 @@ else
 		<MenuItems>
 			@foreach (var node in Item.Items)
 			{
-				<TucMenuDropdownItem Item="node" />
+				<TucMenuDropdownItem @key="@node.Id" Item="node" />
 			}
 		</MenuItems>
 
@@ -92,14 +96,14 @@ else
 }
 @if (Item.Actions.Count > 0)
 {
-	<FluentMenu Anchor="@Item.Id" Trigger="MouseButton.Right" Anchored="true" UseMenuService="false">
+	<FluentMenu Anchor="@Item.Id" Trigger="MouseButton.Right" Anchored="true" UseMenuService="true">
 		<FluentMenuItem Disabled="true">
 			<span>@(String.IsNullOrWhiteSpace(Item.Text) ? "no title" : Item.Text)</span>
 			<FluentIcon Slot="start" Value="@TfConstants.GetIcon("Navigation")!.WithColor("var(--neutral-foreground-hint)")"/>
 		</FluentMenuItem>		
 		@foreach (var action in Item.Actions)
 		{
-			<FluentMenuItem>
+			<FluentMenuItem  @key="@action.Id" OnClick="@action.OnClick">
 				<span>@(String.IsNullOrWhiteSpace(action.Text) ? "no title" : action.Text)</span>
 				<FluentIcon Slot="start" Value="action.IconCollapsed"/>
 			</FluentMenuItem>				

@@ -19,6 +19,7 @@ public partial class TucMenuDropdownItem : TfBaseComponent
 		if(_hash != hash){ 
 			_hash = hash;
 			_init();
+			StateHasChanged();
 		}
 	}
 

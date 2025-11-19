@@ -397,7 +397,6 @@ public partial class TfService
 			presets.Add(preset);
 		}
 
-
 		existingSpaceView.PresetsJson =
 			JsonSerializer.Serialize(presets);
 
