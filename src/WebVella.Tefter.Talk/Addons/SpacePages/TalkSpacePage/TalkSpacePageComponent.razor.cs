@@ -46,7 +46,14 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 
 		return context.ComponentOptionsJson;
 	}
-
+	public override List<TfScreenRegionTab> GetManagementTabs()
+	{
+		var tabs = new List<TfScreenRegionTab>()
+		{
+			new TfScreenRegionTab("channel", "Connected Channel", "CommentMultiple"),
+		};
+		return tabs;
+	}	
 	#endregion
 
 	#region << Private properties >>
@@ -57,7 +64,7 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	private List<TalkChannel> _channels { get; set; } = new();
 
 	//Read mode
-	private TfUser _currentUser = new();
+	private Guid _spacePageId;
 	private TalkChannel _channel = null;
 	private string _dataIdentityValue = null;
 	private bool _isLoaded = false;
@@ -74,7 +81,6 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 
 	protected override async Task OnInitializedAsync()
 	{
-		_currentUser = TfAuthLayout.GetState().User;
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_isLoaded = true;
@@ -108,6 +114,7 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	{
 		try
 		{
+			_spacePageId = navState.SpacePageId ?? Guid.Empty;
 			_options = null;
 			if (!String.IsNullOrWhiteSpace(Context.ComponentOptionsJson))
 			{
@@ -172,7 +179,7 @@ public partial class TalkSpacePageComponent : TucBaseSpacePageComponent, IDispos
 	#endregion
 }
 
-public class TalkSpacePageComponentOptions
+public record TalkSpacePageComponentOptions
 {
 	[JsonPropertyName("ChannelId")]
 	public Guid? ChannelId { get; set; } = null;

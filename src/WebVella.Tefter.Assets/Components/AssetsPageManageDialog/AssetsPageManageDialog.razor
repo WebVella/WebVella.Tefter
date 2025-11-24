@@ -1,0 +1,75 @@
+﻿@namespace WebVella.Tefter.Assets.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Connected Asset Folder")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
+		              Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+	}
+	else
+	{
+		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+		                FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator/>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<TucSelect SelectedOption="@(Content.Folders.FirstOrDefault(x=> x.Id == _form.FolderId))"
+					           TOption="AssetsFolder"
+					           Required="true"
+					           Items="@Content.Folders" Style="width:100%"
+					           OptionValue="@((p) => p.Id.ToString())"
+					           Placeholder="@LOC("select..")"
+					           OptionText="@(p => p.Name)" Label="@LOC("Select folder")"/>
+					<FluentValidationMessage For="@(() => _form.FolderId)"/>
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<TucSelect SelectedOption="@_form.ViewType"
+					           SelectedOptionChanged="((x) => _form.ViewType = x)"
+					           TOption="AssetsFolderViewType"
+					           Items="@(Enum.GetValues<AssetsFolderViewType>())" Style="width:100%"
+					           OptionValue="@((p) => ((int)p).ToString())"
+					           OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Folder presentation")"/>
+					<FluentValidationMessage For="@(() => _form.ViewType)"/>
+				</FluentGridItem>
+			</FluentGrid>
+
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<TucSelect SelectedOption="@_form.DataIdentityValueType"
+					           Required="true"
+					           SelectedOptionChanged="((x) => _form.DataIdentityValueType = x)"
+					           TOption="AssetsFolderDataIdentityValueType"
+					           Items="@(Enum.GetValues<AssetsFolderDataIdentityValueType>())" Style="width:100%"
+					           OptionValue="@((p) => ((int)p).ToString())"
+					           OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Data Identity value")"/>
+					<FluentValidationMessage For="@(() => _form.DataIdentityValueType)"/>
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					@if (_form.DataIdentityValueType == AssetsFolderDataIdentityValueType.CustomString)
+					{
+						<FluentTextField TextFieldType="@TextFieldType.Text"
+						                 Placeholder="@LOC("empty string")"
+						                 @bind-Value=@_form.CustomDataIdentityValue AutoComplete="off"
+						                 Label="@LOC("Custom data identity type")" Style="width:100%"/>
+						<FluentValidationMessage For="@(() => _form.CustomDataIdentityValue)"/>
+					}
+				</FluentGridItem>
+			</FluentGrid>
+		</FluentEditForm>
+	}
+</FluentDialogBody>

@@ -1,0 +1,50 @@
+﻿@namespace WebVella.Tefter.Talk.Components
+@inherits TfBaseComponent
+
+<TucCard Title="@LOC("Settings")">
+			<ToolbarTemplate>
+				<FluentButton Appearance="@Appearance.Outline" OnClick="_editFolder">
+					@LOC("Edit")
+					<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start"/>
+				</FluentButton>
+			</ToolbarTemplate>
+			<ChildContent>
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<TucSelect SelectedOption="@_channelSelected"
+						           TOption="TalkChannel"
+						           Items="@_channels" Style="width:100%"
+						           OptionValue="@((p) => p.Id.ToString())"
+						           Placeholder="@LOC("select..")"
+						           OptionText="@(p => p.Name)" Label="@LOC("Select folder")"
+						           ReadOnly="true"/>
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+					</FluentGridItem>
+				</FluentGrid>
+
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<TucSelect SelectedOption="@_options.DataIdentityValueType"
+						           SelectedOptionChanged="((x) => _options.DataIdentityValueType = x)"
+						           TOption="TalkChannelDataIdentityValueType"
+						           Items="@(Enum.GetValues<TalkChannelDataIdentityValueType>())" Style="width:100%"
+						           OptionValue="@((p) => ((int)p).ToString())"
+						           OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Data Identity value")"
+						           ReadOnly="true"/>
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						@if (_options.DataIdentityValueType == TalkChannelDataIdentityValueType.CustomString)
+						{
+							<FluentTextField TextFieldType="@TextFieldType.Text"
+							                 Placeholder="@LOC("empty string")"
+							                 @bind-Value=@_options.CustomDataIdentityValue AutoComplete="off"
+							                 Label="@LOC("Custom data identity type")" Style="width:100%"
+							                 ReadOnly="true"/>
+						}
+					</FluentGridItem>
+				</FluentGrid>
+			</ChildContent>
+		</TucCard>
+
+

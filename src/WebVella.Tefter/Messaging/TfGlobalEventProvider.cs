@@ -14,6 +14,15 @@ public class TfGlobalEvent : IGlobalEvent
 
 	public bool IsUserApplicable(TfUser? user)
 		=> UserId is not null && user is not null && UserId.Value == user.Id;
+
+	public bool IsUserApplicable(TfBaseComponent component)
+	{
+		var state = component.TfAuthLayout.GetState();
+		if (UserId is not null && UserId.Value == state.User.Id)
+			return true;
+		return false;
+	}
+		
 }
 
 public partial class TfGlobalEventProvider : IAsyncDisposable, IDisposable

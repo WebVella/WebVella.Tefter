@@ -64,11 +64,10 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 	private string optionsJson = "{}";
 	private AssetsSpacePageComponentOptions _options = new();
 	private AssetsFolder _optionsFolder = null;
-	private List<Asset> _optionsFolderAssets = new();
 	private List<AssetsFolder> _folders = new();
 
 	//Read mode
-	private TfUser _currentUser = new();
+	private Guid _spacePageId;
 	private AssetsFolder _folder = null;
 	private string _dataIdentityValue = null;
 	private bool _isLoaded = false;
@@ -84,7 +83,6 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		_currentUser = TfAuthLayout.GetState().User;
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_isLoaded = true;
@@ -117,6 +115,7 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 	{
 		try
 		{
+			_spacePageId = navState.SpacePageId ?? Guid.Empty;
 			_options = null;
 			if (!String.IsNullOrWhiteSpace(Context.ComponentOptionsJson))
 			{
@@ -177,16 +176,11 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 		_options.FolderId = folder?.Id;
 		return Task.CompletedTask;
 	}
-	
-	private Task _editFolder()
-	{
-		
-		return Task.CompletedTask;
-	}	
+
 	#endregion
 }
 
-public class AssetsSpacePageComponentOptions
+public record AssetsSpacePageComponentOptions
 {
 	[JsonPropertyName("FolderId")]
 	public Guid? FolderId { get; set; } = null;

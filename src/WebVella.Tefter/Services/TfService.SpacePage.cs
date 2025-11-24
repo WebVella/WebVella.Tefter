@@ -18,6 +18,9 @@ public partial interface ITfService
 
 	public List<TfSpacePage> UpdateSpacePage(
 		TfSpacePage spacePage);
+	
+	public void UpdateSpacePageComponentOptions(
+		Guid spacePageId,string optionsJson);	
 
 	public void RenameSpacePage(
 		Guid pageId,
@@ -592,6 +595,22 @@ public partial class TfService : ITfService
 		{
 			throw ProcessException(ex);
 		}
+	}
+
+	public void UpdateSpacePageComponentOptions(
+		Guid spacePageId, string optionsJson)
+	{
+		var spacePage = GetSpacePage(spacePageId);
+		if (spacePage is null) throw new ArgumentException(nameof(spacePageId), LOC["Page not found"]);
+		if(!optionsJson.StartsWith("{") || !optionsJson.EndsWith("}"))
+			throw new ArgumentException(nameof(optionsJson), LOC["Json object is required"]);
+		spacePage.ComponentOptionsJson = optionsJson;
+		var success = _dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(spacePage),
+			nameof(TfSpacePageDbo.ComponentSettingsJson));
+		if (!success)
+			throw new TfDboServiceException("Update<TfSpacePageDbo> failed");		
+		
+		PublishEventWithScope(new TfSpacePageUpdatedEvent(GetSpacePage(spacePageId)!));
 	}
 
 	public List<TfSpacePage> DeleteSpacePage(

@@ -8,7 +8,7 @@
 	{
 		<TalkThreadComponent Channel="_channel" Context="@Context"
 		                     DataIdentityValue="@_dataIdentityValue"
-		                     Style="height:100%;margin:calc(-1 * var(--tf-padding));display:flex;"/>
+		                     Style="height:100%;display:flex;"/>
 	}
 	else if (Context.Mode == TfComponentMode.Create || Context.Mode == TfComponentMode.Update)
 	{
@@ -48,6 +48,14 @@
 			</FluentGridItem>
 		</FluentGrid>
 	}
+	else if (Context.Mode == TfComponentMode.Manage)
+	{
+		<TalkPageComponent SpacePageId="@_spacePageId"/>
+	}
+	else
+	{
+		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Error">@LOC("Mode: {0} not supported",Context.Mode.ToString())</FluentMessageBar>
+	}		
 }
 
 
