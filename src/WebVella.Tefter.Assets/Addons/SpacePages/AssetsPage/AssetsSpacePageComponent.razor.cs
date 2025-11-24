@@ -47,6 +47,15 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 
 		return context.ComponentOptionsJson;
 	}
+	
+	public override List<TfScreenRegionTab> GetManagementTabs()
+	{
+		var tabs = new List<TfScreenRegionTab>()
+		{
+			new TfScreenRegionTab("folder", "Connected Folder", "Folder"),
+		};
+		return tabs;
+	}	
 	#endregion
 
 	#region << Private properties >>
@@ -168,7 +177,12 @@ public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent, IDisp
 		_options.FolderId = folder?.Id;
 		return Task.CompletedTask;
 	}
-
+	
+	private Task _editFolder()
+	{
+		
+		return Task.CompletedTask;
+	}	
 	#endregion
 }
 

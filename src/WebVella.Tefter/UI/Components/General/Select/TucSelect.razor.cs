@@ -91,6 +91,12 @@ public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption :
 	public bool Disabled { get; set; } = false;
 
 	/// <summary>
+	/// Gets or sets whether the component is readonly.
+	/// </summary>
+	[Parameter]
+	public bool ReadOnly { get; set; } = false;	
+	
+	/// <summary>
 	/// Gets or sets whether the component is required (validates that a value is selected).
 	/// </summary>
 	[Parameter]
@@ -146,6 +152,16 @@ public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption :
 
 		return LOC("select...");
 	}
+	
+	private string? _getValue()
+	{
+		if (SelectedOption is null) return null;
+		
+		if(OptionText is not null)
+			return OptionText.Invoke(SelectedOption);
+
+		return SelectedOption.ToString();
+	}	
 
 	private async Task _valueChanged(string newValue)
 	{

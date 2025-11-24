@@ -4,22 +4,37 @@
 @typeparam TOption
 @if (_shouldRender)
 {
-	<FluentSelect TOption="TOption"
-	              Items="@Items"
-	              Class="@Class"
-	              Style="@Style"
-	              Placeholder="@_getPlacehoder()"
-	              OptionText="@OptionText"
-	              OptionValue="@OptionValue"
-	              OptionTemplate="@OptionTemplate"
-	              Label="@Label"
-	              Required=Required
-	              Height="@Height"
-	              Width="@Width"
-	              Id="@Id"
-	              Value="@_value"
-	              ValueChanged="@((x) => _valueChanged(x))"
-	              Disabled="Disabled"/>
+	@if (!ReadOnly)
+	{
+		<FluentSelect TOption="TOption"
+		              Items="@Items"
+		              Class="@Class"
+		              Style="@Style"
+		              Placeholder="@_getPlacehoder()"
+		              OptionText="@OptionText"
+		              OptionValue="@OptionValue"
+		              OptionTemplate="@OptionTemplate"
+		              Label="@Label"
+		              Required=Required
+		              Height="@Height"
+		              Width="@Width"
+		              Id="@Id"
+		              Value="@_value"
+		              ValueChanged="@((x) => _valueChanged(x))"
+		              Disabled="Disabled"/>
+	}
+	else
+	{
+		<FluentTextField Class="@Class"
+		                 Style="@Style"
+		                 Placeholder="@_getPlacehoder()"
+		                 Label="@Label"
+		                 ReadOnly="true"
+		                 Required=Required
+		                 Id="@Id"		
+		                 Value="@_getValue()"
+		/>
+	}
 }
 else
 {
@@ -32,5 +47,6 @@ else
 				  Height="@Height"
 				  Width="@Width"
 				  Id="@Id"
-				  Disabled="Disabled" />
+				  Disabled="Disabled" 
+				  ReadOnly="ReadOnly"/>
 }
