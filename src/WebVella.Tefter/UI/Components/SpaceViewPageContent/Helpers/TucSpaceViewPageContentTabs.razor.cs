@@ -15,6 +15,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
+		TfEventProvider.SpaceViewUpdatedEvent -= On_SpaceViewUpdated;
 		await TfEventProvider.DisposeAsync();
 	}
 
@@ -71,21 +72,33 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 			Icon? mainIcon = String.IsNullOrWhiteSpace(spaceView.Settings.MainTabFluentIcon)
 				? null
 				: TfConstants.GetIcon(spaceView.Settings.MainTabFluentIcon);
+			string mainLabel = spaceView.Settings.MainTabLabel;
+			if (String.IsNullOrWhiteSpace(mainLabel)
+			    && mainIcon is null)
+				mainLabel = LOC("Main");
 
 			if (spaceView.Presets.Count > 0)
 			{
 				_menu.Add(new TfMenuItem
 				{
 					Id = "tf-main",
-					Text =
-						String.IsNullOrWhiteSpace(spaceView.Settings.MainTabLabel)
-							? "Main"
-							: spaceView.Settings.MainTabLabel,
+					Text = mainLabel,
 					Url = NavigatorExt.AddQueryValueToUri(Navigator.GetLocalUrl(), TfConstants.PresetIdQueryName,
 						null),
 					Selected = currentPresetId is null,
 					IconCollapsed = mainIcon,
-					IconExpanded = mainIcon
+					IconExpanded = mainIcon,
+					Color = spaceView.Settings.MainTabColor,
+					Actions = new List<TfMenuItem>()
+					{
+						new TfMenuItem()
+						{
+							Text = "Manage Preset",
+							IconCollapsed = TfConstants.GetIcon("Settings"),
+							IconExpanded = TfConstants.GetIcon("Settings"),
+							OnClick = EventCallback.Factory.Create(this, async () => await _manageMainHandler())
+						}
+					}
 				});
 
 				foreach (var prItem in spaceView.Presets)
@@ -130,21 +143,33 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 				IconExpanded = TfConstants.GetIcon("Settings"),
 				OnClick = EventCallback.Factory.Create(this, async () => await _managePresetHandler(preset))
 			});
-			item.Actions.Add(new TfMenuItem(){IsDivider = true});
+			item.Actions.Add(new TfMenuItem() { IsDivider = true });
 			item.Actions.Add(new TfMenuItem()
 			{
 				Text = preset.ParentId is null ? "Move left" : "Move up",
-				IconCollapsed = preset.ParentId is null ? TfConstants.GetIcon("ArrowLeft") : TfConstants.GetIcon("ArrowUp"),
-				IconExpanded = preset.ParentId is null ? TfConstants.GetIcon("ArrowLeft") : TfConstants.GetIcon("ArrowUp"),
+				IconCollapsed =
+					preset.ParentId is null ? TfConstants.GetIcon("ArrowLeft") : TfConstants.GetIcon("ArrowUp"),
+				IconExpanded =
+					preset.ParentId is null ? TfConstants.GetIcon("ArrowLeft") : TfConstants.GetIcon("ArrowUp"),
 				OnClick = EventCallback.Factory.Create(this, async () => await _movePresetHandler(preset, true))
-			});			
+			});
 			item.Actions.Add(new TfMenuItem()
 			{
 				Text = preset.ParentId is null ? "Move right" : "Move down",
-				IconCollapsed = preset.ParentId is null ? TfConstants.GetIcon("ArrowRight") : TfConstants.GetIcon("ArrowDown"),
-				IconExpanded = preset.ParentId is null ? TfConstants.GetIcon("ArrowRight") : TfConstants.GetIcon("ArrowDown"),
+				IconCollapsed =
+					preset.ParentId is null ? TfConstants.GetIcon("ArrowRight") : TfConstants.GetIcon("ArrowDown"),
+				IconExpanded =
+					preset.ParentId is null ? TfConstants.GetIcon("ArrowRight") : TfConstants.GetIcon("ArrowDown"),
 				OnClick = EventCallback.Factory.Create(this, async () => await _movePresetHandler(preset, false))
-			});						
+			});
+			item.Actions.Add(new TfMenuItem() { IsDivider = true });
+			item.Actions.Add(new TfMenuItem()
+			{
+				Text = "Delete Preset",
+				IconCollapsed = TfConstants.GetIcon("Delete")!.WithColor(Color.Error),
+				IconExpanded = TfConstants.GetIcon("Settings")!.WithColor(Color.Error),
+				OnClick = EventCallback.Factory.Create(this, async () => await _deletePresetHandler(preset))
+			});
 		}
 
 		foreach (var child in preset.Presets)
@@ -166,6 +191,20 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 		}
 	}
 
+	private async Task _manageMainHandler()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewManageMainTabDialog>(
+			SpaceView,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthExtraLarge,
+				TrapFocus = false
+			});
+		_ = await dialog.Result;
+	}
+
 	private async Task _managePresetHandler(TfSpaceViewPreset preset)
 	{
 		var context = new TfPresetFilterManagementContext { Item = preset, DateSet = SpaceData, SpaceView = SpaceView };
@@ -180,7 +219,25 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 			});
 		_ = await dialog.Result;
 	}
-	
+
+
+	private async Task _deletePresetHandler(TfSpaceViewPreset preset)
+	{
+		try
+		{
+			await TfService.RemoveSpaceViewPreset(SpaceView.Id, preset.Id);
+			ToastService.ShowSuccess(LOC("Preset successfully removed!"));
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
 	private async Task _movePresetHandler(TfSpaceViewPreset preset, bool isUp)
 	{
 		try
@@ -196,5 +253,5 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 		{
 			await InvokeAsync(StateHasChanged);
 		}
-	}	
+	}
 }

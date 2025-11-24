@@ -30,6 +30,14 @@
                 <div class="tf-space-finder__space__meta">
                     <FluentHighlighter Text="@item.Space.Name" HighlightedText="@_search"/>
                 </div>
+                @if (item.Current)
+                {
+                    <div class="tf-space-finder__space__current">
+                        <FluentButton Appearance="@Appearance.Outline" Disabled="true">
+                            @LOC("current")
+                        </FluentButton>
+                    </div>
+                }
                 <div class="tf-space-finder__space__bookmark">
                     <FluentButton Appearance="@Appearance.Outline" OnClick="item.OnBookmark" StopPropagation="true">
                         <FluentIcon

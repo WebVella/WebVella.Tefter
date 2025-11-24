@@ -13,7 +13,7 @@ public partial class TucSpaceViewManageMainTabDialog : TfFormBaseComponent, IDia
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) throw new Exception("Content Id is required");
-		_form = Content.Settings with { CanCreateRows = Content.Settings.CanCreateRows };
+		_form = Content.Settings with { MainTabLabel = Content.Settings.MainTabLabel };
 		base.InitForm(_form);
 	}
 
@@ -28,7 +28,6 @@ public partial class TucSpaceViewManageMainTabDialog : TfFormBaseComponent, IDia
 			await Task.Delay(10);
 			//Columns should not be generated on edit
 			MessageStore.Clear();
-
 
 			if (!EditContext.Validate()) return;
 

@@ -1125,7 +1125,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 		_ = tfService.CreateDataIdentity(new TfDataIdentity
 		{
 			DataIdentity = TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
-			Label = TfConstants.TEFTER_DEFAULT_OBJECT_NAME
+			Label = "Used in the initial setup of addons and connected to the system row Id of the data",
 		});
 
 	}

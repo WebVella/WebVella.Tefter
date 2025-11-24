@@ -9,6 +9,7 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private string? _search = null;
+	private Guid? _currentSpaceId = null;
 	private List<TfSpace> _allSpaces = new();
 	private HashSet<Guid> _userBookmarks = new();
 	private List<TfSpaceFinderItem> _options = new();
@@ -36,8 +37,10 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
 		_allSpaces = TfService.GetSpacesListForUser(Content.Id);
-		_userBookmarks = TfAuthLayout.GetState().UserBookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).Select(x => x.SpaceId)
+		var state = TfAuthLayout.GetState();
+		_userBookmarks = state.UserBookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).Select(x => x.SpaceId)
 			.ToHashSet();
+		_currentSpaceId = state.NavigationState.SpaceId;
 		_objectRef = DotNetObjectReference.Create(this);
 		_init(null);
 	}
@@ -69,6 +72,7 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 				space:space,
 				index:0,
 				bookmarked:_userBookmarks.Contains(space.Id),
+				current:_currentSpaceId == space.Id,
 				color: space.Color?.GetColor().OKLCH ?? "var(--accent-foreground-rest)",
 				onClick:null!,
 				onBookmark:null!

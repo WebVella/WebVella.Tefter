@@ -647,7 +647,7 @@ html:root {
   --warning: var(--tf-amber-500);
   --error: var(--tf-red-500);
   --info: var(--tf-sky-500);
-  --highlight-bg: var(--tf-yellow-500);
+  --highlight-bg: oklch(79.5% 0.184 86.047 / 25%);
   --neutral-layer-floating: var(--neutral-layer-2);
 }
 /* Inputs */
@@ -2022,7 +2022,7 @@ fluent-menu-item::part(start) {
   margin-top: 0;
 }
 .tf-space-finder__space--active {
-  border-color: var(--accent-fill-rest) !important;
+  border-color: color-mix(in srgb, var(--neutral-stroke-rest), var(--neutral-foreground-rest) 25%) !important;
 }
 .tf-space-finder__space--active:hover {
   background: var(--neutral-fill-hover);
@@ -2045,8 +2045,11 @@ fluent-menu-item::part(start) {
   padding: 0 10px;
 }
 .tf-space-finder__space__meta mark {
-  background: transparent;
-  font-weight: bold;
+  color: inherit !important;
+}
+.tf-space-finder__space__current {
+  flex: 0 0 auto;
+  padding-right: 10px;
 }
 .tf-space-finder__space__bookmark {
   flex: 0 0 20px;

@@ -9,7 +9,7 @@
     }
 
     &--active {
-      border-color: var(--accent-fill-rest) !important;
+      border-color: color-mix(in srgb, var(--neutral-stroke-rest), var(--neutral-foreground-rest) 25%) !important;
 
       &:hover {
         background: var(--neutral-fill-hover);
@@ -36,11 +36,13 @@
       padding: 0 10px;
 
       mark {
-        background: transparent;
-        font-weight: bold;
+        color:inherit !important;
       }
     }
-
+    &__current {
+      flex: 0 0 auto;
+      padding-right:10px;
+    }
     &__bookmark {
       flex: 0 0 20px;
     }

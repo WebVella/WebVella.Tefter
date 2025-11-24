@@ -72,7 +72,7 @@ else if (_navState.ManageTab == "columns")
 			<FluentButton OnClick="_importColumns" Appearance="@Appearance.Outline" Disabled="_submitting">
 				<FluentIcon Value="@TfConstants.GetIcon("ArrowDownload")" Color="@Color.Accent" Slot="start"/>
 				@LOC("Import Missing from Dataset")
-			</FluentButton>			
+			</FluentButton>
 			<FluentButton OnClick="_addColumn" Appearance="@Appearance.Outline" Disabled="_submitting">
 				<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start"/>
 				@LOC("Add new")
@@ -178,14 +178,20 @@ else if (_navState.ManageTab == "presets")
 					<FluentInputLabel Label="@LOC("Icon")"/>
 					<TucSelectIcon Value=@_spaceView.Settings.MainTabFluentIcon
 					               Placeholder="@LOC("defaults to page icon")"
-					                 ReadOnly="true"/>
-				</FluentGridItem>				
+					               ReadOnly="true"/>
+				</FluentGridItem>
+				<FluentGridItem xs="4">
+					<FluentInputLabel Label="@LOC("Color")"/>
+					<TucSelectColor @bind-Value=@_spaceView.Settings.MainTabColor
+					                Placeholder="@LOC("default color")"
+					                ReadOnly="true"/>
+				</FluentGridItem>
 			</FluentGrid>
 		</ChildContent>
 	</TucCard>
 	<TucPresetFiltersCard Title="@LOC("Preset Filters")" Dataset="_spaceData" Items="_spaceView.Presets"
 	                      SpaceView="_spaceView"
-	                      ItemsChanged="_onPresetsChanged"  Style="margin-top:var(--tf-card-space)"/>
+	                      ItemsChanged="_onPresetsChanged" Style="margin-top:var(--tf-card-space)"/>
 }
 else
 {

@@ -5,8 +5,8 @@
 }
 
 ::deep  .asset-item {
-	background: var(--tf-white);
-	border: none;
+	background: var(--neutral-fill-layer-rest);
+	border: 1px solid var(--neutral-stroke-rest);
 	flex: 1 1 auto;
 	display: flex;
 	justify-content: start;
@@ -16,7 +16,7 @@
 }
 
 	::deep .asset-item:hover {
-		background: var(--tf-fill-base-hover);
+		background-color: var(--neutral-fill-layer-hover);
 	}
 
 ::deep  .asset-item__icon {
