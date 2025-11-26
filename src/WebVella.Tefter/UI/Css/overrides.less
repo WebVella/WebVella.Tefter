@@ -8,7 +8,18 @@ html:root {
   --neutral-layer-floating:var(--neutral-layer-2);
 }
 
-/* Inputs */
+/*Buttons*/
+fluent-button:focus-visible,
+fluent-button:focus{
+  outline: none !important;
+  outline-offset:0 !important;
+  &::part(control){
+    outline: none !important;
+    outline-offset:0 !important;
+  }
+}
+
+/* From */
 .fluent-input-label,
 .tf-input-description{
   color: var(--neutral-foreground-hint) !important;

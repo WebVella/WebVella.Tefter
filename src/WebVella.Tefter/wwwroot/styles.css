@@ -247,9 +247,10 @@ html:root {
 html:root {
   color-scheme: dark;
   --tf-topbar-height: 50px;
-  --tf-aside-footer-height: 30px;
   --tf-space-header-height: var(--tf-topbar-height);
-  --tf-space-actions-height: 60px;
+  --tf-space-actions-height: 50px;
+  --tf-aside-footer-height: 30px;
+  --tf-aside-actions-height: 50px;
   --tf-page-header-height: 50px;
   --tf-page-tabs-height: 50px;
   --tf-aside-width: 220px;
@@ -650,7 +651,18 @@ html:root {
   --highlight-bg: oklch(79.5% 0.184 86.047 / 25%);
   --neutral-layer-floating: var(--neutral-layer-2);
 }
-/* Inputs */
+/*Buttons*/
+fluent-button:focus-visible,
+fluent-button:focus {
+  outline: none !important;
+  outline-offset: 0 !important;
+}
+fluent-button:focus-visible::part(control),
+fluent-button:focus::part(control) {
+  outline: none !important;
+  outline-offset: 0 !important;
+}
+/* From */
 .fluent-input-label,
 .tf-input-description {
   color: var(--neutral-foreground-hint) !important;
@@ -859,6 +871,32 @@ fluent-menu-item::part(start) {
 }
 .tf-card fluent-badge {
   --neutral-fill-secondary-rest: light-dark(var(--neutral-layer-4), var(--neutral-layer-2));
+}
+.tf-aside-actions {
+  --tf-padding-actions: calc(var(--tf-padding) / 2);
+  position: relative;
+  padding-left: var(--tf-padding-actions);
+  padding-right: var(--tf-padding-actions);
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  gap: var(--tf-padding-actions);
+  height: 100%;
+}
+.tf-aside-actions fluent-button {
+  flex: 1 1 auto;
+}
+.tf-aside-actions fluent-button::part(control) {
+  background: var(--neutral-fill-secondary-active);
+  border-color: var(--neutral-stroke-rest);
+}
+.tf-aside-actions fluent-button::part(control):hover {
+  background: var(--neutral-fill-secondary-hover);
+  border-color: var(--neutral-stroke-hover);
+}
+.tf-aside-actions fluent-button::part(content) {
+  position: relative;
+  top: -2px;
 }
 .tf-console-box {
   padding: 10px;
@@ -1826,18 +1864,23 @@ fluent-menu-item::part(start) {
   flex: 0 0 var(--tf-aside-width);
   display: flex;
   flex-flow: column;
-  background: var(--neutral-fill-secondary-active);
+}
+.tflg__aside__actions {
+  flex: 0 0 var(--tf-aside-actions-height);
   border-right: 1px solid var(--neutral-stroke-rest);
+  background: var(--neutral-fill-secondary-active);
+  border-top: 1px dashed var(--neutral-stroke-rest);
 }
 .tflg__aside__footer {
   flex: 0 0 var(--tf-aside-footer-height);
   display: flex;
-  align-items: start;
-  justify-content: start;
+  align-items: end;
+  justify-content: center;
   color: var(--neutral-foreground-hint);
   font-size: var(--type-ramp-minus-1-font-size);
-  padding-left: var(--tf-padding);
-  padding-right: var(--tf-padding);
+  padding-bottom: calc(var(--tf-padding) / 2);
+  border-right: 1px solid var(--neutral-stroke-rest);
+  background: var(--neutral-fill-secondary-active);
 }
 .tflg__aside__footer a {
   color: var(--neutral-foreground-hint);
@@ -1854,17 +1897,25 @@ fluent-menu-item::part(start) {
   display: flex;
   flex-flow: column;
 }
-.tflg__space-header {
-  flex: 0 0 var(--tf-space-header-height);
-}
 .tflg__space-actions {
   flex: 0 0 var(--tf-space-actions-height);
+  background: var(--neutral-fill-layer-rest);
+}
+.tflg__space-header {
+  flex: 0 0 var(--tf-space-header-height);
+  border: 1px solid var(--neutral-stroke-rest);
+  border-left: none;
+  border-top-right-radius: var(--tf-padding);
+  border-bottom-style: dashed;
+  background: var(--neutral-fill-secondary-active);
 }
 .tflg__sidenav {
   flex: 1 1 auto;
-  height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-actions-height) - var(--tf-aside-footer-height));
+  height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-actions-height) - var(--tf-aside-actions-height) - var(--tf-aside-footer-height));
   overflow-y: auto;
   scrollbar-width: thin;
+  border-right: 1px solid var(--neutral-stroke-rest);
+  background: var(--neutral-fill-secondary-active);
 }
 .tflg__page-topbar {
   flex: 0 0 var(--tf-topbar-height);
@@ -2000,18 +2051,30 @@ fluent-menu-item::part(start) {
   font-size: var(--type-ramp-plus-1-font-size);
 }
 .tf-space-actions {
+  --tf-padding-actions: calc(var(--tf-padding) / 2);
   position: relative;
-  padding-left: var(--tf-padding);
-  padding-right: var(--tf-padding);
-  --tf-space-pane-extra-space: 10px;
+  padding-left: var(--tf-padding-actions);
+  padding-right: var(--tf-padding-actions);
   display: flex;
   justify-items: center;
-  align-items: start;
-  gap: 10px;
+  align-items: center;
+  gap: var(--tf-padding-actions);
   height: 100%;
 }
 .tf-space-actions fluent-button {
   flex: 1 1 auto;
+}
+.tf-space-actions fluent-button::part(control) {
+  background: var(--neutral-fill-secondary-active);
+  border-color: var(--neutral-stroke-rest);
+}
+.tf-space-actions fluent-button::part(control):hover {
+  background: var(--neutral-fill-secondary-hover);
+  border-color: var(--neutral-stroke-hover);
+}
+.tf-space-actions fluent-button::part(content) {
+  position: relative;
+  top: -2px;
 }
 .tf-space-finder__space {
   box-shadow: none;

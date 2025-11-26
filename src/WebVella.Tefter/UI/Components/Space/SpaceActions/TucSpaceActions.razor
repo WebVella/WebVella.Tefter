@@ -1,93 +1,10 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <div class="tf-space-actions">
-    <FluentButton Title="@LOC("Space Search [CTRL+Tab]")"
-                  Appearance="@Appearance.Outline" OnClick="_findSpace">@LOC("spaces")
+    <FluentButton Title="@LOC("Space Search [CTRL+Tab]")" Class="tf-space-actions--active"
+                  Appearance="@Appearance.Stealth" OnClick="_findSpace">@LOC("spaces")
     </FluentButton>
-    @if (TfAuthLayout.GetState().Space is not null)
-    {
-        <FluentButton Id="space-menu-toggle"
-                      Appearance="@Appearance.Outline" Title="@LOC("Configure the current space")"
-                      OnClick="() => _spaceMenuVisible = !_spaceMenuVisible">@LOC("settings")
-        </FluentButton>
-        <FluentMenu @bind-Open="_spaceMenuVisible" Anchor="space-menu-toggle" UseMenuService="true"
-                    HorizontalPosition="HorizontalPosition.Right">
-            @if (TfAuthLayout.GetState().SpacePage is not null)
-            {
-                <FluentMenuItem
-                    OnClick="_addPage">
-                    @LOC("Create Page")
-                    <span slot="start">
-                        <FluentIcon Value="@TfConstants.GetIcon("Add")" Slot="start"/>
-                    </span>
-                </FluentMenuItem>
-                <FluentMenuItem
-                    OnClick="_addSpace">
-                    @LOC("Create Space")
-                    <span slot="start">
-                        <FluentIcon Value="@TfConstants.GetIcon("Add")" Slot="start"/>
-                    </span>
-                </FluentMenuItem>       
-                <FluentDivider/>
-                <FluentMenuItem>
-                    <ChildContent>
-                        <span slot="start">
-                            <FluentIcon Value="@TfConstants.GetIcon("Document")!.WithColor(Color.Disabled)" Slot="start"/>
-                        </span>                        
-                        @LOC("Current Page")
-                    </ChildContent>
-                    <MenuItems>
-                        <FluentMenuItem
-                            OnClick="_copyPage">
-                            @LOC("Copy Page")
-                            <span slot="start">
-                                <FluentIcon Value="@TfConstants.GetIcon("Copy")" Slot="start"/>
-                            </span>
-                        </FluentMenuItem>                              
-                        <FluentMenuItem
-                            OnClick="_manageCurrentPage">
-                            @LOC("Page Properties")
-                            <span slot="start">
-                                <FluentIcon Value="@TfConstants.GetIcon("Settings")" Slot="start"/>
-                            </span>
-                        </FluentMenuItem>
-                        <FluentDivider/>
-                        <FluentMenuItem
-                            OnClick="_removePage">
-                            @LOC("Delete Page")
-                            <span slot="start">
-                                <FluentIcon Value="@TfConstants.GetIcon("Delete").WithColor(Color.Error)" Slot="start"/>
-                            </span>
-                        </FluentMenuItem>
-                    </MenuItems>
-                </FluentMenuItem>
-            }
-            <FluentMenuItem>
-                <ChildContent>
-                    <span slot="start">
-                        <FluentIcon Value="@TfConstants.GetIcon("Circle")!.WithColor(Color.Disabled)" Slot="start"/>
-                    </span>                           
-                    @LOC("Current Space")
-                </ChildContent>
-                <MenuItems>
-                    <FluentMenuItem
-                        OnClick="_manageCurrentSpace">
-                        @LOC("Space Properties")
-                        <span slot="start">
-                            <FluentIcon Value="@TfConstants.GetIcon("Settings")" Slot="start"/>
-                        </span>
-                    </FluentMenuItem>
-                    <FluentDivider/>
-                    <FluentMenuItem
-                        OnClick="_deleteSpace">
-                        @LOC("Delete Space")
-                        <span slot="start">
-                            <FluentIcon Value="@TfConstants.GetIcon("Delete").WithColor(Color.Error)" Slot="start"/>
-                        </span>
-                    </FluentMenuItem>                        
-                </MenuItems>
-            </FluentMenuItem>
-     
-        </FluentMenu>
-    }
+    <FluentButton Title="@LOC("Space Search [CTRL+Tab]")"
+                  Appearance="@Appearance.Stealth" OnClick="_findSpace">@LOC("boards")
+    </FluentButton>    
 </div>

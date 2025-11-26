@@ -18,6 +18,7 @@ public partial class TucSpaceHeader : TfBaseComponent, IDisposable
 	
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
+		_space = TfAuthLayout.GetState().Space;
 		StateHasChanged();
 	}	
 	

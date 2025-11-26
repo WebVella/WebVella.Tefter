@@ -15,8 +15,6 @@
 
 ::deep .talk-panel__left__header {
 	flex: 0 0 50px;
-	border-bottom: 1px solid var(--tf-layout-color-accent);
-	background:var(--neutral-fill-secondary-rest);
 	padding: 0 10px;
 	display: flex;
 	align-items: center;
@@ -115,8 +113,7 @@
 	display: flex;
 	flex-flow: column-reverse;
 	justify-content: end;
-	padding: 10px;
-	padding-bottom: 15px;
+	padding: 10px 10px 15px 10px;
 }
 
 /*Channel label*/
@@ -164,8 +161,8 @@
 
 /*right header */
 ::deep .talk-panel__right__header.broadcast {
-	background-color:var(--tf-layout-color-mute);
-	border-bottom:1px solid var(--tf-layout-color);
+	background-color:var(--neutral-fill-secondary-rest);
+	border-bottom:1px solid var(--neutral-stroke-rest);
 }
 
 ::deep .talk-panel__right__header-icon {
