@@ -2,6 +2,7 @@
   display: flex;
   flex-flow: row;
   position: relative;
+  background: var(--neutral-layer-1);
 
   &__aside {
     flex: 0 0 var(--tf-aside-width);
@@ -11,7 +12,7 @@
     &__actions{
       flex: 0 0 var(--tf-aside-actions-height);
       border-right: 1px solid var(--neutral-stroke-rest);
-      background: var(--neutral-fill-secondary-active);
+      background: var(--neutral-layer-2);
       border-top: 1px dashed var(--neutral-stroke-rest);
     }
 
@@ -24,7 +25,7 @@
       font-size: var(--type-ramp-minus-1-font-size);
       padding-bottom: calc(var(--tf-padding) / 2);
       border-right: 1px solid var(--neutral-stroke-rest);
-      background: var(--neutral-fill-secondary-active);
+      background: var(--neutral-layer-2);
       a {
         color: var(--neutral-foreground-hint);
         text-decoration: none;
@@ -48,7 +49,7 @@
 
   &__space-actions {
     flex: 0 0 var(--tf-space-actions-height);
-    background: var(--neutral-fill-layer-rest);
+    background: var(--neutral-layer-1);
   }  
   
   &__space-header {
@@ -57,7 +58,7 @@
     border-left: none;
     border-top-right-radius: var(--tf-padding);
     border-bottom-style: dashed;
-    background: var(--neutral-fill-secondary-active);
+    background: var(--neutral-layer-2);
   }
 
 
@@ -68,7 +69,7 @@
     overflow-y: auto;
     scrollbar-width: thin;
     border-right: 1px solid var(--neutral-stroke-rest);
-    background: var(--neutral-fill-secondary-active);
+    background: var(--neutral-layer-2);
   }
 
   &__page-topbar {

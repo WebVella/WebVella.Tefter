@@ -9,7 +9,7 @@
   gap: var(--tf-padding-actions);
   height: 100%;
 
-  fluent-button {
+  fluent-button, fluent-anchor {
     flex: 1 1 auto;
 
     &::part(control) {
@@ -25,5 +25,15 @@
       position: relative;
       top: -2px;
     }
+  }
+
+  &--active{
+    &::part(control) {
+      border-color: color-mix(in srgb, var(--neutral-fill-secondary-active) 50%, var(--accent-fill-rest) 50%) !important;
+      &:hover{
+        border-color: color-mix(in srgb, var(--neutral-fill-secondary-active) 50%, var(--accent-fill-rest) 50%) !important;
+      }      
+    }
+ 
   }
 }     

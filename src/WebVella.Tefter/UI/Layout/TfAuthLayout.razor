@@ -2,8 +2,9 @@
 @if (_isLoaded)
 {
 	<CascadingValue TValue="TfAuthLayout" Name="TfAuthLayout" Value="this" IsFixed="true">
-		<FluentDesignTheme Mode="@_themeMode" CustomColor="@_accentColor.GetColor().HEX"
-		                   NeutralBaseColor="@TfColor.Zinc500.GetColor().HEX"/>
+		@* <FluentDesignTheme Mode="@_themeMode" CustomColor="@_accentColor.GetColor().HEX" *@
+		@*                    NeutralBaseColor="@TfColor.Zinc500.GetColor().HEX"/> *@
+		<FluentDesignTheme Mode="@_themeMode" CustomColor="@_accentColor.GetColor().HEX"/>		
 		@Body
 		<div id="tf-fluent-providers">
 			<FluentToastProvider MaxToastCount="5" Position="ToastPosition.TopCenter"

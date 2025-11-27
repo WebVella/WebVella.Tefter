@@ -5,28 +5,24 @@ namespace WebVella.Tefter.Talk.Components;
 
 public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 {
-	[Inject] public ITalkService TalkService { get; set; }
+	[Inject] public ITalkService TalkService { get; set; } = null!;
 	[Parameter] public TalkChannel? Channel { get; set; } = null;
 	[Parameter] public string? DataIdentityValue { get; set; } = null;
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 	[Parameter] public string Style { get; set; } = "";
-	[Parameter] public RenderFragment HeaderActions { get; set; }
-	[Inject] protected NavigationManager Navigator { get; set; } = null!;
+	[Parameter] public RenderFragment HeaderActions { get; set; } = null!;
 
-	private string _error = string.Empty;
 	private bool _isLoading = true;
 
-	private TucEditor _channelEditor = null;
-	private string _channelEditorContent = null;
+	private TucEditor? _channelEditor = null;
+	private string? _channelEditorContent = null;
 	private bool _channelEditorSending = false;
 
-	private TucEditor _threadEditor = null;
-	private string _threadEditorContent = null;
+	private string? _threadEditorContent = null;
 	private bool _threadEditorSending = false;
 
-	private TalkThread _activeThread = null;
+	private TalkThread? _activeThread = null;
 
-	private Guid _rowId = Guid.Empty;
 	private List<TalkThread> _threads = new();
 
 	private Guid? _threadEditedId = null;
@@ -34,7 +30,7 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 	private Guid? _threadIdUpdateSaving = null;
 	private bool _threadVisibleInChannel = false;
 
-	private string _dataIdentityValue = null;
+	private string? _dataIdentityValue = null;
 	private Guid? _channelId = null;
 	private Guid? _pageId = null;
 	private FluentSearch? _refSearch = null;
@@ -50,6 +46,7 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		if (Context is null) throw new Exception("Context cannot be null");
 		await _init(TfAuthLayout.GetState().NavigationState);
 		_isLoading = false;
 		TalkService.ThreadCreated += On_ThreadChanged;
@@ -61,10 +58,10 @@ public partial class TalkThreadComponent : TfBaseComponent, IDisposable
 	{
 		if (firstRender && _refSearch != null)
 		{
-			if (Context.SpacePage?.Id != _pageId)
+			if (Context!.SpacePage?.Id != _pageId)
 			{
 				_refSearch.FocusAsync();
-				_pageId = Context.SpacePage.Id;
+				_pageId = Context!.SpacePage!.Id;
 			}
 		}
 	}
