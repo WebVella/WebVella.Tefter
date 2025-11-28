@@ -16,24 +16,29 @@
 <FluentDialogBody>
 	<FluentGrid>
 		<FluentGridItem xs="12">
+			<FluentInputLabel Label="@LOC("Color")"/>
+			<TucSelectColor @bind-Value="_color" Required="true"/>
+		</FluentGridItem>		
+		<FluentGridItem xs="12">
 			<TucSelect SelectedOption="@_mode"
 			           SelectedOptionChanged="((x) => _mode = x)"
 			           TOption="DesignThemeModes"
 			           Items="@(Enum.GetValues<DesignThemeModes>())" Style="width:100%"
 			           OptionValue="@(p => ((int)p).ToString())"
-			           OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode [ctrl+Q]")"/>
+			           OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"/>
+			<div class="tf-input-description">can be switched with [ctrl+Q] shortcut</div>
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="12">
 			<TucSelect SelectedOption="@_culture"
-			           SelectedOptionChanged="((x) => _culture = x)"			           
+			           SelectedOptionChanged="((x) => _culture = x ?? TfConstants.CultureOptions[0])"			           
 			           TOption="TfCultureOption"
 			           Items="@TfConstants.CultureOptions" Style="width:100%"
 			           OptionValue="@(p => p.CultureName)" Label="@LOC("Language")">
 				<OptionTemplate Context="option">
 					<FluentStack VerticalAlignment="@VerticalAlignment.Center">
-						<img style="height:16px;vertical-align:text-bottom;" src="@option.IconUrl"/>
+						<img style="height:16px;vertical-align:text-bottom;" src="@option.IconUrl" alt="icon"/>
 						@option.CultureInfo.NativeName
 					</FluentStack>
 				</OptionTemplate>

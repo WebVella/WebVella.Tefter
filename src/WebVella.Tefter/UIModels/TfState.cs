@@ -13,5 +13,4 @@ public record TfState
 	public TfSpacePage? SpacePage { get; set; } = null;
 	public List<TfMenuItem> Breadcrumb { get; set; } = new();
 	public List<TfMenuItem> Menu { get; set; } = new();
-	public bool IsSavedUrlRedirected { get; set; } = false;
 }

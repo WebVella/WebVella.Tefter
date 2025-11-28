@@ -141,7 +141,8 @@ public partial interface ITfService
 		TfUser user);
 
 	Task<TfUser> UpdateUserWithFormAsync(TfUserManageForm form);
-	Task<TfUser> UpdateUserVisualPreferencesAsync(Guid userId, DesignThemeModes themeMode, TfCultureOption culture);
+	Task<TfUser> UpdateUserVisualPreferencesAsync(Guid userId, DesignThemeModes themeMode, 
+		TfCultureOption culture, TfColor color);
 
 	//Gets the authenticated user from cookie
 	Task<TfUser?> GetUserFromCookieAsync(IJSRuntime jsRuntime, AuthenticationStateProvider authStateProvider);
@@ -274,6 +275,7 @@ public partial class TfService : ITfService
 			if (userDbo.Settings != null)
 			{
 				userBuilder
+					.WithColor(userDbo.Settings.Color)
 					.WithThemeMode(userDbo.Settings.ThemeMode)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
@@ -324,6 +326,7 @@ public partial class TfService : ITfService
 			if (userDbo.Settings != null)
 			{
 				userBuilder
+					.WithColor(userDbo.Settings.Color)
 					.WithThemeMode(userDbo.Settings.ThemeMode)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
@@ -382,6 +385,7 @@ public partial class TfService : ITfService
 			if (userDbo.Settings != null)
 			{
 				userBuilder
+					.WithColor(userDbo.Settings.Color)
 					.WithThemeMode(userDbo.Settings.ThemeMode)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
@@ -432,6 +436,7 @@ public partial class TfService : ITfService
 				if (userDbo.Settings != null)
 				{
 					userBuilder
+						.WithColor(userDbo.Settings.Color)
 						.WithThemeMode(userDbo.Settings.ThemeMode)
 						.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 						.WithCultureCode(userDbo.Settings.CultureName)
@@ -738,6 +743,7 @@ public partial class TfService : ITfService
 			if (userDbo.Settings != null)
 			{
 				userBuilder
+					.WithColor(userDbo.Settings.Color)
 					.WithThemeMode(userDbo.Settings.ThemeMode)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
@@ -789,6 +795,7 @@ public partial class TfService : ITfService
 			if (userDbo.Settings != null)
 			{
 				userBuilder
+					.WithColor(userDbo.Settings.Color)
 					.WithThemeMode(userDbo.Settings.ThemeMode)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
@@ -848,6 +855,7 @@ public partial class TfService : ITfService
 			if (userDbo.Settings != null)
 			{
 				userBuilder
+					.WithColor(userDbo.Settings.Color)
 					.WithThemeMode(userDbo.Settings.ThemeMode)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 					.WithCultureCode(userDbo.Settings.CultureName)
@@ -898,6 +906,7 @@ public partial class TfService : ITfService
 				if (userDbo.Settings != null)
 				{
 					userBuilder
+						.WithColor(userDbo.Settings.Color)
 						.WithThemeMode(userDbo.Settings.ThemeMode)
 						.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
 						.WithCultureCode(userDbo.Settings.CultureName)
@@ -1004,6 +1013,7 @@ public partial class TfService : ITfService
 			Roles = new List<TfRole>().AsReadOnly(),
 			Settings = new TfUserSettings
 			{
+				Color = form.Color,
 				ThemeMode = form.ThemeMode,
 				IsSidebarOpen = form.IsSidebarOpen,
 				CultureName = form.Culture?.CultureInfo.Name ?? TfConstants.DefaultCulture.Name,
@@ -1091,6 +1101,7 @@ public partial class TfService : ITfService
 			.WithFirstName(form.FirstName)
 			.WithLastName(form.LastName)
 			.Enabled(form.Enabled)
+			.WithColor(form.Color)
 			.WithThemeMode(form.ThemeMode)
 			.WithCultureCode(form.Culture?.CultureInfo.Name ?? TfConstants.DefaultCulture.Name)
 			.WithRoles(user.Roles.ToArray());
@@ -1102,7 +1113,8 @@ public partial class TfService : ITfService
 		return user;
 	}
 	
-	public async Task<TfUser> UpdateUserVisualPreferencesAsync(Guid userId, DesignThemeModes themeMode, TfCultureOption culture)
+	public async Task<TfUser> UpdateUserVisualPreferencesAsync(Guid userId, DesignThemeModes themeMode, 
+		TfCultureOption culture, TfColor color)
 	{
 		var user = await GetUserAsync(userId);
 		if (user is null)
@@ -1110,6 +1122,7 @@ public partial class TfService : ITfService
 		
 		TfUserBuilder userBuilder = CreateUserBuilder(user);
 		userBuilder
+			.WithColor(color)
 			.WithThemeMode(themeMode)
 			.WithCultureCode(culture.CultureName);
 		user = userBuilder.Build();

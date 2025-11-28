@@ -9,6 +9,9 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent,
 	private TfSpaceViewPreset? _selectedParent = null;
 	private bool _isSubmitting = false;
 	private bool _isCreate = false;
+	private string _title = "";
+	private string _btnText = "";
+	private Icon _iconBtn = null!;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -119,6 +122,9 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent,
 			};
 		}
 
+		_title = _isCreate ? LOC("Create Preset Filter") : LOC("Manage Preset Filter");
+		_btnText = _isCreate ? LOC("Create") : LOC("Save");
+		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;		
 		InitForm(_form);
 	}
 

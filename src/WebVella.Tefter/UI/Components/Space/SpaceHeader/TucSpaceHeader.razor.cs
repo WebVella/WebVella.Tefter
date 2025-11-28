@@ -4,6 +4,7 @@ public partial class TucSpaceHeader : TfBaseComponent, IDisposable
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 
 	private TfSpace? _space = null!;
+	private bool _spacesActive = false;
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
@@ -26,6 +27,5 @@ public partial class TucSpaceHeader : TfBaseComponent, IDisposable
 	{
 		_space = args.Payload;
 		await InvokeAsync(StateHasChanged);
-	}		
-		
+	}
 }

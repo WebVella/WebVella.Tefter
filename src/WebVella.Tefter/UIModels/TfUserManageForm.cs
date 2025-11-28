@@ -17,6 +17,10 @@ public record TfUserManageForm
 	internal string? ConfirmPassword { get; set; }
 	[Required]
 	public bool Enabled { get; set; } = true;
+	
+	[Required]
+	public TfColor Color { get; set; } = TfConstants.DefaultThemeColor;	
+	
 	[Required]
 	public DesignThemeModes ThemeMode { get; set; } = DesignThemeModes.System;
 	[Required]

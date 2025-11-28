@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace WebVella.Tefter.Models;
 public class TfUserSettings
 {
+	public TfColor Color { get; init; } = TfConstants.DefaultThemeColor;
 	public DesignThemeModes ThemeMode { get; init; } = DesignThemeModes.System;
 	public bool IsSidebarOpen { get; init; } = true;
 	public string CultureName { get; init; } = "en-US";

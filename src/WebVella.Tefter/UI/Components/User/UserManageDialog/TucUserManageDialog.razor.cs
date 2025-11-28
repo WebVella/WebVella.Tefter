@@ -38,6 +38,7 @@ public partial class TucUserManageDialog : TfFormBaseComponent, IDialogContentCo
 				FirstName = Content.FirstName,
 				LastName = Content.LastName,
 				Id = Content.Id,
+				Color = Content.Settings.Color,
 				ThemeMode = Content.Settings.ThemeMode,
 				IsSidebarOpen = Content.Settings.IsSidebarOpen,
 				Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureName == Content.Settings.CultureName)

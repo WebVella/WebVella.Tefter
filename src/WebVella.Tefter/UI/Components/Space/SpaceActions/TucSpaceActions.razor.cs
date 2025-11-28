@@ -4,7 +4,6 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 {
 	private DotNetObjectReference<TucSpaceActions> _objectRef;
 	private bool _spaceFinderVisible = false;
-
 	public async ValueTask DisposeAsync()
 	{
 		try
@@ -13,7 +12,7 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 		}
 		catch
 		{
-			//In rare ocasions the item is disposed after the JSRuntime is no longer avaible
+			//In rare occasions the item is disposed after the JSRuntime is no longer available
 		}
 
 		_objectRef?.Dispose();
@@ -25,6 +24,7 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 		_objectRef = DotNetObjectReference.Create(this);
 		await JSRuntime.InvokeAsync<object>(
 			"Tefter.addGlobalSearchKeyListener", _objectRef, ComponentId.ToString(), "OnGlobalSearchHandler");
+
 	}
 
 	private async Task _findSpace()
@@ -43,11 +43,16 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 		_ = await dialog.Result;
 		_spaceFinderVisible = false;
 	}
-	
+
+	private bool _isHomeSpace()
+		=> TfAuthLayout.GetState().NavigationState.RouteNodes[0] == RouteDataNode.Home;
+
 
 	[JSInvokable("OnGlobalSearchHandler")]
 	public async Task OnGlobalSearchHandler()
 	{
 		await _findSpace();
 	}
+
+
 }

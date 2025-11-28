@@ -75,6 +75,11 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Color")"/>
+					<TucSelectColor Value="@_form.Color" ValueChanged="@((x) => _form.Color = x ?? TfConstants.DefaultThemeColor)" Required="true"/>
+					<FluentValidationMessage For="@(() => _form.Color)"/>
+				</FluentGridItem>
+				<FluentGridItem xs="6">
 					<TucSelect SelectedOption="@_form.ThemeMode"
 					           SelectedOptionChanged="((x) => _form.ThemeMode = x)"
 					           TOption="DesignThemeModes"
@@ -83,6 +88,8 @@
 					           OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"/>
 					<FluentValidationMessage For="@(() => _form.ThemeMode)"/>
 				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
 				<FluentGridItem xs="6">
 					<TucSelect SelectedOption="@_form.Culture"
 					           SelectedOptionChanged="((x) => _form.Culture = x)"					           
@@ -92,7 +99,9 @@
 					           OptionText="@(p => p.CultureInfo.NativeName)" Label="@LOC("Localization")"/>
 					<FluentValidationMessage For="@(() => _form.Culture)"/>
 				</FluentGridItem>
-			</FluentGrid>
+				<FluentGridItem xs="6">
+				</FluentGridItem>				
+			</FluentGrid>			
 		</FluentEditForm>
 	}
 </FluentDialogBody>

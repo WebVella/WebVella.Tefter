@@ -60,7 +60,7 @@ else
 						<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape")"
 						            Color="Color.Neutral"/>
 					}
-					else
+					else 
 					{
 						<FluentIcon Slot="start"
 						            Value="@TfConstants.GetIcon("RectangleLandscape", variant: IconVariant.Filled)"
@@ -74,7 +74,7 @@ else
 			@if (!Required && Value is not null)
 			{
 				<FluentButton Appearance=@Appearance.Outline
-				              IconStart="@TfConstants.GetIcon("Dismiss").WithColor(Color.Error)"
+				              IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)"
 				              OnClick="@(() => _optionChanged(null))"/>
 			}
 		</FluentStack>

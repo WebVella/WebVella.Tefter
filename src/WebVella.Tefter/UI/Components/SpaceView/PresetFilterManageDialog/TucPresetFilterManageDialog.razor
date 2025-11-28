@@ -2,13 +2,13 @@
 @inherits TfFormBaseComponent
 @* Header *@
 <FluentDialogHeader ShowDismiss="false" Visible="true">
-	<FluentLabel Typo="Typography.PaneHeader">@LOC("Manage Preset Filter")</FluentLabel>
+	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
 </FluentDialogHeader>
 
 @* Footer *@
 <FluentDialogFooter>
-	<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
-	              Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+	<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@_iconBtn"
+	              Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
 

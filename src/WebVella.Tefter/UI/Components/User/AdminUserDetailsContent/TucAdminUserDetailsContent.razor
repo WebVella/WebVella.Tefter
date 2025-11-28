@@ -59,11 +59,13 @@
 					</FluentGrid>
 					<FluentGrid>
 						<FluentGridItem xs="6">
+							<FluentInputLabel Label="@LOC("Color")"/>
+							<TucSelectColor Value="@_user.Settings.Color" Readonly="true"/>
+						</FluentGridItem>
+						<FluentGridItem xs="6">
 							<FluentTextField TextFieldType="@TextFieldType.Text"
 							                 Value="@_user.Settings.ThemeMode.ToString()"
 							                 ReadOnly="true" Label="@LOC("Theme Mode")" Style="width:100%"/>
-						</FluentGridItem>
-						<FluentGridItem xs="6">
 						</FluentGridItem>
 					</FluentGrid>
 					<FluentGrid>

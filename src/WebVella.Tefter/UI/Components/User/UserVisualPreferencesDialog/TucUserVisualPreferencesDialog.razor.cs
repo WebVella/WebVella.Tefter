@@ -6,6 +6,7 @@ public partial class TucUserVisualPreferencesDialog : TfBaseComponent, IDialogCo
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
 	private bool _isSubmitting = false;
+	private TfColor? _color = TfColor.Indigo500;
 	private DesignThemeModes _mode = DesignThemeModes.System;
 	private TfCultureOption _culture = null!;
 
@@ -14,6 +15,7 @@ public partial class TucUserVisualPreferencesDialog : TfBaseComponent, IDialogCo
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
 		_mode = Content.Settings.ThemeMode;
+		_color = Content.Settings.Color;
 		
 		_culture = TfConstants.CultureOptions.FirstOrDefault(x=> x.CultureName == Content.Settings?.Culture.Name)
 			?? TfConstants.CultureOptions.First();
@@ -30,7 +32,7 @@ public partial class TucUserVisualPreferencesDialog : TfBaseComponent, IDialogCo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = await TfService.UpdateUserVisualPreferencesAsync(Content!.Id,_mode, _culture);
+			var result = await TfService.UpdateUserVisualPreferencesAsync(Content!.Id,_mode, _culture, _color ?? TfConstants.DefaultThemeColor);
 			ToastService.ShowSuccess(LOC("User account was successfully updated!"));
 
 			await Dialog.CloseAsync(result);

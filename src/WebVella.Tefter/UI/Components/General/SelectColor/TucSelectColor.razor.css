@@ -1,7 +1,18 @@
 ﻿::deep {
-	width:100%;
+    width: 100%;
 }
-::deep .tf-select-btn::part(content) {
-	flex:1 1 auto;
-	text-align:left;
-}
+
+    ::deep .tf-select-btn {
+        background: padding-box linear-gradient(var(--neutral-fill-rest),var(--neutral-fill-rest)),border-box var(--neutral-stroke-control-rest);
+        border: calc(var(--stroke-width) * 1px) solid transparent;
+    }
+
+        ::deep .tf-select-btn::part(control) {
+            border: none !important;
+            outline: none !important;
+        }
+
+        ::deep .tf-select-btn::part(content) {
+            flex: 1 1 auto;
+            text-align: left;
+        }

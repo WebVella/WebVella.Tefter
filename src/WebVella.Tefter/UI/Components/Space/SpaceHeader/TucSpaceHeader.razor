@@ -1,10 +1,36 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<div class="tf-space-header">
-    <div class="tf-space-header__icon">
-        <FluentIcon Value="@TfConstants.GetIcon(_space?.FluentIconName ?? "Settings")" Focusable="false"></FluentIcon>
+
+@if (TfAuthLayout.GetState().NavigationState.RouteNodes[0] == RouteDataNode.Home)
+{
+    <div class="tf-space-header">
+        <div class="tf-space-header__icon">
+            <FluentIcon Value="@TfConstants.GetIcon("Home")" Focusable="false"></FluentIcon>
+        </div>
+        <div class="tf-space-header__meta">
+            <div class="tf-space-header__meta__title">@LOC("Home")</div>
+        </div>
     </div>
-    <div class="tf-space-header__meta">
-        <div class="tf-space-header__meta__title">@(_space?.Name ?? LOC("Administration"))</div>
+}
+else if (TfAuthLayout.GetState().NavigationState.RouteNodes[0] == RouteDataNode.Space)
+{
+    <div class="tf-space-header">
+        <div class="tf-space-header__icon">
+            <FluentIcon Value="@TfConstants.GetIcon(_space?.FluentIconName ?? "Circle")" Focusable="false"></FluentIcon>
+        </div>
+        <div class="tf-space-header__meta">
+            <div class="tf-space-header__meta__title">@(_space?.Name ?? LOC("Space"))</div>
+        </div>
     </div>
-</div>
+}
+else
+{
+    <div class="tf-space-header">
+        <div class="tf-space-header__icon">
+            <FluentIcon Value="@TfConstants.GetIcon("Settings")" Focusable="false"></FluentIcon>
+        </div>
+        <div class="tf-space-header__meta">
+            <div class="tf-space-header__meta__title">@LOC("Administration")</div>
+        </div>
+    </div>
+}

@@ -667,6 +667,9 @@ fluent-button:focus::part(control) {
 .tf-input-description {
   color: var(--neutral-foreground-hint) !important;
 }
+.tf-input-description {
+  font-style: italic;
+}
 fluent-text-field.with-prefix::part(start) {
   color: var(--neutral-foreground-hint);
 }
@@ -767,6 +770,7 @@ fluent-menu-item::part(start) {
 }
 .fluent-dialog-footer {
   padding-top: 30px !important;
+  justify-content: center !important;
 }
 .tf-card {
   border: 1px solid var(--neutral-stroke-rest);
