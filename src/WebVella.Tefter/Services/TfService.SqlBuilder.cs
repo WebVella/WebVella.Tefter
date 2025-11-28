@@ -291,6 +291,7 @@ public partial class TfService : ITfService
 								TableName = GetSharedColumnValueTableNameByType(sharedColumn.DbType)
 							};
 
+							spaceDataHasAtLeastOneValidColumn = true;
 							_sharedColumnsData.Add(sharedColumnData);
 						}
 					}
@@ -362,7 +363,7 @@ public partial class TfService : ITfService
 							if (joinData.Columns.Any(x => x.DbName == columnName))
 								continue;
 
-
+							spaceDataHasAtLeastOneValidColumn = true;
 							joinData.Columns.Add(new SqlBuilderColumn
 							{
 								Id = extColumn.Id,
@@ -658,6 +659,10 @@ public partial class TfService : ITfService
 					first = false;
 				}
 				sb.Append(sortSb.ToString());
+			}
+			else
+			{
+				sb.Append($" {_tableAlias}.tf_row_index ASC ");
 			}
 
 			if (sb.Length == 0)
