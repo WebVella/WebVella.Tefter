@@ -356,6 +356,21 @@ public partial class TfServiceTest : BaseTest
 				spaceView.Name.Should().Be(view.Name);
 				spaceView.DatasetId.Should().Be(view.DatasetId);
 
+				var spacePage = new TfSpacePage
+				{
+					Id = Guid.NewGuid(),
+					ComponentOptionsJson = null,
+					ComponentId = null,
+					FluentIconName = null,
+					Name = "1_0_0",
+					ParentId = null,
+					Position = null,
+					SpaceId = space.Id,
+					Type = TfSpacePageType.Folder
+				};
+
+				tfService.CreateSpacePage(spacePage);
+
 
 				var bookmarkList = tfService.GetBookmarksListForUser(user.Id, space.Id);
 
@@ -364,7 +379,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "test1",
 					Description = " test with #tag1 #tAg2 #Tag3",
-					SpaceId = view.Id,
+					SpacePageId = spacePage.Id,
 					Url = null,
 					UserId = user.Id,
 					CreatedOn = DateTime.UtcNow

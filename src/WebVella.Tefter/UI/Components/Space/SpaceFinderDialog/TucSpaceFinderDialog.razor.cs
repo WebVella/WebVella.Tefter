@@ -38,7 +38,7 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 		if (Content is null) throw new Exception("Content is null");
 		_allSpaces = TfService.GetSpacesListForUser(Content.Id);
 		var state = TfAuthLayout.GetState();
-		_userBookmarks = state.UserBookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).Select(x => x.SpaceId)
+		_userBookmarks = state.UserBookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).Select(x => x.SpacePageId)
 			.ToHashSet();
 		_currentSpaceId = state.NavigationState.SpaceId;
 		_objectRef = DotNetObjectReference.Create(this);
@@ -143,7 +143,7 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 		{
 			TfService.ToggleBookmark(
 				userId: TfAuthLayout.GetState().User.Id,
-				spaceId: option.Space.Id
+				spacePageId: option.Space.Id
 			);
 			option.Bookmarked = !option.Bookmarked;
 			if (option.Bookmarked)

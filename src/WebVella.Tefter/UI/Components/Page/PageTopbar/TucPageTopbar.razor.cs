@@ -61,7 +61,7 @@ public partial class TucPageTopbar : TfBaseComponent, IAsyncDisposable
 			var submit = new TfBookmark
 			{
 				Id = Guid.NewGuid(),
-				SpaceId = TfAuthLayout.GetState().SpacePage.Id,
+				SpacePageId = TfAuthLayout.GetState().SpacePage.Id,
 				UserId = TfAuthLayout.GetState().User.Id,
 				CreatedOn = DateTime.Now,
 				Description = String.Empty, //initially nothing is added for convenience
@@ -104,7 +104,7 @@ public partial class TucPageTopbar : TfBaseComponent, IAsyncDisposable
 		_bookmarkIcon = TfConstants.GetIcon("Star")!;
 		_bookmarkTitle = LOC("Bookmark this space");
 		_hasBookmark = false;
-		if (state.Space is not null && state.UserBookmarks.Any(x => x.Id == state.Space.Id))
+		if (state.SpacePage is not null && state.UserBookmarks.Any(x => x.SpacePageId == state.SpacePage.Id))
 		{
 			_bookmarkIcon = TfConstants.GetIcon("Star", variant: IconVariant.Filled)!;
 			_bookmarkTitle = LOC("Remove space bookmark");
@@ -115,12 +115,12 @@ public partial class TucPageTopbar : TfBaseComponent, IAsyncDisposable
 	private async Task _onBookmarkClick()
 	{
 		var state = TfAuthLayout.GetState();
-		if (state.Space is null) return;
+		if (state.SpacePage is null) return;
 		try
 		{
 			TfService.ToggleBookmark(
 				userId: state.User.Id,
-				spaceId: state.Space.Id
+				spacePageId: state.SpacePage.Id
 			);
 			_initBookmark();
 			ToastService.ShowSuccess(_hasBookmark ? LOC("Space Bookmarked") : LOC("Space bookmark removed"));

@@ -747,6 +747,50 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			});
 		#endregion
 
+		#region  TABLE: SPACE_PAGE
+
+		dbBuilder
+			.NewTableBuilder(Guid.NewGuid(), "tf_space_page")
+			.WithColumns(columns =>
+			{
+				columns
+					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
+					.AddGuidColumn("parent_id", c => { c.Nullable().WithoutAutoDefaultValue(); })
+					.AddGuidColumn("space_id", c => { c.NotNullable().WithoutAutoDefaultValue(); })
+					.AddShortTextColumn("name", c => { c.NotNullable(); })
+					.AddShortTextColumn("icon", c => { c.NotNullable(); })
+					.AddShortIntegerColumn("position", c => { c.NotNullable(); })
+					.AddShortIntegerColumn("type", c => { c.NotNullable(); })
+					.AddGuidColumn("component_id", c => { c.Nullable(); })
+					.AddTextColumn("component_settings_json", c => { c.NotNullable().WithDefaultValue("{}"); });
+
+			})
+			.WithConstraints(constraints =>
+			{
+				constraints
+					.AddPrimaryKeyConstraint("pk_space_page_id", c => { c.WithColumns("id"); })
+					.AddForeignKeyConstraint("fk_space_page_space", c =>
+					{
+						c.WithForeignTable("tf_space")
+						.WithForeignColumns("id")
+						.WithColumns("space_id");
+					})
+					.AddForeignKeyConstraint("fk_space_page_parent", c =>
+					{
+						c.WithForeignTable("tf_space_page")
+						.WithForeignColumns("id")
+						.WithColumns("parent_id");
+					});
+			})
+			.WithIndexes(indexes =>
+			{
+				indexes
+					.AddBTreeIndex("ix_space_page_id", i => { i.WithColumns("id"); })
+					.AddBTreeIndex("ix_space_page_space_id", i => { i.WithColumns("space_id"); });
+			});
+
+		#endregion
+
 		#region  TABLE: BOOKMARK
 
 		dbBuilder
@@ -760,17 +804,17 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 					.AddTextColumn("url", c => { c.Nullable(); })
 					.AddDateTimeColumn("created_on", c => { c.NotNullable().WithAutoDefaultValue(); })
 					.AddGuidColumn("user_id", c => { c.NotNullable(); })
-					.AddGuidColumn("space_view_id", c => { c.NotNullable(); });
+					.AddGuidColumn("space_page_id", c => { c.NotNullable(); });
 			})
 			.WithConstraints(constraints =>
 			{
 				constraints
 					.AddPrimaryKeyConstraint("pk_bookmark_id", c => { c.WithColumns("id"); })
-					.AddForeignKeyConstraint("fk_bookmark_space_view", c =>
+					.AddForeignKeyConstraint("fk_bookmark_space_page", c =>
 					{
-						c.WithForeignTable("tf_space_view")
+						c.WithForeignTable("tf_space_page")
 						.WithForeignColumns("id")
-						.WithColumns("space_view_id");
+						.WithColumns("space_page_id");
 					});
 			})
 			.WithIndexes(indexes =>
@@ -838,50 +882,6 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 				indexes
 					.AddBTreeIndex("ix_bookmark_tags_bookmark_id", i => { i.WithColumns("bookmark_id"); })
 					.AddBTreeIndex("ix_bookmark_tags_tag_id", i => { i.WithColumns("tag_id"); });
-			});
-
-		#endregion
-
-		#region  TABLE: SPACE_PAGE
-
-		dbBuilder
-			.NewTableBuilder(Guid.NewGuid(), "tf_space_page")
-			.WithColumns(columns =>
-			{
-				columns
-					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
-					.AddGuidColumn("parent_id", c => { c.Nullable().WithoutAutoDefaultValue(); })
-					.AddGuidColumn("space_id", c => { c.NotNullable().WithoutAutoDefaultValue(); })
-					.AddShortTextColumn("name", c => { c.NotNullable(); })
-					.AddShortTextColumn("icon", c => { c.NotNullable(); })
-					.AddShortIntegerColumn("position", c => { c.NotNullable(); })
-					.AddShortIntegerColumn("type", c => { c.NotNullable(); })
-					.AddGuidColumn("component_id", c => { c.Nullable(); })
-					.AddTextColumn("component_settings_json", c => { c.NotNullable().WithDefaultValue("{}"); });
-
-			})
-			.WithConstraints(constraints =>
-			{
-				constraints
-					.AddPrimaryKeyConstraint("pk_space_page_id", c => { c.WithColumns("id"); })
-					.AddForeignKeyConstraint("fk_space_page_space", c =>
-					{
-						c.WithForeignTable("tf_space")
-						.WithForeignColumns("id")
-						.WithColumns("space_id");
-					})
-					.AddForeignKeyConstraint("fk_space_page_parent", c =>
-					{
-						c.WithForeignTable("tf_space_page")
-						.WithForeignColumns("id")
-						.WithColumns("parent_id");
-					});
-			})
-			.WithIndexes(indexes =>
-			{
-				indexes
-					.AddBTreeIndex("ix_space_page_id", i => { i.WithColumns("id"); })
-					.AddBTreeIndex("ix_space_page_space_id", i => { i.WithColumns("space_id"); });
 			});
 
 		#endregion

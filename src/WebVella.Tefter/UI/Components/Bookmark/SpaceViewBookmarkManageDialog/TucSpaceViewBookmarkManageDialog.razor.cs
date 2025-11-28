@@ -13,7 +13,7 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		if (Content.SpaceId == Guid.Empty) throw new Exception("SpaceId is required");
+		if (Content.SpacePageId == Guid.Empty) throw new Exception("SpacePageId is required");
 		if (Content is null) throw new Exception("Content is null");
 		if (!String.IsNullOrWhiteSpace(Content.Url)) _isBookmark = false;
 		_title = _isBookmark ? LOC("Bookmark") : LOC("Saved URL");

@@ -346,12 +346,6 @@ public partial class TfService
 
 			bool success = false;
 
-			var bookmarks = GetBookmarksListForSpace(id);
-			foreach (var bookmark in bookmarks)
-			{
-				DeleteBookmark(bookmark.Id);
-			}
-
 			var spaceViewColumns = GetSpaceViewColumnsList(spaceView.Id);
 			foreach (var column in spaceViewColumns)
 			{

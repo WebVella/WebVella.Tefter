@@ -1,20 +1,24 @@
-﻿using Nito.AsyncEx.Synchronous;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
 	public List<TfBookmark> GetBookmarksListForUser(
-		Guid userId, Guid spaceId);
+		Guid userId,
+		Guid? spaceId = null);
+
 	public List<TfBookmark> GetSavesListForUser(
-		Guid userId, Guid spaceId);	
+		Guid userId,
+		Guid? spaceId = null);
 
 	public TfBookmark GetBookmark(
 		Guid id);
 
 	public void ToggleBookmark(
-		Guid userId, Guid spaceId);	
-	
+		Guid userId,
+		Guid spacePageId);
+
 	public TfBookmark CreateBookmark(
 		TfBookmark bookmark);
 
@@ -28,45 +32,109 @@ public partial interface ITfService
 public partial class TfService : ITfService
 {
 	public List<TfBookmark> GetBookmarksListForUser(
-		Guid userId, Guid spaceId)
+		Guid userId,
+		Guid? spaceId = null)
 	{
 		try
 		{
 			var bookmarks = _dboManager.GetList<TfBookmark>(userId, nameof(TfBookmark.UserId));
-			foreach (var bookmark in bookmarks)
-				bookmark.Tags = GetBookmarkTags(bookmark.Id);
 
-			return bookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).ToList();
+			if (spaceId.HasValue)
+			{
+				List<TfBookmark> result = new List<TfBookmark>();
+				foreach (var bookmark in bookmarks)
+				{
+					var page = GetSpacePage(bookmark.SpacePageId);
+					if(page is null || page.SpaceId != spaceId.Value)	
+						continue;
+
+					bookmark.Tags = GetBookmarkTags(bookmark.Id);
+					result.Add(bookmark);
+				}
+				
+				return result;
+			}
+			else
+			{
+				foreach (var bookmark in bookmarks)
+					bookmark.Tags = GetBookmarkTags(bookmark.Id);
+
+				return bookmarks;
+			}
 		}
 		catch (Exception ex)
 		{
 			throw ProcessException(ex);
 		}
 	}
-	
+
 	public List<TfBookmark> GetSavesListForUser(
-		Guid userId, Guid spaceId)
+		Guid userId,
+		Guid? spaceId = null)
 	{
 		try
 		{
 			var bookmarks = _dboManager.GetList<TfBookmark>(userId, nameof(TfBookmark.UserId));
-			foreach (var bookmark in bookmarks)
+			foreach (var bookmark in bookmarks.Where(x => !String.IsNullOrWhiteSpace(x.Url)))
 				bookmark.Tags = GetBookmarkTags(bookmark.Id);
 
-			return bookmarks.Where(x => !String.IsNullOrWhiteSpace(x.Url)).ToList();;
+			if (spaceId.HasValue)
+			{
+				List<TfBookmark> result = new List<TfBookmark>();
+				foreach (var bookmark in bookmarks)
+				{
+					var page = GetSpacePage(bookmark.SpacePageId);
+					if (page is null || page.SpaceId != spaceId.Value)
+						continue;
+
+					result.Add(bookmark);
+				}
+				return result;
+			}
+
+			return bookmarks;
 		}
 		catch (Exception ex)
 		{
 			throw ProcessException(ex);
 		}
-	}	
+	}
 
 	public List<TfBookmark> GetBookmarksListForSpace(
-		Guid spaceId)
+		Guid spaceId )
 	{
 		try
 		{
-			return _dboManager.GetList<TfBookmark>(spaceId, nameof(TfBookmark.SpaceId));
+			var bookmarks = _dboManager.GetList<TfBookmark>();
+			List<TfBookmark> result = new List<TfBookmark>();
+			foreach (var bookmark in bookmarks)
+			{
+				var page = GetSpacePage(bookmark.SpacePageId);
+				if (page is null || page.SpaceId != spaceId)
+					continue;
+
+				bookmark.Tags = GetBookmarkTags(bookmark.Id);
+				result.Add(bookmark);
+			}
+
+			return result;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	public List<TfBookmark> GetBookmarksListForSpacePage(
+		Guid spacePageId)
+	{
+		try
+		{
+			var bookmarks = _dboManager.GetList<TfBookmark>(spacePageId,nameof(TfBookmark.SpacePageId));
+			foreach (var bookmark in bookmarks)
+				bookmark.Tags = GetBookmarkTags(bookmark.Id);
+
+			return bookmarks;
 		}
 		catch (Exception ex)
 		{
@@ -135,23 +203,30 @@ public partial class TfService : ITfService
 	}
 
 	public void ToggleBookmark(
-		Guid userId, Guid spaceId)
+		Guid userId,
+		Guid spacePageId)
 	{
-		var bookmark = GetBookmarksListForUser(userId,spaceId).FirstOrDefault();
+		var bookmark = GetBookmarksListForUser(userId)
+			.FirstOrDefault(x => x.SpacePageId == spacePageId);
+
+		var spacePage = GetSpacePage(spacePageId);
+
+		if (spacePage is null)
+			return;
+
 		if (bookmark is not null)
 		{
 			DeleteBookmark(bookmark.Id);
 		}
 		else
 		{
-			var space = GetSpace(spaceId);
 			CreateBookmark(new TfBookmark()
 			{
-				Id= Guid.NewGuid(),
+				Id = Guid.NewGuid(),
 				UserId = userId,
-				SpaceId = spaceId,
-				Name = space.Name ?? "uknown space",
-				Description = space.Name ?? "unknown space",
+				SpacePageId = spacePageId,
+				Name = spacePage.Name ?? "unknown space",
+				Description = spacePage.Name ?? "unknown space",
 			});
 		}
 	}
@@ -165,7 +240,7 @@ public partial class TfService : ITfService
 				bookmark.Id = Guid.NewGuid();
 
 			new TfBookmarkValidator(this)
-				.ValidateCreate(bookmark)
+				.ValidateCreate(bookmark!)
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
@@ -173,12 +248,12 @@ public partial class TfService : ITfService
 			{
 				bool success = false;
 
-				success = _dboManager.Insert<TfBookmark>(bookmark);
+				success = _dboManager.Insert<TfBookmark>(bookmark!);
 
 				if (!success)
 					throw new TfDboServiceException("Insert<TfBookmark> failed.");
 
-				var textTags = GetUniqueTagsFromText(bookmark.Description);
+				var textTags = GetUniqueTagsFromText(bookmark!.Description);
 				if (textTags.Count > 0)
 				{
 					var allTags = _dboManager.GetList<TfTag>();
@@ -187,7 +262,7 @@ public partial class TfService : ITfService
 					{
 						var tag = allTags.SingleOrDefault(x => x.Label == textTag);
 
-						TfBookmarkTag bookmarkTag = null;
+						TfBookmarkTag bookmarkTag;
 
 						if (tag is not null)
 						{
@@ -331,7 +406,6 @@ public partial class TfService : ITfService
 					.ToValidationException()
 					.ThrowIfContainsErrors();
 
-
 				bool success = false;
 
 				//remove connection to tags
@@ -351,9 +425,9 @@ public partial class TfService : ITfService
 
 				if (!success)
 					throw new TfDboServiceException("Delete<TfBookmark> failed.");
-				
+
 				scope.Complete();
-				
+
 				PublishEventWithScope(new TfUserUpdatedEvent(GetUser(existingBookmark.UserId)));
 			}
 		}

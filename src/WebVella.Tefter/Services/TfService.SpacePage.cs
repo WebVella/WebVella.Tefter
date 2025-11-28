@@ -682,6 +682,10 @@ public partial class TfService : ITfService
 
 				foreach (var pageToDelete in pagesToDelete)
 				{
+					var bookmarks = GetBookmarksListForSpacePage(pageToDelete.Id);
+					foreach(var bookmark in bookmarks)
+						DeleteBookmark(bookmark.Id);
+
 					if (!_dboManager.Delete<TfSpacePageDbo>(pageToDelete.Id))
 						throw new TfDboServiceException("Delete<TfSpacePageDbo> failed");
 
