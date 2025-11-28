@@ -63,13 +63,13 @@
 		<!--<PackageReference Include="FluentResults" Version="3.16.0" />
 		<PackageReference Include="FluentResults.Extensions.AspNetCore" Version="0.1.0" />-->
 		<PackageReference Include="Bogus" Version="35.6.5" />
-		<PackageReference Include="Markdig" Version="0.43.0" />
+		<PackageReference Include="Markdig" Version="0.44.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.3.0" />
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.13.1" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.13.1" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.13.2" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.13.2" />
 
 		<PackageReference Include="Npgsql" Version="9.0.4" />
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
@@ -80,9 +80,9 @@
 		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
 		<PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
 		<PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
-		<PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
-		<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+		<PackageReference Include="Serilog.Extensions.Hosting" Version="10.0.0" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="10.0.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
 		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
 		<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />

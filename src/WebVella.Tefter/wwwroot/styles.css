@@ -247,14 +247,14 @@ html:root {
 html:root {
   color-scheme: dark;
   --tf-topbar-height: 50px;
-  --tf-space-header-height: var(--tf-topbar-height);
+  --tf-space-header-height: 51px;
   --tf-space-actions-height: 50px;
   --tf-aside-footer-height: 30px;
   --tf-aside-actions-height: 50px;
   --tf-page-header-height: 50px;
   --tf-page-tabs-height: 50px;
   --tf-aside-width: 220px;
-  --tf-padding: calc((10 + (var(--design-unit) * 2 * var(--density))) * 1px);
+  --tf-padding: 12px;
   --tf-card-space: calc(var(--tf-padding) * 2);
 }
 /*
@@ -654,12 +654,12 @@ html:root {
 /*Buttons*/
 fluent-button:focus-visible,
 fluent-button:focus {
-  outline: none !important;
+  outline: 1px solid color-mix(in srgb, var(--neutral-fill-secondary-active) 50%, var(--accent-fill-rest) 50%) !important;
   outline-offset: 0 !important;
 }
 fluent-button:focus-visible::part(control),
 fluent-button:focus::part(control) {
-  outline: none !important;
+  outline: 1px solid color-mix(in srgb, var(--neutral-fill-secondary-active) 50%, var(--accent-fill-rest) 50%) !important;
   outline-offset: 0 !important;
 }
 /* From */
@@ -748,7 +748,7 @@ div[class^='fluent-messagebar'],
 }
 /*Menu*/
 fluent-menu {
-  --neutral-layer-floating: var(--neutral-layer-2);
+  --neutral-layer-floating: var(--neutral-layer-1);
 }
 fluent-menu-item::part(start) {
   display: flex;
@@ -771,7 +771,7 @@ fluent-menu-item::part(start) {
 .tf-card {
   border: 1px solid var(--neutral-stroke-rest);
   border-radius: calc(var(--layer-corner-radius) * 1px);
-  background: var(--neutral-fill-secondary-active);
+  background: var(--neutral-layer-2);
   padding: var(--tf-padding);
   box-shadow: var(--elevation-shadow-card-active);
   display: flex;
@@ -1234,7 +1234,7 @@ fluent-menu-item::part(start) {
 }
 .fluent-dialog-body .tf-grid-thead-bkg,
 .tf-card .tf-grid-thead-bkg {
-  background: var(--neutral-fill-rest);
+  background: var(--neutral-layer-1);
 }
 .tf-grid-thead-loading {
   position: absolute;
@@ -1523,7 +1523,7 @@ fluent-menu-item::part(start) {
 }
 .tf-grid thead td.tf--sticky,
 .tf-grid tbody td.tf--sticky {
-  --tf-grid-td-fill: var(--neutral-fill-rest);
+  --tf-grid-td-fill: var(--neutral-layer-1);
 }
 .tf-grid thead .tf--sticky-first::after,
 .tf-grid tbody .tf--sticky-first::after {
@@ -1861,6 +1861,7 @@ fluent-menu-item::part(start) {
   flex-flow: row;
   position: relative;
   background: var(--neutral-layer-1);
+  min-height: 100vh;
 }
 .tflg__aside {
   flex: 0 0 var(--tf-aside-width);
@@ -1936,7 +1937,7 @@ fluent-menu-item::part(start) {
   flex: 0 0 var(--tf-page-header-height);
   display: flex;
   justify-content: space-between;
-  align-items: start;
+  align-items: center;
   padding: 0 var(--tf-padding);
 }
 .tflpc__header__left {
@@ -1970,8 +1971,9 @@ fluent-menu-item::part(start) {
   visibility: hidden;
 }
 .tflpc__header__left__action fluent-button {
-  --neutral-fill-stealth-rest: var(--neutral-fill-layer-rest);
+  --neutral-fill-stealth-rest: var(--neutral-layer-1);
   --accent-fill-rest: var(--neutral-foreground-hint);
+  margin-right: 5px;
 }
 .tflpc__header__left__action fluent-button:hover {
   --accent-fill-rest: var(--neutral-foreground-rest);
@@ -2473,7 +2475,7 @@ fluent-menu-item::part(start) {
   width: 100%;
   display: flex;
   height: calc(var(--tf-page-tabs-height) - var(--tf-tabs-bottom-margin));
-  border-bottom: 1px solid var(--neutral-stroke-rest);
+  border-bottom: 1px dashed var(--neutral-stroke-rest);
   margin-bottom: var(--tf-tabs-padding);
 }
 .tf-tabs__item {
@@ -2527,7 +2529,7 @@ fluent-menu-item::part(start) {
   top: 0;
   bottom: 0;
   width: 1px;
-  background: linear-gradient(to bottom, var(--neutral-layer-2) 10%, var(--neutral-layer-3) 50%, var(--neutral-layer-2) 90%);
+  background: linear-gradient(to bottom, var(--neutral-layer-2) 10%, var(--neutral-layer-4) 50%, var(--neutral-layer-2) 90%);
 }
 .tf-submenu .tf-submenu {
   padding-left: calc(var(--tf-padding) * 2);

@@ -93,7 +93,7 @@ public partial interface ITfService
 		int batchSize = 100);
 }
 
-public partial class TfService : ITfService
+public partial class TfService
 {
 	public TfDataTable QueryDataProvider(
 		Guid providerId,
@@ -152,7 +152,7 @@ public partial class TfService : ITfService
 			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
 
 			//do not make sql request if no rows are required
-			DataTable dataTable = null;
+			DataTable dataTable;
 			if (noRows)
 				dataTable = new DataTable();
 			else

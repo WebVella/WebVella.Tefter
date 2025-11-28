@@ -1,7 +1,6 @@
 ﻿.tflpc {
   display: flex;
   flex-flow: column nowrap;
-
   &:not(.tflpc--has-page-tabs) {
     --tf-page-tabs-height: 0px;
   }
@@ -10,7 +9,7 @@
     flex: 0 0 var(--tf-page-header-height);
     display: flex;
     justify-content: space-between;
-    align-items: start;
+    align-items: center;
     padding: 0 var(--tf-padding);
 
     &__left {
@@ -48,8 +47,9 @@
         visibility: hidden;
         
         fluent-button {
-          --neutral-fill-stealth-rest: var(--neutral-fill-layer-rest);
+          --neutral-fill-stealth-rest: var(--neutral-layer-1);
           --accent-fill-rest: var(--neutral-foreground-hint);
+          margin-right: 5px;
 
           &:hover {
             --accent-fill-rest: var(--neutral-foreground-rest);

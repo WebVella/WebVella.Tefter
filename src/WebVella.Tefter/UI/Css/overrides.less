@@ -11,11 +11,11 @@ html:root {
 /*Buttons*/
 fluent-button:focus-visible,
 fluent-button:focus{
-  outline: none !important;
-  outline-offset:0 !important;
+  outline: 1px solid color-mix(in srgb, var(--neutral-fill-secondary-active) 50%, var(--accent-fill-rest) 50%) !important;
+  outline-offset: 0 !important;
   &::part(control){
-    outline: none !important;
-    outline-offset:0 !important;
+    outline: 1px solid color-mix(in srgb, var(--neutral-fill-secondary-active) 50%, var(--accent-fill-rest) 50%) !important;
+    outline-offset: 0 !important;
   }
 }
 
@@ -131,7 +131,7 @@ div[class ^='fluent-messagebar'],
 
 /*Menu*/
 fluent-menu{
-  --neutral-layer-floating:var(--neutral-layer-2);
+  --neutral-layer-floating:var(--neutral-layer-1);
 }
 fluent-menu-item{
   &::part(start){
