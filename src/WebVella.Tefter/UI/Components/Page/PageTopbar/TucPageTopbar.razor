@@ -10,33 +10,37 @@
     <div class="tf-page-topbar__right">
         @if (state.Space is not null && state.SpacePage is not null)
         {
-            <FluentButton Id="view-bookmark-selector" OnClick="_onBookmarkClick" IconStart="@_bookmarkIcon"
-                          Appearance="@Appearance.Outline" Title="@_bookmarkTitle"/>
+            <FluentButton Id="view-bookmark-selector" OnClick="_onBookmarkClick" 
+                          IconStart="@((_hasBookmark ? TfConstants.GetIcon("Star", variant: IconVariant.Filled) : TfConstants.GetIcon("Star"))!.WithColor(Color.Neutral))"
+                          Appearance="@Appearance.Outline" Title="@(_hasBookmark ? LOC("Remove page bookmark") : LOC("Bookmark this page"))"/>
             @if (_activeSavedUrl is not null)
             {
                 @if (Navigator.IsSpaceViewSavedUrlChanged(_activeSavedUrl.Url))
                 {
-                    <FluentButton Id="view-save-selector" OnClick="_onSaveLinkClick" Appearance="@Appearance.Outline">
+                    <FluentButton Id="view-save-selector" OnClick="_onSaveLinkClick" Appearance="@Appearance.Outline"
+                                  Title="@LOC("Update Saved Link")">
                         <FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Warning"/>
                     </FluentButton>
                 }
                 else
                 {
-                    <FluentButton Id="view-save-selector" OnClick="_onSaveLinkClick" Appearance="@Appearance.Outline">
+                    <FluentButton Id="view-save-selector" OnClick="_onSaveLinkClick" Appearance="@Appearance.Outline"
+                                  Title="@LOC("Remove Saved Link")">
                         <FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Accent"/>
                     </FluentButton>
                 }
             }
             else
             {
-                <FluentButton Id="view-save-selector" OnClick="_onSaveLinkClick" Appearance="@Appearance.Outline">
-                    <FluentIcon Value="@TfConstants.GetIcon("Link")"/>
+                <FluentButton Id="view-save-selector" OnClick="_onSaveLinkClick" Appearance="@Appearance.Outline"
+                              Title="@LOC("Save Link")">
+                    <FluentIcon Value="@TfConstants.GetIcon("Link")" Color="Color.Neutral"/>
                 </FluentButton>
             }
             @if (state.User.IsAdmin)
             {
                 <TucAnchor Id="view-save-selector" Href="@(String.Format(TfConstants.SpacePagePageManageUrl,state.NavigationState.SpaceId, state.NavigationState.SpacePageId).GenerateWithLocalAndQueryAsReturnUrl(Navigator.Uri))" Appearance="@Appearance.Outline">
-                    <FluentIcon Value="@TfConstants.GetIcon("Settings")"/>
+                    <FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="Color.Neutral"/>
                 </TucAnchor>                
             }
 
@@ -86,4 +90,3 @@
         </FluentMenu>
     </div>
 </div>
-<TucPageLinkSaveSelector @ref="_saveSelector" ActiveSavedUrl="@_activeSavedUrl"/>

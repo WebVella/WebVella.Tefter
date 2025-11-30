@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 @* Header *@
 <FluentDialogHeader ShowDismiss="false">
-	<FluentLabel Typo="Typography.PaneHeader">@LOC("Theme mode")</FluentLabel>
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Visual Preferences")</FluentLabel>
 </FluentDialogHeader>
 
 @* Footer *@
@@ -15,22 +15,22 @@
 @* Body *@
 <FluentDialogBody>
 	<FluentGrid>
-		<FluentGridItem xs="12">
+		<FluentGridItem xs="6">
 			<FluentInputLabel Label="@LOC("Color")"/>
-			<TucSelectColor @bind-Value="_color" Required="true"/>
+			<TucSelectColor @bind-Value="_color" Required="true" />
 		</FluentGridItem>		
-		<FluentGridItem xs="12">
+		<FluentGridItem xs="6">
 			<TucSelect SelectedOption="@_mode"
 			           SelectedOptionChanged="((x) => _mode = x)"
 			           TOption="DesignThemeModes"
 			           Items="@(Enum.GetValues<DesignThemeModes>())" Style="width:100%"
 			           OptionValue="@(p => ((int)p).ToString())"
 			           OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"/>
-			<div class="tf-input-description">can be switched with [ctrl+Q] shortcut</div>
+			<div class="tf-input-description">switch with [ctrl+Q] shortcut</div>
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>
-		<FluentGridItem xs="12">
+		<FluentGridItem xs="6">
 			<TucSelect SelectedOption="@_culture"
 			           SelectedOptionChanged="((x) => _culture = x ?? TfConstants.CultureOptions[0])"			           
 			           TOption="TfCultureOption"

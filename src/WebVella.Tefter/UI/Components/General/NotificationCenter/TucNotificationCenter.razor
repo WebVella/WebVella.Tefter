@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 @code {
 	private RenderFragment NotificationIcon() =>
-        @<FluentIcon Value="@TfConstants.GetIcon("Alert")" Title="Notification center" />;
+        @<FluentIcon Value="@TfConstants.GetIcon("Alert")!.WithColor(Color.Neutral)" Title="Notification center" />;
 }
 @if (MessageService.Count(TfConstants.MESSAGES_NOTIFICATION_CENTER) > 0)
 {

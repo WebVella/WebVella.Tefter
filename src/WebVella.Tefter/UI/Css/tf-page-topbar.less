@@ -55,6 +55,12 @@
   }
 
   fluent-anchor, fluent-button {
+    --neutral-foreground-rest:var(--neutral-foreground-hint);
+    &:hover{
+      --neutral-foreground-rest:var(--accent-fill-rest);
+    }
+    
+    
     &::part(control) {
       border-color: transparent;
     }

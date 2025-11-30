@@ -5,6 +5,11 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 {
 	public event Func<SampleGlobalEvent,Task> SampleGlobalEvent;
 	
+	//bookmark
+	public event Func<TfBookmarkCreatedEvent,Task> BookmarkCreatedEvent;	
+	public event Func<TfBookmarkUpdatedEvent,Task> BookmarkUpdatedEvent;	
+	public event Func<TfBookmarkDeletedEvent,Task> BookmarkDeletedEvent;	
+	
 	//data identity
 	public event Func<TfDataIdentityCreatedEvent,Task> DataIdentityCreatedEvent;
 	public event Func<TfDataIdentityUpdatedEvent,Task> DataIdentityUpdatedEvent;
@@ -69,6 +74,14 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 	{
 		if (obj is SampleGlobalEvent)
 			SampleGlobalEvent?.Invoke((SampleGlobalEvent)obj);
+		
+		//bookmark
+		if (obj is TfBookmarkCreatedEvent)
+			BookmarkCreatedEvent?.Invoke((TfBookmarkCreatedEvent)obj);
+		if (obj is TfBookmarkUpdatedEvent)
+			BookmarkUpdatedEvent?.Invoke((TfBookmarkUpdatedEvent)obj);
+		if (obj is TfBookmarkDeletedEvent)
+			BookmarkDeletedEvent?.Invoke((TfBookmarkDeletedEvent)obj);		
 		
 		//data identity
 		if (obj is TfDataIdentityCreatedEvent)
@@ -191,5 +204,6 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 		
 		if (obj is TfUserUpdatedEvent)
 			UserUpdatedEvent?.Invoke((TfUserUpdatedEvent)obj);					
+					
 	}
 }

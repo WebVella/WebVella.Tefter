@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-@if (TfAuthLayout.GetState().NavigationState.RouteNodes[0] == RouteDataNode.Home)
+@if (TfAuthLayout.GetState().NavigationState.HasNode(RouteDataNode.Home, 0))
 {
     <div class="tf-space-header">
         <div class="tf-space-header__icon">
@@ -12,7 +12,7 @@
         </div>
     </div>
 }
-else if (TfAuthLayout.GetState().NavigationState.RouteNodes[0] == RouteDataNode.Space)
+else if (TfAuthLayout.GetState().NavigationState.HasNode(RouteDataNode.Space, 0))
 {
     <div class="tf-space-header">
         <div class="tf-space-header__icon">

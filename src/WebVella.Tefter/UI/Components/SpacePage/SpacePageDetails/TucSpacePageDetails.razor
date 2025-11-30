@@ -19,7 +19,7 @@ else if (_spacePage is null)
 		No addon component defined
 	</FluentMessageBar>
 }
-else if (_spacePage.ComponentType is not null)
+else
 {
 	<TucErrorBoundry ShowAsAlert="true" Style="padding:var(--tf-padding)">
 		<DynamicComponent Type="@_spacePage.ComponentType" Parameters="@_getDynamicComponentParams()" />

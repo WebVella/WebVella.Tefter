@@ -247,7 +247,7 @@ html:root {
 html:root {
   color-scheme: dark;
   --tf-topbar-height: 50px;
-  --tf-space-header-height: 51px;
+  --tf-space-header-height: 50px;
   --tf-space-actions-height: 50px;
   --tf-aside-footer-height: 30px;
   --tf-aside-actions-height: 50px;
@@ -681,6 +681,11 @@ fluent-switch::part(label) {
 }
 fluent-select {
   --max-height: 200px;
+  min-width: unset;
+  /*    &::part(control){
+        width:unset;
+
+    }*/
 }
 fluent-select fluent-option {
   --neutral-fill-stealth-rest: transparent;
@@ -1867,6 +1872,9 @@ fluent-menu-item::part(start) {
   background: var(--neutral-layer-1);
   min-height: 100vh;
 }
+.tflg--no-aside-actions {
+  --tf-aside-actions-height: 0px;
+}
 .tflg__aside {
   flex: 0 0 var(--tf-aside-width);
   display: flex;
@@ -1879,6 +1887,7 @@ fluent-menu-item::part(start) {
   border-top: 1px dashed var(--neutral-stroke-rest);
 }
 .tflg__aside__footer {
+  box-sizing: border-box;
   flex: 0 0 var(--tf-aside-footer-height);
   display: flex;
   align-items: end;
@@ -1910,6 +1919,7 @@ fluent-menu-item::part(start) {
 }
 .tflg__space-header {
   flex: 0 0 var(--tf-space-header-height);
+  box-sizing: border-box;
   border: 1px solid var(--neutral-stroke-rest);
   border-left: none;
   border-top-right-radius: var(--tf-padding);
@@ -1918,7 +1928,7 @@ fluent-menu-item::part(start) {
 }
 .tflg__sidenav {
   flex: 1 1 auto;
-  height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-actions-height) - var(--tf-aside-actions-height) - var(--tf-aside-footer-height));
+  height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-actions-height) - var(--tf-aside-footer-height) - var(--tf-aside-actions-height) - 5px);
   overflow-y: auto;
   scrollbar-width: thin;
   border-right: 1px solid var(--neutral-stroke-rest);
@@ -2178,6 +2188,14 @@ fluent-menu-item::part(start) {
 .tf-page-topbar fluent-divider {
   height: 1rem;
   margin: 0 0.5rem;
+}
+.tf-page-topbar fluent-anchor,
+.tf-page-topbar fluent-button {
+  --neutral-foreground-rest: var(--neutral-foreground-hint);
+}
+.tf-page-topbar fluent-anchor:hover,
+.tf-page-topbar fluent-button:hover {
+  --neutral-foreground-rest: var(--accent-fill-rest);
 }
 .tf-page-topbar fluent-anchor::part(control),
 .tf-page-topbar fluent-button::part(control) {

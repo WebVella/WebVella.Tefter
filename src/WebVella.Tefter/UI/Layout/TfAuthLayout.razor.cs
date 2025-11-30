@@ -11,7 +11,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
-	
+
 	private TfState _state = new();
 	private TfUser _currentUser = new();
 	private bool _isLoaded = false;
@@ -38,7 +38,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		var user = await TfService.GetUserFromCookieAsync(
 			jsRuntime: JsRuntime,
 			authStateProvider: AuthenticationStateProvider);
-		
+
 		if (user is null)
 		{
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
@@ -114,7 +114,18 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		else
 			_state = TfService.GetAppState(Navigator, _currentUser, url, _state, space);
 
-		_accentColor = (_state.Space?.Color ?? TfColor.Amber500);
+		if (_state.NavigationState.RouteNodes[0] == RouteDataNode.Home)
+		{
+			_accentColor = _currentUser.Settings.Color;
+		}
+		else if (_state.NavigationState.RouteNodes[0] == RouteDataNode.Space)
+		{
+			_accentColor = _state.Space?.Color ?? TfConstants.DefaultThemeColor;
+		}
+		else
+		{
+			_accentColor = TfColor.Amber500;
+		}
 		_themeMode = _currentUser?.Settings?.ThemeMode ?? DesignThemeModes.System;
 	}
 

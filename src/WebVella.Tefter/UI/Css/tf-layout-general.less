@@ -1,83 +1,90 @@
 ﻿.tflg {
-  display: flex;
-  flex-flow: row;
-  position: relative;
-  background: var(--neutral-layer-1);
-  min-height: 100vh;
-
-  &__aside {
-    flex: 0 0 var(--tf-aside-width);
     display: flex;
-    flex-flow: column;
-    
-    &__actions{
-      flex: 0 0 var(--tf-aside-actions-height);
-      border-right: 1px solid var(--neutral-stroke-rest);
-      background: var(--neutral-layer-2);
-      border-top: 1px dashed var(--neutral-stroke-rest);
-    }
-
-    &__footer {
-      flex: 0 0 var(--tf-aside-footer-height);
-      display: flex;
-      align-items: end;
-      justify-content: center;
-      color: var(--neutral-foreground-hint);
-      font-size: var(--type-ramp-minus-1-font-size);
-      padding-bottom: calc(var(--tf-padding) / 2);
-      border-right: 1px solid var(--neutral-stroke-rest);
-      background: var(--neutral-layer-2);
-      a {
-        color: var(--neutral-foreground-hint);
-        text-decoration: none;
-        &:hover{
-          color: var(--neutral-foreground-rest);
-        }
-      }
-      
-      sup{
-        font-size: calc(var(--type-ramp-minus-1-font-size) - 4px);
-      }
-    }
-  }
-
-  &__wrapper {
-    flex: 1 1 auto;
-    display: flex;
-    flex-flow: column;
-  }
-
-
-  &__space-actions {
-    flex: 0 0 var(--tf-space-actions-height);
+    flex-flow: row;
+    position: relative;
     background: var(--neutral-layer-1);
-  }  
-  
-  &__space-header {
-    flex: 0 0 var(--tf-space-header-height);
-    border: 1px solid var(--neutral-stroke-rest);
-    border-left: none;
-    border-top-right-radius: var(--tf-padding);
-    border-bottom-style: dashed;
-    background: var(--neutral-layer-2);
-  }
+    min-height: 100vh;
+
+    &--no-aside-actions {
+        --tf-aside-actions-height: 0px;
+    }
+
+    &__aside {
+        flex: 0 0 var(--tf-aside-width);
+        display: flex;
+        flex-flow: column;
+
+        &__actions {
+            flex: 0 0 var(--tf-aside-actions-height);
+            border-right: 1px solid var(--neutral-stroke-rest);
+            background: var(--neutral-layer-2);
+            border-top: 1px dashed var(--neutral-stroke-rest);
+        }
+
+        &__footer {
+            box-sizing: border-box;
+            flex: 0 0 var(--tf-aside-footer-height);
+            display: flex;
+            align-items: end;
+            justify-content: center;
+            color: var(--neutral-foreground-hint);
+            font-size: var(--type-ramp-minus-1-font-size);
+            padding-bottom: calc(var(--tf-padding) / 2);
+            border-right: 1px solid var(--neutral-stroke-rest);
+            background: var(--neutral-layer-2);
+
+            a {
+                color: var(--neutral-foreground-hint);
+                text-decoration: none;
+
+                &:hover {
+                    color: var(--neutral-foreground-rest);
+                }
+            }
+
+            sup {
+                font-size: calc(var(--type-ramp-minus-1-font-size) - 4px);
+            }
+        }
+    }
+
+    &__wrapper {
+        flex: 1 1 auto;
+        display: flex;
+        flex-flow: column;
+    }
 
 
-  &__sidenav {
-    flex: 1 1 auto;
-    height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-actions-height) - var(--tf-aside-actions-height)
-    - var(--tf-aside-footer-height));
-    overflow-y: auto;
-    scrollbar-width: thin;
-    border-right: 1px solid var(--neutral-stroke-rest);
-    background: var(--neutral-layer-2);
-  }
+    &__space-actions {
+        flex: 0 0 var(--tf-space-actions-height);
+        background: var(--neutral-layer-1);
+    }
 
-  &__page-topbar {
-    flex: 0 0 var(--tf-topbar-height);
-  }
+    &__space-header {
+        flex: 0 0 var(--tf-space-header-height);
+        box-sizing: border-box;
+        border: 1px solid var(--neutral-stroke-rest);
+        border-left: none;
+        border-top-right-radius: var(--tf-padding);
+        border-bottom-style: dashed;
+        background: var(--neutral-layer-2);
+    }
 
-  &__page-content {
-    flex: 1 1 auto;
-  }
-}     
+
+    &__sidenav {
+        flex: 1 1 auto;
+        height: calc(100vh - var(--tf-space-header-height) - var(--tf-space-actions-height) - var(--tf-aside-footer-height) - var(--tf-aside-actions-height) - 5px );
+        overflow-y: auto;
+        scrollbar-width: thin;
+        border-right: 1px solid var(--neutral-stroke-rest);
+        background: var(--neutral-layer-2);
+    }
+
+    &__page-topbar {
+        flex: 0 0 var(--tf-topbar-height);
+    }
+
+    &__page-content {
+        flex: 1 1 auto;
+    }
+}

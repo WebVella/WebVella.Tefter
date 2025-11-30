@@ -5,12 +5,10 @@ namespace WebVella.Tefter.Services;
 public partial interface ITfService
 {
 	public List<TfBookmark> GetBookmarksListForUser(
-		Guid userId,
-		Guid? spaceId = null);
+		Guid userId);
 
 	public List<TfBookmark> GetSavesListForUser(
-		Guid userId,
-		Guid? spaceId = null);
+		Guid userId);
 
 	public TfBookmark GetBookmark(
 		Guid id);
@@ -32,35 +30,15 @@ public partial interface ITfService
 public partial class TfService : ITfService
 {
 	public List<TfBookmark> GetBookmarksListForUser(
-		Guid userId,
-		Guid? spaceId = null)
+		Guid userId)
 	{
 		try
 		{
 			var bookmarks = _dboManager.GetList<TfBookmark>(userId, nameof(TfBookmark.UserId));
-
-			if (spaceId.HasValue)
-			{
-				List<TfBookmark> result = new List<TfBookmark>();
-				foreach (var bookmark in bookmarks)
-				{
-					var page = GetSpacePage(bookmark.SpacePageId);
-					if(page is null || page.SpaceId != spaceId.Value)	
-						continue;
-
-					bookmark.Tags = GetBookmarkTags(bookmark.Id);
-					result.Add(bookmark);
-				}
-				
-				return result;
-			}
-			else
-			{
-				foreach (var bookmark in bookmarks)
-					bookmark.Tags = GetBookmarkTags(bookmark.Id);
-
-				return bookmarks;
-			}
+			bookmarks = bookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).ToList();
+			foreach (var bookmark in bookmarks)
+				bookmark.Tags = GetBookmarkTags(bookmark.Id);
+			return bookmarks;
 		}
 		catch (Exception ex)
 		{
@@ -69,29 +47,14 @@ public partial class TfService : ITfService
 	}
 
 	public List<TfBookmark> GetSavesListForUser(
-		Guid userId,
-		Guid? spaceId = null)
+		Guid userId)
 	{
 		try
 		{
 			var bookmarks = _dboManager.GetList<TfBookmark>(userId, nameof(TfBookmark.UserId));
-			foreach (var bookmark in bookmarks.Where(x => !String.IsNullOrWhiteSpace(x.Url)))
+			bookmarks = bookmarks.Where(x => !String.IsNullOrWhiteSpace(x.Url)).ToList();
+			foreach (var bookmark in bookmarks)
 				bookmark.Tags = GetBookmarkTags(bookmark.Id);
-
-			if (spaceId.HasValue)
-			{
-				List<TfBookmark> result = new List<TfBookmark>();
-				foreach (var bookmark in bookmarks)
-				{
-					var page = GetSpacePage(bookmark.SpacePageId);
-					if (page is null || page.SpaceId != spaceId.Value)
-						continue;
-
-					result.Add(bookmark);
-				}
-				return result;
-			}
-
 			return bookmarks;
 		}
 		catch (Exception ex)
@@ -101,7 +64,7 @@ public partial class TfService : ITfService
 	}
 
 	public List<TfBookmark> GetBookmarksListForSpace(
-		Guid spaceId )
+		Guid spaceId)
 	{
 		try
 		{
@@ -130,7 +93,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			var bookmarks = _dboManager.GetList<TfBookmark>(spacePageId,nameof(TfBookmark.SpacePageId));
+			var bookmarks = _dboManager.GetList<TfBookmark>(spacePageId, nameof(TfBookmark.SpacePageId));
 			foreach (var bookmark in bookmarks)
 				bookmark.Tags = GetBookmarkTags(bookmark.Id);
 
@@ -172,7 +135,6 @@ public partial class TfService : ITfService
 		{
 			throw ProcessException(ex);
 		}
-
 	}
 
 	private List<string> GetUniqueTagsFromText(
@@ -207,7 +169,7 @@ public partial class TfService : ITfService
 		Guid spacePageId)
 	{
 		var bookmark = GetBookmarksListForUser(userId)
-			.FirstOrDefault(x => x.SpacePageId == spacePageId);
+			.FirstOrDefault(x => x.SpacePageId == spacePageId && String.IsNullOrWhiteSpace(x.Url));
 
 		var spacePage = GetSpacePage(spacePageId);
 
@@ -266,51 +228,36 @@ public partial class TfService : ITfService
 
 						if (tag is not null)
 						{
-							bookmarkTag = new TfBookmarkTag
-							{
-								BookmarkId = bookmark.Id,
-								TagId = tag.Id
-							};
+							bookmarkTag = new TfBookmarkTag { BookmarkId = bookmark.Id, TagId = tag.Id };
 						}
 						else
 						{
-							var newTag = new TfTag
-							{
-								Id = Guid.NewGuid(),
-								Label = textTag
-							};
+							var newTag = new TfTag { Id = Guid.NewGuid(), Label = textTag };
 
 							success = _dboManager.Insert<TfTag>(newTag);
 							if (!success)
 								throw new TfDboServiceException("Insert<TfTag> failed.");
 
-							bookmarkTag = new TfBookmarkTag
-							{
-								BookmarkId = bookmark.Id,
-								TagId = newTag.Id
-							};
-
+							bookmarkTag = new TfBookmarkTag { BookmarkId = bookmark.Id, TagId = newTag.Id };
 						}
 
 						success = _dboManager.Insert<TfBookmarkTag>(bookmarkTag);
 
 						if (!success)
 							throw new TfDboServiceException("Insert<TfBookmarkTag> failed.");
-
 					}
 				}
 
 				scope.Complete();
-
-				PublishEventWithScope(new TfUserUpdatedEvent(GetUser(bookmark.UserId)));
-				return GetBookmark(bookmark.Id);
+				bookmark = GetBookmark(bookmark.Id);
+				PublishEventWithScope(new TfBookmarkCreatedEvent(GetBookmark(bookmark.Id)));
+				return bookmark;
 			}
 		}
 		catch (Exception ex)
 		{
 			throw ProcessException(ex);
 		}
-
 	}
 
 	public TfBookmark UpdateBookmark(
@@ -357,7 +304,6 @@ public partial class TfService : ITfService
 
 					if (!success)
 						throw new TfDboServiceException("Insert<TfBookmarkTag> failed.");
-
 				}
 
 				//remove connection to missing tags
@@ -381,9 +327,10 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Update<TfBookmark> failed.");
 
 				scope.Complete();
-				PublishEventWithScope(new TfUserUpdatedEvent(GetUser(bookmark.UserId)));
 
-				return GetBookmark(bookmark.Id);
+				bookmark = GetBookmark(bookmark.Id);
+				PublishEventWithScope(new TfBookmarkUpdatedEvent(GetBookmark(bookmark.Id)));
+				return bookmark;
 			}
 		}
 		catch (Exception ex)
@@ -427,8 +374,7 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfBookmark> failed.");
 
 				scope.Complete();
-
-				PublishEventWithScope(new TfUserUpdatedEvent(GetUser(existingBookmark.UserId)));
+				PublishEventWithScope(new TfBookmarkDeletedEvent(existingBookmark));
 			}
 		}
 		catch (Exception ex)
@@ -438,7 +384,6 @@ public partial class TfService : ITfService
 	}
 
 
-
 	#region <--- validation --->
 
 	internal class TfBookmarkValidator : AbstractValidator<TfBookmark>
@@ -446,7 +391,6 @@ public partial class TfService : ITfService
 		public TfBookmarkValidator(
 			ITfService tfService)
 		{
-
 			RuleSet("general", () =>
 			{
 				RuleFor(bookmark => bookmark.Id)
@@ -456,40 +400,39 @@ public partial class TfService : ITfService
 				RuleFor(bookmark => bookmark.Name)
 					.NotEmpty()
 					.WithMessage("The bookmark name is required.");
-
 			});
 
 			RuleSet("create", () =>
 			{
 				RuleFor(bookmark => bookmark.Id)
-						.Must((bookmark, id) => { return tfService.GetBookmark(id) == null; })
-						.WithMessage("There is already existing bookmark with specified identifier.");
-
+					.Must((bookmark, id) => { return tfService.GetBookmark(id) == null; })
+					.WithMessage("There is already existing bookmark with specified identifier.");
 			});
 
 			RuleSet("update", () =>
 			{
 				RuleFor(bookmark => bookmark.Id)
-						.Must((bookmark, id) =>
-						{
-							return tfService.GetBookmark(id) != null;
-						})
-						.WithMessage("There is not existing bookmark with specified identifier.");
-
+					.Must((bookmark, id) =>
+					{
+						return tfService.GetBookmark(id) != null;
+					})
+					.WithMessage("There is not existing bookmark with specified identifier.");
 			});
 
 			RuleSet("delete", () =>
 			{
 			});
-
 		}
 
 		public ValidationResult ValidateCreate(
 			TfBookmark bookmark)
 		{
 			if (bookmark == null)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The bookmark is null.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The bookmark is null.")
+				});
 
 			return this.Validate(bookmark, options =>
 			{
@@ -501,8 +444,11 @@ public partial class TfService : ITfService
 			TfBookmark bookmark)
 		{
 			if (bookmark == null)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The bookmark is null.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The bookmark is null.")
+				});
 
 			return this.Validate(bookmark, options =>
 			{
@@ -514,8 +460,11 @@ public partial class TfService : ITfService
 			TfBookmark bookmark)
 		{
 			if (bookmark == null)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The bookmark with specified identifier is not found.") });
+				return new ValidationResult(new[]
+				{
+					new ValidationFailure("",
+						"The bookmark with specified identifier is not found.")
+				});
 
 			return this.Validate(bookmark, options =>
 			{

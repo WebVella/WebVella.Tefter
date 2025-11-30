@@ -1,4 +1,4 @@
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucLayoutGeneral : TfBaseComponent
 {
@@ -22,6 +22,10 @@ public partial class TucLayoutGeneral : TfBaseComponent
 			if (!_hasSidebar)
 			{
 				sb.Append("tflg--no-aside ");
+			}
+			if (AsideActions is null)
+			{
+				sb.Append("tflg--no-aside-actions ");
 			}
 			return sb.ToString();
 		}

@@ -45,7 +45,7 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 	}
 
 	private bool _isHomeSpace()
-		=> TfAuthLayout.GetState().NavigationState.RouteNodes[0] == RouteDataNode.Home;
+		=> TfAuthLayout.GetState().NavigationState.HasNode(RouteDataNode.Home, 0);
 
 
 	[JSInvokable("OnGlobalSearchHandler")]

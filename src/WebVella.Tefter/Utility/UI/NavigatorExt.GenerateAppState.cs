@@ -35,8 +35,8 @@ public static partial class NavigatorExt
 		}
 		else
 		{
-			appState.UserBookmarks = _tfService.GetBookmarksListForUser(currentUser.Id,navState.SpaceId.Value);
-			appState.UserSaves = _tfService.GetSavesListForUser(currentUser.Id,navState.SpaceId.Value);
+			appState.UserBookmarks = _tfService.GetBookmarksListForUser(currentUser.Id);
+			appState.UserSaves = _tfService.GetSavesListForUser(currentUser.Id);
 		}
 
 		if (navState.RouteNodes.Count == 0) { }
@@ -52,7 +52,7 @@ public static partial class NavigatorExt
 			appState.generateBreadcrumb(LOC, navState, addonPages: addonPages);
 		}
 		else if (navState.RouteNodes[0] == RouteDataNode.Home
-		         || navState.RouteNodes[0] == RouteDataNode.Space)
+				 || navState.RouteNodes[0] == RouteDataNode.Space)
 		{
 			if (navState.SpaceId is not null)
 			{
@@ -70,7 +70,7 @@ public static partial class NavigatorExt
 				{
 					//get space pages
 					if (oldState is not null && oldState.Space?.Id == appState.Space.Id
-					                         && oldState.SpacePages is not null)
+											 && oldState.SpacePages is not null)
 						appState.SpacePages = oldState.SpacePages;
 					else
 						appState.SpacePages = _tfService.GetSpacePages(navState.SpaceId.Value);
@@ -80,7 +80,7 @@ public static partial class NavigatorExt
 					else if (navState.SpacePageId == oldState?.SpacePage?.Id)
 						appState.SpacePage = oldState?.SpacePage;
 					else
-						appState.SpacePage =_tfService.GetSpacePage(navState.SpacePageId.Value);
+						appState.SpacePage = _tfService.GetSpacePage(navState.SpacePageId.Value);
 
 
 					appState.Menu = navState.generateSpaceMenu(
@@ -88,6 +88,10 @@ public static partial class NavigatorExt
 
 					appState.generateBreadcrumb(LOC, navState, spacePages: appState.SpacePages);
 				}
+			}
+			else
+			{
+				appState.generateBreadcrumb(LOC, navState);
 			}
 		}
 
@@ -123,7 +127,7 @@ public static partial class NavigatorExt
 				IconCollapsed = TfConstants.GetIcon("People"),
 				IconExpanded = TfConstants.GetIcon("People"),
 				Selected = routeState.HasNode(RouteDataNode.Users, 1)
-				           || routeState.HasNode(RouteDataNode.Roles, 1),
+						   || routeState.HasNode(RouteDataNode.Roles, 1),
 				Url = string.Format(TfConstants.AdminUsersPageUrl),
 				Text = LOC["Access"],
 				Expanded = true
@@ -157,8 +161,8 @@ public static partial class NavigatorExt
 				IconCollapsed = TfConstants.GetIcon("Database"),
 				IconExpanded = TfConstants.GetIcon("Database"),
 				Selected = routeState.HasNode(RouteDataNode.DataProviders, 1)
-				           || routeState.HasNode(RouteDataNode.SharedColumns, 1)
-				           || routeState.HasNode(RouteDataNode.DataIdentities, 1),
+						   || routeState.HasNode(RouteDataNode.SharedColumns, 1)
+						   || routeState.HasNode(RouteDataNode.DataIdentities, 1),
 				Url = string.Format(TfConstants.AdminDataProvidersPageUrl),
 				Text = LOC["Data"],
 				Expanded = true
@@ -198,7 +202,7 @@ public static partial class NavigatorExt
 				IconCollapsed = TfConstants.GetIcon("Folder"),
 				IconExpanded = TfConstants.GetIcon("Folder"),
 				Selected = routeState.HasNode(RouteDataNode.Templates, 1)
-				           || routeState.HasNode(RouteDataNode.FileRepository, 1),
+						   || routeState.HasNode(RouteDataNode.FileRepository, 1),
 				Url = string.Format(TfConstants.AdminFileRepositoryPageUrl),
 				Text = LOC["Content"],
 				Expanded = true
@@ -283,7 +287,7 @@ public static partial class NavigatorExt
 				: String.Format(TfConstants.SpacePagePageUrl, page.SpaceId, page.Id),
 			Text = page.Name,
 			Tooltip = page.Name,
-			Data = new TfMenuItemData(){PageId = page.Id}
+			Data = new TfMenuItemData() { PageId = page.Id }
 		};
 
 		foreach (var childPage in page.ChildPages)
@@ -300,13 +304,16 @@ public static partial class NavigatorExt
 		List<TfSpacePage>? spacePages = null)
 	{
 		var menu = new List<TfMenuItem>();
-		menu.Add(new()
+		if (navState.HasNode(RouteDataNode.Admin, 0) || navState.HasNode(RouteDataNode.Space, 0))
 		{
-			Id = "tf-app-switch",
-			Text = LOC["Spaces"],
-			IconCollapsed = TfConstants.GetIcon("AppFolder", IconSize.Size16),
-			Url = "#"
-		});
+			menu.Add(new()
+			{
+				Id = "tf-app-switch",
+				Text = LOC["Spaces"],
+				IconCollapsed = TfConstants.GetIcon("AppFolder", IconSize.Size16),
+				Url = "#"
+			});
+		}
 
 		if (navState.HasNode(RouteDataNode.Admin, 0))
 		{
@@ -314,17 +321,23 @@ public static partial class NavigatorExt
 
 			var accessNode = new TfMenuItem()
 			{
-				Id = "tf-admin-access", Text = LOC["Access"], Url = TfConstants.AdminUsersPageUrl
+				Id = "tf-admin-access",
+				Text = LOC["Access"],
+				Url = TfConstants.AdminUsersPageUrl
 			};
 
 			var dataNode = new TfMenuItem()
 			{
-				Id = "tf-admin-data", Text = LOC["Data"], Url = TfConstants.AdminDataProvidersPageUrl
+				Id = "tf-admin-data",
+				Text = LOC["Data"],
+				Url = TfConstants.AdminDataProvidersPageUrl
 			};
 
 			var contentNode = new TfMenuItem()
 			{
-				Id = "tf-admin-content", Text = LOC["Content"], Url = TfConstants.AdminFileRepositoryPageUrl
+				Id = "tf-admin-content",
+				Text = LOC["Content"],
+				Url = TfConstants.AdminFileRepositoryPageUrl
 			};
 
 			var addonsNode = new TfMenuItem()
@@ -454,7 +467,7 @@ public static partial class NavigatorExt
 				}
 			}
 		}
-		else if (navState.RouteNodes[0] == RouteDataNode.Space)
+		else if (navState.HasNode(RouteDataNode.Space, 0))
 		{
 			if (appState.Space is not null)
 			{
@@ -467,6 +480,16 @@ public static partial class NavigatorExt
 						: null
 				});
 			}
+		}
+		else if (navState.HasNode(RouteDataNode.Home, 0))
+		{
+
+			menu.Add(new()
+			{
+				Id = $"tf-space-home",
+				Text = LOC["Home"],
+				Url = "/"
+			});
 		}
 
 		appState.Breadcrumb = menu;

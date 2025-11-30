@@ -47,10 +47,15 @@ fluent-switch::part(label){
 
 fluent-select {
     --max-height:200px;
+    min-width:unset;
     fluent-option {
         --neutral-fill-stealth-rest: transparent;
         --neutral-fill-stealth-hover: color-mix(in srgb, var(--fill-color), var(--accent-fill-rest) 10%);
     }
+/*    &::part(control){
+        width:unset;
+
+    }*/
 
 }
 

@@ -97,4 +97,8 @@
 	  <AdditionalFiles Include="UI\Components\SpaceView\SpaceViewPinColumnsDialog\TucSpaceViewColorRulesDialog.razor" />
 	  <AdditionalFiles Include="UI\Components\Space\AsideActions\TucAsideActions.razor" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="UI\Components\Page\PageLinkSaveSelector\TucPageLinkSaveSelector.razor" />
+	</ItemGroup>
 </Project>
