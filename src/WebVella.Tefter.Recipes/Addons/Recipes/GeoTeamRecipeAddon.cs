@@ -33,6 +33,9 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 
     public GeoTalkRecipeAddon()
     {
+        var adminUserId = Guid.NewGuid();
+        var regularUserId = Guid.NewGuid();
+        var regularUser2Id = Guid.NewGuid();
         var regularRoleId = new Guid("26dfd164-f1d7-4078-85e7-7f3f852f6577");
         var dataProviderId = new Guid("9ba6d290-8de0-475e-92f7-bda8d03667c7");
         int dataProviderIndex = 1;
@@ -230,6 +233,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         },
                         Data = new TfCreateUserRecipeStepData()
                         {
+                            UserId = adminUserId,
                             Email = "admin@test.com",
                             Password = "1",
                             FirstName = "System",
@@ -265,6 +269,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         },
                         Data = new TfCreateUserRecipeStepData()
                         {
+                            UserId = regularUserId,
                             Email = "user1@test.com",
                             Password = "1",
                             FirstName = "User",
@@ -284,6 +289,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         },
                         Data = new TfCreateUserRecipeStepData()
                         {
+                            UserId = regularUser2Id,
                             Email = "user2@test.com",
                             Password = "1",
                             FirstName = "User",
@@ -673,8 +679,8 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                        {
                            Width = 65
                        }
-                   },                    
-                   
+                   },
+
                    new TfSpaceViewColumn
                    {
                        Id = new Guid("7b9bed20-529c-4b53-b886-5d92cf317304"),
@@ -751,7 +757,6 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
         });
 
         #endregion
-
 
         #region << Template blob >>
 
@@ -847,6 +852,81 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
             }
         });
 
+        #endregion
+
+        #region << Bookmark >>
+        Steps.Add(new TfBookmarkRecipeStep
+        {
+            Instance = new TfRecipeStepInstance
+            {
+                Visible = false,
+                StepId = new Guid("51c26f63-79d5-4617-a3d7-102686109ce2"),
+                StepMenuTitle = "Bookmark Space page",
+                StepContentTitle = "Bookmark Space page",
+            },
+            Data = new TfBookmarkRecipeStepData()
+            {
+                Bookmarks = new List<TfBookmark> {
+                    new TfBookmark
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = adminUserId,
+                        SpacePageId = spacePageId,
+                        Name = "Example bookmark",
+                        CreatedOn = DateTime.Now,
+                        Description = "#test",
+                    },
+                    new TfBookmark
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = adminUserId,
+                        SpacePageId = spacePageId,
+                        Name = "Example Saved URL",
+                        CreatedOn = DateTime.Now,
+                        Description = "#test",
+                        Url = String.Format(TfConstants.SpacePagePageUrl,spaceId,spacePageId) + $"?{TfConstants.SearchQueryName}=city"
+                    },
+                    new TfBookmark
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = regularUserId,
+                        SpacePageId = spacePageId,
+                        Name = "Example bookmark",
+                        CreatedOn = DateTime.Now,
+                        Description = "#test",
+                    },
+                    new TfBookmark
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = regularUserId,
+                        SpacePageId = spacePageId,
+                        Name = "Example Saved URL",
+                        CreatedOn = DateTime.Now,
+                        Description = "#test",
+                        Url = String.Format(TfConstants.SpacePagePageUrl,spaceId,spacePageId) + $"?{TfConstants.SearchQueryName}=city"
+                    },
+                    new TfBookmark
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = regularUser2Id,
+                        SpacePageId = spacePageId,
+                        Name = "Example bookmark",
+                        CreatedOn = DateTime.Now,
+                        Description = "#test",
+                    },
+                    new TfBookmark
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = regularUser2Id,
+                        SpacePageId = spacePageId,
+                        Name = "Example Saved URL",
+                        CreatedOn = DateTime.Now,
+                        Description = "#test",
+                        Url = String.Format(TfConstants.SpacePagePageUrl,spaceId,spacePageId) + $"?{TfConstants.SearchQueryName}=city"
+                    },
+                }
+            }
+        });
         #endregion
     }
 }

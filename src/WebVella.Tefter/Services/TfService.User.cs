@@ -965,7 +965,7 @@ public partial class TfService : ITfService
 
 		UserDbo userDbo = new UserDbo
 		{
-			Id = Guid.NewGuid(),
+			Id = user.Id == Guid.Empty ? Guid.NewGuid() : user.Id,
 			CreatedOn = user.CreatedOn,
 			Email = user.Email,
 			Enabled = user.Enabled,

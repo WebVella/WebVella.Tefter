@@ -11,14 +11,13 @@ public class TfCreateDataIdentityRecipeStep : ITfRecipeStepAddon
 	public ITfRecipeStepAddonData Data { get; set; }
 	public Task ApplyStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult stepResult)
 	{
-		ITfService tfService = serviceProvider.GetService<ITfService>();
-
 		if (addon.GetType().FullName != this.GetType().FullName)
 			throw new Exception("Wrong addon type provided for application");
 
 		if (addon.Data.GetType().FullName != typeof(TfCreateDataIdentityRecipeStepData).FullName)
 			throw new Exception("Wrong data model type provided for application");
 
+		ITfService tfService = serviceProvider.GetService<ITfService>()!;
 		var step = (TfCreateDataIdentityRecipeStepData)addon.Data;
 		_ = tfService.CreateDataIdentity(new TfDataIdentity
 		{
