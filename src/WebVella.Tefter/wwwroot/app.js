@@ -73,6 +73,36 @@
                     delay: 2000,
                     maxStack: 500,
                     userOnly: true
+                },
+                mention: {
+                    allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
+                    mentionDenotationChars: ["@"],
+                    defaultMenuOrientation:'top',
+                    source: async function (searchTerm, renderList, mentionChar) {
+                        let values;
+                        try {
+                            const response = await fetch("/api/get-users");
+                            if (!response.ok) {
+                                throw new Error(`Response status: ${response.status}`);
+                            }
+
+                            values = await response.json();
+                        } catch (error) {
+                            console.error(error.message);
+                        }
+
+                        if (searchTerm.length === 0) {
+                            renderList(values, searchTerm);
+                        } else {
+                            const matches = [];
+                            for (let i = 0; i < values.length; i++)
+                                if (
+                                    ~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())
+                                )
+                                    matches.push(values[i]);
+                            renderList(matches, searchTerm);
+                        }
+                    }
                 }
             },
             placeholder: placeholder,
@@ -88,6 +118,7 @@
             Tefter.HtmlEditors[editorId].keyboard.bindings['Enter'].unshift({
                 key: 'Enter',
                 shiftKey: false,
+                ctrlKey:true,
                 handler: (range, context) => {
                     return Tefter.executeEditorEnterKeyListenerCallbacks(editorId);
                 }
@@ -119,7 +150,7 @@
         }
     },
     addEditorTextChangeListener: function (dotNetHelper, editorId, methodName) {
-        Tefter.HtmlEditorsChangeListeners[editorId] = {dotNetHelper: dotNetHelper, methodName: methodName};
+        Tefter.HtmlEditorsChangeListeners[editorId] = { dotNetHelper: dotNetHelper, methodName: methodName };
         return true;
     },
     removeEditorTextChangeListener: function (editorId) {
@@ -141,7 +172,7 @@
     },
 
     addEditorEnterKeyListener: function (dotNetHelper, editorId, methodName) {
-        Tefter.HtmlEditorsEnterListeners[editorId] = {dotNetHelper: dotNetHelper, methodName: methodName};
+        Tefter.HtmlEditorsEnterListeners[editorId] = { dotNetHelper: dotNetHelper, methodName: methodName };
         return true;
     },
     removeEditorEnterKeyListener: function (editorId) {
@@ -276,7 +307,7 @@
         }
     },
     addColumnResizeListener: function (dotNetHelper, listenerId, methodName) {
-        Tefter.ColumnResizeListeners[listenerId] = {dotNetHelper: dotNetHelper, methodName: methodName};
+        Tefter.ColumnResizeListeners[listenerId] = { dotNetHelper: dotNetHelper, methodName: methodName };
         return true;
     },
     removeColumnResizeListener: function (listenerId) {
@@ -300,7 +331,7 @@
         return false;
     },
     addColumnSortListener: function (dotNetHelper, listenerId, methodName) {
-        Tefter.ColumnSortListeners[listenerId] = {dotNetHelper: dotNetHelper, methodName: methodName};
+        Tefter.ColumnSortListeners[listenerId] = { dotNetHelper: dotNetHelper, methodName: methodName };
         return true;
     },
     removeColumnSortListener: function (listenerId) {
@@ -324,7 +355,7 @@
         return false;
     },
     addGlobalSearchKeyListener: function (dotNetHelper, listenerId, methodName) {
-        Tefter.GlobalSearchListeners[listenerId] = {dotNetHelper: dotNetHelper, methodName: methodName};
+        Tefter.GlobalSearchListeners[listenerId] = { dotNetHelper: dotNetHelper, methodName: methodName };
         return true;
     },
     removeGlobalSearchKeyListener: function (listenerId) {
@@ -347,7 +378,7 @@
         return true;
     },
     addArrowsKeyListener: function (dotNetHelper, listenerId, methodName) {
-        Tefter.ArrowsListeners[listenerId] = {dotNetHelper: dotNetHelper, methodName: methodName};
+        Tefter.ArrowsListeners[listenerId] = { dotNetHelper: dotNetHelper, methodName: methodName };
         return true;
     },
     removeArrowsKeyListener: function (listenerId) {
@@ -370,7 +401,7 @@
         return true;
     },
     addEnterKeyListener: function (dotNetHelper, listenerId, methodName) {
-        Tefter.EnterKeyListeners[listenerId] = {dotNetHelper: dotNetHelper, methodName: methodName};
+        Tefter.EnterKeyListeners[listenerId] = { dotNetHelper: dotNetHelper, methodName: methodName };
         return true;
     },
     removeEnterKeyListener: function (listenerId) {
@@ -403,7 +434,7 @@
         return true;
     },
     addThemeSwitchListener: function (dotNetHelper, listenerId, methodName) {
-        Tefter.ThemeSwitchListeners[listenerId] = {dotNetHelper: dotNetHelper, methodName: methodName};
+        Tefter.ThemeSwitchListeners[listenerId] = { dotNetHelper: dotNetHelper, methodName: methodName };
         return true;
     },
     removeThemeSwitchListener: function (listenerId) {
@@ -424,7 +455,7 @@
             }
         }
         return true;
-    },    
+    },
 }
 
 //Listeners
@@ -471,6 +502,6 @@ document.addEventListener("keydown", function (evtobj) {
             evtobj.preventDefault();
             Tefter.executeThemeSwitchListenerCallbacks();
         }
-    }    
+    }
 
 });

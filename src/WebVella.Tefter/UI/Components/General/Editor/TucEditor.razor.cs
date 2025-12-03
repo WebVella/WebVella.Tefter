@@ -58,7 +58,7 @@ public partial class TucEditor : TfBaseComponent,IAsyncDisposable
 			if (OnEnter.HasDelegate)
 			{
 				var onEnterMethodName = "OnEnterHandler";
-				var placeHolder = LOC("Shift + Enter for new line. Enter to send.");
+				var placeHolder = LOC("Ctrl + Enter to send.");
 				if (!String.IsNullOrWhiteSpace(Placeholder))
 					placeHolder = Placeholder + Environment.NewLine + placeHolder;
 
@@ -82,7 +82,14 @@ public partial class TucEditor : TfBaseComponent,IAsyncDisposable
 		if (_editorInited && Value != _value)
 		{
 			_value = Value;
-			await JSRuntime.InvokeAsync<object>("Tefter.setQuillHtml", _componentId.ToString(), _value);
+			try
+			{
+				await JSRuntime.InvokeAsync<object>("Tefter.setQuillHtml", _componentId.ToString(), _value);
+			}
+			catch (Exception)
+			{
+				//ignored
+			}			
 		}
 	}
 	private async Task _valueChanged(string value)
@@ -101,7 +108,6 @@ public partial class TucEditor : TfBaseComponent,IAsyncDisposable
 
 	public async Task Focus()
 	{
-		if(JSRuntime is null) return;
 		await JSRuntime.InvokeAsync<object>(
 			"Tefter.focusQuill", _componentId.ToString());
 	}

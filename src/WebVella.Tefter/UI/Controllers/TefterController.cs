@@ -97,4 +97,42 @@ public class ApiExcelController : ControllerBase
 		}
 	}
 
+	[Route("get-users")]
+	[HttpGet]
+	public async Task<ActionResult> GetUsers([FromQuery] string? search)
+	{
+		try
+		{
+			var users = _tfService.GetUsers();
+			var result = new List<TfIdValue>();
+			search = search?.Trim().ToLowerInvariant();
+			
+			foreach (var user in users)
+			{
+				if ( String.IsNullOrWhiteSpace(search)
+					|| user.Names.ToLowerInvariant().Contains(search))
+				{
+					result.Add(new TfIdValue()
+					{
+						Id = user.Id.ToString(),
+						Value = user.Names
+					});
+				}
+			}
+			
+			return new JsonResult(result);
+
+		}
+		catch (Exception exception)
+		{
+			return new ContentResult
+			{
+				Content = $"Error: {exception.Message}",
+				ContentType = "text/plain",
+				// change to whatever status code you want to send out
+				StatusCode = 500
+			};
+		}
+	}
+	
 }

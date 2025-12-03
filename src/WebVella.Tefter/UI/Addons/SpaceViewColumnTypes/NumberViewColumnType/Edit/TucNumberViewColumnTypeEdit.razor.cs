@@ -32,6 +32,13 @@ public partial class TucNumberViewColumnTypeEdit : TfLocalizedViewColumnComponen
 
 		Value = _value;
 		await ValueChanged.InvokeAsync(Value);
-		await JsRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
+		try
+		{
+			await JsRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
+		}
+		catch (Exception)
+		{
+			//ignored
+		}		
 	}
 }

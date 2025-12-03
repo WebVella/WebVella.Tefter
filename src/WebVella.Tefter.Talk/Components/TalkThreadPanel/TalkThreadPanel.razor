@@ -144,7 +144,7 @@
 							<div class="editor__actions__left"></div>
 							<div class="editor__actions__right">
 								<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_sendMessage" Appearance=@Appearance.Accent
-											  Loading="_channelEditorSending" Disabled="_channelEditorSending">@LOC("Send")</FluentButton>
+											  Loading="_channelEditorSending" Disabled="_channelEditorSending">@LOC("Send") <span style="opacity:0.5">[ctrl+Enter]</span></FluentButton>
 							</div>
 						</div>
 					</div>
@@ -238,7 +238,7 @@
 										</div>
 										<div class="editor__actions__right">
 											<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_replyMessage" Appearance=@Appearance.Accent
-														  Loading="_threadEditorSending" Disabled="_threadEditorSending">@LOC("Send")</FluentButton>
+														  Loading="_threadEditorSending" Disabled="_threadEditorSending">@LOC("Send") <span style="opacity: 0.5">[ctrl+Enter]</span></FluentButton>
 										</div>
 									</div>
 								</div>

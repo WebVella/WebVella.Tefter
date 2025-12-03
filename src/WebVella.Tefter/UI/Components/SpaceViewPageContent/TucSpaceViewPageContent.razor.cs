@@ -43,7 +43,10 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			await JSRuntime.InvokeAsync<bool>("Tefter.removeColumnResizeListener", ComponentId);
 			await JSRuntime.InvokeAsync<bool>("Tefter.removeColumnSortListener", ComponentId);
 		}
-		catch { }
+		catch (Exception)
+		{
+			//ignored
+		}
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -88,11 +91,18 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewColumnsChanged;
 			TfEventProvider.SpaceViewDataChangedEvent += On_SpaceViewDataChanged;
 			TfEventProvider.SpacePageUpdatedEvent += On_SpacePageUpdated;
-			await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable", _tableId);
-			await JSRuntime.InvokeAsync<bool>("Tefter.addColumnResizeListener",
-				_objectRef, ComponentId, "OnColumnResized");
-			await JSRuntime.InvokeAsync<bool>("Tefter.addColumnSortListener",
-				_objectRef, ComponentId, "OnColumnSort");
+			try
+			{
+				await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable", _tableId);
+				await JSRuntime.InvokeAsync<bool>("Tefter.addColumnResizeListener",
+					_objectRef, ComponentId, "OnColumnResized");
+				await JSRuntime.InvokeAsync<bool>("Tefter.addColumnSortListener",
+					_objectRef, ComponentId, "OnColumnSort");
+			}
+			catch (Exception)
+			{
+				//ignored
+			}
 		}
 	}
 

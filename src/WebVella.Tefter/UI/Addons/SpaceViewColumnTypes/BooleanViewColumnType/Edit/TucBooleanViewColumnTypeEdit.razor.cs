@@ -18,7 +18,14 @@ public partial class TucBooleanViewColumnTypeEdit : TfLocalizedViewColumnCompone
 			return;
 		Value = value;
 		await ValueChanged.InvokeAsync(Value);
-		await JsRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
+		try
+		{
+			await JsRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
+		}
+		catch (Exception)
+		{
+			//ignored
+		}
 	}
 
 	private async Task _valueChangedNotNull(bool value)
@@ -28,7 +35,14 @@ public partial class TucBooleanViewColumnTypeEdit : TfLocalizedViewColumnCompone
 			return;
 		Value = value;
 		await ValueChanged.InvokeAsync(Value);
-		await JsRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
+		try
+		{
+			await JsRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
+		}
+		catch (Exception)
+		{
+			//ignored
+		}
 	}
 
 	private string? _getLabel()

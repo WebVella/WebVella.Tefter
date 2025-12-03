@@ -5,6 +5,7 @@ public partial class TucDateTimeViewColumnTypeEdit : TfLocalizedViewColumnCompon
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
 	[Parameter] public TfSpaceViewColumnEditMode Context { get; set; } = null!;
+
 	[Parameter]
 	public DateTime? Value
 	{
@@ -23,12 +24,13 @@ public partial class TucDateTimeViewColumnTypeEdit : TfLocalizedViewColumnCompon
 
 	private DateTime? _original = null;
 	private DateTime? _value = null;
-	private TfDateTimeViewColumnTypeSettings _settings =  new ();
+	private TfDateTimeViewColumnTypeSettings _settings = new();
 
 	protected override void OnParametersSet()
 	{
 		_settings = Context.GetSettings<TfDateTimeViewColumnTypeSettings>();
 	}
+
 	private async Task _valueChanged()
 	{
 		if (!String.IsNullOrWhiteSpace(_settings.ChangeConfirmationMessage)
@@ -36,6 +38,13 @@ public partial class TucDateTimeViewColumnTypeEdit : TfLocalizedViewColumnCompon
 			return;
 		Value = _value;
 		await ValueChanged.InvokeAsync(Value);
-		await JsRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
+		try
+		{
+			await JsRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
+		}
+		catch (Exception)
+		{
+			//ignored
+		}
 	}
 }
