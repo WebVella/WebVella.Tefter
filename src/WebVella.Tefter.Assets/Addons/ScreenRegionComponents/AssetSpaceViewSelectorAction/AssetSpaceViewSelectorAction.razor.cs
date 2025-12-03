@@ -3,7 +3,7 @@
 namespace WebVella.Tefter.Talk.Components;
 
 public partial class AssetSpaceViewSelectorAction : TfBaseComponent,
-	ITfScreenRegionComponent<TfSpaceViewSelectorActionScreenRegionContext>
+	ITfScreenRegionAddon<TfSpaceViewSelectorActionScreenRegion>
 {
 	public const string ID = "c899bbe1-eade-4a00-a16e-6af87348ac71";
 	public const string NAME = "Add Assets to Selection";
@@ -17,7 +17,7 @@ public partial class AssetSpaceViewSelectorAction : TfBaseComponent,
 	public int PositionRank { get; init; } = POSITION_RANK;
 	public List<TfScreenRegionScope> Scopes { get; init; } = new();
 	[Parameter]
-	public TfSpaceViewSelectorActionScreenRegionContext RegionContext { get; set; }
+	public TfSpaceViewSelectorActionScreenRegion RegionContext { get; set; }
 
 	[CascadingParameter(Name = "TucSpaceViewPageContent")]
 	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;

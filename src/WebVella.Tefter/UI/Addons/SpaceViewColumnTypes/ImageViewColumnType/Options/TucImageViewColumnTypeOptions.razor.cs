@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Addons;
 public partial class TucImageViewColumnTypeOptions : TfLocalizedViewColumnComponent
 {
-	[Parameter] public TfSpaceViewColumnOptionsModeContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnOptionsMode Context { get; set; } = null!;
 	[Parameter] public EventCallback<TfImageViewColumnTypeSettings> SettingsChanged { get; set; }
 	
 	private TfImageViewColumnTypeSettings _form =  new ();

@@ -18,7 +18,7 @@ public partial class TucPager : TfBaseComponent, IDisposable
 	private readonly Debounce _currentSelectedChangedDebounce = new();
 	private int _page = 1;
 	private int _pageSize = TfConstants.PageSize;
-	private int _throttleMS = 500;
+	private int _throttleMS = 200;
 
 	private string _firstTooltip = "Go to first page [Home]";
 	private string _prevTooltip = "Go to previous page [Page Down]";

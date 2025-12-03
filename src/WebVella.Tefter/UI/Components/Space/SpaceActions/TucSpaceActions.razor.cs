@@ -22,8 +22,15 @@ public partial class TucSpaceActions : TfBaseComponent, IAsyncDisposable
 	{
 		ComponentId = Guid.NewGuid();
 		_objectRef = DotNetObjectReference.Create(this);
-		await JSRuntime.InvokeAsync<object>(
+		try
+		{
+			await JSRuntime.InvokeAsync<object>(
 			"Tefter.addGlobalSearchKeyListener", _objectRef, ComponentId.ToString(), "OnGlobalSearchHandler");
+		}
+		catch
+		{
+			//In rare occasions the item is disposed after the JSRuntime is no longer available
+		}
 
 	}
 

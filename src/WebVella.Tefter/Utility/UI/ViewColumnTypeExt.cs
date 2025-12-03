@@ -39,25 +39,25 @@ public static class ViewColumnTypeExt
 
 	#region << Context >>
 
-	public static (TfDataColumn?, object?) GetColumnAndDataByAlias(this TfSpaceViewColumnBaseContext args, string alias)
+	public static (TfDataColumn?, object?) GetColumnAndDataByAlias(this TfSpaceViewColumnBase args, string alias)
 	{
 		TfDataTable? dt;
 		Guid rowId;
 		switch (args)
 		{
-			case TfSpaceViewColumnReadModeContext context:
+			case TfSpaceViewColumnReadMode context:
 				dt = context.DataTable;
 				rowId = context.RowId;
 				break;
-			case TfSpaceViewColumnEditModeContext context:
+			case TfSpaceViewColumnEditMode context:
 				dt = context.DataTable;
 				rowId = context.RowId;
 				break;
-			case TfSpaceViewColumnExportExcelModeContext context:
+			case TfSpaceViewColumnExportExcelMode context:
 				dt = context.DataTable;
 				rowId = context.RowId;
 				break;
-			case TfSpaceViewColumnExportCsvModeContext context:
+			case TfSpaceViewColumnExportCsvMode context:
 				dt = context.DataTable;
 				rowId = context.RowId;
 				break;
@@ -74,7 +74,7 @@ public static class ViewColumnTypeExt
 		return (column, dt.GetColumnData(rowId, column));
 	}
 
-	public static string GetStorageKey(this TfSpaceViewColumnBaseContext args, string suffix)
+	public static string GetStorageKey(this TfSpaceViewColumnBase args, string suffix)
 	{
 		var sb = new StringBuilder();
 		sb.Append(args.ViewColumn.Id);
@@ -85,25 +85,25 @@ public static class ViewColumnTypeExt
 		return sb.ToString();
 	}
 
-	public static (TfDataColumn, object?) GetColumnAndData(this TfSpaceViewColumnBaseContext args, string columnName)
+	public static (TfDataColumn, object?) GetColumnAndData(this TfSpaceViewColumnBase args, string columnName)
 	{
 		TfDataTable? dt;
 		Guid rowId;
 		switch (args)
 		{
-			case TfSpaceViewColumnReadModeContext context:
+			case TfSpaceViewColumnReadMode context:
 				dt = context.DataTable;
 				rowId = context.RowId;
 				break;
-			case TfSpaceViewColumnEditModeContext context:
+			case TfSpaceViewColumnEditMode context:
 				dt = context.DataTable;
 				rowId = context.RowId;
 				break;
-			case TfSpaceViewColumnExportExcelModeContext context:
+			case TfSpaceViewColumnExportExcelMode context:
 				dt = context.DataTable;
 				rowId = context.RowId;
 				break;
-			case TfSpaceViewColumnExportCsvModeContext context:
+			case TfSpaceViewColumnExportCsvMode context:
 				dt = context.DataTable;
 				rowId = context.RowId;
 				break;
@@ -120,7 +120,7 @@ public static class ViewColumnTypeExt
 		return (column, dt.GetColumnData(rowId, column));
 	}
 
-	public static T GetSettings<T>(this TfSpaceViewColumnBaseContext args)
+	public static T GetSettings<T>(this TfSpaceViewColumnBase args)
 	{
 		if (args.ViewColumn.TypeOptionsJson is null) return Activator.CreateInstance<T>();
 		var options = JsonSerializer.Deserialize<T>(args.ViewColumn.TypeOptionsJson);
@@ -128,7 +128,7 @@ public static class ViewColumnTypeExt
 		return options;
 	}
 
-	public static void SetColumnTypeOptions<T>(this TfSpaceViewColumnBaseContext args, T? options)
+	public static void SetColumnTypeOptions<T>(this TfSpaceViewColumnBase args, T? options)
 	{
 		if (options is null)
 			args.ViewColumn.TypeOptionsJson = "{}";

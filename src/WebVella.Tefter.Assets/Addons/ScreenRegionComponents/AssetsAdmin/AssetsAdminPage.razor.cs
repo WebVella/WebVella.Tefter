@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Assets.Addons;
 
-public partial class AssetsAdminPage : TfBaseComponent, ITfScreenRegionComponent<TfAdminPageScreenRegionContext>
+public partial class AssetsAdminPage : TfBaseComponent, ITfScreenRegionAddon<TfAdminPageScreenRegion>
 {
 	public const string ID = "9cf13acf-8959-499e-aab8-ff2c25a6c97e";
 	public const string NAME = "Assets Folders";
@@ -17,5 +17,5 @@ public partial class AssetsAdminPage : TfBaseComponent, ITfScreenRegionComponent
 			new TfScreenRegionScope(null,new Guid(ID))
 		};
 	[Parameter]
-	public TfAdminPageScreenRegionContext RegionContext { get; set; }
+	public TfAdminPageScreenRegion RegionContext { get; set; }
 }

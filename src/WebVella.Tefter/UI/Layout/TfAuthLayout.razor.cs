@@ -1,4 +1,5 @@
 ﻿using Microsoft.FluentUI.AspNetCore.Components.DesignTokens;
+using WebVella.Tefter.Messaging;
 
 namespace WebVella.Tefter.UI.Layout;
 
@@ -61,6 +62,9 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			_locationChangingHandler = Navigator.RegisterLocationChangingHandler(Navigator_LocationChanging);
 			TfEventProvider.UserUpdatedEvent += On_UserUpdated;
 			TfEventProvider.SpaceUpdatedEvent += On_SpaceUpdated;
+			TfEventProvider.BookmarkCreatedEvent += On_BookmarkChangedEvent;
+			TfEventProvider.BookmarkUpdatedEvent += On_BookmarkChangedEvent;
+			TfEventProvider.BookmarkDeletedEvent += On_BookmarkChangedEvent;
 		}
 	}
 
@@ -88,6 +92,17 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			}
 		});
 	}
+
+	private async Task On_BookmarkChangedEvent(TfGlobalEvent args)
+	{
+		if (args.IsUserApplicable(_currentUser))
+		{
+			var allBookmarks = TfService.GetBookmarksAndSavesListForUser(_currentUser.Id);
+			_state.UserBookmarks = allBookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).ToList();
+			_state.UserSaves = allBookmarks.Where(x => !String.IsNullOrWhiteSpace(x.Url)).ToList();
+		}
+	}
+
 
 	private ValueTask Navigator_LocationChanging(LocationChangingContext args)
 	{

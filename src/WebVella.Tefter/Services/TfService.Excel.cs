@@ -102,7 +102,7 @@ public partial class TfService
 			currentExcelRow++;
 
 			var contextData = new Dictionary<string, object>();
-			var compContext = new TfSpaceViewColumnExportExcelModeContext(contextData)
+			var compContext = new TfSpaceViewColumnExportExcelMode(contextData)
 			{
 				DataTable = dataset,
 				ViewColumn = null!,
@@ -227,7 +227,7 @@ public partial class TfService
 
 		csv.NextRecord();
 		var contextData = new Dictionary<string, object>();
-		var compContext = new TfSpaceViewColumnExportCsvModeContext(contextData)
+		var compContext = new TfSpaceViewColumnExportCsvMode(contextData)
 		{
 			DataTable = dataset,
 			TfService = this,

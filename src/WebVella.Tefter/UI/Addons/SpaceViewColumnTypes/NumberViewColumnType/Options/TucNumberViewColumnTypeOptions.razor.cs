@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Addons;
 public partial class TucNumberViewColumnTypeOptions : TfLocalizedViewColumnComponent
 {
-	[Parameter] public TfSpaceViewColumnOptionsModeContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnOptionsMode Context { get; set; } = null!;
 	[Parameter] public EventCallback<TfNumberViewColumnTypeSettings> SettingsChanged { get; set; }
 	
 	private TfNumberViewColumnTypeSettings _form =  new ();

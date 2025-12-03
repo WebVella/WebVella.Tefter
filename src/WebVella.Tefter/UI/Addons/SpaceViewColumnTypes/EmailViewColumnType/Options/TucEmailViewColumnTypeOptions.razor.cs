@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Addons;
 public partial class TucEmailViewColumnTypeOptions : TfLocalizedViewColumnComponent
 {
-	[Parameter] public TfSpaceViewColumnOptionsModeContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnOptionsMode Context { get; set; } = null!;
 	[Parameter] public EventCallback<TfEmailViewColumnTypeSettings> SettingsChanged { get; set; }
 	private TfEmailViewColumnTypeSettings _form =  new ();
 

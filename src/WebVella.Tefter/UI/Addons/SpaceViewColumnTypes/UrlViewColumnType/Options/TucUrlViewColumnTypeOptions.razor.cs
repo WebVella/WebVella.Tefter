@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Addons;
 public partial class TucUrlViewColumnTypeOptions : TfLocalizedViewColumnComponent
 {
-	[Parameter] public TfSpaceViewColumnOptionsModeContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnOptionsMode Context { get; set; } = null!;
 	[Parameter] public EventCallback<TfUrlViewColumnTypeSettings> SettingsChanged { get; set; }
 
 	private TfUrlViewColumnTypeSettings _form =  new ();

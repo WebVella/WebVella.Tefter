@@ -1,0 +1,9 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+@if (!String.IsNullOrWhiteSpace(FluentIconName))
+{
+    <div class="tf-tile-card__icon">
+        <FluentIcon Value="@TfConstants.GetIcon(FluentIconName,size:IconSize.Size32)!.WithColor(_color)"/>
+    </div>
+}

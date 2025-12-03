@@ -2,7 +2,7 @@
 
 public partial class TucDateTimeViewColumnTypeRead : ComponentBase
 {
-	[Parameter] public TfSpaceViewColumnReadModeContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnReadMode Context { get; set; } = null!;
 	[Parameter] public List<DateTime?>? Value { get; set; }
 	
 	private string _format = null!;

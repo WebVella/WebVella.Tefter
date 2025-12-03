@@ -1,13 +1,12 @@
 ﻿namespace WebVella.Tefter.Utility;
+
 using WebVella.Tefter.Models;
+
 public static partial class NavigatorExt
 {
 	internal static TfNavigationState GetNodeData(this Uri uri)
 	{
-		TfNavigationState result = new TfNavigationState()
-		{
-			Uri = uri.AbsoluteUri
-		};
+		TfNavigationState result = new TfNavigationState() { Uri = uri.AbsoluteUri };
 		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 		var dictIndex = 0;
 		foreach (var item in nodes)
@@ -25,7 +24,7 @@ public static partial class NavigatorExt
 		var search = GetStringFromQuery(uri, TfConstants.SearchQueryName, null);
 		var searchAside = GetStringFromQuery(uri, TfConstants.AsideSearchQueryName, null);
 		var returnUrl = GetStringFromQuery(uri, TfConstants.ReturnUrlQueryName, null);
-		
+
 		List<TfFilterQuery> filters = null;
 		var filtersString = GetStringFromQuery(uri, TfConstants.FiltersQueryName, null);
 		if (!String.IsNullOrWhiteSpace(filtersString)) filters = filtersString.DeserializeFiltersFromUrl(true);
@@ -60,6 +59,7 @@ public static partial class NavigatorExt
 	}
 
 	#region << Public >>
+
 	private static TfNavigationState Front_NodesProcess(this TfNavigationState result)
 	{
 		if (result.NodesDict.Count == 0)
@@ -67,12 +67,38 @@ public static partial class NavigatorExt
 			result = result.AddRouteNodes(RouteDataNode.Home);
 			return result;
 		}
+
+		if (result.NodesDict.Count >= 1 && result.NodesDict[0] == TfConstants.RouteNameHome)
+			result = result.AddRouteNodes(RouteDataNode.Home);	
+		
+		result = result.Front_Dashboard_NodesProcess();
 		result = result.Front_Space_NodesProcess();
 		result = result.Front_Pages_NodesProcess();
 		return result;
 	}
 
+	#region << Dashboards >>
+
+	private static TfNavigationState Front_Dashboard_NodesProcess(this TfNavigationState result)
+	{
+		if (result.NodesDict.Count < 1 || result.NodesDict[0] != TfConstants.RouteNameHome)
+			return result;
+		
+		if (result.NodesDict.Count < 2)
+			return result;
+
+		if (result.NodesDict[1] == TfConstants.RouteNameSavedLinks)
+		{
+			result = result.AddRouteNodes(RouteDataNode.HomeSavedLinks);	
+		}
+
+		return result;
+	}
+
+	#endregion
+
 	#region << Space >>
+
 	private static TfNavigationState Front_Space_NodesProcess(this TfNavigationState result)
 	{
 		if (result.NodesDict.Count < 1 || result.NodesDict[0] != TfConstants.RouteNameSpace)
@@ -86,7 +112,7 @@ public static partial class NavigatorExt
 	private static TfNavigationState Front_Space_SpaceId_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 1
-			|| result.RouteNodes[0] != RouteDataNode.Space)
+		    || result.RouteNodes[0] != RouteDataNode.Space)
 			return result;
 
 		if (result.NodesDict.Count < 2)
@@ -101,17 +127,18 @@ public static partial class NavigatorExt
 			result = result.Front_Space_SpaceId_Page_NodesProcess();
 			result = result.Front_Space_SpaceId_SpaceData_NodesProcess();
 			result = result.Front_Space_SpaceId_SpaceView_NodesProcess();
-
 		}
+
 		return result;
 	}
 
 	#region << Space Manage >>
+
 	private static TfNavigationState Front_Space_SpaceId_Manage_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId)
 			return result;
 
 		if (result.NodesDict.Count < 3)
@@ -124,15 +151,16 @@ public static partial class NavigatorExt
 			result = result.Front_Space_SpaceId_Manage_Pages_NodesProcess();
 			result = result.Front_Space_SpaceId_Manage_Access_NodesProcess();
 		}
+
 		return result;
 	}
 
 	private static TfNavigationState Front_Space_SpaceId_Manage_Pages_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 3
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.Manage)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.Manage)
 			return result;
 
 		if (result.NodesDict.Count < 4)
@@ -142,15 +170,16 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Pages);
 		}
+
 		return result;
 	}
 
 	private static TfNavigationState Front_Space_SpaceId_Manage_Access_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 3
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.Manage)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.Manage)
 			return result;
 
 		if (result.NodesDict.Count < 4)
@@ -160,16 +189,19 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Access);
 		}
+
 		return result;
 	}
+
 	#endregion
 
 	#region << Space Page >>
+
 	private static TfNavigationState Front_Space_SpaceId_Page_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId)
 			return result;
 
 		if (result.NodesDict.Count < 3)
@@ -180,15 +212,16 @@ public static partial class NavigatorExt
 			result = result.AddRouteNodes(RouteDataNode.SpacePage);
 			result = result.Front_Space_SpaceId_Page_PageId_NodesProcess();
 		}
+
 		return result;
 	}
 
 	private static TfNavigationState Front_Space_SpaceId_Page_PageId_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 3
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.SpacePage)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.SpacePage)
 			return result;
 
 		if (result.NodesDict.Count < 4)
@@ -201,17 +234,18 @@ public static partial class NavigatorExt
 			result = result.Front_Space_SpaceId_Page_PageId_Manage_NodesProcess();
 			result = result.Front_Space_SpaceId_Page_PageId_ManageTab_NodesProcess();
 		}
+
 		return result;
 	}
-	
+
 	private static TfNavigationState Front_Space_SpaceId_Page_PageId_Manage_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
 		    || result.RouteNodes[0] != RouteDataNode.Space
 		    || result.RouteNodes[1] != RouteDataNode.SpaceId
 		    || result.RouteNodes[2] != RouteDataNode.SpacePage
-			|| result.RouteNodes[3] != RouteDataNode.SpacePageId
-		    )
+		    || result.RouteNodes[3] != RouteDataNode.SpacePageId
+		   )
 			return result;
 
 		if (result.NodesDict.Count < 5)
@@ -221,10 +255,12 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Manage);
 		}
+
 		return result;
-	}	
-	
-	private static TfNavigationState Front_Space_SpaceId_Page_PageId_ManageTab_NodesProcess(this TfNavigationState result)
+	}
+
+	private static TfNavigationState Front_Space_SpaceId_Page_PageId_ManageTab_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
 		    || result.RouteNodes[0] != RouteDataNode.Space
@@ -242,18 +278,19 @@ public static partial class NavigatorExt
 			result = result with { ManageTab = result.NodesDict[4] };
 			result = result.AddRouteNodes(RouteDataNode.ManageTab);
 		}
+
 		return result;
-	}		
+	}
+
 	#endregion
 
-	
-	
 	#region << Space Data >>
+
 	private static TfNavigationState Front_Space_SpaceId_SpaceData_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId)
 			return result;
 
 		if (result.NodesDict.Count < 3)
@@ -264,15 +301,17 @@ public static partial class NavigatorExt
 			result = result.AddRouteNodes(RouteDataNode.SpaceData);
 			result = result.Front_Space_SpaceId_SpaceData_SpaceDataId_NodesProcess();
 		}
+
 		return result;
 	}
 
-	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_NodesProcess(this TfNavigationState result)
+	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 3
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.SpaceData)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.SpaceData)
 			return result;
 
 		if (result.NodesDict.Count < 4)
@@ -288,18 +327,19 @@ public static partial class NavigatorExt
 			result = result.Front_Space_SpaceId_SpaceData_SpaceDataId_Aux_NodesProcess();
 			result = result.Front_Space_SpaceId_SpaceData_SpaceDataId_Views_NodesProcess();
 			result = result.Front_Space_SpaceId_SpaceData_SpaceDataId_Data_NodesProcess();
-
 		}
+
 		return result;
 	}
 
-	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_Columns_NodesProcess(this TfNavigationState result)
+	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_Columns_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 4
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.SpaceData
-			|| result.RouteNodes[3] != RouteDataNode.SpaceDataId)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.SpaceData
+		    || result.RouteNodes[3] != RouteDataNode.SpaceDataId)
 			return result;
 
 		if (result.NodesDict.Count < 5)
@@ -309,16 +349,18 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Columns);
 		}
+
 		return result;
 	}
 
-	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_Filters_NodesProcess(this TfNavigationState result)
+	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_Filters_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 4
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.SpaceData
-			|| result.RouteNodes[3] != RouteDataNode.SpaceDataId)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.SpaceData
+		    || result.RouteNodes[3] != RouteDataNode.SpaceDataId)
 			return result;
 
 		if (result.NodesDict.Count < 5)
@@ -328,16 +370,18 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Filters);
 		}
+
 		return result;
 	}
 
-	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_Sorts_NodesProcess(this TfNavigationState result)
+	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_Sorts_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 4
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.SpaceData
-			|| result.RouteNodes[3] != RouteDataNode.SpaceDataId)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.SpaceData
+		    || result.RouteNodes[3] != RouteDataNode.SpaceDataId)
 			return result;
 
 		if (result.NodesDict.Count < 5)
@@ -347,16 +391,18 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Sorts);
 		}
+
 		return result;
 	}
 
-	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_Aux_NodesProcess(this TfNavigationState result)
+	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_Aux_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 4
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.SpaceData
-			|| result.RouteNodes[3] != RouteDataNode.SpaceDataId)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.SpaceData
+		    || result.RouteNodes[3] != RouteDataNode.SpaceDataId)
 			return result;
 
 		if (result.NodesDict.Count < 5)
@@ -366,16 +412,18 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Aux);
 		}
+
 		return result;
 	}
 
-	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_Views_NodesProcess(this TfNavigationState result)
+	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_Views_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 4
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.SpaceData
-			|| result.RouteNodes[3] != RouteDataNode.SpaceDataId)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.SpaceData
+		    || result.RouteNodes[3] != RouteDataNode.SpaceDataId)
 			return result;
 
 		if (result.NodesDict.Count < 5)
@@ -385,15 +433,18 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Views);
 		}
+
 		return result;
 	}
-	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_Data_NodesProcess(this TfNavigationState result)
+
+	private static TfNavigationState Front_Space_SpaceId_SpaceData_SpaceDataId_Data_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 4
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.SpaceData
-			|| result.RouteNodes[3] != RouteDataNode.SpaceDataId)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.SpaceData
+		    || result.RouteNodes[3] != RouteDataNode.SpaceDataId)
 			return result;
 
 		if (result.NodesDict.Count < 5)
@@ -403,16 +454,19 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Data);
 		}
+
 		return result;
 	}
+
 	#endregion
 
 	#region << Space View >>
+
 	private static TfNavigationState Front_Space_SpaceId_SpaceView_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId)
 			return result;
 
 		if (result.NodesDict.Count < 3)
@@ -423,14 +477,17 @@ public static partial class NavigatorExt
 			result = result.AddRouteNodes(RouteDataNode.SpaceView);
 			result = result.Front_Space_SpaceId_SpaceView_SpaceViewId_NodesProcess();
 		}
+
 		return result;
 	}
-	private static TfNavigationState Front_Space_SpaceId_SpaceView_SpaceViewId_NodesProcess(this TfNavigationState result)
+
+	private static TfNavigationState Front_Space_SpaceId_SpaceView_SpaceViewId_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 3
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.SpaceView)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.SpaceView)
 			return result;
 
 		if (result.NodesDict.Count < 4)
@@ -443,18 +500,19 @@ public static partial class NavigatorExt
 			result = result.Front_Space_SpaceId_SpaceView_SpaceViewId_Columns_NodesProcess();
 			result = result.Front_Space_SpaceId_SpaceView_SpaceViewId_Filters_NodesProcess();
 			result = result.Front_Space_SpaceId_SpaceView_SpaceViewId_Pages_NodesProcess();
-
 		}
+
 		return result;
 	}
 
-	private static TfNavigationState Front_Space_SpaceId_SpaceView_SpaceViewId_Columns_NodesProcess(this TfNavigationState result)
+	private static TfNavigationState Front_Space_SpaceId_SpaceView_SpaceViewId_Columns_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 4
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.SpaceView
-			|| result.RouteNodes[3] != RouteDataNode.SpaceViewId)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.SpaceView
+		    || result.RouteNodes[3] != RouteDataNode.SpaceViewId)
 			return result;
 
 		if (result.NodesDict.Count < 5)
@@ -464,16 +522,18 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Columns);
 		}
+
 		return result;
 	}
 
-	private static TfNavigationState Front_Space_SpaceId_SpaceView_SpaceViewId_Filters_NodesProcess(this TfNavigationState result)
+	private static TfNavigationState Front_Space_SpaceId_SpaceView_SpaceViewId_Filters_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 4
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.SpaceView
-			|| result.RouteNodes[3] != RouteDataNode.SpaceViewId)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.SpaceView
+		    || result.RouteNodes[3] != RouteDataNode.SpaceViewId)
 			return result;
 
 		if (result.NodesDict.Count < 5)
@@ -483,16 +543,18 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Filters);
 		}
+
 		return result;
 	}
 
-	private static TfNavigationState Front_Space_SpaceId_SpaceView_SpaceViewId_Pages_NodesProcess(this TfNavigationState result)
+	private static TfNavigationState Front_Space_SpaceId_SpaceView_SpaceViewId_Pages_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 4
-			|| result.RouteNodes[0] != RouteDataNode.Space
-			|| result.RouteNodes[1] != RouteDataNode.SpaceId
-			|| result.RouteNodes[2] != RouteDataNode.SpaceView
-			|| result.RouteNodes[3] != RouteDataNode.SpaceViewId)
+		    || result.RouteNodes[0] != RouteDataNode.Space
+		    || result.RouteNodes[1] != RouteDataNode.SpaceId
+		    || result.RouteNodes[2] != RouteDataNode.SpaceView
+		    || result.RouteNodes[3] != RouteDataNode.SpaceViewId)
 			return result;
 
 		if (result.NodesDict.Count < 5)
@@ -502,42 +564,54 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Pages);
 		}
+
 		return result;
 	}
 
 	#endregion
+
 	#endregion
 
 	#region << Pages >>
+
 	private static TfNavigationState Front_Pages_NodesProcess(this TfNavigationState result)
 	{
-		if (result.NodesDict.Count < 1 || result.NodesDict[0] != TfConstants.RouteNamePages)
+		if (result.NodesDict.Count < 1 || result.NodesDict[0] != TfConstants.RouteNameHome)
 			return result;
 
-		result = result.AddRouteNodes(RouteDataNode.Pages);
+		if (result.NodesDict.Count < 2)
+			return result;		
+		
+		if (result.NodesDict[1] == TfConstants.RouteNamePages)
+		{
+			result = result.AddRouteNodes(RouteDataNode.Pages);
 
-		result = result.Front_Pages_PageId_NodesProcess();
+			result = result.Front_Pages_PageId_NodesProcess();
+		}		
+
 
 		return result;
 	}
 
 	private static TfNavigationState Front_Pages_PageId_NodesProcess(this TfNavigationState result)
 	{
-		if (result.RouteNodes.Count < 1
-			|| result.RouteNodes[0] != RouteDataNode.Pages)
+		if (result.RouteNodes.Count < 2
+		    || result.RouteNodes[0] != RouteDataNode.Home
+		    || result.RouteNodes[1] != RouteDataNode.Pages)
 			return result;
 
-		if (result.NodesDict.Count < 2)
+		if (result.NodesDict.Count < 3)
 			return result;
 
-		if (Guid.TryParse(result.NodesDict[1], out Guid outGuid))
+		if (Guid.TryParse(result.NodesDict[2], out Guid outGuid))
 		{
 			result = result.AddRouteNodes(RouteDataNode.PageId);
 			result = result with { PageId = outGuid };
-
 		}
+
 		return result;
 	}
+
 	#endregion
 
 	#endregion
@@ -567,6 +641,7 @@ public static partial class NavigatorExt
 	}
 
 	#region << Users >>
+
 	private static TfNavigationState Admin_Users_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 1 || result.RouteNodes[0] != RouteDataNode.Admin)
@@ -583,8 +658,8 @@ public static partial class NavigatorExt
 	private static TfNavigationState Admin_Users_UserId_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.Users)
+		    || result.RouteNodes[0] != RouteDataNode.Admin
+		    || result.RouteNodes[1] != RouteDataNode.Users)
 			return result;
 
 		if (result.NodesDict.Count < 3)
@@ -598,15 +673,16 @@ public static partial class NavigatorExt
 			result = result.Admin_Users_UserId_Access_NodesProcess();
 			result = result.Admin_Users_UserId_Saves_NodesProcess();
 		}
+
 		return result;
 	}
 
 	private static TfNavigationState Admin_Users_UserId_Access_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 3
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.Users
-			|| result.RouteNodes[2] != RouteDataNode.UserId)
+		    || result.RouteNodes[0] != RouteDataNode.Admin
+		    || result.RouteNodes[1] != RouteDataNode.Users
+		    || result.RouteNodes[2] != RouteDataNode.UserId)
 			return result;
 
 		if (result.NodesDict.Count < 4)
@@ -616,15 +692,16 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Access);
 		}
+
 		return result;
 	}
 
 	private static TfNavigationState Admin_Users_UserId_Saves_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 3
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.Users
-			|| result.RouteNodes[2] != RouteDataNode.UserId)
+		    || result.RouteNodes[0] != RouteDataNode.Admin
+		    || result.RouteNodes[1] != RouteDataNode.Users
+		    || result.RouteNodes[2] != RouteDataNode.UserId)
 			return result;
 
 		if (result.NodesDict.Count < 4)
@@ -634,11 +711,14 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Saves);
 		}
+
 		return result;
 	}
+
 	#endregion
 
 	#region << Roles >>
+
 	private static TfNavigationState Admin_Roles_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 1 || result.RouteNodes[0] != RouteDataNode.Admin)
@@ -655,8 +735,8 @@ public static partial class NavigatorExt
 	private static TfNavigationState Admin_Roles_RoleId_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.Roles)
+		    || result.RouteNodes[0] != RouteDataNode.Admin
+		    || result.RouteNodes[1] != RouteDataNode.Roles)
 			return result;
 
 		if (result.NodesDict.Count < 3)
@@ -666,15 +746,15 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.RoleId);
 			result = result with { RoleId = outGuid };
-
-
 		}
+
 		return result;
 	}
 
 	#endregion
 
 	#region << Data Providers >>
+
 	private static TfNavigationState Admin_DataProviders_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 1 || result.RouteNodes[0] != RouteDataNode.Admin)
@@ -687,11 +767,12 @@ public static partial class NavigatorExt
 		result = result.Admin_DataProviders_DataProviderId_NodesProcess();
 		return result;
 	}
+
 	private static TfNavigationState Admin_DataProviders_DataProviderId_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.DataProviders)
+		    || result.RouteNodes[0] != RouteDataNode.Admin
+		    || result.RouteNodes[1] != RouteDataNode.DataProviders)
 			return result;
 
 		if (result.NodesDict.Count < 3)
@@ -705,16 +786,18 @@ public static partial class NavigatorExt
 			result = result.Admin_DataProviders_DataProviderId_Aux_NodesProcess();
 			result = result.Admin_DataProviders_DataProviderId_Synchronization_NodesProcess();
 			result = result.Admin_DataProviders_DataProviderId_Data_NodesProcess();
-
 		}
+
 		return result;
 	}
-	private static TfNavigationState Admin_DataProviders_DataProviderId_Schema_NodesProcess(this TfNavigationState result)
+
+	private static TfNavigationState Admin_DataProviders_DataProviderId_Schema_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 3
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.DataProviders
-			|| result.RouteNodes[2] != RouteDataNode.DataProviderId)
+		    || result.RouteNodes[0] != RouteDataNode.Admin
+		    || result.RouteNodes[1] != RouteDataNode.DataProviders
+		    || result.RouteNodes[2] != RouteDataNode.DataProviderId)
 			return result;
 
 		if (result.NodesDict.Count < 4)
@@ -724,14 +807,16 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Schema);
 		}
+
 		return result;
 	}
+
 	private static TfNavigationState Admin_DataProviders_DataProviderId_Aux_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 3
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.DataProviders
-			|| result.RouteNodes[2] != RouteDataNode.DataProviderId)
+		    || result.RouteNodes[0] != RouteDataNode.Admin
+		    || result.RouteNodes[1] != RouteDataNode.DataProviders
+		    || result.RouteNodes[2] != RouteDataNode.DataProviderId)
 			return result;
 
 		if (result.NodesDict.Count < 4)
@@ -741,14 +826,17 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Aux);
 		}
+
 		return result;
 	}
-	private static TfNavigationState Admin_DataProviders_DataProviderId_Synchronization_NodesProcess(this TfNavigationState result)
+
+	private static TfNavigationState Admin_DataProviders_DataProviderId_Synchronization_NodesProcess(
+		this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 3
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.DataProviders
-			|| result.RouteNodes[2] != RouteDataNode.DataProviderId)
+		    || result.RouteNodes[0] != RouteDataNode.Admin
+		    || result.RouteNodes[1] != RouteDataNode.DataProviders
+		    || result.RouteNodes[2] != RouteDataNode.DataProviderId)
 			return result;
 
 		if (result.NodesDict.Count < 4)
@@ -758,14 +846,16 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Synchronization);
 		}
+
 		return result;
 	}
+
 	private static TfNavigationState Admin_DataProviders_DataProviderId_Data_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 3
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.DataProviders
-			|| result.RouteNodes[2] != RouteDataNode.DataProviderId)
+		    || result.RouteNodes[0] != RouteDataNode.Admin
+		    || result.RouteNodes[1] != RouteDataNode.DataProviders
+		    || result.RouteNodes[2] != RouteDataNode.DataProviderId)
 			return result;
 
 		if (result.NodesDict.Count < 4)
@@ -779,11 +869,14 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.Datasets);
 		}
+
 		return result;
 	}
+
 	#endregion
 
 	#region << Data Identities >>
+
 	private static TfNavigationState Admin_DataIdentities_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 1 || result.RouteNodes[0] != RouteDataNode.Admin)
@@ -796,11 +889,12 @@ public static partial class NavigatorExt
 		result = result.Admin_DataIdentities_DataIdentityId_NodesProcess();
 		return result;
 	}
+
 	private static TfNavigationState Admin_DataIdentities_DataIdentityId_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.DataIdentities)
+		    || result.RouteNodes[0] != RouteDataNode.Admin
+		    || result.RouteNodes[1] != RouteDataNode.DataIdentities)
 			return result;
 
 		if (result.NodesDict.Count < 3)
@@ -811,9 +905,11 @@ public static partial class NavigatorExt
 
 		return result;
 	}
+
 	#endregion
 
 	#region << Shared Columns >>
+
 	private static TfNavigationState Admin_SharedColumns_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 1 || result.RouteNodes[0] != RouteDataNode.Admin)
@@ -826,11 +922,12 @@ public static partial class NavigatorExt
 		result = result.Admin_SharedColumns_SharedColumnId_NodesProcess();
 		return result;
 	}
+
 	private static TfNavigationState Admin_SharedColumns_SharedColumnId_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.SharedColumns)
+		    || result.RouteNodes[0] != RouteDataNode.Admin
+		    || result.RouteNodes[1] != RouteDataNode.SharedColumns)
 			return result;
 
 		if (result.NodesDict.Count < 3)
@@ -839,13 +936,15 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.SharedColumnId);
 			result = result with { SharedColumnId = outGuid };
-
 		}
+
 		return result;
 	}
+
 	#endregion
 
 	#region << Pages >>
+
 	private static TfNavigationState Admin_Pages_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 1 || result.RouteNodes[0] != RouteDataNode.Admin)
@@ -860,11 +959,12 @@ public static partial class NavigatorExt
 
 		return result;
 	}
+
 	private static TfNavigationState Admin_Page_PageId_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.Pages)
+		    || result.RouteNodes[0] != RouteDataNode.Admin
+		    || result.RouteNodes[1] != RouteDataNode.Pages)
 			return result;
 
 		if (result.NodesDict.Count < 3)
@@ -873,13 +973,15 @@ public static partial class NavigatorExt
 		{
 			result = result.AddRouteNodes(RouteDataNode.PageId);
 			result = result with { PageId = outGuid };
-
 		}
+
 		return result;
 	}
+
 	#endregion
 
 	#region << Files >>
+
 	private static TfNavigationState Admin_Files_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 1 || result.RouteNodes[0] != RouteDataNode.Admin)
@@ -892,9 +994,11 @@ public static partial class NavigatorExt
 
 		return result;
 	}
+
 	#endregion
 
 	#region << Templates >>
+
 	private static TfNavigationState Admin_Templates_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 1 || result.RouteNodes[0] != RouteDataNode.Admin)
@@ -911,8 +1015,8 @@ public static partial class NavigatorExt
 	private static TfNavigationState Admin_Templates_TemplateTypeId_NodesProcess(this TfNavigationState result)
 	{
 		if (result.RouteNodes.Count < 2
-			|| result.RouteNodes[0] != RouteDataNode.Admin
-			|| result.RouteNodes[1] != RouteDataNode.Templates)
+		    || result.RouteNodes[0] != RouteDataNode.Admin
+		    || result.RouteNodes[1] != RouteDataNode.Templates)
 			return result;
 
 		if (result.NodesDict.Count < 3)
@@ -923,6 +1027,7 @@ public static partial class NavigatorExt
 			result = result.AddRouteNodes(RouteDataNode.TemplateId);
 			result = result with { TemplateId = outGuid };
 		}
+
 		return result;
 	}
 

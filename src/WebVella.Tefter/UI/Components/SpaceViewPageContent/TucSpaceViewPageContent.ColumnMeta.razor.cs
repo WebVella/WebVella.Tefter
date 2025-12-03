@@ -4,7 +4,7 @@ public partial class TucSpaceViewPageContent
 {
 	private Dictionary<Guid, TfSpaceViewRowPresentationMeta> _rowMeta = new();
 	private Dictionary<Guid, TfSpaceViewColumnPresentationMeta> _columnsMeta = new();
-	private Dictionary<Guid, Dictionary<Guid, TfSpaceViewColumnBaseContext>> _regionContextDict = new();
+	private Dictionary<Guid, Dictionary<Guid, TfSpaceViewColumnBase>> _regionContextDict = new();
 	private Dictionary<string, string> _queryNameToColumnNameDict = new();
 	private Dictionary<Guid, Dictionary<string, Tuple<TfColor?, TfColor?>>> _rowColoringCacheDictionary = new();
 
@@ -66,7 +66,7 @@ public partial class TucSpaceViewPageContent
 			{
 				if (_rowMeta[tfId].EditMode)
 				{
-					_regionContextDict[tfId][column.Id] = new TfSpaceViewColumnEditModeContext(_contextViewData)
+					_regionContextDict[tfId][column.Id] = new TfSpaceViewColumnEditMode(_contextViewData)
 					{
 						TfService = TfService,
 						ServiceProvider = ServiceProvider,
@@ -78,7 +78,7 @@ public partial class TucSpaceViewPageContent
 				}
 				else
 				{
-					_regionContextDict[tfId][column.Id] = new TfSpaceViewColumnReadModeContext(_contextViewData)
+					_regionContextDict[tfId][column.Id] = new TfSpaceViewColumnReadMode(_contextViewData)
 					{
 						TfService = TfService,
 						ServiceProvider = ServiceProvider,

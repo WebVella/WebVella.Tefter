@@ -17,7 +17,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	private TucSpaceViewColumnManageDialogTab _activeTab = TucSpaceViewColumnManageDialogTab.General;
 	private List<TfMenuItem> _menu = new();
 	private TfSpaceViewColumn _form = new();
-	private TfSpaceViewColumnOptionsModeContext _typeOptionsContext = null!;
+	private TfSpaceViewColumnOptionsMode _typeOptions = null!;
 	private Dictionary<string, object> _contextViewData = new();
 	private TfSpaceView _spaceView = new();
 	private TfDataTable _sampleData = null!;
@@ -70,7 +70,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		_initDataMappingOptions();
 		//Init Menu and context
 		_initMenu();
-		_typeOptionsContext = new TfSpaceViewColumnOptionsModeContext(_contextViewData)
+		_typeOptions = new TfSpaceViewColumnOptionsMode(_contextViewData)
 		{
 			TfService = TfService,
 			ServiceProvider = ServiceProvider,
@@ -90,7 +90,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			//on enter click without blur
 			await Task.Delay(10);
 			MessageStore.Clear();
-			var optionValErrors = _selectedColumnType.ValidateTypeOptions(_typeOptionsContext);
+			var optionValErrors = _selectedColumnType.ValidateTypeOptions(_typeOptions);
 			foreach (var valError in optionValErrors)
 			{
 				MessageStore.Add(EditContext.Field(nameof(_form.TypeOptionsJson)), valError.Message);

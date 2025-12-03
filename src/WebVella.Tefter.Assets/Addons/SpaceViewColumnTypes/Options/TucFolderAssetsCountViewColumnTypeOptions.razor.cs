@@ -4,7 +4,7 @@ namespace WebVella.Tefter.UI.Addons;
 
 public partial class TucFolderAssetsCountViewColumnTypeOptions : TfLocalizedViewColumnComponent
 {
-    [Parameter] public TfSpaceViewColumnOptionsModeContext Context { get; set; } = null!;
+    [Parameter] public TfSpaceViewColumnOptionsMode Context { get; set; } = null!;
     [Parameter] public EventCallback<TfFolderAssetsCountViewColumnTypeSettings> SettingsChanged { get; set; }
     [Parameter] public EventCallback<Tuple<string, string?>> DataMappingChanged { get; set; }
     [Parameter] public List<AssetsFolder> FolderOptions { get; set; } = new();

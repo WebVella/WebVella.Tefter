@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-<TucScreenRegionComponent RegionContext="@(new TfSpaceViewToolBarActionScreenRegionContext())" />
+<TucScreenRegionComponent Region="@(new TfSpaceViewToolBarActionScreenRegion())" />
 @if (SpaceView.Settings.CanCreateRows)
 {
 	<FluentButton OnClick="_onAddRowClick" Appearance="@Appearance.Outline" Title="@LOC("Add new row")">

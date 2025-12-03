@@ -8,6 +8,7 @@ public partial class TfConstants
 	public static string SearchQueryName = "sch";
 	public static string AsideSearchQueryName = "asch";
 	public static string FiltersQueryName = "flt";
+	public static string OrderQueryName = "ord";
 	public static string SortsQueryName = "srt";
 	public static string ActiveSaveQueryName = "svid";
 	public static string TabQueryName = "tab";
@@ -67,6 +68,13 @@ public partial class TfConstants
 	public static string AdminTemplateDetailsPageUrl = $"/{RouteNameAdmin}/{RouteNameTemplates}/{{0}}";
 	public static string BlobDownloadUrl = "/fs/blob/{0}/{1}";
 
+	
+	public static string RouteNameHome = "home";	
+	public static string RouteNameSavedLinks = "saved-links";	
+	public static string HomeSavedLinksUrl = $"/{RouteNameHome}/{RouteNameSavedLinks}";
+	public static string HomePagesSingleUrl = $"/{RouteNameHome}/{RouteNamePages}/{{0}}";
+
+	
 	public static string RouteNameSpace = "space";
 	public static string RouteNameSpacePage = "page";
 	public static string RouteNameSpaceView = "view";
@@ -82,7 +90,6 @@ public partial class TfConstants
 	public static string SpaceManageAccessPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}/{RouteNameAccess}";
 	public static string NoAccessPage = "/403";
 	public static string InstallPage = "/tf-install";
-	public static string InstallDataDropPage = "/tf-install/data-drop";
 	public static string InstallRecipesPage = "/tf-install/recipes";
 	public static string InstallRecipeDetailsPage = "/tf-install/recipes/{0}";
 

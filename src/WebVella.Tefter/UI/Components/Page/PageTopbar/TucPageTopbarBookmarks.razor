@@ -1,0 +1,56 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@{
+    var state = TfAuthLayout.GetState();
+}
+
+@if (state.Space is not null && state.SpacePage is not null)
+{
+    <FluentButton Id="@_bookmarkBtnId" OnClick="_onBookmarkClick"
+                  IconStart="@((_activeBookmark is not null ? TfConstants.GetIcon("Star", variant: IconVariant.Filled) : TfConstants.GetIcon("Star"))!.WithColor(Color.Neutral))"
+                  Appearance="@Appearance.Outline"
+                  Title="@(_activeBookmark is not null ? LOC("Manage bookmark") : LOC("Bookmark this page"))" />
+
+    <FluentButton Id="@_savedLinkBtnId" OnClick="_onSavedLinkClick" Appearance="@Appearance.Outline"
+                  Title="@(_activeSavedLink is not null ? LOC("Manage saved URL") : LOC("Save this URL"))">
+        <FluentIcon Value="@TfConstants.GetIcon("Link")" Color="_getLinkColor()" />
+    </FluentButton>
+
+    <FluentMenu @bind-Open="_bookmarkOpen" Anchor="@_bookmarkBtnId" UseMenuService="true" HorizontalPosition="HorizontalPosition.Left">
+        <FluentMenuItem OnClick="_bookmarkEdit">
+            @LOC("Edit Bookmark")
+            <FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
+        </FluentMenuItem>
+        <FluentDivider />
+        <FluentMenuItem OnClick="_bookmarkRemove">
+            @LOC("Remove Bookmark")
+            <FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" Slot="start" />
+        </FluentMenuItem>
+    </FluentMenu>
+
+    <FluentMenu @bind-Open="_savedLinkOpen" Anchor="@_savedLinkBtnId" UseMenuService="true" HorizontalPosition="HorizontalPosition.Left">
+        <FluentMenuItem OnClick="_savedLinkEdit">
+            @LOC("Edit Saved URL")
+            <FluentIcon Value="@TfConstants.GetIcon("Edit")" Slot="start" />
+        </FluentMenuItem>
+        @if (_activeSavedLink is not null && Navigator.IsSpaceViewSavedUrlChanged(_activeSavedLink.Url))
+        {
+            <FluentMenuItem OnClick="_savedLinkUpdateUrl">
+                @LOC("Update URL only")
+                <FluentIcon Value="@TfConstants.GetIcon("Link")" Slot="start" />
+            </FluentMenuItem>
+        }
+        <FluentDivider />
+        <FluentMenuItem OnClick="_savedLinkRemove">
+            @LOC("Remove Saved URL")
+            <FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)" Slot="start" />
+        </FluentMenuItem>
+    </FluentMenu>
+
+    <FluentDivider Orientation="Orientation.Vertical" />
+
+    <div style="display:none">
+
+    </div>
+}
+

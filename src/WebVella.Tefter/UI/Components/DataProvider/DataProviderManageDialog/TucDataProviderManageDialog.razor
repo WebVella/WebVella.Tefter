@@ -72,7 +72,7 @@
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentDivider Style="margin:1rem 0"/>
-			<TucScreenRegionComponent RegionContext="_dynamicComponentContext" Scope="@_dynamicComponentScope"/>
+			<TucScreenRegionComponent Region="_dynamicComponent" Scope="@_dynamicComponentScope"/>
 			<FluentValidationMessage For="@(() => _form.SettingsJson)"/>
 		</FluentEditForm>
 	}

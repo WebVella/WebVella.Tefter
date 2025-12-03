@@ -2,7 +2,7 @@
 
 public partial class TucNumberViewColumnTypeRead : ComponentBase
 {
-	[Parameter] public TfSpaceViewColumnReadModeContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnReadMode Context { get; set; } = null!;
 	[Parameter] public List<decimal?>? Value { get; set; }
 
 	private TfNumberViewColumnTypeSettings _settings =  new ();

@@ -4,7 +4,7 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 {
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfDataProvider? _provider = null;
-	private TfDataProviderDisplaySettingsScreenRegionContext? _dynamicComponentContext = null;
+	private TfDataProviderDisplaySettingsScreenRegion? _dynamicComponentContext = null;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private bool _isDeleting = false;
 
@@ -52,7 +52,7 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 			_provider = TfService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
-			_dynamicComponentContext = new TfDataProviderDisplaySettingsScreenRegionContext()
+			_dynamicComponentContext = new TfDataProviderDisplaySettingsScreenRegion()
 			{
 				SettingsJson = _provider.SettingsJson
 			};

@@ -377,6 +377,7 @@ public partial class TfServiceTest : BaseTest
 					Name = "test1",
 					Description = " test with #tag1 #tAg2 #Tag3",
 					SpacePageId = spacePage.Id,
+					SpacePage = spacePage,
 					Url = null,
 					UserId = user.Id,
 					CreatedOn = DateTime.UtcNow

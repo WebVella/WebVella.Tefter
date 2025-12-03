@@ -431,12 +431,6 @@ public partial class TfService : ITfService
 					if (!success)
 						throw new TfDboServiceException("Delete<SpaceRoleDbo> failed");
 				}
-
-				var bookmarks = GetBookmarksListForSpace(id);
-				foreach (var bookmark in bookmarks)
-				{
-					DeleteBookmark(bookmark.Id);
-				}				
 				
 				//Delete space pages and views
 				var spacePages = GetSpacePages(id);

@@ -13,7 +13,7 @@ public partial class TucTemplateSettingsDialog : TfBaseComponent, IDialogContent
 	private string? _form = null;
 
 	private ITfTemplateProcessorAddon? _processor = null;
-	private TfTemplateProcessorManageSettingsScreenRegionContext? _dynamicComponentContext = null;
+	private TfTemplateProcessorManageSettingsScreenRegion? _dynamicComponentContext = null;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 
 	protected override async Task OnInitializedAsync()
@@ -83,7 +83,7 @@ public partial class TucTemplateSettingsDialog : TfBaseComponent, IDialogContent
 	{
 		_processor = _getProcessor();
 
-		_dynamicComponentContext = new TfTemplateProcessorManageSettingsScreenRegionContext
+		_dynamicComponentContext = new TfTemplateProcessorManageSettingsScreenRegion
 		{
 			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
 			Template = Content with { Id = Content.Id },

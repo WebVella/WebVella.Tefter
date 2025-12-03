@@ -4,11 +4,17 @@ namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
+	public List<TfBookmark> GetBookmarksAndSavesListForUser(
+		Guid userId);
+
 	public List<TfBookmark> GetBookmarksListForUser(
 		Guid userId);
 
 	public List<TfBookmark> GetSavesListForUser(
 		Guid userId);
+
+	List<TfBookmark> GetBookmarksListForSpacePage(
+		Guid spacePageId);
 
 	public TfBookmark GetBookmark(
 		Guid id);
@@ -27,18 +33,39 @@ public partial interface ITfService
 		Guid id);
 }
 
-public partial class TfService : ITfService
+public partial class TfService
 {
-	public List<TfBookmark> GetBookmarksListForUser(
+	public List<TfBookmark> GetBookmarksAndSavesListForUser(
 		Guid userId)
 	{
 		try
 		{
 			var bookmarks = _dboManager.GetList<TfBookmark>(userId, nameof(TfBookmark.UserId));
-			bookmarks = bookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).ToList();
+			var pageDict = GetAllSpacePages().ToDictionary(x => x.Id);
+			var spaceDict = GetSpacesList().ToDictionary(x => x.Id);
+			bookmarks = bookmarks.Where(x => pageDict.ContainsKey(x.SpacePageId)).ToList();
 			foreach (var bookmark in bookmarks)
+			{
 				bookmark.Tags = GetBookmarkTags(bookmark.Id);
+				bookmark.SpacePage = pageDict[bookmark.SpacePageId];
+				bookmark.Space = spaceDict[bookmark.SpacePage.SpaceId];
+			}
+
 			return bookmarks;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	public List<TfBookmark> GetBookmarksListForUser(
+		Guid userId)
+	{
+		try
+		{
+			var bookmarks = GetBookmarksAndSavesListForUser(userId);
+			return bookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).ToList();
 		}
 		catch (Exception ex)
 		{
@@ -51,36 +78,8 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			var bookmarks = _dboManager.GetList<TfBookmark>(userId, nameof(TfBookmark.UserId));
-			bookmarks = bookmarks.Where(x => !String.IsNullOrWhiteSpace(x.Url)).ToList();
-			foreach (var bookmark in bookmarks)
-				bookmark.Tags = GetBookmarkTags(bookmark.Id);
-			return bookmarks;
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
-	public List<TfBookmark> GetBookmarksListForSpace(
-		Guid spaceId)
-	{
-		try
-		{
-			var bookmarks = _dboManager.GetList<TfBookmark>();
-			List<TfBookmark> result = new List<TfBookmark>();
-			foreach (var bookmark in bookmarks)
-			{
-				var page = GetSpacePage(bookmark.SpacePageId);
-				if (page is null || page.SpaceId != spaceId)
-					continue;
-
-				bookmark.Tags = GetBookmarkTags(bookmark.Id);
-				result.Add(bookmark);
-			}
-
-			return result;
+			var bookmarks = GetBookmarksAndSavesListForUser(userId);
+			return bookmarks.Where(x => !String.IsNullOrWhiteSpace(x.Url)).ToList();
 		}
 		catch (Exception ex)
 		{
@@ -209,7 +208,7 @@ public partial class TfService : ITfService
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				bool success = false;
-
+				bookmark.CreatedOn = DateTime.UtcNow;
 				success = _dboManager.Insert<TfBookmark>(bookmark!);
 
 				if (!success)

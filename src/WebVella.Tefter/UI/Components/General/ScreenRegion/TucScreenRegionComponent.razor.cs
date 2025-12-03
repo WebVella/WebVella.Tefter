@@ -3,7 +3,7 @@ public partial class TucScreenRegionComponent
 {
 	[Inject] public ITfMetaService TfMetaService { get; set; } = null!;
 	[Parameter] public TfScreenRegionScope? Scope { get; set; }
-	[Parameter] public TfBaseScreenRegionContext RegionContext { get; set; } = null!;
+	[Parameter] public TfBaseScreenRegion Region { get; set; } = null!;
 	[Parameter] public string? Placeholder { get; set; } = null;
 	[Parameter] public int? Count { get; set; } = null;
 
@@ -12,7 +12,7 @@ public partial class TucScreenRegionComponent
 		get
 		{
 			var dict = new Dictionary<string, object>();
-			dict[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = RegionContext;
+			dict[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = Region;
 			return dict;
 		}
 	}
@@ -21,17 +21,17 @@ public partial class TucScreenRegionComponent
 	{
 		get
 		{
-			if (RegionContext is null) return (new List<TfScreenRegionComponentMeta>()).AsReadOnly();
+			if (Region is null) return (new List<TfScreenRegionComponentMeta>()).AsReadOnly();
 
 			if (Count is not null)
 			{
 				return TfMetaService.GetRegionComponentsMeta(
-					context: RegionContext.GetType(),
+					context: Region.GetType(),
 					scope: Scope
 				).Take(Count.Value).ToList().AsReadOnly();
 			}
 			return TfMetaService.GetRegionComponentsMeta(
-				context: RegionContext.GetType(),
+				context: Region.GetType(),
 				scope: Scope
 			);
 		}

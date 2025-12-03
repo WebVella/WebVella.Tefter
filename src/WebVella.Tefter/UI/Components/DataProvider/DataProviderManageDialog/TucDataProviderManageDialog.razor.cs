@@ -14,7 +14,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 	private bool _isCreate = false;
 	private TfCreateDataProvider _form = new();
 
-	private TfDataProviderManageSettingsScreenRegionContext _dynamicComponentContext = null!;
+	private TfDataProviderManageSettingsScreenRegion _dynamicComponent = null!;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private ReadOnlyCollection<ITfDataProviderAddon> _providerTypes = null!;
 
@@ -62,7 +62,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 
 	private void _initDynamicComponent()
 	{
-		_dynamicComponentContext = new TfDataProviderManageSettingsScreenRegionContext
+		_dynamicComponent = new TfDataProviderManageSettingsScreenRegion
 		{
 			SettingsJson = _form.SettingsJson,
 			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
@@ -79,9 +79,9 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 
 			//Get dynamic settings component errors
 			List<ValidationError> settingsErrors = new();
-			if (_dynamicComponentContext.Validate is not null)
+			if (_dynamicComponent.Validate is not null)
 			{
-				settingsErrors = _dynamicComponentContext.Validate();
+				settingsErrors = _dynamicComponent.Validate();
 			}
 
 			//Check form

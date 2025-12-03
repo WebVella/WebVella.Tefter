@@ -5,87 +5,51 @@
 }
 <div class="tf-page-topbar">
     <div class="tf-page-topbar__left">
-        <TucPageTopbarBreadcrumb/>
+        <TucPageTopbarBreadcrumb />
     </div>
     <div class="tf-page-topbar__right">
-        @if (state.Space is not null && state.SpacePage is not null)
-        {
-            <FluentButton Id="view-bookmark-selector" OnClick="_onBookmarkClick" 
-                          IconStart="@((_hasBookmark ? TfConstants.GetIcon("Star", variant: IconVariant.Filled) : TfConstants.GetIcon("Star"))!.WithColor(Color.Neutral))"
-                          Appearance="@Appearance.Outline" Title="@(_hasBookmark ? LOC("Remove page bookmark") : LOC("Bookmark this page"))"/>
-            @if (_activeSavedUrl is not null)
-            {
-                @if (Navigator.IsSpaceViewSavedUrlChanged(_activeSavedUrl.Url))
-                {
-                    <FluentButton Id="view-save-selector" OnClick="_onSaveLinkClick" Appearance="@Appearance.Outline"
-                                  Title="@LOC("Update Saved Link")">
-                        <FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Warning"/>
-                    </FluentButton>
-                }
-                else
-                {
-                    <FluentButton Id="view-save-selector" OnClick="_onSaveLinkClick" Appearance="@Appearance.Outline"
-                                  Title="@LOC("Remove Saved Link")">
-                        <FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Accent"/>
-                    </FluentButton>
-                }
-            }
-            else
-            {
-                <FluentButton Id="view-save-selector" OnClick="_onSaveLinkClick" Appearance="@Appearance.Outline"
-                              Title="@LOC("Save Link")">
-                    <FluentIcon Value="@TfConstants.GetIcon("Link")" Color="Color.Neutral"/>
-                </FluentButton>
-            }
-            @if (state.User.IsAdmin)
-            {
-                <TucAnchor Id="view-save-selector" Href="@(String.Format(TfConstants.SpacePagePageManageUrl,state.NavigationState.SpaceId, state.NavigationState.SpacePageId).GenerateWithLocalAndQueryAsReturnUrl(Navigator.Uri))" Appearance="@Appearance.Outline">
-                    <FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="Color.Neutral"/>
-                </TucAnchor>                
-            }
-
-            <FluentDivider Orientation="Orientation.Vertical"/>
-        }
-        <TucNotificationCenter/>
+        <TucPageTopbarBookmarks />
+        <TucNotificationCenter />
         <TucAnchor Href="#" OnClick="() => _userMenuVisible = !_userMenuVisible"
                    Id="user-menu-toggle" Appearance="@Appearance.Outline">
-            <TucAvatar User="state.User" UseUserColor="false"/>
+            <TucAvatar User="state.User" UseUserColor="false" />
         </TucAnchor>
         <FluentMenu Width="200px" @bind-Open="_userMenuVisible" Anchor="user-menu-toggle" UseMenuService="true" Class="tf-override">
             <FluentMenuItem Disabled="true">
                 @state.User.FirstName @state.User.LastName
+                <span slot="start"><FluentIcon Value="@TfConstants.GetIcon("Person")!.WithColor(Color.Neutral)" Slot="start" /></span>
             </FluentMenuItem>
-            <FluentDivider Style="margin-top:10px"/>
+            <FluentDivider Style="margin-top:10px" />
             <FluentMenuItem OnClick="_visualPreferencesHandler">
                 @LOC("Visual Preferences")
-                <span slot="start"><FluentIcon Value="@TfConstants.GetIcon("Color")" Slot="start"/></span>
+                <span slot="start"><FluentIcon Value="@TfConstants.GetIcon("Color")" Slot="start" /></span>
             </FluentMenuItem>
-            @if (_isSetAsStartupUri())
-            {
-                <FluentMenuItem OnClick="_resetUrlAsStartup">
-                    @LOC("Reset Startup URL")
-                    <span slot="start">
-                                <FluentIcon Value="@TfConstants.GetIcon("PinOff")"
-                                            Slot="start"/>
-                            </span>
-                </FluentMenuItem>
-            }
-            else
-            {
-                <FluentMenuItem OnClick="_setUrlAsStartup">
-                    @LOC("Set as Startup URL")
-                    <span slot="start">
-                                <FluentIcon Value="@TfConstants.GetIcon("Pin")"
-                                            Slot="start"/>
-                            </span>
-                </FluentMenuItem>
-            }
+            @* @if (_isSetAsStartupUri()) *@
+            @* { *@
+            @*     <FluentMenuItem OnClick="_resetUrlAsStartup"> *@
+            @*         @LOC("Reset Startup URL") *@
+            @*         <span slot="start"> *@
+            @*                     <FluentIcon Value="@TfConstants.GetIcon("PinOff")" *@
+            @*                                 Slot="start"/> *@
+            @*                 </span> *@
+            @*     </FluentMenuItem> *@
+            @* } *@
+            @* else *@
+            @* { *@
+            @*     <FluentMenuItem OnClick="_setUrlAsStartup"> *@
+            @*         @LOC("Set as Startup URL") *@
+            @*         <span slot="start"> *@
+            @*                     <FluentIcon Value="@TfConstants.GetIcon("Pin")" *@
+            @*                                 Slot="start"/> *@
+            @*                 </span> *@
+            @*     </FluentMenuItem> *@
+            @* } *@
             <FluentMenuItem OnClick="_logout">
                 @LOC("Logout")
                 <span slot="start">
-                            <FluentIcon Value="@TfConstants.GetIcon("SignOut")"
-                                        Slot="start"/>
-                        </span>
+                    <FluentIcon Value="@TfConstants.GetIcon("SignOut")"
+                                Slot="start" />
+                </span>
             </FluentMenuItem>
         </FluentMenu>
     </div>

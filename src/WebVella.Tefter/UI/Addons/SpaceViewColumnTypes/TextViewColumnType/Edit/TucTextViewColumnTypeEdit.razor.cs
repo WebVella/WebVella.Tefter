@@ -3,7 +3,7 @@
 public partial class TucTextViewColumnTypeEdit : TfLocalizedViewColumnComponent
 {
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;	
-	[Parameter] public TfSpaceViewColumnEditModeContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnEditMode Context { get; set; } = null!;
 	[Parameter] public string? Value { get; set; }
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }	
 

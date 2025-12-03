@@ -23,23 +23,31 @@ public static partial class NavigatorExt
 
 
 		//Get user saves and bookmarks
-		if (oldState is not null && oldState.User.Id == currentUser.Id && oldState.Space?.Id == navState.SpaceId)
+		if (oldState is not null && oldState.User.Id == currentUser.Id)
 		{
 			appState.UserBookmarks = oldState.UserBookmarks;
 			appState.UserSaves = oldState.UserSaves;
 		}
-		else if (navState.SpaceId is null)
+		else if (navState.HasNode(RouteDataNode.Admin,0) )
 		{
 			appState.UserBookmarks = new();
 			appState.UserSaves = new();
 		}
 		else
 		{
-			appState.UserBookmarks = _tfService.GetBookmarksListForUser(currentUser.Id);
-			appState.UserSaves = _tfService.GetSavesListForUser(currentUser.Id);
+			var bookmarks = _tfService.GetBookmarksAndSavesListForUser(currentUser.Id);
+			appState.UserBookmarks = bookmarks.Where(x=> String.IsNullOrWhiteSpace(x.Url)).ToList();
+			appState.UserSaves = bookmarks.Where(x=> !String.IsNullOrWhiteSpace(x.Url)).ToList();
 		}
 
-		if (navState.RouteNodes.Count == 0) { }
+		if (navState.RouteNodes.Count == 0 || navState.RouteNodes[0] == RouteDataNode.Home)
+		{
+			var addonPages = _metaService.GetHomeAddonPages();
+			appState.Menu = navState.generateHomeMenu(
+				LOC: LOC,
+				addonPages: addonPages);
+			appState.generateBreadcrumb(LOC, navState, addonPages: addonPages);			
+		}
 		else if (navState.RouteNodes[0] == RouteDataNode.Admin)
 		{
 			if (!currentUser.IsAdmin)
@@ -51,8 +59,7 @@ public static partial class NavigatorExt
 				addonPages: addonPages);
 			appState.generateBreadcrumb(LOC, navState, addonPages: addonPages);
 		}
-		else if (navState.RouteNodes[0] == RouteDataNode.Home
-				 || navState.RouteNodes[0] == RouteDataNode.Space)
+		else if (navState.RouteNodes[0] == RouteDataNode.Space)
 		{
 			if (navState.SpaceId is not null)
 			{
@@ -88,10 +95,6 @@ public static partial class NavigatorExt
 
 					appState.generateBreadcrumb(LOC, navState, spacePages: appState.SpacePages);
 				}
-			}
-			else
-			{
-				appState.generateBreadcrumb(LOC, navState);
 			}
 		}
 
@@ -261,6 +264,54 @@ public static partial class NavigatorExt
 		return menuItems;
 	}
 
+	private static List<TfMenuItem> generateHomeMenu(this TfNavigationState routeState,
+		IStringLocalizer<TfService> LOC,
+		ReadOnlyCollection<TfScreenRegionComponentMeta> addonPages)
+	{
+		var menuItems = new List<TfMenuItem>();
+
+		#region << Dashboard >>
+
+		menuItems.Add(new TfMenuItem()
+		{
+			Id = "tf-home-link",
+			IconCollapsed = TfConstants.GetIcon("Star"),
+			IconExpanded = TfConstants.GetIcon("Star"),
+			Selected = routeState.RouteNodes.Count == 1,
+			Url = "/",
+			Text = LOC["My Bookmarks"]
+		});
+
+		menuItems.Add(new TfMenuItem()
+		{
+			Id = "tf-home-saved-link",
+			IconCollapsed = TfConstants.GetIcon("Link"),
+			IconExpanded = TfConstants.GetIcon("Link"),
+			Selected = routeState.HasNode(RouteDataNode.HomeSavedLinks, 1),
+			Url = TfConstants.HomeSavedLinksUrl,
+			Text = LOC["My Saved Links"]
+		});		
+		
+		#endregion
+
+
+		#region << Addons >>
+		foreach (var addonPage in addonPages)
+		{
+			menuItems.Add(new()
+			{
+				Id = $"tf-addon-{addonPage.Id}",
+				Selected = routeState.PageId == addonPage.Id,
+				Url = string.Format(TfConstants.HomePagesSingleUrl, addonPage.Id),
+				Text = addonPage.Name
+			});
+		}
+
+		#endregion
+
+		return menuItems;
+	}	
+	
 	private static List<TfMenuItem> generateSpaceMenu(this TfNavigationState navState,
 		List<TfSpacePage> spacePages)
 	{

@@ -2,7 +2,7 @@
 
 public partial class TucSelectViewColumnTypeRead : ComponentBase
 {
-	[Parameter] public TfSpaceViewColumnReadModeContext Context { get; set; } = null!;	
+	[Parameter] public TfSpaceViewColumnReadMode Context { get; set; } = null!;	
 	[Parameter] public List<TfSelectOption?>? Value { get; set; }
 	
 	private string _getStyle(TfSelectOption selectedOption)

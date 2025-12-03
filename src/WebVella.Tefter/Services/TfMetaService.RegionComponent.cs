@@ -5,6 +5,7 @@ public partial interface ITfMetaService
 	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMeta();
 	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMeta(Type? context = null, TfScreenRegionScope? scope = null);
 	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetAdminAddonPages(string? search = null);
+	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetHomeAddonPages(string? search = null);
 }
 
 public partial class TfMetaService : ITfMetaService
@@ -26,7 +27,7 @@ public partial class TfMetaService : ITfMetaService
 		foreach (var comp in _regionComponentMeta)
 		{
 			var contextMatched = false;
-			if (context is null || comp.Type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), context))
+			if (context is null || comp.Type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), context))
 				contextMatched = true;
 			if (!contextMatched) continue;
 
@@ -74,9 +75,9 @@ public partial class TfMetaService : ITfMetaService
 
 		#region << Try Get meta >>
 		{
-			if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfAdminPageScreenRegionContext)))
+			if (type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(TfAdminPageScreenRegion)))
 			{
-				var instance = (ITfScreenRegionComponent<TfAdminPageScreenRegionContext>)Activator.CreateInstance(type);
+				var instance = (ITfScreenRegionAddon<TfAdminPageScreenRegion>)Activator.CreateInstance(type);
 				if (_addonIdHS.Contains(instance.AddonId))
 					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
 				_addonIdHS.Add(instance.AddonId);
@@ -92,9 +93,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfDataProviderManageSettingsScreenRegionContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(TfDataProviderManageSettingsScreenRegion)))
 			{
-				var instance = (ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>)Activator.CreateInstance(type);
+				var instance = (ITfScreenRegionAddon<TfDataProviderManageSettingsScreenRegion>)Activator.CreateInstance(type);
 				if (_addonIdHS.Contains(instance.AddonId))
 					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
 				_addonIdHS.Add(instance.AddonId);
@@ -109,9 +110,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfDataProviderDisplaySettingsScreenRegionContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(TfDataProviderDisplaySettingsScreenRegion)))
 			{
-				var instance = (ITfScreenRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>)Activator.CreateInstance(type);
+				var instance = (ITfScreenRegionAddon<TfDataProviderDisplaySettingsScreenRegion>)Activator.CreateInstance(type);
 				if (_addonIdHS.Contains(instance.AddonId))
 					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
 				_addonIdHS.Add(instance.AddonId);
@@ -126,9 +127,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfPageScreenRegionContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(TfPageScreenRegion)))
 			{
-				var instance = (ITfScreenRegionComponent<TfPageScreenRegionContext>)Activator.CreateInstance(type);
+				var instance = (ITfScreenRegionAddon<TfPageScreenRegion>)Activator.CreateInstance(type);
 				if (_addonIdHS.Contains(instance.AddonId))
 					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
 				_addonIdHS.Add(instance.AddonId);
@@ -143,9 +144,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfSpaceViewSelectorActionScreenRegionContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(TfSpaceViewSelectorActionScreenRegion)))
 			{
-				var instance = (ITfScreenRegionComponent<TfSpaceViewSelectorActionScreenRegionContext>)Activator.CreateInstance(type);
+				var instance = (ITfScreenRegionAddon<TfSpaceViewSelectorActionScreenRegion>)Activator.CreateInstance(type);
 				if (_addonIdHS.Contains(instance.AddonId))
 					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
 				_addonIdHS.Add(instance.AddonId);
@@ -160,9 +161,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfSpaceViewToolBarActionScreenRegionContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(TfSpaceViewToolBarActionScreenRegion)))
 			{
-				var instance = (ITfScreenRegionComponent<TfSpaceViewToolBarActionScreenRegionContext>)Activator.CreateInstance(type);
+				var instance = (ITfScreenRegionAddon<TfSpaceViewToolBarActionScreenRegion>)Activator.CreateInstance(type);
 				if (_addonIdHS.Contains(instance.AddonId))
 					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
 				_addonIdHS.Add(instance.AddonId);
@@ -177,9 +178,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfTemplateProcessorHelpScreenRegionContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(TfTemplateProcessorHelpScreenRegion)))
 			{
-				var instance = (ITfScreenRegionComponent<TfTemplateProcessorHelpScreenRegionContext>)Activator.CreateInstance(type);
+				var instance = (ITfScreenRegionAddon<TfTemplateProcessorHelpScreenRegion>)Activator.CreateInstance(type);
 				if (_addonIdHS.Contains(instance.AddonId))
 					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
 				_addonIdHS.Add(instance.AddonId);
@@ -194,9 +195,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfTemplateProcessorManageSettingsScreenRegionContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(TfTemplateProcessorManageSettingsScreenRegion)))
 			{
-				var instance = (ITfScreenRegionComponent<TfTemplateProcessorManageSettingsScreenRegionContext>)Activator.CreateInstance(type);
+				var instance = (ITfScreenRegionAddon<TfTemplateProcessorManageSettingsScreenRegion>)Activator.CreateInstance(type);
 				if (_addonIdHS.Contains(instance.AddonId))
 					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
 				_addonIdHS.Add(instance.AddonId);
@@ -211,9 +212,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfTemplateProcessorResultScreenRegionContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(TfTemplateProcessorResultScreenRegion)))
 			{
-				var instance = (ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>)Activator.CreateInstance(type);
+				var instance = (ITfScreenRegionAddon<TfTemplateProcessorResultScreenRegion>)Activator.CreateInstance(type);
 				if (_addonIdHS.Contains(instance.AddonId))
 					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
 				_addonIdHS.Add(instance.AddonId);
@@ -228,9 +229,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfTemplateProcessorResultPreviewScreenRegionContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(TfTemplateProcessorResultPreviewScreenRegion)))
 			{
-				var instance = (ITfScreenRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>)Activator.CreateInstance(type);
+				var instance = (ITfScreenRegionAddon<TfTemplateProcessorResultPreviewScreenRegion>)Activator.CreateInstance(type);
 				if (_addonIdHS.Contains(instance.AddonId))
 					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
 				_addonIdHS.Add(instance.AddonId);
@@ -245,9 +246,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfTemplateProcessorDisplaySettingsScreenRegionContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(TfTemplateProcessorDisplaySettingsScreenRegion)))
 			{
-				var instance = (ITfScreenRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegionContext>)Activator.CreateInstance(type);
+				var instance = (ITfScreenRegionAddon<TfTemplateProcessorDisplaySettingsScreenRegion>)Activator.CreateInstance(type);
 				if (_addonIdHS.Contains(instance.AddonId))
 					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
 				_addonIdHS.Add(instance.AddonId);
@@ -291,7 +292,7 @@ public partial class TfMetaService : ITfMetaService
 	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetAdminAddonPages(string? search = null)
 	{
 		var addonPages = GetRegionComponentsMeta(
-						context: typeof(TfAdminPageScreenRegionContext),
+						context: typeof(TfAdminPageScreenRegion),
 						scope: null
 					);
 		if (String.IsNullOrWhiteSpace(search))
@@ -302,6 +303,21 @@ public partial class TfMetaService : ITfMetaService
 		search = search.Trim().ToLowerInvariant();
 		return addonPages.Where(x=> x.Name.ToLowerInvariant().Contains(search)).ToList().AsReadOnly();
 	}
+	
+	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetHomeAddonPages(string? search = null)
+	{
+		var addonPages = GetRegionComponentsMeta(
+			context: typeof(TfPageScreenRegion),
+			scope: null
+		);
+		if (String.IsNullOrWhiteSpace(search))
+		{
+			return addonPages;
+		}
+
+		search = search.Trim().ToLowerInvariant();
+		return addonPages.Where(x=> x.Name.ToLowerInvariant().Contains(search)).ToList().AsReadOnly();
+	}	
 }
 
 

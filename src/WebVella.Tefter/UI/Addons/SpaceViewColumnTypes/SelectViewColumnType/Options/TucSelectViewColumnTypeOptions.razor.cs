@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Addons;
 public partial class TucSelectViewColumnTypeOptions : TfLocalizedViewColumnComponent
 {
-	[Parameter] public TfSpaceViewColumnOptionsModeContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnOptionsMode Context { get; set; } = null!;
 	[Parameter] public EventCallback<TfSelectViewColumnTypeSettings> SettingsChanged { get; set; }
 	[Parameter] public TfDataset? SelectedDataset { get; set; } = null!;
 	[Parameter] public List<TfDataset> DatasetOptions { get; set; } = null!;

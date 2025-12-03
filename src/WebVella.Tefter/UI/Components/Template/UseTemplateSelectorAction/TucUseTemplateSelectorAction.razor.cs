@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucUseTemplateSelectorAction : TfBaseComponent, ITfScreenRegionComponent<TfSpaceViewSelectorActionScreenRegionContext>
+public partial class TucUseTemplateSelectorAction : TfBaseComponent, ITfScreenRegionAddon<TfSpaceViewSelectorActionScreenRegion>
 {
 	//State
 	public Guid AddonId { get; init; } = new Guid("3e344931-988c-4f84-874d-823e31ec73ad"); 
@@ -10,7 +10,7 @@ public partial class TucUseTemplateSelectorAction : TfBaseComponent, ITfScreenRe
 	public List<TfScreenRegionScope> Scopes { get; init; } = new ();
 
 	[Parameter] 
-	public TfSpaceViewSelectorActionScreenRegionContext RegionContext { get; set; } = null!;
+	public TfSpaceViewSelectorActionScreenRegion RegionContext { get; set; } = null!;
 	private async Task _clickHandler()
 	{
 		if (RegionContext.SelectedDataRows.Count == 0) return;

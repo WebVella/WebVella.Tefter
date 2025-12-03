@@ -4,7 +4,7 @@ namespace WebVella.Tefter.UI.Addons;
 
 public partial class TucTalkCommentsCountViewColumnTypeOptions : TfLocalizedViewColumnComponent
 {
-    [Parameter] public TfSpaceViewColumnOptionsModeContext Context { get; set; } = null!;
+    [Parameter] public TfSpaceViewColumnOptionsMode Context { get; set; } = null!;
 
     [Parameter] public EventCallback<TfTalkCommentsCountViewColumnTypeSettings> SettingsChanged { get; set; }
     [Parameter] public EventCallback<Tuple<string, string?>> DataMappingChanged { get; set; }

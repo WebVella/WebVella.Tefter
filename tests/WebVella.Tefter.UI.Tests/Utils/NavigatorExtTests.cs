@@ -27,13 +27,29 @@ public class NavigatorExtTests
 		result.RouteNodes.Count.Should().Be(1);
 		result.RouteNodes[0].Should().Be(RouteDataNode.Home);
 
-		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDashboardUrl)}");
+		#region << Home Dashboards >>
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.HomeSavedLinksUrl)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
-		result.NodesDict.Count.Should().Be(1);
-		result.RouteNodes.Count.Should().Be(1);
-		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
-
+		result.NodesDict.Count.Should().Be(2);
+		result.RouteNodes.Count.Should().Be(2);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Home);
+		result.RouteNodes[1].Should().Be(RouteDataNode.HomeSavedLinks);
+		#endregion
+		
+		#region << Home page >>
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.HomePagesSingleUrl, pageId)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(3);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Home);
+		result.RouteNodes[1].Should().Be(RouteDataNode.Pages);
+		result.RouteNodes[2].Should().Be(RouteDataNode.PageId);
+		result.PageId.Should().Be(pageId);
+	
+		
+		#endregion		
+		
 		#region << Admin Users >>
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminUsersPageUrl)}");
 		result = NavigatorExt.GetNodeData(uri);

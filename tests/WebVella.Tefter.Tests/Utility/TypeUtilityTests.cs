@@ -96,7 +96,7 @@ public class TypeUtilityTests
 		{
 			Type objType = typeof(UtilityTestsSimpleClass);
 			bool? result = null;
-			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(UtilityTestsSimpleClass)); return true; };
+			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(UtilityTestsSimpleClass)); return true; };
 			action.Should().NotThrow();
 			result.Should().BeFalse();
 		}
@@ -107,9 +107,9 @@ public class TypeUtilityTests
 	{
 		using (await locker.LockAsync())
 		{
-			Type objType = typeof(UtilityTestsClassDynamicComponentWithoutScope);
+			Type objType = typeof(UtilityTestsClassDynamicAddonWithoutScope);
 			bool? result = null;
-			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfDataProviderManageSettingsScreenRegionContext)); return true; };
+			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(TfDataProviderManageSettingsScreenRegion)); return true; };
 			action.Should().NotThrow();
 			result.Should().BeTrue();
 		}
@@ -145,11 +145,11 @@ public class TypeUtilityTests
 	{
 		using (await locker.LockAsync())
 		{
-			Type objType = typeof(ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>);
+			Type objType = typeof(ITfScreenRegionAddon<TfDataProviderManageSettingsScreenRegion>);
 			string result = null;
 			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromGenericInterface(); return true; };
 			action.Should().NotThrow();
-			result.Should().Be(typeof(TfDataProviderManageSettingsScreenRegionContext).FullName);
+			result.Should().Be(typeof(TfDataProviderManageSettingsScreenRegion).FullName);
 		}
 	}
 
@@ -162,7 +162,7 @@ public class TypeUtilityTests
 		{
 			Type objType = typeof(UtilityTestsSimpleClass);
 			List<string> result = new();
-			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromImplementedGenericInterface(typeof(ITfScreenRegionComponent<>)); return true; };
+			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromImplementedGenericInterface(typeof(ITfScreenRegionAddon<>)); return true; };
 			action.Should().NotThrow();
 			result.Should().NotBeNull();
 			result.Count.Should().Be(0);
@@ -174,13 +174,13 @@ public class TypeUtilityTests
 	{
 		using (await locker.LockAsync())
 		{
-			Type objType = typeof(UtilityTestsClassDynamicComponentWithoutScope);
+			Type objType = typeof(UtilityTestsClassDynamicAddonWithoutScope);
 			List<string> result = new();
-			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromImplementedGenericInterface(typeof(ITfScreenRegionComponent<>)); return true; };
+			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromImplementedGenericInterface(typeof(ITfScreenRegionAddon<>)); return true; };
 			action.Should().NotThrow();
 			result.Should().NotBeNull();
 			result.Count.Should().Be(1);
-			result[0].Should().Be(typeof(TfDataProviderManageSettingsScreenRegionContext).FullName);
+			result[0].Should().Be(typeof(TfDataProviderManageSettingsScreenRegion).FullName);
 		}
 	}
 
@@ -213,9 +213,9 @@ public class UtilityTestsChildGenericClass : UtilityTestsBaseGenericClass<Utilit
 
 }
 
-public class UtilityTestsClassDynamicComponentWithoutScope : ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
+public class UtilityTestsClassDynamicAddonWithoutScope : ITfScreenRegionAddon<TfDataProviderManageSettingsScreenRegion>
 {
-    public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; set; }
+    public TfDataProviderManageSettingsScreenRegion RegionContext { get; set; }
     public Guid AddonId { get; init; }
     public int PositionRank { get; init; }
     public string AddonName { get; init; }
@@ -223,20 +223,20 @@ public class UtilityTestsClassDynamicComponentWithoutScope : ITfScreenRegionComp
     public string AddonFluentIconName { get; init; }
     public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>() { };
 
-    public UtilityTestsClassDynamicComponentWithoutScope()
+    public UtilityTestsClassDynamicAddonWithoutScope()
     {
         AddonId = new Guid("cff347c8-ff47-4e93-ae46-fb2b1451c80f");
     }
 }
 
 //TODO FIX
-public class UtilityTestsClassDynamicComponentWithScope : ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
+public class UtilityTestsClassDynamicAddonWithScope : ITfScreenRegionAddon<TfDataProviderManageSettingsScreenRegion>
 {
-    private TfDataProviderManageSettingsScreenRegionContext _regionContext;
-    public TfDataProviderManageSettingsScreenRegionContext RegionContext
+    private TfDataProviderManageSettingsScreenRegion _region;
+    public TfDataProviderManageSettingsScreenRegion RegionContext
     {
-        get => _regionContext;
-        set => _regionContext = value;
+        get => _region;
+        set => _region = value;
     }
     public Guid AddonId { get; init; }
     public int PositionRank { get; init; }
@@ -247,7 +247,7 @@ public class UtilityTestsClassDynamicComponentWithScope : ITfScreenRegionCompone
                         new TfScreenRegionScope(typeof(UtilityTestsDataProviderTypeClass),null)
                     };
 
-    public UtilityTestsClassDynamicComponentWithScope()
+    public UtilityTestsClassDynamicAddonWithScope()
     {
         AddonId = new Guid("4ce31e80-60e1-4bc9-a6ac-8328606d102f");
     }

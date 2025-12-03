@@ -1,0 +1,31 @@
+﻿@import '_variables.less';
+
+.tf-paginator-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &__left, &__right {
+        flex: 0 0 auto;
+    }
+
+    &__left {
+        & > * {
+            margin-right: calc(var(--design-unit) * 1px);
+        }
+    }
+}
+
+.tf-pagination-pager {
+    flex: 0 0 100px;
+    height: calc((var(--base-height-multiplier) + var(--density)) * var(--design-unit) * 1px);
+}
+
+.tf-pagination-pagesize {
+    width: 80px;
+    height: calc((var(--base-height-multiplier) + var(--density)) * var(--design-unit) * 1px);
+}
+
+.tf-paginator-nav-description {
+    color: var(--neutral-foreground-hover);
+}

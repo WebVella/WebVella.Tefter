@@ -4,7 +4,7 @@ public partial class TucTalkCommentsCountViewColumnTypeRead : ComponentBase
 {
 	[Inject] public IDialogService DialogService { get; set; } = null!;
 	[Parameter] public List<long?>? Value { get; set; }
-	[Parameter] public TfSpaceViewColumnReadModeContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnReadMode Context { get; set; } = null!;
 	[Parameter] public string? ColumnName { get; set; } = null!;
 	
     private async Task _onClick()

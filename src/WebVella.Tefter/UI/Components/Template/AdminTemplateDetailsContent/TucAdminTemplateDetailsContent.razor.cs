@@ -4,7 +4,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	private TfTemplate? _template = null;
 	private List<TfDatasetAsOption> _spaceDataSelection = new();
-	private TfTemplateProcessorDisplaySettingsScreenRegionContext? _dynamicComponentContext = null;
+	private TfTemplateProcessorDisplaySettingsScreenRegion? _dynamicComponentContext = null;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private ITfTemplateProcessorAddon? _processor = null;
 	private TfNavigationState _navState = null!;
@@ -63,7 +63,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposab
 
 			}
 
-			_dynamicComponentContext = new TfTemplateProcessorDisplaySettingsScreenRegionContext
+			_dynamicComponentContext = new TfTemplateProcessorDisplaySettingsScreenRegion
 			{
 				Template = _template
 			};

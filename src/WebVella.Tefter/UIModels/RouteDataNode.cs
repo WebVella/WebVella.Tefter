@@ -3,6 +3,8 @@ public enum RouteDataNode
 {
 	[Description("Home")]
 	Home,
+	[Description("SavedLinks")]
+	HomeSavedLinks,	
 	[Description("Space")]
 	Space,
 	[Description("Admin")]
@@ -39,8 +41,6 @@ public enum RouteDataNode
 	Saves,
 	[Description("Schema")]
 	Schema,
-	[Description("Join Keys")]
-	JoinKeys,
 	[Description("Shared Columns")]
 	Aux,
 	[Description("Synchronization")]
@@ -51,8 +51,6 @@ public enum RouteDataNode
 	Datasets,
 	[Description("Views")]
 	Views,
-	[Description("List")]
-	List,
 	[Description("User Id")]
 	UserId,
 	[Description("Role Id")]
@@ -65,8 +63,6 @@ public enum RouteDataNode
 	SharedColumnId,
 	[Description("Template Id")]
 	TemplateId,
-	[Description("Template Type Id")]
-	TemplateTypeId,
 	[Description("Space Id")]
 	SpaceId,
 	[Description("Space Page Id")]

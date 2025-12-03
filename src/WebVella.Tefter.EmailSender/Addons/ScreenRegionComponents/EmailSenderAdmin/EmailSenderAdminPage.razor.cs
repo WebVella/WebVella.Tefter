@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.EmailSender.Addons;
 
-public partial class EmailSenderAdminPage : TfBaseComponent, ITfScreenRegionComponent<TfAdminPageScreenRegionContext>
+public partial class EmailSenderAdminPage : TfBaseComponent, ITfScreenRegionAddon<TfAdminPageScreenRegion>
 {
 	public const string ID = "1f6e544e-6a53-4fa1-98ef-9c51a569c2b5";
 	public const string NAME = "Email Sender";
@@ -16,6 +16,6 @@ public partial class EmailSenderAdminPage : TfBaseComponent, ITfScreenRegionComp
 			new TfScreenRegionScope(null,new Guid(ID))
 		};
 	[Parameter]
-	public TfAdminPageScreenRegionContext RegionContext { get; set; }
+	public TfAdminPageScreenRegion RegionContext { get; set; }
 
 }

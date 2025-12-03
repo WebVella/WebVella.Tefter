@@ -8,7 +8,7 @@ public partial class TucTemplateHelpDialog : TfBaseComponent, IDialogContentComp
 	private string _error = string.Empty;
 
 	private ITfTemplateProcessorAddon? _processor = null;
-	private TfTemplateProcessorHelpScreenRegionContext? _dynamicComponentContext = null;
+	private TfTemplateProcessorHelpScreenRegion? _dynamicComponentContext = null;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 
 	protected override async Task OnInitializedAsync()
@@ -38,7 +38,7 @@ public partial class TucTemplateHelpDialog : TfBaseComponent, IDialogContentComp
 	{
 		_processor = _getProcessor();
 
-		_dynamicComponentContext = new TfTemplateProcessorHelpScreenRegionContext{};
+		_dynamicComponentContext = new TfTemplateProcessorHelpScreenRegion{};
 		_dynamicComponentScope = new TfScreenRegionScope();
 		if(_processor is not null)
 			_dynamicComponentScope = new TfScreenRegionScope(_processor.GetType(), null);

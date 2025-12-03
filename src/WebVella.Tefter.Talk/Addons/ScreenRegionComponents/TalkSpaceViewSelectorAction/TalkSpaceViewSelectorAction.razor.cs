@@ -3,7 +3,7 @@
 namespace WebVella.Tefter.Talk.Components;
 
 public partial class TalkSpaceViewSelectorAction : TfBaseComponent,
-	ITfScreenRegionComponent<TfSpaceViewSelectorActionScreenRegionContext>
+	ITfScreenRegionAddon<TfSpaceViewSelectorActionScreenRegion>
 {
 	public const string ID = "942d6fb0-4662-4c5c-ae52-123dd40375ac";
 	public const string NAME = "Add Talk Discussion to Selection";
@@ -17,7 +17,7 @@ public partial class TalkSpaceViewSelectorAction : TfBaseComponent,
 	public int PositionRank { get; init; } = POSITION_RANK;
 	public List<TfScreenRegionScope> Scopes { get; init; } = new();
 	[Parameter]
-	public TfSpaceViewSelectorActionScreenRegionContext RegionContext { get; set; }
+	public TfSpaceViewSelectorActionScreenRegion RegionContext { get; set; }
 
 	[CascadingParameter(Name = "TucSpaceViewPageContent")]
 	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;

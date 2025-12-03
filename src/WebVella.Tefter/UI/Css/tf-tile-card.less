@@ -1,0 +1,72 @@
+﻿@import '_variables.less';
+
+.tf-tile-card {
+    padding: 5px 10px;
+    border-radius: calc(var(--layer-corner-radius) * 1px);
+    display: flex;
+    text-decoration: none;
+    color: var(--neutral-foreground-rest);
+    height: 100%;
+
+    &-wrapper {
+        padding: 0;
+        position: relative;
+        height: 100%;
+    }
+
+    &:hover {
+        color: var(--neutral-foreground-rest);
+        background: color-mix(in srgb, var(--neutral-layer-1), var(--accent-fill-rest) 5%);
+        border-color: color-mix(in srgb, var(--neutral-layer-1), var(--accent-fill-rest) 50%);
+    }
+
+    &__icon {
+        flex: 0 0 50px;
+        display: flex;
+        align-items: center;
+        justify-content: start;
+    }
+
+    &__meta {
+        flex: 1 1 auto;
+        display: flex;
+        flex-flow: column;
+        justify-content: space-between;
+
+        &__header {
+            &__title {
+                //font-size: var(--type-ramp-plus-1-font-size);
+            }
+
+            &__subtitle {
+                font-size: var(--type-ramp-minus-1-font-size);
+                color: var(--neutral-foreground-hint);
+            }
+        }
+
+        &__footer {
+            padding-top: 5px;
+            font-size: var(--type-ramp-minus-1-font-size);
+            color: var(--neutral-foreground-hint);
+        }
+    }
+
+    &__actions {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        visibility: hidden;
+
+        fluent-button {
+            --neutral-fill-stealth-rest: transparent;
+        }
+
+        &--open {
+            visibility: visible;
+        }
+    }
+
+    &-wrapper:hover &__actions {
+        visibility: visible;
+    }
+}

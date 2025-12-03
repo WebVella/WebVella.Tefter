@@ -4,7 +4,7 @@ namespace WebVella.Tefter.UI.Addons;
 
 public partial class TucBooleanViewColumnTypeOptions : TfLocalizedViewColumnComponent
 {
-	[Parameter] public TfSpaceViewColumnOptionsModeContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnOptionsMode Context { get; set; } = null!;
 	[Parameter] public EventCallback<TfBooleanViewColumnTypeSettings> SettingsChanged { get; set; }
 	
 	private TfBooleanViewColumnTypeSettings _settings =  new ();

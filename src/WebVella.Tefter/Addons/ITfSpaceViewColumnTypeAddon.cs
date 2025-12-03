@@ -5,12 +5,12 @@ public interface ITfSpaceViewColumnTypeAddon : ITfAddon
 	public List<TfSpaceViewColumnDataMappingDefinition> DataMappingDefinitions { get; init; }
 	
 	//Setups Excel cell with value and formatting
-	void ProcessExcelCell(TfSpaceViewColumnBaseContext args);
+	void ProcessExcelCell(TfSpaceViewColumnBase args);
 	//Returns Value/s as string usually for CSV export
-	string GetValueAsString(TfSpaceViewColumnBaseContext args);
+	string GetValueAsString(TfSpaceViewColumnBase args);
 	//Returns fragment to be rendered
-	RenderFragment Render(TfSpaceViewColumnBaseContext args);
-	List<ValidationError> ValidateTypeOptions(TfSpaceViewColumnOptionsModeContext args);
+	RenderFragment Render(TfSpaceViewColumnBase args);
+	List<ValidationError> ValidateTypeOptions(TfSpaceViewColumnOptionsMode args);
 }
 
 public record TfSpaceViewColumnDataMappingDefinition

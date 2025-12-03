@@ -36,15 +36,16 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentTextArea Value=@_form.Description ValueChanged="@_onDescriptionChanged" Rows="5"
-									Immediate="true" ImmediateDelay="200" Resize="TextAreaResize.Vertical"
-									Label="@LOC("Description")" Style="width:100%" Placeholder="@LOC("Your notes with the ability to used hashtags. (eg. #budget)")"/>
+					<FluentTextField Value=@_form.Description ValueChanged="@_onDescriptionChanged"
+									Immediate="true" ImmediateDelay="200" 
+									Label="@LOC("HashTags")" Style="width:100%" Placeholder="@LOC("no hashtags")"/>
 					<FluentValidationMessage For="@(() => _form.Description)" />
+					<div class="tf-input-description">@LOC("separate with comma (eg. #budget, #2025)")</div>
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentDivider Style="margin:1rem 0" />
 			<FluentStack Orientation="@Orientation.Horizontal" Style="min-height:24px;">
-				@foreach (var item in _form.Tags.OrderBy(x => x.Label))
+				@foreach (var item in _form.Tags)
 				{
 					<FluentBadge Appearance="Appearance.Accent">#@item.Label</FluentBadge>
 				}

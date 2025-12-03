@@ -1,0 +1,77 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+<TucLayoutPageContent Title="@(IsSavedLinks? LOC("My Saved Links") : LOC("My Bookmarks"))" Icon="@(IsSavedLinks ? "Link" : "Star")">
+    <Toolbar>
+        @if (_allBookmarks.Count > 0)
+        {
+            <FluentSearch Placeholder="@LOC("search...")" AutoComplete="off" Value="@_search" ValueChanged="_searchValueChanged"
+                          Style="margin-left:1rem" @ref=_refSearch />
+            <FluentButton Appearance="Appearance.Outline"
+                          IconStart="@TfConstants.GetIcon("ArrowSortDownLines")!.WithColor(_order == TucMyBookmarksOrder.Newest ? Color.Accent : Color.Neutral)"
+                          OnClick="@(()=> _orderChanged(TucMyBookmarksOrder.Newest))" />
+            <FluentButton Appearance="Appearance.Outline"
+                          IconStart="@TfConstants.GetIcon("ArrowSortUpLines")!.WithColor(_order == TucMyBookmarksOrder.Oldest ? Color.Accent : Color.Neutral)"
+                          OnClick="@(()=> _orderChanged(TucMyBookmarksOrder.Oldest))" />
+            <FluentButton Appearance="Appearance.Outline"
+                          IconStart="@TfConstants.GetIcon("TextSortAscending")!.WithColor(_order == TucMyBookmarksOrder.Alpha ? Color.Accent : Color.Neutral)"
+                          OnClick="@(()=> _orderChanged(TucMyBookmarksOrder.Alpha))" />
+            <FluentButton Appearance="Appearance.Outline"
+                          IconStart="@TfConstants.GetIcon("TextSortDescending")!.WithColor(_order == TucMyBookmarksOrder.AlphaReverse ? Color.Accent : Color.Neutral)"
+                          OnClick="@(()=> _orderChanged(TucMyBookmarksOrder.AlphaReverse))" />
+        }
+    </Toolbar>
+    <ChildContent>
+        <div style="padding:var(--tf-padding)">
+            @if (_allBookmarks.Count > 0)
+            {
+                <FluentGrid Spacing="1">
+                    @foreach (var bookmark in _bookmarks)
+                    {
+                        <FluentGridItem xs="12" sm="6" md="4" lg="3" xxl="2">
+                            <TucTileCard Title="@bookmark.Name"
+                                         Subtitle="@($"{bookmark.Space!.Name} : {bookmark.SpacePage!.Name}")"
+                                         FluentIconName="@bookmark.SpacePage.FluentIconName"
+                                         Color="@bookmark.Space.Color"
+                                         Footer="@bookmark.Description"
+                                         Url="@bookmark.GetUrl()"
+                                         Menu="_getMenu(bookmark)" />
+                        </FluentGridItem>
+                    }
+                </FluentGrid>
+                @if (_page > 1 || (_bookmarks.Count == _pageSize))
+                {
+                    <TucPager GoLast="@_goLastPage" GoOnPage="@_goOnPage" Style="margin-top:1rem;" />
+                }
+                @if (_bookmarks.Count == 0)
+                {
+                    <FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info" Style="margin-top:1rem;">
+                        
+                        @if (IsSavedLinks)
+                        {
+                            @LOC("No saved links found")
+                        }
+                        else
+                        {
+                            @LOC("No bookmarked pages found")
+                        }
+                    </FluentMessageBar>
+                }
+            }
+            else
+            {
+                <FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info" Style="margin-top:1rem;">
+                    @if (IsSavedLinks)
+                    {
+                        @LOC("You do not have any saved links yet!")
+                    }
+                    else
+                    {
+                        @LOC("You do not have any bookmarked pages yet!")
+                    }
+                    
+                </FluentMessageBar>
+            }
+        </div>
+    </ChildContent>
+</TucLayoutPageContent>

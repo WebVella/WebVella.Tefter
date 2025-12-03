@@ -3,7 +3,7 @@
 public partial class TucSelectViewColumnTypeEdit : TfLocalizedViewColumnComponent
 {
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;	
-	[Parameter] public TfSpaceViewColumnEditModeContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnEditMode Context { get; set; } = null!;
 	[Parameter] public TfSelectOption? Value { get; set; }
 	[Parameter] public List<TfSelectOption> Options { get; set; } = new();
 	[Parameter] public EventCallback<TfSelectOption?> ValueChanged { get; set; }

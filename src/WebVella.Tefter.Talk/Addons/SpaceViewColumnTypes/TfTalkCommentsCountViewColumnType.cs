@@ -43,38 +43,38 @@ public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnTypeAddon
 
     #region << PUBLIC >>
 
-    public void ProcessExcelCell(TfSpaceViewColumnBaseContext args)
+    public void ProcessExcelCell(TfSpaceViewColumnBase args)
     {
-        if (args is not TfSpaceViewColumnExportExcelModeContext)
+        if (args is not TfSpaceViewColumnExportExcelMode)
             throw new Exception("Wrong context type. TfSpaceViewColumnExportExcelModeContext is expected");
-        if (args is TfSpaceViewColumnExportExcelModeContext context)
+        if (args is TfSpaceViewColumnExportExcelMode context)
             context.ExcelCell.SetValue(XLCellValue.FromObject(String.Join(", ", _initValue(args))));
     }
 
     //Returns Value/s as string usually for CSV export
-    public string GetValueAsString(TfSpaceViewColumnBaseContext args)
+    public string GetValueAsString(TfSpaceViewColumnBase args)
     {
-        if (args is not TfSpaceViewColumnExportCsvModeContext)
+        if (args is not TfSpaceViewColumnExportCsvMode)
             throw new Exception("Wrong context type. TfSpaceViewColumnExportCsvModeContext is expected");
 
         return String.Join(", ", _initValue(args));
     }
 
-    public RenderFragment Render(TfSpaceViewColumnBaseContext args)
+    public RenderFragment Render(TfSpaceViewColumnBase args)
     {
         if (args is null)
             throw new Exception("TfSpaceViewColumnBaseContext is expected");
-        if (args is TfSpaceViewColumnReadModeContext readContext)
+        if (args is TfSpaceViewColumnReadMode readContext)
             return _renderReadMode(readContext);
-        if (args is TfSpaceViewColumnEditModeContext editContext)
+        if (args is TfSpaceViewColumnEditMode editContext)
             return _renderEditMode(editContext);
-        if (args is TfSpaceViewColumnOptionsModeContext optionsContext)
+        if (args is TfSpaceViewColumnOptionsMode optionsContext)
             return _renderOptionsMode(optionsContext);
 
         throw new Exception("Unsupported render mode");
     }
 
-    public List<ValidationError> ValidateTypeOptions(TfSpaceViewColumnOptionsModeContext args)
+    public List<ValidationError> ValidateTypeOptions(TfSpaceViewColumnOptionsMode args)
     {
         _validationErrors = new();
         var settings = args.GetSettings<TfTalkCommentsCountViewColumnTypeSettings>();
@@ -88,7 +88,7 @@ public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnTypeAddon
     #region << Private >>
 
     //Value
-    private List<long?> _initValue(TfSpaceViewColumnBaseContext args)
+    private List<long?> _initValue(TfSpaceViewColumnBase args)
     {
         var values = new List<long?>();
 
@@ -116,7 +116,7 @@ public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnTypeAddon
     }
 
     //Render
-    private RenderFragment _renderReadMode(TfSpaceViewColumnReadModeContext context)
+    private RenderFragment _renderReadMode(TfSpaceViewColumnReadMode context)
     {
         var values = _initValue(context);
         string? columnName = null;
@@ -134,10 +134,10 @@ public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnTypeAddon
         };
     }
 
-    private RenderFragment _renderEditMode(TfSpaceViewColumnEditModeContext context)
+    private RenderFragment _renderEditMode(TfSpaceViewColumnEditMode context)
     {
         //Non Editable columns
-        return _renderReadMode(new TfSpaceViewColumnReadModeContext(context.ViewData)
+        return _renderReadMode(new TfSpaceViewColumnReadMode(context.ViewData)
         {
             TfService = context.TfService,
             ServiceProvider = context.ServiceProvider,
@@ -147,7 +147,7 @@ public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnTypeAddon
         });
     }
 
-    private RenderFragment _renderOptionsMode(TfSpaceViewColumnOptionsModeContext context)
+    private RenderFragment _renderOptionsMode(TfSpaceViewColumnOptionsMode context)
     {
         var talkSrv = context.ServiceProvider.GetRequiredService<ITalkService>();
         return builder =>

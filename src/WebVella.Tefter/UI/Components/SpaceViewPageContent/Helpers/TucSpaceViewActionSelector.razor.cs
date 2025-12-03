@@ -11,11 +11,11 @@ public partial class TucSpaceViewActionSelector : TfBaseComponent
 	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;
 
 	private bool _open = false;
-	private TfSpaceViewSelectorActionScreenRegionContext _context
+	private TfSpaceViewSelectorActionScreenRegion _context
 	{
 		get
 		{
-			return new TfSpaceViewSelectorActionScreenRegionContext()
+			return new TfSpaceViewSelectorActionScreenRegion()
 			{
 				SelectedDataRows = SelectedRows,
 				SpaceData = SpaceData,

@@ -88,7 +88,7 @@
 				}
 
 				<TucErrorBoundry>
-					@(((ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(_selectedColumnType.GetType())!).Render(_typeOptionsContext))
+					@(((ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(_selectedColumnType.GetType())!).Render(_typeOptions))
 					<FluentValidationMessage For="@(() => _form.TypeOptionsJson)"/>
 				</TucErrorBoundry>
 			}

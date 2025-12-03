@@ -92,13 +92,4 @@
 		<PackageReference Include="WebVella.BlazorTrace" Version="1.2.0" />
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.2.2" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <AdditionalFiles Include="UI\Components\SpaceView\SpaceViewPinColumnsDialog\TucSpaceViewColorRulesDialog.razor" />
-	  <AdditionalFiles Include="UI\Components\Space\AsideActions\TucAsideActions.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="UI\Components\Page\PageLinkSaveSelector\TucPageLinkSaveSelector.razor" />
-	</ItemGroup>
 </Project>

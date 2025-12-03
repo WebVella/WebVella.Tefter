@@ -38,12 +38,6 @@
                         </FluentButton>
                     </div>
                 }
-                <div class="tf-space-finder__space__bookmark">
-                    <FluentButton Appearance="@Appearance.Outline" OnClick="item.OnBookmark" StopPropagation="true">
-                        <FluentIcon
-                            Value="@TfConstants.GetIcon("Star", variant: item.Bookmarked ? IconVariant.Filled : IconVariant.Regular)"/>
-                    </FluentButton>
-                </div>
             </TucCard>
         </Virtualize>
     </div>

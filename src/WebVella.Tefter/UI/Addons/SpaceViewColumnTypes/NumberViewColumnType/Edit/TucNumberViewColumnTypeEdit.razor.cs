@@ -4,7 +4,7 @@ public partial class TucNumberViewColumnTypeEdit : TfLocalizedViewColumnComponen
 {
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
-	[Parameter] public TfSpaceViewColumnEditModeContext Context { get; set; } = null!;
+	[Parameter] public TfSpaceViewColumnEditMode Context { get; set; } = null!;
 	[Parameter]
 	public decimal? Value
 	{

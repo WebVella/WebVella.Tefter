@@ -1,0 +1,27 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+
+<TucCard Class="tf-tile-card-wrapper">
+    @if (!String.IsNullOrWhiteSpace(Url))
+    {
+        <a href="@Url" class="tf-tile-card tf-tile-card--clickable">
+            <TucTileCardIcon FluentIconName="@FluentIconName" Color="@Color"/>
+            <div class="tf-tile-card__meta">
+                <TucTileCardHeader Title="@Title" Subtitle="@Subtitle"/>
+                <TucTileCardFooter Footer="@Footer"/>
+            </div>
+        </a>
+    }
+    else
+    {
+        <div class="tf-tile-card">
+            <TucTileCardIcon FluentIconName="@FluentIconName" Color="@Color"/>
+            <div class="tf-tile-card__meta">
+                <TucTileCardHeader Title="@Title" Subtitle="@Subtitle"/>
+                <TucTileCardFooter Footer="@Footer"/>
+            </div>
+        </div>
+    }
+    <TucTileCardActions Menu="Menu"/>
+</TucCard>
