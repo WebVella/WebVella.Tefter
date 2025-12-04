@@ -92,4 +92,8 @@
 		<PackageReference Include="WebVella.BlazorTrace" Version="1.2.0" />
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.2.2" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <AdditionalFiles Include="UI\Components\Dashboard\HomeDashboard\TucHomeDashboard.razor" />
+	</ItemGroup>
 </Project>

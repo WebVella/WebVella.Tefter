@@ -1,4 +1,4 @@
-html:root {
+﻿html:root {
   --tf-black: #000;
   --tf-white: #fff;
   --tf-red-50: oklch(97.1% 0.013 17.38);
@@ -254,6 +254,7 @@ html:root {
   --tf-page-header-height: 50px;
   --tf-page-tabs-height: 50px;
   --tf-aside-width: 220px;
+  --tf-content-aside-width: 220px;
   --tf-padding: 12px;
   --tf-card-space: calc(var(--tf-padding) * 2);
 }
@@ -1594,38 +1595,38 @@ fluent-menu-item::part(start) {
 .tf-grid .tf-grid-td {
   --tf-td-color-red: var(--tf-red-500);
   --tf-td-fill-red: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-red-500) 5%);
-  --tf-td-color-orange: var(--tf-orange-500);
-  --tf-td-fill-orange: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-orange-500) 5%);
-  --tf-td-color-amber: var(--tf-amber-500);
-  --tf-td-fill-amber: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-amber-500) 5%);
-  --tf-td-color-yellow: var(--tf-yellow-500);
-  --tf-td-fill-yellow: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-yellow-500) 5%);
-  --tf-td-color-lime: var(--tf-lime-500);
-  --tf-td-fill-lime: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-lime-500) 5%);
-  --tf-td-color-green: var(--tf-green-500);
-  --tf-td-fill-green: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-green-500) 5%);
-  --tf-td-color-emerald: var(--tf-emerald-500);
-  --tf-td-fill-emerald: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-emerald-500) 5%);
-  --tf-td-color-teal: var(--tf-teal-500);
-  --tf-td-fill-teal: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-teal-500) 5%);
-  --tf-td-color-cyan: var(--tf-cyan-500);
-  --tf-td-fill-cyan: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-cyan-500) 5%);
-  --tf-td-color-sky: var(--tf-sky-500);
-  --tf-td-fill-sky: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-sky-500) 5%);
-  --tf-td-color-blue: var(--tf-blue-500);
-  --tf-td-fill-blue: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-blue-500) 5%);
-  --tf-td-color-indigo: var(--tf-indigo-500);
-  --tf-td-fill-indigo: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-indigo-500) 5%);
-  --tf-td-color-violet: var(--tf-violet-500);
-  --tf-td-fill-violet: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-violet-500) 5%);
-  --tf-td-color-purple: var(--tf-purple-500);
-  --tf-td-fill-purple: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-purple-500) 5%);
-  --tf-td-color-fuchsia: var(--tf-fuchsia-500);
-  --tf-td-fill-fuchsia: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-fuchsia-500) 5%);
-  --tf-td-color-pink: var(--tf-pink-500);
-  --tf-td-fill-pink: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-pink-500) 5%);
-  --tf-td-color-rose: var(--tf-rose-500);
-  --tf-td-fill-rose: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-rose-500) 5%);
+  --tf-td-color-orange: var(--tf-red-500);
+  --tf-td-fill-orange: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-red-500) 5%);
+  --tf-td-color-amber: var(--tf-orange-500);
+  --tf-td-fill-amber: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-orange-500) 5%);
+  --tf-td-color-yellow: var(--tf-amber-500);
+  --tf-td-fill-yellow: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-amber-500) 5%);
+  --tf-td-color-lime: var(--tf-yellow-500);
+  --tf-td-fill-lime: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-yellow-500) 5%);
+  --tf-td-color-green: var(--tf-lime-500);
+  --tf-td-fill-green: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-lime-500) 5%);
+  --tf-td-color-emerald: var(--tf-green-500);
+  --tf-td-fill-emerald: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-green-500) 5%);
+  --tf-td-color-teal: var(--tf-emerald-500);
+  --tf-td-fill-teal: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-emerald-500) 5%);
+  --tf-td-color-cyan: var(--tf-teal-500);
+  --tf-td-fill-cyan: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-teal-500) 5%);
+  --tf-td-color-sky: var(--tf-cyan-500);
+  --tf-td-fill-sky: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-cyan-500) 5%);
+  --tf-td-color-blue: var(--tf-sky-500);
+  --tf-td-fill-blue: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-sky-500) 5%);
+  --tf-td-color-indigo: var(--tf-blue-500);
+  --tf-td-fill-indigo: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-blue-500) 5%);
+  --tf-td-color-violet: var(--tf-indigo-500);
+  --tf-td-fill-violet: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-indigo-500) 5%);
+  --tf-td-color-purple: var(--tf-violet-500);
+  --tf-td-fill-purple: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-violet-500) 5%);
+  --tf-td-color-fuchsia: var(--tf-purple-500);
+  --tf-td-fill-fuchsia: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-purple-500) 5%);
+  --tf-td-color-pink: var(--tf-fuchsia-500);
+  --tf-td-fill-pink: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-fuchsia-500) 5%);
+  --tf-td-color-rose: var(--tf-pink-500);
+  --tf-td-fill-rose: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-pink-500) 5%);
 }
 .tf-header {
   display: flex;
@@ -1885,11 +1886,12 @@ fluent-menu-item::part(start) {
   flex: 0 0 var(--tf-aside-width);
   display: flex;
   flex-flow: column;
+  --tf-layout-aside-background: var(--neutral-layer-2);
 }
 .tflg__aside__actions {
   flex: 0 0 var(--tf-aside-actions-height);
   border-right: 1px solid var(--neutral-stroke-rest);
-  background: var(--neutral-layer-2);
+  background: var(--tf-layout-aside-background);
   border-top: 1px dashed var(--neutral-stroke-rest);
 }
 .tflg__aside__footer {
@@ -1902,7 +1904,7 @@ fluent-menu-item::part(start) {
   font-size: var(--type-ramp-minus-1-font-size);
   padding-bottom: calc(var(--tf-padding) / 2);
   border-right: 1px solid var(--neutral-stroke-rest);
-  background: var(--neutral-layer-2);
+  background: var(--tf-layout-aside-background);
 }
 .tflg__aside__footer a {
   color: var(--neutral-foreground-hint);
@@ -1930,7 +1932,7 @@ fluent-menu-item::part(start) {
   border-left: none;
   border-top-right-radius: var(--tf-padding);
   border-bottom-style: dashed;
-  background: var(--neutral-layer-2);
+  background: var(--tf-layout-aside-background);
 }
 .tflg__sidenav {
   flex: 1 1 auto;
@@ -1938,7 +1940,7 @@ fluent-menu-item::part(start) {
   overflow-y: auto;
   scrollbar-width: thin;
   border-right: 1px solid var(--neutral-stroke-rest);
-  background: var(--neutral-layer-2);
+  background: var(--tf-layout-aside-background);
 }
 .tflg__page-topbar {
   flex: 0 0 var(--tf-topbar-height);
@@ -2024,9 +2026,31 @@ fluent-menu-item::part(start) {
   padding-right: var(--tf-padding);
 }
 .tflpc__content {
-  flex: 1 1 auto;
-  height: calc(100vh - var(--tf-topbar-height) - var(--tf-page-header-height) - var(--tf-page-tabs-height));
+  display: flex;
+  --tf-page-content-height: calc(100vh - var(--tf-topbar-height) - var(--tf-page-header-height) - var(--tf-page-tabs-height));
   width: calc(100vw - var(--tf-aside-width) - 1px);
+}
+.tflpc__content__aside {
+  flex: 0 0 var(--tf-content-aside-width);
+  height: var(--tf-page-content-height);
+  overflow-y: auto;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  position: relative;
+}
+.tflpc__content__aside::after {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--neutral-layer-1) 0%, var(--neutral-stroke-rest) 50%, var(--neutral-layer-1) 100%);
+}
+.tflpc__content__inner {
+  flex: 1 1 auto;
+  height: var(--tf-page-content-height);
   overflow-y: auto;
   overflow-x: auto;
   scrollbar-width: thin;
@@ -2622,29 +2646,6 @@ fluent-menu-item::part(start) {
   width: 100%;
   padding: 0 calc(var(--tf-padding) / 2);
 }
-.tf-submenu {
-  padding-left: calc(var(--tf-padding) * 2);
-  position: relative;
-}
-.tf-submenu:before {
-  content: "";
-  display: block;
-  position: absolute;
-  left: calc(var(--tf-padding) + 3px);
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: linear-gradient(to bottom, var(--neutral-layer-2) 10%, var(--neutral-layer-4) 50%, var(--neutral-layer-2) 90%);
-}
-.tf-submenu .tf-submenu {
-  padding-left: calc(var(--tf-padding) * 2);
-}
-.tf-submenu .tf-submenu .tf-submenu {
-  padding-left: calc(var(--tf-padding) * 3);
-}
-.tf-submenu .tf-submenu .tf-submenu .tf-submenu {
-  padding-left: calc(var(--tf-padding) * 4);
-}
 .tf-treemenu__item {
   display: flex;
   align-items: center;
@@ -2658,11 +2659,11 @@ fluent-menu-item::part(start) {
   border-radius: calc(var(--control-corner-radius) * 1px);
   position: relative;
 }
-.tf-treemenu__item:hover {
+.tf-treemenu__item:not(.tf-disabled):hover {
   color: var(--accent-foreground-hover);
   background: color-mix(in srgb, var(--neutral-layer-1), var(--accent-fill-rest) 5%);
 }
-.tf-treemenu__item:hover .tf-treemenu__item__expander {
+.tf-treemenu__item:not(.tf-disabled):hover .tf-treemenu__item__expander {
   display: flex;
 }
 .tf-treemenu__item.tf-active:not(.tf-child-active) {
@@ -2698,6 +2699,11 @@ fluent-menu-item::part(start) {
 .tf-treemenu__item__icon svg {
   width: 20px;
 }
+.tf-treemenu__item__icon > div {
+  flex: 1 1 auto;
+  display: flex !important;
+  align-items: center;
+}
 .tf-treemenu__item__titleblock {
   flex: 1 1 auto;
   display: flex;
@@ -2711,6 +2717,9 @@ fluent-menu-item::part(start) {
   overflow: hidden;
   text-overflow: ellipsis;
   display: inline-block;
+}
+.tf-disabled .tf-treemenu__item__title {
+  color: var(--neutral-foreground-hint);
 }
 .tf-treemenu__item__icon + .tf-treemenu__item__title {
   padding-left: 7px;
@@ -2752,6 +2761,36 @@ fluent-menu-item::part(start) {
   to {
     transform: rotate(360deg);
   }
+}
+.tf-treemenu__header {
+  padding: 0 var(--tf-padding);
+  color: var(--neutral-foreground-hint);
+}
+.tf-treemenu + .tf-treemenu__header {
+  margin-top: 1rem;
+}
+.tf-submenu {
+  padding-left: calc(var(--tf-padding) * 2);
+  position: relative;
+}
+.tf-submenu:before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: calc(var(--tf-padding) + 3px);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--neutral-layer-2) 10%, var(--neutral-layer-4) 50%, var(--neutral-layer-2) 90%);
+}
+.tf-submenu .tf-submenu {
+  padding-left: calc(var(--tf-padding) * 2);
+}
+.tf-submenu .tf-submenu .tf-submenu {
+  padding-left: calc(var(--tf-padding) * 3);
+}
+.tf-submenu .tf-submenu .tf-submenu .tf-submenu {
+  padding-left: calc(var(--tf-padding) * 4);
 }
 .tf-welcome {
   padding-left: var(--tf-padding);
@@ -2874,4 +2913,3 @@ fluent-menu-item::part(start) {
   padding: 5px 10px;
   border: 1px solid var(--neutral-stroke-rest);
 }
-/*# sourceMappingURL=styles.css.map */

@@ -69,46 +69,20 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 		{
 			_menu = new();
 			Guid? currentPresetId = Navigator.GetGuidFromQuery(TfConstants.PresetIdQueryName);
-			Icon? mainIcon = String.IsNullOrWhiteSpace(spaceView.Settings.MainTabFluentIcon)
-				? null
-				: TfConstants.GetIcon(spaceView.Settings.MainTabFluentIcon);
-			string mainLabel = spaceView.Settings.MainTabLabel;
-			if (String.IsNullOrWhiteSpace(mainLabel)
-			    && mainIcon is null)
-				mainLabel = LOC("Main");
-
 			if (spaceView.Presets.Count > 0)
 			{
-				_menu.Add(new TfMenuItem
-				{
-					Id = "tf-main",
-					Text = mainLabel,
-					Url = NavigatorExt.AddQueryValueToUri(Navigator.GetLocalUrl(), TfConstants.PresetIdQueryName,
-						null),
-					Selected = currentPresetId is null,
-					IconCollapsed = mainIcon,
-					IconExpanded = mainIcon,
-					Color = spaceView.Settings.MainTabColor,
-					Actions = new List<TfMenuItem>()
-					{
-						new TfMenuItem()
-						{
-							Text = "Manage Preset",
-							IconCollapsed = TfConstants.GetIcon("Settings"),
-							IconExpanded = TfConstants.GetIcon("Settings"),
-							OnClick = EventCallback.Factory.Create(this, async () => await _manageMainHandler())
-						}
-					}
-				});
+				if (currentPresetId is null)
+					currentPresetId = spaceView.Presets[0].Id;
 
+				var first = true;
 				foreach (var prItem in spaceView.Presets)
 				{
-					_menu.Add(_getMenuItem(prItem));
+					_menu.Add(_getMenuItem(prItem, first, true));
+					first = false;
 				}
 
 				foreach (var menuItem in _menu)
 				{
-					if (menuItem.Id == "tf-main") continue;
 					_setSelection(menuItem, currentPresetId);
 				}
 			}
@@ -120,16 +94,27 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 		}
 	}
 
-	private TfMenuItem _getMenuItem(TfSpaceViewPreset preset)
+	private TfMenuItem _getMenuItem(TfSpaceViewPreset preset, bool isFirst, bool isRoot)
 	{
+		string? url = null;
+		if (!preset.IsGroup)
+		{
+			if (isFirst && isRoot)
+			{
+				url = Navigator.GetLocalUrl();
+			}
+			else
+			{
+				url = NavigatorExt.AddQueryValueToUri(Navigator.GetLocalUrl(), TfConstants.PresetIdQueryName,
+					preset.Id.ToString());
+			}
+		}
+
 		var item = new TfMenuItem
 		{
 			Id = TfConverters.ConvertGuidToHtmlElementId(preset.Id),
 			Text = preset.Name,
-			Url = preset.IsGroup
-				? null
-				: NavigatorExt.AddQueryValueToUri(Navigator.GetLocalUrl(), TfConstants.PresetIdQueryName,
-					preset.Id.ToString()),
+			Url = url,
 			Color = preset.Color,
 			IconCollapsed = TfConstants.GetIcon(preset.Icon),
 			IconExpanded = TfConstants.GetIcon(preset.Icon)
@@ -174,7 +159,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 
 		foreach (var child in preset.Presets)
 		{
-			item.Items.Add(_getMenuItem(child));
+			item.Items.Add(_getMenuItem(child, isFirst, false));
 		}
 
 		return item;
@@ -183,26 +168,12 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 	private void _setSelection(TfMenuItem menuItem, Guid? currrentPresetId)
 	{
 		menuItem.Selected = currrentPresetId is not null
-		                    && menuItem.IdTree.Contains(currrentPresetId.Value.ToString());
+							&& menuItem.IdTree.Contains(currrentPresetId.Value.ToString());
 
 		foreach (var child in menuItem.Items)
 		{
 			_setSelection(child, currrentPresetId);
 		}
-	}
-
-	private async Task _manageMainHandler()
-	{
-		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewManageMainTabDialog>(
-			SpaceView,
-			new()
-			{
-				PreventDismissOnOverlayClick = true,
-				PreventScroll = true,
-				Width = TfConstants.DialogWidthExtraLarge,
-				TrapFocus = false
-			});
-		_ = await dialog.Result;
 	}
 
 	private async Task _managePresetHandler(TfSpaceViewPreset preset)

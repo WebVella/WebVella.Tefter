@@ -134,7 +134,7 @@ public partial class TfService : ITfService
 					StepId = step.Instance.StepId,
 					StepTypeName = step.GetType().Name,
 					StepName = step.Instance.StepMenuTitle,
-					Message = ex.Message,
+					Message = ex.InnerException is not null ? ex.InnerException.Message : ex.Message,
 					StackTrace = ex.StackTrace
 				});
 			}
@@ -149,7 +149,7 @@ public partial class TfService : ITfService
 				StepId = step.Instance.StepId,
 				StepTypeName = step.GetType().Name,
 				StepName = step.Instance.StepMenuTitle,
-				Message = ex.Message,
+				Message = ex.InnerException is not null ? ex.InnerException.Message : ex.Message,
 				StackTrace = ex.StackTrace
 			});
 		}

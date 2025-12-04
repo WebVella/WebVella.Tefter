@@ -234,6 +234,9 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			if (_navState.SpaceViewPresetId is not null)
 				_preset = _spaceView!.Presets.GetPresetById(_navState.SpaceViewPresetId.Value);
 
+			if(_preset is null && _spaceView!.Presets.Count > 0)
+				_preset = _spaceView!.Presets[0];
+
 			_spaceViewColumns = TfService.GetSpaceViewColumnsList(_spaceView.Id);
 
 			_data = TfService.QueryDataset(

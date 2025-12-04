@@ -76,21 +76,35 @@
                 },
                 mention: {
                     allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
-                    mentionDenotationChars: ["@"],
+                    mentionDenotationChars: ["@","#"],
                     defaultMenuOrientation:'top',
                     source: async function (searchTerm, renderList, mentionChar) {
-                        let values;
-                        try {
-                            const response = await fetch("/api/get-users");
-                            if (!response.ok) {
-                                throw new Error(`Response status: ${response.status}`);
+                        let values = [];
+                        if(mentionChar === "@") {
+                            try {
+                                const response = await fetch("/api/get-users");
+                                if (!response.ok) {
+                                    throw new Error(`Response status: ${response.status}`);
+                                }
+
+                                values = await response.json();
+                            } catch (error) {
+                                console.error(error.message);
                             }
-
-                            values = await response.json();
-                        } catch (error) {
-                            console.error(error.message);
                         }
+                        if(mentionChar === "#") {
+                            try {
+                                const response = await fetch("/api/get-tags");
+                                if (!response.ok) {
+                                    throw new Error(`Response status: ${response.status}`);
+                                }
 
+                                values = await response.json();
+                            } catch (error) {
+                                console.error(error.message);
+                            }
+                        }
+                        
                         if (searchTerm.length === 0) {
                             renderList(values, searchTerm);
                         } else {

@@ -6,8 +6,5 @@ public record TfSpaceViewSettings
 	public bool CanCreateRows { get; set; } = false;
 	public bool CanUpdateRows { get; set; } = false;
 	public bool CanDeleteRows { get; set; } = false;
-	public string? MainTabLabel { get; set; } = null;
-	public string? MainTabFluentIcon { get; set; } = null;
-	public TfColor? MainTabColor { get; set; } = null;
 	public List<TfColoringRule> ColoringRules { get; set; } = new();
 }

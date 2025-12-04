@@ -38,9 +38,9 @@
 				<FluentGridItem xs="12">
 					<FluentTextField Value=@_form.Description ValueChanged="@_onDescriptionChanged"
 									Immediate="true" ImmediateDelay="200" 
-									Label="@LOC("HashTags")" Style="width:100%" Placeholder="@LOC("no hashtags")"/>
+									Label="@LOC("Description")" Style="width:100%"/>
+					<div class="tf-input-description">@LOC("can be hash-tagged (eg. #budget2025)")</div>
 					<FluentValidationMessage For="@(() => _form.Description)" />
-					<div class="tf-input-description">@LOC("separate with comma (eg. #budget, #2025)")</div>
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentDivider Style="margin:1rem 0" />
@@ -48,6 +48,10 @@
 				@foreach (var item in _form.Tags)
 				{
 					<FluentBadge Appearance="Appearance.Accent">#@item.Label</FluentBadge>
+				}
+				@if (_form.Tags.Count == 0)
+				{
+					<div style="color:var(--neutral-foreground-hint)">@LOC("no tags")</div>
 				}
 			</FluentStack>
 		</FluentEditForm>

@@ -13,7 +13,6 @@ public class TfBaseComponent : ComponentBase
 	[Inject] protected IMessageService MessageService { get; set; } = null!;
 	[Inject] protected ITfConfigurationService ConfigurationService { get; set; } = null!;
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } = null!;
-	[Inject] protected IWvBlazorTraceService WvBlazorTraceService { get; set; } = null!;
 	[Inject] protected IKeyCodeService KeyCodeService { get; set; } = null!;
 	[Inject] protected ITfService TfService { get; set; } = null!;
 	[Inject] protected ITfMetaService TfMetaService { get; set; } = null!;

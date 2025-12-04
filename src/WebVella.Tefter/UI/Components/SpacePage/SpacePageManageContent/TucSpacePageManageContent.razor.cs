@@ -5,6 +5,7 @@ public partial class TucSpacePageManageContent : TfBaseComponent, IDisposable
 	private bool _isDeleting = false;
 	private TfSpace _space = null!;
 	private TfSpacePage _spacePage = null!;
+	private List<TfTag> _pageTags = new();
 	private TfSpacePageAddonMeta? _component = null;
 	public void Dispose()
 	{
@@ -45,8 +46,9 @@ public partial class TucSpacePageManageContent : TfBaseComponent, IDisposable
 				throw new Exception("Page Id not found in URL");
 			_spacePage = TfService.GetSpacePage(navState.SpacePageId.Value);
 			var pageMeta = TfMetaService.GetSpacePagesComponentsMeta();
-			_component = pageMeta.FirstOrDefault(x => x.Instance.AddonId == _spacePage.ComponentId);			
-			
+			_component = pageMeta.FirstOrDefault(x => x.Instance.AddonId == _spacePage.ComponentId);
+
+			_pageTags = TfService.GetSpacePageTags(_spacePage.Id);
 		}
 		finally
 		{

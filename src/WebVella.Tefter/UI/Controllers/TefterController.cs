@@ -13,7 +13,7 @@ public class ApiExcelController : ControllerBase
 	private readonly ITfService _tfService;
 
 	public ApiExcelController(
-	ITfService tfService)
+		ITfService tfService)
 	{
 		_tfService = tfService;
 	}
@@ -27,9 +27,9 @@ public class ApiExcelController : ControllerBase
 			if (string.IsNullOrWhiteSpace(exportType))
 				throw new Exception("Export type not defined");
 
-			if (Request.Protocol == "POST" && (!Request.Form.ContainsKey("data") || String.IsNullOrWhiteSpace(Request.Form["data"])))
+			if (Request.Protocol == "POST" &&
+			    (!Request.Form.ContainsKey("data") || String.IsNullOrWhiteSpace(Request.Form["data"])))
 				throw new Exception("Data Json not defined");
-
 
 
 			byte[] bytes = null;
@@ -43,15 +43,19 @@ public class ApiExcelController : ControllerBase
 							throw new Exception("No bytes were generated during the export");
 						var random = new Random().Next(10, 99);
 						DateTime dt = DateTime.Now;
-						string time = dt.Year.ToString() + dt.Month.ToString() + dt.Day.ToString() + dt.Hour.ToString() + dt.Minute.ToString() + dt.Second.ToString() + dt.Millisecond.ToString();
+						string time = dt.Year.ToString() + dt.Month.ToString() + dt.Day.ToString() +
+						              dt.Hour.ToString() + dt.Minute.ToString() + dt.Second.ToString() +
+						              dt.Millisecond.ToString();
 
 						var fileName = $"{exportType}-{time}{random}.xlsx";
 						System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
 						{
 							FileName = fileName,
-							Inline = true  // false = prompt the user for downloading;  true = browser to try to show the file inline
+							Inline =
+								true // false = prompt the user for downloading;  true = browser to try to show the file inline
 						};
-						Response.Headers.Append("Content-Type", $"application/vnd.openxmlformats-officedocument.spreadsheetml");
+						Response.Headers.Append("Content-Type",
+							$"application/vnd.openxmlformats-officedocument.spreadsheetml");
 						Response.Headers.Append("Content-Disposition", cd.ToString());
 						Response.Headers.Append("X-Content-Type-Options", "nosniff");
 
@@ -65,13 +69,16 @@ public class ApiExcelController : ControllerBase
 							throw new Exception("No bytes were generated during the export");
 						var random = new Random().Next(10, 99);
 						DateTime dt = DateTime.Now;
-						string time = dt.Year.ToString() + dt.Month.ToString() + dt.Day.ToString() + dt.Hour.ToString() + dt.Minute.ToString() + dt.Second.ToString() + dt.Millisecond.ToString();
+						string time = dt.Year.ToString() + dt.Month.ToString() + dt.Day.ToString() +
+						              dt.Hour.ToString() + dt.Minute.ToString() + dt.Second.ToString() +
+						              dt.Millisecond.ToString();
 
 						var fileName = $"{exportType}-{time}{random}.csv";
 						System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
 						{
 							FileName = fileName,
-							Inline = true  // false = prompt the user for downloading;  true = browser to try to show the file inline
+							Inline =
+								true // false = prompt the user for downloading;  true = browser to try to show the file inline
 						};
 						Response.Headers.Append("Content-Type", $"text/csv; charset=utf-8");
 						Response.Headers.Append("Content-Disposition", cd.ToString());
@@ -82,8 +89,6 @@ public class ApiExcelController : ControllerBase
 				default:
 					throw new Exception("Export type not supported");
 			}
-
-			
 		}
 		catch (Exception exception)
 		{
@@ -99,40 +104,36 @@ public class ApiExcelController : ControllerBase
 
 	[Route("get-users")]
 	[HttpGet]
-	public async Task<ActionResult> GetUsers([FromQuery] string? search)
+	public ActionResult GetUsers([FromQuery] string? search)
 	{
-		try
-		{
-			var users = _tfService.GetUsers();
-			var result = new List<TfIdValue>();
-			search = search?.Trim().ToLowerInvariant();
-			
-			foreach (var user in users)
-			{
-				if ( String.IsNullOrWhiteSpace(search)
-					|| user.Names.ToLowerInvariant().Contains(search))
-				{
-					result.Add(new TfIdValue()
-					{
-						Id = user.Id.ToString(),
-						Value = user.Names
-					});
-				}
-			}
-			
-			return new JsonResult(result);
+		var users = _tfService.GetUsers();
+		var result = new List<TfIdValue>();
+		search = search?.Trim().ToLowerInvariant();
 
-		}
-		catch (Exception exception)
+		foreach (var user in users)
 		{
-			return new ContentResult
+			if (String.IsNullOrWhiteSpace(search)
+			    || user.Names.ToLowerInvariant().Contains(search))
 			{
-				Content = $"Error: {exception.Message}",
-				ContentType = "text/plain",
-				// change to whatever status code you want to send out
-				StatusCode = 500
-			};
+				result.Add(new TfIdValue() { Id = user.Id.ToString(), Value = user.Names });
+			}
 		}
+
+		return new JsonResult(result);
 	}
-	
+
+	[Route("get-tags")]
+	[HttpGet]
+	public ActionResult GetTags([FromQuery] string? search)
+	{
+		var tags = _tfService.GetTags(search);
+		var result = new List<TfIdValue>();
+
+		foreach (var tag in tags)
+		{
+			result.Add(new TfIdValue() { Id = tag.Id.ToString(), Value = tag.Label });
+		}
+
+		return new JsonResult(result);
+	}
 }

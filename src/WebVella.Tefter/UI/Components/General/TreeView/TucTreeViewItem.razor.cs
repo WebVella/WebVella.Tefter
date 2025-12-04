@@ -20,6 +20,7 @@ public partial class TucTreeViewItem : ComponentBase
 			if (Item.OnExpand.HasDelegate) classList.Add("tf-expandable");
 			if (Item.Expanded) classList.Add("tf-expanded");
 			if (Item.Selected) classList.Add("tf-active");
+			if (Item.Disabled) classList.Add("tf-disabled");
 			if (Item.ChildSelected) classList.Add("tf-child-active");
 			if (Item.Items.Count > 0) classList.Add("tf-parent");
 

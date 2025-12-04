@@ -18,9 +18,9 @@ public partial interface ITfService
 
 	public List<TfSpacePage> UpdateSpacePage(
 		TfSpacePage spacePage);
-	
+
 	public void UpdateSpacePageComponentOptions(
-		Guid spacePageId,string optionsJson);	
+		Guid spacePageId, string optionsJson);
 
 	public void RenameSpacePage(
 		Guid pageId,
@@ -34,10 +34,14 @@ public partial interface ITfService
 
 	public void MoveSpacePage(Guid pageId, bool isMoveUp);
 	TfSpacePage? GetSpacePageBySpaceViewId(Guid spaceViewId);
+
+	List<TfTag> GetSpacePageTags(
+				Guid pageId);
 }
 
 public partial class TfService : ITfService
 {
+	#region << Space Page >>
 	public List<TfSpacePage> GetAllSpacePages()
 	{
 		try
@@ -169,7 +173,7 @@ public partial class TfService : ITfService
 	}
 
 	public (Guid, List<TfSpacePage>) CreateSpacePage(
-		TfSpacePage spacePage )
+		TfSpacePage spacePage)
 	{
 		try
 		{
@@ -247,7 +251,7 @@ public partial class TfService : ITfService
 				foreach (var pageToUpdate in pagesToUpdate)
 				{
 					if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(pageToUpdate),
-						    nameof(TfSpacePageDbo.Position)))
+							nameof(TfSpacePageDbo.Position)))
 						throw new TfDboServiceException("Update<TfSpacePageDbo> failed.");
 				}
 
@@ -279,13 +283,16 @@ public partial class TfService : ITfService
 							{
 								spacePage.ComponentOptionsJson = optionsJson;
 								if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(spacePage),
-									    nameof(TfSpacePageDbo.ComponentSettingsJson)))
+										nameof(TfSpacePageDbo.ComponentSettingsJson)))
 									throw new Exception("Space page update failed");
 							}
 						});
 						task.WaitAndUnwrapException();
 					}
 				}
+
+				//Tags
+				MaintainSpacePageTags(spacePage);
 
 				scope.Complete();
 
@@ -574,7 +581,7 @@ public partial class TfService : ITfService
 							{
 								spacePage.ComponentOptionsJson = optionsJson;
 								if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(spacePage),
-									    nameof(TfSpacePageDbo.ComponentSettingsJson)))
+										nameof(TfSpacePageDbo.ComponentSettingsJson)))
 									throw new TfDboServiceException("Update<TfSpacePageDbo> failed");
 							}
 						});
@@ -582,6 +589,8 @@ public partial class TfService : ITfService
 					}
 				}
 
+				//Tags
+				MaintainSpacePageTags(spacePage);
 
 				scope.Complete();
 
@@ -602,14 +611,14 @@ public partial class TfService : ITfService
 	{
 		var spacePage = GetSpacePage(spacePageId);
 		if (spacePage is null) throw new ArgumentException(nameof(spacePageId), LOC["Page not found"]);
-		if(!optionsJson.StartsWith("{") || !optionsJson.EndsWith("}"))
+		if (!optionsJson.StartsWith("{") || !optionsJson.EndsWith("}"))
 			throw new ArgumentException(nameof(optionsJson), LOC["Json object is required"]);
 		spacePage.ComponentOptionsJson = optionsJson;
 		var success = _dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(spacePage),
 			nameof(TfSpacePageDbo.ComponentSettingsJson));
 		if (!success)
-			throw new TfDboServiceException("Update<TfSpacePageDbo> failed");		
-		
+			throw new TfDboServiceException("Update<TfSpacePageDbo> failed");
+
 		PublishEventWithScope(new TfSpacePageUpdatedEvent(GetSpacePage(spacePageId)!));
 	}
 
@@ -620,7 +629,7 @@ public partial class TfService : ITfService
 		{
 			var spacePage = GetSpacePage(pageId);
 			if (spacePage is null)
-				throw new ValidationException("Page not found");			
+				throw new ValidationException("Page not found");
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 
@@ -656,7 +665,7 @@ public partial class TfService : ITfService
 					childPage.Position--;
 
 					if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(childPage),
-						    nameof(TfSpacePageDbo.Position)))
+							nameof(TfSpacePageDbo.Position)))
 						throw new TfDboServiceException("Update<TfSpacePageDbo> failed");
 				}
 
@@ -683,7 +692,7 @@ public partial class TfService : ITfService
 				foreach (var pageToDelete in pagesToDelete)
 				{
 					var bookmarks = GetBookmarksListForSpacePage(pageToDelete.Id);
-					foreach(var bookmark in bookmarks)
+					foreach (var bookmark in bookmarks)
 						DeleteBookmark(bookmark.Id);
 
 					if (!_dboManager.Delete<TfSpacePageDbo>(pageToDelete.Id))
@@ -769,9 +778,9 @@ public partial class TfService : ITfService
 					if (pageToCreate.ComponentId == new Guid(TucSpaceViewSpacePageAddon.Id))
 					{
 						var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(
-							pageToCreate.ComponentOptionsJson); 
+							pageToCreate.ComponentOptionsJson);
 
-						if(options.SpaceViewId.HasValue)
+						if (options.SpaceViewId.HasValue)
 						{
 							options.SpaceViewId = null;
 							pageToCreate.ComponentOptionsJson = JsonSerializer.Serialize(options);
@@ -820,6 +829,7 @@ public partial class TfService : ITfService
 		{
 			Id = dbo.Id,
 			Name = dbo.Name,
+			Description = dbo.Description,
 			Position = dbo.Position,
 			SpaceId = dbo.SpaceId,
 			Type = dbo.Type,
@@ -840,6 +850,7 @@ public partial class TfService : ITfService
 		{
 			Id = model.Id,
 			Name = model.Name,
+			Description = model.Description,
 			Position = model.Position ?? 0,
 			SpaceId = model.SpaceId,
 			Type = model.Type,
@@ -850,6 +861,72 @@ public partial class TfService : ITfService
 		};
 	}
 
+	#endregion
+	#region << Tags >>
+	public List<TfTag> GetSpacePageTags(
+			Guid pageId)
+	{
+		try
+		{
+			return _dboManager.GetListBySql<TfTag>(@"SELECT t.* FROM tf_tag t
+				LEFT OUTER JOIN tf_space_page_tag bt ON bt.tag_id = t.id AND bt.space_page_id = @space_page_id
+			WHERE bt.tag_id IS NOT NULL AND bt.space_page_id = @space_page_id
+			", new NpgsqlParameter("space_page_id", pageId));
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	private void MaintainSpacePageTags(TfSpacePage page)
+	{
+		var existingTags = GetSpacePageTags(page.Id);
+		var textTags = page.Description.GetUniqueTagsFromText();
+
+		List<string> tagsToAdd = textTags
+			.Where(t => !existingTags.Any(x => x.Label == t))
+			.ToList();
+
+		List<Guid> tagIdsToRemove = existingTags
+			.Where(x => !textTags.Contains(x.Label))
+			.Select(x => x.Id)
+			.ToList();
+
+		bool success = false;
+		//add new tags
+		foreach (var textTag in tagsToAdd)
+		{
+			var existingTag = GetTag(textTag);
+			if (existingTag is not null) continue;
+
+			var newTag = CreateTag(new TfTag { Id = Guid.NewGuid(), Label = textTag });
+			var pageTag = new TfSpacePageTag { SpacePageId = page.Id, TagId = newTag.Id };
+
+			success = _dboManager.Insert<TfSpacePageTag>(pageTag);
+
+			if (!success)
+				throw new TfDboServiceException("Insert<TfSpacePageTag> failed.");
+		}
+
+		//remove connection to missing tags
+		foreach (Guid id in tagIdsToRemove)
+		{
+			Dictionary<string, Guid> deleteKey = new Dictionary<string, Guid>();
+			deleteKey.Add(nameof(TfSpacePageTag.SpacePageId), page.Id);
+			deleteKey.Add(nameof(TfSpacePageTag.TagId), id);
+
+			success = _dboManager.Delete<TfSpacePageTag>(deleteKey);
+
+			if (!success)
+				throw new TfDboServiceException("Delete<TfSpacePageTag> failed.");
+
+			CheckRemoveOrphanTags(id);
+		}
+
+
+	}
+	#endregion
 	#region <--- validation --->
 
 	internal class TfSpacePageValidator

@@ -104,21 +104,6 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		if (result is { Cancelled: false, Data: not null }) { }
 	}	
 
-	private async Task _editMainTab()
-	{
-		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewManageMainTabDialog>(
-			_spaceView!,
-			new ()
-			{
-				PreventDismissOnOverlayClick = true,
-				PreventScroll = true,
-				Width = TfConstants.DialogWidthLarge,
-				TrapFocus = false
-			});
-		var result = await dialog.Result;
-		if (result is { Cancelled: false, Data: not null }) { }
-	}
-
 	private async Task _importColumns()
 	{
 		if (_submitting) return;

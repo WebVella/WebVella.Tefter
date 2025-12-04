@@ -1,11 +1,8 @@
-﻿using WebVella.Tefter.Utility;
+﻿namespace WebVella.Tefter.UI.Components;
 
-namespace WebVella.Tefter.UI.Components;
-
-public partial class TucMyBookmarks : TfBaseComponent, IDisposable
+public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 {
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
-	[Parameter] public bool IsSavedLinks { get; set; } = false;
 
 	private List<TfBookmark> _allBookmarks = new();
 	private List<TfBookmark> _bookmarks = new();
@@ -13,8 +10,10 @@ public partial class TucMyBookmarks : TfBaseComponent, IDisposable
 	private int _pageSize = 32;
 	private string? _search = null;
 	private TucMyBookmarksOrder _order = TucMyBookmarksOrder.Newest;
-	private FluentSearch? _refSearch = null;
+	private FluentSearch _refSearch = null!;
 
+	private readonly List<TfMenuItem> _nav = new();
+	private readonly List<TfMenuItem> _tagNav = new();
 
 	public void Dispose()
 	{
@@ -25,10 +24,9 @@ public partial class TucMyBookmarks : TfBaseComponent, IDisposable
 	}
 	protected override void OnInitialized()
 	{
-		if(!IsSavedLinks)
 			_allBookmarks = TfAuthLayout.GetState().UserBookmarks.ToList();
-		else
-			_allBookmarks = TfAuthLayout.GetState().UserSaves.ToList();
+		
+			//_allBookmarks = TfAuthLayout.GetState().UserSaves.ToList();
 		_init();
 		TfEventProvider.BookmarkUpdatedEvent += On_BookmarkChangedEvent;
 		TfEventProvider.BookmarkDeletedEvent += On_BookmarkChangedEvent;
@@ -37,7 +35,7 @@ public partial class TucMyBookmarks : TfBaseComponent, IDisposable
 
 	protected override void OnAfterRender(bool firstRender)
 	{
-		if (firstRender && _refSearch != null)
+		if (firstRender)
 		{
 			_refSearch.FocusAsync();
 		}
@@ -47,10 +45,8 @@ public partial class TucMyBookmarks : TfBaseComponent, IDisposable
 	{
 		if (args.IsUserApplicable(this))
 		{
-			if (!IsSavedLinks)
 				_allBookmarks = TfService.GetBookmarksListForUser(TfAuthLayout.GetState().User.Id);
-			else
-				_allBookmarks = TfService.GetSavesListForUser(TfAuthLayout.GetState().User.Id);
+				//_allBookmarks = TfService.GetSavesListForUser(TfAuthLayout.GetState().User.Id);
 			_init();
 			await InvokeAsync(StateHasChanged);
 		}
@@ -62,31 +58,60 @@ public partial class TucMyBookmarks : TfBaseComponent, IDisposable
 		StateHasChanged();
 	}
 
-	private List<TfMenuItem> _getMenu(TfBookmark bookmark)
+	private void _initNav()
 	{
-		var menu = new List<TfMenuItem>();
-		menu.Add(new TfMenuItem()
+		_nav.Clear();
+		_tagNav.Clear();
+		
+		_nav.Add(new TfMenuItem()
 		{
-			Disabled=true,
-			Text = $"{bookmark.CreatedOn.ToString(TfConstants.DateHourFormat)}",
-			IconCollapsed = TfConstants.GetIcon("Clock")!.WithColor(Color.Neutral),
+			Text = "Bookmarks",
+			IconCollapsed = TfConstants.GetIcon("Star"),
+			Url = "/",
+			Selected = true
 		});
-		menu.Add(new TfMenuItem()
+		_nav.Add(new TfMenuItem()
 		{
-			IsDivider = true
+			Text = "Saved URLs",
+			IconCollapsed = TfConstants.GetIcon("Link"),
+			Url = "/"
 		});
-		menu.Add(new TfMenuItem()
+
+		_tagNav.Add(new TfMenuItem()
 		{
-			Text = "Edit",
-			IconCollapsed = TfConstants.GetIcon("Edit"),
-			OnClick = EventCallback.Factory.Create(this, async () => await _onEdit(bookmark))
-		});
-		menu.Add(new TfMenuItem()
+			Text = "Test",
+			IconCollapsed = new CustomIcons.HashTag(),
+			Url = "/"
+		});		
+	}
+
+	private List<TfMenuItem> _getActionsMenu(TfBookmark bookmark)
+	{
+		var menu = new List<TfMenuItem>
 		{
-			Text = "Delete",
-			IconCollapsed = TfConstants.GetIcon("Delete")!.WithColor(Color.Error),
-			OnClick = EventCallback.Factory.Create(this, async () => await _onRemove(bookmark))
-		});
+			new TfMenuItem()
+			{
+				Disabled=true,
+				Text = $"{bookmark.CreatedOn.ToString(TfConstants.DateHourFormat)}",
+				IconCollapsed = TfConstants.GetIcon("Clock")!.WithColor(Color.Neutral),
+			},
+			new TfMenuItem()
+			{
+				IsDivider = true
+			},
+			new TfMenuItem()
+			{
+				Text = "Edit",
+				IconCollapsed = TfConstants.GetIcon("Edit"),
+				OnClick = EventCallback.Factory.Create(this, async () => await _onEdit(bookmark))
+			},
+			new TfMenuItem()
+			{
+				Text = "Delete",
+				IconCollapsed = TfConstants.GetIcon("Delete")!.WithColor(Color.Error),
+				OnClick = EventCallback.Factory.Create(this, async () => await _onRemove(bookmark))
+			}
+		};
 		return menu;
 	}
 
@@ -104,19 +129,18 @@ public partial class TucMyBookmarks : TfBaseComponent, IDisposable
 		_ = await dialog.Result;
 	}
 
-
-	private async Task _onRemove(TfBookmark bookmark)
+	private Task _onRemove(TfBookmark bookmark)
 	{
 		TfService.DeleteBookmark(bookmark.Id);
-
 		ToastService.ShowSuccess(LOC("Bookmark removed"));
+		return Task.CompletedTask;
 	}
 
 	private async Task _goLastPage()
 	{
 		int newPage = (int)(_allBookmarks.Count / _pageSize) + 1;
 
-		var queryDict = new Dictionary<string, object>
+		var queryDict = new Dictionary<string, object?>
 		{
 			{ TfConstants.PageQueryName, newPage }
 		};
@@ -128,16 +152,16 @@ public partial class TucMyBookmarks : TfBaseComponent, IDisposable
 		var navState = TfAuthLayout.GetState().NavigationState;
 		if (page < 1 && page != -1) page = 1;
 		if (navState.Page == page) return;
-		var queryDict = new Dictionary<string, object>
+		var queryDict = new Dictionary<string, object?>
 		{
 			{ TfConstants.PageQueryName, page }
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
-	private async Task _searchValueChanged(string search)
+	private async Task _searchValueChanged(string? search)
 	{
-		var queryDict = new Dictionary<string, object>{
+		var queryDict = new Dictionary<string, object?>{
 			{TfConstants.SearchQueryName,search}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
@@ -145,7 +169,7 @@ public partial class TucMyBookmarks : TfBaseComponent, IDisposable
 
 	private async Task _orderChanged(TucMyBookmarksOrder order)
 	{
-		var queryDict = new Dictionary<string, object>{
+		var queryDict = new Dictionary<string, object?>{
 			{TfConstants.OrderQueryName,((int)order).ToString()}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
@@ -165,7 +189,7 @@ public partial class TucMyBookmarks : TfBaseComponent, IDisposable
 					x.Name.ToLowerInvariant().Contains(search!)
 					|| x.Description.ToLowerInvariant().Contains(search!)
 					|| x.Space!.Name!.ToLowerInvariant().Contains(search!)
-					|| x.SpacePage!.Name!.ToLowerInvariant().Contains(search!)).ToList();
+					|| x.SpacePage!.Name.ToLowerInvariant().Contains(search!)).ToList();
 
 		switch (_order)
 		{
@@ -183,6 +207,7 @@ public partial class TucMyBookmarks : TfBaseComponent, IDisposable
 				break;
 		}
 		_bookmarks = _bookmarks.Skip((_page - 1) * _pageSize).Take(_pageSize).ToList();
+		_initNav();
 	}
 
 

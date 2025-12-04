@@ -8,6 +8,7 @@ public record TfSpacePage
 	public TfSpacePageType Type { get; set; } = TfSpacePageType.Page;
 	public string Name { get; set; }
 	public string FluentIconName { get; set; } = "Document";
+	public string? Description { get; set; }
 	public short? Position { get; set; }
 	public Guid? ComponentId { get; set; }
 	public Type ComponentType { get; internal set; }
@@ -115,8 +116,11 @@ public class TfSpacePageDbo
 	public string Name { get; set; }
 
 	[TfDboModelProperty("icon")]
-	public string Icon { get; set; } = null;
+	public string? Icon { get; set; } = null;
 
+	[TfDboModelProperty("description")] 
+	public string? Description { get; set; } = null;	
+	
 	[TfDboModelProperty("position")]
 	public short Position { get; set; }
 
@@ -127,4 +131,11 @@ public class TfSpacePageDbo
 	public string ComponentSettingsJson { get; set; } = "{}";
 }
 
+[DboCacheModel]
+[TfDboModel("tf_space_page_tag")]
+internal class TfSpacePageTag
+{
+	[TfDboModelProperty("space_page_id")] public Guid SpacePageId { get; set; }
 
+	[TfDboModelProperty("tag_id")] public Guid TagId { get; set; }
+}

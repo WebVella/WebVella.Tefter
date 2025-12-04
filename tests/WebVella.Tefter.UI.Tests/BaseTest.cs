@@ -44,7 +44,7 @@ public class BaseTest
 	internal Mock<IMigrationManager> MigrationManagerMock;
 	public Mock<ITfService> TfServiceMock;
 	public Mock<ITfMetaService> TfMetaServiceMock;
-	public Mock<IWvBlazorTraceService> WvBlazorTraceServiceMock;
+	//public Mock<IWvBlazorTraceService> WvBlazorTraceServiceMock;
 	//localization
 	public Mock<IStringLocalizerFactory> StringLocalizerFactoryMock;
 
@@ -64,7 +64,7 @@ public class BaseTest
 		Context.Services.AddScoped<IToastService, ToastService>();
 		Context.Services.AddScoped<IDialogService, DialogService>();
 		Context.Services.AddScoped<IMessageService, MessageService>();
-		Context.Services.AddBlazorTrace(new WvBlazorTraceConfiguration(){ EnableTracing = false});
+		//Context.Services.AddBlazorTrace(new WvBlazorTraceConfiguration(){ EnableTracing = false});
 		#endregion
 
 		AuthenticationStateProviderMock = new Mock<AuthenticationStateProvider>();

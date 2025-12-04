@@ -45,7 +45,15 @@
         <div class="tflpc__tabs">@Tabs</div>
     }
     <div class="tflpc__content">
-        @ChildContent
+        @if (Aside is not null)
+        {
+            <div class="tflpc__content__aside">
+                @Aside
+            </div>
+        }
+        <div class="tflpc__content__inner">
+            @ChildContent
+        </div>
     </div>
 </div>
 

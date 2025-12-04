@@ -14,7 +14,7 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 	//Saved Link
 	private TfBookmark? _activeSavedLink = null;
 	private bool _savedLinkOpen = false;
-	private string _savedLinkBtnId = "tf-page-top-bookmark-selector";
+	private string _savedLinkBtnId = "tf-page-top-saved-selector";
 
 	#region << Lifecycle >>
 	public async ValueTask DisposeAsync()
@@ -116,7 +116,7 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 					UserId = state.User.Id,
 					SpacePageId = state.SpacePage.Id,
 					Name = state.SpacePage.Name ?? "unknown space",
-					Description = String.Empty
+					Description = state.SpacePage.Description ?? String.Empty
 				};
 				TfService.CreateBookmark(bookmark);
 				ToastService.ShowSuccess(LOC("Page Bookmarked"));
@@ -189,7 +189,7 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 					UserId = state.User.Id,
 					SpacePageId = state.SpacePage.Id,
 					Name = state.SpacePage.Name ?? "unknown space" + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
-					Description = String.Empty,
+					Description = state.SpacePage.Description ?? String.Empty,
 					Url = new Uri(Navigator.Uri).PathAndQuery
 				};
 				TfService.CreateBookmark(bookmark);

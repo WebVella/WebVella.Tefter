@@ -28,11 +28,6 @@ public static partial class NavigatorExt
 			appState.UserBookmarks = oldState.UserBookmarks;
 			appState.UserSaves = oldState.UserSaves;
 		}
-		else if (navState.HasNode(RouteDataNode.Admin,0) )
-		{
-			appState.UserBookmarks = new();
-			appState.UserSaves = new();
-		}
 		else
 		{
 			var bookmarks = _tfService.GetBookmarksAndSavesListForUser(currentUser.Id);
@@ -274,23 +269,13 @@ public static partial class NavigatorExt
 
 		menuItems.Add(new TfMenuItem()
 		{
-			Id = "tf-home-link",
-			IconCollapsed = TfConstants.GetIcon("Star"),
-			IconExpanded = TfConstants.GetIcon("Star"),
+			Id = "tf-home-dashboard",
+			IconCollapsed = TfConstants.GetIcon("Board"),
+			IconExpanded = TfConstants.GetIcon("Board"),
 			Selected = routeState.RouteNodes.Count == 1,
 			Url = "/",
-			Text = LOC["My Bookmarks"]
+			Text = LOC["My Dashboard"]
 		});
-
-		menuItems.Add(new TfMenuItem()
-		{
-			Id = "tf-home-saved-link",
-			IconCollapsed = TfConstants.GetIcon("Link"),
-			IconExpanded = TfConstants.GetIcon("Link"),
-			Selected = routeState.HasNode(RouteDataNode.HomeSavedLinks, 1),
-			Url = TfConstants.HomeSavedLinksUrl,
-			Text = LOC["My Saved Links"]
-		});		
 		
 		#endregion
 

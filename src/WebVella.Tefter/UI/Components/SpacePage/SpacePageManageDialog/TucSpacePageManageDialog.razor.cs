@@ -22,6 +22,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 	private List<Option<Guid>> _allPageOptions = new();
 	private Option<bool> _copyOption = null!;
 	private Option<Guid>? _copyPage = null;
+	private List<TfTag> _pageTags = new();
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -95,10 +96,12 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 				ComponentType = Content.ComponentType,
 				FluentIconName = Content.FluentIconName,
 				Name = Content.Name,
+				Description = Content.Description,
 				ParentId = Content.ParentId,
 				ParentPage = Content.ParentPage,
 				Position = Content.Position,
 			};
+			_pageTags = TfService.GetSpacePageTags(Content.Id);
 		}
 
 		if (_form.ComponentId.HasValue)
@@ -239,7 +242,6 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 	{
 		_selectedPageComponent = meta;
 	}
-
 	private Dictionary<string, object> _getDynamicComponentParams()
 	{
 		var dict = new Dictionary<string, object>();
@@ -259,5 +261,18 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 	{
 		_form.ComponentOptionsJson = json;
 		StateHasChanged();
+	}
+
+	private void _onDescriptionChanged(string description)
+	{
+		_form.Description = description;
+		_pageTags.Clear();
+		if (!String.IsNullOrWhiteSpace(description))
+		{
+			foreach (var item in TfConverters.GetUniqueTagsFromText(description))
+			{
+				_pageTags.Add(new TfTag { Id = Guid.NewGuid(), Label = item });
+			}
+		}
 	}
 }

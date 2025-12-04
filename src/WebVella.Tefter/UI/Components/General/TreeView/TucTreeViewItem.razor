@@ -2,6 +2,25 @@
 @inherits ComponentBase
 
 @if (Item is null) { }
+else if (Item.IsDivider)
+{
+	<FluentDivider/>
+}
+else if (Item.Disabled)
+{
+	<div id="@Item.Id" class="@_cssClass">
+		<TucTreeViewItemContent Item="@Item"  OnExpand="_onExpand"/>
+	</div>
+	@if (Item.Items.Count > 0 && Item.Expanded)
+	{
+		<div class="tf-treemenu tf-submenu">
+			@foreach (var item in Item.Items)
+			{
+				<TucTreeViewItem Item="item" />
+			}
+		</div>
+	}	
+}
 else if (!String.IsNullOrWhiteSpace(Item.Url) && Item.Url != "#")
 {
 	<a id="@Item.Id" class="@_cssClass" href="@Item.Url">

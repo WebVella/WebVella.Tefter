@@ -758,6 +758,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 					.AddGuidColumn("parent_id", c => { c.Nullable().WithoutAutoDefaultValue(); })
 					.AddGuidColumn("space_id", c => { c.NotNullable().WithoutAutoDefaultValue(); })
 					.AddShortTextColumn("name", c => { c.NotNullable(); })
+					.AddShortTextColumn("description", c => { c.Nullable(); })
 					.AddShortTextColumn("icon", c => { c.NotNullable(); })
 					.AddShortIntegerColumn("position", c => { c.NotNullable(); })
 					.AddShortIntegerColumn("type", c => { c.NotNullable(); })
@@ -790,7 +791,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			});
 
 		#endregion
-
+		
 		#region  TABLE: BOOKMARK
 
 		dbBuilder
@@ -839,7 +840,8 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithConstraints(constraints =>
 			{
 				constraints
-					.AddPrimaryKeyConstraint("pk_tag_id", c => { c.WithColumns("id"); });
+					.AddPrimaryKeyConstraint("pk_tag_id", c => { c.WithColumns("id"); })
+					.AddUniqueKeyConstraint("pk_tag_label", c => { c.WithColumns("label"); });
 			})
 			.WithIndexes(indexes =>
 			{
@@ -886,6 +888,42 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 
 		#endregion
 
+		#region  TABLE: SPACE_PAGE_TAG
+
+		dbBuilder
+			.NewTableBuilder(Guid.NewGuid(), "tf_space_page_tag")
+			.WithColumns(columns =>
+			{
+				columns
+					.AddGuidColumn("space_page_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+					.AddGuidColumn("tag_id", c => { c.WithoutAutoDefaultValue().NotNullable(); });
+			})
+			.WithConstraints(constraints =>
+			{
+				constraints
+					.AddPrimaryKeyConstraint("pk_space_page_tags", c => { c.WithColumns("space_page_id", "tag_id"); })
+					.AddForeignKeyConstraint("fk_space_page_tags_space_page", c =>
+					{
+						c.WithForeignTable("tf_space_page")
+							.WithForeignColumns("id")
+							.WithColumns("space_page_id");
+					})
+					.AddForeignKeyConstraint("fk_space_page_tags_tag", c =>
+					{
+						c.WithForeignTable("tf_tag")
+							.WithForeignColumns("id")
+							.WithColumns("tag_id");
+					});
+			})
+			.WithIndexes(indexes =>
+			{
+				indexes
+					.AddBTreeIndex("ix_space_page_tags_space_page_id", i => { i.WithColumns("space_page_id"); })
+					.AddBTreeIndex("ix_space_page_tags_tag_id", i => { i.WithColumns("tag_id"); });
+			});
+
+		#endregion		
+		
 		#region  TABLE: REPOSITORY_FILE
 
 		dbBuilder
