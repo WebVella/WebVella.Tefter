@@ -26,13 +26,10 @@ public static partial class NavigatorExt
 		if (oldState is not null && oldState.User.Id == currentUser.Id)
 		{
 			appState.UserBookmarks = oldState.UserBookmarks;
-			appState.UserSaves = oldState.UserSaves;
 		}
 		else
 		{
-			var bookmarks = _tfService.GetBookmarksAndSavesListForUser(currentUser.Id);
-			appState.UserBookmarks = bookmarks.Where(x=> String.IsNullOrWhiteSpace(x.Url)).ToList();
-			appState.UserSaves = bookmarks.Where(x=> !String.IsNullOrWhiteSpace(x.Url)).ToList();
+			appState.UserBookmarks = _tfService.GetBookmarksForUser(currentUser.Id);
 		}
 
 		if (navState.RouteNodes.Count == 0 || navState.RouteNodes[0] == RouteDataNode.Home)

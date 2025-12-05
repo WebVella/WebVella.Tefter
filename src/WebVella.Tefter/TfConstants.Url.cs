@@ -12,6 +12,7 @@ public partial class TfConstants
 	public static string SortsQueryName = "srt";
 	public static string ActiveSaveQueryName = "svid";
 	public static string TabQueryName = "tab";
+	public static string TagQueryName = "tag";
 	public static string PresetIdQueryName = "preset";
 	public static string ReturnUrlQueryName = "returnUrl";
 
@@ -70,8 +71,8 @@ public partial class TfConstants
 
 	
 	public static string RouteNameHome = "home";	
-	public static string RouteNameSavedLinks = "saved-links";	
-	public static string HomeSavedLinksUrl = $"/{RouteNameHome}/{RouteNameSavedLinks}";
+	public static string RouteNameNoSpace = "no-space";	
+	public static string HomeNoSpaceUrl = $"/{RouteNameNoSpace}";
 	public static string HomePagesSingleUrl = $"/{RouteNameHome}/{RouteNamePages}/{{0}}";
 
 	

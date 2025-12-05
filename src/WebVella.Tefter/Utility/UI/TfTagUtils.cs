@@ -14,7 +14,7 @@ public static partial class TfTagUtils
 		var matches = regex.Matches(text);
 		foreach (var match in matches)
 		{
-			var tag = match.ToString().ToLowerInvariant().Trim().Substring(1);
+			var tag = match.ToString().Trim().Substring(1);
 			if (!string.IsNullOrWhiteSpace(tag) && !result.Contains(tag))
 				result.Add(tag);
 		}

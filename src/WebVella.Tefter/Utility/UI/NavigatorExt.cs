@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.Utility;
+
 public static partial class NavigatorExt
 {
 	public static bool UrlHasState(this NavigationManager navigator)
@@ -33,10 +34,10 @@ public static partial class NavigatorExt
 		return uri.GetNodeData();
 	}
 
-	public static async Task ApplyChangeToUrlQuery(this NavigationManager navigator, Dictionary<string, object?> replaceDict, bool forceLoad = false)
+	public static string ApplyChangeToUrlQuery(this string url, Dictionary<string, object?> replaceDict)
 	{
-		var currentUrl = navigator.Uri;
-		var uri = new System.Uri(currentUrl);
+		if (!url.StartsWith("http")) url = $"http://localhost{url}";
+		var uri = new System.Uri(url);
 		var queryDictionary = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
 		var newQueryDictionary = new Dictionary<string, string?>();
@@ -152,7 +153,23 @@ public static partial class NavigatorExt
 		var urlQueryString = "";
 		if (queryStringList.Count > 0)
 			urlQueryString = "?" + string.Join("&", queryStringList);
-		navigator.NavigateTo(uri.LocalPath + urlQueryString, forceLoad);
+
+		return uri.LocalPath + urlQueryString;
+
+	}
+
+	public static string ApplyChangeToUrlQuery(this string url, string paramName, object? value)
+	{
+		var queryDict = new Dictionary<string, object?>();
+		queryDict[paramName] = value;
+		return url.ApplyChangeToUrlQuery(queryDict);
+	}
+
+	public static async Task ApplyChangeToUrlQuery(this NavigationManager navigator, Dictionary<string, object?> replaceDict, bool forceLoad = false)
+	{
+		var currentUrl = navigator.Uri;
+		var newUrl = navigator.Uri.ApplyChangeToUrlQuery(replaceDict);
+		navigator.NavigateTo(newUrl, forceLoad);
 		if (!forceLoad)
 			await Task.Delay(1);
 
@@ -370,15 +387,6 @@ public static partial class NavigatorExt
 		return result;
 	}
 
-	public static string AddQueryValueToUri(string url, string paramName, string? value)
-	{
-		var uri = new Uri($"http://localhost{url}");
-		var queryDictionary = System.Web.HttpUtility.ParseQueryString(uri.Query);
-		queryDictionary[paramName] = value;
-
-		return uri.LocalPath + "?" + queryDictionary.ToString();
-	}
-
 	public static string? ProcessQueryValueFromUrl(string? queryValue)
 	{
 		if (String.IsNullOrWhiteSpace(queryValue))
@@ -477,8 +485,8 @@ public static partial class NavigatorExt
 	{
 		var uri = new Uri(navigator.Uri);
 		return uri.LocalPath;
-	}	
-	
+	}
+
 	public static string GetLocalAndQueryUrl(this NavigationManager navigator)
 	{
 		var uri = new Uri(navigator.Uri);
@@ -495,13 +503,13 @@ public static partial class NavigatorExt
 		if (String.IsNullOrWhiteSpace(returnUrl)) return mainUrl;
 		mainUrl = !mainUrl.StartsWith("http") ? $"http://localhost{mainUrl}" : mainUrl;
 		returnUrl = !returnUrl.StartsWith("http") ? $"http://localhost{returnUrl}" : returnUrl;
-		
+
 		var returnUri = new Uri(returnUrl);
 		var mainUri = new Uri(mainUrl);
 		var queryDictionary = System.Web.HttpUtility.ParseQueryString(mainUri.Query);
 		queryDictionary[TfConstants.ReturnUrlQueryName] = ProcessQueryValueForUrl(returnUri.PathAndQuery);
 
-		return mainUri.LocalPath + "?" + queryDictionary.ToString();		
+		return mainUri.LocalPath + "?" + queryDictionary.ToString();
 	}
 
 	public static void ReloadCurrentUrl(this NavigationManager navigator)
@@ -567,12 +575,12 @@ public static partial class NavigatorExt
 	}
 	public static string GenerateQueryName()
 	{
-		return "q" + (Guid.NewGuid()).ToString().Substring(0,5);
+		return "q" + (Guid.NewGuid()).ToString().Substring(0, 5);
 	}
 
 	public static string ProcessForTitle(string columnName)
 	{
-		if(String.IsNullOrWhiteSpace(columnName)) return columnName;
+		if (String.IsNullOrWhiteSpace(columnName)) return columnName;
 		var colArray = columnName.Split(".");
 		var colName = colArray.Length > 1 ? colArray[1] : columnName;
 		colArray = colName.Split("_");

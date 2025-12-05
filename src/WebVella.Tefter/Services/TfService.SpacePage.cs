@@ -691,7 +691,7 @@ public partial class TfService : ITfService
 
 				foreach (var pageToDelete in pagesToDelete)
 				{
-					var bookmarks = GetBookmarksListForSpacePage(pageToDelete.Id);
+					var bookmarks = GetAllBookmarksForSpacePageWithoutTags(pageToDelete.Id);
 					foreach (var bookmark in bookmarks)
 						DeleteBookmark(bookmark.Id);
 
@@ -898,10 +898,9 @@ public partial class TfService : ITfService
 		foreach (var textTag in tagsToAdd)
 		{
 			var existingTag = GetTag(textTag);
-			if (existingTag is not null) continue;
-
-			var newTag = CreateTag(new TfTag { Id = Guid.NewGuid(), Label = textTag });
-			var pageTag = new TfSpacePageTag { SpacePageId = page.Id, TagId = newTag.Id };
+			if (existingTag is null)
+				existingTag = CreateTag(new TfTag { Id = Guid.NewGuid(), Label = textTag });
+			var pageTag = new TfSpacePageTag { SpacePageId = page.Id, TagId = existingTag.Id };
 
 			success = _dboManager.Insert<TfSpacePageTag>(pageTag);
 

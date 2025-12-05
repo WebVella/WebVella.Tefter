@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Models;
+﻿using WebVella.Tefter.Utility;
+
+namespace WebVella.Tefter.Models;
 
 [DboCacheModel]
 [TfDboModel("tf_bookmark")]
@@ -27,17 +29,22 @@ public record TfBookmark
 	{
 		if (String.IsNullOrWhiteSpace(Url))
 		{
-			if(Space is not null && SpacePage is not null)
+			if (Space is not null && SpacePage is not null)
 				return String.Format(TfConstants.SpacePagePageUrl, Space.Id, SpacePage.Id);
 
 			return "#";
 		}
 
-		return NavigatorExt.AddQueryValueToUri(Url,TfConstants.ActiveSaveQueryName,Id.ToString());
-		
+		return Url.ApplyChangeToUrlQuery(TfConstants.ActiveSaveQueryName, Id.ToString());
+
 	}
 
 	public List<TfTag> Tags { get; set; } = new();
+
+	public TfBookmarkType Type
+	{
+		get => TfBookmarkType.URL;
+	}
 }
 
 [DboCacheModel]
@@ -56,4 +63,11 @@ internal class TfBookmarkTag
 	[TfDboModelProperty("bookmark_id")] public Guid BookmarkId { get; set; }
 
 	[TfDboModelProperty("tag_id")] public Guid TagId { get; set; }
+}
+
+
+public enum TfBookmarkType
+{
+	[Description("URL")]
+	URL = 0
 }

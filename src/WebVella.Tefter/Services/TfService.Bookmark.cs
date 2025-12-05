@@ -1,27 +1,18 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
-	public List<TfBookmark> GetBookmarksAndSavesListForUser(
+	public List<TfBookmark> GetBookmarksForUser(
 		Guid userId);
 
-	public List<TfBookmark> GetBookmarksListForUser(
-		Guid userId);
-
-	public List<TfBookmark> GetSavesListForUser(
-		Guid userId);
-
-	List<TfBookmark> GetBookmarksListForSpacePage(
+	List<TfBookmark> GetAllBookmarksForSpacePageWithoutTags(
 		Guid spacePageId);
 
-	public TfBookmark GetBookmark(
+	public TfBookmark? GetBookmark(
 		Guid id);
-
-	public void ToggleBookmark(
-		Guid userId,
-		Guid spacePageId);
 
 	public TfBookmark CreateBookmark(
 		TfBookmark bookmark);
@@ -35,7 +26,7 @@ public partial interface ITfService
 
 public partial class TfService
 {
-	public List<TfBookmark> GetBookmarksAndSavesListForUser(
+	public List<TfBookmark> GetBookmarksForUser(
 		Guid userId)
 	{
 		try
@@ -43,10 +34,10 @@ public partial class TfService
 			var bookmarks = _dboManager.GetList<TfBookmark>(userId, nameof(TfBookmark.UserId));
 			var pageDict = GetAllSpacePages().ToDictionary(x => x.Id);
 			var spaceDict = GetSpacesList().ToDictionary(x => x.Id);
-			bookmarks = bookmarks.Where(x => pageDict.ContainsKey(x.SpacePageId)).ToList();
 			foreach (var bookmark in bookmarks)
 			{
 				bookmark.Tags = GetBookmarkTags(bookmark.Id);
+				if(!pageDict.ContainsKey(bookmark.SpacePageId)) continue;
 				bookmark.SpacePage = pageDict[bookmark.SpacePageId];
 				bookmark.Space = spaceDict[bookmark.SpacePage.SpaceId];
 			}
@@ -59,44 +50,12 @@ public partial class TfService
 		}
 	}
 
-	public List<TfBookmark> GetBookmarksListForUser(
-		Guid userId)
-	{
-		try
-		{
-			var bookmarks = GetBookmarksAndSavesListForUser(userId);
-			return bookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).ToList();
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
-	public List<TfBookmark> GetSavesListForUser(
-		Guid userId)
-	{
-		try
-		{
-			var bookmarks = GetBookmarksAndSavesListForUser(userId);
-			return bookmarks.Where(x => !String.IsNullOrWhiteSpace(x.Url)).ToList();
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
-	public List<TfBookmark> GetBookmarksListForSpacePage(
+	public List<TfBookmark> GetAllBookmarksForSpacePageWithoutTags(
 		Guid spacePageId)
 	{
 		try
 		{
-			var bookmarks = _dboManager.GetList<TfBookmark>(spacePageId, nameof(TfBookmark.SpacePageId));
-			foreach (var bookmark in bookmarks)
-				bookmark.Tags = GetBookmarkTags(bookmark.Id);
-
-			return bookmarks;
+			return _dboManager.GetList<TfBookmark>(spacePageId, nameof(TfBookmark.SpacePageId));
 		}
 		catch (Exception ex)
 		{
@@ -104,14 +63,14 @@ public partial class TfService
 		}
 	}
 
-	public TfBookmark GetBookmark(
+	public TfBookmark? GetBookmark(
 		Guid id)
 	{
 		try
 		{
 			var bookmark = _dboManager.Get<TfBookmark>(id);
-			if (bookmark is not null)
-				bookmark.Tags = GetBookmarkTags(id);
+			if(bookmark is null) return null;
+			bookmark.Tags = GetBookmarkTags(id);
 			return bookmark;
 		}
 		catch (Exception ex)
@@ -126,7 +85,7 @@ public partial class TfService
 		try
 		{
 			return _dboManager.GetListBySql<TfTag>(@"SELECT t.* FROM tf_tag t
-				LEFT OUTER JOIN tf_bookmark_tag bt ON bt.tag_id = t.id AND bt.bookmark_id = @bookmark_id
+				LEFT OUTER JOIN tf_bookmark_tag bt ON bt.tag_id = t.id
 			WHERE bt.tag_id IS NOT NULL AND bt.bookmark_id = @bookmark_id
 			", new NpgsqlParameter("bookmark_id", bookmarkId));
 		}
@@ -136,34 +95,7 @@ public partial class TfService
 		}
 	}
 
-	public void ToggleBookmark(
-		Guid userId,
-		Guid spacePageId)
-	{
-		var bookmark = GetBookmarksListForUser(userId)
-			.FirstOrDefault(x => x.SpacePageId == spacePageId && String.IsNullOrWhiteSpace(x.Url));
-
-		var spacePage = GetSpacePage(spacePageId);
-
-		if (spacePage is null)
-			return;
-
-		if (bookmark is not null)
-		{
-			DeleteBookmark(bookmark.Id);
-		}
-		else
-		{
-			CreateBookmark(new TfBookmark()
-			{
-				Id = Guid.NewGuid(),
-				UserId = userId,
-				SpacePageId = spacePageId,
-				Name = spacePage.Name ?? "unknown space",
-				Description = spacePage.Name ?? "unknown space",
-			});
-		}
-	}
+	
 
 	public TfBookmark CreateBookmark(
 		TfBookmark bookmark)
@@ -185,11 +117,12 @@ public partial class TfService
 				if (!success)
 					throw new TfDboServiceException("Insert<TfBookmark> failed.");
 
+				bookmark = GetBookmark(bookmark.Id)!;
 				MaintainBookmarkTags(bookmark);
 
 				scope.Complete();
-				bookmark = GetBookmark(bookmark.Id);
-				PublishEventWithScope(new TfBookmarkCreatedEvent(GetBookmark(bookmark.Id)));
+				bookmark = GetBookmark(bookmark.Id)!;
+				PublishEventWithScope(new TfBookmarkCreatedEvent(bookmark));
 				return bookmark;
 			}
 		}
@@ -206,24 +139,24 @@ public partial class TfService
 		{
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var existingBookmark = GetBookmark(bookmark.Id);
-
 				new TfBookmarkValidator(this)
-					.ValidateUpdate(existingBookmark)
+					.ValidateUpdate(bookmark)
 					.ToValidationException()
 					.ThrowIfContainsErrors();
 
-				
+
 				var success = _dboManager.Update<TfBookmark>(bookmark);
 				if (!success)
 					throw new TfDboServiceException("Update<TfBookmark> failed.");
+
+				bookmark = GetBookmark(bookmark.Id)!;
 
 				MaintainBookmarkTags(bookmark);
 
 				scope.Complete();
 
-				bookmark = GetBookmark(bookmark.Id);
-				PublishEventWithScope(new TfBookmarkUpdatedEvent(GetBookmark(bookmark.Id)));
+				bookmark = GetBookmark(bookmark.Id)!;
+				PublishEventWithScope(new TfBookmarkUpdatedEvent(bookmark));
 				return bookmark;
 			}
 		}
@@ -296,10 +229,11 @@ public partial class TfService
 		foreach (var textTag in tagsToAdd)
 		{
 			var existingTag = GetTag(textTag);
-			if(existingTag is not null) continue;
-			var newTag = CreateTag(new TfTag { Id = Guid.NewGuid(), Label = textTag });
-			var pageTag = new TfBookmarkTag { BookmarkId = bookmark.Id, TagId = newTag.Id };
+			if (existingTag is null) 
+				existingTag = CreateTag(new TfTag { Id = Guid.NewGuid(), Label = textTag });
+			var pageTag = new TfBookmarkTag { BookmarkId = bookmark.Id, TagId = existingTag.Id };
 			success = _dboManager.Insert<TfBookmarkTag>(pageTag);
+
 			if (!success)
 				throw new TfDboServiceException("Insert<TfBookmarkTag> failed.");
 		}

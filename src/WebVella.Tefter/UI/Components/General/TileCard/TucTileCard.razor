@@ -1,27 +1,26 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-
-<TucCard Class="tf-tile-card-wrapper">
-    @if (!String.IsNullOrWhiteSpace(Url))
-    {
-        <a href="@Url" class="tf-tile-card tf-tile-card--clickable">
-            <TucTileCardIcon FluentIconName="@FluentIconName" Color="@Color"/>
-            <div class="tf-tile-card__meta">
-                <TucTileCardHeader Title="@Title" Subtitle="@Subtitle"/>
-                <TucTileCardFooter Footer="@Footer"/>
+<TucCard Class="@($"tf-tile-card-wrapper no-padding {(String.IsNullOrWhiteSpace(Footer) ? "" : "has-footer")}")" FooterTemplate="@_getFooter()">
+    <ChildContent>
+        @if (!String.IsNullOrWhiteSpace(Url))
+        {
+            <a href="@Url" class="tf-tile-card tf-tile-card--clickable">
+                <TucTileCardIcon FluentIconName="@FluentIconName" Color="@Color" IconText="@IconText" />
+                <div class="tf-tile-card__meta">
+                    <TucTileCardContent Title="@Title" Subtitle="@Subtitle" Description="@Description"/>
+                </div>
+            </a>
+        }
+        else
+        {
+            <div class="tf-tile-card">
+                <TucTileCardIcon FluentIconName="@FluentIconName" Color="@Color" IconText="@IconText" />
+                <div class="tf-tile-card__meta">
+                    <TucTileCardContent Title="@Title" Subtitle="@Subtitle" Description="@Description" />
+                </div>
             </div>
-        </a>
-    }
-    else
-    {
-        <div class="tf-tile-card">
-            <TucTileCardIcon FluentIconName="@FluentIconName" Color="@Color"/>
-            <div class="tf-tile-card__meta">
-                <TucTileCardHeader Title="@Title" Subtitle="@Subtitle"/>
-                <TucTileCardFooter Footer="@Footer"/>
-            </div>
-        </div>
-    }
-    <TucTileCardActions Menu="Menu"/>
+        }
+        <TucTileCardActions Menu="Menu" />
+    </ChildContent>
 </TucCard>

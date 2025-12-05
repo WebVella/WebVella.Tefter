@@ -97,9 +97,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	{
 		if (args.IsUserApplicable(_currentUser))
 		{
-			var allBookmarks = TfService.GetBookmarksAndSavesListForUser(_currentUser.Id);
-			_state.UserBookmarks = allBookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url)).ToList();
-			_state.UserSaves = allBookmarks.Where(x => !String.IsNullOrWhiteSpace(x.Url)).ToList();
+			_state.UserBookmarks = TfService.GetBookmarksForUser(_currentUser.Id);
 		}
 	}
 

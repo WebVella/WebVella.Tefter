@@ -375,21 +375,23 @@ public partial class TfServiceTest : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "test1",
-					Description = " test with #tag1 #tAg2 #Tag3",
+					Description = " test with #tag1",
 					SpacePageId = spacePage.Id,
 					SpacePage = spacePage,
 					Url = null,
 					UserId = user.Id,
 					CreatedOn = DateTime.UtcNow
 				};
-
 				var bookmark = tfService.CreateBookmark(bookmarkModel);
+				bookmark.Tags.Should().HaveCount(1);
 				bookmark.Description = " test with #tag_1 #tAg_2 #Tag3";
 				bookmark = tfService.UpdateBookmark(bookmark);
+				tfService.GetBookmarksForUser(user.Id).Count.Should().Be(1);
+				bookmark.Tags.Should().HaveCount(3);
 
-				tfService.GetBookmarksListForUser(user.Id).Count.Should().Be(1);
+
 				tfService.DeleteBookmark(bookmark.Id);
-				tfService.GetBookmarksListForUser(user.Id).Count.Should().Be(0);
+				tfService.GetBookmarksForUser(user.Id).Count.Should().Be(0);
 			}
 		}
 	}

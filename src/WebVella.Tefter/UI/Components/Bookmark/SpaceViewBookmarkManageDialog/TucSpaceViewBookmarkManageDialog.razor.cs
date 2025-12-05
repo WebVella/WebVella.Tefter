@@ -21,7 +21,7 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 		_iconBtn = TfConstants.GetIcon("Save")!;
 
 		_form = Content with { Id = Content.Id };
-
+		_onDescriptionChanged(_form.Description);
 		base.InitForm(_form);
 	}
 

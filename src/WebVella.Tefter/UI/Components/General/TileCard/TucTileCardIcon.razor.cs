@@ -4,7 +4,7 @@ public partial class TucTileCardIcon : TfBaseComponent
 {
 	[Parameter] public string? FluentIconName { get; set; } = null;
 	[Parameter] public TfColor? Color { get; set; } = null;
-
+	[Parameter] public string? IconText { get; set; } = null;
 	private string _color
 	{
 		get

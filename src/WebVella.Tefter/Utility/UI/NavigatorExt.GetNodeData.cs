@@ -69,33 +69,14 @@ public static partial class NavigatorExt
 		}
 
 		if (result.NodesDict.Count >= 1 && result.NodesDict[0] == TfConstants.RouteNameHome)
-			result = result.AddRouteNodes(RouteDataNode.Home);	
-		
-		result = result.Front_Dashboard_NodesProcess();
+			result = result.AddRouteNodes(RouteDataNode.Home);
+		if (result.NodesDict.Count >= 1 && result.NodesDict[0] == TfConstants.RouteNameNoSpace)
+			result = result.AddRouteNodes(RouteDataNode.NoSpace);
+
 		result = result.Front_Space_NodesProcess();
 		result = result.Front_Pages_NodesProcess();
 		return result;
 	}
-
-	#region << Dashboards >>
-
-	private static TfNavigationState Front_Dashboard_NodesProcess(this TfNavigationState result)
-	{
-		if (result.NodesDict.Count < 1 || result.NodesDict[0] != TfConstants.RouteNameHome)
-			return result;
-		
-		if (result.NodesDict.Count < 2)
-			return result;
-
-		if (result.NodesDict[1] == TfConstants.RouteNameSavedLinks)
-		{
-			result = result.AddRouteNodes(RouteDataNode.HomeSavedLinks);	
-		}
-
-		return result;
-	}
-
-	#endregion
 
 	#region << Space >>
 

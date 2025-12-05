@@ -53,8 +53,9 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
         var talkCountSharedColumnName = "sc_talk_count";
         var assetsCountSharedColumnId = new Guid("801b1b8d-d7d1-44c6-9530-978a43fd2884");
         var assetsCountSharedColumnName = "sc_asset_count";
-        var talkChannelId = new Guid("d45f7ba7-c9dc-41ce-9dff-1979c03a0e60");
-        var assetFolderId = new Guid("ae7d547f-4284-4487-8564-50718840e873");
+        //use default channel and folder
+        var talkChannelId = new TalkApp().AddonId;
+        var assetFolderId = new AssetsApp().AddonId;
 
         #region << Prepared steps >>
 
@@ -814,45 +815,6 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 
         #endregion
 
-        #region << Talk setup >>
-
-        Steps.Add(new TfCreateTalkChannelRecipeStep
-        {
-            Instance = new TfRecipeStepInstance
-            {
-                Visible = false,
-                StepId = new Guid("f966db54-54e1-43f0-ae91-5a3f682f05d9"),
-                StepMenuTitle = "Create Talk Channel",
-            },
-            Data = new TfCreateTalkChannelRecipeStepData()
-            {
-                ChannelId = talkChannelId,
-                CountSharedColumnName = talkCountSharedColumnName,
-                Name = "GeneralTalk"
-            }
-        });
-
-        #endregion
-
-        #region << Asset >>
-
-        Steps.Add(new TfCreateAssetFolderRecipeStep
-        {
-            Instance = new TfRecipeStepInstance
-            {
-                Visible = false,
-                StepId = new Guid("0ec13a3d-9980-48b8-aacf-2b2d61ef02ed"),
-                StepMenuTitle = "Create Asset Folder",
-            },
-            Data = new TfCreateAssetFolderRecipeStepData()
-            {
-                FolderId = assetFolderId,
-                CountSharedColumnName = assetsCountSharedColumnName,
-                Name = "general"
-            }
-        });
-
-        #endregion
 
         #region << Bookmark >>
         Steps.Add(new TfBookmarkRecipeStep

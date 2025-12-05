@@ -7,6 +7,7 @@ public partial interface ITfService
 	List<TfTag> GetTags(string? search = null);
 	TfTag CreateTag(TfTag tag);
 	TfTag UpdateTag(TfTag tag);
+	void DeleteTag(Guid tagId);
 }
 
 public partial class TfService
@@ -37,7 +38,7 @@ public partial class TfService
 			return null;
 		try
 		{
-			const string sql = @"SELECT * FROM tf_tag WHERE label ILIKE @label";
+			const string sql = @"SELECT * FROM tf_tag WHERE label = @label";
 
 			var dt = _dbService.ExecuteSqlQueryCommand(sql, CreateParameter("@label", label.Trim(), DbType.String));
 
@@ -84,6 +85,9 @@ public partial class TfService
 			.ToValidationException()
 			.ThrowIfContainsErrors();
 
+		if(tag.Label.StartsWith("#"))
+			tag.Label = tag.Label.Substring(1);
+
 		var idPar = CreateParameter("@id", tag.Id, DbType.Guid);
 		var labelPar = CreateParameter("@label", tag.Label, DbType.String);
 		const string sql = @"
@@ -109,6 +113,8 @@ public partial class TfService
 			.ToValidationException()
 			.ThrowIfContainsErrors();
 
+		if (tag.Label.StartsWith("#"))
+			tag.Label = tag.Label.Substring(1);
 		var idPar = CreateParameter("@id", tag.Id, DbType.Guid);
 		var labelPar = CreateParameter("@label", tag.Label, DbType.String);
 		const string sql = @"
@@ -128,14 +134,14 @@ public partial class TfService
 		return GetTag(tag.Id)!;
 	}
 
-	public void DeleteTag(Guid id)
+	public void DeleteTag(Guid tagId)
 	{
 		new TagValidator(this)
-			.ValidateDeleteById(id)
+			.ValidateDeleteById(tagId)
 			.ToValidationException()
 			.ThrowIfContainsErrors();
 
-		var idPar = CreateParameter("@id", id, DbType.Guid);
+		var idPar = CreateParameter("@id", tagId, DbType.Guid);
 		const string sql = @"
 				DELETE FROM tf_tag 
 				       WHERE id = @id;";

@@ -3,8 +3,8 @@ public enum RouteDataNode
 {
 	[Description("Home")]
 	Home,
-	[Description("SavedLinks")]
-	HomeSavedLinks,	
+	[Description("NoSpace")]
+	NoSpace,	
 	[Description("Space")]
 	Space,
 	[Description("Admin")]

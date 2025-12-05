@@ -5,9 +5,15 @@
     <Toolbar>
         @if (_allBookmarks.Count > 0)
         {
+            @if (!String.IsNullOrWhiteSpace(_tagQuery))
+            {
+                <FluentButton Appearance="Appearance.Outline"
+                              IconEnd="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)"
+                              OnClick="@_removeTagQuery">#@_tagQuery</FluentButton>
+            }
             <FluentSearch Placeholder="@LOC("search...")" AutoComplete="off" Value="@_search"
                           ValueChanged="_searchValueChanged"
-                          Style="margin-left:1rem" @ref="_refSearch"/>
+                          @ref="_refSearch"/>
             <FluentButton Appearance="Appearance.Outline"
                           IconStart="@TfConstants.GetIcon("ArrowSortDownLines")!.WithColor(_order == TucMyBookmarksOrder.Newest ? Color.Accent : Color.Neutral)"
                           OnClick="@(() => _orderChanged(TucMyBookmarksOrder.Newest))"/>
@@ -25,7 +31,7 @@
     <Aside>
         <div class="tflpc__content__aside__nav">
             <TucTreeView Items="_nav"/>
-            <div class="tf-treemenu__header">@LOC("Tags")</div>
+            <div class="tf-treemenu__header">@LOC("Followed Tags")</div>
             <TucTreeView Items="_tagNav"/>
         </div>
     </Aside>
@@ -34,25 +40,27 @@
             @if (_allBookmarks.Count > 0)
             {
                 <FluentGrid Spacing="1">
-                    @foreach (var bookmark in _bookmarks)
+                    @foreach (var item in _dashboard)
                     {
                         <FluentGridItem xs="12" sm="6" md="4" lg="3" xxl="2">
-                            <TucTileCard Title="@bookmark.Name"
-                                         Subtitle="@($"{bookmark.Space!.Name} : {bookmark.SpacePage!.Name}")"
-                                         FluentIconName="@bookmark.SpacePage.FluentIconName"
-                                         Color="@bookmark.Space.Color"
-                                         Footer="@bookmark.Description"
-                                         Url="@bookmark.GetUrl()"
-                                         Menu="_getActionsMenu(bookmark)"/>
+                            <TucTileCard Title="@item.Title"
+                                         Subtitle="@item.SubTitle"
+                                         Description="@item.Description"
+                                         FluentIconName="@item.Icon"
+                                         Color="@item.Color"
+                                         IconText="@item.IconText"
+                                         Url="@item.Url"
+                                         Menu="item.Menu"
+                                         Footer="@item.Footer" />
                         </FluentGridItem>
                     }
                 </FluentGrid>
-                @if (_page > 1 || (_bookmarks.Count == _pageSize))
+                @if (_page > 1 || (_dashboard.Count == _pageSize))
                 {
                     <TucPager GoLast="@_goLastPage" GoOnPage="@_goOnPage" Style="margin-top:1rem;"/>
                 }
 
-                @if (_bookmarks.Count == 0)
+                @if (_dashboard.Count == 0)
                 {
                     <FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info" Style="margin-top:1rem;">
                         @LOC("No items found")

@@ -6,15 +6,12 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 
 	private List<TfBookmark> _allUserBookmarks = new();
 
-	//Bookmark
-	private TfBookmark? _activeBookmark = null;
-	private bool _bookmarkOpen = false;
-	private string _bookmarkBtnId = "tf-page-top-bookmark-selector";
+	private TfBookmark? _activePin = null;
+	private string _pinBtnId = "tf-page-top-pin-selector";
 
-	//Saved Link
-	private TfBookmark? _activeSavedLink = null;
-	private bool _savedLinkOpen = false;
-	private string _savedLinkBtnId = "tf-page-top-saved-selector";
+	private TfBookmark? _activeBookmark = null;
+	private bool _bookmarkMenuOpen = false;
+	private string _bookmarkBtnId = "tf-page-top-bookmark";
 
 	#region << Lifecycle >>
 	public async ValueTask DisposeAsync()
@@ -81,105 +78,69 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 		var state = TfAuthLayout.GetState();
 		if (forceInit)
 		{
-			_allUserBookmarks = TfService.GetBookmarksAndSavesListForUser(state.User.Id);
+			_allUserBookmarks = TfService.GetBookmarksForUser(state.User.Id);
 		}
 		else
 		{
 			_allUserBookmarks.AddRange(state.UserBookmarks);
-			_allUserBookmarks.AddRange(state.UserSaves);
 		}
-		_activeSavedLink = null;
-		_activeBookmark = null;
-		if (state.NavigationState.ActiveSaveId is not null)
-			_activeSavedLink = _allUserBookmarks.FirstOrDefault(x => x.Id == state.NavigationState.ActiveSaveId.Value
-				&& !String.IsNullOrWhiteSpace(x.Url));
-
+		_activePin = null;
 		if (state.SpacePage is not null)
-			_activeBookmark = _allUserBookmarks.FirstOrDefault(x => x.SpacePageId == state.SpacePage.Id
-			&& String.IsNullOrWhiteSpace(x.Url));
+			_activePin = _allUserBookmarks.FirstOrDefault(x => x.SpacePageId == state.SpacePage.Id && String.IsNullOrWhiteSpace(x.Url));
+		_activeBookmark = null;
+
+		if (state.NavigationState.ActiveSaveId is not null)
+			_activeBookmark = _allUserBookmarks.FirstOrDefault(x => x.Id == state.NavigationState.ActiveSaveId.Value);
+
+
 	}
 
-
-	#region << Bookmark >>
-	private Task _onBookmarkClick()
+	#region << Pin >>
+	private Task _onPinClick()
 	{
 		var state = TfAuthLayout.GetState();
 		if (state.SpacePage is null) return Task.CompletedTask;
 
-		if (_activeBookmark is null)
+		try
 		{
-			try
+			if (_activePin is null)
 			{
+
 				var bookmark = new TfBookmark
 				{
 					Id = Guid.NewGuid(),
 					UserId = state.User.Id,
 					SpacePageId = state.SpacePage.Id,
-					Name = state.SpacePage.Name ?? "unknown space",
+					Name = state.SpacePage.Name!,
 					Description = state.SpacePage.Description ?? String.Empty
 				};
 				TfService.CreateBookmark(bookmark);
-				ToastService.ShowSuccess(LOC("Page Bookmarked"));
+				ToastService.ShowSuccess(LOC("Page Pinned"));
+
 			}
-			catch (Exception ex)
+			else
 			{
-				ProcessException(ex);
+				TfService.DeleteBookmark(_activePin.Id);
+				ToastService.ShowSuccess(LOC("Page unpinned"));
 			}
-		}
-		else
-		{
-			_bookmarkOpen = true;
-		}
-		return Task.CompletedTask;
-	}
-
-	private async Task _bookmarkEdit()
-	{
-		if (_activeBookmark is null) return;
-
-		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewBookmarkManageDialog>(
-				_activeBookmark,
-				new()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge,
-					TrapFocus = false
-				});
-		_ = await dialog.Result;
-	}
-
-	private async Task _bookmarkRemove()
-	{
-		try
-		{
-
-			if (_activeBookmark is null)
-				return;
-
-			TfService.DeleteBookmark(_activeBookmark.Id);
-
-			ToastService.ShowSuccess(LOC("Bookmark removed"));
 		}
 		catch (Exception ex)
 		{
 			ProcessException(ex);
 		}
-		finally
-		{
-			await InvokeAsync(StateHasChanged);
-		}
+		return Task.CompletedTask;
 	}
+
 
 	#endregion
 
-	#region << Saved Link >>
-	private async Task _onSavedLinkClick()
+	#region << Bookmark >>
+	private async Task _onBookmarkClick()
 	{
 		var state = TfAuthLayout.GetState();
 		if (state.SpacePage is null) return;
 
-		if (_activeSavedLink is null)
+		if (_activeBookmark is null)
 		{
 			try
 			{
@@ -203,16 +164,16 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 		}
 		else
 		{
-			_savedLinkOpen = true;
+			_bookmarkMenuOpen = true;
 		}
 	}
 
-	private async Task _savedLinkEdit()
+	private async Task _bookmarkEdit()
 	{
-		if (_activeSavedLink is null) return;
+		if (_activeBookmark is null) return;
 
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewBookmarkManageDialog>(
-				_activeSavedLink,
+				_activeBookmark,
 				new()
 				{
 					PreventDismissOnOverlayClick = true,
@@ -223,13 +184,13 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 		_ = await dialog.Result;
 	}
 
-	private async Task _savedLinkUpdateUrl()
+	private async Task _bookmarkUpdateUrl()
 	{
-		if (_activeSavedLink is null) return;
+		if (_activeBookmark is null) return;
 
 		try
 		{
-			var submit = _activeSavedLink with { Url = new Uri(Navigator.Uri).PathAndQuery };
+			var submit = _activeBookmark with { Url = new Uri(Navigator.Uri).PathAndQuery };
 			TfService.UpdateBookmark(submit);
 			ToastService.ShowSuccess(LOC("URL updated"));
 		}
@@ -243,15 +204,15 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 		}
 	}
 
-	private async Task _savedLinkRemove()
+	private async Task _bookmarkRemove()
 	{
 		try
 		{
 
-			if (_activeSavedLink is null)
+			if (_activeBookmark is null)
 				return;
 
-			TfService.DeleteBookmark(_activeSavedLink.Id);
+			TfService.DeleteBookmark(_activeBookmark.Id);
 			ToastService.ShowSuccess(LOC("Save URL removed"));
 			await Navigator.ApplyChangeToUrlQuery(TfConstants.ActiveSaveQueryName, null);
 		}
@@ -267,11 +228,11 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 
 	private Microsoft.FluentUI.AspNetCore.Components.Color _getLinkColor()
 	{
-		if(_activeSavedLink is null) return Microsoft.FluentUI.AspNetCore.Components.Color.Neutral;
-		if(Navigator.IsSpaceViewSavedUrlChanged(_activeSavedLink.Url))
+		if (_activeBookmark is null) return Microsoft.FluentUI.AspNetCore.Components.Color.Neutral;
+		if (Navigator.IsSpaceViewSavedUrlChanged(_activeBookmark.Url))
 			return Microsoft.FluentUI.AspNetCore.Components.Color.Warning;
 
-		return Microsoft.FluentUI.AspNetCore.Components.Color.Accent;
+		return Microsoft.FluentUI.AspNetCore.Components.Color.Neutral;
 	}
 
 	#endregion

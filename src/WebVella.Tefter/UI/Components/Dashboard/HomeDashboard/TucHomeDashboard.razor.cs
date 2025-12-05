@@ -1,19 +1,24 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using WebVella.Tefter.Utility;
+
+namespace WebVella.Tefter.UI.Components;
 
 public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 {
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 
+	private List<TfDashboardItem> _dashboard = new();
 	private List<TfBookmark> _allBookmarks = new();
-	private List<TfBookmark> _bookmarks = new();
 	private int _page = 1;
 	private int _pageSize = 32;
 	private string? _search = null;
+	private string? _tagQuery = null;
 	private TucMyBookmarksOrder _order = TucMyBookmarksOrder.Newest;
 	private FluentSearch _refSearch = null!;
 
 	private readonly List<TfMenuItem> _nav = new();
 	private readonly List<TfMenuItem> _tagNav = new();
+
+	private TucMyBookmarksTab _activeTab = TucMyBookmarksTab.Bookmarks;
 
 	public void Dispose()
 	{
@@ -24,9 +29,7 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 	}
 	protected override void OnInitialized()
 	{
-			_allBookmarks = TfAuthLayout.GetState().UserBookmarks.ToList();
-		
-			//_allBookmarks = TfAuthLayout.GetState().UserSaves.ToList();
+		_allBookmarks = TfAuthLayout.GetState().UserBookmarks.ToList();
 		_init();
 		TfEventProvider.BookmarkUpdatedEvent += On_BookmarkChangedEvent;
 		TfEventProvider.BookmarkDeletedEvent += On_BookmarkChangedEvent;
@@ -45,8 +48,7 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 	{
 		if (args.IsUserApplicable(this))
 		{
-				_allBookmarks = TfService.GetBookmarksListForUser(TfAuthLayout.GetState().User.Id);
-				//_allBookmarks = TfService.GetSavesListForUser(TfAuthLayout.GetState().User.Id);
+			_allBookmarks = TfService.GetBookmarksForUser(TfAuthLayout.GetState().User.Id);
 			_init();
 			await InvokeAsync(StateHasChanged);
 		}
@@ -62,27 +64,55 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 	{
 		_nav.Clear();
 		_tagNav.Clear();
-		
+		_tagQuery = Navigator.GetStringFromQuery(TfConstants.TagQueryName);
+		_activeTab = Navigator.GetEnumFromQuery<TucMyBookmarksTab>(TfConstants.TabQueryName, TucMyBookmarksTab.All)!.Value;
+		//Global menu
+		_nav.Add(new TfMenuItem()
+		{
+			Text = "All items",
+			IconCollapsed = TfConstants.GetIcon("ListBar"),
+			Url = Navigator.GetLocalAndQueryUrl()
+				.ApplyChangeToUrlQuery(TfConstants.TabQueryName, null),
+			Selected = _activeTab == TucMyBookmarksTab.All
+		});
 		_nav.Add(new TfMenuItem()
 		{
 			Text = "Bookmarks",
 			IconCollapsed = TfConstants.GetIcon("Star"),
-			Url = "/",
-			Selected = true
+			Url = Navigator.GetLocalAndQueryUrl()
+				.ApplyChangeToUrlQuery(TfConstants.TabQueryName, TucMyBookmarksTab.Bookmarks),
+			Selected = _activeTab == TucMyBookmarksTab.Bookmarks
+		});
+
+		_nav.Add(new TfMenuItem()
+		{
+			Text = "Pinned Pages",
+			IconCollapsed = TfConstants.GetIcon("Pin"),
+			Url = Navigator.GetLocalAndQueryUrl()
+				.ApplyChangeToUrlQuery(TfConstants.TabQueryName, TucMyBookmarksTab.Pins),
+			Selected = _activeTab == TucMyBookmarksTab.Pins
 		});
 		_nav.Add(new TfMenuItem()
 		{
-			Text = "Saved URLs",
-			IconCollapsed = TfConstants.GetIcon("Link"),
-			Url = "/"
+			Text = "Pinned Data",
+			IconCollapsed = TfConstants.GetIcon("Database"),
+			Url = Navigator.GetLocalAndQueryUrl()
+				.ApplyChangeToUrlQuery(TfConstants.TabQueryName, TucMyBookmarksTab.Data),
+			Selected = _activeTab == TucMyBookmarksTab.Data
 		});
 
-		_tagNav.Add(new TfMenuItem()
+		//tag menu
+		var tags = TfService.GetTags();
+		foreach (var tag in tags)
 		{
-			Text = "Test",
-			IconCollapsed = new CustomIcons.HashTag(),
-			Url = "/"
-		});		
+			_tagNav.Add(new TfMenuItem()
+			{
+				Text = tag.Label,
+				IconCollapsed = new CustomIcons.HashTag(),
+				Url = Navigator.GetLocalAndQueryUrl().ApplyChangeToUrlQuery(TfConstants.TagQueryName, tag.Label == _tagQuery ? null : tag.Label),
+				Selected = tag.Label == _tagQuery
+			});
+		}
 	}
 
 	private List<TfMenuItem> _getActionsMenu(TfBookmark bookmark)
@@ -101,13 +131,13 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 			},
 			new TfMenuItem()
 			{
-				Text = "Edit",
+				Text = "Edit Bookmark",
 				IconCollapsed = TfConstants.GetIcon("Edit"),
 				OnClick = EventCallback.Factory.Create(this, async () => await _onEdit(bookmark))
 			},
 			new TfMenuItem()
 			{
-				Text = "Delete",
+				Text = "Remove Bookmark",
 				IconCollapsed = TfConstants.GetIcon("Delete")!.WithColor(Color.Error),
 				OnClick = EventCallback.Factory.Create(this, async () => await _onRemove(bookmark))
 			}
@@ -182,35 +212,91 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 		_pageSize = state.PageSize ?? 32;
 		_search = state.Search;
 		_order = Navigator.GetEnumFromQuery<TucMyBookmarksOrder>(TfConstants.OrderQueryName, TucMyBookmarksOrder.Newest)!.Value;
+		var tagQuery = Navigator.GetStringFromQuery(TfConstants.TagQueryName);
 		var search = _search?.ToLowerInvariant();
-		_bookmarks = _allBookmarks.ToList();
-		if (!String.IsNullOrWhiteSpace(_search))
-			_bookmarks = _bookmarks.Where(x =>
-					x.Name.ToLowerInvariant().Contains(search!)
-					|| x.Description.ToLowerInvariant().Contains(search!)
-					|| x.Space!.Name!.ToLowerInvariant().Contains(search!)
-					|| x.SpacePage!.Name.ToLowerInvariant().Contains(search!)).ToList();
+		_activeTab = Navigator.GetEnumFromQuery<TucMyBookmarksTab>(TfConstants.TabQueryName, TucMyBookmarksTab.All)!.Value;
+		_dashboard.Clear();
+
+		//bookmarks
+		if (_activeTab == TucMyBookmarksTab.All
+			|| _activeTab == TucMyBookmarksTab.Bookmarks)
+		{
+			var bookmarks = _allBookmarks.Where(x=> !String.IsNullOrWhiteSpace(x.Url));
+			if (!String.IsNullOrWhiteSpace(_search))
+				bookmarks = bookmarks.Where(x =>
+						x.Name.ToLowerInvariant().Contains(search!)
+						|| x.Description.ToLowerInvariant().Contains(search!)
+						|| x.Space!.Name!.ToLowerInvariant().Contains(search!)
+						|| x.SpacePage!.Name.ToLowerInvariant().Contains(search!));
+			if (!String.IsNullOrWhiteSpace(tagQuery))
+				bookmarks = bookmarks.Where(x => x.Tags.Any(x => x.Label == tagQuery));
+
+			foreach (var item in bookmarks)
+			{
+				_dashboard.Add(new TfDashboardItem(
+					bookmark:item,
+					navigator:Navigator,
+					tagLinkTitle: LOC("click to filter by tag"),
+					menu: _getActionsMenu(item)));
+			}
+		}
+		//pinned pages
+		if (_activeTab == TucMyBookmarksTab.All
+			|| _activeTab == TucMyBookmarksTab.Pins)
+		{
+			var bookmarks = _allBookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url));
+			if (!String.IsNullOrWhiteSpace(_search))
+				bookmarks = bookmarks.Where(x =>
+						x.Name.ToLowerInvariant().Contains(search!)
+						|| x.Description.ToLowerInvariant().Contains(search!)
+						|| x.Space!.Name!.ToLowerInvariant().Contains(search!)
+						|| x.SpacePage!.Name.ToLowerInvariant().Contains(search!));
+			if (!String.IsNullOrWhiteSpace(tagQuery))
+				bookmarks = bookmarks.Where(x => x.Tags.Any(x => x.Label == tagQuery));
+
+			foreach (var item in bookmarks)
+			{
+				_dashboard.Add(new TfDashboardItem(
+					bookmark: item,
+					navigator: Navigator,
+					tagLinkTitle: LOC("click to filter by tag"),
+					menu: _getActionsMenu(item)));
+			}
+		}
+
+
 
 		switch (_order)
 		{
 			case TucMyBookmarksOrder.Oldest:
-				_bookmarks = _bookmarks.OrderBy(x => x.CreatedOn).ToList();
+				_dashboard = _dashboard.OrderBy(x => x.CreatedOn).ToList();
 				break;
 			case TucMyBookmarksOrder.Alpha:
-				_bookmarks = _bookmarks.OrderBy(x => x.Name).ToList();
+				_dashboard = _dashboard.OrderBy(x => x.Title).ToList();
 				break;
 			case TucMyBookmarksOrder.AlphaReverse:
-				_bookmarks = _bookmarks.OrderByDescending(x => x.Name).ToList();
+				_dashboard = _dashboard.OrderByDescending(x => x.Title).ToList();
 				break;
 			default:
-				_bookmarks = _bookmarks.OrderByDescending(x => x.CreatedOn).ToList();
+				_dashboard = _dashboard.OrderByDescending(x => x.CreatedOn).ToList();
 				break;
 		}
-		_bookmarks = _bookmarks.Skip((_page - 1) * _pageSize).Take(_pageSize).ToList();
+		_dashboard = _dashboard.Skip((_page - 1) * _pageSize).Take(_pageSize).ToList();
 		_initNav();
 	}
 
+	private void _removeTagQuery()
+	{
+		Navigator.NavigateTo(Navigator.GetLocalAndQueryUrl().ApplyChangeToUrlQuery(TfConstants.TagQueryName, null));
+	}
 
+	public enum TucMyBookmarksTab
+	{
+		All = 0,
+		Bookmarks = 1,
+		Pins = 2,
+		Data = 3
+	}
 
 	public enum TucMyBookmarksOrder
 	{

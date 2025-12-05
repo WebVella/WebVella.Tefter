@@ -110,16 +110,14 @@
 							  OnEnter="_onUpdate" />
 				</div>
 				<div class="tf_message_editor_actions">
-					<div class="tf_message_editor_actions_left">
-						<span style="color:var(--neutral-foreground-hint)">Shift + Enter for new line. Enter to send.</span>
-					</div>
+					<div class="tf_message_editor_actions_left"></div>
 					<div class="tf_message_editor_actions_right">
 						<FluentButton IconStart="@TfConstants.GetIcon("Save").WithColor(Color.Neutral)" OnClick="_onUpdate"
 									  Loading="IsSaving"
 									  Disabled="IsSaving"
-									  Appearance="@Appearance.Accent">Save</FluentButton>
+									  Appearance="@Appearance.Accent">@LOC("Save") <span style="opacity: 0.5">[ctrl+Enter]</span></FluentButton>
 						<FluentButton OnClick="@OnEditCancel" Appearance="@Appearance.Stealth"
-									  Disabled="IsSaving">Cancel</FluentButton>
+									  Disabled="IsSaving">@LOC("Cancel")</FluentButton>
 					</div>
 				</div>
 			</div>

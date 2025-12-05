@@ -41,10 +41,10 @@ public partial class TalkSpaceViewSelectorAction : TfBaseComponent,
 					TrapFocus = false,
 					OnDialogClosing = EventCallback.Factory.Create<DialogInstance>(this, async (instance) =>
 					{
-                        var dataChange = TucSpaceViewPageContent.GetCurrentData().ApplyCountChange(
-							countChange: ((TalkThreadModalContext)instance.Content).CountChange);
-						if (dataChange is null) return;
-						TucSpaceViewPageContent.OnDataChange(dataChange);
+      //                  var dataChange = TucSpaceViewPageContent.GetCurrentData().ApplyCountChange(
+						//	countChange: ((TalkThreadModalContext)instance.Content).CountChange);
+						//if (dataChange is null) return;
+						//TucSpaceViewPageContent.OnDataChange(dataChange);
 					})
 				});
 	}

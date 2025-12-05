@@ -21,9 +21,14 @@
             </FluentMenuItem>
             <FluentDivider Style="margin-top:10px" />
             <FluentMenuItem OnClick="_visualPreferencesHandler">
+                @LOC("Followed Tags")
+                <span slot="start"><FluentIcon Value="@(new CustomIcons.HashTag())" Slot="start" /></span>
+            </FluentMenuItem>
+            <FluentMenuItem OnClick="_visualPreferencesHandler">
                 @LOC("Visual Preferences")
                 <span slot="start"><FluentIcon Value="@TfConstants.GetIcon("Color")" Slot="start" /></span>
             </FluentMenuItem>
+
             @* @if (_isSetAsStartupUri()) *@
             @* { *@
             @*     <FluentMenuItem OnClick="_resetUrlAsStartup"> *@

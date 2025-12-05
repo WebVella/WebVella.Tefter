@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using WebVella.Tefter.Utility;
+
+namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDisposable
 {
@@ -105,8 +107,8 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 			}
 			else
 			{
-				url = NavigatorExt.AddQueryValueToUri(Navigator.GetLocalUrl(), TfConstants.PresetIdQueryName,
-					preset.Id.ToString());
+				url = Navigator.GetLocalUrl().ApplyChangeToUrlQuery(TfConstants.PresetIdQueryName,
+						preset.Id.ToString());
 			}
 		}
 

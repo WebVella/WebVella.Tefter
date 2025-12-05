@@ -27,14 +27,13 @@ public class NavigatorExtTests
 		result.RouteNodes.Count.Should().Be(1);
 		result.RouteNodes[0].Should().Be(RouteDataNode.Home);
 
-		#region << Home Dashboards >>
-		uri = new Uri($"{baseUrl}{string.Format(TfConstants.HomeSavedLinksUrl)}");
+		#region << NoSpace >>
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.HomeNoSpaceUrl)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
-		result.NodesDict.Count.Should().Be(2);
-		result.RouteNodes.Count.Should().Be(2);
-		result.RouteNodes[0].Should().Be(RouteDataNode.Home);
-		result.RouteNodes[1].Should().Be(RouteDataNode.HomeSavedLinks);
+		result.NodesDict.Count.Should().Be(1);
+		result.RouteNodes.Count.Should().Be(1);
+		result.RouteNodes[0].Should().Be(RouteDataNode.NoSpace);
 		#endregion
 		
 		#region << Home page >>
