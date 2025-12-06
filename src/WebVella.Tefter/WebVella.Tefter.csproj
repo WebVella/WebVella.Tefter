@@ -95,5 +95,6 @@
 
 	<ItemGroup>
 	  <AdditionalFiles Include="UI\Components\Dashboard\HomeDashboard\TucHomeDashboard.razor" />
+	  <AdditionalFiles Include="UI\Components\Page\HomePageDetailsContent\TucAdminPageDetailsContent.razor" />
 	</ItemGroup>
 </Project>

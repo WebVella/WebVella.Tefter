@@ -26,6 +26,7 @@ public class TfCreateSpacePageRecipeStep : ITfRecipeStepAddon
 			Id = step.SpacePageId == Guid.Empty ? Guid.NewGuid() : step.SpacePageId,
 			SpaceId = step.SpaceId,
 			Name = step.Name,
+			Description = step.Description,
 			Position = step.Position,
 			Type = step.Type,
 			ComponentType = step.ComponentType.GetType(),
@@ -46,12 +47,13 @@ public class TfCreateSpacePageRecipeStepData : ITfRecipeStepAddonData
 {
 	public Guid SpacePageId { get; set; }
 	public Guid SpaceId { get; set; }
-	public string Name { get; set; }
+	public string Name { get; set; } = null!;
+	public string? Description { get; set; } = null;
 	public short Position { get; set; } = 100;
 	public TfSpacePageType Type { get; set; } = TfSpacePageType.Page;
-	public ITfSpacePageAddon ComponentType { get; set; }
+	public ITfSpacePageAddon ComponentType { get; set; } = null!;
 	public Guid? ComponentId { get; set; } = null;
 	public string ComponentOptionsJson { get; set; } = "{}";
 	public List<TfSpacePage> ChildPages { get; set; } = new();
-	public string FluentIconName { get; set; }
+	public string FluentIconName { get; set; } = null!;
 }

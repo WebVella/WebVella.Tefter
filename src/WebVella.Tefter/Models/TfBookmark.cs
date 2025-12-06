@@ -7,12 +7,9 @@ namespace WebVella.Tefter.Models;
 public record TfBookmark
 {
 	[TfDboModelProperty("id")] public Guid Id { get; set; }
-
-	[TfDboModelProperty("name")] public string Name { get; set; }
-
-	[TfDboModelProperty("description")] public string Description { get; set; }
-
-	[TfDboModelProperty("url")] public string Url { get; set; }
+	//identity_row_id - is autocreated
+	[TfDboModelProperty("name")] public string Name { get; set; } = null!;
+	[TfDboModelProperty("description")] public string? Description { get; set; } = null;
 
 	[TfDboModelProperty("created_on")]
 	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
@@ -22,6 +19,18 @@ public record TfBookmark
 
 	[TfDboModelProperty("space_page_id")] public Guid SpacePageId { get; set; }
 
+	[TfDboModelProperty("type")]
+	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfBookmarkType>))]
+	public TfBookmarkType Type { get; set; } = TfBookmarkType.URL;
+
+	//URL type
+	[TfDboModelProperty("url")] public string? Url { get; set; } = null;
+
+	//DataProviderRows
+	[TfDboModelProperty("data_identity")] public string? DataIdentity { get; set; } = null;
+
+
+	//Filled in on demand
 	public TfSpacePage? SpacePage { get; set; } = null;
 	public TfSpace? Space { get; set; } = null;
 
@@ -36,15 +45,9 @@ public record TfBookmark
 		}
 
 		return Url.ApplyChangeToUrlQuery(TfConstants.ActiveSaveQueryName, Id.ToString());
-
 	}
 
 	public List<TfTag> Tags { get; set; } = new();
-
-	public TfBookmarkType Type
-	{
-		get => TfBookmarkType.URL;
-	}
 }
 
 [DboCacheModel]
@@ -65,9 +68,9 @@ internal class TfBookmarkTag
 	[TfDboModelProperty("tag_id")] public Guid TagId { get; set; }
 }
 
-
 public enum TfBookmarkType
 {
-	[Description("URL")]
-	URL = 0
+	[Description("URL")] URL = 0,
+	[Description("Page")] Page = 1,
+	[Description("Rows")] DataProviderRows = 2
 }

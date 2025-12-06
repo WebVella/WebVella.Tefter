@@ -800,9 +800,12 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
+					.AddShortTextColumn("identity_row_id", c => { c.AsGeneratedSHA1FromColumns("id"); })
 					.AddShortTextColumn("name", c => { c.NotNullable(); })
 					.AddTextColumn("description", c => { c.Nullable(); })
+					.AddShortIntegerColumn("type", c => { c.NotNullable().WithDefaultValue(0); })
 					.AddTextColumn("url", c => { c.Nullable(); })
+					.AddShortTextColumn("data_identity", c => { c.Nullable(); })
 					.AddDateTimeColumn("created_on", c => { c.NotNullable().WithAutoDefaultValue(); })
 					.AddGuidColumn("user_id", c => { c.NotNullable(); })
 					.AddGuidColumn("space_page_id", c => { c.NotNullable(); });

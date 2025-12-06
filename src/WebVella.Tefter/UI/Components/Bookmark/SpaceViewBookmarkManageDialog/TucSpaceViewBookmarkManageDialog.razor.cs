@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.UI.Components;
+
 public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDialogContentComponent<TfBookmark?>
 {
 	[Parameter] public TfBookmark? Content { get; set; }
@@ -10,9 +11,11 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 	private Icon _iconBtn;
 	private bool _isBookmark = true;
 	private TfBookmark _form = new();
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		if (Content.Id == Guid.Empty) throw new Exception("Id is required");
 		if (Content.SpacePageId == Guid.Empty) throw new Exception("SpacePageId is required");
 		if (Content is null) throw new Exception("Content is null");
 		if (!String.IsNullOrWhiteSpace(Content.Url)) _isBookmark = false;
@@ -34,24 +37,14 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 			//Workaround to wait for the form to be bound 
 			//on enter click without blur
 			await Task.Delay(10);
-			//Columns should not be generated on edit
 			MessageStore.Clear();
 
 			if (!EditContext.Validate()) return;
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			if (_form.Id == Guid.Empty)
-			{
-				_form.Id = Guid.NewGuid();
-				TfService.CreateBookmark(_form);
-				ToastService.ShowSuccess(LOC($"{(_isBookmark ? "Bookmark" : "URL")} saved"));
-			}
-			else
-			{
-				TfService.UpdateBookmark(_form);
-				ToastService.ShowSuccess(LOC($"{(_isBookmark ? "Bookmark" : "URL")} updated"));
-			}
+			TfService.UpdateBookmark(_form);
+			ToastService.ShowSuccess(LOC($"{(_isBookmark ? "Bookmark" : "URL")} updated"));
 
 			await Dialog.CloseAsync(_form);
 		}
@@ -65,6 +58,7 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 			await InvokeAsync(StateHasChanged);
 		}
 	}
+
 	private async Task _cancel()
 	{
 		await Dialog.CancelAsync();
@@ -82,5 +76,4 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 			}
 		}
 	}
-
 }

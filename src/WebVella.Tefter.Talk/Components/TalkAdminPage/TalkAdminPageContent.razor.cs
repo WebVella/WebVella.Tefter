@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Talk.Components;
 
-public partial class TalkChannelAdminList : TfBaseComponent
+public partial class TalkAdminPageContent : TfBaseComponent,IDisposable
 {
     [Inject] public ITalkService TalkService { get; set; }
 

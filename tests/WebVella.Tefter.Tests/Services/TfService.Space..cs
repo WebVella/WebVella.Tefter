@@ -378,6 +378,7 @@ public partial class TfServiceTest : BaseTest
 					Description = " test with #tag1",
 					SpacePageId = spacePage.Id,
 					SpacePage = spacePage,
+					Type = TfBookmarkType.Page,
 					Url = null,
 					UserId = user.Id,
 					CreatedOn = DateTime.UtcNow

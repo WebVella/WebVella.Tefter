@@ -1,12 +1,15 @@
 ﻿namespace WebVella.Tefter.Utility;
+
 public class UrlUtility
 {
 	private static string BASE_URL = "";
+
 	public UrlUtility(ITfConfigurationService config)
 	{
 		BASE_URL = config.BaseUrl;
 		if (BASE_URL.EndsWith("/")) BASE_URL = BASE_URL.Substring(0, BASE_URL.Length - 1);
 	}
+
 	public async Task<string?> GetMetaTitleFromUrl(string? url)
 	{
 		if (String.IsNullOrWhiteSpace(url)) return null;
@@ -14,21 +17,30 @@ public class UrlUtility
 		if (!uri.IsAbsoluteUri) return null;
 
 		if (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps) return null;
-
-		using (HttpClient httpClient = new HttpClient())
+		try
 		{
-			httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Tefter App");
-			httpClient.Timeout = TimeSpan.FromSeconds(200);
-
-			using (HttpResponseMessage response = await httpClient.GetAsync(uri).ConfigureAwait(false))
+			using (HttpClient httpClient = new HttpClient())
 			{
-				if (!response.IsSuccessStatusCode) return null;
-				HttpContent content = response.Content;
-				var html = await content.ReadAsStringAsync();
-				string title = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
-				return title;
+				httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Tefter App");
+				httpClient.Timeout = TimeSpan.FromSeconds(200);
+
+				using (HttpResponseMessage response = await httpClient.GetAsync(uri).ConfigureAwait(false))
+				{
+					if (!response.IsSuccessStatusCode) return null;
+					HttpContent content = response.Content;
+					var html = await content.ReadAsStringAsync();
+					string title = Regex
+						.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase)
+						.Groups["Title"].Value;
+					return title;
+				}
 			}
 		}
+		catch (Exception)
+		{
+			//Ignore
+		}
+		return null;
 	}
 
 	public async Task<string?> GetFavIconForUrl(string url)
@@ -38,31 +50,40 @@ public class UrlUtility
 		if (!uri.IsAbsoluteUri) return null;
 		if (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps) return null;
 
-		using (HttpClient httpClient = new HttpClient())
+		try
 		{
-			httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Tefter App");
-			httpClient.Timeout = TimeSpan.FromSeconds(2);
-
-			//First try default favicon.ico
-			var favIconPath = uri.GetLeftPart(System.UriPartial.Authority);
-			favIconPath += "/favicon.ico";
-			using (HttpResponseMessage response = await httpClient.GetAsync(favIconPath).ConfigureAwait(false))
+			using (HttpClient httpClient = new HttpClient())
 			{
-				if (response.IsSuccessStatusCode)
+				httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Tefter App");
+				httpClient.Timeout = TimeSpan.FromSeconds(2);
+
+				//First try default favicon.ico
+				var favIconPath = uri.GetLeftPart(System.UriPartial.Authority);
+				favIconPath += "/favicon.ico";
+				using (HttpResponseMessage response = await httpClient.GetAsync(favIconPath).ConfigureAwait(false))
 				{
-					return favIconPath;
+					if (response.IsSuccessStatusCode)
+					{
+						return favIconPath;
+					}
+				}
+
+				using (HttpResponseMessage response = await httpClient.GetAsync(uri).ConfigureAwait(false))
+				{
+					if (!response.IsSuccessStatusCode) return null;
+
+					HttpContent content = response.Content;
+					var html = await content.ReadAsStringAsync();
+					var capture = Regex.Match(html, @"rel=['""](?:shortcut )?icon['""] href=['""]([^?'""]+)[?'""]",
+						RegexOptions.IgnoreCase);
+
+					if (capture.Groups is not null && capture.Groups.Count > 1) return capture.Groups[1].Value;
 				}
 			}
-			using (HttpResponseMessage response = await httpClient.GetAsync(uri).ConfigureAwait(false))
-			{
-				if (!response.IsSuccessStatusCode) return null;
-
-				HttpContent content = response.Content;
-				var html = await content.ReadAsStringAsync();
-				var capture = Regex.Match(html, @"rel=['""](?:shortcut )?icon['""] href=['""]([^?'""]+)[?'""]", RegexOptions.IgnoreCase);
-
-				if (capture.Groups is not null && capture.Groups.Count > 1) return capture.Groups[1].Value;
-			}
+		}
+		catch (Exception)
+		{
+			//Ignore
 		}
 
 		return null;
@@ -87,12 +108,15 @@ public class UrlUtility
 			{
 				url = BASE_URL + url;
 			}
-			else{ 
+			else
+			{
 				url = "https://" + url;
 			}
 		}
+
 		Uri uri = null;
 		if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri)) { }
+
 		if (uri == null) return null;
 		return uri;
 	}

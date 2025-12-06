@@ -271,7 +271,7 @@ public static partial class NavigatorExt
 			IconExpanded = TfConstants.GetIcon("Board"),
 			Selected = routeState.RouteNodes.Count == 1,
 			Url = "/",
-			Text = LOC["My Dashboard"]
+			Text = LOC["Dashboard"]
 		});
 		
 		#endregion
@@ -285,6 +285,7 @@ public static partial class NavigatorExt
 				Id = $"tf-addon-{addonPage.Id}",
 				Selected = routeState.PageId == addonPage.Id,
 				Url = string.Format(TfConstants.HomePagesSingleUrl, addonPage.Id),
+				IconCollapsed = TfConstants.GetIcon(addonPage.FluentIconName), 
 				Text = addonPage.Name
 			});
 		}

@@ -83,34 +83,5 @@ public record TfSpaceViewPreset
 	[JsonPropertyName("color")]
 	public TfColor? Color { get; set; } = TfConstants.DefaultThemeColor;
 
-	[JsonPropertyName("icon")]
-	public string Icon { get; set; }
-}
-
-public enum TfSpaceViewType
-{
-	[Description("Datagrid")]
-	DataGrid = 0,
-	[Description("Form")]
-	Form = 1,
-	[Description("Chart")]
-	Chart = 2,
-	[Description("Dashboard")]
-	Dashboard = 3
-}
-
-public enum TfSpaceViewDatasetType
-{
-	[Description("new dataset")]
-	New = 0,
-	[Description("existing dataset")]
-	Existing = 1
-}
-
-public enum TfSpaceViewSetType
-{
-	[Description("new view")]
-	New = 0,
-	[Description("existing view")]
-	Existing = 1
+	[JsonPropertyName("icon")] public string Icon { get; set; } = null!;
 }

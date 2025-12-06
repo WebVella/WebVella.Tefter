@@ -37,7 +37,7 @@ public partial class TfService
 			foreach (var bookmark in bookmarks)
 			{
 				bookmark.Tags = GetBookmarkTags(bookmark.Id);
-				if(!pageDict.ContainsKey(bookmark.SpacePageId)) continue;
+				if (!pageDict.ContainsKey(bookmark.SpacePageId)) continue;
 				bookmark.SpacePage = pageDict[bookmark.SpacePageId];
 				bookmark.Space = spaceDict[bookmark.SpacePage.SpaceId];
 			}
@@ -69,7 +69,7 @@ public partial class TfService
 		try
 		{
 			var bookmark = _dboManager.Get<TfBookmark>(id);
-			if(bookmark is null) return null;
+			if (bookmark is null) return null;
 			bookmark.Tags = GetBookmarkTags(id);
 			return bookmark;
 		}
@@ -95,7 +95,6 @@ public partial class TfService
 		}
 	}
 
-	
 
 	public TfBookmark CreateBookmark(
 		TfBookmark bookmark)
@@ -229,7 +228,7 @@ public partial class TfService
 		foreach (var textTag in tagsToAdd)
 		{
 			var existingTag = GetTag(textTag);
-			if (existingTag is null) 
+			if (existingTag is null)
 				existingTag = CreateTag(new TfTag { Id = Guid.NewGuid(), Label = textTag });
 			var pageTag = new TfBookmarkTag { BookmarkId = bookmark.Id, TagId = existingTag.Id };
 			success = _dboManager.Insert<TfBookmarkTag>(pageTag);
@@ -249,10 +248,7 @@ public partial class TfService
 				throw new TfDboServiceException("Delete<TfBookmarkTag> failed.");
 
 			CheckRemoveOrphanTags(id);
-
 		}
-
-
 	}
 
 	#region <--- validation --->
@@ -271,6 +267,26 @@ public partial class TfService
 				RuleFor(bookmark => bookmark.Name)
 					.NotEmpty()
 					.WithMessage("The bookmark name is required.");
+				
+				RuleFor(bookmark => bookmark.Url)
+					.Must((bookmark, url) =>
+					{
+						if (bookmark.Type == TfBookmarkType.URL
+						    && String.IsNullOrEmpty(url)) return false;
+
+						return true;
+					})
+					.WithMessage("URL is required for bookmark of type URL.");
+				
+				RuleFor(bookmark => bookmark.DataIdentity)
+					.Must((bookmark, identity) =>
+					{
+						if (bookmark.Type == TfBookmarkType.DataProviderRows
+						    && String.IsNullOrEmpty(identity)) return false;
+
+						return true;
+					})
+					.WithMessage("Identity is required for bookmark of type DataProviderRows.");					
 			});
 
 			RuleSet("create", () =>
@@ -278,6 +294,7 @@ public partial class TfService
 				RuleFor(bookmark => bookmark.Id)
 					.Must((bookmark, id) => { return tfService.GetBookmark(id) == null; })
 					.WithMessage("There is already existing bookmark with specified identifier.");
+			
 			});
 
 			RuleSet("update", () =>
@@ -288,6 +305,7 @@ public partial class TfService
 						return tfService.GetBookmark(id) != null;
 					})
 					.WithMessage("There is not existing bookmark with specified identifier.");
+			
 			});
 
 			RuleSet("delete", () =>

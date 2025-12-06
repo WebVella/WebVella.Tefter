@@ -112,7 +112,8 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 					UserId = state.User.Id,
 					SpacePageId = state.SpacePage.Id,
 					Name = state.SpacePage.Name!,
-					Description = state.SpacePage.Description ?? String.Empty
+					Description = state.SpacePage.Description ?? String.Empty,
+					Type = TfBookmarkType.Page 
 				};
 				TfService.CreateBookmark(bookmark);
 				ToastService.ShowSuccess(LOC("Page Pinned"));
@@ -151,7 +152,8 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 					SpacePageId = state.SpacePage.Id,
 					Name = state.SpacePage.Name ?? "unknown space" + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
 					Description = state.SpacePage.Description ?? String.Empty,
-					Url = new Uri(Navigator.Uri).PathAndQuery
+					Url = new Uri(Navigator.Uri).PathAndQuery,
+					Type = TfBookmarkType.URL
 				};
 				TfService.CreateBookmark(bookmark);
 				ToastService.ShowSuccess(LOC("URL Saved"));

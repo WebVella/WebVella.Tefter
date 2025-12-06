@@ -63,7 +63,6 @@ public class TfCreateSpaceViewRecipeStepData : ITfRecipeStepAddonData
 	public Guid SpaceDataId { get; set; }
 	public string Name { get; set; } = string.Empty;
 	public short Position { get; set; } = 100;
-	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
 	public List<TfSpaceViewPreset> Presets { get; set; } = new();
 	public TfSpaceViewSettings Settings { get; set; } = new();
 	public List<TfSpaceViewColumn> Columns { get; set; } = new();

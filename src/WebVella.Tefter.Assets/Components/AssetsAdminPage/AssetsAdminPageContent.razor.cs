@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Routing;
 
 namespace WebVella.Tefter.Assets.Components;
-public partial class AssetsFolderAdminList : TfBaseComponent
+public partial class AssetsAdminPageContent : TfBaseComponent,IDisposable
 {
 	[Inject] public IAssetsService AssetsService { get; set; }
 

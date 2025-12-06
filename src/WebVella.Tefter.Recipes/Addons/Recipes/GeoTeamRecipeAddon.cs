@@ -491,7 +491,6 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                 SpaceId = spaceId,
                 Name = "World Cities",
                 Position = 100,
-                Type = TfSpaceViewType.DataGrid,
                 Settings = new TfSpaceViewSettings
                 {
                     CanCreateRows = true,
@@ -658,6 +657,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                 SpacePageId = spacePageId,
                 SpaceId = spaceId,
                 Name = "World Cities",
+                Description = "#test, #page #recipe",
                 FluentIconName = "Globe",
                 Position = 100,
                 Type = TfSpacePageType.Page,
@@ -730,7 +730,6 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 
         #endregion
 
-
         #region << Bookmark >>
         Steps.Add(new TfBookmarkRecipeStep
         {
@@ -748,6 +747,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                     new TfBookmark
                     {
                         Id = Guid.NewGuid(),
+                        Type =  TfBookmarkType.Page,
                         UserId = adminUserId,
                         SpacePageId = spacePageId,
                         Name = "Example bookmark",
@@ -758,6 +758,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                     new TfBookmark
                     {
                         Id = Guid.NewGuid(),
+                        Type =  TfBookmarkType.URL,
                         UserId = adminUserId,
                         SpacePageId = spacePageId,
                         Name = "Example Saved URL",
@@ -770,6 +771,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                     new TfBookmark
                     {
                         Id = Guid.NewGuid(),
+                        Type =  TfBookmarkType.Page,
                         UserId = regularUserId,
                         SpacePageId = spacePageId,
                         Name = "Example bookmark",
@@ -780,6 +782,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                     new TfBookmark
                     {
                         Id = Guid.NewGuid(),
+                        Type =  TfBookmarkType.URL,
                         UserId = regularUserId,
                         SpacePageId = spacePageId,
                         Name = "Example Saved URL",
@@ -792,6 +795,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                     new TfBookmark
                     {
                         Id = Guid.NewGuid(),
+                        Type =  TfBookmarkType.Page,
                         UserId = regularUser2Id,
                         SpacePageId = spacePageId,
                         Name = "Example bookmark",
@@ -802,6 +806,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                     new TfBookmark
                     {
                         Id = Guid.NewGuid(),
+                        Type =  TfBookmarkType.URL,
                         UserId = regularUser2Id,
                         SpacePageId = spacePageId,
                         Name = "Example Saved URL",
