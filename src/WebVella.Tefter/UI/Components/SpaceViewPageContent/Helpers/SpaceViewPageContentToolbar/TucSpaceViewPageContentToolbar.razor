@@ -27,7 +27,15 @@
 }
 
 <FluentButton Id="view-actions-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline" Title="@LOC("Actions")">
-	<FluentIcon Value="@TfConstants.GetIcon("Connector")" Color="@Color.Accent" />
+	@if (SelectedRows.Count == 0)
+	{
+		<FluentIcon Value="@TfConstants.GetIcon("Connector")" Color="@Color.Accent"/>
+	}
+	else
+	{
+		<FluentIcon Value="@TfConstants.GetIcon("Connector")" Color="@Color.Accent" Slot="start"/>
+		<FluentBadge Appearance="Appearance.Neutral">@SelectedRows.Count</FluentBadge>
+	}
 </FluentButton>
 <FluentButton Id="view-share-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline" Title="@LOC("Shared")">
 	<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Accent" />

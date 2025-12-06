@@ -19,9 +19,6 @@ public partial class AssetSpaceViewSelectorAction : TfBaseComponent,
 	[Parameter]
 	public TfSpaceViewSelectorActionScreenRegion RegionContext { get; set; }
 
-	[CascadingParameter(Name = "TucSpaceViewPageContent")]
-	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;
-
 	private IDialogReference _dialog;
 	private async Task _onClick()
 	{
@@ -41,10 +38,10 @@ public partial class AssetSpaceViewSelectorAction : TfBaseComponent,
 					TrapFocus = false,
 					OnDialogClosing = EventCallback.Factory.Create<DialogInstance>(this, (instance) =>
 					{
-						var dataChange = TucSpaceViewPageContent.GetCurrentData().ApplyCountChange(
+						var dataChange = RegionContext.TucSpaceViewPageContent.GetCurrentData().ApplyCountChange(
 							countChange: ((AssetsAttachModalContext)instance.Content).CountChange);
 						if (dataChange is null) return;
-						TucSpaceViewPageContent.OnDataChange(dataChange);
+						RegionContext.TucSpaceViewPageContent.OnDataChange(dataChange);
 					})
 				});
 	}

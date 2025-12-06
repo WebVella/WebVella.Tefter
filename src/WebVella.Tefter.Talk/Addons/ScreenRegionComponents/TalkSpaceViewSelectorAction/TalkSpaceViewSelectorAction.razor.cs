@@ -19,9 +19,6 @@ public partial class TalkSpaceViewSelectorAction : TfBaseComponent,
 	[Parameter]
 	public TfSpaceViewSelectorActionScreenRegion RegionContext { get; set; }
 
-	[CascadingParameter(Name = "TucSpaceViewPageContent")]
-	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;
-
 	private IDialogReference _dialog;
 	private async Task _onClick()
 	{
@@ -41,10 +38,10 @@ public partial class TalkSpaceViewSelectorAction : TfBaseComponent,
 					TrapFocus = false,
 					OnDialogClosing = EventCallback.Factory.Create<DialogInstance>(this, async (instance) =>
 					{
-      //                  var dataChange = TucSpaceViewPageContent.GetCurrentData().ApplyCountChange(
-						//	countChange: ((TalkThreadModalContext)instance.Content).CountChange);
-						//if (dataChange is null) return;
-						//TucSpaceViewPageContent.OnDataChange(dataChange);
+                        var dataChange = RegionContext.TucSpaceViewPageContent.GetCurrentData().ApplyCountChange(
+							countChange: ((TalkThreadModalContext)instance.Content).CountChange);
+						if (dataChange is null) return;
+						RegionContext.TucSpaceViewPageContent.OnDataChange(dataChange);
 					})
 				});
 	}

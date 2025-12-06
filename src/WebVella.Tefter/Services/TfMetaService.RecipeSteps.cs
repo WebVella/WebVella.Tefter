@@ -2,7 +2,7 @@
 
 public partial interface ITfMetaService
 {
-	ITfRecipeStepAddon GetRecipeStep(Guid id);
+	ITfRecipeStepAddon? GetRecipeStep(Guid id);
 
 	ReadOnlyCollection<ITfRecipeStepAddon> GetRecipeSteps();
 }
@@ -24,7 +24,7 @@ public partial class TfMetaService : ITfMetaService
 			_typesMap[type.FullName] = type;
 		}
 	}
-	public ITfRecipeStepAddon GetRecipeStep(Guid id)
+	public ITfRecipeStepAddon? GetRecipeStep(Guid id)
 	{
 		return _recipeSteps.SingleOrDefault(x => x.AddonId == id);
 	}

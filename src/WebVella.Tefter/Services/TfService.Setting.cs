@@ -4,7 +4,7 @@ public partial interface ITfService
 {
 	public List<TfSetting> GetSettings();
 
-	public TfSetting GetSetting(
+	public TfSetting? GetSetting(
 		string name);
 
 	public void SaveSetting(
@@ -28,7 +28,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfSetting GetSetting(
+	public TfSetting? GetSetting(
 		string name)
 	{
 		try

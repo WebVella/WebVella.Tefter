@@ -19,7 +19,8 @@ public partial class TucSpaceViewActionSelector : TfBaseComponent
 			{
 				SelectedDataRows = SelectedRows,
 				SpaceData = SpaceData,
-				CurrentUser = User
+				CurrentUser = User,
+				TucSpaceViewPageContent = TucSpaceViewPageContent
 			};
 		}
 	}

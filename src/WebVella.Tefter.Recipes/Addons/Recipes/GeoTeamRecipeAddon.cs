@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using WebVella.Tefter.Addons;
+﻿using System.Text.Json;
 using WebVella.Tefter.Assets.Addons;
 using WebVella.Tefter.DataProviders.Csv;
 using WebVella.Tefter.DataProviders.Csv.Addons;
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Talk;
 using WebVella.Tefter.Talk.Addons;
-using WebVella.Tefter.Talk.Components;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Addons.RecipeSteps;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
@@ -46,13 +39,13 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
         var spacePageId = new Guid("831ce409-febb-40c3-a9b3-74af0c3bb8d3");
         var template1Id = new Guid("3ec7ec15-e3bb-4854-8688-0227e5efa646");
         var template1BlobId = new Guid("18716b34-b123-4366-be4d-c0bc967da59b");
+        // ReSharper disable once StringLiteralTypo
         var template1FileName = "worldcities-template1.xlsx";
+        // ReSharper disable once StringLiteralTypo
         var csvFileName = "worldcities.csv";
-        var dataIdentity = "recipe_city_id";
-        var talkCountSharedColumnId = new Guid("2bb01d12-76bd-4247-8478-9ed5eb8a1707");
-        var talkCountSharedColumnName = "sc_talk_count";
-        var assetsCountSharedColumnId = new Guid("801b1b8d-d7d1-44c6-9530-978a43fd2884");
-        var assetsCountSharedColumnName = "sc_asset_count";
+        var dataIdentity = "default";
+        var talkCountSharedColumnName = "sc_default_talk_counter";
+        var assetsCountSharedColumnName = "sc_default_assets_counter";
         //use default channel and folder
         var talkChannelId = new TalkApp().AddonId;
         var assetFolderId = new AssetsApp().AddonId;
@@ -67,7 +60,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                 StepId = new Guid("0ea1122d-1377-4160-b6b6-2874ee9bbf9a"),
                 StepMenuTitle = "Get started",
                 StepContentTitle = "Geo Talk Sample application",
-                StepContentDescription = null,
+                StepContentDescription = String.Empty,
             },
             Data = new TfInfoRecipeStepData
             {
@@ -198,10 +191,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
             },
             Data = new TfGroupRecipeStepData()
             {
-                Steps = new()
-                {
-                    step11, step12, step13, step14, step15, step16
-                },
+                Steps = [step11, step12, step13, step14, step15, step16],
             }
         });
 
@@ -219,8 +209,8 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
             },
             Data = new TfGroupRecipeStepData()
             {
-                Steps = new List<ITfRecipeStepAddon>()
-                {
+                Steps =
+                [
                     new TfCreateUserRecipeStep
                     {
                         Instance = new TfRecipeStepInstance
@@ -239,9 +229,10 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                             Password = "1",
                             FirstName = "System",
                             LastName = "Administrator",
-                            Roles = new List<Guid> { TfConstants.ADMIN_ROLE_ID },
+                            Roles = [TfConstants.ADMIN_ROLE_ID],
                         }
                     },
+
                     new TfCreateRoleRecipeStep
                     {
                         Instance = new TfRecipeStepInstance
@@ -258,6 +249,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                             Name = "regular"
                         }
                     },
+
                     new TfCreateUserRecipeStep
                     {
                         Instance = new TfRecipeStepInstance
@@ -275,9 +267,10 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                             Password = "1",
                             FirstName = "User",
                             LastName = "1",
-                            Roles = new List<Guid> { regularRoleId }
+                            Roles = [regularRoleId]
                         }
                     },
+
                     new TfCreateUserRecipeStep
                     {
                         Instance = new TfRecipeStepInstance
@@ -295,10 +288,11 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                             Password = "1",
                             FirstName = "User",
                             LastName = "2",
-                            Roles = new List<Guid> { regularRoleId }
+                            Roles = [regularRoleId]
                         }
-                    },
-                }
+                    }
+
+                ]
             }
         });
 
@@ -319,26 +313,6 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                 FileName = csvFileName,
                 EmbeddedResourceName = $"WebVella.Tefter.Recipes.Files.{csvFileName}",
                 Assembly = this.GetType().Assembly,
-            }
-        });
-
-        #endregion
-
-        #region << Data Identity >>
-
-        Steps.Add(new TfCreateDataIdentityRecipeStep
-        {
-            Instance = new TfRecipeStepInstance
-            {
-                Visible = false,
-                StepId = new Guid("c86fcc0a-980f-4c2f-b527-e74d467a6f1e"),
-                StepMenuTitle = "Data Provider",
-                StepContentTitle = "Creating the Data provider",
-            },
-            Data = new TfCreateDataIdentityRecipeStepData()
-            {
-                DataIdentity = dataIdentity,
-                Label = "recipe data identity",
             }
         });
 
@@ -365,8 +339,8 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                 {
                     Filepath = $"tefter://fs/repository/{csvFileName}"
                 }),
-                Columns = new List<TfDataProviderColumn>()
-                {
+                Columns =
+                [
                     new TfDataProviderColumn
                     {
                         Id = new Guid("b706b5b1-c296-4adb-a799-0f40993f6cfb"),
@@ -380,10 +354,10 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         IsNullable = false,
                         IsSearchable = true,
                         IncludeInTableSearch = true,
-                        PreferredSearchType = TfDataProviderColumnSearchType.Contains,
                         IsSortable = true,
                         IsUnique = false
                     },
+
                     new TfDataProviderColumn
                     {
                         Id = new Guid("0dbc9155-3f1c-4c69-8af8-4b0d91f1301d"),
@@ -397,10 +371,10 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         IsNullable = false,
                         IsSearchable = true,
                         IncludeInTableSearch = true,
-                        PreferredSearchType = TfDataProviderColumnSearchType.Contains,
                         IsSortable = true,
                         IsUnique = false
                     },
+
                     new TfDataProviderColumn
                     {
                         Id = new Guid("af549f23-0a3a-4cfc-9033-7a4cbdbdce16"),
@@ -414,10 +388,10 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         IsNullable = false,
                         IsSearchable = false,
                         IncludeInTableSearch = false,
-                        PreferredSearchType = TfDataProviderColumnSearchType.Equals,
                         IsSortable = true,
                         IsUnique = false
                     },
+
                     new TfDataProviderColumn
                     {
                         Id = new Guid("22e9ed31-fe26-49d6-84e0-2c7f8fd13344"),
@@ -431,74 +405,13 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         IsNullable = false,
                         IsSearchable = false,
                         IncludeInTableSearch = false,
-                        PreferredSearchType = TfDataProviderColumnSearchType.Equals,
                         IsSortable = false,
                         IsUnique = true
                     }
-                },
+                ],
                 TriggerDataSynchronization = true,
-                SynchPrimaryKeyColumns = new List<string> { $"{dataProviderPrefix}id" },
-                DataIdentities = new List<TfRecipeStepDataProviderDataIdentity>
-                {
-                    new TfRecipeStepDataProviderDataIdentity(
-                        id: new Guid("81b6b073-f4f2-44b9-a29b-d8024a6e910c"),
-                        dataIdentity: dataIdentity,
-                        columns: new List<string> { $"{dataProviderPrefix}id" })
-                }
-            }
-        });
-
-        #endregion
-
-        #region << Shared Columns >>
-
-        Steps.Add(new TfGroupRecipeStep
-        {
-            Instance = new TfRecipeStepInstance
-            {
-                Visible = false,
-                StepId = new Guid("a0c78375-3a1d-4707-b04a-94ccf3a4ab14"),
-                StepMenuTitle = "Setup Addons",
-            },
-            Data = new TfGroupRecipeStepData()
-            {
-                Steps = new List<ITfRecipeStepAddon>()
-                {
-                    new TfCreateSharedColumnRecipeStep
-                    {
-                        Instance = new TfRecipeStepInstance
-                        {
-                            Visible = false,
-                            StepId = new Guid("6f510bd2-32ab-4510-b965-7d044a6f813a"),
-                            StepMenuTitle = "Talk Count Shared Column",
-                        },
-                        Data = new TfCreateSharedColumnRecipeStepData()
-                        {
-                            SharedColumnId = talkCountSharedColumnId,
-                            DbName = talkCountSharedColumnName,
-                            ColumnType = Database.TfDatabaseColumnType.Integer,
-                            IncludeInTableSearch = false,
-                            DataIdentity = dataIdentity,
-                        }
-                    },
-                    new TfCreateSharedColumnRecipeStep
-                    {
-                        Instance = new TfRecipeStepInstance
-                        {
-                            Visible = false,
-                            StepId = new Guid("e0c68dfb-7773-42bd-b17e-7c768366cb4c"),
-                            StepMenuTitle = "Asset Count Shared Column",
-                        },
-                        Data = new TfCreateSharedColumnRecipeStepData()
-                        {
-                            SharedColumnId = assetsCountSharedColumnId,
-                            DbName = assetsCountSharedColumnName,
-                            ColumnType = Database.TfDatabaseColumnType.Integer,
-                            IncludeInTableSearch = false,
-                            DataIdentity = dataIdentity,
-                        }
-                    },
-                }
+                SynchPrimaryKeyColumns = [$"{dataProviderPrefix}id"],
+                DataIdentities = []
             }
         });
 
@@ -521,18 +434,17 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                 SpaceId = spaceId,
                 Name = "World Cities",
                 Position = 100,
-                Columns = new()
-                {
+                Columns =
+                [
                     $"{dataIdentity}.{talkCountSharedColumnName}",
                     $"{dataIdentity}.{assetsCountSharedColumnName}",
                     $"{dataProviderPrefix}city",
                     $"{dataProviderPrefix}country",
                     $"{dataProviderPrefix}population",
-                    $"{dataProviderPrefix}id",
-                },
+                    $"{dataProviderPrefix}id"
+                ],
                 Filters = new(),
-                SortOrders = new List<TfSort>
-                    { new TfSort { ColumnName = $"{dataProviderPrefix}city", Direction = TfSortDirection.ASC } }
+                SortOrders = [new TfSort { ColumnName = $"{dataProviderPrefix}city", Direction = TfSortDirection.ASC }]
             }
         });
 
@@ -553,7 +465,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                 SpaceId = spaceId,
                 Name = "World Cities",
                 IsPrivate = true,
-                Roles = new List<Guid> { regularRoleId },
+                Roles = [regularRoleId],
                 Color = TfColor.Teal500,
                 FluentIconName = "Globe",
                 Position = 100
@@ -588,62 +500,58 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                     FreezeFinalNColumns = 0,
                     FreezeStartingNColumns = 0,
                 },
-                Presets = new()
-                {
+                Presets =
+                [
                     new TfSpaceViewPreset
                     {
                         Id = new Guid("8598ced6-55ff-4b7a-a51e-d83957aa2084"),
                         IsGroup = false,
                         Color = TfColor.Amber500,
                         Name = "1M+",
-                        Filters = new List<TfFilterBase>()
-                        {
+                        Filters =
+                        [
                             new TfFilterNumeric($"{dataProviderPrefix}population",
                                 TfFilterNumericComparisonMethod.GreaterOrEqual, "1000000")
-                        },
-                        SortOrders = new List<TfSort>
-                        {
-                            new TfSort($"{dataProviderPrefix}population", TfSortDirection.DESC)
-                        }
+                        ],
+                        SortOrders = [new TfSort($"{dataProviderPrefix}population", TfSortDirection.DESC)]
                     },
+
                     new TfSpaceViewPreset
                     {
                         Id = new Guid("5431e7f8-e871-407b-8ade-58baa1ad69ca"),
                         IsGroup = false,
                         Name = "100K+",
                         Color = TfColor.Blue500,
-                        Filters = new List<TfFilterBase>()
-                        {
+                        Filters =
+                        [
                             new TfFilterNumeric($"{dataProviderPrefix}population",
                                 TfFilterNumericComparisonMethod.Lower, "1000000"),
+
                             new TfFilterNumeric($"{dataProviderPrefix}population",
                                 TfFilterNumericComparisonMethod.GreaterOrEqual, "100000")
-                        },
-                        SortOrders = new List<TfSort>
-                        {
-                            new TfSort($"{dataProviderPrefix}population", TfSortDirection.DESC)
-                        }
+                        ],
+                        SortOrders = [new TfSort($"{dataProviderPrefix}population", TfSortDirection.DESC)]
                     },
+
                     new TfSpaceViewPreset
                     {
                         Id = new Guid("a7ca2eb7-e800-4880-a2a7-e177a2d10850"),
                         IsGroup = false,
                         Name = "<100K",
                         Color = TfColor.Cyan500,
-                        Filters = new List<TfFilterBase>()
-                        {
+                        Filters =
+                        [
                             new TfFilterNumeric($"{dataProviderPrefix}population",
-                                TfFilterNumericComparisonMethod.Lower, "100000"),
-                        },
-                        SortOrders = new List<TfSort>
-                        {
-                            new TfSort($"{dataProviderPrefix}population", TfSortDirection.DESC)
-                        }
-                    },
-                },
-                Columns = new()
-                {
-                   new TfSpaceViewColumn
+                                TfFilterNumericComparisonMethod.Lower, "100000")
+
+                        ],
+                        SortOrders = [new TfSort($"{dataProviderPrefix}population", TfSortDirection.DESC)]
+                    }
+
+                ],
+                Columns =
+                [
+                    new TfSpaceViewColumn
                     {
                         Id = new Guid("50dddc94-678c-4199-99f4-6b5f7fb3eba0"),
                         Position = 1,
@@ -662,67 +570,74 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                             Width = 65
                         }
                     },
-                   new TfSpaceViewColumn
-                   {
-                       Id = new Guid("ccdf96e3-298a-4604-b860-db559d5eb4e7"),
-                       Position = 2,
-                       QueryName = "assets",
-                       Title = "assets",
-                       DataMapping = new Dictionary<string, string?>
-                           { { "Value", $"{dataIdentity}.{assetsCountSharedColumnName}" } },
-                       SpaceViewId = spaceViewId,
-                       TypeId = new Guid(TfFolderAssetsCountViewColumnType.ID),
-                       TypeOptionsJson = JsonSerializer.Serialize(new TfFolderAssetsCountViewColumnTypeSettings
-                       {
-                           FolderId = assetFolderId
-                       }),
-                       Settings = new TfSpaceViewColumnSettings
-                       {
-                           Width = 65
-                       }
-                   },
 
-                   new TfSpaceViewColumn
-                   {
-                       Id = new Guid("7b9bed20-529c-4b53-b886-5d92cf317304"),
-                       Position = 3,
-                       QueryName = "city",
-                       Title = "city",
-                       DataMapping = new Dictionary<string, string?> { { "Value", $"{dataProviderPrefix}city" } },
-                       SpaceViewId = spaceViewId,
-                       TypeId = new Guid(TfTextViewColumnType.ID)
-                   },
-                   new TfSpaceViewColumn
-                   {
-                       Id = new Guid("80aa74a1-2453-4001-9af6-b4a537695d70"),
-                       Position = 4,
-                       QueryName = "country",
-                       Title = "country",
-                       DataMapping = new Dictionary<string, string?> { { "Value", $"{dataProviderPrefix}country" } },
-                       SpaceViewId = spaceViewId,
-                       TypeId = new Guid(TfTextViewColumnType.ID),
-                   },
-                   new TfSpaceViewColumn
-                   {
-                       Id = new Guid("c3f77a8c-9336-4bee-8412-7e193ee64882"),
-                       Position = 5,
-                       QueryName = "population",
-                       Title = "population",
-                       DataMapping = new Dictionary<string, string?> { { "Value", $"{dataProviderPrefix}population" } },
-                       SpaceViewId = spaceViewId,
-                       TypeId = new Guid(TfLongIntegerViewColumnType.ID)
-                   },
-                   new TfSpaceViewColumn
-                   {
-                       Id = new Guid("6a0eee60-6d6e-4fd8-9fed-e2462f1922ea"),
-                       Position = 6,
-                       QueryName = "id",
-                       Title = "id",
-                       DataMapping = new Dictionary<string, string?> { { "Value", $"{dataProviderPrefix}id" } },
-                       SpaceViewId = spaceViewId,
-                       TypeId = new Guid(TfLongIntegerViewColumnType.ID),
-                   },
-                }
+                    new TfSpaceViewColumn
+                    {
+                        Id = new Guid("ccdf96e3-298a-4604-b860-db559d5eb4e7"),
+                        Position = 2,
+                        QueryName = "assets",
+                        Title = "assets",
+                        DataMapping = new Dictionary<string, string?>
+                            { { "Value", $"{dataIdentity}.{assetsCountSharedColumnName}" } },
+                        SpaceViewId = spaceViewId,
+                        TypeId = new Guid(TfFolderAssetsCountViewColumnType.ID),
+                        TypeOptionsJson = JsonSerializer.Serialize(new TfFolderAssetsCountViewColumnTypeSettings
+                        {
+                            FolderId = assetFolderId
+                        }),
+                        Settings = new TfSpaceViewColumnSettings
+                        {
+                            Width = 65
+                        }
+                    },
+
+
+                    new TfSpaceViewColumn
+                    {
+                        Id = new Guid("7b9bed20-529c-4b53-b886-5d92cf317304"),
+                        Position = 3,
+                        QueryName = "city",
+                        Title = "city",
+                        DataMapping = new Dictionary<string, string?> { { "Value", $"{dataProviderPrefix}city" } },
+                        SpaceViewId = spaceViewId,
+                        TypeId = new Guid(TfTextViewColumnType.ID)
+                    },
+
+                    new TfSpaceViewColumn
+                    {
+                        Id = new Guid("80aa74a1-2453-4001-9af6-b4a537695d70"),
+                        Position = 4,
+                        QueryName = "country",
+                        Title = "country",
+                        DataMapping = new Dictionary<string, string?> { { "Value", $"{dataProviderPrefix}country" } },
+                        SpaceViewId = spaceViewId,
+                        TypeId = new Guid(TfTextViewColumnType.ID),
+                    },
+
+                    new TfSpaceViewColumn
+                    {
+                        Id = new Guid("c3f77a8c-9336-4bee-8412-7e193ee64882"),
+                        Position = 5,
+                        QueryName = "population",
+                        Title = "population",
+                        DataMapping =
+                            new Dictionary<string, string?> { { "Value", $"{dataProviderPrefix}population" } },
+                        SpaceViewId = spaceViewId,
+                        TypeId = new Guid(TfLongIntegerViewColumnType.ID)
+                    },
+
+                    new TfSpaceViewColumn
+                    {
+                        Id = new Guid("6a0eee60-6d6e-4fd8-9fed-e2462f1922ea"),
+                        Position = 6,
+                        QueryName = "id",
+                        Title = "id",
+                        DataMapping = new Dictionary<string, string?> { { "Value", $"{dataProviderPrefix}id" } },
+                        SpaceViewId = spaceViewId,
+                        TypeId = new Guid(TfLongIntegerViewColumnType.ID),
+                    }
+
+                ]
             }
         });
 
@@ -801,7 +716,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                 ContentProcessorType = new ExcelFileTemplateProcessor(),
                 IsEnabled = true,
                 IsSelectable = true,
-                SpaceDataList = new() { spaceDataId },
+                SpaceDataList = [spaceDataId],
                 EmbeddedResourceName = $"WebVella.Tefter.Recipes.Files.{csvFileName}",
                 Assembly = this.GetType().Assembly,
                 SettingsJson = JsonSerializer.Serialize(new ExcelFileTemplateSettings()
@@ -828,7 +743,8 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
             },
             Data = new TfBookmarkRecipeStepData()
             {
-                Bookmarks = new List<TfBookmark> {
+                Bookmarks =
+                [
                     new TfBookmark
                     {
                         Id = Guid.NewGuid(),
@@ -838,6 +754,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         CreatedOn = DateTime.Now,
                         Description = "#test",
                     },
+
                     new TfBookmark
                     {
                         Id = Guid.NewGuid(),
@@ -846,8 +763,10 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         Name = "Example Saved URL",
                         CreatedOn = DateTime.Now,
                         Description = "#test",
-                        Url = String.Format(TfConstants.SpacePagePageUrl,spaceId,spacePageId) + $"?{TfConstants.SearchQueryName}=city"
+                        Url = String.Format(TfConstants.SpacePagePageUrl, spaceId, spacePageId) +
+                              $"?{TfConstants.SearchQueryName}=city"
                     },
+
                     new TfBookmark
                     {
                         Id = Guid.NewGuid(),
@@ -857,6 +776,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         CreatedOn = DateTime.Now,
                         Description = "#test",
                     },
+
                     new TfBookmark
                     {
                         Id = Guid.NewGuid(),
@@ -865,8 +785,10 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         Name = "Example Saved URL",
                         CreatedOn = DateTime.Now,
                         Description = "#test",
-                        Url = String.Format(TfConstants.SpacePagePageUrl,spaceId,spacePageId) + $"?{TfConstants.SearchQueryName}=city"
+                        Url = String.Format(TfConstants.SpacePagePageUrl, spaceId, spacePageId) +
+                              $"?{TfConstants.SearchQueryName}=city"
                     },
+
                     new TfBookmark
                     {
                         Id = Guid.NewGuid(),
@@ -876,6 +798,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         CreatedOn = DateTime.Now,
                         Description = "#test",
                     },
+
                     new TfBookmark
                     {
                         Id = Guid.NewGuid(),
@@ -884,9 +807,11 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                         Name = "Example Saved URL",
                         CreatedOn = DateTime.Now,
                         Description = "#test",
-                        Url = String.Format(TfConstants.SpacePagePageUrl,spaceId,spacePageId) + $"?{TfConstants.SearchQueryName}=city"
-                    },
-                }
+                        Url = String.Format(TfConstants.SpacePagePageUrl, spaceId, spacePageId) +
+                              $"?{TfConstants.SearchQueryName}=city"
+                    }
+
+                ]
             }
         });
         #endregion

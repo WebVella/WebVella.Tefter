@@ -49,11 +49,6 @@ public class TfDataProviderColumn
 	[TfDboModelProperty("is_searchable")]
 	public bool IsSearchable { get; set; } = true;
 
-	[Obsolete]
-	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfDataProviderColumnSearchType>))]
-	[TfDboModelProperty("preferred_search_type")]
-	public TfDataProviderColumnSearchType PreferredSearchType { get; set; } = TfDataProviderColumnSearchType.Contains;
-
 	[TfDboModelProperty("include_in_table_search")]
 	public bool IncludeInTableSearch { get; set; }
 
@@ -188,7 +183,6 @@ public class TfUpsertDataProviderColumn
 			IsUnique = false,//set below
 			IsSortable = true,//always
 			IsSearchable = true,//always
-			PreferredSearchType = TfDataProviderColumnSearchType.Equals,//outdated
 		};
 		//Applies the ruleset props
 		model.ApplyRuleSet(RuleSet, DefaultValue);

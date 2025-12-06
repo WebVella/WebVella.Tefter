@@ -1,7 +1,4 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
-using System.Diagnostics.Eventing.Reader;
-
-namespace WebVella.Tefter.Services;
+﻿namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -11,7 +8,7 @@ public partial interface ITfService
 	Task<TfRecipeStepResult> ApplyStep(ITfRecipeStepAddon step);
 }
 
-public partial class TfService : ITfService
+public partial class TfService
 {
 	public Task<TfInstallData?> GetInstallDataAsync()
 	{
@@ -43,44 +40,45 @@ public partial class TfService : ITfService
 		try
 		{
 			if (recipe == null) throw new ArgumentNullException(nameof(recipe));
-			using (TfDatabaseTransactionScope scope = _dbService.CreateTransactionScope())
+			using TfDatabaseTransactionScope scope = _dbService.CreateTransactionScope();
+			foreach (var step in recipe.Steps)
+			{
+				var stepResult = await ApplyStep(step);
+				result.Steps.Add(stepResult);
+				if(!stepResult.IsStepSuccessful)
+					break;
+			}
+			result.CompletedOn = DateTime.Now;
+			if (result.IsSuccessful)
+			{
+				var installData = new TfInstallData
+				{
+					RecipeId = recipe.AddonId,
+					RecipeTypeFullName = recipe.GetType().FullName!,
+					AppliedOn = DateTime.Now
+				};
+				var setting = new TfSetting
+				{
+					Key = TfConstants.InstallDataKey,
+					Value = JsonSerializer.Serialize(installData)
+				};
+				SaveSetting(setting);
+				scope.Complete();
+			}
+			else
 			{
 				foreach (var step in recipe.Steps)
 				{
-					var stepResult = await ApplyStep(step);
-					result.Steps.Add(stepResult);
-				}
-				result.CompletedOn = DateTime.Now;
-				if (result.IsSuccessful)
-				{
-					var installData = new TfInstallData
-					{
-						RecipeId = recipe.AddonId,
-						RecipeTypeFullName = recipe.GetType().FullName,
-						AppliedOn = DateTime.Now
-					};
-					var setting = new TfSetting
-					{
-						Key = TfConstants.InstallDataKey,
-						Value = JsonSerializer.Serialize(installData)
-					};
-					SaveSetting(setting);
-					scope.Complete();
-				}
-				else
-				{
-					foreach (var step in recipe.Steps)
-					{
-						var stepResult = result.Steps.FirstOrDefault(x => x.StepId == step.Instance.StepId);
-						await ReverseStep(step, stepResult);
-					}
+					var stepResult = result.Steps.FirstOrDefault(x => x.StepId == step.Instance.StepId);
+					await ReverseStep(step, stepResult);
 				}
 			}
+
 			return result;
 		}
 		catch (Exception ex)
 		{
-			foreach (var step in recipe.Steps)
+			foreach (var step in recipe!.Steps)
 			{
 				var stepResult = result.Steps.FirstOrDefault(x => x.StepId == step.Instance.StepId);
 				await ReverseStep(step, stepResult);
@@ -113,7 +111,7 @@ public partial class TfService : ITfService
 			stepResult.IsStepCompleted = true;
 			stepResult.IsStepSuccessful = false;
 			var errors = ex.GetDataAsValidationErrorList();
-			if (errors is not null && errors.Count > 0)
+			if (errors.Count > 0)
 			{
 				foreach (ValidationError error in errors)
 				{
@@ -135,7 +133,7 @@ public partial class TfService : ITfService
 					StepTypeName = step.GetType().Name,
 					StepName = step.Instance.StepMenuTitle,
 					Message = ex.InnerException is not null ? ex.InnerException.Message : ex.Message,
-					StackTrace = ex.StackTrace
+					StackTrace = ex.StackTrace ?? String.Empty
 				});
 			}
 
@@ -150,13 +148,13 @@ public partial class TfService : ITfService
 				StepTypeName = step.GetType().Name,
 				StepName = step.Instance.StepMenuTitle,
 				Message = ex.InnerException is not null ? ex.InnerException.Message : ex.Message,
-				StackTrace = ex.StackTrace
+				StackTrace = ex.StackTrace ?? String.Empty
 			});
 		}
 		return stepResult;
 	}
 
-	public async Task ReverseStep(ITfRecipeStepAddon step, TfRecipeStepResult? stepResult)
+	private async Task ReverseStep(ITfRecipeStepAddon step, TfRecipeStepResult? stepResult)
 	{
 		try
 		{
@@ -167,6 +165,9 @@ public partial class TfService : ITfService
 				stepBase: step,
 				stepResult: stepResult);
 		}
-		catch { }
+		catch (Exception)
+		{
+			//Ignore
+		}
 	}
 }

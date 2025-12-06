@@ -11,7 +11,8 @@
 	@if (_selectedFolder is not null)
 	{
 		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Attach")"
-					  Loading="_isSubmitting" Disabled="(_isSubmitting || _submits.Count == 0)">@LOC("Attach")</FluentButton>
+		              Loading="_isSubmitting"
+		              Disabled="(_isSubmitting || _submits.Count == 0)">@LOC("Attach")</FluentButton>
 		<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 	}
 	else
@@ -22,42 +23,46 @@
 <FluentDialogBody>
 	@if (_isLoading)
 	{
-		<TucLoadingPane />
+		<TucLoadingPane/>
 	}
 	else if (Content.DataProviderId == Guid.Empty)
 	{
-		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No data provider is selected")</FluentMessageBar>
+		<FluentMessageBar AllowDismiss="false"
+		                  Intent="@MessageIntent.Warning">@LOC("No data provider is selected")</FluentMessageBar>
 	}
 	else if (Content.SelectedRowIds is null || Content.SelectedRowIds.Count == 0)
 	{
-		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No rows are selected")</FluentMessageBar>
+		<FluentMessageBar AllowDismiss="false"
+		                  Intent="@MessageIntent.Warning">@LOC("No rows are selected")</FluentMessageBar>
 	}
 	else if (_folders.Count == 0)
 	{
-		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No compatible folders found for this dataset")</FluentMessageBar>
+		<FluentMessageBar AllowDismiss="false"
+		                  Intent="@MessageIntent.Warning">@LOC("No compatible folders found for this dataset")</FluentMessageBar>
 	}
 	else if (_selectedFolder is null)
 	{
 		<table class="tf-grid">
 			<colgroup>
-				<col style="width:60px;" />
-				<col />
+				<col style="width:60px;"/>
+				<col/>
 			</colgroup>
 			<tbody class="tf-grid-tbody">
-				@foreach (var context in _folders)
-				{
-					<tr @key=@context.Id class="tf-grid-tr">
-						<td class="tf-grid-td">
-							<div>
-								<FluentButton Title="@LOC("select")" OnClick="@(_ => _selectChannelHandler(context))"
-											  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Pin")">@LOC("select")</FluentButton>
-							</div>
-						</td>
-						<td class="tf-grid-td">
-							<div>@context.Name</div>
-						</td>
-					</tr>
-				}
+			@foreach (var context in _folders)
+			{
+				<tr @key=@context.Id class="tf-grid-tr">
+					<td class="tf-grid-td">
+						<div>
+							<FluentButton Title="@LOC("select")" OnClick="@(_ => _selectChannelHandler(context))"
+							              Appearance="@Appearance.Outline"
+							              IconStart="@TfConstants.GetIcon("Pin")">@LOC("select")</FluentButton>
+						</div>
+					</td>
+					<td class="tf-grid-td">
+						<div>@context.Name</div>
+					</td>
+				</tr>
+			}
 			</tbody>
 		</table>
 	}
@@ -65,66 +70,68 @@
 	{
 		<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
 			<FluentButton OnClick="_addFile"
-						  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Document")">@LOC("Attach file")</FluentButton>
+			              Appearance="Appearance.Outline"
+			              IconStart="@TfConstants.GetIcon("Document")">@LOC("Attach file")</FluentButton>
 			<FluentButton OnClick="_addLink"
-						  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Link")">@LOC("Attach link")</FluentButton>
+			              Appearance="Appearance.Outline"
+			              IconStart="@TfConstants.GetIcon("Link")">@LOC("Attach link")</FluentButton>
 		</FluentStack>
 
 		<table class="tf-grid" style="margin-top:1rem;">
 			<colgroup>
-				<col style="width:60px;" />
-				<col />
-				<col />
+				<col style="width:60px;"/>
+				<col/>
+				<col/>
 			</colgroup>
 			<thead class="tf-grid-thead">
-				<tr class="tf-grid-tr">
-					<th></th>
-					<th>@LOC("name")</th>
-					<th>@LOC("details")</th>
-				</tr>
+			<tr class="tf-grid-thead-bkg"></tr>
+			<tr class="tf-grid-tr">
+				<th></th>
+				<th>@LOC("name")</th>
+				<th>@LOC("details")</th>
+			</tr>
 			</thead>
 			<tbody class="tf-grid-tbody">
-				@foreach (var context in _submits)
-				{
-					<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+			@foreach (var context in _submits)
+			{
+				<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+					<td class="tf-grid-td">
+						<div>
+							<FluentButton Appearance="@Appearance.Outline"
+							              OnClick="@(() => _removeSubmit(context))"
+							              IconStart="@TfConstants.GetIcon("Dismiss").WithColor("var(--error)")"/>
+						</div>
+					</td>
+					@if (context is CreateLinkAssetWithRowIdModel)
+					{
+						var item = (CreateLinkAssetWithRowIdModel)context;
 						<td class="tf-grid-td">
-							<div>
-								<FluentButton Appearance="@Appearance.Outline"
-											  OnClick="@(() => _removeSubmit(context))"
-									IconStart="@TfConstants.GetIcon("Dismiss").WithColor("var(--error)")"/>
-							</div>
+							<div>@item.Label</div>
 						</td>
-						@if (context is CreateLinkAssetWithRowIdModel)
-						{
-							var item = (CreateLinkAssetWithRowIdModel)context;
-							<td class="tf-grid-td">
-								<div>@item.Label</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>@item.Url</div>
-							</td>
-						}
-						else if (context is CreateFileAssetWithRowIdModel)
-						{
-							var item = (CreateFileAssetWithRowIdModel)context;
-							<td class="tf-grid-td">
-								<div>@item.Label</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>@item.FileName</div>
-							</td>
-						}
-					</tr>
-				}
-				@if (_submits.Count == 0)
-				{
-					<tr class="tf-grid-tr">
-						<td colspan="3">
-							<div>@LOC("No items")</div>
+						<td class="tf-grid-td">
+							<div>@item.Url</div>
 						</td>
-					</tr>
-
-				}
+					}
+					else if (context is CreateFileAssetWithRowIdModel)
+					{
+						var item = (CreateFileAssetWithRowIdModel)context;
+						<td class="tf-grid-td">
+							<div>@item.Label</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@item.FileName</div>
+						</td>
+					}
+				</tr>
+			}
+			@if (_submits.Count == 0)
+			{
+				<tr class="tf-grid-tr">
+					<td colspan="3">
+						<div>@LOC("No items")</div>
+					</td>
+				</tr>
+			}
 			</tbody>
 		</table>
 	}

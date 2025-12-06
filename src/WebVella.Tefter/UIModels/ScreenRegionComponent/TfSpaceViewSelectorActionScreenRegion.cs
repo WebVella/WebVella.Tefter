@@ -8,4 +8,5 @@ public class TfSpaceViewSelectorActionScreenRegion : TfBaseScreenRegion
 	public List<Guid> SelectedDataRows { get; set; } = new();
 	public TfDataset SpaceData { get; set; } = null!;
 	public TfUser CurrentUser { get; set; } = null!;
+	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;
 }
