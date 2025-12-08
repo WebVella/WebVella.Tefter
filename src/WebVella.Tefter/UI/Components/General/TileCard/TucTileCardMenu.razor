@@ -1,0 +1,34 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+@if (Menu.Count > 0)
+{
+    <div class="tf-tile-card__menu">
+        <FluentButton Id="@_itemId" OnClick="@(() => _open = true)" StopPropagation="true" Appearance="@Appearance.Stealth" Title="@LOC("more...")">
+            <FluentIcon Value="@TfConstants.GetIcon("MoreVertical", IconSize.Size16, IconVariant.Filled)!.WithColor(Color.Neutral)" />
+        </FluentButton>
+        <FluentMenu @bind-Open="_open" Anchor="@_itemId" UseMenuService="true" HorizontalPosition="HorizontalPosition.Left">
+            @foreach (var action in Menu)
+            {
+                @if (action.IsDivider)
+                {
+                    <FluentDivider />
+                }
+                else
+                {
+                    <FluentMenuItem OnClick="action.OnClick" Disabled="action.Disabled">
+                        @action.Text
+                        @if (action.IconCollapsed is not null && action.Color is not null)
+                        {
+                            <FluentIcon Value="action.IconCollapsed!.WithColor(action.Color.GetColor().OKLCH)" Slot="start" />
+                        }
+                        else if (action.IconCollapsed is not null)
+                        {
+                            <FluentIcon Value="action.IconCollapsed!" Slot="start" />
+                        }
+                    </FluentMenuItem>
+                }
+            }
+        </FluentMenu>
+    </div>
+}

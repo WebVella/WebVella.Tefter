@@ -127,7 +127,8 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		else
 			_state = TfService.GetAppState(Navigator, _currentUser, url, _state, space);
 
-		if (_state.NavigationState.RouteNodes[0] == RouteDataNode.Home)
+		if (_state.NavigationState.RouteNodes.Count == 0) { }
+		else if (_state.NavigationState.RouteNodes[0] == RouteDataNode.Home)
 		{
 			_accentColor = _currentUser.Settings.Color;
 		}

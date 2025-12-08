@@ -13,14 +13,15 @@ public record TfDashboardItem
 	public string? Icon { get; set; }
 	public string? IconText { get; set; }
 	public TfColor? Color { get; set; }
-	public string? Url { get; set; }
 	public List<TfMenuItem> Menu { get; set; } = new();
+	public List<TfMenuItem> Actions { get; set; } = new();
 
 	public TfDashboardItem() { }
 	public TfDashboardItem(TfBookmark bookmark, 
 		NavigationManager navigator,
 		string tagLinkTitle,
-		List<TfMenuItem> menu)
+		List<TfMenuItem> menu,
+		List<TfMenuItem> actions)
 	{
 		Id = bookmark.Id;
 		CreatedOn = bookmark.CreatedOn;
@@ -33,7 +34,6 @@ public record TfDashboardItem
 		}
 
 		IconText = String.IsNullOrWhiteSpace(bookmark.Url) ? "PAGE" : "URL";
-		Url = bookmark.GetUrl();
 		var result = new List<string>();
 		foreach (var tag in bookmark.Tags)
 		{
@@ -44,6 +44,7 @@ public record TfDashboardItem
 			Footer = String.Join(", ", result);
 
 		Menu = menu;
+		Actions = actions;
 	}
 
 

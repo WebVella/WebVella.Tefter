@@ -1,26 +1,18 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-<TucCard Class="@($"tf-tile-card-wrapper no-padding {(String.IsNullOrWhiteSpace(Footer) ? "" : "has-footer")}")" FooterTemplate="@_getFooter()">
+<TucCard Class="tf-tile-card-wrapper no-padding">
     <ChildContent>
-        @if (!String.IsNullOrWhiteSpace(Url))
-        {
-            <a href="@Url" class="tf-tile-card tf-tile-card--clickable">
-                <TucTileCardIcon FluentIconName="@FluentIconName" Color="@Color" IconText="@IconText" />
-                <div class="tf-tile-card__meta">
-                    <TucTileCardContent Title="@Title" Subtitle="@Subtitle" Description="@Description"/>
-                </div>
-            </a>
-        }
-        else
-        {
-            <div class="tf-tile-card">
-                <TucTileCardIcon FluentIconName="@FluentIconName" Color="@Color" IconText="@IconText" />
-                <div class="tf-tile-card__meta">
-                    <TucTileCardContent Title="@Title" Subtitle="@Subtitle" Description="@Description" />
-                </div>
+
+        <div class="tf-tile-card">
+            <TucTileCardIcon FluentIconName="@FluentIconName" Color="@Color" IconText="@IconText"/>
+            <div class="tf-tile-card__meta">
+                <TucTileCardContent Title="@Title" Subtitle="@Subtitle" Description="@Description"/>
             </div>
-        }
-        <TucTileCardActions Menu="Menu" />
+            <TucTileCardMenu Menu="Menu"/>
+        </div>
+        <TucTileCardFooter Footer="@Footer"/>
+        <TucTileCardActions Actions="Actions"/>
+
     </ChildContent>
 </TucCard>

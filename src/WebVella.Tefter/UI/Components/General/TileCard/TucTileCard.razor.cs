@@ -1,8 +1,4 @@
-﻿using DocumentFormat.OpenXml.InkML;
-using DocumentFormat.OpenXml.Spreadsheet;
-using Microsoft.FluentUI.AspNetCore.Components;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucTileCard : TfBaseComponent
 {
@@ -15,6 +11,7 @@ public partial class TucTileCard : TfBaseComponent
 	[Parameter] public string? IconText { get; set; } = null;
 	[Parameter] public TfColor? Color { get; set; } = null;
 	[Parameter] public List<TfMenuItem> Menu { get; set; } = new();
+	[Parameter] public List<TfMenuItem> Actions { get; set; } = new();
 
 
 	private RenderFragment? _getFooter()

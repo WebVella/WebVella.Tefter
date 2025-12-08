@@ -35,6 +35,10 @@ else if (Context.Mode == TfComponentMode.Manage)
 {
 	<TucSpaceViewManageTabPageContent Context="Context" />
 }
+else if (Context.Mode == TfComponentMode.QuickView)
+{
+	<TucSpaceViewQuickView Context="Context" />
+}
 else
 {
 	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Error">@LOC("Mode: {0} not supported",Context.Mode.ToString())</FluentMessageBar>

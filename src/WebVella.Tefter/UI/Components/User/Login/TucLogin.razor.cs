@@ -2,16 +2,43 @@
 
 public partial class TucLogin : TfFormBaseComponent
 {
+	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
+	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;	
+	private bool _isLoading = true;
 	private bool _isSubmitting = false;
 	private TfLoginForm _form = new();
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		var installData = await TfService.GetInstallDataAsync();
-		if (installData is null)
-			Navigator.NavigateTo(TfConstants.InstallPage, true);
 		InitForm(_form);
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			//Check if not already logged in
+			var user = await TfService.GetUserFromCookieAsync(
+				jsRuntime: JsRuntime,
+				authStateProvider: AuthenticationStateProvider);
+
+			if (user is not null)
+			{
+				Navigator.NavigateTo(TfConstants.HomePageUrl, true);
+				return;
+			}
+		
+			var installData = await TfService.GetInstallDataAsync();
+			if (installData is null)
+			{
+				Navigator.NavigateTo(TfConstants.InstallPage, true);
+				return;
+			}
+
+			_isLoading = false;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 
 	internal async Task _submit()

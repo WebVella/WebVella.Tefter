@@ -830,9 +830,6 @@ fluent-menu-item::part(start) {
   flex: 1 1 auto;
   padding: var(--tf-padding);
 }
-.tf-card__content fluent-anchor.stealth {
-  --neutral-fill-stealth-rest: var(--neutral-foreground-rest);
-}
 .tf-card__footer {
   flex: 0 0 auto;
   padding: var(--tf-padding);
@@ -2595,9 +2592,6 @@ fluent-menu-item::part(start) {
   text-decoration: none;
   color: var(--neutral-foreground-rest);
   height: 100%;
-  border-radius: calc(var(--layer-corner-radius) * 1px);
-}
-.has-footer .tf-tile-card {
   border-radius: calc(var(--layer-corner-radius) * 1px) calc(var(--layer-corner-radius) * 1px) 0 0;
 }
 .tf-tile-card-wrapper {
@@ -2605,10 +2599,9 @@ fluent-menu-item::part(start) {
   position: relative;
   height: 100%;
 }
-.tf-tile-card:hover {
-  color: var(--neutral-foreground-rest);
-  background: color-mix(in srgb, var(--neutral-layer-1), var(--accent-fill-rest) 5%);
-  border-color: color-mix(in srgb, var(--neutral-layer-1), var(--accent-fill-rest) 50%);
+.tf-tile-card-wrapper .tf-card__content {
+  display: flex;
+  flex-direction: column;
 }
 .tf-tile-card__icon {
   flex: 0 0 50px;
@@ -2652,19 +2645,21 @@ fluent-menu-item::part(start) {
   color: var(--neutral-foreground-rest);
 }
 .tf-tile-card__actions {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  visibility: hidden;
+  flex: 0 0 auto;
+  padding: 5px 10px;
+  border-top: 1px solid var(--neutral-stroke-rest);
+  display: flex;
+  gap: 10px;
 }
-.tf-tile-card__actions fluent-button {
+.tf-tile-card__actions fluent-button,
+.tf-tile-card__actions fluent-anchor {
+  flex: 1 1 auto;
+}
+.tf-tile-card__menu {
+  flex: 0 0 auto;
+}
+.tf-tile-card__menu fluent-button {
   --neutral-fill-stealth-rest: transparent;
-}
-.tf-tile-card__actions--open {
-  visibility: visible;
-}
-.tf-card__content:hover .tf-tile-card__actions {
-  visibility: visible;
 }
 .tf-treemenu {
   width: 100%;

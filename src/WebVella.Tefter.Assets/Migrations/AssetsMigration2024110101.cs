@@ -81,5 +81,41 @@ public class AssetsMigration2024110101 : ITfApplicationMigration
                         .WithColumns("folder_id");
                     });
             });
+        
+        #region  TABLE: Thread_TAG
+
+        dbBuilder
+            .NewTableBuilder(Guid.NewGuid(), "assets_asset_tag")
+            .WithColumns(columns =>
+            {
+                columns
+                    .AddGuidColumn("assets_asset_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+                    .AddGuidColumn("tag_id", c => { c.WithoutAutoDefaultValue().NotNullable(); });
+            })
+            .WithConstraints(constraints =>
+            {
+                constraints
+                    .AddPrimaryKeyConstraint("pk_assets_asset_tags", c => { c.WithColumns("assets_asset_id", "tag_id"); })
+                    .AddForeignKeyConstraint("fk_assets_asset_tags_assets_asset", c =>
+                    {
+                        c.WithForeignTable("assets_asset")
+                            .WithForeignColumns("id")
+                            .WithColumns("assets_asset_id");
+                    })
+                    .AddForeignKeyConstraint("fk_assets_asset_tags_tag", c =>
+                    {
+                        c.WithForeignTable("tf_tag")
+                            .WithForeignColumns("id")
+                            .WithColumns("tag_id");
+                    });
+            })
+            .WithIndexes(indexes =>
+            {
+                indexes
+                    .AddBTreeIndex("ix_assets_asset_tags_assets_asset_id", i => { i.WithColumns("assets_asset_id"); })
+                    .AddBTreeIndex("ix_assets_asset_tags_tag_id", i => { i.WithColumns("tag_id"); });
+            });
+
+        #endregion        
     }
 }

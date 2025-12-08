@@ -88,5 +88,78 @@ public class TalkMigration2024100101 : ITfApplicationMigration
 						.WithColumns("channel_id");
 					});
 			});		
+		
+		#region  TABLE: Thread_TAG
+
+		dbBuilder
+			.NewTableBuilder(Guid.NewGuid(), "talk_thread_tag")
+			.WithColumns(columns =>
+			{
+				columns
+					.AddGuidColumn("talk_thread_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+					.AddGuidColumn("tag_id", c => { c.WithoutAutoDefaultValue().NotNullable(); });
+			})
+			.WithConstraints(constraints =>
+			{
+				constraints
+					.AddPrimaryKeyConstraint("pk_talk_thread_tags", c => { c.WithColumns("talk_thread_id", "tag_id"); })
+					.AddForeignKeyConstraint("fk_talk_thread_tags_talk_thread", c =>
+					{
+						c.WithForeignTable("talk_thread")
+							.WithForeignColumns("id")
+							.WithColumns("talk_thread_id");
+					})
+					.AddForeignKeyConstraint("fk_talk_thread_tags_tag", c =>
+					{
+						c.WithForeignTable("tf_tag")
+							.WithForeignColumns("id")
+							.WithColumns("tag_id");
+					});
+			})
+			.WithIndexes(indexes =>
+			{
+				indexes
+					.AddBTreeIndex("ix_talk_thread_tags_talk_thread_id", i => { i.WithColumns("talk_thread_id"); })
+					.AddBTreeIndex("ix_talk_thread_tags_tag_id", i => { i.WithColumns("tag_id"); });
+			});
+
+		#endregion
+		
+		#region  TABLE: Thread_MENTION
+
+		dbBuilder
+			.NewTableBuilder(Guid.NewGuid(), "talk_thread_mention")
+			.WithColumns(columns =>
+			{
+				columns
+					.AddGuidColumn("talk_thread_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+					.AddGuidColumn("user_id", c => { c.WithoutAutoDefaultValue().NotNullable(); });
+			})
+			.WithConstraints(constraints =>
+			{
+				constraints
+					.AddPrimaryKeyConstraint("pk_talk_thread_mention", c => { c.WithColumns("talk_thread_id", "user_id"); })
+					.AddForeignKeyConstraint("fk_talk_thread_mention_talk_thread", c =>
+					{
+						c.WithForeignTable("talk_thread")
+							.WithForeignColumns("id")
+							.WithColumns("talk_thread_id");
+					})
+					.AddForeignKeyConstraint("fk_talk_thread_mention_user", c =>
+					{
+						c.WithForeignTable("tf_user")
+							.WithForeignColumns("id")
+							.WithColumns("user_id");
+					});
+			})
+			.WithIndexes(indexes =>
+			{
+				indexes
+					.AddBTreeIndex("ix_talk_thread_mention_talk_thread_id", i => { i.WithColumns("talk_thread_id"); })
+					.AddBTreeIndex("ix_talk_thread_mention_user_id", i => { i.WithColumns("user_id"); });
+			});
+
+		#endregion		
+		
 	}
 }

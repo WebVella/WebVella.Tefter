@@ -82,3 +82,10 @@ public class CreateLinkAssetWithDataIdentityModel
 	public Guid CreatedBy { get; set; }
     public List<string> DataIdentityValues { get; set; } = new();
 }
+
+public class TfAssetTag
+{
+	public Guid BookmarkId { get; set; }
+
+	public Guid TagId { get; set; }
+}

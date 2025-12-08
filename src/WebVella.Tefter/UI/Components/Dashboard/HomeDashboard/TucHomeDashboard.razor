@@ -11,6 +11,7 @@
                               IconEnd="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)"
                               OnClick="@_removeTagQuery">#@_tagQuery</FluentButton>
             }
+
             <FluentSearch Placeholder="@LOC("search...")" AutoComplete="off" Value="@_search"
                           ValueChanged="_searchValueChanged"
                           @ref="_refSearch"/>
@@ -31,8 +32,11 @@
     <Aside>
         <div class="tflpc__content__aside__nav">
             <TucTreeView Items="_nav"/>
-            <div class="tf-treemenu__header">@LOC("Followed Tags")</div>
-            <TucTreeView Items="_tagNav"/>
+            @if (_tagNav.Count > 0)
+            {
+                <div class="tf-treemenu__header">@LOC("Followed Tags")</div>
+                <TucTreeView Items="_tagNav"/>
+            }
         </div>
     </Aside>
     <ChildContent>
@@ -49,9 +53,9 @@
                                          FluentIconName="@item.Icon"
                                          Color="@item.Color"
                                          IconText="@item.IconText"
-                                         Url="@item.Url"
                                          Menu="item.Menu"
-                                         Footer="@item.Footer" />
+                                         Actions="item.Actions"
+                                         Footer="@item.Footer"/>
                         </FluentGridItem>
                     }
                 </FluentGrid>

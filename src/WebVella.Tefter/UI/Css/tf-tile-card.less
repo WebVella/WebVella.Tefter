@@ -2,102 +2,100 @@
 
 
 .tf-tile-card {
-    padding: 5px 10px;
-    display: flex;
-    text-decoration: none;
-    color: var(--neutral-foreground-rest);
+  padding: 5px 10px;
+  display: flex;
+  text-decoration: none;
+  color: var(--neutral-foreground-rest);
+  height: 100%;
+  border-radius: calc(var(--layer-corner-radius) * 1px) calc(var(--layer-corner-radius) * 1px) 0 0;
+
+
+  &-wrapper {
+    padding: 0;
+    position: relative;
     height: 100%;
-    border-radius:calc(var(--layer-corner-radius) * 1px);
+    
+    .tf-card__content{
+      display: flex;
+      flex-direction: column;
+    }
+  }
 
-    .has-footer & {
-        border-radius: calc(var(--layer-corner-radius) * 1px) calc(var(--layer-corner-radius) * 1px) 0 0;
+  &__icon {
+    flex: 0 0 50px;
+    text-align: center;
+    margin-left: -10px;
+
+    &__image {
+      --tile-card-image-height: 24px;
+      height: var(--tile-card-image-height);
+
+      svg {
+        width: var(--tile-card-image-height) !important;
+      }
     }
 
+    &__text {
+      flex: 1 1 auto;
+      width: 100%;
+      text-align: center;
+      font-size: var(--type-ramp-minus-1-font-size);
+    }
+  }
 
-    &-wrapper {
-        padding: 0;
-        position: relative;
-        height: 100%;
+  &__meta {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+
+    &__header {
+      &__title {
+        //font-size: var(--type-ramp-plus-1-font-size);
+      }
+
+      &__subtitle {
+        font-size: var(--type-ramp-minus-1-font-size);
+        color: var(--neutral-foreground-hint);
+      }
     }
 
-    &:hover {
-        color: var(--neutral-foreground-rest);
-        background: color-mix(in srgb, var(--neutral-layer-1), var(--accent-fill-rest) 5%);
-        border-color: color-mix(in srgb, var(--neutral-layer-1), var(--accent-fill-rest) 50%);
-    }
+    &__footer {
+      font-size: var(--type-ramp-minus-1-font-size);
+      color: var(--neutral-foreground-hint);
+      padding: 5px 10px;
+      border-top: 1px solid var(--neutral-stroke-rest);
 
-    &__icon {
-        flex: 0 0 50px;
-        text-align: center;
-        margin-left: -10px;
+      a {
+        color: var(--neutral-foreground-hint);
+        text-decoration: none;
 
-        &__image {
-            --tile-card-image-height: 24px;
-            height: var(--tile-card-image-height);
-
-            svg {
-                width: var(--tile-card-image-height) !important;
-            }
+        &:hover {
+          color: var(--neutral-foreground-rest);
         }
-
-        &__text {
-            flex: 1 1 auto;
-            width: 100%;
-            text-align: center;
-            font-size: var(--type-ramp-minus-1-font-size);
-        }
+      }
     }
+  }
 
-    &__meta {
-        flex: 1 1 auto;
-        display: flex;
-        flex-flow: column;
-        justify-content: space-between;
-
-        &__header {
-            &__title {
-                //font-size: var(--type-ramp-plus-1-font-size);
-            }
-
-            &__subtitle {
-                font-size: var(--type-ramp-minus-1-font-size);
-                color: var(--neutral-foreground-hint);
-            }
-        }
-
-        &__footer {
-            font-size: var(--type-ramp-minus-1-font-size);
-            color: var(--neutral-foreground-hint);
-            padding: 5px 10px;
-            border-top: 1px solid var(--neutral-stroke-rest);
-
-            a {
-                color: var(--neutral-foreground-hint);
-                text-decoration: none;
-
-                &:hover {
-                    color: var(--neutral-foreground-rest);
-                }
-            }
-        }
+  &__actions {
+    flex: 0 0 auto;
+    padding: 5px 10px;
+    border-top: 1px solid var(--neutral-stroke-rest);    
+    display: flex;
+    gap: 10px;
+    
+    fluent-button,fluent-anchor{
+      flex:1 1 auto;
     }
+  }
 
-    &__actions {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        visibility: hidden;
+  &__menu {
+    flex: 0 0 auto;
 
-        fluent-button {
-            --neutral-fill-stealth-rest: transparent;
-        }
-
-        &--open {
-            visibility: visible;
-        }
+    fluent-button {
+      --neutral-fill-stealth-rest: transparent;
     }
+  }
 
-    .tf-card__content:hover &__actions {
-        visibility: visible;
-    }
+
 }

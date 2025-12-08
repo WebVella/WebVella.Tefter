@@ -9,5 +9,7 @@ public enum TfComponentMode
 	[Description("Update")]
 	Update = 2,
 	[Description("Manage")]
-	Manage = 3	
+	Manage = 3,
+	[Description("QuickView")]
+	QuickView = 4		
 }
