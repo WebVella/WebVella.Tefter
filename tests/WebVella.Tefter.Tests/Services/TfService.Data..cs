@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Tests.Applications;
+using WebVella.Tefter.Utility;
 
 namespace WebVella.Tefter.Tests.Services;
 
@@ -26,6 +27,8 @@ public partial class TfServiceTest : BaseTest
 				Data_SimpleQueryTest(provider.Id, dataset.Id);
 
 				Data_QueryOnlyTfIds(provider.Id, dataset.Id);
+
+				Data_RelIdentityQuery(provider);
 			}
 		}
 	}
@@ -271,6 +274,58 @@ public partial class TfServiceTest : BaseTest
 
 			var dataIdentityValues = tfService.GetDataIdentityValuesForRowIds(provider, dataIdentity, ids);
 			dataIdentityValues.Count.Should().Be( dataProviderRows.Rows.Count);
+		}
+	}
+
+	private void Data_RelIdentityQuery(TfDataProvider provider)
+	{
+		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+		ITfService tfService = ServiceProvider.GetService<ITfService>();
+		const int numberOfConnections = 10;
+
+		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+		{
+			var dataIdentity1 = tfService.GetDataIdentity("test_data_identity_1");
+			var dataIdentity2 = tfService.GetDataIdentity("test_data_identity_2");
+
+			var dataProviderRows = tfService.QueryDataProvider(provider.Id);
+
+			List<string> identityValues = new List<string>();
+			for (int i = 0; i < numberOfConnections; i++)
+			{
+				var identityValue1 = (string)dataProviderRows.Rows[i][$"tf_ide_{dataIdentity1}"];
+				var identityValue2 = (string)Guid.NewGuid().ToString().ToSha1();
+
+				identityValues.Add(identityValue2);
+
+				tfService.CreateDataIdentityConnection(
+					new TfDataIdentityConnection
+					{
+						DataIdentity1 = dataIdentity1.DataIdentity,
+						Value1 = identityValue1,
+						DataIdentity2 = dataIdentity2.DataIdentity,
+						Value2 = identityValue2
+					});
+			}
+
+			var queryInfo = new TfRelDataIdentityQueryInfo
+			{
+				DataIdentity = dataIdentity1.DataIdentity,
+				RelDataIdentity = dataIdentity2.DataIdentity,
+				RelIdentityValues = identityValues
+			};
+			
+			var connectedRows = tfService.QueryDataProvider(provider.Id, relIdentityInfo: queryInfo);
+			connectedRows.Rows.Count.Should().Be(numberOfConnections);
+
+			for (int i = 0; i < numberOfConnections; i++)
+			{
+
+				var originalValue = (string)dataProviderRows.Rows[i][$"tf_ide_{dataIdentity1}"];
+				var queriedValue = (string)connectedRows.Rows[i][$"tf_ide_{dataIdentity1}"];
+
+				originalValue.Should().Be(queriedValue);
+			}
 		}
 	}
 }
