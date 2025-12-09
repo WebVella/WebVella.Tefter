@@ -192,12 +192,16 @@ public partial class TfService
 
 					if (!success)
 						throw new TfDboServiceException("Delete<TfBookmarkTag> failed.");
+
+					CheckRemoveOrphanTags(tagId);
 				}
 
 				success = _dboManager.Delete<TfBookmark>(id);
 
 				if (!success)
 					throw new TfDboServiceException("Delete<TfBookmark> failed.");
+
+				
 
 				scope.Complete();
 				PublishEventWithScope(new TfBookmarkDeletedEvent(existingBookmark));

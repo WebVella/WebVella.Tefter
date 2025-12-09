@@ -41,7 +41,8 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 			UserId = TfAuthLayout.GetState().User.Id,
 			SpaceDataList = Content.SpaceDataList,
 		};
-		if (_form.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
+		if (_form.ContentProcessorType is not null 
+			&& _form.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 		{
 			_selectedProcessor = (ITfTemplateProcessorAddon?)Activator.CreateInstance(_form.ContentProcessorType);
 

@@ -8,6 +8,8 @@ public partial interface ITfService
 	TfTag CreateTag(TfTag tag);
 	TfTag UpdateTag(TfTag tag);
 	void DeleteTag(Guid tagId);
+
+	void CheckRemoveOrphanTags(Guid id);
 }
 
 public partial class TfService
@@ -186,7 +188,13 @@ public partial class TfService
 		var pageTags = _dboManager.GetList<TfSpacePageTag>(id, nameof(TfSpacePageTag.TagId));
 		if (pageTags.Count > 0) return;
 
-		DeleteTag(id);
+		//TODO BOZ: How to check and maintain for tags created in Talk and Assets
+		//probably an interface method
+
+		//TODO BOZ: Enable once the addon tag usage is implemented
+		//DeleteTag(id);
+
+
 	}
 
 
