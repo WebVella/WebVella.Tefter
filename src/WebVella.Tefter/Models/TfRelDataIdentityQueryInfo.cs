@@ -3,6 +3,6 @@
 public class TfRelDataIdentityQueryInfo
 {
 	public required string DataIdentity { get; set; }
-	public required string RelDataIdentity { get; set; }
+	public string? RelDataIdentity { get; set; } = null;
 	public required List<string> RelIdentityValues { get; set; } = new();
 }

@@ -727,14 +727,30 @@ public partial class TfService : ITfService
 				var arrayParam = new NpgsqlParameter($"@{paramName}", NpgsqlDbType.Array | NpgsqlDbType.Text);
 				arrayParam.Value = _relIdentityInfo.RelIdentityValues.ToArray();
 				parameters.Add(arrayParam);
-				sb.Append(@$"( EXISTS (
+
+				if (string.IsNullOrWhiteSpace(_relIdentityInfo.RelDataIdentity))
+				{
+					sb.Append(@$"( EXISTS (
+							SELECT 1 FROM tf_data_identity_connection tfdic 
+							WHERE ( tfdic.data_identity_1 = '{_relIdentityInfo.DataIdentity}' AND tfdic.data_identity_2 IS NULL  
+									AND tfdic.value_1 = {_tableAlias}.{identityColumn} AND tfdic.value_2 = ANY(@{paramName} ) )
+									OR
+								  ( tfdic.data_identity_2 = '{_relIdentityInfo.DataIdentity}' AND tfdic.data_identity_1 IS NULL 
+									AND tfdic.value_2 = {_tableAlias}.{identityColumn} AND tfdic.value_1 = ANY(@{paramName} ) )
+							) ) ");
+				}
+				else
+				{
+					sb.Append(@$"( EXISTS (
 							SELECT 1 FROM tf_data_identity_connection tfdic 
 							WHERE ( tfdic.data_identity_1 = '{_relIdentityInfo.DataIdentity}' AND tfdic.data_identity_2 = '{_relIdentityInfo.RelDataIdentity}' 
 									AND tfdic.value_1 = {_tableAlias}.{identityColumn} AND tfdic.value_2 = ANY(@{paramName} ) )
 									OR
 								  ( tfdic.data_identity_2 = '{_relIdentityInfo.DataIdentity}' AND tfdic.data_identity_1 = '{_relIdentityInfo.RelDataIdentity}' 
 									AND tfdic.value_2 = {_tableAlias}.{identityColumn} AND tfdic.value_1 = ANY(@{paramName} ) )
-							) ) " );
+							) ) ");
+				}
+
 				sb.Append($"{Environment.NewLine}");
 			}
 
