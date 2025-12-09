@@ -34,14 +34,17 @@ try
 	{
 		builder.Configuration
 		 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-		 .AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: true);
+		 .AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: true)
+         .AddEnvironmentVariables(); 
+        
 
-		var config = new ConfigurationBuilder()
+        var config = new ConfigurationBuilder()
 				 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 				 .AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: true)
-					.Build();
+                 .AddEnvironmentVariables()
+				 .Build();
 
-		builder.Host.UseSerilog(Log.Logger);
+        builder.Host.UseSerilog(Log.Logger);
 
 		//builder.Host.ConfigureLogging(logging =>
 		//      {

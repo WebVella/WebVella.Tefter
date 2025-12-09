@@ -1,0 +1,1 @@
+docker compose -f from-build-compose.yml down -v

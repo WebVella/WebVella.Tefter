@@ -39,10 +39,19 @@ public static class TfDependencyInjection
 		services.AddScoped<AuthenticationStateProvider, TfAuthStateProvider>();
 		services.AddSingleton<ITfConfigurationService, TfConfigurationService>((Context) =>
 		{
-			return new TfConfigurationService(new ConfigurationBuilder()
-				.AddJsonFile("appsettings.json".ToApplicationPath())
-				.AddJsonFile($"appsettings.{Environment.MachineName}.json".ToApplicationPath(), true)
-				.Build());
+			var configBuilder = new ConfigurationBuilder();
+			if(config is not null)
+			{
+				configBuilder.AddConfiguration(config);
+			}
+			else
+			{
+				configBuilder
+					.AddJsonFile("appsettings.json".ToApplicationPath())
+					.AddJsonFile($"appsettings.{Environment.MachineName}.json".ToApplicationPath(), true)
+					.AddEnvironmentVariables();
+			}
+			return new TfConfigurationService(configBuilder.Build());
 		});
 
 		//messaging

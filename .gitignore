@@ -358,5 +358,6 @@ MigrationBackup/
 # private development log configuration
 appsettings.rumen.json
 appsettings.DESKTOP-KU8LRG2.json
-/Docker/WebVella.Tefter/docker_build.bat
-/Docker/WebVella.Tefter/docker_run.bat
+
+# contains local configuration for Docker setup
+/Docker/.env

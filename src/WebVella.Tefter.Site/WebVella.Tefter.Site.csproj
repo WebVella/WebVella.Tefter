@@ -12,7 +12,14 @@
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <SatelliteResourceLanguages>en,bg</SatelliteResourceLanguages>
     </PropertyGroup>
-    <ItemGroup>
+	<ItemGroup>
+		<!-- Prevent publishing of all appsettings.*.json files -->
+		<Content Update="appsettings.*.json" CopyToPublishDirectory="Never" />
+		<!-- Explicitly allow the base appsettings.json -->
+		<Content Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+	</ItemGroup>
+
+	<ItemGroup>
         <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.DocumentFile\WebVella.Tefter.TemplateProcessors.DocumentFile.csproj" />
         <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.Email\WebVella.Tefter.TemplateProcessors.Email.csproj" />
         <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.ExcelFile\WebVella.Tefter.TemplateProcessors.ExcelFile.csproj" />

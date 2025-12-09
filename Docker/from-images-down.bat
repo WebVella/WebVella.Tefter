@@ -1,0 +1,1 @@
+docker compose -f from-images-compose.yml down -v
