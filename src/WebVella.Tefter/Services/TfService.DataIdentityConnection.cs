@@ -21,6 +21,12 @@ public partial interface ITfService
 		string dataIdentity,
 		string identityValue);
 
+	public void CreateDataIdentityConnections(
+		string dataIdentity,
+		string identityValue,
+		string relatedDataIdentity,
+		List<string> relatedDataIdentityValues);
+
 	public void CreateBatchDataIdentityConnections(
 		List<TfDataIdentityConnection> dataIdentityConnections,
 		int batchSize = 1000);
@@ -469,6 +475,31 @@ public partial class TfService : ITfService
 		}
 	}
 
+	public void CreateDataIdentityConnections(
+		string dataIdentity,
+		string identityValue,
+		string relatedDataIdentity,
+		List<string> relatedDataIdentityValues)
+	{
+		//TODO validation
+
+		if(relatedDataIdentityValues == null || relatedDataIdentityValues.Count == 0)
+			return;
+
+		List<TfDataIdentityConnection> dataIdentityConnections = new();
+		foreach (var relatedDataIdentityValue in relatedDataIdentityValues)
+		{
+			var dic = new TfDataIdentityConnection()
+			{
+				DataIdentity1 = dataIdentity,
+				Value1 = identityValue,
+				DataIdentity2 = relatedDataIdentity,
+				Value2 = relatedDataIdentityValue
+			};
+			dataIdentityConnections.Add(dic);
+		}
+		CreateBatchDataIdentityConnections(dataIdentityConnections);
+	}
 
 	public void CreateBatchDataIdentityConnections(
 		List<TfDataIdentityConnection> dataIdentityConnections,

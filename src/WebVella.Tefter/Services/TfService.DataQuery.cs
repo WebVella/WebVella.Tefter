@@ -10,17 +10,21 @@ public partial interface ITfService
 		string? search = null,
 		int? page = null,
 		int? pageSize = null,
-		bool noRows = false);
+		bool noRows = false,
+		TfRelDataIdentityQueryInfo? relIdentityInfo = null);
+
 	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
 		string? search = null,
 		int? page = null,
 		int? pageSize = null,
-		bool noRows = false);
+		bool noRows = false,
+		TfRelDataIdentityQueryInfo? relIdentityInfo = null);
 
 	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
-		List<Guid> tfIds);
+		List<Guid> tfIds,
+		TfRelDataIdentityQueryInfo? relIdentityInfo = null);
 
 
 	public TfDataTable QueryDataset(
@@ -34,11 +38,13 @@ public partial interface ITfService
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false,
-		bool returnOnlyTfIds = false);
+		bool returnOnlyTfIds = false,
+		TfRelDataIdentityQueryInfo? relIdentityInfo = null);
 
 	public TfDataTable QueryDataset(
 		Guid datasetId,
-		List<Guid> tfIds);
+		List<Guid> tfIds,
+		TfRelDataIdentityQueryInfo? relIdentityInfo = null);
 
 	public List<Guid> QueryDatasetIdList(
 		Guid datasetId,
@@ -47,7 +53,8 @@ public partial interface ITfService
 		List<TfSort>? userSorts = null,
 		string? presetSearch = null,
 		List<TfFilterBase>? presetFilters = null,
-		List<TfSort>? presetSorts = null
+		List<TfSort>? presetSorts = null,
+		TfRelDataIdentityQueryInfo? relIdentityInfo = null
 	);
 	TfDataTable InsertRowInDataTable(TfDataTable dt);
 
@@ -100,7 +107,8 @@ public partial class TfService
 		string? search = null,
 		int? page = null,
 		int? pageSize = null,
-		bool noRows = false)
+		bool noRows = false,
+		TfRelDataIdentityQueryInfo? relIdentityInfo = null)
 	{
 		try
 		{
@@ -113,7 +121,8 @@ public partial class TfService
 				search: search,
 				page: page,
 				pageSize: pageSize,
-				noRows: noRows
+				noRows: noRows,
+				relIdentityInfo: relIdentityInfo
 			);
 		}
 		catch (Exception ex)
@@ -121,12 +130,14 @@ public partial class TfService
 			throw ProcessException(ex);
 		}
 	}
+
 	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
 		string? search = null,
 		int? page = null,
 		int? pageSize = null,
-		bool noRows = false)
+		bool noRows = false,
+		TfRelDataIdentityQueryInfo? relIdentityInfo = null)
 	{
 		try
 		{
@@ -147,7 +158,8 @@ public partial class TfService
 				userSorts: null,
 				userSearch: search,
 				page: page,
-				pageSize: pageSize);
+				pageSize: pageSize,
+				relIdentityInfo:relIdentityInfo);
 
 			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
 
@@ -183,7 +195,8 @@ public partial class TfService
 
 	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
-		List<Guid> tfIds)
+		List<Guid> tfIds,
+		TfRelDataIdentityQueryInfo? relIdentityInfo = null)
 	{
 		try
 		{
@@ -205,7 +218,8 @@ public partial class TfService
 				dataProvider: provider,
 				dataProviders: allDataProviders,
 				spaceData: null,
-				tfIds: tfIds);
+				tfIds: tfIds,
+				relIdentityInfo: relIdentityInfo);
 
 			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
 
@@ -236,7 +250,8 @@ public partial class TfService
 
 	public TfDataTable QueryDataset(
 		Guid datasetId,
-		List<Guid> tfIds)
+		List<Guid> tfIds,
+		TfRelDataIdentityQueryInfo? relIdentityInfo = null)
 	{
 		try
 		{
@@ -261,7 +276,8 @@ public partial class TfService
 				dataProviders: allDataProviders,
 				dataProvider: provider,
 				spaceData: spaceData,
-				tfIds: tfIds);
+				tfIds: tfIds,
+				relIdentityInfo: relIdentityInfo);
 
 			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
 
@@ -301,7 +317,8 @@ public partial class TfService
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false,
-		bool returnOnlyTfIds = false)
+		bool returnOnlyTfIds = false,
+		TfRelDataIdentityQueryInfo? relIdentityInfo = null)
 	{
 		try
 		{
@@ -334,7 +351,8 @@ public partial class TfService
 				userSorts: userSorts,
 				page: page,
 				pageSize: pageSize,
-				returnOnlyTfIds: returnOnlyTfIds);
+				returnOnlyTfIds: returnOnlyTfIds,
+				relIdentityInfo: relIdentityInfo);
 
 			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
 
@@ -571,7 +589,8 @@ public partial class TfService
 		List<TfSort>? userSorts = null,
 		string? presetSearch = null,
 		List<TfFilterBase>? presetFilters = null,
-		List<TfSort>? presetSorts = null
+		List<TfSort>? presetSorts = null,
+		TfRelDataIdentityQueryInfo? relIdentityInfo = null
 		)
 	{
 		var result = new List<Guid>();
@@ -586,7 +605,8 @@ public partial class TfService
 			page: null,
 			pageSize: null,
 			noRows: false,
-			returnOnlyTfIds: true);
+			returnOnlyTfIds: true,
+			relIdentityInfo: relIdentityInfo);
 	
 		for (int i = 0; i < dt.Rows.Count; i++)
 		{

@@ -1,8 +1,4 @@
-﻿using Microsoft.FluentUI.AspNetCore.Components;
-using NpgsqlTypes;
-using Serilog;
-using System;
-using WebVella.Tefter.Models;
+﻿using NpgsqlTypes;
 
 namespace WebVella.Tefter.Services;
 
@@ -44,6 +40,8 @@ public partial class TfService : ITfService
 		private int? _pageSize = null;
 		private List<Guid>? _tfIds = null;
 		private bool _returnOnlyTfIds = false;
+		private TfRelDataIdentityQueryInfo? _relIdentityInfo = null;
+
 		public List<SqlBuilderJoinData> JoinData { get { return _joinData; } }
 		public List<SqlBuilderSharedColumnData> SharedColumnsData { get { return _sharedColumnsData; } }
 
@@ -61,16 +59,14 @@ public partial class TfService : ITfService
 			List<TfSort>? userSorts = null,
 			int? page = null,
 			int? pageSize = null,
-			bool returnOnlyTfIds = false)
+			bool returnOnlyTfIds = false,
+			TfRelDataIdentityQueryInfo? relIdentityInfo = null)
 		{
-			if (dbService is null)
-				throw new ArgumentNullException(nameof(dbService));
+			ArgumentNullException.ThrowIfNull(dbService);
 
-			if (dataProvider is null)
-				throw new ArgumentNullException(nameof(dataProvider));
+			ArgumentNullException.ThrowIfNull(dataProvider);
 
-			if (dataProviders is null)
-				throw new ArgumentNullException(nameof(dataProviders));
+			ArgumentNullException.ThrowIfNull(dataProviders);
 
 			if (spaceData is not null && spaceData.Filters is not null)
 				_filters = spaceData.Filters;
@@ -106,6 +102,8 @@ public partial class TfService : ITfService
 
 			_spaceData = spaceData;
 
+			_relIdentityInfo = relIdentityInfo;
+
 			InitColumns();
 
 			if (spaceData is not null && spaceData.Filters is not null)
@@ -121,19 +119,16 @@ public partial class TfService : ITfService
 			TfDataProvider dataProvider,
 			ReadOnlyCollection<TfDataProvider> dataProviders,
 			TfDataset spaceData,
-			List<Guid> tfIds)
+			List<Guid> tfIds,
+			TfRelDataIdentityQueryInfo? relIdentityInfo = null)
 		{
-			if (dbService is null)
-				throw new ArgumentNullException(nameof(dbService));
+			ArgumentNullException.ThrowIfNull(dbService);
 
-			if (dataProvider is null)
-				throw new ArgumentNullException(nameof(dataProvider));
+			ArgumentNullException.ThrowIfNull(dataProvider);
 
-			if (dataProviders is null)
-				throw new ArgumentNullException(nameof(dataProviders));
+			ArgumentNullException.ThrowIfNull(dataProviders);
 
-			if (tfIds is null)
-				throw new ArgumentNullException(nameof(tfIds));
+			ArgumentNullException.ThrowIfNull(tfIds);
 
 			_tfIds = tfIds;
 
@@ -165,6 +160,8 @@ public partial class TfService : ITfService
 			_tfService = tfService;
 
 			_spaceData = spaceData;
+
+			_relIdentityInfo = relIdentityInfo;
 
 			InitColumns();
 		}
@@ -688,7 +685,7 @@ public partial class TfService : ITfService
 			else
 			{
 				var sbSearch = new List<string>();
-				string? searchStringSum = null; 
+				string? searchStringSum = null;
 				_presetSearch = _presetSearch?.Trim();
 				_userSearch = _userSearch?.Trim();
 				if (!string.IsNullOrWhiteSpace(_presetSearch))
@@ -698,14 +695,14 @@ public partial class TfService : ITfService
 
 				if (sbSearch.Count == 1)
 					searchStringSum = sbSearch[0];
-				else if(sbSearch.Count == 2)
+				else if (sbSearch.Count == 2)
 					searchStringSum = $"({sbSearch[0]}) AND ({sbSearch[1]})";
 
 				if (!String.IsNullOrWhiteSpace(searchStringSum))
 				{
 					sb.Append(searchStringSum.GeneratePostgresSearchScript(
-						fieldName:$"{_tableAlias}.tf_search",
-						parameters:parameters
+						fieldName: $"{_tableAlias}.tf_search",
+						parameters: parameters
 						));
 				}
 
@@ -717,6 +714,28 @@ public partial class TfService : ITfService
 
 					sb.Append($"\t{filterSql} ");
 				}
+			}
+
+			if(_relIdentityInfo is not null)
+			{
+				string identityColumn = $"tf_ide_{_relIdentityInfo.DataIdentity}";
+
+				if (sb.Length > 0)
+					sb.Append($" AND {Environment.NewLine}");
+
+				var paramName = "rel_identity_values_" + Guid.NewGuid().ToString().Replace("-", string.Empty);
+				var arrayParam = new NpgsqlParameter($"@{paramName}", NpgsqlDbType.Array | NpgsqlDbType.Text);
+				arrayParam.Value = _relIdentityInfo.RelIdentityValues.ToArray();
+				parameters.Add(arrayParam);
+				sb.Append(@$"( EXISTS (
+							SELECT 1 FROM tf_data_identity_connection tfdic 
+							WHERE ( tfdic.data_identity_1 = '{_relIdentityInfo.DataIdentity}' AND tfdic.data_identity_2 = '{_relIdentityInfo.RelDataIdentity}' 
+									AND tfdic.value_1 = {_tableAlias}.{identityColumn} AND tfdic.value_2 = ANY(@{paramName} ) )
+									OR
+								  ( tfdic.data_identity_2 = '{_relIdentityInfo.DataIdentity}' AND tfdic.data_identity_1 = '{_relIdentityInfo.RelDataIdentity}' 
+									AND tfdic.value_2 = {_tableAlias}.{identityColumn} AND tfdic.value_1 = ANY(@{paramName} ) )
+							) ) " );
+				sb.Append($"{Environment.NewLine}");
 			}
 
 			if (sb.Length == 0)
