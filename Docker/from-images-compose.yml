@@ -18,7 +18,7 @@ services:
       retries: 10
 
   webvella-tefter-web:
-    image: ${TEFTER_IMAGE_NAME}:${TEFTER_IMAGE_VERSION}
+    image: webvella/${TEFTER_IMAGE_NAME}:${TEFTER_IMAGE_VERSION}
     volumes:
       - dataprotection:/root/.aspnet/DataProtection-Keys
       - blobstorage:/app/blob-storage

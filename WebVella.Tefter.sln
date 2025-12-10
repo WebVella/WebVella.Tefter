@@ -80,12 +80,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{75A65C
 	ProjectSection(SolutionItems) = preProject
 		Docker\.env = Docker\.env
 		Docker\Dockerfile = Docker\Dockerfile
-		Docker\from-build-up.bat = Docker\from-build-up.bat
 		Docker\from-build-compose.yml = Docker\from-build-compose.yml
 		Docker\from-build-down.bat = Docker\from-build-down.bat
-		Docker\from-images-down.bat = Docker\from-images-down.bat
+		Docker\from-build-up.bat = Docker\from-build-up.bat
 		Docker\from-images-compose.yml = Docker\from-images-compose.yml
+		Docker\from-images-down.bat = Docker\from-images-down.bat
 		Docker\from-images-up.bat = Docker\from-images-up.bat
+		Docker\push_image.bat = Docker\push_image.bat
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pg-init", "pg-init", "{7DC27614-46A2-40D3-9694-3204990D40B6}"
