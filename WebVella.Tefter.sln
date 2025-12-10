@@ -87,6 +87,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{75A65C
 		Docker\from-images-down.bat = Docker\from-images-down.bat
 		Docker\from-images-up.bat = Docker\from-images-up.bat
 		Docker\push_image.bat = Docker\push_image.bat
+		Docker\README.TXT = Docker\README.TXT
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pg-init", "pg-init", "{7DC27614-46A2-40D3-9694-3204990D40B6}"
