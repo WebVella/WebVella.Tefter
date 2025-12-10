@@ -17,7 +17,7 @@ services:
       timeout: 5s
       retries: 10
 
-  webvella-tefter-web:
+  tefter-bg:
     build:
       context: ..
       dockerfile: Docker/Dockerfile
