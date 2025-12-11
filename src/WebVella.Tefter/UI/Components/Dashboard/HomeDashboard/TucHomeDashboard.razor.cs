@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using WebVella.Tefter.UI.Pages;
+
+namespace WebVella.Tefter.UI.Components;
 
 public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 {
@@ -95,9 +97,9 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 
 		//bookmarks
 		if (_activeTab == TucMyBookmarksTab.All
-		    || _activeTab == TucMyBookmarksTab.Bookmarks)
+			|| _activeTab == TucMyBookmarksTab.Bookmarks)
 		{
-			var bookmarks = _allBookmarks.Where(x => !String.IsNullOrWhiteSpace(x.Url));
+			var bookmarks = _allBookmarks.Where(x => x.Type == TfBookmarkType.URL);
 			if (!String.IsNullOrWhiteSpace(_search))
 				bookmarks = bookmarks.Where(x =>
 					x.Name.ToLowerInvariant().Contains(search!)
@@ -120,9 +122,9 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 
 		//pinned pages
 		if (_activeTab == TucMyBookmarksTab.All
-		    || _activeTab == TucMyBookmarksTab.Pins)
+			|| _activeTab == TucMyBookmarksTab.PinnedPages)
 		{
-			var bookmarks = _allBookmarks.Where(x => String.IsNullOrWhiteSpace(x.Url));
+			var bookmarks = _allBookmarks.Where(x => x.Type == TfBookmarkType.Page);
 			if (!String.IsNullOrWhiteSpace(_search))
 				bookmarks = bookmarks.Where(x =>
 					x.Name.ToLowerInvariant().Contains(search!)
@@ -139,7 +141,32 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 					navigator: Navigator,
 					tagLinkTitle: LOC("click to filter by tag"),
 					menu: _getItemMenu(item),
-					actions:_getItemActions(item)
+					actions: _getItemActions(item)
+					));
+			}
+		}
+		//pinned data
+		if (_activeTab == TucMyBookmarksTab.All
+			|| _activeTab == TucMyBookmarksTab.PinnedData)
+		{
+			var bookmarks = _allBookmarks.Where(x => x.Type == TfBookmarkType.DataProviderRows);
+			if (!String.IsNullOrWhiteSpace(_search))
+				bookmarks = bookmarks.Where(x =>
+					x.Name.ToLowerInvariant().Contains(search!)
+					|| (x.Description is null || x.Description.ToLowerInvariant().Contains(search!))
+					|| x.Space!.Name!.ToLowerInvariant().Contains(search!)
+					|| x.SpacePage!.Name.ToLowerInvariant().Contains(search!));
+			if (!String.IsNullOrWhiteSpace(tagQuery))
+				bookmarks = bookmarks.Where(x => x.Tags.Any(y => y.Label == tagQuery));
+
+			foreach (var item in bookmarks)
+			{
+				_dashboard.Add(new TfDashboardItem(
+					bookmark: item,
+					navigator: Navigator,
+					tagLinkTitle: LOC("click to filter by tag"),
+					menu: _getItemMenu(item),
+					actions: _getItemActions(item)
 					));
 			}
 		}
@@ -193,18 +220,18 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 		_nav.Add(new TfMenuItem()
 		{
 			Text = "Pinned Pages",
-			IconCollapsed = TfConstants.GetIcon("Pin"),
+			IconCollapsed = TfConstants.GetIcon("Document"),
 			Url = Navigator.GetLocalAndQueryUrl()
-				.ApplyChangeToUrlQuery(TfConstants.TabQueryName, TucMyBookmarksTab.Pins),
-			Selected = _activeTab == TucMyBookmarksTab.Pins
+				.ApplyChangeToUrlQuery(TfConstants.TabQueryName, TucMyBookmarksTab.PinnedPages),
+			Selected = _activeTab == TucMyBookmarksTab.PinnedPages
 		});
 		_nav.Add(new TfMenuItem()
 		{
-			Text = "Pinned Data",
+			Text = "Pinned Records",
 			IconCollapsed = TfConstants.GetIcon("Database"),
 			Url = Navigator.GetLocalAndQueryUrl()
-				.ApplyChangeToUrlQuery(TfConstants.TabQueryName, TucMyBookmarksTab.Data),
-			Selected = _activeTab == TucMyBookmarksTab.Data
+				.ApplyChangeToUrlQuery(TfConstants.TabQueryName, TucMyBookmarksTab.PinnedData),
+			Selected = _activeTab == TucMyBookmarksTab.PinnedData
 		});
 
 		//tag menu
@@ -247,7 +274,7 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 		};
 		return menu;
 	}
-	
+
 	private List<TfMenuItem> _getItemActions(TfBookmark bookmark)
 	{
 		List<TfMenuItem> menu = new();
@@ -259,9 +286,34 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 			case TfBookmarkType.Page:
 				menu.Add(new TfMenuItem() { Text = "browse", Url = bookmark.GetUrl(), });
 				break;
+			case TfBookmarkType.DataProviderRows:
+				menu.Add(new TfMenuItem() { Text = "quick view", OnClick = EventCallback.Factory.Create(this, async () => await _onQuickView(bookmark)) });
+				menu.Add(new TfMenuItem() { Text = "browse", Url = bookmark.GetUrl(), });
+				break;
 		}
 		return menu;
-	}	
+	}
+
+	private async Task _onQuickView(TfBookmark bookmark)
+	{
+		var context = new TucSpacePageQuickViewDialogContext
+		{
+			SpacePageId = bookmark.SpacePageId,
+			DataIdentity = TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
+			RelDataIdentity = TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
+			RelIdentityValues = new List<string> { bookmark.Id.ToSha1()}
+		};
+		var dialog = await DialogService.ShowDialogAsync<TucSpacePageQuickViewDialog>(
+			context,
+			new()
+			{
+				PreventDismissOnOverlayClick = false,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthContentScreen,
+				TrapFocus = true
+			});
+		_ = await dialog.Result;
+	}
 
 	private async Task _onEdit(TfBookmark bookmark)
 	{
@@ -283,12 +335,6 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 		ToastService.ShowSuccess(LOC("Bookmark removed"));
 		return Task.CompletedTask;
 	}
-
-	private async Task _quickView(TfBookmark bookmark)
-	{
-		ToastService.ShowInfo(LOC("Quick View"));
-	}	
-	
 	private async Task _goLastPage()
 	{
 		int newPage = (int)(_allBookmarks.Count / _pageSize) + 1;
@@ -328,8 +374,8 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 	{
 		All = 0,
 		Bookmarks = 1,
-		Pins = 2,
-		Data = 3
+		PinnedPages = 2,
+		PinnedData = 3
 	}
 
 	public enum TucMyBookmarksOrder

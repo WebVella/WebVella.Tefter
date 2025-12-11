@@ -24,7 +24,7 @@ public partial class TalkSpaceViewSelectorAction : TfBaseComponent,
 	{
 		var context = new TalkThreadModalContext
 		{
-			DataProviderId = RegionContext.SpaceData.DataProviderId,
+			DataProviderId = RegionContext.Dataset.DataProviderId,
 			SelectedRowIds = RegionContext.SelectedDataRows,
 			CurrentUser = RegionContext.CurrentUser
 		};

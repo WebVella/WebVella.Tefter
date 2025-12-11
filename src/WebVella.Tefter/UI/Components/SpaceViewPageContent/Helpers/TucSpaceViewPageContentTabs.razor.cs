@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Utility;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDisposable
 {
@@ -70,23 +68,47 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 		try
 		{
 			_menu = new();
+			string? pinnedDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName, null);
+			string? pinnedDataIdentityValue = Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName, null);
+			var hasPinnedData = false;
+			if (!String.IsNullOrWhiteSpace(pinnedDataIdentity) && !String.IsNullOrWhiteSpace(pinnedDataIdentityValue))
+				hasPinnedData = true;
+
 			Guid? currentPresetId = Navigator.GetGuidFromQuery(TfConstants.PresetIdQueryName);
+			var first = true;
 			if (spaceView.Presets.Count > 0)
 			{
-				if (currentPresetId is null)
+				if (currentPresetId is null && !hasPinnedData)
 					currentPresetId = spaceView.Presets[0].Id;
 
-				var first = true;
 				foreach (var prItem in spaceView.Presets)
 				{
 					_menu.Add(_getMenuItem(prItem, first, true));
 					first = false;
 				}
-
-				foreach (var menuItem in _menu)
+				if (!hasPinnedData)
 				{
-					_setSelection(menuItem, currentPresetId);
+					foreach (var menuItem in _menu)
+					{
+						_setSelection(menuItem, currentPresetId);
+					}
 				}
+			}
+
+			if (hasPinnedData)
+			{
+				_menu.Add(new TfMenuItem
+				{
+					Id = "space-view-pinned-data-tab",
+					Text = LOC("Pinned Data"),
+					Selected = true,
+					IconColor = TfColor.Orange500,
+					Url = String.Format(TfConstants.SpacePagePageUrl, SpacePage.SpaceId, SpacePage.Id)
+						.ApplyChangeToUrlQuery(TfConstants.DataIdentityIdQueryName, pinnedDataIdentity)
+						.ApplyChangeToUrlQuery(TfConstants.DataIdentityValueQueryName, pinnedDataIdentityValue),
+					IconCollapsed = TfConstants.GetIcon("Pin"),
+					IconExpanded = TfConstants.GetIcon("Pin")
+				});
 			}
 		}
 		finally

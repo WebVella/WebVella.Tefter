@@ -24,7 +24,7 @@ public partial class AssetSpaceViewSelectorAction : TfBaseComponent,
 	{
 		var context = new AssetsAttachModalContext
 		{
-			DataProviderId = RegionContext.SpaceData.DataProviderId,
+			DataProviderId = RegionContext.Dataset.DataProviderId,
 			SelectedRowIds = RegionContext.SelectedDataRows,
 			CurrentUser = RegionContext.CurrentUser
 		};

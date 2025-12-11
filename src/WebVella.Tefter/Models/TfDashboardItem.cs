@@ -33,7 +33,7 @@ public record TfDashboardItem
 			Color = bookmark.Space.Color;
 		}
 
-		IconText = String.IsNullOrWhiteSpace(bookmark.Url) ? "PAGE" : "URL";
+		IconText = bookmark.Type.ToDescriptionString();
 		var result = new List<string>();
 		foreach (var tag in bookmark.Tags)
 		{

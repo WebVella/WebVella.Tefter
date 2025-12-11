@@ -1,0 +1,59 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Pin Records to Home")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
+					  Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+
+	}
+	else
+	{
+		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+						FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator />
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
+									 Label="@LOC("Name")" Style="width:100%" AutoComplete="off" />
+					<FluentValidationMessage For="@(() => _form.Name)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentTextField Value=@_form.Description ValueChanged="@_onDescriptionChanged"
+									Immediate="true" ImmediateDelay="200" 
+									Label="@LOC("Description")" Style="width:100%"/>
+					<div class="tf-input-description">@LOC("can be hash-tagged (eg. #budget2025)")</div>
+					<FluentValidationMessage For="@(() => _form.Description)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentDivider Style="margin:1rem 0" />
+			<FluentStack Orientation="@Orientation.Horizontal" Style="min-height:24px;">
+				@foreach (var item in _tags)
+				{
+					<FluentBadge Appearance="Appearance.Accent">#@item.Label</FluentBadge>
+				}
+				@if (_tags.Count == 0)
+				{
+					<div style="color:var(--neutral-foreground-hint)">@LOC("no tags")</div>
+				}
+			</FluentStack>
+		</FluentEditForm>
+	}
+</FluentDialogBody>

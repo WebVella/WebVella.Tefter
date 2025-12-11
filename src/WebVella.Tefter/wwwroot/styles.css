@@ -2439,7 +2439,7 @@ fluent-menu-item::part(start) {
   box-shadow: none !important;
 }
 .tf-select-component .tf-card__content {
-  padding-top: 0;
+  padding: 0 !important;
 }
 .tf-select-component.disabled .tf-card {
   background: var(--neutral-fill-rest);
