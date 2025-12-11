@@ -142,7 +142,6 @@ else
                             <Virtualize Items="@_data.Rows.GetList()" TItem="TfDataRow" Context="row">
                                 @{
                                     var tfId = row.GetRowId();
-                                    _generateRowColoringDict(tfId);
                                 }
                                 <tr @key=@tfId class="@_rowMeta[tfId].RowClass"
                                     style="@_rowMeta[tfId].RowStyles"

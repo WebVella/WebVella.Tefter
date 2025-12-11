@@ -237,6 +237,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				_preset = _spaceView!.Presets[0];
 
 			_spaceViewColumns = TfService.GetSpaceViewColumnsList(_spaceView.Id);
+			await InvokeAsync(StateHasChanged);
+			await Task.Delay(1);
 
 			_data = TfService.QueryDataset(
 				datasetId: _spaceView!.DatasetId,
@@ -378,14 +380,10 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			_selectAllLoading = true;
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
-			TfSpaceViewPreset? preset = null;
-			if (_navState.SpaceViewPresetId is not null)
-				preset = _spaceView!.Presets.GetPresetById(_navState.SpaceViewPresetId.Value);
-
 			_selectedDataRows = TfService.QueryDatasetIdList(
 				datasetId: _spaceView!.DatasetId,
-				presetFilters: preset is not null ? preset.Filters : null,
-				presetSorts: preset is not null ? preset.SortOrders : null,
+				presetFilters: _preset is not null ? _preset.Filters : null,
+				presetSorts: _preset is not null ? _preset.SortOrders : null,
 				userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _allDataProviders,
 					_allSharedColumns),
 				userSorts: _navState.Sorts.ConvertQuerySortToList(_spaceViewColumns),

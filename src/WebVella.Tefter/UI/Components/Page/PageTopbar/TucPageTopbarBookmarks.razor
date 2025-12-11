@@ -10,11 +10,11 @@
     <FluentButton Id="@_pinBtnId" OnClick="_onPinClick"
                   IconStart="@((_activePin is not null ? TfConstants.GetIcon("Pin", variant: IconVariant.Filled) : TfConstants.GetIcon("Pin"))!.WithColor(Color.Neutral))"
                   Appearance="@Appearance.Outline"
-                  Title="@(_activePin is not null ? LOC("UnPin Page") : LOC("Pin Page"))" />
+                  Title="@(_activePin is not null ? LOC("UnPin Page from Home") : LOC("Pin Page to Home"))" />
 
     @* Bookmark *@
     <FluentButton Id="@_bookmarkBtnId" OnClick="_onBookmarkClick" Appearance="@Appearance.Outline"
-                  Title="@(_activeBookmark is not null ? LOC("Manage Bookmark") : LOC("Save as Bookmark"))">
+                  Title="@(_activeBookmark is not null ? LOC("Manage Bookmark") : LOC("Save Home Bookmark"))">
         <FluentIcon Value="@((_activeBookmark is not null ? TfConstants.GetIcon("Star", variant: IconVariant.Filled) : TfConstants.GetIcon("Star"))!.WithColor(Color.Neutral))" Color="_getLinkColor()" />
     </FluentButton>
 

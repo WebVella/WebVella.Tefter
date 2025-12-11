@@ -28,4 +28,29 @@ public partial class TucSpaceHeader : TfBaseComponent, IDisposable
 		_space = args.Payload;
 		await InvokeAsync(StateHasChanged);
 	}
+
+	private void _manageCurrentSpace()
+	{
+		var pageManageUrl = String.Format(TfConstants.SpaceManagePageUrl, TfAuthLayout.GetState().Space!.Id);
+		Navigator.NavigateTo(pageManageUrl.GenerateWithLocalAndQueryAsReturnUrl(Navigator.Uri)!);
+	}
+
+
+	private async Task _deleteSpace()
+	{
+		var state = TfAuthLayout.GetState();
+		if (state.Space is null) return;
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this space deleted?")))
+			return;
+		try
+		{
+			TfService.DeleteSpace(state.Space.Id);
+			ToastService.ShowSuccess(LOC("Space deleted"));
+			Navigator.NavigateTo(TfConstants.HomePageUrl);
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+	}
 }

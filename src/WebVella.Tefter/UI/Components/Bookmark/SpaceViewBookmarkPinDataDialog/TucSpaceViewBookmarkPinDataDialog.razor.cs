@@ -1,29 +1,23 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDialogContentComponent<TfBookmark?>
+public partial class TucSpaceViewBookmarkPinDataDialog : TfFormBaseComponent, IDialogContentComponent<TfCreatePinDataBookmarkModel?>
 {
-	[Parameter] public TfBookmark? Content { get; set; }
+	[Parameter] public TfCreatePinDataBookmarkModel? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
-	private string _title = "";
-	private string _btnText = "";
-	private Icon _iconBtn;
-	private bool _isBookmark = true;
-	private TfBookmark _form = new();
+	private TfCreatePinDataBookmarkModel _form = new();
+	private List<TfTag> _tags = new();
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
-		if (Content.Id == Guid.Empty) throw new Exception("Id is required");
-		if (Content.SpacePageId == Guid.Empty) throw new Exception("SpacePageId is required");
-		if (!String.IsNullOrWhiteSpace(Content.Url)) _isBookmark = false;
-		_title = _isBookmark ? LOC("Bookmark") : LOC("Saved URL");
-		_btnText = LOC("Save");
-		_iconBtn = TfConstants.GetIcon("Save")!;
-
-		_form = Content with { Id = Content.Id };
+		if (Content.Dataset is null) throw new Exception("Dataset is required");
+		if (Content.SpacePage is null) throw new Exception("SpacePage is required");
+		if (Content.SpaceView is null) throw new Exception("SpaceView is required");
+		if (Content.SelectedRowIds.Count == 0) throw new Exception("SelectedRowIds is required");
+		_form = Content with { Name = string.Empty };
 		_onDescriptionChanged(_form.Description);
 		base.InitForm(_form);
 	}
@@ -43,8 +37,9 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			TfService.UpdateBookmark(_form);
-			ToastService.ShowSuccess(LOC($"{(_isBookmark ? "Bookmark" : "URL")} updated"));
+			
+			TfService.CreateBookmark(_form);
+			ToastService.ShowSuccess(LOC($"Records pinned"));
 
 			await Dialog.CloseAsync(_form);
 		}
@@ -64,15 +59,17 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 		await Dialog.CancelAsync();
 	}
 
-	private void _onDescriptionChanged(string description)
+	private void _onDescriptionChanged(string? description)
 	{
+		if (String.IsNullOrWhiteSpace(description))
+			return;
 		_form.Description = description;
-		_form.Tags = new List<TfTag>();
+		_tags = new List<TfTag>();
 		if (!String.IsNullOrWhiteSpace(description))
 		{
 			foreach (var item in TfConverters.GetUniqueTagsFromText(description))
 			{
-				_form.Tags.Add(new TfTag { Id = Guid.NewGuid(), Label = item });
+				_tags.Add(new TfTag { Id = Guid.NewGuid(), Label = item });
 			}
 		}
 	}

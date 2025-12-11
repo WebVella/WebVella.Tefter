@@ -1,0 +1,25 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true" Style="display: none">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Quick View")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+	}
+	else
+	{
+		<TucErrorBoundry ShowAsAlert="true">
+			<DynamicComponent Type="@_spacePage.ComponentType" Parameters="@_getDynamicComponentParams()" />
+		</TucErrorBoundry>
+	}
+</FluentDialogBody>

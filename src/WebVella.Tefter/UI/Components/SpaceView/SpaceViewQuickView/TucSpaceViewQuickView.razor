@@ -1,3 +1,106 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<div>QuickView</div>
+
+<table class="tf-grid tf-grid--sticky" id="@_tableId">
+    <colgroup>
+        @foreach (var col in _spaceViewColumns)
+        {
+            <col span="1" style="@_getSafeColumnMetaString(col.Id, nameof(TfSpaceViewColumnPresentationMeta.TableColStyles))">
+        }
+    </colgroup>
+    <thead class="tf-grid-thead">
+        <tr class="tf-grid-thead-bkg"></tr>
+        @if (_isDataLoading)
+        {
+            <tr class="tf-grid-thead-loading"></tr>
+        }
+        <tr class="tf-grid-tr">
+            @foreach (var column in _spaceViewColumns.OrderBy(x => x.Position))
+            {
+                <th data-query-name="@column.QueryName" class="@_getSafeColumnMetaString(column.Id, nameof(TfSpaceViewColumnPresentationMeta.HeaderCellClass))"
+                    style="@_getSafeColumnMetaString(column.Id, nameof(TfSpaceViewColumnPresentationMeta.HeaderCellStyles))" id="@column.AnchorId">
+                    <div>
+                        @if (String.IsNullOrWhiteSpace(column.Icon))
+                        {
+                            <div>@column.Title</div>
+                        }
+                        else if (column.OnlyIcon)
+                        {
+                            <div style="display:flex;">
+                                <FluentIcon Value="@TfConstants.GetIcon(column.Icon)" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="display:flex">
+                                <FluentIcon Value="@TfConstants.GetIcon(column.Icon)" />
+                                <div style="padding-left:5px;">@column.Title</div>
+                            </div>
+                        }
+                    </div>
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody class="tf-grid-tbody">
+        @if (_isDataLoading) { }
+        else if (_data is null)
+        {
+            <tr class="tf-grid-tr">
+                <td class="tf-grid-td" colspan="@_spaceViewColumns.Count">
+                    <div>@LOC("Dataset or DataProvider not found")</div>
+                </td>
+            </tr>
+        }
+        else if (_data.Rows.Count == 0)
+        {
+            <tr class="tf-grid-tr">
+                <td class="tf-grid-td" colspan="@_spaceViewColumns.Count">
+                    <div>@LOC("Records are no longer existing")</div>
+                </td>
+            </tr>
+        }
+        else
+        {
+            <Virtualize Items="@_data.Rows.GetList()" TItem="TfDataRow" Context="row">
+                @{
+                    var tfId = row.GetRowId();
+                }
+                <tr @key=@tfId id="@($"row-{tfId}")">
+                    @foreach (var column in _spaceViewColumns)
+                    {
+                        <td @key=@($"{tfId}__{column.Id}")
+                            class="@_getSafeColumnMetaString(column.Id, nameof(TfSpaceViewColumnPresentationMeta.BodyCellClass))"
+                            style="@_getSafeRegionContextString(tfId, column.Id, nameof(TfSpaceViewColumnBase.BodyCellStyles)) @_getSafeColumnMetaString(column.Id, nameof(TfSpaceViewColumnPresentationMeta.BodyCellStyles))">
+                            <div class="tf-grid-td-color" style=""></div>
+                            <div class="tf-grid-td-hover"></div>
+                            @if (!_regionContextDict[tfId].ContainsKey(column.Id))
+                            {
+                            }
+                            else if (_columnTypeMetaDict.ContainsKey(column.TypeId))
+                            {
+                                <TucErrorBoundry>
+                                    @(((ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(_columnTypeMetaDict[column.TypeId]!.GetType())!).Render(_regionContextDict[tfId][column.Id]))
+                                </TucErrorBoundry>
+                            }
+                            else
+                            {
+                                <span style="color:var(--error)"
+                                      title="@LOC("Column type not found")">error</span>
+                            }
+                        </td>
+                    }
+                </tr>
+            </Virtualize>
+            @if (_data.Rows.Count >= TfConstants.ItemsMaxLimit)
+            {
+                <tr class="tf-grid-tr">
+                    <td class="tf-grid-td" colspan="@(_spaceViewColumns.Count + 1)">
+                        <FluentMessageBar AllowDismiss="false"
+                                          Intent="@MessageIntent.Warning">@LOC("Your query exceeded the allowed maximum of {0} rows. Please fine tune your query or export and process in another program", TfConstants.ItemsMaxLimit)</FluentMessageBar>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

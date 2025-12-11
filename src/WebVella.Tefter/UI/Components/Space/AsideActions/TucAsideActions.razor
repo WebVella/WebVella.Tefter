@@ -3,6 +3,7 @@
 <div class="tf-aside-actions">
     @if (TfAuthLayout.GetState().Space is not null)
     {
+        var state = TfAuthLayout.GetState();
         <FluentButton Title="@LOC("Add new page")" Appearance="@Appearance.Outline" OnClick="@_addPage">@LOC("new page")</FluentButton>        
         <FluentButton Id="space-menu-toggle"
                       Appearance="@Appearance.Outline" Title="@LOC("Space settings")"
@@ -16,7 +17,7 @@
                     Disabled="true">
                     @LOC("Current Page")
                     <span slot="start">
-                        <FluentIcon Value="@(TfConstants.GetIcon("Document")!.WithColor("var(--neutral-foreground-hint)"))" Slot="start"/>
+                        <FluentIcon Value="@(TfConstants.GetIcon(state.SpacePage?.FluentIconName)!.WithColor("var(--neutral-foreground-hint)"))" Slot="start" />
                     </span>
                 </FluentMenuItem>
                 <FluentDivider/>
@@ -47,7 +48,7 @@
                 Disabled="true">
                 @LOC("Current Space")
                 <span slot="start">
-                    <FluentIcon Value="@(TfConstants.GetIcon("Circle")!.WithColor("var(--neutral-foreground-hint)"))" Slot="start"/>
+                    <FluentIcon Value="@(TfConstants.GetIcon(state.Space?.FluentIconName)!.WithColor("var(--neutral-foreground-hint)"))" Slot="start" />
                 </span>
             </FluentMenuItem>
             <FluentDivider/>            

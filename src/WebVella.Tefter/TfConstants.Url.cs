@@ -14,6 +14,8 @@ public partial class TfConstants
 	public static string TabQueryName = "tab";
 	public static string TagQueryName = "tag";
 	public static string PresetIdQueryName = "preset";
+	public static string DataIdentityIdQueryName = "diid";
+	public static string DataIdentityValueQueryName = "div";
 	public static string ReturnUrlQueryName = "returnUrl";
 
 	public static string SearchInBookmarksQueryName = "sbkm";

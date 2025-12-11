@@ -7,7 +7,6 @@ namespace WebVella.Tefter.Models;
 public record TfBookmark
 {
 	[TfDboModelProperty("id")] public Guid Id { get; set; }
-	//identity_row_id - is autocreated
 	[TfDboModelProperty("name")] public string Name { get; set; } = null!;
 	[TfDboModelProperty("description")] public string? Description { get; set; } = null;
 
@@ -36,15 +35,23 @@ public record TfBookmark
 
 	public string GetUrl()
 	{
-		if (String.IsNullOrWhiteSpace(Url))
-		{
-			if (Space is not null && SpacePage is not null)
-				return String.Format(TfConstants.SpacePagePageUrl, Space.Id, SpacePage.Id);
-
-			return "#";
+		switch (Type) { 
+			case TfBookmarkType.URL:
+				return Url.ApplyChangeToUrlQuery(TfConstants.ActiveSaveQueryName, Id.ToString());
+			case TfBookmarkType.Page:
+				if (Space is not null && SpacePage is not null)
+					return String.Format(TfConstants.SpacePagePageUrl, Space.Id, SpacePage.Id);
+				break;
+			case TfBookmarkType.DataProviderRows:
+				if (Space is not null && SpacePage is not null)
+					return String.Format(TfConstants.SpacePagePageUrl, Space.Id, SpacePage.Id)
+						.ApplyChangeToUrlQuery(TfConstants.DataIdentityIdQueryName, TfConstants.TEFTER_DEFAULT_OBJECT_NAME)
+						.ApplyChangeToUrlQuery(TfConstants.DataIdentityValueQueryName, Id.ToSha1());
+				break;
 		}
 
-		return Url.ApplyChangeToUrlQuery(TfConstants.ActiveSaveQueryName, Id.ToString());
+		return "#";
+
 	}
 
 	public List<TfTag> Tags { get; set; } = new();

@@ -98,7 +98,9 @@
 		<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" Color="@Color.Accent" />
 		</FluentButton> *@
 
-<TucSpaceViewActionSelector @ref="_actionSelector" SpaceView="SpaceView" SpaceData="SpaceData" User=Context.CurrentUser Data="Data" SelectedRows="SelectedRows" />
+<TucSpaceViewActionSelector @ref="_actionSelector" SpaceView="SpaceView" SpaceData="SpaceData" 
+							SpacePage="Context.SpacePage"
+							User=Context.CurrentUser Data="Data" SelectedRows="SelectedRows" />
 <TucSpaceViewShareSelector @ref="_shareSelector" SpaceView="SpaceView" Data="Data" SelectedRows="SelectedRows" />
 <TucSpaceViewSettingsSelector @ref="_settingsSelector" SpaceView="SpaceView" SpaceData="SpaceData" User=Context.CurrentUser 
                               Data="Data" SelectedRows="SelectedRows"/>

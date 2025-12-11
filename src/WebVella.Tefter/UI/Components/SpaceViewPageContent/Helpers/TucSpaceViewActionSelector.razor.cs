@@ -1,6 +1,7 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSpaceViewActionSelector : TfBaseComponent
 {
+	[Parameter] public TfSpacePage SpacePage { get; set; } = null!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
 	[Parameter] public TfDataset SpaceData { get; set; } = null!;
 	[Parameter] public TfUser User { get; set; } = null!;
@@ -18,9 +19,11 @@ public partial class TucSpaceViewActionSelector : TfBaseComponent
 			return new TfSpaceViewSelectorActionScreenRegion()
 			{
 				SelectedDataRows = SelectedRows,
-				SpaceData = SpaceData,
+				SpaceView = SpaceView,
+				Dataset = SpaceData,
 				CurrentUser = User,
-				TucSpaceViewPageContent = TucSpaceViewPageContent
+				TucSpaceViewPageContent = TucSpaceViewPageContent,
+				SpacePage = SpacePage,
 			};
 		}
 	}

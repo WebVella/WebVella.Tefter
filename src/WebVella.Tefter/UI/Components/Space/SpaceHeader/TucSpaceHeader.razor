@@ -1,7 +1,9 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-
-@if (TfAuthLayout.GetState().NavigationState.HasNode(RouteDataNode.Home, 0))
+@{
+    var state = TfAuthLayout.GetState();
+}
+@if (state.NavigationState.HasNode(RouteDataNode.Home, 0))
 {
     <div class="tf-space-header">
         <div class="tf-space-header__icon">
@@ -12,9 +14,9 @@
         </div>
     </div>
 }
-else if (TfAuthLayout.GetState().NavigationState.HasNode(RouteDataNode.Space, 0))
+else if (state.NavigationState.HasNode(RouteDataNode.Space, 0))
 {
-    <div class="tf-space-header">
+    <div class="tf-space-header" id="tf-space-header">
         <div class="tf-space-header__icon">
             <FluentIcon Value="@TfConstants.GetIcon(_space?.FluentIconName ?? "Circle")" Focusable="false"></FluentIcon>
         </div>
@@ -22,6 +24,27 @@ else if (TfAuthLayout.GetState().NavigationState.HasNode(RouteDataNode.Space, 0)
             <div class="tf-space-header__meta__title">@(_space?.Name ?? LOC("Space"))</div>
         </div>
     </div>
+    <FluentMenu Anchor="tf-space-header" Trigger="MouseButton.Right" Anchored="false" UseMenuService="true">
+        <FluentMenuItem Disabled="true">
+            @LOC("Current Space")
+            <span slot="start">
+                <FluentIcon Value="@(TfConstants.GetIcon(state.Space?.FluentIconName)!.WithColor("var(--neutral-foreground-hint)"))" Slot="start" />
+            </span>
+        </FluentMenuItem>
+        <FluentDivider />
+        <FluentMenuItem OnClick="@_manageCurrentSpace">
+            @LOC("Space Properties")
+            <span slot="start">
+                <FluentIcon Value="@TfConstants.GetIcon("Settings")" Slot="start" />
+            </span>
+        </FluentMenuItem>
+        <FluentMenuItem OnClick="@_deleteSpace">
+            @LOC("Delete Space")
+            <span slot="start">
+                <FluentIcon Value="@(TfConstants.GetIcon("Delete")!.WithColor(Color.Error))" Slot="start" />
+            </span>
+        </FluentMenuItem>
+    </FluentMenu>
 }
 else
 {

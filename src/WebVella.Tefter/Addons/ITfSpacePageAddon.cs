@@ -25,6 +25,7 @@ public class TfSpacePageAddonContext
 	public TfUser CurrentUser { get; set; } = null!;
 	public string? Icon { get; set; }
 	public string? ComponentOptionsJson { get; set; }
+	public TfRelDataIdentityQueryInfo? RelDataIdentityQueryInfo { get; set; }
 	public EventCallback<string> ComponentOptionsJsonChanged { get; set; }
 	public TfComponentMode Mode { get; set; }
 	public EventCallback EditNode { get; set; }

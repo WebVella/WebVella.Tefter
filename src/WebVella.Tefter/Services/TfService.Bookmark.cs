@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.FluentUI.AspNetCore.Components.DesignTokens;
 
 namespace WebVella.Tefter.Services;
 
@@ -16,6 +17,9 @@ public partial interface ITfService
 
 	public TfBookmark CreateBookmark(
 		TfBookmark bookmark);
+
+	public TfBookmark CreateBookmark(
+		TfCreatePinDataBookmarkModel bookmark);
 
 	public TfBookmark UpdateBookmark(
 		TfBookmark bookmark);
@@ -131,6 +135,62 @@ public partial class TfService
 		}
 	}
 
+	public TfBookmark CreateBookmark(
+			TfCreatePinDataBookmarkModel submit)
+	{
+
+		try
+		{
+			if (submit.SelectedRowIds.Count == 0)
+				throw new Exception("No records provided");
+
+			var bookmark = new TfBookmark
+			{
+				Id = Guid.NewGuid(),
+				Description = submit.Description,
+				Name = submit.Name,
+				CreatedOn = DateTime.UtcNow,
+				DataIdentity = TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
+				SpacePageId = submit.SpacePage.Id,
+				Type = TfBookmarkType.DataProviderRows,
+				UserId = submit.User.Id,
+
+			};
+
+			new TfBookmarkValidator(this)
+				.ValidateCreate(bookmark!)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
+
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var success = _dboManager.Insert<TfBookmark>(bookmark!);
+				if (!success)
+					throw new TfDboServiceException("Insert<TfBookmark> failed.");
+
+				bookmark = GetBookmark(bookmark.Id)!;
+				MaintainBookmarkTags(bookmark);
+
+				//Create bookmark <> data identity connections
+				CreateDataIdentityConnections(
+					dataIdentity: TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
+					identityValue: bookmark.Id.ToSha1(),
+					relatedDataIdentity: TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
+					relatedDataIdentityValues: submit.SelectedRowIds.Select(x=> x.ToSha1()).ToList()
+					);
+
+				scope.Complete();
+				bookmark = GetBookmark(bookmark.Id)!;
+				PublishEventWithScope(new TfBookmarkCreatedEvent(bookmark));
+				return bookmark;
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
 	public TfBookmark UpdateBookmark(
 		TfBookmark bookmark)
 	{
@@ -201,7 +261,7 @@ public partial class TfService
 				if (!success)
 					throw new TfDboServiceException("Delete<TfBookmark> failed.");
 
-				
+
 
 				scope.Complete();
 				PublishEventWithScope(new TfBookmarkDeletedEvent(existingBookmark));
@@ -271,26 +331,26 @@ public partial class TfService
 				RuleFor(bookmark => bookmark.Name)
 					.NotEmpty()
 					.WithMessage("The bookmark name is required.");
-				
+
 				RuleFor(bookmark => bookmark.Url)
 					.Must((bookmark, url) =>
 					{
 						if (bookmark.Type == TfBookmarkType.URL
-						    && String.IsNullOrEmpty(url)) return false;
+							&& String.IsNullOrEmpty(url)) return false;
 
 						return true;
 					})
 					.WithMessage("URL is required for bookmark of type URL.");
-				
+
 				RuleFor(bookmark => bookmark.DataIdentity)
 					.Must((bookmark, identity) =>
 					{
 						if (bookmark.Type == TfBookmarkType.DataProviderRows
-						    && String.IsNullOrEmpty(identity)) return false;
+							&& String.IsNullOrEmpty(identity)) return false;
 
 						return true;
 					})
-					.WithMessage("Identity is required for bookmark of type DataProviderRows.");					
+					.WithMessage("Identity is required for bookmark of type DataProviderRows.");
 			});
 
 			RuleSet("create", () =>
@@ -298,7 +358,7 @@ public partial class TfService
 				RuleFor(bookmark => bookmark.Id)
 					.Must((bookmark, id) => { return tfService.GetBookmark(id) == null; })
 					.WithMessage("There is already existing bookmark with specified identifier.");
-			
+
 			});
 
 			RuleSet("update", () =>
@@ -309,7 +369,7 @@ public partial class TfService
 						return tfService.GetBookmark(id) != null;
 					})
 					.WithMessage("There is not existing bookmark with specified identifier.");
-			
+
 			});
 
 			RuleSet("delete", () =>

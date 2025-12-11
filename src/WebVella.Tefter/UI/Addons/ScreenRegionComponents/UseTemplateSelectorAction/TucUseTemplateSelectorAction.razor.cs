@@ -18,7 +18,7 @@ public partial class TucUseTemplateSelectorAction : TfBaseComponent, ITfScreenRe
 		var context = new TfUseTemplateContext
 		{
 			SelectedRowIds = RegionContext.SelectedDataRows,
-			SpaceData = RegionContext.SpaceData,
+			SpaceData = RegionContext.Dataset,
 			User = RegionContext.CurrentUser
 		};
 		_ = await DialogService.ShowDialogAsync<TucUseTemplateDialog>(
