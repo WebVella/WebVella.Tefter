@@ -80,6 +80,21 @@ public partial class TfServiceTest : BaseTest
 
 			result = tfService.QueryDataProvider(provider);
 
+			for (var i = 0; i < 10; i++)
+			{
+				var row = result.Rows[i];
+
+				row[$"dp{provider.Index}_guid_column"].Should().Be(row[$"dp{provider.Index}_guid_column_expression"]);
+				row[$"dp{provider.Index}_short_text_column"].Should().Be(row[$"dp{provider.Index}_short_text_column_expression"]);
+				row[$"dp{provider.Index}_text_column"].Should().Be(row[$"dp{provider.Index}_text_column_expression"]);
+				row[$"dp{provider.Index}_date_column"].Should().Be(row[$"dp{provider.Index}_date_column_expression"]);
+				row[$"dp{provider.Index}_datetime_column"].Should().Be(row[$"dp{provider.Index}_datetime_column_expression"]);
+				row[$"dp{provider.Index}_short_int_column"].Should().Be(row[$"dp{provider.Index}_short_int_column_expression"]);
+				row[$"dp{provider.Index}_int_column"].Should().Be(row[$"dp{provider.Index}_int_column_expression"]);
+				row[$"dp{provider.Index}_long_int_column"].Should().Be(row[$"dp{provider.Index}_long_int_column_expression"]);
+				row[$"dp{provider.Index}_number_column"].Should().Be(row[$"dp{provider.Index}_number_column_expression"]);
+			}
+
 			var tableToUpdate = result;
 
 			for (var i = 0; i < 10; i++)

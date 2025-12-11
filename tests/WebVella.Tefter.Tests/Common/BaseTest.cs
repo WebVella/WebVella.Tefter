@@ -102,6 +102,7 @@ public class BaseTest
 		foreach (var column in columns)
 		{
 			CreateProviderColumn(tfService, provider, column.Item1, column.Item2, column.Item3,sourceName: column.Item1);
+			CreateProviderColumn(tfService, provider, $"{column.Item1}_expression", column.Item2, column.Item3, sourceName: column.Item1,expression: column.Item1);
 		}
 
 		//create columns with no source and unique to test unique generation
@@ -321,26 +322,44 @@ public class BaseTest
 		TfDatabaseColumnType dbType,
 		string sourceType,
 		string sourceName,
-		bool? isUnique = null)
+		bool? isUnique = null,
+		string? expression = null )
 	{
-		var column = new TfDataProviderColumn
+		if (string.IsNullOrEmpty(expression))
 		{
-			Id = Guid.NewGuid(),
-			AutoDefaultValue = false,
-			DefaultValue = null,
-			DataProviderId = provider.Id,
-			DbName = dbName,
-			DbType = dbType,
-			SourceName = sourceName,
-			SourceType = sourceType,
-			IncludeInTableSearch = true,
-			IsNullable = true,
-			IsSearchable = true,
-			IsSortable = false,
-			IsUnique = isUnique??false
-		};
+			var column = new TfDataProviderColumn
+			{
+				Id = Guid.NewGuid(),
+				AutoDefaultValue = false,
+				DefaultValue = null,
+				DataProviderId = provider.Id,
+				DbName = dbName,
+				DbType = dbType,
+				SourceName = sourceName,
+				SourceType = sourceType,
+				IncludeInTableSearch = true,
+				IsNullable = true,
+				IsSearchable = true,
+				IsSortable = false,
+				IsUnique = isUnique ?? false
+			};
+			tfService.CreateDataProviderColumn(column);
+		}
+		else
+		{
+			var column = new TfDataProviderColumn
+			{
+				Id = Guid.NewGuid(),
+				DataProviderId = provider.Id,
+				DbName = dbName,
+				DbType = dbType,
+				Expression = expression,
+				ExpressionJson = "{}",
+			};
+			tfService.CreateDataProviderColumn(column);
+		}
 
-		tfService.CreateDataProviderColumn(column);
+		
 	}
 }
 

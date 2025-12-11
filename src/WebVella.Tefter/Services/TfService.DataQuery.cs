@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Newtonsoft.Json.Linq;
 using NpgsqlTypes;
+using System.Reflection.Metadata.Ecma335;
 
 namespace WebVella.Tefter.Services;
 
@@ -727,6 +729,9 @@ public partial class TfService
 
 		foreach (var column in provider.Columns)
 		{
+			if(!string.IsNullOrEmpty(column.Expression))
+				continue;
+
 			if (column.IncludeInTableSearch)
 			{
 				bool columnFoundInDataTable = false;
@@ -935,6 +940,10 @@ public partial class TfService
 		{
 			var tableColumn = row.DataTable.Columns[i];
 
+			var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == tableColumn.Name);
+			if (providerColumn != null && !string.IsNullOrWhiteSpace(providerColumn.Expression))
+				continue;
+
 			//ignore shared, identity and joined columns here
 			if (tableColumn.Origin == TfDataColumnOriginType.SharedColumn ||
 				tableColumn.Origin == TfDataColumnOriginType.JoinedProviderColumn |
@@ -945,7 +954,6 @@ public partial class TfService
 			columnNames.Add(tableColumn.Name);
 
 			object defaultColumnValue = null;
-			var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == tableColumn.Name);
 			if (providerColumn is not null)
 				defaultColumnValue = GetProviderColumnDefaultValue(providerColumn);
 
@@ -982,6 +990,9 @@ public partial class TfService
 
 		foreach (var providerColumn in provider.Columns)
 		{
+			if (!string.IsNullOrWhiteSpace(providerColumn.Expression))
+				continue;
+
 			if (processedColumns.Contains(providerColumn.DbName!))
 				continue;
 
@@ -1031,6 +1042,9 @@ public partial class TfService
 
 		foreach (var column in provider.Columns)
 		{
+			if(!string.IsNullOrEmpty(column.Expression))
+				continue;
+
 			if (column.IncludeInTableSearch)
 			{
 				bool columnFoundInDataTable = false;
@@ -1064,6 +1078,10 @@ public partial class TfService
 		List<string> columnsWithChanges = new List<string>();
 		foreach (var column in row.DataTable.Columns)
 		{
+			var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == column.Name);
+			if (providerColumn != null && !string.IsNullOrWhiteSpace(providerColumn.Expression))
+				continue;
+
 			//join,shared and identity columns will not be updated
 			if (column.Origin == TfDataColumnOriginType.SharedColumn ||
 				column.Origin == TfDataColumnOriginType.JoinedProviderColumn ||
@@ -1140,6 +1158,10 @@ public partial class TfService
 
 		foreach (var tableColumn in row.DataTable.Columns)
 		{
+			var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == tableColumn.Name);
+			if (providerColumn != null && !string.IsNullOrWhiteSpace(providerColumn.Expression))
+				continue;
+
 			if (tableColumn.Origin != TfDataColumnOriginType.SharedColumn)
 				continue;
 
@@ -1185,6 +1207,10 @@ public partial class TfService
 		for (int i = 0; i < row.DataTable.Columns.Count; i++)
 		{
 			var tableColumn = row.DataTable.Columns[i];
+
+			var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == tableColumn.Name);	
+			if(providerColumn != null && !string.IsNullOrWhiteSpace(providerColumn.Expression))
+				continue;
 
 			//ignore shared,identity and joined columns here
 			if (tableColumn.Origin == TfDataColumnOriginType.SharedColumn ||
