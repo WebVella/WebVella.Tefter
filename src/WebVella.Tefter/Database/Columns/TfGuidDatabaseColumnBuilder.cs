@@ -49,7 +49,13 @@ public class TfGuidDatabaseColumnBuilder : TfDatabaseColumnBuilder
         return this;
     }
 
-    internal override TfGuidDatabaseColumn Build()
+	public TfGuidDatabaseColumnBuilder AsExpression(string expression)
+	{
+		_expression = expression;
+		return this;
+	}
+
+	internal override TfGuidDatabaseColumn Build()
     {
         return new TfGuidDatabaseColumn
         {
@@ -58,7 +64,8 @@ public class TfGuidDatabaseColumnBuilder : TfDatabaseColumnBuilder
             IsNullable = _isNullable,
             AutoDefaultValue = _autoDefaultValue,
             Name = _name,
-            Type = TfDatabaseColumnType.Guid
+            Type = TfDatabaseColumnType.Guid,
+			Expression = _expression
         };
     }
 }

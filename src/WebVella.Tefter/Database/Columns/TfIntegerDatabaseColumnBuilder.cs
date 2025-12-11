@@ -35,7 +35,13 @@ public class TfIntegerDatabaseColumnBuilder : TfDatabaseColumnBuilder
         return this;
     }
 
-    internal override TfIntegerDatabaseColumn Build()
+	public TfIntegerDatabaseColumnBuilder AsExpression(string expression)
+	{
+		_expression = expression;
+		return this;
+	}
+
+	internal override TfIntegerDatabaseColumn Build()
     {
         return new TfIntegerDatabaseColumn
         {
@@ -43,7 +49,8 @@ public class TfIntegerDatabaseColumnBuilder : TfDatabaseColumnBuilder
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,   
-            Type = TfDatabaseColumnType.Integer
+            Type = TfDatabaseColumnType.Integer,
+			Expression = _expression
         }; 
     }
 }

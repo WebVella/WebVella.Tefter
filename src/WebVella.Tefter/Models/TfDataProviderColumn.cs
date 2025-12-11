@@ -52,12 +52,23 @@ public class TfDataProviderColumn
 	[TfDboModelProperty("include_in_table_search")]
 	public bool IncludeInTableSearch { get; set; }
 
-	public void FixPrefix(string prefix)
+	[TfDboModelProperty("expression")]
+	public string? Expression { get; set; } = null;
+
+	[TfDboModelProperty("expression_json")]
+	public string? ExpressionJson { get; set; } = null;
+
+	public void FixPrefix(
+		string prefix)
 	{
 		if (!String.IsNullOrWhiteSpace(DbName) && !DbName.StartsWith(prefix))
 			DbName = prefix + DbName;
 	}
-	public void ApplyRuleSet(TfDataProviderColumnRuleSet ruleSet, string? defaultValue)
+	public void ApplyRuleSet(
+		TfDataProviderColumnRuleSet ruleSet,
+		string? defaultValue = null, 
+		string? expression = null,
+		string? expressionJson = null )
 	{
 		switch (ruleSet)
 		{
@@ -144,7 +155,10 @@ public enum TfDataProviderColumnRuleSet
 	NullableWithAutoDefault = 2,
 	//4. IsNullable = false, IsUnique = true, AutoDefaultValue = true, DefaultValue = null
 	[Description("required and must have only unique values")]
-	Unique = 3
+	Unique = 3,
+	//4. Generated column - requires Expression and ExpressionJson to be set
+	[Description("requires expression and will have calculated values")]
+	Generated = 4
 }
 
 public class TfUpsertDataProviderColumn
@@ -159,6 +173,9 @@ public class TfUpsertDataProviderColumn
 	public string? DefaultValue { get; set; }
 	public TfDataProviderColumnRuleSet RuleSet { get; set; } = TfDataProviderColumnRuleSet.Nullable;
 	public bool IncludeInTableSearch { get; set; }
+	public string? Expression { get; set; } = null;
+	public string? ExpressionJson { get; set; } = null;
+
 	public void FixPrefix(string prefix)
 	{
 		if (!String.IsNullOrWhiteSpace(DbName) && !DbName.StartsWith(prefix))
@@ -183,6 +200,8 @@ public class TfUpsertDataProviderColumn
 			IsUnique = false,//set below
 			IsSortable = true,//always
 			IsSearchable = true,//always
+			Expression = Expression,
+			ExpressionJson = ExpressionJson
 		};
 		//Applies the ruleset props
 		model.ApplyRuleSet(RuleSet, DefaultValue);

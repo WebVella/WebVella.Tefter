@@ -165,7 +165,7 @@ public partial class TfService : ITfService
 					{
 						c.AddShortTextColumn(identityColumnName, col =>
 						{
-							col.AsGeneratedSHA1FromColumns(dataIdentity.Columns.ToArray());
+							col.AsSha1ExpressionFromColumns(dataIdentity.Columns.ToArray());
 						});
 					});
 
@@ -241,7 +241,7 @@ public partial class TfService : ITfService
 					{
 						c.AddShortTextColumn(identityColumnName, col =>
 						{
-							col.AsGeneratedSHA1FromColumns(dataIdentity.Columns.ToArray());
+							col.AsSha1ExpressionFromColumns(dataIdentity.Columns.ToArray());
 						});
 					});
 

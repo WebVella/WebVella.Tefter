@@ -35,7 +35,13 @@ public class TfLongIntegerDatabaseColumnBuilder : TfDatabaseColumnBuilder
         return this;
     }
 
-    internal override TfLongIntegerDatabaseColumn Build()
+	public TfLongIntegerDatabaseColumnBuilder AsExpression(string expression)
+	{
+		_expression = expression;
+		return this;
+	}
+
+	internal override TfLongIntegerDatabaseColumn Build()
     {
         return new TfLongIntegerDatabaseColumn
         {
@@ -44,6 +50,7 @@ public class TfLongIntegerDatabaseColumnBuilder : TfDatabaseColumnBuilder
             IsNullable = _isNullable,
             Name = _name,   
             Type = TfDatabaseColumnType.LongInteger,
+			Expression = _expression,
         }; 
     }
 }

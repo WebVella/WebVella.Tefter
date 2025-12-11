@@ -37,7 +37,13 @@ public class TfBooleanDatabaseColumnBuilder : TfDatabaseColumnBuilder
         return this;
     }
 
-    internal override TfBooleanDatabaseColumn Build()
+	public TfBooleanDatabaseColumnBuilder AsExpression(string expression)
+	{
+		_expression = expression;
+		return this;
+	}
+
+	internal override TfBooleanDatabaseColumn Build()
     {
         return new TfBooleanDatabaseColumn
         {
@@ -45,7 +51,8 @@ public class TfBooleanDatabaseColumnBuilder : TfDatabaseColumnBuilder
 			DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,
-            Type = TfDatabaseColumnType.Boolean
+            Type = TfDatabaseColumnType.Boolean,
+			Expression = _expression
         };
     }
 }

@@ -1,6 +1,4 @@
-﻿using HtmlAgilityPack;
-
-namespace WebVella.Tefter.Database;
+﻿namespace WebVella.Tefter.Database;
 
 public partial interface ITfDatabaseManager
 {
@@ -73,205 +71,295 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 				{
 					case TfDatabaseColumnType.Guid:
 						{
-							Guid? guidDefaultValue = (Guid?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfGuidDatabaseColumn), defaultValue);
-
-							bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
-
-							var columnBuider = columnCollectionBuilder
-								.AddGuidColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(guidDefaultValue)
-								.WithLastCommited(meta.LastCommited);
-
-							if (isNullable)
-								columnBuider.Nullable();
+							if (isGenerated && !string.IsNullOrWhiteSpace(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddGuidColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
 							else
-								columnBuider.NotNullable();
+							{
+								Guid? guidDefaultValue = (Guid?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfGuidDatabaseColumn), defaultValue);
 
-							if (isAutoDefaultValue)
-								columnBuider.WithAutoDefaultValue();
-							else
-								columnBuider.WithoutAutoDefaultValue();
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
+
+								var columnBuider = columnCollectionBuilder
+									.AddGuidColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(guidDefaultValue)
+									.WithLastCommited(meta.LastCommited);
+
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
+							}
 						}
 						break;
 					case TfDatabaseColumnType.Boolean:
 						{
-							bool? columnDefaultValue = (bool?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfBooleanDatabaseColumn), defaultValue);
-
-							var columnBuider = columnCollectionBuilder
-								.AddBooleanColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue)
-								.WithLastCommited(meta.LastCommited);
-
-							if (isNullable)
-								columnBuider.Nullable();
+							if (isGenerated && !string.IsNullOrWhiteSpace(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddBooleanColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
 							else
-								columnBuider.NotNullable();
+							{
+								bool? columnDefaultValue = (bool?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfBooleanDatabaseColumn), defaultValue);
+
+								var columnBuider = columnCollectionBuilder
+									.AddBooleanColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue)
+									.WithLastCommited(meta.LastCommited);
+
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+							}
 						}
 						break;
 					case TfDatabaseColumnType.Number:
 						{
-							decimal? columnDefaultValue = (decimal?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfNumberDatabaseColumn), defaultValue);
-
-							var columnBuider = columnCollectionBuilder
-								.AddNumberColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue);
-
-							if (isNullable)
-								columnBuider.Nullable();
+							if (isGenerated && !string.IsNullOrWhiteSpace(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddNumberColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
 							else
-								columnBuider.NotNullable();
+							{
+								decimal? columnDefaultValue = (decimal?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfNumberDatabaseColumn), defaultValue);
 
-							columnBuider.WithLastCommited(meta.LastCommited);
+								var columnBuider = columnCollectionBuilder
+									.AddNumberColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue);
+
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+
+								columnBuider.WithLastCommited(meta.LastCommited);
+							}
 						}
 						break;
 					case TfDatabaseColumnType.DateOnly:
 						{
-							DateOnly? columnDefaultValue = (DateOnly?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateDatabaseColumn), defaultValue);
-
-							bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
-
-							var columnBuider = columnCollectionBuilder
-								.AddDateColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue)
-								.WithLastCommited(meta.LastCommited);
-
-							if (isNullable)
-								columnBuider.Nullable();
+							if (isGenerated && !string.IsNullOrWhiteSpace(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddDateColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
 							else
-								columnBuider.NotNullable();
+							{
+								DateOnly? columnDefaultValue = (DateOnly?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateDatabaseColumn), defaultValue);
 
-							if (isAutoDefaultValue)
-								columnBuider.WithAutoDefaultValue();
-							else
-								columnBuider.WithoutAutoDefaultValue();
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
+
+								var columnBuider = columnCollectionBuilder
+									.AddDateColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue)
+									.WithLastCommited(meta.LastCommited);
+
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
+							}
 						}
 						break;
 					case TfDatabaseColumnType.DateTime:
 						{
-							DateTime? columnDefaultValue = (DateTime?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateTimeDatabaseColumn), defaultValue);
-
-							bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
-
-							var columnBuider = columnCollectionBuilder
-								.AddDateTimeColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue)
-								.WithLastCommited(meta.LastCommited);
-
-							if (isNullable)
-								columnBuider.Nullable();
+							if (isGenerated && !string.IsNullOrWhiteSpace(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddDateTimeColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
 							else
-								columnBuider.NotNullable();
+							{
+								DateTime? columnDefaultValue = (DateTime?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateTimeDatabaseColumn), defaultValue);
 
-							if (isAutoDefaultValue)
-								columnBuider.WithAutoDefaultValue();
-							else
-								columnBuider.WithoutAutoDefaultValue();
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
+
+								var columnBuider = columnCollectionBuilder
+									.AddDateTimeColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue)
+									.WithLastCommited(meta.LastCommited);
+
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
+							}
 						}
 						break;
 					case TfDatabaseColumnType.Text:
 						{
-							string columnDefaultValue = (string)TfDatabaseUtility
+							if (isGenerated && !string.IsNullOrWhiteSpace(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddTextColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
+							else
+							{
+								string columnDefaultValue = (string)TfDatabaseUtility
 								.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfTextDatabaseColumn), defaultValue);
 
-							var columnBuider = columnCollectionBuilder
-								.AddTextColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue)
-								.WithLastCommited(meta.LastCommited);
+								var columnBuider = columnCollectionBuilder
+									.AddTextColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue)
+									.WithLastCommited(meta.LastCommited);
 
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+							}
 						}
 						break;
 					case TfDatabaseColumnType.ShortText:
 						{
-							string columnDefaultValue = (string)TfDatabaseUtility
-								.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfShortTextDatabaseColumn), defaultValue);
-
-								if(isGenerated && generationExpression != null)
-								{
-									columnCollectionBuilder
-										.AddShortTextColumnBuilder(meta.Id, columnName)
-										.AsGeneratedExpression(generationExpression)
-										.WithLastCommited(meta.LastCommited);
-								}
-								else
-								{
-
-									bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_SHORT_TEXT_COLUMN_AUTO_SHA1_DEFAULT_VALUE;
-
-									var columnBuider = columnCollectionBuilder
-										.AddShortTextColumnBuilder(meta.Id, columnName)
-										.WithDefaultValue(columnDefaultValue)
-										.WithLastCommited(meta.LastCommited);
-
-									if (isNullable)
-										columnBuider.Nullable();
-									else
-										columnBuider.NotNullable();
-
-									if (isAutoDefaultValue)
-										columnBuider.WithAutoDefaultValue();
-									else
-										columnBuider.WithoutAutoDefaultValue();
-								}
+							if (isGenerated && !string.IsNullOrWhiteSpace(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddShortTextColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
 							}
+							else
+							{
+								string columnDefaultValue = (string)TfDatabaseUtility
+									.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfShortTextDatabaseColumn), defaultValue);
+
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_SHORT_TEXT_COLUMN_AUTO_SHA1_DEFAULT_VALUE;
+
+								var columnBuider = columnCollectionBuilder
+									.AddShortTextColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue)
+									.WithLastCommited(meta.LastCommited);
+
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
+							}
+						}
 						break;
 					case TfDatabaseColumnType.ShortInteger:
 						{
-							short? columnDefaultValue = (short?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, 
+							if (isGenerated && !string.IsNullOrWhiteSpace(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddShortIntegerColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
+							else
+							{
+								short? columnDefaultValue = (short?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
 								typeof(TfShortIntegerDatabaseColumn), defaultValue);
 
-							var columnBuider = columnCollectionBuilder
-								.AddShortIntegerColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue);
+								var columnBuider = columnCollectionBuilder
+									.AddShortIntegerColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue);
 
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
 
-							columnBuider.WithLastCommited(meta.LastCommited);
+								columnBuider.WithLastCommited(meta.LastCommited);
+							}
 						}
 						break;
 					case TfDatabaseColumnType.Integer:
 						{
-							int? columnDefaultValue = (int?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
+							if (isGenerated && !string.IsNullOrWhiteSpace(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddIntegerColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
+							else
+							{
+								int? columnDefaultValue = (int?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
 								typeof(TfIntegerDatabaseColumn), defaultValue);
 
-							var columnBuider = columnCollectionBuilder
-								.AddIntegerColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue);
+								var columnBuider = columnCollectionBuilder
+									.AddIntegerColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue);
 
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
 
-							columnBuider.WithLastCommited(meta.LastCommited);
+								columnBuider.WithLastCommited(meta.LastCommited);
+							}
 						}
 						break;
 					case TfDatabaseColumnType.LongInteger:
 						{
-							long? columnDefaultValue = (long?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
+							if (isGenerated && !string.IsNullOrWhiteSpace(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddLongIntegerColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
+							else
+							{
+								long? columnDefaultValue = (long?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
 								typeof(TfLongIntegerDatabaseColumn), defaultValue);
 
-							var columnBuider = columnCollectionBuilder
-								.AddLongIntegerColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue);
+								var columnBuider = columnCollectionBuilder
+									.AddLongIntegerColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue);
 
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
 
-							columnBuider.WithLastCommited(meta.LastCommited);
+								columnBuider.WithLastCommited(meta.LastCommited);
+							}
 						}
 						break;
 					default:
 						throw new TfDatabaseException($"Not supported dbType for column '{columnName}'");
-				};
+				}
+				;
 			}
 
 			#endregion
@@ -420,7 +508,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 		return databaseBuilder;
 	}
 
-	public TfDatabaseUpdateResult CloneTableForSynch( string tableToClone )
+	public TfDatabaseUpdateResult CloneTableForSynch(string tableToClone)
 	{
 		var databaseBuilder = GetDatabaseBuilder();
 
@@ -443,7 +531,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 
 				string name = (string)row["table_name"];
 
-				if( name == tableToClone)
+				if (name == tableToClone)
 				{
 					newTableBuilder = databaseBuilder
 						.NewTableBuilder(Guid.NewGuid(), cloneTableName)
@@ -482,137 +570,197 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 				var generationExpression = row["generation_expression"] == DBNull.Value ? null : (string)row["generation_expression"];
 
 				var columnCollectionBuilder = newTableBuilder.WithColumnsBuilder();
-				meta.Id = Guid.NewGuid();
+				meta!.Id = Guid.NewGuid();
 
 				switch (meta.ColumnType)
 				{
 					case TfDatabaseColumnType.Guid:
 						{
-							Guid? guidDefaultValue = (Guid?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfGuidDatabaseColumn), defaultValue);
-
-							bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
-
-							var columnBuider = columnCollectionBuilder
-								.AddGuidColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(guidDefaultValue)
-								.WithLastCommited(meta.LastCommited);
-
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
-
-							if (isAutoDefaultValue)
-								columnBuider.WithAutoDefaultValue();
-							else
-								columnBuider.WithoutAutoDefaultValue();
-						}
-						break;
-					case TfDatabaseColumnType.Boolean:
-						{
-							bool? columnDefaultValue = (bool?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfBooleanDatabaseColumn), defaultValue);
-
-							var columnBuider = columnCollectionBuilder
-								.AddBooleanColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue)
-								.WithLastCommited(meta.LastCommited);
-
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
-						}
-						break;
-					case TfDatabaseColumnType.Number:
-						{
-							decimal? columnDefaultValue = (decimal?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfNumberDatabaseColumn), defaultValue);
-
-							var columnBuider = columnCollectionBuilder
-								.AddNumberColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue);
-
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
-
-							columnBuider.WithLastCommited(meta.LastCommited);
-						}
-						break;
-					case TfDatabaseColumnType.DateOnly:
-						{
-							DateOnly? columnDefaultValue = (DateOnly?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateDatabaseColumn), defaultValue);
-
-							bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
-
-							var columnBuider = columnCollectionBuilder
-								.AddDateColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue)
-								.WithLastCommited(meta.LastCommited);
-
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
-
-							if (isAutoDefaultValue)
-								columnBuider.WithAutoDefaultValue();
-							else
-								columnBuider.WithoutAutoDefaultValue();
-						}
-						break;
-					case TfDatabaseColumnType.DateTime:
-						{
-							DateTime? columnDefaultValue = (DateTime?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateTimeDatabaseColumn), defaultValue);
-
-							bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
-
-							var columnBuider = columnCollectionBuilder
-								.AddDateTimeColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue)
-								.WithLastCommited(meta.LastCommited);
-
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
-
-							if (isAutoDefaultValue)
-								columnBuider.WithAutoDefaultValue();
-							else
-								columnBuider.WithoutAutoDefaultValue();
-						}
-						break;
-					case TfDatabaseColumnType.Text:
-						{
-							string columnDefaultValue = (string)TfDatabaseUtility
-								.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfTextDatabaseColumn), defaultValue);
-
-							var columnBuider = columnCollectionBuilder
-								.AddTextColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue)
-								.WithLastCommited(meta.LastCommited);
-
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
-						}
-						break;
-					case TfDatabaseColumnType.ShortText:
-						{
-							string columnDefaultValue = (string)TfDatabaseUtility
-								.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfShortTextDatabaseColumn), defaultValue);
-
-							if (isGenerated && generationExpression != null)
+							if (isGenerated && !string.IsNullOrEmpty(generationExpression))
 							{
 								columnCollectionBuilder
-									.AddShortTextColumnBuilder(meta.Id, columnName)
-									.AsGeneratedExpression(generationExpression)
+									.AddGuidColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
 									.WithLastCommited(meta.LastCommited);
 							}
 							else
 							{
+								Guid? guidDefaultValue = (Guid?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfGuidDatabaseColumn), defaultValue);
+
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
+
+								var columnBuider = columnCollectionBuilder
+									.AddGuidColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(guidDefaultValue)
+									.WithLastCommited(meta.LastCommited);
+
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
+							}
+						}
+						break;
+					case TfDatabaseColumnType.Boolean:
+						{
+							if (isGenerated && !string.IsNullOrEmpty(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddBooleanColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
+							else
+							{
+								bool? columnDefaultValue = (bool?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfBooleanDatabaseColumn), defaultValue);
+
+								var columnBuider = columnCollectionBuilder
+									.AddBooleanColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue)
+									.WithLastCommited(meta.LastCommited);
+
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+							}
+						}
+						break;
+					case TfDatabaseColumnType.Number:
+						{
+							if (isGenerated && !string.IsNullOrEmpty(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddNumberColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
+							else
+							{
+								decimal? columnDefaultValue = (decimal?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfNumberDatabaseColumn), defaultValue);
+
+								var columnBuider = columnCollectionBuilder
+									.AddNumberColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue);
+
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+
+								columnBuider.WithLastCommited(meta.LastCommited);
+							}
+						}
+						break;
+					case TfDatabaseColumnType.DateOnly:
+						{
+							if (isGenerated && !string.IsNullOrEmpty(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddDateColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
+							else
+							{
+								DateOnly? columnDefaultValue = (DateOnly?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateDatabaseColumn), defaultValue);
+
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
+
+								var columnBuider = columnCollectionBuilder
+									.AddDateColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue)
+									.WithLastCommited(meta.LastCommited);
+
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
+							}
+						}
+						break;
+					case TfDatabaseColumnType.DateTime:
+						{
+							if (isGenerated && !string.IsNullOrEmpty(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddDateTimeColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
+							else
+							{
+								DateTime? columnDefaultValue = (DateTime?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateTimeDatabaseColumn), defaultValue);
+
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
+
+								var columnBuider = columnCollectionBuilder
+									.AddDateTimeColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue)
+									.WithLastCommited(meta.LastCommited);
+
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
+							}
+						}
+						break;
+					case TfDatabaseColumnType.Text:
+						{
+							if (isGenerated && !string.IsNullOrEmpty(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddTextColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
+							else
+							{
+								string columnDefaultValue = (string)TfDatabaseUtility
+								.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfTextDatabaseColumn), defaultValue);
+
+								var columnBuider = columnCollectionBuilder
+									.AddTextColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue)
+									.WithLastCommited(meta.LastCommited);
+
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+							}
+						}
+						break;
+					case TfDatabaseColumnType.ShortText:
+						{
+							if (isGenerated && !string.IsNullOrEmpty(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddShortTextColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
+							else
+							{
+								string columnDefaultValue = (string)TfDatabaseUtility
+									.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfShortTextDatabaseColumn), defaultValue);
+
 								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_SHORT_TEXT_COLUMN_AUTO_SHA1_DEFAULT_VALUE;
 
 								var columnBuider = columnCollectionBuilder
@@ -634,58 +782,89 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 						break;
 					case TfDatabaseColumnType.ShortInteger:
 						{
-							short? columnDefaultValue = (short?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
+							if (isGenerated && !string.IsNullOrEmpty(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddShortIntegerColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
+							else
+							{
+								short? columnDefaultValue = (short?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
 								typeof(TfShortIntegerDatabaseColumn), defaultValue);
 
-							var columnBuider = columnCollectionBuilder
-								.AddShortIntegerColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue);
+								var columnBuider = columnCollectionBuilder
+									.AddShortIntegerColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue);
 
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
 
-							columnBuider.WithLastCommited(meta.LastCommited);
+								columnBuider.WithLastCommited(meta.LastCommited);
+							}
 						}
 						break;
 					case TfDatabaseColumnType.Integer:
 						{
-							int? columnDefaultValue = (int?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
+							if (isGenerated && !string.IsNullOrEmpty(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddIntegerColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
+							else
+							{
+								int? columnDefaultValue = (int?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
 								typeof(TfIntegerDatabaseColumn), defaultValue);
 
-							var columnBuider = columnCollectionBuilder
-								.AddIntegerColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue);
+								var columnBuider = columnCollectionBuilder
+									.AddIntegerColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue);
 
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
 
-							columnBuider.WithLastCommited(meta.LastCommited);
+								columnBuider.WithLastCommited(meta.LastCommited);
+							}
 						}
 						break;
 					case TfDatabaseColumnType.LongInteger:
 						{
-							long? columnDefaultValue = (long?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
+							if (isGenerated && !string.IsNullOrEmpty(generationExpression))
+							{
+								columnCollectionBuilder
+									.AddLongIntegerColumnBuilder(meta.Id, columnName)
+									.AsExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
+							else
+							{
+								long? columnDefaultValue = (long?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
 								typeof(TfLongIntegerDatabaseColumn), defaultValue);
 
-							var columnBuider = columnCollectionBuilder
-								.AddLongIntegerColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue);
+								var columnBuider = columnCollectionBuilder
+									.AddLongIntegerColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue);
 
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
 
-							columnBuider.WithLastCommited(meta.LastCommited);
+								columnBuider.WithLastCommited(meta.LastCommited);
+							}
 						}
 						break;
 					default:
 						throw new TfDatabaseException($"Not supported dbType for column '{columnName}'");
-				};
+				}
+				;
 			}
 
 			#endregion
@@ -835,11 +1014,11 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 			}
 
 			#endregion
-			
 
-			var result =  SaveChanges(databaseBuilder);
 
-			if(result.IsSuccess)
+			var result = SaveChanges(databaseBuilder);
+
+			if (result.IsSuccess)
 				scope.Complete();
 
 			return result;
@@ -884,7 +1063,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 			}
 
 			_dbService.ExecuteSqlNonQueryCommand(cleanupScript);
-			
+
 			var result = new TfDatabaseUpdateResult(log);
 
 			if (result.IsSuccess)

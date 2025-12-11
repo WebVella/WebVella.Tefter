@@ -106,6 +106,9 @@ public partial class TfService : ITfService
 			var processedRowDict = new Dictionary<string, object?>();
 			foreach (var column in provider!.Columns)
 			{
+				if (!string.IsNullOrWhiteSpace(column.Expression))
+					continue;
+
 				var value = GetColumnValue(provider, column, null, rowDict, errors);
 				processedRowDict[column.DbName!] = value;
 			}
@@ -205,6 +208,9 @@ public partial class TfService : ITfService
 			{
 				var column = provider!.Columns.SingleOrDefault(x => x.DbName == columnName);
 				if (column is null)
+					continue;
+
+				if (!string.IsNullOrWhiteSpace(column.Expression))
 					continue;
 
 				var value = GetColumnValue(provider, column!, null, rowDict, errors);

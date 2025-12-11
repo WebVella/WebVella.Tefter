@@ -45,7 +45,14 @@ public class TfDateTimeDatabaseColumnBuilder : TfDatabaseColumnBuilder
 
         return this;
     }
-    internal override TfDateTimeDatabaseColumn Build()
+
+	public TfDateTimeDatabaseColumnBuilder AsExpression(string expression)
+	{
+		_expression = expression;
+		return this;
+	}
+
+	internal override TfDateTimeDatabaseColumn Build()
     {
         return new TfDateTimeDatabaseColumn
         {
@@ -54,7 +61,8 @@ public class TfDateTimeDatabaseColumnBuilder : TfDatabaseColumnBuilder
             IsNullable = _isNullable,
             AutoDefaultValue = _autoDefaultValue,
             Name = _name,
-            Type = TfDatabaseColumnType.DateTime
-        };
+            Type = TfDatabaseColumnType.DateTime,
+			Expression = _expression
+		};
     }
 }

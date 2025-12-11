@@ -49,7 +49,13 @@ public class TfDateDatabaseColumnBuilder : TfDatabaseColumnBuilder
         return this;
     }
 
-    internal override TfDateDatabaseColumn Build()
+	public TfDateDatabaseColumnBuilder AsExpression(string expression)
+	{
+		_expression = expression;
+		return this;
+	}
+
+	internal override TfDateDatabaseColumn Build()
     {
         return new TfDateDatabaseColumn
         {
@@ -58,7 +64,8 @@ public class TfDateDatabaseColumnBuilder : TfDatabaseColumnBuilder
             IsNullable = _isNullable,
             AutoDefaultValue = _autoDefaultValue,
             Name = _name,
-            Type = TfDatabaseColumnType.DateOnly
-        };
+            Type = TfDatabaseColumnType.DateOnly,
+			Expression = _expression,
+		};
     }
 }

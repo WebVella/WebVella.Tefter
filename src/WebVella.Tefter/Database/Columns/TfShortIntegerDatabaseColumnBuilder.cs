@@ -35,7 +35,13 @@ public class TfShortIntegerDatabaseColumnBuilder : TfDatabaseColumnBuilder
         return this;
     }
 
-    internal override TfShortIntegerDatabaseColumn Build()
+	public TfShortIntegerDatabaseColumnBuilder AsExpression(string expression)
+	{
+		_expression = expression;
+		return this;
+	}
+
+	internal override TfShortIntegerDatabaseColumn Build()
     {
         return new TfShortIntegerDatabaseColumn
         {
@@ -44,6 +50,7 @@ public class TfShortIntegerDatabaseColumnBuilder : TfDatabaseColumnBuilder
             IsNullable = _isNullable,
             Name = _name,   
             Type = TfDatabaseColumnType.ShortInteger,
-        }; 
+			Expression = _expression,
+		}; 
     }
 }

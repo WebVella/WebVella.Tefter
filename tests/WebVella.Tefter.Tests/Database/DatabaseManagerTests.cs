@@ -22,10 +22,10 @@ public partial class DatabaseManagerTests : BaseTest
 				var tablesAfterSave = dbManager.GetDatabaseBuilder().Build();
 
 				tablesAfterSave.Count().Should().Be(tablesBeforeSave.Count());
-				foreach(var table in tablesBeforeSave )
+				foreach (var table in tablesBeforeSave)
 				{
 					var savedTable = tablesAfterSave.Find(table.Id);
-					CompareTables(table,savedTable);
+					CompareTables(table, savedTable);
 				}
 			}
 		}
@@ -69,6 +69,7 @@ public partial class DatabaseManagerTests : BaseTest
 
 						   #region <--- Id --->
 							   .AddGuidColumn("id", x => x.NotNullable().WithAutoDefaultValue())
+							   .AddGuidColumn("id_expression", x => x.AsExpression(" id "))
 						   #endregion
 
 						   #region <--- Guid --->
@@ -104,6 +105,10 @@ public partial class DatabaseManagerTests : BaseTest
 								   .WithoutAutoDefaultValue();
 							   })
 							   .AddGuidColumn("guid_nullable_without_default_value", c => { c.Nullable(); })
+							   .AddGuidColumn("guid_expression", c =>
+							   {
+								   c.AsExpression(" guid_not_nullable_with_default_value ");
+							   })
 							   //this should provide exception
 							   //.AddNewGuidColumn("guid_not_nullable_without_default_value", c => { c.Nullable(); }) 
 						   #endregion
@@ -129,6 +134,10 @@ public partial class DatabaseManagerTests : BaseTest
 							   {
 								   c.Nullable();
 							   })
+								.AddBooleanColumn("bool_expression", c =>
+								{
+									c.AsExpression("bool_not_nullable_with_default_false");
+								})
 							   //this should provide exception
 							   //.AddNewBooleanColumn("bool_not_nullable_without_default", c => { c.NotNullable(); })  
 						   #endregion
@@ -147,6 +156,10 @@ public partial class DatabaseManagerTests : BaseTest
 							   {
 								   c.Nullable();
 							   })
+								.AddNumberColumn("number_expression", c =>
+								{
+									c.AsExpression(" number_not_nullable_with_default ");
+								})
 							   //this should provide exception
 							   //.AddNewNumberColumn("number_not_nullable_without_default", c => { c.NotNullable(); }) 
 						   #endregion
@@ -187,6 +200,10 @@ public partial class DatabaseManagerTests : BaseTest
 							   {
 								   c.Nullable();
 							   })
+								.AddDateColumn("date_expression", c =>
+								{
+									c.AsExpression(" date_not_nullable_with_default_value ");
+								})
 							   //this should provide exception
 							   //.AddNewDateColumn("date_not_nullable_without_default_value", c => { c.NotNullable(); }) 
 						   #endregion
@@ -227,6 +244,10 @@ public partial class DatabaseManagerTests : BaseTest
 							   {
 								   c.Nullable();
 							   })
+								 .AddDateTimeColumn("datetime_expression", c =>
+								 {
+									 c.AsExpression(" datetime_not_nullable_with_default_value ");
+								 })
 							   //this should provide exception
 							   //.AddNewDateTimeColumn("datetime_not_nullable_without_default_value", c => { c.NotNullable(); }) 
 						   #endregion
@@ -245,7 +266,11 @@ public partial class DatabaseManagerTests : BaseTest
 							   .AddTextColumn("text_nullable_without_default", c =>
 							   {
 								   c.Nullable();
-							   });
+							   })
+								.AddTextColumn("text_expression", c =>
+								{
+									c.AsExpression(" text_not_nullable_with_default ");
+								});
 						   //this should provide exception
 						   //.AddNewTextColumn("text_not_nullable_without_default", c => { c.NotNullable(); }) 
 						   #endregion
@@ -391,7 +416,7 @@ public partial class DatabaseManagerTests : BaseTest
 				var fk1 = (TfDatabaseForeignKeyConstraint)constraint1 as TfDatabaseForeignKeyConstraint;
 				var fk2 = (TfDatabaseForeignKeyConstraint)constraint2 as TfDatabaseForeignKeyConstraint;
 
-				fk1.ForeignTable.Should().Be(fk2.ForeignTable);	
+				fk1.ForeignTable.Should().Be(fk2.ForeignTable);
 
 				for (int j = 0; j < fk1.ForeignColumns.Count(); j++)
 				{

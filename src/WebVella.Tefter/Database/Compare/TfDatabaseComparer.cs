@@ -287,9 +287,9 @@ internal static class TfDatabaseComparer
                 return differences;
             }
 
-			if (string.IsNullOrWhiteSpace( initialColumn.GeneratedExpression ) != string.IsNullOrWhiteSpace( modifiedColumn.GeneratedExpression ) )
+			if (string.IsNullOrWhiteSpace( initialColumn.Expression ) != string.IsNullOrWhiteSpace( modifiedColumn.Expression ) )
 			{
-				if (string.IsNullOrWhiteSpace(initialColumn.GeneratedExpression))
+				if (string.IsNullOrWhiteSpace(initialColumn.Expression))
 				{
 					differences.Add(new TfDifference
 					{
@@ -325,11 +325,11 @@ internal static class TfDatabaseComparer
 
 			List<string> descriptions = new List<string>();
 
-			if (initialColumn.GeneratedExpression != null )
+			if (initialColumn.Expression != null )
 			{
-				if (initialColumn.GeneratedExpression != modifiedColumn.GeneratedExpression)
+				if (initialColumn.Expression != modifiedColumn.Expression)
 				{
-					descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' will change generation expression to '{modifiedColumn.GeneratedExpression}'");
+					descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' will change generated expression to '{modifiedColumn.Expression}'");
 				}
 			}
 			else

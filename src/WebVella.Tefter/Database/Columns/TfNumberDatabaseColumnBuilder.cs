@@ -35,7 +35,13 @@ public class TfNumberDatabaseColumnBuilder : TfDatabaseColumnBuilder
         return this;
     }
 
-    internal override TfNumberDatabaseColumn Build()
+	public TfNumberDatabaseColumnBuilder AsExpression(string expression)
+	{
+		_expression = expression;
+		return this;
+	}
+
+	internal override TfNumberDatabaseColumn Build()
     {
         return new TfNumberDatabaseColumn
         {
@@ -43,7 +49,8 @@ public class TfNumberDatabaseColumnBuilder : TfDatabaseColumnBuilder
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,   
-            Type = TfDatabaseColumnType.Number
-        }; 
+            Type = TfDatabaseColumnType.Number,
+			Expression = _expression,
+		}; 
     }
 }

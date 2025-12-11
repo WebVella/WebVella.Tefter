@@ -270,9 +270,9 @@ $$ LANGUAGE plpgsql;
         {
             StringBuilder sb = new StringBuilder();
             sb.Append($"ALTER TABLE \"{tableName}\" ADD COLUMN \"{column.Name}\" {column.DatabaseColumnType}");
-			if (!string.IsNullOrWhiteSpace(column.GeneratedExpression))
+			if (!string.IsNullOrWhiteSpace(column.Expression))
 			{
-				sb.Append($" generated always as ( {column.GeneratedExpression} ) stored");
+				sb.Append($" generated always as ( {column.Expression} ) stored");
 			}
 			else
 			{
@@ -320,10 +320,10 @@ $$ LANGUAGE plpgsql;
         {
             StringBuilder sb = new StringBuilder();
 		
-			if (!string.IsNullOrWhiteSpace(column.GeneratedExpression))
+			if (!string.IsNullOrWhiteSpace(column.Expression))
 			{
 				sb.Append($"ALTER TABLE \"{tableName}\" DROP COLUMN \"{column.Name}\";");
-				sb.Append($"ALTER TABLE \"{tableName}\" ADD COLUMN \"{column.Name}\" {column.DatabaseColumnType}  generated always as ( {column.GeneratedExpression} ) stored;");
+				sb.Append($"ALTER TABLE \"{tableName}\" ADD COLUMN \"{column.Name}\" {column.DatabaseColumnType}  generated always as ( {column.Expression} ) stored;");
 				//this will be available in postgres 17
 				//sb.Append($" ALTER COLUMN \"{column.Name}\" SET EXPRESSION AS ( {column.GeneratedExpression} );");
 			}

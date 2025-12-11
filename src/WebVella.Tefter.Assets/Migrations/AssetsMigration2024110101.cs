@@ -59,7 +59,7 @@ public class AssetsMigration2024110101 : ITfApplicationMigration
             {
                 columns
                     .AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
-                    .AddShortTextColumn("identity_row_id", c => { c.AsGeneratedSHA1FromColumns("id"); })
+                    .AddShortTextColumn("identity_row_id", c => { c.AsSha1ExpressionFromColumns("id"); })
                     .AddGuidColumn("folder_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
                     .AddShortIntegerColumn("type", c => { c.NotNullable(); })
                     .AddTextColumn("content_json", c => { c.NotNullable(); })

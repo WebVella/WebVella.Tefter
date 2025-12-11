@@ -509,6 +509,48 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Should().NotBeNull();
 		table.Columns.Should().HaveCount(0);
+
+		//expression test
+		
+		Guid expressionColumnId = Guid.NewGuid();
+		const string expressionColumnName = "test_guid_expression";
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.AddGuidColumn(columnId, columnName, column =>
+					{
+						column
+							.WithoutAutoDefaultValue()
+							.WithDefaultValue(defaultValue)
+							.Nullable();
+					})
+					.AddGuidColumn(expressionColumnId, expressionColumnName, column =>
+					{
+						column
+							.AsExpression($" {columnName} ");
+					});
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(2);
+		
+		columnById = table.Columns.Find(columnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(columnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfGuidDatabaseColumn>();
+
+		columnById = table.Columns.Find(expressionColumnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(expressionColumnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfGuidDatabaseColumn>();
 	}
 
 	[Fact]
@@ -596,6 +638,47 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Should().NotBeNull();
 		table.Columns.Should().HaveCount(0);
+
+		//expression test
+
+		Guid expressionColumnId = Guid.NewGuid();
+		const string expressionColumnName = "expression_test_number";
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.AddNumberColumn(columnId, columnName, column =>
+					{
+						column
+							.WithDefaultValue(defaultValue)
+							.Nullable();
+					})
+					.AddNumberColumn(expressionColumnId, expressionColumnName, column =>
+					{
+						column
+							.AsExpression($" {columnName} ");
+					});
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(2);
+
+		columnById = table.Columns.Find(columnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(columnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfNumberDatabaseColumn>();
+
+		columnById = table.Columns.Find(expressionColumnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(expressionColumnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfNumberDatabaseColumn>();
 	}
 
 	[Fact]
@@ -683,6 +766,47 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Should().NotBeNull();
 		table.Columns.Should().HaveCount(0);
+
+		//expression test
+
+		Guid expressionColumnId = Guid.NewGuid();
+		const string expressionColumnName = "expression_test_short_integer";
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.AddShortIntegerColumn(columnId, columnName, column =>
+					{
+						column
+							.WithDefaultValue(defaultValue)
+							.Nullable();
+					})
+					.AddShortIntegerColumn(expressionColumnId, expressionColumnName, column =>
+					{
+						column
+							.AsExpression($" {columnName} ");
+					});
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(2);
+
+		columnById = table.Columns.Find(columnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(columnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfShortIntegerDatabaseColumn>();
+
+		columnById = table.Columns.Find(expressionColumnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(expressionColumnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfShortIntegerDatabaseColumn>();
 	}
 
 	[Fact]
@@ -770,6 +894,47 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Should().NotBeNull();
 		table.Columns.Should().HaveCount(0);
+
+		//expression test
+
+		Guid expressionColumnId = Guid.NewGuid();
+		const string expressionColumnName = "expression_test_integer";
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.AddIntegerColumn(columnId, columnName, column =>
+					{
+						column
+							.WithDefaultValue(defaultValue)
+							.Nullable();
+					})
+					.AddIntegerColumn(expressionColumnId, expressionColumnName, column =>
+					{
+						column
+							.AsExpression($" {columnName} ");
+					});
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(2);
+
+		columnById = table.Columns.Find(columnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(columnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfIntegerDatabaseColumn>();
+
+		columnById = table.Columns.Find(expressionColumnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(expressionColumnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfIntegerDatabaseColumn>();
 	}
 
 	[Fact]
@@ -857,6 +1022,47 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Should().NotBeNull();
 		table.Columns.Should().HaveCount(0);
+
+		//expression test
+
+		Guid expressionColumnId = Guid.NewGuid();
+		const string expressionColumnName = "expression_test_long_integer";
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.AddLongIntegerColumn(columnId, columnName, column =>
+					{
+						column
+							.WithDefaultValue(defaultValue)
+							.Nullable();
+					})
+					.AddLongIntegerColumn(expressionColumnId, expressionColumnName, column =>
+					{
+						column
+							.AsExpression($" {columnName} ");
+					});
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(2);
+
+		columnById = table.Columns.Find(columnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(columnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfLongIntegerDatabaseColumn>();
+
+		columnById = table.Columns.Find(expressionColumnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(expressionColumnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfLongIntegerDatabaseColumn>();
 	}
 
 
@@ -945,6 +1151,47 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Should().NotBeNull();
 		table.Columns.Should().HaveCount(0);
+
+		//expression test
+
+		Guid expressionColumnId = Guid.NewGuid();
+		const string expressionColumnName = "expression_test_boolean";
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.AddBooleanColumn(columnId, columnName, column =>
+					{
+						column
+							.WithDefaultValue(defaultValue)
+							.Nullable();
+					})
+					.AddBooleanColumn(expressionColumnId, expressionColumnName, column =>
+					{
+						column
+							.AsExpression($" {columnName} ");
+					});
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(2);
+
+		columnById = table.Columns.Find(columnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(columnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfBooleanDatabaseColumn>();
+
+		columnById = table.Columns.Find(expressionColumnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(expressionColumnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfBooleanDatabaseColumn>();
 	}
 
 	[Fact]
@@ -1032,6 +1279,47 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Should().NotBeNull();
 		table.Columns.Should().HaveCount(0);
+
+		//expression test
+
+		Guid expressionColumnId = Guid.NewGuid();
+		const string expressionColumnName = "expression_test_text";
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.AddTextColumn(columnId, columnName, column =>
+					{
+						column
+							.WithDefaultValue(defaultValue)
+							.Nullable();
+					})
+					.AddTextColumn(expressionColumnId, expressionColumnName, column =>
+					{
+						column
+							.AsExpression($" {columnName} ");
+					});
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(2);
+
+		columnById = table.Columns.Find(columnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(columnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfTextDatabaseColumn>();
+
+		columnById = table.Columns.Find(expressionColumnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(expressionColumnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfTextDatabaseColumn>();
 	}
 
 	[Fact]
@@ -1119,6 +1407,47 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Should().NotBeNull();
 		table.Columns.Should().HaveCount(0);
+
+		//expression test
+
+		Guid expressionColumnId = Guid.NewGuid();
+		const string expressionColumnName = "expression_test_short_text";
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.AddShortTextColumn(columnId, columnName, column =>
+					{
+						column
+							.WithDefaultValue(defaultValue)
+							.Nullable();
+					})
+					.AddShortTextColumn(expressionColumnId, expressionColumnName, column =>
+					{
+						column
+							.AsExpression($" {columnName} ");
+					});
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(2);
+
+		columnById = table.Columns.Find(columnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(columnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfShortTextDatabaseColumn>();
+
+		columnById = table.Columns.Find(expressionColumnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(expressionColumnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfShortTextDatabaseColumn>();
 	}
 
 	[Fact]
@@ -1206,6 +1535,47 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Should().NotBeNull();
 		table.Columns.Should().HaveCount(0);
+
+		//expression test
+
+		Guid expressionColumnId = Guid.NewGuid();
+		const string expressionColumnName = "expression_test_date";
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.AddDateColumn(columnId, columnName, column =>
+					{
+						column
+							.WithDefaultValue(defaultValue)
+							.Nullable();
+					})
+					.AddDateColumn(expressionColumnId, expressionColumnName, column =>
+					{
+						column
+							.AsExpression($" {columnName} ");
+					});
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(2);
+
+		columnById = table.Columns.Find(columnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(columnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfDateDatabaseColumn>();
+
+		columnById = table.Columns.Find(expressionColumnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(expressionColumnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfDateDatabaseColumn>();
 	}
 
 	[Fact]
@@ -1293,6 +1663,47 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Should().NotBeNull();
 		table.Columns.Should().HaveCount(0);
+
+		//expression test
+
+		Guid expressionColumnId = Guid.NewGuid();
+		const string expressionColumnName = "expression_test_datetime";
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.AddDateTimeColumn(columnId, columnName, column =>
+					{
+						column
+							.WithDefaultValue(defaultValue)
+							.Nullable();
+					})
+					.AddDateTimeColumn(expressionColumnId, expressionColumnName, column =>
+					{
+						column
+							.AsExpression($" {columnName} ");
+					});
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(2);
+
+		columnById = table.Columns.Find(columnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(columnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfDateTimeDatabaseColumn>();
+
+		columnById = table.Columns.Find(expressionColumnId);
+		columnById.Should().NotBeNull();
+		columnByName = table.Columns.Find(expressionColumnName);
+		columnByName.Should().NotBeNull();
+		columnById.Should().BeOfType<TfDateTimeDatabaseColumn>();
 	}
 
 	[Fact]

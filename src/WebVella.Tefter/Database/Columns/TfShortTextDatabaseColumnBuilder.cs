@@ -49,18 +49,18 @@ public class TfShortTextDatabaseColumnBuilder : TfDatabaseColumnBuilder
 		return this;
 	}
 
-	public TfShortTextDatabaseColumnBuilder AsGeneratedExpression(string expression)
+	public TfShortTextDatabaseColumnBuilder AsExpression(string expression)
 	{
-		_generatedExpression = expression;
+		_expression = expression;
 		return this;
 	}
 
-	public TfShortTextDatabaseColumnBuilder AsGeneratedSHA1FromColumns(params string [] columns )
+	public TfShortTextDatabaseColumnBuilder AsSha1ExpressionFromColumns(params string [] columns)
 	{
 		if (columns == null || columns.Length == 0)
 			throw new ArgumentNullException(nameof(columns), "The columns array cannot be null or empty.");
 
-		_generatedExpression = string.Format( TfConstants.DB_SHORT_TEXT_COLUMN_SHA1_FROM_COLUMNS_VALUE,
+		_expression = string.Format( TfConstants.DB_SHORT_TEXT_COLUMN_SHA1_FROM_COLUMNS_VALUE,
 			string.Join(",", columns.Select( x=> x + "::TEXT") ));
 
 		return this;
@@ -76,7 +76,7 @@ public class TfShortTextDatabaseColumnBuilder : TfDatabaseColumnBuilder
             IsNullable = _isNullable,
             Name = _name,
             Type = TfDatabaseColumnType.ShortText,
-			GeneratedExpression = _generatedExpression
+			Expression = _expression
 		};
     }
 }

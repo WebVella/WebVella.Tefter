@@ -151,7 +151,9 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 					.AddBooleanColumn("is_searchable", c => { c.NotNullable().WithDefaultValue(false); })
 					.AddShortIntegerColumn("preferred_search_type", c => { c.NotNullable().WithDefaultValue(0); })
 					.AddBooleanColumn("include_in_table_search", c => { c.NotNullable().WithDefaultValue(false); })
-					.AddDateTimeColumn("created_on", c => { c.NotNullable().WithAutoDefaultValue(); });
+					.AddDateTimeColumn("created_on", c => { c.NotNullable().WithAutoDefaultValue(); })
+					.AddTextColumn("expression", c => { c.Nullable(); })
+					.AddTextColumn("expression_json", c => { c.Nullable(); });
 			})
 			.WithConstraints(constraints =>
 			{
@@ -800,7 +802,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
-					.AddShortTextColumn("identity_row_id", c => { c.AsGeneratedSHA1FromColumns("id"); })
+					.AddShortTextColumn("identity_row_id", c => { c.AsSha1ExpressionFromColumns("id"); })
 					.AddShortTextColumn("name", c => { c.NotNullable(); })
 					.AddTextColumn("description", c => { c.Nullable(); })
 					.AddShortIntegerColumn("type", c => { c.NotNullable().WithDefaultValue(0); })

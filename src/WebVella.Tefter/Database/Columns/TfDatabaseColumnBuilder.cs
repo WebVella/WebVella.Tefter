@@ -8,8 +8,8 @@ public abstract class TfDatabaseColumnBuilder
     protected object _defaultValue = null;
     protected bool _isNullable = true;
     protected bool _autoDefaultValue = false;
-	protected string _generatedExpression = null;
-    private readonly TfDatabaseBuilder _databaseBuilder;
+	protected string _expression = null;
+	private readonly TfDatabaseBuilder _databaseBuilder;
 
     internal Guid Id => _id;
 	internal string Name => _name;

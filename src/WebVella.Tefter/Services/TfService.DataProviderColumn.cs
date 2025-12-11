@@ -1,6 +1,4 @@
-﻿using Nito.AsyncEx.Synchronous;
-
-namespace WebVella.Tefter.Services;
+﻿namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -139,29 +137,34 @@ public partial class TfService : ITfService
 
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
-				DbName = "tf_row_index", DbType = TfDatabaseColumnType.Integer
+				DbName = "tf_row_index",
+				DbType = TfDatabaseColumnType.Integer
 			});
 
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
-				DbName = "tf_created_on", DbType = TfDatabaseColumnType.DateTime
+				DbName = "tf_created_on",
+				DbType = TfDatabaseColumnType.DateTime
 			});
 
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
-				DbName = "tf_updated_on", DbType = TfDatabaseColumnType.DateTime
+				DbName = "tf_updated_on",
+				DbType = TfDatabaseColumnType.DateTime
 			});
 
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
-				DbName = "tf_search", DbType = TfDatabaseColumnType.Text
+				DbName = "tf_search",
+				DbType = TfDatabaseColumnType.Text
 			});
 
 			foreach (var providerDataIdentity in providerIdentities)
 			{
 				systemColumns.Add(new TfDataProviderSystemColumn
 				{
-					DbName = $"tf_ide_{providerDataIdentity.DataIdentity}", DbType = TfDatabaseColumnType.ShortText
+					DbName = $"tf_ide_{providerDataIdentity.DataIdentity}",
+					DbType = TfDatabaseColumnType.ShortText
 				});
 			}
 
@@ -413,214 +416,313 @@ public partial class TfService : ITfService
 		{
 			case TfDatabaseColumnType.Boolean:
 				{
-					columnsBuilder.AddBooleanColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-
-						if (column.DefaultValue is not null)
-							c.WithDefaultValue(Convert.ToBoolean(column.DefaultValue));
-					});
-
-					if (column.IsSearchable || column.IsSortable)
-					{
-						tableBuilder.WithIndexes(indexes =>
+						columnsBuilder.AddBooleanColumn(column.DbName!, c =>
 						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
-								c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
+					}
+					else
+					{
+						columnsBuilder.AddBooleanColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+
+							if (column.DefaultValue is not null)
+								c.WithDefaultValue(Convert.ToBoolean(column.DefaultValue));
+						});
+
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+									c => { c.WithColumns(column.DbName!); });
+							});
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.Text:
 				{
-					columnsBuilder.AddTextColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						c.WithDefaultValue(column.DefaultValue);
-					});
-
-					if (column.IsSearchable || column.IsSortable)
-					{
-						tableBuilder.WithIndexes(indexes =>
+						columnsBuilder.AddTextColumn(column.DbName!, c =>
 						{
-							indexes.AddGinIndexBuilder($"ix_{providerTableName}_{column.DbName}",
-								c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
+					}
+					else
+					{
+						columnsBuilder.AddTextColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							c.WithDefaultValue(column.DefaultValue);
+						});
+
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddGinIndexBuilder($"ix_{providerTableName}_{column.DbName}",
+									c => { c.WithColumns(column.DbName!); });
+							});
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.ShortText:
 				{
-					columnsBuilder.AddShortTextColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						c.WithDefaultValue(column.DefaultValue);
-					});
-
-					if (column.IsSearchable || column.IsSortable)
-					{
-						tableBuilder.WithIndexes(indexes =>
+						columnsBuilder.AddShortTextColumn(column.DbName!, c =>
 						{
-							indexes.AddBTreeIndexBuilder($"ix_{providerTableName}_{column.DbName}",
-								c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
+					}
+					else
+					{
+						columnsBuilder.AddShortTextColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							c.WithDefaultValue(column.DefaultValue);
+						});
+
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder($"ix_{providerTableName}_{column.DbName}",
+									c => { c.WithColumns(column.DbName!); });
+							});
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.Guid:
 				{
-					columnsBuilder.AddGuidColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.AutoDefaultValue)
-							c.WithAutoDefaultValue();
-						else
+						columnsBuilder.AddGuidColumn(column.DbName!, c =>
 						{
-							if (column.DefaultValue is not null)
-								c.WithDefaultValue(new Guid(column.DefaultValue));
-						}
-					});
-
-					if (column.IsSearchable || column.IsSortable)
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
-								c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
+					}
+					else
+					{
+						columnsBuilder.AddGuidColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
+							{
+								if (column.DefaultValue is not null)
+									c.WithDefaultValue(new Guid(column.DefaultValue));
+							}
+						});
+
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+									c => { c.WithColumns(column.DbName!); });
+							});
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.DateOnly:
 				{
-					columnsBuilder.AddDateColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.AutoDefaultValue)
-							c.WithAutoDefaultValue();
-						else
+						columnsBuilder.AddDateColumn(column.DbName!, c =>
 						{
-							if (column.DefaultValue is not null)
-							{
-								var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
-								DateOnly date = DateOnly.FromDateTime(datetime);
-								c.WithDefaultValue(date);
-							}
-						}
-					});
-
-					if (column.IsSearchable || column.IsSortable)
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
-								c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
+					}
+					else
+					{
+						columnsBuilder.AddDateColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
+							{
+								if (column.DefaultValue is not null)
+								{
+									var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+									DateOnly date = DateOnly.FromDateTime(datetime);
+									c.WithDefaultValue(date);
+								}
+							}
+						});
+
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+									c => { c.WithColumns(column.DbName!); });
+							});
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.DateTime:
 				{
-					columnsBuilder.AddDateTimeColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.AutoDefaultValue)
-							c.WithAutoDefaultValue();
-						else
+						columnsBuilder.AddDateTimeColumn(column.DbName!, c =>
 						{
-							if (column.DefaultValue is not null)
-							{
-								var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
-								c.WithDefaultValue(datetime);
-							}
-						}
-					});
-
-					if (column.IsSearchable || column.IsSortable)
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
-								c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
+					}
+					else
+					{
+						columnsBuilder.AddDateTimeColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
+							{
+								if (column.DefaultValue is not null)
+								{
+									var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+									c.WithDefaultValue(datetime);
+								}
+							}
+						});
+
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+									c => { c.WithColumns(column.DbName!); });
+							});
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.Number:
 				{
-					columnsBuilder.AddNumberColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.DefaultValue is not null)
+						columnsBuilder.AddNumberColumn(column.DbName!, c =>
 						{
-							var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
-							c.WithDefaultValue(number);
-						}
-					});
-					if (column.IsSearchable || column.IsSortable)
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
-								c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
+					}
+					else
+					{
+						columnsBuilder.AddNumberColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
+								c.WithDefaultValue(number);
+							}
+						});
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+									c => { c.WithColumns(column.DbName!); });
+							});
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.ShortInteger:
 				{
-					columnsBuilder.AddShortIntegerColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.DefaultValue is not null)
+						columnsBuilder.AddShortIntegerColumn(column.DbName!, c =>
 						{
-							var number = short.Parse(column.DefaultValue);
-							c.WithDefaultValue(number);
-						}
-					});
-					if (column.IsSearchable || column.IsSortable)
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
-								c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
+					}
+					else
+					{
+						columnsBuilder.AddShortIntegerColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = short.Parse(column.DefaultValue);
+								c.WithDefaultValue(number);
+							}
+						});
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+									c => { c.WithColumns(column.DbName!); });
+							});
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.Integer:
 				{
-					columnsBuilder.AddIntegerColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.DefaultValue is not null)
+						columnsBuilder.AddIntegerColumn(column.DbName!, c =>
 						{
-							var number = int.Parse(column.DefaultValue);
-							c.WithDefaultValue(number);
-						}
-					});
-					if (column.IsSearchable || column.IsSortable)
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
-								c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
+					}
+					else
+					{
+						columnsBuilder.AddIntegerColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = int.Parse(column.DefaultValue);
+								c.WithDefaultValue(number);
+							}
+						});
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+									c => { c.WithColumns(column.DbName!); });
+							});
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.LongInteger:
 				{
-					columnsBuilder.AddLongIntegerColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
+					{
+						columnsBuilder.AddLongIntegerColumn(column.DbName!, c =>
+						{
+							c.AsExpression(column.Expression);
+						});
+					}
+					else
+					{
+						columnsBuilder.AddLongIntegerColumn(column.DbName!, c =>
 					{
 						if (column.IsNullable) c.Nullable();
 						else c.NotNullable();
@@ -630,13 +732,14 @@ public partial class TfService : ITfService
 							c.WithDefaultValue(number);
 						}
 					});
-					if (column.IsSearchable || column.IsSortable)
-					{
-						tableBuilder.WithIndexes(indexes =>
+						if (column.IsSearchable || column.IsSortable)
 						{
-							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
-								c => { c.WithColumns(column.DbName); });
-						});
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}",
+									c => { c.WithColumns(column.DbName!); });
+							});
+						}
 					}
 				}
 				break;
@@ -644,12 +747,13 @@ public partial class TfService : ITfService
 				throw new Exception("Not supported database column type");
 		}
 
-		if (column.IsUnique)
+		//add unique constraint only if not generated column
+		if (column.IsUnique && string.IsNullOrEmpty(column.Expression))
 		{
 			tableBuilder.WithConstraints(constraints =>
 			{
 				constraints.AddUniqueKeyConstraintBuilder($"ux_{providerTableName}_{column.DbName}",
-					c => { c.WithColumns(column.DbName); });
+					c => { c.WithColumns(column.DbName!); });
 			});
 		}
 
@@ -673,325 +777,424 @@ public partial class TfService : ITfService
 		{
 			case TfDatabaseColumnType.Boolean:
 				{
-					columnsBuilder.WithBooleanColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-
-						if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
+						columnsBuilder.WithBooleanColumn(column.DbName!, c =>
 						{
-							c.WithDefaultValue(Convert.ToBoolean(column.DefaultValue));
-						}
-					});
-
-					string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-					    (column.IsSearchable || column.IsSortable))
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddGinIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
 					}
-
-					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-					    (!column.IsSearchable && !column.IsSortable))
+					else
 					{
-						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						columnsBuilder.WithBooleanColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+
+							if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
+							{
+								c.WithDefaultValue(Convert.ToBoolean(column.DefaultValue));
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddGinIndexBuilder(indexName, c => { c.WithColumns(column.DbName!); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.Text:
 				{
-					columnsBuilder.WithTextColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-
-						if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
+						columnsBuilder.WithTextColumn(column.DbName!, c =>
 						{
-							c.WithDefaultValue(column.DefaultValue);
-						}
-					});
-
-
-					string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-					    (column.IsSearchable || column.IsSortable))
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddGinIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
 					}
-
-					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-					    (!column.IsSearchable && !column.IsSortable))
+					else
 					{
-						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						columnsBuilder.WithTextColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+
+							if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
+							{
+								c.WithDefaultValue(column.DefaultValue);
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddGinIndexBuilder(indexName, c => { c.WithColumns(column.DbName!); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.ShortText:
 				{
-					columnsBuilder.WithShortTextColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-
-						if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
+						columnsBuilder.WithShortTextColumn(column.DbName!, c =>
 						{
-							c.WithDefaultValue(column.DefaultValue);
-						}
-					});
-
-					string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-					    (column.IsSearchable || column.IsSortable))
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
 					}
-
-					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-					    (!column.IsSearchable && !column.IsSortable))
+					else
 					{
-						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						columnsBuilder.WithShortTextColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+
+							if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
+							{
+								c.WithDefaultValue(column.DefaultValue);
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName!); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.Guid:
 				{
-					columnsBuilder.WithGuidColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.AutoDefaultValue)
-							c.WithAutoDefaultValue();
-						else
+						columnsBuilder.WithGuidColumn(column.DbName!, c =>
 						{
-							if (column.DefaultValue is not null)
-								c.WithDefaultValue(new Guid(column.DefaultValue));
-						}
-					});
-
-					string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-					    (column.IsSearchable || column.IsSortable))
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
 					}
-
-					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-					    (!column.IsSearchable && !column.IsSortable))
+					else
 					{
-						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						columnsBuilder.WithGuidColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
+							{
+								if (column.DefaultValue is not null)
+									c.WithDefaultValue(new Guid(column.DefaultValue));
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName!); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.DateOnly:
 				{
-					columnsBuilder.WithDateColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.AutoDefaultValue)
-							c.WithAutoDefaultValue();
-						else
+						columnsBuilder.WithDateColumn(column.DbName!, c =>
 						{
-							if (column.DefaultValue is not null)
-							{
-								var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
-								DateOnly date = DateOnly.FromDateTime(datetime);
-								c.WithDefaultValue(date);
-							}
-						}
-					});
-
-					string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-					    (column.IsSearchable || column.IsSortable))
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
 					}
-
-					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-					    (!column.IsSearchable && !column.IsSortable))
+					else
 					{
-						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						columnsBuilder.WithDateColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
+							{
+								if (column.DefaultValue is not null)
+								{
+									var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+									DateOnly date = DateOnly.FromDateTime(datetime);
+									c.WithDefaultValue(date);
+								}
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName!); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.DateTime:
 				{
-					columnsBuilder.WithDateTimeColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.AutoDefaultValue)
-							c.WithAutoDefaultValue();
-						else
+						columnsBuilder.WithDateTimeColumn(column.DbName!, c =>
 						{
-							if (column.DefaultValue is not null)
-							{
-								var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
-								c.WithDefaultValue(datetime);
-							}
-						}
-					});
-
-					string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-					    (column.IsSearchable || column.IsSortable))
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
 					}
-
-					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-					    (!column.IsSearchable && !column.IsSortable))
+					else
 					{
-						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						columnsBuilder.WithDateTimeColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
+							{
+								if (column.DefaultValue is not null)
+								{
+									var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+									c.WithDefaultValue(datetime);
+								}
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName!); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.Number:
 				{
-					columnsBuilder.WithNumberColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.DefaultValue is not null)
+						columnsBuilder.WithNumberColumn(column.DbName!, c =>
 						{
-							var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
-							c.WithDefaultValue(number);
-						}
-					});
-
-					string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-					    (column.IsSearchable || column.IsSortable))
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
 					}
-
-					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-					    (!column.IsSearchable && !column.IsSortable))
+					else
 					{
-						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						columnsBuilder.WithNumberColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
+								c.WithDefaultValue(number);
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName!); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.ShortInteger:
 				{
-					columnsBuilder.WithShortIntegerColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.DefaultValue is not null)
+						columnsBuilder.WithShortIntegerColumn(column.DbName!, c =>
 						{
-							var number = short.Parse(column.DefaultValue);
-							c.WithDefaultValue(number);
-						}
-					});
-
-					string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-					    (column.IsSearchable || column.IsSortable))
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
 					}
-
-					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-					    (!column.IsSearchable && !column.IsSortable))
+					else
 					{
-						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						columnsBuilder.WithShortIntegerColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = short.Parse(column.DefaultValue);
+								c.WithDefaultValue(number);
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName!); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.Integer:
 				{
-					columnsBuilder.WithIntegerColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.DefaultValue is not null)
+						columnsBuilder.WithIntegerColumn(column.DbName!, c =>
 						{
-							var number = int.Parse(column.DefaultValue);
-							c.WithDefaultValue(number);
-						}
-					});
-
-					string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-					    (column.IsSearchable || column.IsSortable))
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
 					}
-
-					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-					    (!column.IsSearchable && !column.IsSortable))
+					else
 					{
-						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						columnsBuilder.WithIntegerColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = int.Parse(column.DefaultValue);
+								c.WithDefaultValue(number);
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName!); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
 					}
 				}
 				break;
 			case TfDatabaseColumnType.LongInteger:
 				{
-					columnsBuilder.WithLongIntegerColumn(column.DbName, c =>
+					if (!string.IsNullOrEmpty(column.Expression))
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.DefaultValue is not null)
+						columnsBuilder.WithLongIntegerColumn(column.DbName!, c =>
 						{
-							var number = long.Parse(column.DefaultValue);
-							c.WithDefaultValue(number);
-						}
-					});
-
-					string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-					    (column.IsSearchable || column.IsSortable))
-					{
-						tableBuilder.WithIndexes(indexes =>
-						{
-							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							c.AsExpression(column.Expression);
 						});
 					}
-
-					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-					    (!column.IsSearchable && !column.IsSortable))
+					else
 					{
-						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						columnsBuilder.WithLongIntegerColumn(column.DbName!, c =>
+						{
+							if (column.IsNullable) c.Nullable();
+							else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = long.Parse(column.DefaultValue);
+								c.WithDefaultValue(number);
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName!); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
 					}
 				}
 				break;
@@ -999,21 +1202,25 @@ public partial class TfService : ITfService
 				throw new Exception("Not supported database column type");
 		}
 
-		if (column.IsUnique && !existingColumn.IsUnique)
+		//only if column is not generated
+		if (string.IsNullOrEmpty(column.Expression))
 		{
-			tableBuilder.WithConstraints(constraints =>
+			if (column.IsUnique && !existingColumn.IsUnique)
 			{
-				constraints.AddUniqueKeyConstraintBuilder($"ux_{providerTableName}_{column.DbName}",
-					c => { c.WithColumns(column.DbName); });
-			});
-		}
+				tableBuilder.WithConstraints(constraints =>
+				{
+					constraints.AddUniqueKeyConstraintBuilder($"ux_{providerTableName}_{column.DbName}",
+						c => { c.WithColumns(column.DbName!); });
+				});
+			}
 
-		if (!column.IsUnique && existingColumn.IsUnique)
-		{
-			tableBuilder.WithConstraints(constraints =>
+			if (!column.IsUnique && existingColumn.IsUnique)
 			{
-				constraints.Remove($"ux_{providerTableName}_{column.DbName}");
-			});
+				tableBuilder.WithConstraints(constraints =>
+				{
+					constraints.Remove($"ux_{providerTableName}_{column.DbName}");
+				});
+			}
 		}
 
 		var result = _dbManager.SaveChanges(dbBuilder);
@@ -1318,19 +1525,22 @@ public partial class TfService : ITfService
 						if (column.IsNullable)
 							return true;
 
+						if (!string.IsNullOrEmpty(column.Expression))
+							return true;
+
 						if ((column.DefaultValue is not null || column.AutoDefaultValue)
-						    &&
-						    (column.DbType == TfDatabaseColumnType.Guid ||
-						     column.DbType == TfDatabaseColumnType.DateOnly ||
-						     column.DbType == TfDatabaseColumnType.DateTime))
+							&&
+							(column.DbType == TfDatabaseColumnType.Guid ||
+							 column.DbType == TfDatabaseColumnType.DateOnly ||
+							 column.DbType == TfDatabaseColumnType.DateTime))
 						{
 							return true;
 						}
 
 						if ((string.IsNullOrWhiteSpace(column.DefaultValue) && !column.AutoDefaultValue)
-						    &&
-						    (column.DbType != TfDatabaseColumnType.Text &&
-						     column.DbType != TfDatabaseColumnType.ShortText))
+							&&
+							(column.DbType != TfDatabaseColumnType.Text &&
+							 column.DbType != TfDatabaseColumnType.ShortText))
 							return false;
 
 						if (column.DefaultValue == null && !column.AutoDefaultValue)
@@ -1343,6 +1553,9 @@ public partial class TfService : ITfService
 				RuleFor(column => column.DefaultValue)
 					.Must((column, defaultValue) =>
 					{
+						if (!string.IsNullOrEmpty(column.Expression))
+							return true;
+
 						if (String.IsNullOrWhiteSpace(defaultValue))
 							return true;
 
@@ -1409,6 +1622,25 @@ public partial class TfService : ITfService
 					})
 					.WithMessage(
 						$"Column is marked not nullable. Default value is required. Specified default value is empty or not correct for selected provider data type.");
+
+				RuleFor(column => column.Expression)
+					.Must((column, expression) =>
+					{
+						return (string.IsNullOrWhiteSpace(column.Expression) && string.IsNullOrWhiteSpace(column.ExpressionJson)) ||
+						   (!string.IsNullOrWhiteSpace(column.Expression) && !string.IsNullOrWhiteSpace(column.ExpressionJson));
+					})
+					.WithMessage("There database column expression or expression json is missing.");
+
+				RuleFor(column => column.Expression)
+					.Must((column, expression) =>
+					{
+						if(string.IsNullOrWhiteSpace(column.Expression))
+							return true;
+
+						return string.IsNullOrWhiteSpace(column.SourceName);
+					})
+					.WithMessage("There database column expression or expression json is missing.");
+
 			});
 
 			RuleSet("create", () =>
@@ -1471,6 +1703,18 @@ public partial class TfService : ITfService
 						return existingColumn.DbType == dbType;
 					})
 					.WithMessage("There database type of column cannot be changed.");
+
+				RuleFor(column => column.Expression)
+					.Must((column, expression) =>
+					{
+						var existingColumn = tfService.GetDataProviderColumn(column.Id);
+						if (existingColumn is null)
+							return true;
+
+						return (string.IsNullOrWhiteSpace(existingColumn.Expression) && string.IsNullOrWhiteSpace(expression)) ||
+							   (!string.IsNullOrWhiteSpace(existingColumn.Expression) && !string.IsNullOrWhiteSpace(expression));
+					})
+					.WithMessage("There database column expression type cannot be changed.");
 			});
 
 			RuleSet("delete", () =>
@@ -1479,11 +1723,11 @@ public partial class TfService : ITfService
 					.Must((column, id) =>
 					{
 						var existingColumn = tfService.GetDataProviderColumn(column.Id);
-						if(existingColumn is null)
+						if (existingColumn is null)
 							return true;
 
 						bool identityFound = false;
-						foreach(var identity in _provider.Identities)
+						foreach (var identity in _provider.Identities)
 						{
 							if (identity.Columns.Contains(existingColumn.DbName))
 								identityFound = true;

@@ -250,6 +250,270 @@ public partial class TfServiceTest : BaseTest
 	}
 
 	[Fact]
+	public async Task DataProviderColumn_Expressions()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var provider = CreateProviderInternal(tfService, tfMetaService);
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = Guid.NewGuid().ToString(),
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_text",
+					DbType = TfDatabaseColumnType.Text,
+					SourceName = "source_column",
+					SourceType = "TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = false,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_text_expression",
+					DbType = TfDatabaseColumnType.Text,
+					Expression = $" dp{provider.Index}_text ",
+					ExpressionJson = "{}"
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = string.Empty,
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_short_text",
+					DbType = TfDatabaseColumnType.ShortText,
+					SourceName = "source_column",
+					SourceType = "SHORT_TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = false,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_short_text_expression",
+					DbType = TfDatabaseColumnType.ShortText,
+					Expression = $" dp{provider.Index}_short_text ",
+					ExpressionJson = "{}"
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = short.MaxValue.ToString(CultureInfo.InvariantCulture),
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_short_int",
+					DbType = TfDatabaseColumnType.ShortInteger,
+					SourceName = "source_column",
+					SourceType = "SHORT_INTEGER",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_short_int_expression",
+					DbType = TfDatabaseColumnType.ShortInteger,
+					Expression = $" dp{provider.Index}_short_int ",
+					ExpressionJson = "{}"
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = int.MaxValue.ToString(CultureInfo.InvariantCulture),
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_int",
+					DbType = TfDatabaseColumnType.Integer,
+					SourceName = "source_column",
+					SourceType = "INTEGER",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_int_expression",
+					DbType = TfDatabaseColumnType.Integer,
+					Expression = $" dp{provider.Index}_int ",
+					ExpressionJson = "{}"
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = long.MaxValue.ToString(CultureInfo.InvariantCulture),
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_long_int",
+					DbType = TfDatabaseColumnType.LongInteger,
+					SourceName = "source_column",
+					SourceType = "LONG_INTEGER",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_long_int_expression",
+					DbType = TfDatabaseColumnType.LongInteger,
+					Expression = $" dp{provider.Index}_long_int ",
+					ExpressionJson = "{}"
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = decimal.MaxValue.ToString(CultureInfo.InvariantCulture),
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_number",
+					DbType = TfDatabaseColumnType.Number,
+					SourceName = "source_column",
+					SourceType = "NUMBER",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_number_expression",
+					DbType = TfDatabaseColumnType.Number,
+					Expression = $" dp{provider.Index}_number ",
+					ExpressionJson = "{}"
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = "2024-06-27",
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_date",
+					DbType = TfDatabaseColumnType.DateOnly,
+					SourceName = "source_column",
+					SourceType = "DATE",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_date_expression",
+					DbType = TfDatabaseColumnType.DateOnly,
+					Expression = $" dp{provider.Index}_date ",
+					ExpressionJson = "{}"
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = "2024-06-27 12:01",
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_datetime",
+					DbType = TfDatabaseColumnType.DateTime,
+					SourceName = "source_column",
+					SourceType = "DATETIME",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = provider.Id,
+					DbName = $"dp{provider.Index}_datetime_expression",
+					DbType = TfDatabaseColumnType.DateTime,
+					Expression = $" dp{provider.Index}_datetime ",
+					ExpressionJson = "{}"
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+			}
+		}
+	}
+
+	[Fact]
 	public async Task DataProviderColumn_DefaultValue()
 	{
 		using (await locker.LockAsync())

@@ -63,18 +63,22 @@ internal partial class TalkService : ITalkService
         Guid channelId = (Guid)dt.Rows[0]["channel_id"];
 
         var threads = GetThreads(channelId, dataIdentityValue: null);
-        return threads.SingleOrDefault(x => x.Id == id);
 
-        //var threadsAsFlatList = new List<TalkThread>();
+        var threadsAsFlatList = new List<TalkThread>();
 
-        //foreach (var thread in threads)
-        //{
-        //	threadsAsFlatList.Add(thread);
-        //	foreach (var subThread in thread.SubThread)
-        //		threadsAsFlatList.Add(subThread);
-        //}
+        foreach (var thread in threads)
+        {
+            if (!threadsAsFlatList.Any(x => x.Id == thread.Id))
+                threadsAsFlatList.Add(thread);
 
-        //return threadsAsFlatList.SingleOrDefault(x => x.Id == id);
+            foreach (var subThread in thread.SubThread)
+            {
+                if (!threadsAsFlatList.Any(x => x.Id == subThread.Id))
+                    threadsAsFlatList.Add(subThread);
+            }
+        }
+
+        return threadsAsFlatList.SingleOrDefault(x => x.Id == id);
     }
 
     public List<TalkThread> GetThreads(

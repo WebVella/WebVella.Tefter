@@ -892,6 +892,10 @@ public partial class TfService : ITfService
 
 		foreach (var column in provider.Columns)
 		{
+			//do not process expression columns
+			if (!string.IsNullOrWhiteSpace( column.Expression ) )
+				continue;
+
 			columnNames.Add(column.DbName!);
 
 			switch (column.DbType)
@@ -1061,6 +1065,10 @@ public partial class TfService : ITfService
 		{
 			foreach (var column in columns)
 			{
+				//do not process expression columns
+				if (!string.IsNullOrWhiteSpace(column.Expression))
+					continue;
+
 				if (column.IncludeInTableSearch)
 				{
 					object value = existingDataRow[column.DbName!];
@@ -1218,6 +1226,10 @@ public partial class TfService : ITfService
 		{
 			foreach (var column in columns)
 			{
+				//do not process expression columns
+				if (!string.IsNullOrWhiteSpace(column.Expression))
+					continue;
+
 				object? defaultValue = null;
 
 				if (!column.IsNullable || column.IsUnique)
@@ -1277,6 +1289,10 @@ public partial class TfService : ITfService
 	{
 		foreach (var column in columns)
 		{
+			//do not process expression columns
+			if (!string.IsNullOrWhiteSpace(column.Expression))
+				continue;
+
 			//for unique columns with null values we generate new unique value
 			if (column.IsUnique && newDataRow[column.DbName!] == null)
 			{

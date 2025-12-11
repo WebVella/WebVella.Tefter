@@ -65,7 +65,7 @@ public class TalkMigration2024100101 : ITfApplicationMigration
 			{
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
-					.AddShortTextColumn("identity_row_id", c => { c.AsGeneratedSHA1FromColumns("id"); })
+					.AddShortTextColumn("identity_row_id", c => { c.AsSha1ExpressionFromColumns("id"); })
 					.AddGuidColumn("channel_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 					.AddGuidColumn("thread_id", c => { c.Nullable(); })
 					.AddShortIntegerColumn("type", c => { c.NotNullable(); })
