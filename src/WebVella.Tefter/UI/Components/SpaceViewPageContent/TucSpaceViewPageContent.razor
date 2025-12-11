@@ -39,11 +39,11 @@ else
                               OnEdit="_renamePage" OnEditTooltop="@LOC("Rename page")" 
                               OnAdd="_addPreset" OnAddTooltop="@LOC("Create preset from current filters")">
             <Tabs>
-                <TucSpaceViewPageContentTabs SpaceView="_spaceView" SpacePage="_spacePage" SpaceData="_spaceData"/>
+                <TucSpaceViewPageContentTabs SpaceView="_spaceView" SpacePage="_spacePage" SpaceData="_dataset"/>
             </Tabs>
             <Toolbar>
                 <TucSpaceViewPageContentToolbar Context=Context SpaceView="_spaceView" Data=_data
-                                                SpaceData="_spaceData" SpaceViewPreset=_preset
+                                                SpaceData="_dataset" SpaceViewPreset=_preset
                                                 SelectedRows="_selectedDataRows" />
             </Toolbar>
             <ChildContent>

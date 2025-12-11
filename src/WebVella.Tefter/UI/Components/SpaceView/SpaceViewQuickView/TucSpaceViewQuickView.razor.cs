@@ -68,6 +68,8 @@ public partial class TucSpaceViewQuickView : TfBaseComponent
 		if (_dataset is null)
 			return;
 		_dataProvider = TfService.GetDataProvider(_dataset.DataProviderId);
+		await InvokeAsync(StateHasChanged);
+		await Task.Delay(1);
 		_data = TfService.QueryDataProvider(_dataProvider,
 			sorts:_dataset.SortOrders,
 			relIdentityInfo: Context.RelDataIdentityQueryInfo);

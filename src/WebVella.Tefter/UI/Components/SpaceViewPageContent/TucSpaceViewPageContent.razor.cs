@@ -17,7 +17,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private TfSpace? _space = null;
 	private TfSpacePage? _spacePage = null;
 	private TfSpaceView? _spaceView = null;
-	private TfDataset? _spaceData = null;
+	private TfDataset? _dataset = null;
 	private TfDataProvider? _dataProvider = null;
 	private TfSpaceViewPreset? _preset = null;
 	private TfDataTable? _data = null;
@@ -174,8 +174,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			_spacePage = args.Payload;
 			await InvokeAsync(StateHasChanged);
 		});
-	}	
-	
+	}
+
 	private async Task _init(TfNavigationState navState, bool showLoading = true)
 	{
 		_navState = navState;
@@ -217,13 +217,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			if (oldViewId != options.SpaceViewId.Value)
 			{
 				_contextViewData = new();
-				_spaceData = TfService.GetDataset(_spaceView.DatasetId);
-				_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _spaceData.DataProviderId);
+				_dataset = TfService.GetDataset(_spaceView.DatasetId);
+				_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _dataset.DataProviderId);
 				_selectedDataRows = new();
 				_editedDataRows = new();
 			}
 
-			if (_spaceData is null || _dataProvider is null)
+			if (_dataset is null || _dataProvider is null)
 			{
 				throw new Exception("Dataset or DataProvider was not found");
 			}
@@ -233,25 +233,42 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			if (_navState.SpaceViewPresetId is not null)
 				_preset = _spaceView!.Presets.GetPresetById(_navState.SpaceViewPresetId.Value);
 
-			if(_preset is null && _spaceView!.Presets.Count > 0)
+			if (_preset is null && _spaceView!.Presets.Count > 0)
 				_preset = _spaceView!.Presets[0];
 
 			_spaceViewColumns = TfService.GetSpaceViewColumnsList(_spaceView.Id);
-			await InvokeAsync(StateHasChanged);
-			await Task.Delay(1);
 
-			_data = TfService.QueryDataset(
-				datasetId: _spaceView!.DatasetId,
-				presetSearch:_preset?.Search,
-				presetFilters: _preset?.Filters,
-				presetSorts: _preset?.SortOrders,
-				userSearch: _navState.Search,
-				userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _allDataProviders,
-					_allSharedColumns),
-				userSorts: _navState.Sorts.ConvertQuerySortToList(_spaceViewColumns),
-				page: 1,
-				pageSize: TfConstants.ItemsMaxLimit
-			);
+			string? relationDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName, null);
+			string? relationDataIdentityValue = Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName, null);
+
+			if (!String.IsNullOrWhiteSpace(relationDataIdentity)
+				&& !String.IsNullOrWhiteSpace(relationDataIdentityValue))
+			{
+				//Hardcoded relation is requested
+				TfRelDataIdentityQueryInfo relInfo = new (){ 
+					DataIdentity  = relationDataIdentity, 
+					RelDataIdentity = relationDataIdentity,
+					RelIdentityValues = new List<string>{ relationDataIdentityValue }
+				};
+				_data = TfService.QueryDataProvider(_dataProvider,
+					sorts: _dataset.SortOrders,
+					relIdentityInfo: relInfo);
+			}
+			else
+			{
+				_data = TfService.QueryDataset(
+					datasetId: _spaceView!.DatasetId,
+					presetSearch: _preset?.Search,
+					presetFilters: _preset?.Filters,
+					presetSorts: _preset?.SortOrders,
+					userSearch: _navState.Search,
+					userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _allDataProviders,
+						_allSharedColumns),
+					userSorts: _navState.Sorts.ConvertQuerySortToList(_spaceViewColumns),
+					page: 1,
+					pageSize: TfConstants.ItemsMaxLimit
+				);
+			}
 
 			foreach (TfDataRow row in _data.Rows)
 			{
@@ -273,10 +290,11 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		}
 	}
 
-	private async Task _renamePage(){
+	private async Task _renamePage()
+	{
 		_ = await DialogService.ShowDialogAsync<TucSpacePageRenameDialog>(
 			_spacePage!,
-			new ()
+			new()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -285,12 +303,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				ShowTitle = false
 			});
 	}
-	
-	private async Task _addPreset(){
+
+	private async Task _addPreset()
+	{
 		var context = new TfPresetFilterManagementContext
 		{
 			Item = null,
-			DateSet = _spaceData,
+			DateSet = _dataset,
 			SpaceView = _spaceView
 		};
 		var dialog = await DialogService.ShowDialogAsync<TucPresetFilterManageDialog>(
@@ -303,8 +322,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				TrapFocus = false
 			});
 		_ = await dialog.Result;
-	}	
-	
+	}
+
 	#endregion
 
 	#region << Public methods >>
@@ -488,7 +507,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private string _getNoDataString()
 	{
 		var last30Jobs = TfService.GetDataProviderSynchronizationTasks(_data.QueryInfo.DataProviderId, page: 1, pageSize: 30);
-		var syncRunning = last30Jobs.Any(x=> x.Status == TfSynchronizationStatus.Pending || x.Status == TfSynchronizationStatus.InProgress);
+		var syncRunning = last30Jobs.Any(x => x.Status == TfSynchronizationStatus.Pending || x.Status == TfSynchronizationStatus.InProgress);
 		if (syncRunning)
 			return LOC("Data import is currently running. Please try again in a minute.");
 		return LOC("No data");
