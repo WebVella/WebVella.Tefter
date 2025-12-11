@@ -75,6 +75,8 @@ public partial class TfService : ITfService
 				_userFilters = userFilters;
 
 			_userSorts = userSorts;
+			if (_userSorts is null)
+				_userSorts = new List<TfSort>();
 
 			if (presetFilters is not null)
 				_presetFilters = presetFilters;
@@ -120,6 +122,7 @@ public partial class TfService : ITfService
 			ReadOnlyCollection<TfDataProvider> dataProviders,
 			TfDataset spaceData,
 			List<Guid> tfIds,
+			List<TfSort>? userSorts = null,
 			TfRelDataIdentityQueryInfo? relIdentityInfo = null)
 		{
 			ArgumentNullException.ThrowIfNull(dbService);
@@ -136,7 +139,9 @@ public partial class TfService : ITfService
 
 			_userFilters = new List<TfFilterBase>();
 
-			_userSorts = new List<TfSort>();
+			_userSorts = userSorts;
+			if(_userSorts is null)
+				_userSorts = new List<TfSort>();
 
 			_presetFilters = new List<TfFilterBase>();
 

@@ -11,6 +11,7 @@ public partial interface ITfService
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false,
+		List<TfSort>? sorts = null,
 		TfRelDataIdentityQueryInfo? relIdentityInfo = null);
 
 	public TfDataTable QueryDataProvider(
@@ -19,11 +20,13 @@ public partial interface ITfService
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false,
+		List<TfSort>? sorts = null,
 		TfRelDataIdentityQueryInfo? relIdentityInfo = null);
 
 	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
 		List<Guid> tfIds,
+		List<TfSort>? sorts = null,
 		TfRelDataIdentityQueryInfo? relIdentityInfo = null);
 
 
@@ -108,6 +111,7 @@ public partial class TfService
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false,
+		List<TfSort>? sorts = null,
 		TfRelDataIdentityQueryInfo? relIdentityInfo = null)
 	{
 		try
@@ -122,6 +126,7 @@ public partial class TfService
 				page: page,
 				pageSize: pageSize,
 				noRows: noRows,
+				sorts: sorts,
 				relIdentityInfo: relIdentityInfo
 			);
 		}
@@ -137,6 +142,7 @@ public partial class TfService
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false,
+		List<TfSort>? sorts = null,
 		TfRelDataIdentityQueryInfo? relIdentityInfo = null)
 	{
 		try
@@ -155,7 +161,7 @@ public partial class TfService
 				dataProviders: allDataProviders,
 				spaceData: null,
 				userFilters: null,
-				userSorts: null,
+				userSorts: sorts,
 				userSearch: search,
 				page: page,
 				pageSize: pageSize,
@@ -196,6 +202,7 @@ public partial class TfService
 	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
 		List<Guid> tfIds,
+		List<TfSort>? sorts = null,
 		TfRelDataIdentityQueryInfo? relIdentityInfo = null)
 	{
 		try
@@ -219,6 +226,7 @@ public partial class TfService
 				dataProviders: allDataProviders,
 				spaceData: null,
 				tfIds: tfIds,
+				userSorts: sorts,
 				relIdentityInfo: relIdentityInfo);
 
 			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
