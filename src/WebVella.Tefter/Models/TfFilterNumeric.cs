@@ -34,6 +34,10 @@ public record TfFilterNumeric : TfFilterBase
 		}
 	}
 	public TfFilterNumeric() : base(String.Empty,String.Empty) { }
+	public TfFilterNumeric(int comparisonMethodInt) : base(String.Empty, String.Empty)
+	{
+		ComparisonMethod = comparisonMethodInt.ConvertIntToEnum<TfFilterNumericComparisonMethod>(TfFilterNumericComparisonMethod.Equal);
+	}
 	public TfFilterNumeric(
 		string columnName,
 		TfFilterNumericComparisonMethod comparisonMethod,
@@ -57,7 +61,7 @@ public record TfFilterNumeric : TfFilterBase
 	{
 		return new TfFilterQuery
 		{
-			Name = GetColumnName(),
+			QueryName = GetColumnName(),
 			Value = Value?.ToString(),
 			Method = (int)ComparisonMethod,
 		};

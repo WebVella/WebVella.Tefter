@@ -7,7 +7,7 @@ public record TfFilterQuery
 	public Guid Id { get; set; } = Guid.NewGuid();	
 	
 	[JsonPropertyName("n")]
-	public string Name { get; set; } = string.Empty;
+	public string QueryName { get; set; } = string.Empty;
 
 	[JsonPropertyName("v")]
 	public string? Value { get; set; }

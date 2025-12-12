@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.Utility;
+
 public static class FormulaUtility
 {
 	public static DateTime? GetDateFromFormulaString(this string formula, DateTime? defaultDate = null)
@@ -83,7 +84,7 @@ public static class FormulaUtility
 				var today = DateTime.Today;
 				if (String.IsNullOrWhiteSpace(offsetString))
 				{
-					return new DateTime(today.Year, 1,1);
+					return new DateTime(today.Year, 1, 1);
 				}
 
 				if (double.TryParse(offsetString, new CultureInfo("en-US"), out double outDbl))
@@ -95,6 +96,15 @@ public static class FormulaUtility
 					var multiplier = outDbl >= 0 ? 1 : -1;
 					return today.AddYears(multiplier * wholeYears).AddDays(multiplier * days);
 				}
+			}
+		}
+		#endregion
+
+		#region << Just date >>
+		{
+			if (DateTime.TryParse(formula, Thread.CurrentThread.CurrentCulture, out DateTime outDateTime))
+			{
+				return outDateTime;
 			}
 		}
 		#endregion

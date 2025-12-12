@@ -39,7 +39,7 @@ public partial class TucFilterQueryCard : TfBaseComponent
 		_allOptions = new();
 		foreach (var column in ViewColumns)
 		{
-			_allOptions.Add(new TfFilterQuery { Name = column.QueryName });
+			_allOptions.Add(new TfFilterQuery { QueryName = column.QueryName });
 			_columnDict[column.QueryName] = column.Title ?? "no title";
 		}
 
@@ -48,14 +48,14 @@ public partial class TucFilterQueryCard : TfBaseComponent
 
 	private async Task _addColumnFilterHandler(TfFilterQuery? filter)
 	{
-		if (filter is null || String.IsNullOrWhiteSpace(filter.Name)) return;
+		if (filter is null || String.IsNullOrWhiteSpace(filter.QueryName)) return;
 		_selectedOption = filter;
-		await AddFilter(_selectedOption.Name, null);
+		await AddFilter(_selectedOption.QueryName, null);
 	}
 
 	public async Task AddFilter(string queryName, List<string>? parentPath)
 	{
-		TfFilterQuery filter = new() { Name = queryName };
+		TfFilterQuery filter = new() { QueryName = queryName };
 		if (_typeDict.ContainsKey(queryName))
 		{
 			switch (_typeDict[queryName])
@@ -95,8 +95,8 @@ public partial class TucFilterQueryCard : TfBaseComponent
 			filter.Parent = items.GetNodeByPath(parentPath);
 			if (filter.Parent is not null)
 			{
-				if (filter.Parent.Name == new TfFilterAnd().GetColumnName()
-					|| filter.Parent.Name == new TfFilterOr().GetColumnName())
+				if (filter.Parent.QueryName == new TfFilterAnd().GetColumnName()
+					|| filter.Parent.QueryName == new TfFilterOr().GetColumnName())
 					filter.Parent.Items.Add(filter);
 			}
 		}

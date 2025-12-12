@@ -393,27 +393,27 @@ public class NavigatorExtTests
 			var lvl1 = result.Filters[0];
 			lvl1.Should().BeOfType<TfFilterQuery>();
 			var lvl1Filter = (TfFilterQuery)lvl1;
-			lvl1Filter.Name.Should().Be(filterAnd.ToQuery().Name);
+			lvl1Filter.QueryName.Should().Be(filterAnd.ToQuery().QueryName);
 			lvl1Filter.Items.Should().NotBeNull();
 			lvl1Filter.Items.Count.Should().Be(1);
 			var lvl2 = lvl1Filter.Items[0];
 			lvl2.Should().BeOfType<TfFilterQuery>();
 			var lvl2Filter = (TfFilterQuery)lvl2;
-			lvl2Filter.Name.Should().Be(filterOr.ToQuery().Name);
+			lvl2Filter.QueryName.Should().Be(filterOr.ToQuery().QueryName);
 			lvl2Filter.Items.Should().NotBeNull();
 			lvl2Filter.Items.Count.Should().Be(2);
 
 			var lvl31 = lvl2Filter.Items[0];
 			lvl31.Should().BeOfType<TfFilterQuery>();
 			var lvl31Filter = (TfFilterQuery)lvl31;
-			lvl31Filter.Name.Should().Be(filterBoolColumnName);
+			lvl31Filter.QueryName.Should().Be(filterBoolColumnName);
 			lvl31Filter.Method.Should().Be((int)filterBoolMethod);
 			lvl31Filter.Value.Should().Be(filterBoolValue.ToString());
 
 			var lvl33 = lvl2Filter.Items[1];
 			lvl33.Should().BeOfType<TfFilterQuery>();
 			var lvl33Filter = (TfFilterQuery)lvl33;
-			lvl33Filter.Name.Should().Be(filterTextColumnName);
+			lvl33Filter.QueryName.Should().Be(filterTextColumnName);
 			lvl33Filter.Method.Should().Be((int)filterTextMethod);
 			lvl33Filter.Value.Should().Be(filterTextValue);
 

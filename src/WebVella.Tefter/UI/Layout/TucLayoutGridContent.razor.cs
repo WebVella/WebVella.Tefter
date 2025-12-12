@@ -1,4 +1,4 @@
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucLayoutGridContent : ComponentBase
 {
 	[Parameter] public string? Title { get; set; }
@@ -6,6 +6,8 @@ public partial class TucLayoutGridContent : ComponentBase
 	[Parameter] public RenderFragment? ChildContent { get; set; }
 	[Parameter] public int ColumnCount { get; set; } = 1;
 	[Parameter] public string? ContentStyle { get; set; } = null;
+	[Parameter] public string? BackUrl { get; set; } = null;
+	[Parameter] public string? BackText { get; set; } = "Back";
 
 	private string _layoutClass = "tf-layout-grid-content";
 

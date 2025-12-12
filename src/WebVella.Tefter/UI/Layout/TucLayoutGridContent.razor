@@ -1,27 +1,35 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits ComponentBase
 <div class="tf-layout-grid-content-wrapper">
-	<div class="@_cssClass">
-		@if (!String.IsNullOrWhiteSpace(Title))
-		{
-			<div class="tf-layout-grid-content__title">
-				@Title
-			</div>
-		}
-
-		@if (!String.IsNullOrWhiteSpace(SubTitle))
-		{
-			<div class="tf-layout-grid-content__subtitle">
-				@SubTitle
-			</div>
-		}
-
-		@if (ChildContent is not null)
-		{
-			<div class="tf-layout-grid-content__content" style="@_contentStyle">
-				@ChildContent
-			</div>
-		}
-	</div>
+    <div class="@_cssClass">
+        <div class="tf-layout-grid-content__header-wrapper">
+            @if (!String.IsNullOrWhiteSpace(BackUrl))
+            {
+                <div class="tf-layout-grid-content__back">
+                    <FluentAnchor Href="@BackUrl" IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="@Appearance.Outline">@BackText</FluentAnchor>
+                </div>
+            }
+            <div class="tf-layout-grid-content__header">
+                @if (!String.IsNullOrWhiteSpace(Title))
+                {
+                    <div class="tf-layout-grid-content__title">
+                        @Title
+                    </div>
+                }
+                @if (!String.IsNullOrWhiteSpace(SubTitle))
+                {
+                    <div class="tf-layout-grid-content__subtitle">
+                        @SubTitle
+                    </div>
+                }
+            </div>
+        </div>
+        @if (ChildContent is not null)
+        {
+            <div class="tf-layout-grid-content__content" style="@_contentStyle">
+                @ChildContent
+            </div>
+        }
+    </div>
 </div>
 

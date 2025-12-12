@@ -21,8 +21,8 @@
 			           TOption="TfFilterQuery" Required="false"
 			           Items="@_allOptions" Style="width:300px"
 			           Placeholder="@LOC("select to add...")"
-			           OptionValue="(x=> x.Name)"
-			           OptionText="(x=> _columnDict.ContainsKey(x.Name) ? _columnDict[x.Name] : x.Name)"/>
+			           OptionValue="(x=> x.QueryName)"
+			           OptionText="(x=> _columnDict.ContainsKey(x.QueryName) ? _columnDict[x.QueryName] : x.QueryName)"/>
 		</FluentStack>
 	</ToolbarTemplate>
 	<ChildContent>

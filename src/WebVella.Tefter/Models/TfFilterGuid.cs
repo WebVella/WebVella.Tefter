@@ -30,6 +30,10 @@ public record TfFilterGuid : TfFilterBase
 			Value = null;
 	}
 	public TfFilterGuid() : base(String.Empty,String.Empty) { }
+	public TfFilterGuid(int comparisonMethodInt) : base(String.Empty, String.Empty)
+	{
+		ComparisonMethod = comparisonMethodInt.ConvertIntToEnum<TfFilterGuidComparisonMethod>(TfFilterGuidComparisonMethod.Equal);
+	}
 	public TfFilterGuid(
 		string columnName,
 		TfFilterGuidComparisonMethod comparisonMethod,
@@ -55,7 +59,7 @@ public record TfFilterGuid : TfFilterBase
 	{
 		return new TfFilterQuery
 		{
-			Name = GetColumnName(),
+			QueryName = GetColumnName(),
 			Value = Value?.ToString(),
 			Method = (int)ComparisonMethod,
 		};

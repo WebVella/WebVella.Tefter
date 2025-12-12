@@ -57,12 +57,12 @@ public class ViewColumnTypeExtTests
 				{
 					new()
 					{
-						Name = new TfFilterAnd().GetColumnName(),
+						QueryName = new TfFilterAnd().GetColumnName(),
 						Items =
 						{
 							new TfFilterQuery()
 							{
-								Name = queryName,
+								QueryName = queryName,
 								Method = (int)TfFilterTextComparisonMethod.Equal,
 								Value = columnValue.ToString(),
 							}
@@ -139,7 +139,7 @@ public class ViewColumnTypeExtTests
 			{
 				new TfFilterQuery()
 				{
-					Name = queryName,
+					QueryName = queryName,
 					Method = (int)TfFilterTextComparisonMethod.Equal,
 					Value = columnValue.ToString(),
 				}

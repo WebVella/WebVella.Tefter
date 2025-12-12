@@ -672,6 +672,9 @@ fluent-text-field.with-prefix::part(start) {
 fluent-text-field.with-prefix::part(control) {
   padding-left: 0;
 }
+fluent-number-field::part(control) {
+  padding-right: 0;
+}
 fluent-switch::part(label) {
   margin-inline-end: 0;
 }
@@ -1586,6 +1589,28 @@ fluent-menu-item::part(start) {
 .tf-grid-tr:hover .tf-grid-td-hover {
   background: var(--neutral-fill-hover);
 }
+.tf-grid-tr--filters {
+  z-index: 1 !important;
+}
+.tf-grid-tr--filters .tf-grid-th {
+  padding: 5px;
+}
+.tf-grid-tr--filters .filter-content {
+  padding: 0;
+  display: flex;
+  flex-flow: row;
+  gap: 5px;
+}
+.tf-grid-tr--filters .filter-content fluent-text-field {
+  flex: 1 1 auto;
+}
+.tf-grid-tr--filters .filter-content fluent-text-field::part(root) {
+  background: padding-box linear-gradient(var(--neutral-fill-input-active), var(--neutral-fill-input-active)), border-box var(--neutral-stroke-input-active);
+}
+.tf-grid-tr--filters .filter-content fluent-button {
+  flex: 0 0 auto;
+  --accent-fill-rest: var(--neutral-foreground-hint);
+}
 .tf-grid .tf-grid-td {
   --tf-td-color-red: var(--tf-red-500);
   --tf-td-fill-red: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-red-500) 5%);
@@ -1849,8 +1874,17 @@ fluent-menu-item::part(start) {
   display: flex;
   justify-content: center;
 }
-.tf-layout-grid-content__title {
+.tf-layout-grid-content__header-wrapper {
   padding-top: 2rem;
+  display: flex;
+}
+.tf-layout-grid-content__back {
+  flex: 0 0 auto;
+}
+.tf-layout-grid-content__header {
+  flex: 1 1 auto;
+}
+.tf-layout-grid-content__title {
   text-align: center;
   font-size: 23px;
   font-weight: bold;

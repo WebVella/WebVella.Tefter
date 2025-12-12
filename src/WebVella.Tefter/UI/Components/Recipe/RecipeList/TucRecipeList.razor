@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 <TucLayoutGridContent Title="@LOC("Recipe List")"
                       SubTitle="@LOC("Select a recipe by simply clicking on one of the available preconfiguration options.")"
-                      ColumnCount="3">
+					  ColumnCount="3" BackUrl="/tf-install" BackText="@LOC("Back")">
 	<ChildContent>
 		@foreach (var item in _items)
 		{

@@ -47,19 +47,30 @@
 				</FluentGridItem>
 			</FluentGrid>	
 			<FluentGrid>
-				<FluentGridItem xs="6">
+				<FluentGridItem xs="4">
+					<FluentInputLabel Label="@LOC("Filter Type")" />
+					<TucSelect Required="true" Style="width:100%" TOption="TfSpaceViewFilterType"
+							   @bind-SelectedOption="@_form.FitlerType"
+							   Placeholder="@LOC("select template to add...")"
+							   OptionValue="@((p)=> ((int)p).ToString())"
+							   OptionText="@((p) => p.ToDescriptionString())"
+							   Items="@(Enum.GetValues<TfSpaceViewFilterType>())" />
+					<FluentValidationMessage For="@(() => _form.FitlerType)" />
+				</FluentGridItem>
+				<FluentGridItem xs="4">
 					<FluentNumberField TValue="int?" @bind-Value=@_form.FreezeStartingNColumns
 					                   Label="@LOC("Freeze Starting Columns")" Style="width:100%"/>
 					<div
 						class="tf-input-description">@LOC("freezed columns count, not including the checkbox column")</div>
 					<FluentValidationMessage For="@(() => _form.FreezeStartingNColumns)"/>
 				</FluentGridItem>
-				<FluentGridItem xs="6">
+				<FluentGridItem xs="4">
 					<FluentNumberField TValue="int?" @bind-Value=@_form.FreezeFinalNColumns
 					                   Label="@LOC("Freeze Final Columns")" Style="width:100%"/>
 					<div class="tf-input-description">@LOC("freezed columns count")</div>
 					<FluentValidationMessage For="@(() => _form.FreezeFinalNColumns)"/>
 				</FluentGridItem>
+
 			</FluentGrid>
 		</FluentEditForm>
 	}

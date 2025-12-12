@@ -1,7 +1,7 @@
 ﻿@import '_variables.less';
 
 .tf-layout-grid-content {
-	flex:0 1 960px;
+	flex: 0 1 960px;
 
 	&-wrapper {
 		height: 100vh;
@@ -10,8 +10,20 @@
 		justify-content: center;
 	}
 
+	&__header-wrapper {
+		padding-top: 2rem;
+		display: flex;
+	}
+
+	&__back {
+		flex: 0 0 auto;
+	}
+
+	&__header {
+		flex: 1 1 auto;
+	}
+
 	&__title {
-      padding-top: 2rem;
 		text-align: center;
 		font-size: 23px;
 		font-weight: bold;
@@ -24,7 +36,7 @@
 	}
 
 	&__content {
-		padding-top:1rem;
+		padding-top: 1rem;
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-gap: 1rem;

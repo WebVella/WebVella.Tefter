@@ -34,6 +34,14 @@ public record TfFilterDateTime : TfFilterBase
 			Value = null;
 	}
 	public TfFilterDateTime() : base(String.Empty,String.Empty) { }
+	public TfFilterDateTime(int comparisonMethodInt) : base(String.Empty, String.Empty)
+	{
+		ComparisonMethod = comparisonMethodInt.ConvertIntToEnum<TfFilterDateTimeComparisonMethod>(TfFilterDateTimeComparisonMethod.Greater);
+	}
+	public TfFilterDateTime(int comparisonMethodInt, string? value) : base(String.Empty, value)
+	{
+		ComparisonMethod = comparisonMethodInt.ConvertIntToEnum<TfFilterDateTimeComparisonMethod>(TfFilterDateTimeComparisonMethod.Greater);
+	}
 	public TfFilterDateTime(
 		string columnName,
 		TfFilterDateTimeComparisonMethod comparisonMethod,
@@ -67,7 +75,7 @@ public record TfFilterDateTime : TfFilterBase
 	{
 		return new TfFilterQuery
 		{
-			Name = GetColumnName(),
+			QueryName = GetColumnName(),
 			Value = Value,
 			Method = (int)ComparisonMethod,
 		};

@@ -71,17 +71,20 @@
 	</FluentButton>
 }
 <FluentSearch Value="@_navState.Search" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")" />
-<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
-	@if ((_navState.Filters?.Count ?? 0) > 0)
-	{
-		<FluentIcon Value="@TfConstants.GetIcon("DataFunnel")" Slot="start" Color="@Color.Accent" />
-		<FluentBadge Appearance="Appearance.Accent">@(_navState.Filters?.Count ?? 0)</FluentBadge>
-	}
-	else
-	{
-		<FluentIcon Value="@TfConstants.GetIcon("DataFunnel")" Color="@Color.Accent" />
-	}
-</FluentButton>
+@if (SpaceView.Settings.FitlerType == TfSpaceViewFilterType.ToolbarFilter)
+{
+	<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
+		@if ((_navState.Filters?.Count ?? 0) > 0)
+		{
+			<FluentIcon Value="@TfConstants.GetIcon("DataFunnel")" Slot="start" Color="@Color.Accent" />
+			<FluentBadge Appearance="Appearance.Accent">@(_navState.Filters?.Count ?? 0)</FluentBadge>
+		}
+		else
+		{
+			<FluentIcon Value="@TfConstants.GetIcon("DataFunnel")" Color="@Color.Accent" />
+		}
+		</FluentButton>
+}
 <FluentButton Id="view-sort-selector" OnClick="OnSortClick" Title="data sort" Appearance="@Appearance.Outline">
 	@if ((_navState.Sorts?.Count ?? 0) > 0)
 	{

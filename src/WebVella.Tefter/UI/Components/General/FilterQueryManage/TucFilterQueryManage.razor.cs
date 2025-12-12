@@ -35,9 +35,9 @@ public partial class TucFilterQueryManage : TfBaseComponent
 		get
 		{
 			if (Item is null) return "undefined";
-			if (ColumnDict.ContainsKey(Item.Name))
-				return ColumnDict[Item.Name];
-			return Item.Name;
+			if (ColumnDict.ContainsKey(Item.QueryName))
+				return ColumnDict[Item.QueryName];
+			return Item.QueryName;
 		}
 	}
 
@@ -46,10 +46,10 @@ public partial class TucFilterQueryManage : TfBaseComponent
 		get
 		{
 			if (Item is null) return "undefined";
-			if (TypeDict.ContainsKey(Item.Name))
-				return TypeDict[Item.Name].ToDescriptionString();
-			if (Item.Name.ToLowerInvariant() == "and"
-			|| Item.Name.ToLowerInvariant() == "or")
+			if (TypeDict.ContainsKey(Item.QueryName))
+				return TypeDict[Item.QueryName].ToDescriptionString();
+			if (Item.QueryName.ToLowerInvariant() == "and"
+			|| Item.QueryName.ToLowerInvariant() == "or")
 				return "rule";
 			return "undefined";
 		}
@@ -59,7 +59,7 @@ public partial class TucFilterQueryManage : TfBaseComponent
 	{
 		if (_selectedOption is null) return;
 		if (Item is null) return;
-		await AddFilter.InvokeAsync((_selectedOption.Name, Item.Path));
+		await AddFilter.InvokeAsync((_selectedOption.QueryName, Item.Path));
 		_selectedOption = new(); //do not clear for convenience
 	}
 
@@ -72,10 +72,10 @@ public partial class TucFilterQueryManage : TfBaseComponent
 	{
 
 		if (Item is null) return;
-		if (Item.Name == new TfFilterAnd().GetColumnName()
-			|| Item.Name == new TfFilterOr().GetColumnName()) return;
+		if (Item.QueryName == new TfFilterAnd().GetColumnName()
+			|| Item.QueryName == new TfFilterOr().GetColumnName()) return;
 
-		TfFilterQuery updateObj = Item with { Name = Item.Name };
+		TfFilterQuery updateObj = Item with { QueryName = Item.QueryName };
 
 		if (type == TfDatabaseColumnType.Boolean)
 		{

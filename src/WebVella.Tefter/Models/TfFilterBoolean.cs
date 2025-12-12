@@ -3,7 +3,7 @@
 public record TfFilterBoolean : TfFilterBase
 {
 	[JsonPropertyName("m")]
-	public TfFilterBooleanComparisonMethod ComparisonMethod { get; set; } = TfFilterBooleanComparisonMethod.IsTrue;
+	public TfFilterBooleanComparisonMethod ComparisonMethod { get; set; } = TfFilterBooleanComparisonMethod.Equal;
 	public string GetColumnName() => ColumnName;
 	public static string GetFilterType() => "boolean";
 
@@ -46,6 +46,10 @@ public record TfFilterBoolean : TfFilterBase
 	}
 
 	public TfFilterBoolean() : base(String.Empty, String.Empty) { }
+	public TfFilterBoolean(int comparisonMethodInt) : base(String.Empty, String.Empty)
+	{
+		ComparisonMethod = comparisonMethodInt.ConvertIntToEnum<TfFilterBooleanComparisonMethod>(TfFilterBooleanComparisonMethod.IsTrue);
+	}
 
 	public TfFilterBoolean(
 		string columnName,
@@ -66,13 +70,13 @@ public record TfFilterBoolean : TfFilterBase
 		Value = null;
 		ColumnName = columnName;
 		if (!String.IsNullOrWhiteSpace(model.Value) && Boolean.TryParse(model.Value, out bool outVal)) Value = model.Value;
-		ComparisonMethod = Utility.EnumExtensions.ConvertIntToEnum<TfFilterBooleanComparisonMethod>(model.Method,TfFilterBooleanComparisonMethod.IsTrue);
+		ComparisonMethod = Utility.EnumExtensions.ConvertIntToEnum<TfFilterBooleanComparisonMethod>(model.Method, TfFilterBooleanComparisonMethod.IsTrue);
 	}
 	public TfFilterQuery ToQuery()
 	{
 		return new TfFilterQuery
 		{
-			Name = GetColumnName(),
+			QueryName = GetColumnName(),
 			Value = Value?.ToString(),
 			Method = (int)ComparisonMethod,
 		};

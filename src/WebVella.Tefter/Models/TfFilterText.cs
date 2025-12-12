@@ -20,6 +20,11 @@ public record TfFilterText : TfFilterBase
 		Value = value;
 	}
 	public TfFilterText() : base(String.Empty,String.Empty) { }
+	public TfFilterText(int comparisonMethodInt) : base(String.Empty, String.Empty)
+	{
+		ComparisonMethod = comparisonMethodInt.ConvertIntToEnum<TfFilterTextComparisonMethod>(TfFilterTextComparisonMethod.Equal);
+	}
+
 	public TfFilterText(
 		string columnName,
 		TfFilterTextComparisonMethod comparisonMethod,
@@ -42,7 +47,7 @@ public record TfFilterText : TfFilterBase
 	{
 		return new TfFilterQuery
 		{
-			Name = GetColumnName(),
+			QueryName = GetColumnName(),
 			Value = Value,
 			Method = (int)ComparisonMethod,
 		};

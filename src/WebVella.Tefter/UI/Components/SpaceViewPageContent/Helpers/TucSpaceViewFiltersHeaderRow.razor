@@ -1,0 +1,106 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+@if (SpaceView.Settings.FitlerType == TfSpaceViewFilterType.GridFilter)
+{
+    <tr class="tf-grid-tr tf-grid-tr--filters">
+        <th class="@TucSpaceViewPageContent.GetSafeColumnMetaString(Guid.Empty, nameof(TfSpaceViewColumnPresentationMeta.HeaderCellClass))"
+            style="@TucSpaceViewPageContent.GetSafeColumnMetaString(Guid.Empty, nameof(TfSpaceViewColumnPresentationMeta.HeaderCellStyles))">
+            <div class="check-content check"></div>
+        </th>
+        @foreach (var column in SpaceViewColumns)
+        {
+            <th class="@TucSpaceViewPageContent.GetSafeColumnMetaString(column.Id, nameof(TfSpaceViewColumnPresentationMeta.HeaderCellClass))"
+                style="@TucSpaceViewPageContent.GetSafeColumnMetaString(column.Id, nameof(TfSpaceViewColumnPresentationMeta.HeaderCellStyles))">
+                <div class="filter-content">
+                    @if (!_typeDict.ContainsKey(column.QueryName)) { }
+                    else
+                    {
+                        if (_typeDict[column.QueryName] == TfDatabaseColumnType.Boolean)
+                        {
+                            var baseFilter = (TfFilterBoolean)_columnBaseFilterDict[column.QueryName];
+                            var queryFilter = _columnQueryFilterDict[column.QueryName];
+                            @if (baseFilter.RequiresValue)
+                            {
+                                <TucSelect SelectedOption="@(baseFilter.ValueOptions.FirstOrDefault(x=> x.Value == queryFilter.Value))"
+                                           SelectedOptionChanged="@((value) => _valueChanged(column.QueryName,value))"
+                                           TOption="Option<string>" Required="false"
+                                           OptionText="@((p)=> p.Text)"
+                                           OptionValue="@((p)=> p.Value)"
+                                           Items="@baseFilter.ValueOptions"
+                                           Placeholder="@LOC(baseFilter.ComparisonMethod.ToDescriptionString())" />
+                            }
+                        }
+                        else if (_typeDict[column.QueryName] == TfDatabaseColumnType.DateOnly
+                        || _typeDict[column.QueryName] == TfDatabaseColumnType.DateTime)
+                        {
+                            var baseFilter = (TfFilterDateTime)_columnBaseFilterDict[column.QueryName];
+                            var queryFilter = _columnQueryFilterDict[column.QueryName];
+                            @if (baseFilter.RequiresValue)
+                            {
+                                <FluentTextField Value="@queryFilter.Value"
+                                                 ValueChanged="@((value) => _valueChanged(column.QueryName,value))"
+                                                 AutoComplete="off"
+                                                 Placeholder="@LOC(baseFilter.ComparisonMethod.ToDescriptionString())" />
+                            }
+                        }
+                        else if (_typeDict[column.QueryName] == TfDatabaseColumnType.Guid)
+                        {
+                            var baseFilter = (TfFilterGuid)_columnBaseFilterDict[column.QueryName];
+                            var queryFilter = _columnQueryFilterDict[column.QueryName];
+                            @if (baseFilter.RequiresValue)
+                            {
+                                <FluentTextField Value="@queryFilter.Value"
+                                                 ValueChanged="@((value) => _valueChanged(column.QueryName,value))"
+                                                 AutoComplete="off"
+                                                 Placeholder="@LOC(baseFilter.ComparisonMethod.ToDescriptionString())" />
+                            }
+                        }
+                        else if (_typeDict[column.QueryName] == TfDatabaseColumnType.ShortInteger
+                        || _typeDict[column.QueryName] == TfDatabaseColumnType.Integer
+                        || _typeDict[column.QueryName] == TfDatabaseColumnType.LongInteger)
+                        {
+                            var baseFilter = (TfFilterNumeric)_columnBaseFilterDict[column.QueryName];
+                            var queryFilter = _columnQueryFilterDict[column.QueryName];
+                            @if (baseFilter.RequiresValue)
+                            {
+                                <FluentNumberField Value="@queryFilter.Value.ToNullableLong()"
+                                                   TValue="long?"
+                                                   ValueChanged="@((value) => _valueChanged(column.QueryName,value))"
+                                                   AutoComplete="off"
+                                                   Placeholder="@LOC(baseFilter.ComparisonMethod.ToDescriptionString())" />
+                            }
+                        }
+                        else if (_typeDict[column.QueryName] == TfDatabaseColumnType.Number)
+                        {
+                            var baseFilter = (TfFilterNumeric)_columnBaseFilterDict[column.QueryName];
+                            var queryFilter = _columnQueryFilterDict[column.QueryName];
+                            @if (baseFilter.RequiresValue)
+                            {
+                                <FluentNumberField Value="@queryFilter.Value.ToNullableDecimal()"
+                                                   TValue="decimal?"
+                                                   ValueChanged="@((value) => _valueChanged(column.QueryName,value))"
+                                                   AutoComplete="off"
+                                                   Placeholder="@LOC(baseFilter.ComparisonMethod.ToDescriptionString())" />
+                            }
+                        }
+                        else if (_typeDict[column.QueryName] == TfDatabaseColumnType.ShortText
+                        || _typeDict[column.QueryName] == TfDatabaseColumnType.Text)
+                        {
+                            var baseFilter = (TfFilterText)_columnBaseFilterDict[column.QueryName];
+                            var queryFilter = _columnQueryFilterDict[column.QueryName];
+                            @if (baseFilter.RequiresValue)
+                            {
+                                <FluentTextField AutoComplete="off"
+                                                 Value="@queryFilter.Value"
+                                                 ValueChanged="@((value) => _valueChanged(column.QueryName,value))"
+                                                 Placeholder="@LOC(baseFilter.ComparisonMethod.ToDescriptionString())" />
+                            }
+                        }
+                        <FluentButton IconStart="@TfConstants.GetIcon("Filter")" Appearance="@Appearance.Outline" />
+                    }
+                </div>
+            </th>
+        }
+    </tr>
+}

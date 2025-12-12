@@ -23,11 +23,11 @@ else if (_navState.ManageTab == "columns")
 		</ToolbarTemplate>
 		<ChildContent>
 			<FluentGrid>
-				<FluentGridItem xs="6">
+				<FluentGridItem xs="4">
 					<FluentTextField Label="@LOC("Dataset")" ReadOnly="true" Value="@_spaceData!.Name"
 					                 Style="width:100%"></FluentTextField>
 				</FluentGridItem>
-				<FluentGridItem xs="6">
+				<FluentGridItem xs="4">
 					<FluentInputLabel Label="@LOC("Allowed Data manipulation")"/>
 					<FluentStack Orientation="@Orientation.Horizontal">
 						@if (_spaceView.Settings.CanCreateRows)
@@ -54,16 +54,22 @@ else if (_navState.ManageTab == "columns")
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
-				<FluentGridItem xs="6">
+				<FluentGridItem xs="4">
+					<FluentInputLabel Label="@LOC("FilterType")" />
+					<FluentTextField ReadOnly="true" Value="@_spaceView.Settings.FitlerType.ToDescriptionString()"
+									 Style="width:100%"></FluentTextField>
+				</FluentGridItem>
+				<FluentGridItem xs="4">
 					<FluentInputLabel Label="@LOC("Freeze Starting Columns")"/>
 					<FluentNumberField TValue="int?" Value=@_spaceView.Settings.FreezeStartingNColumns
 					                   ReadOnly="true" Style="width:100%"/>
 				</FluentGridItem>
-				<FluentGridItem xs="6">
+				<FluentGridItem xs="4">
 					<FluentInputLabel Label="@LOC("Freeze Final Columns")"/>
 					<FluentNumberField TValue="int?" Value=@_spaceView.Settings.FreezeFinalNColumns
 					                   ReadOnly="true" Style="width:100%"/>
 				</FluentGridItem>
+
 			</FluentGrid>
 		</ChildContent>
 	</TucCard>

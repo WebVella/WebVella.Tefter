@@ -207,22 +207,22 @@ public static class ViewColumnTypeExt
 			foreach (var filter in rule.Filters)
 			{
 				//logical filters cannot be applied
-				if (filter.Name == new TfFilterAnd().GetColumnName()
-				    || filter.Name == new TfFilterOr().GetColumnName())
+				if (filter.QueryName == new TfFilterAnd().GetColumnName()
+				    || filter.QueryName == new TfFilterOr().GetColumnName())
 				{
 					ruleMatch = false;
 					break;
 				}
 
 				//Filter could not be applied as one column is missing
-				if (!queryNameToColumnNameDict.ContainsKey(filter.Name))
+				if (!queryNameToColumnNameDict.ContainsKey(filter.QueryName))
 				{
 					ruleMatch = false;
 					break;
 				}
 
 				//Filter could not be applied as one column is missing
-				var columnName = queryNameToColumnNameDict[filter.Name];
+				var columnName = queryNameToColumnNameDict[filter.QueryName];
 				var column = dt.Columns[columnName];
 				if (column is null)
 				{

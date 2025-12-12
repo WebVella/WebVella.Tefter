@@ -44,7 +44,7 @@ public record TfFilterOr : TfFilterBase
 	{
 		var query = new TfFilterQuery
 		{
-			Name = GetColumnName()
+			QueryName = GetColumnName()
 		};
 		foreach (var item in Filters)
 		{

@@ -39,8 +39,14 @@ fluent-text-field {
   }
 }
 
-fluent-switch::part(label){
-  margin-inline-end:0;
+fluent-number-field {
+    &::part(control) {
+        padding-right: 0;
+    }
+}
+
+fluent-switch::part(label) {
+    margin-inline-end: 0;
 }
 
 fluent-select {

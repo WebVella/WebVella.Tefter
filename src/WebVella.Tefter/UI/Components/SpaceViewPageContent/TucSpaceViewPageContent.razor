@@ -35,11 +35,11 @@ else
     //var columnIndex = 1;
     <CascadingValue IsFixed="true" TValue="TucSpaceViewPageContent" Value="this" Name="TucSpaceViewPageContent">
         <TucLayoutPageContent Icon="@_spacePage!.FluentIconName" Title="@_spacePage!.Name"
-                              ShowTabs="_spaceView.Presets.Count > 0" 
-                              OnEdit="_renamePage" OnEditTooltop="@LOC("Rename page")" 
+                              ShowTabs="_spaceView.Presets.Count > 0"
+                              OnEdit="_renamePage" OnEditTooltop="@LOC("Rename page")"
                               OnAdd="_addPreset" OnAddTooltop="@LOC("Create preset from current filters")">
             <Tabs>
-                <TucSpaceViewPageContentTabs SpaceView="_spaceView" SpacePage="_spacePage" SpaceData="_dataset"/>
+                <TucSpaceViewPageContentTabs SpaceView="_spaceView" SpacePage="_spacePage" SpaceData="_dataset" />
             </Tabs>
             <Toolbar>
                 <TucSpaceViewPageContentToolbar Context=Context SpaceView="_spaceView" Data=_data
@@ -49,10 +49,10 @@ else
             <ChildContent>
                 <table class="tf-grid  tf-grid--sticky" id="@_tableId">
                     <colgroup>
-                        <col span="1" style="@_getSafeColumnMetaString(Guid.Empty,nameof(TfSpaceViewColumnPresentationMeta.TableColStyles))">
+                        <col span="1" style="@GetSafeColumnMetaString(Guid.Empty, nameof(TfSpaceViewColumnPresentationMeta.TableColStyles))">
                         @foreach (var col in _spaceViewColumns)
                         {
-                            <col span="1" style="@_getSafeColumnMetaString(col.Id,nameof(TfSpaceViewColumnPresentationMeta.TableColStyles))">
+                            <col span="1" style="@GetSafeColumnMetaString(col.Id, nameof(TfSpaceViewColumnPresentationMeta.TableColStyles))">
                         }
                     </colgroup>
                     <thead class="tf-grid-thead">
@@ -61,9 +61,9 @@ else
                         {
                             <tr class="tf-grid-thead-loading"></tr>
                         }
-                        <tr class="tf-grid-tr">
-                            <th class="@_getSafeColumnMetaString(Guid.Empty,nameof(TfSpaceViewColumnPresentationMeta.HeaderCellClass))"
-                                style="@_getSafeColumnMetaString(Guid.Empty,nameof(TfSpaceViewColumnPresentationMeta.HeaderCellStyles))">
+                        <tr class="tf-grid-tr tf-grid-tr--titles">
+                            <th class="@GetSafeColumnMetaString(Guid.Empty, nameof(TfSpaceViewColumnPresentationMeta.HeaderCellClass))"
+                                style="@GetSafeColumnMetaString(Guid.Empty, nameof(TfSpaceViewColumnPresentationMeta.HeaderCellStyles))">
                                 <div class="check-content check">
                                     @if (_allDataRowsSelected())
                                     {
@@ -84,10 +84,10 @@ else
                                     }
                                 </div>
                             </th>
-                            @foreach (var column in _spaceViewColumns.OrderBy(x => x.Position))
+                            @foreach (var column in _spaceViewColumns)
                             {
-                                <th data-query-name="@column.QueryName" class="@_getSafeColumnMetaString(column.Id,nameof(TfSpaceViewColumnPresentationMeta.HeaderCellClass))"
-                                    style="@_getSafeColumnMetaString(column.Id,nameof(TfSpaceViewColumnPresentationMeta.HeaderCellStyles))" id="@column.AnchorId">
+                                <th data-query-name="@column.QueryName" class="@GetSafeColumnMetaString(column.Id, nameof(TfSpaceViewColumnPresentationMeta.HeaderCellClass))"
+                                    style="@GetSafeColumnMetaString(column.Id, nameof(TfSpaceViewColumnPresentationMeta.HeaderCellStyles))" id="@column.AnchorId">
                                     <div>
                                         @if (String.IsNullOrWhiteSpace(column.Icon))
                                         {
@@ -109,7 +109,7 @@ else
                                     </div>
                                     <div class="resize-handle" data-column="@column.Position"></div>
                                     <TucSpaceViewPageContentColumnActions Column="column" User="_currentUser" />
-                                    <div class="@_getSafeColumnMetaString(column.Id,nameof(TfSpaceViewColumnPresentationMeta.HeaderSortActionClass))"
+                                    <div class="@GetSafeColumnMetaString(column.Id, nameof(TfSpaceViewColumnPresentationMeta.HeaderSortActionClass))"
                                          data-column="@column.Position"
                                          title="@LOC("Click to sort. SHIFT+click for multiple sort")">
                                         <div class="tf-column-sort__caret-down">@_caretDown</div>
@@ -119,6 +119,8 @@ else
                                 </th>
                             }
                         </tr>
+                        <TucSpaceViewFiltersHeaderRow SpaceView="_spaceView" SpaceViewColumns="_spaceViewColumns" 
+                            AllDataProviders="_allDataProviders" AllSharedColumns="_allSharedColumns" />
                     </thead>
                     <tbody class="tf-grid-tbody">
                         @if (_data is null)
@@ -147,8 +149,8 @@ else
                                     style="@_rowMeta[tfId].RowStyles"
                                     @ondblclick="@row.OnDblClick"
                                     id="@($"row-{tfId}")">
-                                    <td class="@_getSafeColumnMetaString(Guid.Empty,nameof(TfSpaceViewColumnPresentationMeta.BodyCellClass))" 
-                                        style="@_getSafeColumnMetaString(Guid.Empty,nameof(TfSpaceViewColumnPresentationMeta.BodyCellStyles))">
+                                    <td class="@GetSafeColumnMetaString(Guid.Empty, nameof(TfSpaceViewColumnPresentationMeta.BodyCellClass))"
+                                        style="@GetSafeColumnMetaString(Guid.Empty, nameof(TfSpaceViewColumnPresentationMeta.BodyCellStyles))">
                                         <div class="tf-grid-td-color"></div>
                                         <div class="tf-grid-td-selection"></div>
                                         <div class="tf-grid-td-hover"></div>
@@ -202,9 +204,9 @@ else
                                     </td>
                                     @foreach (var column in _spaceViewColumns)
                                     {
-                                        <td @key=@($"{tfId}__{column.Id}") 
-                                            class="@_getSafeColumnMetaString(column.Id,nameof(TfSpaceViewColumnPresentationMeta.BodyCellClass))"
-                                            style="@_getSafeRegionContextString(tfId,column.Id,nameof(TfSpaceViewColumnBase.BodyCellStyles)) @_getSafeColumnMetaString(column.Id,nameof(TfSpaceViewColumnPresentationMeta.BodyCellStyles))">
+                                        <td @key=@($"{tfId}__{column.Id}")
+                                            class="@GetSafeColumnMetaString(column.Id, nameof(TfSpaceViewColumnPresentationMeta.BodyCellClass))"
+                                            style="@GetSafeRegionContextString(tfId, column.Id, nameof(TfSpaceViewColumnBase.BodyCellStyles)) @GetSafeColumnMetaString(column.Id, nameof(TfSpaceViewColumnPresentationMeta.BodyCellStyles))">
                                             <div class="tf-grid-td-color"
                                                  style=""></div>
                                             <div class="tf-grid-td-selection"></div>
@@ -212,7 +214,7 @@ else
                                             @if (!_regionContextDict[tfId].ContainsKey(column.Id))
                                             {
                                             }
-                                            else if(_columnTypeMetaDict.ContainsKey(column.TypeId))
+                                            else if (_columnTypeMetaDict.ContainsKey(column.TypeId))
                                             {
                                                 <TucErrorBoundry>
                                                     @(((ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(_columnTypeMetaDict[column.TypeId]!.GetType())!).Render(_regionContextDict[tfId][column.Id]))

@@ -149,22 +149,22 @@ public record TfFilterBase
 		if (queryNameTypeDict is null) throw new ArgumentException("required", nameof(queryNameTypeDict));
 
 		//rules
-		if (model.Name == (new TfFilterAnd()).GetColumnName())
+		if (model.QueryName == (new TfFilterAnd()).GetColumnName())
 		{
 			return new TfFilterAnd(model, viewColumns, queryNameTypeDict);
 		}
-		else if (model.Name == (new TfFilterOr()).GetColumnName())
+		else if (model.QueryName == (new TfFilterOr()).GetColumnName())
 		{
 			return new TfFilterOr(model, viewColumns, queryNameTypeDict);
 		}
 		else
 		{
-			var viewColumn = viewColumns.FirstOrDefault(x => x.QueryName.ToLowerInvariant() == model.Name.ToLowerInvariant());
+			var viewColumn = viewColumns.FirstOrDefault(x => x.QueryName.ToLowerInvariant() == model.QueryName.ToLowerInvariant());
 			if (viewColumn is null) return null;
 			var columnName = viewColumn.GetColumnNameFromDataMapping();
 			if (String.IsNullOrWhiteSpace(columnName)) return null;
-			if(!queryNameTypeDict.ContainsKey(model.Name)) return null;
-			switch (queryNameTypeDict[model.Name])
+			if(!queryNameTypeDict.ContainsKey(model.QueryName)) return null;
+			switch (queryNameTypeDict[model.QueryName])
 			{
 				case TfDatabaseColumnType.ShortInteger:
 				case TfDatabaseColumnType.Integer:
