@@ -831,7 +831,7 @@ public partial class TfService : ITfService
 
 			if (filter is TfFilterBoolean)
 			{
-				if (column.DbType == TfDatabaseColumnType.Boolean)
+				if (column.DbType != TfDatabaseColumnType.Boolean)
 					return string.Empty;
 
 				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.Boolean);
