@@ -1,7 +1,4 @@
-﻿using Microsoft.FluentUI.AspNetCore.Components.DesignTokens;
-using WebVella.Tefter.Messaging;
-
-namespace WebVella.Tefter.UI.Layout;
+﻿namespace WebVella.Tefter.UI.Layout;
 
 public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 {
@@ -47,6 +44,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		}
 
 		_currentUser = user;
+
 		if (!_checkAccess(Navigator.Uri))
 			Navigator.NavigateTo(string.Format(TfConstants.NoAccessPage));
 		//init state

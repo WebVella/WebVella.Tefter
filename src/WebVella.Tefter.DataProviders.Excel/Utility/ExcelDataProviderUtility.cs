@@ -141,7 +141,15 @@ public class ExcelDataProviderUtility
                         throw new Exception($"Column with the name '{columnName}' was not initialized");
                     var cell = ws.Cell(row.RowNumber(), i);
                     var cellValue = cell.Value.ToString();
-
+                    if (cell.Value.IsDateTime && !String.IsNullOrWhiteSpace(cellValue))
+                    {
+                        //check for dateonly
+                        var cellDateTime = cell.Value.GetDateTime();
+                        if (cellDateTime.Hour == 0 && cellDateTime.Minute == 0 && cellDateTime.Second == 0)
+                        {
+                            cellValue = DateOnly.FromDateTime(cellDateTime).ToString();
+                        }
+                    }
                     if (!result.SourceColumnDefaultValue.ContainsKey(columnName)
                         && !String.IsNullOrWhiteSpace(cellValue))
                         result.SourceColumnDefaultValue[columnName] = cellValue;

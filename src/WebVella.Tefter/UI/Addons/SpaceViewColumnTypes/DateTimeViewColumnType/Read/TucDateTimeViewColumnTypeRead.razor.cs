@@ -10,7 +10,8 @@ public partial class TucDateTimeViewColumnTypeRead : ComponentBase
 	protected override void OnParametersSet()
 	{
 		var settings = Context.GetSettings<TfDateTimeViewColumnTypeSettings>();
-		string defaultFormat = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern;
+		string defaultFormat = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern +
+			" " + Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern;
 		_format = !String.IsNullOrWhiteSpace(settings.Format) ? settings.Format : defaultFormat;		
 	}	
 }

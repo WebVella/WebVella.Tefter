@@ -108,7 +108,7 @@ public class ExcelDataProvider : ITfDataProviderAddon
             var culture = new CultureInfo(settings.CultureName);
 
             Thread.CurrentThread.CurrentCulture = culture;
-            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
 
             if (string.IsNullOrWhiteSpace(settings.Filepath))
                 throw new Exception("Provider csv file path is not specified.");

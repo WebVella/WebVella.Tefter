@@ -22,9 +22,9 @@ public static class SourceToColumnTypeConverter
 		else if (Guid.TryParse(str, out guidValue)) return TfDatabaseColumnType.Guid;
 		else if (bool.TryParse(str, out boolValue)) return TfDatabaseColumnType.Boolean;
 		else if (decimal.TryParse(str, culture, out decimalValue)) return TfDatabaseColumnType.Number;
-		else if (DateOnly.TryParseExact(str, importFormat, culture, DateTimeStyles.None, out dateOnlyValue)) return TfDatabaseColumnType.DateOnly;
+		else if (!String.IsNullOrWhiteSpace(importFormat) && DateOnly.TryParseExact(str, importFormat, culture, DateTimeStyles.None, out dateOnlyValue)) return TfDatabaseColumnType.DateOnly;
 		else if (DateOnly.TryParse(str, culture, out dateOnlyValue)) return TfDatabaseColumnType.DateOnly;
-		else if (DateTime.TryParseExact(str, importFormat, culture, DateTimeStyles.None, out dateTimeValue)) return TfDatabaseColumnType.DateOnly;
+		else if (!String.IsNullOrWhiteSpace(importFormat) && DateTime.TryParseExact(str, importFormat, culture, DateTimeStyles.None, out dateTimeValue)) return TfDatabaseColumnType.DateOnly;
 		else if (DateTime.TryParse(str, culture, out dateTimeValue)) return TfDatabaseColumnType.DateTime;
 		else if (str.Length <= 4000) return TfDatabaseColumnType.ShortText;
 		else return TfDatabaseColumnType.Text;

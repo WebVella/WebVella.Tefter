@@ -584,6 +584,7 @@ public static partial class NavigatorExt
 		var colArray = columnName.Split(".");
 		var colName = colArray.Length > 1 ? colArray[1] : columnName;
 		colArray = colName.Split("_");
-		return colArray.Length > 1 ? colArray[1] : colName;
+		//as the dataprovider code is the first skip it
+		return String.Join(" ", colArray.Skip(1));
 	}
 }

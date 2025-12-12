@@ -26,6 +26,7 @@
 		<PackageReleaseNotes>Initial release</PackageReleaseNotes>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
 <!--		<EnableNETAnalyzers>False</EnableNETAnalyzers>-->
 	</PropertyGroup>
 

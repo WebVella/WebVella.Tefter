@@ -76,12 +76,12 @@
 	<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
 		@if ((_navState.Filters?.Count ?? 0) > 0)
 		{
-			<FluentIcon Value="@TfConstants.GetIcon("DataFunnel")" Slot="start" Color="@Color.Accent" />
+			<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" Color="@Color.Accent" />
 			<FluentBadge Appearance="Appearance.Accent">@(_navState.Filters?.Count ?? 0)</FluentBadge>
 		}
 		else
 		{
-			<FluentIcon Value="@TfConstants.GetIcon("DataFunnel")" Color="@Color.Accent" />
+			<FluentIcon Value="@TfConstants.GetIcon("Filter")" Color="@Color.Accent" />
 		}
 		</FluentButton>
 }

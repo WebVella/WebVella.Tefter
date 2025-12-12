@@ -111,7 +111,7 @@ public class CsvDataProvider : ITfDataProviderAddon
             var culture = new CultureInfo(settings.CultureName);
 
             Thread.CurrentThread.CurrentCulture = culture;
-            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
 
             var config = new CsvConfiguration(culture)
             {
