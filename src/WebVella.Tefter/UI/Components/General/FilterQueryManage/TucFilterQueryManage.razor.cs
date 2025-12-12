@@ -83,20 +83,13 @@ public partial class TucFilterQueryManage : TfBaseComponent
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (int)item.ComparisonMethod;
-				if (valueObj is not null)
-					value = (int)valueObj;
-
-				if (updateObj.Method == value) return;
-
+				if (valueObj is not null) value = (int)valueObj;
 				updateObj.Method = value;
 			}
 			else if (propName == nameof(item.Value))
 			{
 				var value = (Option<string>?)valueObj;
 				item.ValueOptionChanged(value);
-
-				if (updateObj.Value == item.Value) return;
-
 				updateObj.Value = item.Value;
 			}
 			else throw new Exception("propName not supported");
@@ -108,19 +101,12 @@ public partial class TucFilterQueryManage : TfBaseComponent
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (int)item.ComparisonMethod;
-				if (valueObj is not null)
-					value = (int)valueObj;
-
-				if (updateObj.Method == value) return;
-
+				if (valueObj is not null) value = (int)valueObj;
 				updateObj.Method = value;
 			}
 			else if (propName == nameof(item.Value))
 			{
 				item.ValueStringChanged((string?)valueObj);
-
-				if (updateObj.Value == item.Value) return;
-
 				updateObj.Value = item.Value;
 			}
 			else throw new Exception("propName not supported");
@@ -131,11 +117,7 @@ public partial class TucFilterQueryManage : TfBaseComponent
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (int)item.ComparisonMethod;
-				if (valueObj is not null)
-					value = (int)valueObj;
-
-				if (updateObj.Method == value) return;
-
+				if (valueObj is not null) value = (int)valueObj;
 				updateObj.Method = value;
 			}
 			else if (propName == nameof(item.Value))
@@ -143,11 +125,7 @@ public partial class TucFilterQueryManage : TfBaseComponent
 				var value = (string?)valueObj;
 				if (!String.IsNullOrWhiteSpace(value) && !Guid.TryParse(value, out Guid _))
 					ToastService.ShowError(LOC("Invalid GUID value"));
-
 				item.ValueStringChanged(value);
-
-				if (updateObj.Value == item.Value) return;
-
 				updateObj.Value = item.Value;
 			}
 			else throw new Exception("propName not supported");
@@ -160,19 +138,12 @@ public partial class TucFilterQueryManage : TfBaseComponent
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (int)item.ComparisonMethod;
-				if (valueObj is not null)
-					value = (int)valueObj;
-
-				if (updateObj.Method == value) return;
-
+				if (valueObj is not null) value = (int)valueObj;
 				updateObj.Method = value;
 			}
 			else if (propName == nameof(item.Value))
 			{
 				item.ValueChanged((decimal?)(long?)valueObj);
-
-				if (updateObj.Value == item.Value) return;
-
 				updateObj.Value = item.Value;
 			}
 			else throw new Exception("propName not supported");
@@ -183,19 +154,12 @@ public partial class TucFilterQueryManage : TfBaseComponent
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (int)item.ComparisonMethod;
-				if (valueObj is not null)
-					value = (int)valueObj;
-
-				if (updateObj.Method == value) return;
-
+				if (valueObj is not null) value = (int)valueObj;
 				updateObj.Method = value;
 			}
 			else if (propName == nameof(item.Value))
 			{
 				item.ValueChanged((decimal?)valueObj);
-
-				if (updateObj.Value == item.Value) return;
-
 				updateObj.Value = item.Value;
 			}
 			else throw new Exception("propName not supported");
@@ -207,19 +171,12 @@ public partial class TucFilterQueryManage : TfBaseComponent
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (int)item.ComparisonMethod;
-				if (valueObj is not null)
-					value = (int)valueObj;
-
-				if (updateObj.Method == value) return;
-
+				if (valueObj is not null) value = (int)valueObj;
 				updateObj.Method = value;
 			}
 			else if (propName == nameof(item.Value))
 			{
 				item.ValueChanged((string?)valueObj);
-
-				if (updateObj.Value == item.Value) return;
-
 				updateObj.Value = item.Value;
 			}
 			else throw new Exception("propName not supported");
