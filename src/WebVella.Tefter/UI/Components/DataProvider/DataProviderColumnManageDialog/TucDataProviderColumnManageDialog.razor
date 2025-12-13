@@ -10,7 +10,7 @@
 	@if (String.IsNullOrWhiteSpace(_error) && !_isBusy)
 	{
 		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
-					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
+		              Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
 	}
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
@@ -20,114 +20,148 @@
 	<div>
 		@if (_isBusy)
 		{
-			<TucLoadingPane />
+			<TucLoadingPane/>
 		}
 		else if (!string.IsNullOrWhiteSpace(_error))
 		{
 			<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
-
 		}
 		else
 		{
 			<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
-							FormName="submit-form" class="tf-form" novalidate>
-				<DataAnnotationsValidator />
-				<TucDivider Style="margin-bottom:15px" Title="PROVIDER" />
+			                FormName="submit-form" class="tf-form" novalidate>
+				<DataAnnotationsValidator/>
+				<TucDivider Style="margin-bottom:15px" Title="PROVIDER"/>
 				<FluentGrid>
-					<FluentGridItem xs="4">
+					<FluentGridItem xs="6">
 						@if (_isCreate)
 						{
 							<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DbName
-											 Label="@LOC("column name")" Style="width:100%"
-											 AutoComplete="off" Class="with-prefix">
+							                 Label="@LOC("column name")" Style="width:100%"
+							                 Required="true"
+							                 AutoComplete="off" Class="with-prefix">
 								<span slot="start">@_provider.ColumnPrefix</span>
 							</FluentTextField>
-							<FluentValidationMessage For="@(() => _form.DbName)" />
+							<FluentValidationMessage For="@(() => _form.DbName)"/>
 						}
 						else
 						{
 							<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DbName
-											 Label="@LOC("column name")" Style="width:100%"
-											 ReadOnly="true" />
+							                 Label="@LOC("column name")" Style="width:100%"
+							                 ReadOnly="true"/>
 						}
 					</FluentGridItem>
-					<FluentGridItem xs="4">
+					<FluentGridItem xs="6">
 						<TucSelect SelectedOption="@_form.DbType"
-								   SelectedOptionChanged="_dbTypeChanged"
-								   TOption="TfDatabaseColumnType"
-								   Items="@_providerColumnTypeToSourceTypes.Keys"
-								   Style="width:100%"
-								   Placeholder="@LOC("select SOURCE column type")"
-								   OptionText="@(p => p.ToDescriptionString())"
-								   OptionValue="@(p=>((int)p).ToString())"
-								   Label="@LOC("data type")" Disabled="!_isCreate" />
-						<FluentValidationMessage For="@(() => _form.DbType)" />
+						           SelectedOptionChanged="_dbTypeChanged"
+						           TOption="TfDatabaseColumnType"
+						           Items="@_providerColumnTypeToSourceTypes.Keys"
+						           Style="width:100%"
+						           Placeholder="@LOC("select SOURCE column type")"
+						           OptionText="@(p => p.ToDescriptionString())"
+						           OptionValue="@(p => ((int)p).ToString())"
+						           Label="@LOC("data type")" Disabled="!_isCreate" Required="true"/>
+						<FluentValidationMessage For="@(() => _form.DbType)"/>
 					</FluentGridItem>
 				</FluentGrid>
-				<TucDivider Style="margin:15px 0" Title="SOURCE" />
+				<TucDivider Style="margin:15px 0" Title="DATA INPUT"/>
 				<FluentGrid>
-					<FluentGridItem xs="4">
-						<FluentInputLabel Label="@LOC("Data Link")" />
-						<FluentSwitch @bind-Value=@_isConnected UncheckedMessage="@LOC("local data only")"
-									  CheckedMessage="@LOC("synchronized with source")"/>
+					<FluentGridItem xs="6">
+						<TucSelect SelectedOption="@_inputType"
+						           SelectedOptionChanged="_inputTypeChanged"
+						           TOption="TfDataProviderColumnDataInputType"
+						           Items="@(Enum.GetValues<TfDataProviderColumnDataInputType>())"
+						           OptionValue="((p) => p.ToString())"
+						           OptionText="@((p) => p.ToDescriptionString())"
+						           Disabled="@(!_isCreate && _inputType == TfDataProviderColumnDataInputType.LocalCalculated)"
+						           Style="width:100%;min-width:200px;"/>
 					</FluentGridItem>
-					@if (_isConnected)
-					{
-						<FluentGridItem xs="4">
-							<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.SourceName
-											 Label="@LOC("column name")" Style="width:100%" AutoComplete="off"
-											 Placeholder="@LOC("leave empty, if no source")" />
-							<FluentValidationMessage For="@(() => _form.SourceName)" />
-						</FluentGridItem>
-						<FluentGridItem xs="4">
-							<TucSelect SelectedOption="@_form.SourceType"
-							           SelectedOptionChanged="((x) => _form.SourceType = x)"
-									   TOption="string"
-									   Items="@_providerColumnTypeToSourceTypes[_form.DbType]"
-									   Style="width:100%"
-									   Label="@LOC("column type")" />
-							<FluentValidationMessage For="@(() => _form.SourceType)" />
-						</FluentGridItem>
-
-					}
-					else
-					{
-						<FluentGridItem xs="8" Style="display:flex;align-items:end">
-							<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("data stored but NOT synchronized")</FluentMessageBar>
-						</FluentGridItem>
-					}
-				</FluentGrid>
-				<TucDivider Style="margin:15px 0" Title="OPTIONS" />
-				<FluentGrid>
-					<FluentGridItem xs="4">
-						<FluentInputLabel Label="@LOC("Global search")" />
-						<FluentSwitch @bind-Value=@_form.IncludeInTableSearch
-									  CheckedMessage="@LOC("included")"
-									  UncheckedMessage="@LOC("included")" />
-						<FluentValidationMessage For="@(() => _form.IncludeInTableSearch)" />
-					</FluentGridItem>
-				</FluentGrid>
-				<FluentGrid>
-					<FluentGridItem xs="8">
-						<TucSelect SelectedOption="@_form.RuleSet"
-						           SelectedOptionChanged="((x) => _form.RuleSet = x)"
-								   TOption="TfDataProviderColumnRuleSet"
-								   Items="@(Enum.GetValues<TfDataProviderColumnRuleSet>())"
-								   OptionValue="((p) => p.ToString())"
-								   OptionText="@((p) => p.ToDescriptionString())"
-								   Style="width:100%;min-width:200px;"
-								   Label="@LOC("Rule Set")" />
-					</FluentGridItem>
-					<FluentGridItem xs="4">
-						@if (_form.RuleSet == TfDataProviderColumnRuleSet.NullableWithDefault)
+					<FluentGridItem xs="6">
+						@if (!_isCreate && _inputType == TfDataProviderColumnDataInputType.LocalCalculated)
 						{
-							<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DefaultValue
-											 Label="@LOC("Default value")" Style="width:100%" AutoComplete="off" Required=true
-											 Placeholder="@LOC("empty string")" />
+							<FluentMessageBar AllowDismiss="false" Intent="MessageIntent.Info">@LOC("Calculated cannot be changed")</FluentMessageBar>
 						}
 					</FluentGridItem>
 				</FluentGrid>
-				<FluentValidationMessage For="@(() => _form.DefaultValue)" />
+				@if (_inputType == TfDataProviderColumnDataInputType.ImportFromSource)
+				{
+					<FluentGrid>
+						<FluentGridItem xs="6">
+							<FluentTextField TextFieldType="@TextFieldType.Text"
+							                 Required="true"
+							                 @bind-Value=@_form.SourceName
+							                 Label="@LOC("SOURCE column name")" Style="width:100%" AutoComplete="off"
+							                 Placeholder="@LOC("exactly as in source")"/>
+							<FluentValidationMessage For="@(() => _form.SourceName)"/>
+						</FluentGridItem>
+						<FluentGridItem xs="6">
+							<TucSelect SelectedOption="@_form.SourceType"
+							           Required="true"
+							           SelectedOptionChanged="((x) => _form.SourceType = x)"
+							           TOption="string"
+							           Items="@_providerColumnTypeToSourceTypes[_form.DbType]"
+							           Style="width:100%"
+							           Label="@LOC("SOURCE column type")"/>
+							<FluentValidationMessage For="@(() => _form.SourceType)"/>
+						</FluentGridItem>
+					</FluentGrid>
+				}
+				else if (_inputType == TfDataProviderColumnDataInputType.LocalCalculated)
+				{
+					<FluentGrid>
+						<FluentGridItem xs="12">
+							<FluentInputLabel Label="@LOC("Formula Expression")" />
+							<FluentStack HorizontalGap="5">
+								<FluentTextField TextFieldType="@TextFieldType.Text" Required="true"
+								                 @bind-Value=@_form.Expression
+								                 Style="flex:1 1 auto"
+								                 AutoComplete="off"
+								                 Placeholder="@LOC("fill in your Postgres formula expression")"/>
+								<FluentButton Style="flex: 0 0 auto" Title="@LOC("Formula Generation Helper")"
+								              IconStart="@TfConstants.GetIcon("AppsSettings")"/>
+							</FluentStack>
+							<FluentValidationMessage For="@(() => _form.Expression)"/>
+						</FluentGridItem>
+					</FluentGrid>
+				}
+				@if (_inputType == TfDataProviderColumnDataInputType.LocalInput
+				     || _inputType == TfDataProviderColumnDataInputType.ImportFromSource)
+				{
+					<FluentGrid>
+						<FluentGridItem xs="8">
+							<TucSelect SelectedOption="@_form.RuleSet"
+							           SelectedOptionChanged="((x) => _form.RuleSet = x)"
+							           TOption="TfDataProviderColumnRuleSet"
+							           Items="@(Enum.GetValues<TfDataProviderColumnRuleSet>())"
+							           OptionValue="((p) => p.ToString())"
+							           OptionText="@((p) => p.ToDescriptionString())"
+							           Style="width:100%;min-width:200px;"
+							           Required="true"
+							           Label="@LOC("Default value rule")"/>
+						</FluentGridItem>
+						<FluentGridItem xs="4">
+							@if (_form.RuleSet == TfDataProviderColumnRuleSet.NullableWithDefault)
+							{
+								<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DefaultValue
+								                 Label="@LOC("Default value")" Style="width:100%" AutoComplete="off"
+								                 Required=true
+								                 Placeholder="@LOC("empty string")"/>
+							}
+						</FluentGridItem>
+					</FluentGrid>
+					<FluentValidationMessage For="@(() => _form.DefaultValue)"/>
+				}
+				<TucDivider Style="margin:15px 0" Title="OPTIONS"/>
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentInputLabel Label="@LOC("Global search")"/>
+						<FluentSwitch @bind-Value=@_form.IncludeInTableSearch
+						              CheckedMessage="@LOC("include in the global search")"
+						              UncheckedMessage="@LOC("include in the global search")"/>
+						<FluentValidationMessage For="@(() => _form.IncludeInTableSearch)"/>
+					</FluentGridItem>
+				</FluentGrid>
+
 			</FluentEditForm>
 		}
 	</div>

@@ -11,13 +11,14 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private bool _isConnected = false;
 	private Icon _iconBtn = null!;
 	private TfDataProvider _provider = new();
 	private TfUpsertDataProviderColumn _form = new();
 	private Dictionary<TfDatabaseColumnType, List<string>> _providerColumnTypeToSourceTypes = new();
 	private List<DatabaseColumnTypeInfo> _providerColumnTypeOptions = new();
 	private List<TfDataProviderColumnSearchType> _searchTypes = new();
+	
+	private TfDataProviderColumnDataInputType _inputType = TfDataProviderColumnDataInputType.LocalInput;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -56,7 +57,15 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 		{
 			_searchTypes.Add(item);
 		}
-		_isConnected = !String.IsNullOrWhiteSpace(_form.SourceName);
+		_inputType = TfDataProviderColumnDataInputType.LocalInput;
+		if (!String.IsNullOrWhiteSpace(_form.SourceName))
+		{
+			_inputType = TfDataProviderColumnDataInputType.ImportFromSource;
+		}
+		else if (!String.IsNullOrWhiteSpace(_form.Expression))
+		{
+			_inputType = TfDataProviderColumnDataInputType.LocalCalculated;
+		}
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -92,7 +101,15 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 			else
 			{
 				_form = Content!.ToUpsert();
-				_isConnected = !String.IsNullOrWhiteSpace(_form.SourceName);
+				_inputType = TfDataProviderColumnDataInputType.LocalInput;
+				if (!String.IsNullOrWhiteSpace(_form.SourceName))
+				{
+					_inputType = TfDataProviderColumnDataInputType.ImportFromSource;
+				}
+				else if (!String.IsNullOrWhiteSpace(_form.Expression))
+				{
+					_inputType = TfDataProviderColumnDataInputType.LocalCalculated;
+				}
 			}
 			base.InitForm(_form);
 		}
@@ -115,11 +132,16 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 
 			var errors = new List<ValidationError>();
 
-			if (_isConnected && String.IsNullOrWhiteSpace(_form.SourceName))
+			if (_inputType == TfDataProviderColumnDataInputType.ImportFromSource && String.IsNullOrWhiteSpace(_form.SourceName))
 			{
 				errors.Add(new ValidationError(nameof(_form.SourceName), LOC("required if attached")));
 			}
-
+			else if (_inputType == TfDataProviderColumnDataInputType.LocalCalculated && String.IsNullOrWhiteSpace(_form.Expression))
+			{
+				errors.Add(new ValidationError(nameof(_form.Expression), LOC("required when calculated")));
+			}
+			
+			
 			foreach (var item in errors)
 			{
 				MessageStore.Add(EditContext.Field(item.PropertyName), item.Message);
@@ -146,16 +168,28 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 				SourceName = _form.SourceName,
 				SourceType = _form.SourceType,
 				RuleSet = _form.RuleSet,
+				Expression = _form.Expression,
+				ExpressionJson = String.IsNullOrWhiteSpace(_form.ExpressionJson) ? "{}" : _form.ExpressionJson,
 			};
 
 			if (submit.DefaultValue is null
 				&& submit.RuleSet == TfDataProviderColumnRuleSet.NullableWithDefault)
 				submit.DefaultValue = String.Empty;
 
-			if (!_isConnected)
+			if (_inputType == TfDataProviderColumnDataInputType.LocalInput)
 			{
-				submit.SourceName = null;
+				submit.Expression = null;
 				submit.SourceType = null;
+				submit.SourceName = null;
+			}
+			else if (_inputType == TfDataProviderColumnDataInputType.LocalCalculated)
+			{
+				submit.SourceType = null;
+				submit.SourceName = null;
+			}
+			else if (_inputType == TfDataProviderColumnDataInputType.ImportFromSource)
+			{
+				submit.Expression = null;
 			}
 
 			submit.FixPrefix(_provider.ColumnPrefix);
@@ -202,5 +236,21 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 		_form.SourceType = _providerColumnTypeToSourceTypes[_form.DbType][0];
 		await InvokeAsync(StateHasChanged);
 	}
+	
+	private void _inputTypeChanged(TfDataProviderColumnDataInputType type)
+	{
+		if (type == _inputType) return;
+		_inputType = type;
+		_form.SourceType = null;
+		_form.SourceName = null;
+		_form.Expression = null;
+	
+		if (_inputType == TfDataProviderColumnDataInputType.ImportFromSource)
+		{
+			if(_providerColumnTypeToSourceTypes[_form.DbType].Count > 0)
+				_form.SourceType = _providerColumnTypeToSourceTypes[_form.DbType][0];
+		}		
 
+	}
+	
 }

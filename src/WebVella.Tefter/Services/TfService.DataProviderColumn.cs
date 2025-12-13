@@ -1736,7 +1736,7 @@ public partial class TfService : ITfService
 						if (identityFound)
 							return false;
 
-						return false;
+						return true;
 					})
 					.WithMessage("The column cannot be deleted because is part of data identity");
 
