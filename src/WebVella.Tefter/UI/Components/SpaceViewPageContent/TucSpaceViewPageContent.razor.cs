@@ -32,6 +32,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private RenderFragment _caretDownInactive = null!;
 	private RenderFragment _caretDown = null!;
 	private RenderFragment _caretUp = null!;
+	private bool _hasPinnedData = false;
 
 	public async ValueTask DisposeAsync()
 	{
@@ -238,17 +239,19 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 			_spaceViewColumns = TfService.GetSpaceViewColumnsList(_spaceView.Id);
 
-			string? relationDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName, null);
-			string? relationDataIdentityValue = Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName, null);
+			string? pinnedDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName, null);
+			string? pinnedDataIdentityValue = Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName, null);
+			_hasPinnedData = false;
+			if (!String.IsNullOrWhiteSpace(pinnedDataIdentity) && !String.IsNullOrWhiteSpace(pinnedDataIdentityValue))
+				_hasPinnedData = true;
 
-			if (!String.IsNullOrWhiteSpace(relationDataIdentity)
-				&& !String.IsNullOrWhiteSpace(relationDataIdentityValue))
+			if (_hasPinnedData)
 			{
 				//Hardcoded relation is requested
 				TfRelDataIdentityQueryInfo relInfo = new (){ 
-					DataIdentity  = relationDataIdentity, 
-					RelDataIdentity = relationDataIdentity,
-					RelIdentityValues = new List<string>{ relationDataIdentityValue }
+					DataIdentity  = pinnedDataIdentity!, 
+					RelDataIdentity = pinnedDataIdentity!,
+					RelIdentityValues = new List<string>{ pinnedDataIdentityValue! }
 				};
 				_data = TfService.QueryDataProvider(_dataProvider,
 					sorts: _dataset.SortOrders,

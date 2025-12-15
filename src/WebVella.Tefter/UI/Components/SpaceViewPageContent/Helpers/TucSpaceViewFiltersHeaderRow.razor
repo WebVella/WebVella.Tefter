@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-@if (SpaceView.Settings.FitlerType == TfSpaceViewFilterType.GridFilter)
+@if (!_hasPinnedData && SpaceView.Settings.FitlerType == TfSpaceViewFilterType.GridFilter)
 {
     <tr class="tf-grid-tr tf-grid-tr--filters">
         <th class="@TucSpaceViewPageContent.GetSafeColumnMetaString(Guid.Empty, nameof(TfSpaceViewColumnPresentationMeta.HeaderCellClass))"

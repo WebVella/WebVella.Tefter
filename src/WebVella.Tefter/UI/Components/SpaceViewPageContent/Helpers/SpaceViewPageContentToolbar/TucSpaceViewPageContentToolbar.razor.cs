@@ -11,13 +11,14 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposab
 	[Parameter] public TfSpaceViewPreset? SpaceViewPreset { get; set; } = null;
 	[Parameter] public TfDataTable Data { get; set; } = null!;
 	[Parameter] public EventCallback<TfDataTable> DataChanged { get; set; }
-	
+	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
+
 	private TfNavigationState _navState = null!;
 	private bool _hasViewPersonalization = false;
 	private Guid _initedSpaceViewId = Guid.Empty;
+	private bool _hasPinnedData = false;
 
-	
-	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
+
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
@@ -61,6 +62,12 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposab
 		_navState = navState;
 		try
 		{
+			string? pinnedDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName, null);
+			string? pinnedDataIdentityValue = Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName, null);
+			_hasPinnedData = false;
+			if (!String.IsNullOrWhiteSpace(pinnedDataIdentity) && !String.IsNullOrWhiteSpace(pinnedDataIdentityValue))
+				_hasPinnedData = true;
+
 			_hasViewPersonalization = Context.CurrentUser.Settings.ViewPresetColumnPersonalizations.Any(x =>
 				x.SpaceViewId == SpaceView.Id && x.PresetId == SpaceViewPreset?.Id);
 			if (!_hasViewPersonalization)

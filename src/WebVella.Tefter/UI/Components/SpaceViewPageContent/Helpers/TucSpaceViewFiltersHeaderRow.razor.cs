@@ -23,7 +23,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 	public Dictionary<string, TfFilterQuery> _popoverQueryFilterDict = new();
 	public Dictionary<string, TfFilterBase> _popoverBaseFilterDict = new();
 	public Guid? _openedFilterId = null;
-
+	private bool _hasPinnedData = false;
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
@@ -48,6 +48,12 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 
 	private void _init()
 	{
+		string? pinnedDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName, null);
+		string? pinnedDataIdentityValue = Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName, null);
+		_hasPinnedData = false;
+		if (!String.IsNullOrWhiteSpace(pinnedDataIdentity) && !String.IsNullOrWhiteSpace(pinnedDataIdentityValue))
+			_hasPinnedData = true;
+
 		_typeDict = SpaceViewColumns.ToQueryNameTypeDictionary(dataProviders: AllDataProviders,
 			sharedColumns: AllSharedColumns);
 		_filters = new();
