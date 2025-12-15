@@ -1,6 +1,22 @@
 ﻿namespace WebVella.Tefter.MessagingEx;
 
-public class TfEventBus
+public partial interface ITfEventBus
+{
+	IDisposable Subscribe<T>(
+		Action<T?> handler,
+		string? key = null);
+	ValueTask<IAsyncDisposable> SubscribeAsync<T>(
+		Action<T?> handler,
+		string? key = null);
+	void Publish(
+		string? key = null,
+		ITfEventPayload? payload = null);
+	ValueTask PublishAsync(
+		string? key = null,
+		ITfEventPayload? payload = null);
+}
+
+public partial class TfEventBus : ITfEventBus
 {
 	private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 	private readonly List<Subscription> _subscribers = new List<Subscription>();
@@ -41,7 +57,7 @@ public class TfEventBus
 		return new Unsubscriber(_subscribers, subscription, _semaphore);
 	}
 
-	public async ValueTask<IDisposable> SubscribeAsync<T>(
+	public async ValueTask<IAsyncDisposable> SubscribeAsync<T>(
 		Action<T?> handler,
 		string? key = null)
 	{

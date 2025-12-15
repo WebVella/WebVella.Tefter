@@ -55,6 +55,7 @@ public static class TfDependencyInjection
 		});
 
 		//messaging
+		services.AddSingleton<WebVella.Tefter.MessagingEx.ITfEventBus, WebVella.Tefter.MessagingEx.TfEventBus>();
 		services.AddSingleton<ITfChannelEventRouter, TfChannelEventRouter>();
 		services.AddTransient<ITfEventBus, TfEventBus>();
 		services.AddTransient<TfUserEventProvider, TfUserEventProvider>();
