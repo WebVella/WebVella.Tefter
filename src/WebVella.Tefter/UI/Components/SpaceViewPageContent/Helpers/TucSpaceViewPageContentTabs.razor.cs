@@ -97,10 +97,19 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 
 			if (hasPinnedData)
 			{
+				if (spaceView.Presets.Count == 0)
+				{
+					_menu.Add(new TfMenuItem
+					{
+						Id = "space-view-pinned-clear",
+						Text = LOC("All Records"),
+						Url = String.Format(TfConstants.SpacePagePageUrl, SpacePage.SpaceId, SpacePage.Id)
+					});
+				}
 				_menu.Add(new TfMenuItem
 				{
 					Id = "space-view-pinned-data-tab",
-					Text = LOC("Pinned Data"),
+					Text = LOC("Pinned"),
 					Selected = true,
 					IconColor = TfColor.Orange500,
 					Url = String.Format(TfConstants.SpacePagePageUrl, SpacePage.SpaceId, SpacePage.Id)

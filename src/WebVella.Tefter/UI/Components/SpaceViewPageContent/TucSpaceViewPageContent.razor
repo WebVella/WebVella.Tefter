@@ -35,7 +35,7 @@ else
     //var columnIndex = 1;
     <CascadingValue IsFixed="true" TValue="TucSpaceViewPageContent" Value="this" Name="TucSpaceViewPageContent">
         <TucLayoutPageContent Icon="@_spacePage!.FluentIconName" Title="@_spacePage!.Name"
-                              ShowTabs="_spaceView.Presets.Count > 0"
+                              ShowTabs="(_spaceView.Presets.Count > 0 || _hasPinnedData)"
                               OnEdit="_renamePage" OnEditTooltop="@LOC("Rename page")"
                               OnAdd="_addPreset" OnAddTooltop="@LOC("Create preset from current filters")">
             <Tabs>
@@ -119,8 +119,8 @@ else
                                 </th>
                             }
                         </tr>
-                        <TucSpaceViewFiltersHeaderRow SpaceView="_spaceView" SpaceViewColumns="_spaceViewColumns" 
-                            AllDataProviders="_allDataProviders" AllSharedColumns="_allSharedColumns" />
+                        <TucSpaceViewFiltersHeaderRow SpaceView="_spaceView" SpaceViewColumns="_spaceViewColumns"
+                                                      AllDataProviders="_allDataProviders" AllSharedColumns="_allSharedColumns" />
                     </thead>
                     <tbody class="tf-grid-tbody">
                         @if (_data is null)
