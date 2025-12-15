@@ -2,14 +2,14 @@
 @inherits TfBaseComponent
 
 <TucScreenRegionComponent Region="@(new TfSpaceViewToolBarActionScreenRegion())" />
-@if (SpaceView.Settings.CanCreateRows)
+@if (SpaceView.CanCreateRecords(Context.CurrentUser))
 {
 	<FluentButton OnClick="_onAddRowClick" Appearance="@Appearance.Outline" Title="@LOC("Add new row")">
 		<FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" />
 	</FluentButton>
 }
 @* Manage rows *@
-@if (SpaceView.Settings.CanUpdateRows)
+@if (SpaceView.CanUpdateRecords(Context.CurrentUser))
 {
 	@if (TucSpaceViewPageContent.GetEditAll())
 	{

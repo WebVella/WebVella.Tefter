@@ -493,9 +493,6 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                 Position = 100,
                 Settings = new TfSpaceViewSettings
                 {
-                    CanCreateRows = true,
-                    CanUpdateRows = true,
-                    CanDeleteRows = true,
                     FreezeFinalNColumns = 0,
                     FreezeStartingNColumns = 0,
                     FitlerType = TfSpaceViewFilterType.ToolbarFilter

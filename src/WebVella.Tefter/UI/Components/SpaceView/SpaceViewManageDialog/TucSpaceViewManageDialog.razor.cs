@@ -7,13 +7,12 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private TfSpaceViewSettings _form = new();
-
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) throw new Exception("Content Id is required");
-		_form = Content.Settings with { CanCreateRows = Content.Settings.CanCreateRows };
+		_form = Content.Settings with { FitlerType = Content.Settings.FitlerType };
 		base.InitForm(_form);
 	}
 
@@ -54,4 +53,10 @@ public partial class TucSpaceViewManageDialog : TfFormBaseComponent, IDialogCont
 	{
 		await Dialog.CancelAsync();
 	}
+
+	private void _valuesChanged(List<Guid> values)
+	{
+		_form.CanCreateRoles = values;
+	}
+	
 }

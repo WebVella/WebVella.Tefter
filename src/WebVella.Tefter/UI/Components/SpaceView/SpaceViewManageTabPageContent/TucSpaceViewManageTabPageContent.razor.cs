@@ -14,6 +14,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
 	private ReadOnlyDictionary<Guid, ITfSpaceViewColumnTypeAddon> _typeMetaDict = null!;
 	public bool _submitting = false;
+	public Dictionary<Guid,TfRole> _roleDict = new();
+	public List<TfRole> _rolesTotal = new();
 	public void Dispose()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
@@ -25,6 +27,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		await base.OnInitializedAsync();
 		if (Context is null)
 			throw new Exception("Context cannot be null");
+		_roleDict = TfService.GetRoles().ToDictionary(x=> x.Id);
 		await _init(TfAuthLayout.GetState().NavigationState);
 		_isDataLoading = false;
 	}
@@ -80,6 +83,21 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 			_spaceData = TfService.GetDataset(_spaceView.DatasetId);
 			if (_spaceData is null) throw new Exception("Dataset no longer exists");
 			_typeMetaDict = TfMetaService.GetSpaceViewColumnTypeDictionary();
+
+			_rolesTotal.Clear();
+			var totalIds = _spaceView.Settings.CanCreateRoles.ToList();
+			totalIds.AddRange(_spaceView.Settings.CanUpdateRoles.ToList());
+			totalIds.AddRange(_spaceView.Settings.CanDeleteRoles.ToList());
+			foreach (var roleId in totalIds)
+			{
+				if(roleId == TfConstants.ADMIN_ROLE_ID) continue;
+				if(!_roleDict.ContainsKey(roleId)) continue;
+				if (_rolesTotal.Any(x=> x.Id == roleId)) continue;
+
+				_rolesTotal.Add(_roleDict[roleId]);
+			}
+			_rolesTotal = _rolesTotal.OrderBy(x=> x.Name).ToList();
+
 		}
 		finally
 		{

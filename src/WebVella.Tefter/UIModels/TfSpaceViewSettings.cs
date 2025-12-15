@@ -4,11 +4,13 @@ public record TfSpaceViewSettings
 {
 	public int? FreezeStartingNColumns { get; set; } = 0;
 	public int? FreezeFinalNColumns { get; set; } = 0;
-	public bool CanCreateRows { get; set; } = false;
-	public bool CanUpdateRows { get; set; } = false;
-	public bool CanDeleteRows { get; set; } = false;
 	public List<TfColoringRule> ColoringRules { get; set; } = new();
 	public TfSpaceViewFilterType FitlerType { get; set; } = TfSpaceViewFilterType.ToolbarFilter;
+
+	public List<Guid> CanCreateRoles { get; set; } = new();
+	public List<Guid> CanUpdateRoles { get; set; } = new();
+	public List<Guid> CanDeleteRoles { get; set; } = new();
+
 }
 
 public enum TfSpaceViewFilterType

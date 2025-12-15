@@ -2,76 +2,69 @@
 @inherits TfFormBaseComponent
 @* Header *@
 <FluentDialogHeader ShowDismiss="true">
-	<FluentLabel Typo="Typography.PaneHeader">@LOC("Manage view settings")</FluentLabel>
+    <FluentLabel Typo="Typography.PaneHeader">@LOC("Manage view settings")</FluentLabel>
 </FluentDialogHeader>
 
 @* Footer *@
 <FluentDialogFooter>
-	@if (String.IsNullOrWhiteSpace(_error))
-	{
-		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
-		              Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
-	}
-	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+    @if (String.IsNullOrWhiteSpace(_error))
+    {
+        <FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
+                      Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+    }
+    <FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
 
 @* Body *@
 <FluentDialogBody>
-	@if (!string.IsNullOrWhiteSpace(_error))
-	{
-		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
-	}
-	else
-	{
-		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
-		                FormName="submit-form" class="tf-form" novalidate>
-			<DataAnnotationsValidator/>
-			<FluentGrid>
-				<FluentGridItem xs="4">
-					<FluentInputLabel Label="@LOC("New Rows")"/>
-					<FluentCheckbox @bind-Value="@_form.CanCreateRows" Style="height:32px;"
-					                Label="@LOC("can create data")"/>
-					<FluentValidationMessage For="@(() => _form.CanCreateRows)"/>
-				</FluentGridItem>
-				<FluentGridItem xs="4">
-					<FluentInputLabel Label="@LOC("Update Rows")"/>
-					<FluentCheckbox @bind-Value="@_form.CanUpdateRows" Style="height:32px;"
-					                Label="@LOC("can update data")"/>
-					<FluentValidationMessage For="@(() => _form.CanUpdateRows)"/>
-				</FluentGridItem>
-				<FluentGridItem xs="4">
-					<FluentInputLabel Label="@LOC("Delete Rows")"/>
-					<FluentCheckbox @bind-Value="@_form.CanDeleteRows" Style="height:32px;"
-					                Label="@LOC("can delete data")"/>
-					<FluentValidationMessage For="@(() => _form.CanDeleteRows)"/>
-				</FluentGridItem>
-			</FluentGrid>	
-			<FluentGrid>
-				<FluentGridItem xs="4">
-					<FluentInputLabel Label="@LOC("Filter Type")" />
-					<TucSelect Required="true" Style="width:100%" TOption="TfSpaceViewFilterType"
-							   @bind-SelectedOption="@_form.FitlerType"
-							   Placeholder="@LOC("select template to add...")"
-							   OptionValue="@((p)=> ((int)p).ToString())"
-							   OptionText="@((p) => p.ToDescriptionString())"
-							   Items="@(Enum.GetValues<TfSpaceViewFilterType>())" />
-					<FluentValidationMessage For="@(() => _form.FitlerType)" />
-				</FluentGridItem>
-				<FluentGridItem xs="4">
-					<FluentNumberField TValue="int?" @bind-Value=@_form.FreezeStartingNColumns
-					                   Label="@LOC("Freeze Starting Columns")" Style="width:100%"/>
-					<div
-						class="tf-input-description">@LOC("freezed columns count, not including the checkbox column")</div>
-					<FluentValidationMessage For="@(() => _form.FreezeStartingNColumns)"/>
-				</FluentGridItem>
-				<FluentGridItem xs="4">
-					<FluentNumberField TValue="int?" @bind-Value=@_form.FreezeFinalNColumns
-					                   Label="@LOC("Freeze Final Columns")" Style="width:100%"/>
-					<div class="tf-input-description">@LOC("freezed columns count")</div>
-					<FluentValidationMessage For="@(() => _form.FreezeFinalNColumns)"/>
-				</FluentGridItem>
-
-			</FluentGrid>
-		</FluentEditForm>
-	}
+    @if (!string.IsNullOrWhiteSpace(_error))
+    {
+        <FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+    }
+    else
+    {
+        <FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+                        FormName="submit-form" class="tf-form" novalidate>
+            <DataAnnotationsValidator />
+            <FluentGrid>
+                <FluentGridItem xs="4">
+                    <FluentInputLabel Label="@LOC("Filter Type")" />
+                    <TucSelect Required="true" Style="width:100%" TOption="TfSpaceViewFilterType"
+                               @bind-SelectedOption="@_form.FitlerType"
+                               Placeholder="@LOC("select template to add...")"
+                               OptionValue="@((p)=> ((int)p).ToString())"
+                               OptionText="@((p) => p.ToDescriptionString())"
+                               Items="@(Enum.GetValues<TfSpaceViewFilterType>())" />
+                    <FluentValidationMessage For="@(() => _form.FitlerType)" />
+                </FluentGridItem>
+                <FluentGridItem xs="4">
+                    <FluentNumberField TValue="int?" @bind-Value=@_form.FreezeStartingNColumns
+                                       Label="@LOC("Freeze Starting Columns")" Style="width:100%" />
+                    <FluentValidationMessage For="@(() => _form.FreezeStartingNColumns)" />
+                </FluentGridItem>
+                <FluentGridItem xs="4">
+                    <FluentNumberField TValue="int?" @bind-Value=@_form.FreezeFinalNColumns
+                                       Label="@LOC("Freeze Final Columns")" Style="width:100%" />
+                    <FluentValidationMessage For="@(() => _form.FreezeFinalNColumns)" />
+                </FluentGridItem>
+            </FluentGrid>
+            <FluentGrid>
+                <FluentGridItem xs="4">
+                    <FluentInputLabel Label="@LOC("Create Records")" />
+                    <FluentValidationMessage For="@(() => _form.CanCreateRoles)" />
+                    <TucSelectRoles Values="_form.CanCreateRoles" ValuesChanged="@((x)=> _form.CanCreateRoles = x)"/>
+                </FluentGridItem>
+                <FluentGridItem xs="4">
+                    <FluentInputLabel Label="@LOC("Update Records")" />
+                    <FluentValidationMessage For="@(() => _form.CanUpdateRoles)" />
+                    <TucSelectRoles Values="_form.CanUpdateRoles" ValuesChanged="@((x) => _form.CanUpdateRoles = x)" />
+                </FluentGridItem>
+                <FluentGridItem xs="4">
+                    <FluentInputLabel Label="@LOC("Delete Records")" />
+                    <FluentValidationMessage For="@(() => _form.CanDeleteRoles)" />
+                    <TucSelectRoles Values="_form.CanDeleteRoles" ValuesChanged="@((x) => _form.CanDeleteRoles = x)" />
+                </FluentGridItem>
+            </FluentGrid>
+        </FluentEditForm>
+    }
 </FluentDialogBody>

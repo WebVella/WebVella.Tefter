@@ -20,8 +20,32 @@ public class TfSpaceView
 		}
 	}
 	public List<TfSpaceViewPreset> Presets { get; set; } = new();
-	
 	public List<TfSpaceViewPreset> PresetsWithParents => Presets.FillSpaceViewPresetParents();
+
+	public bool CanCreateRecords(TfUser user)
+	{
+		if (Settings is not null && user.Roles is not null
+			&& user.Roles.Any(x => Settings.CanCreateRoles.Contains(x.Id)))
+			return true;
+		return false;
+	}
+
+	public bool CanUpdateRecords(TfUser user)
+	{
+		if (Settings is not null && user.Roles is not null
+			&& user.Roles.Any(x => Settings.CanUpdateRoles.Contains(x.Id)))
+			return true;
+		return false;
+	}
+
+	public bool CanDeleteRecords(TfUser user)
+	{
+		if (Settings is not null && user.Roles is not null
+			&& user.Roles.Any(x => Settings.CanDeleteRoles.Contains(x.Id)))
+			return true;
+		return false;
+	}
+
 }
 
 [DboCacheModel]
@@ -66,8 +90,8 @@ public record TfSpaceViewPreset
 	public string? Name { get; set; }
 
 	[JsonPropertyName("search")]
-	public string? Search { get; set; }	
-	
+	public string? Search { get; set; }
+
 	[JsonPropertyName("filters")]
 	public List<TfFilterBase> Filters { get; set; } = new();
 

@@ -15,6 +15,8 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposab
 	private TfNavigationState _navState = null!;
 	private bool _hasViewPersonalization = false;
 	private Guid _initedSpaceViewId = Guid.Empty;
+
+	
 	[Parameter] public List<Guid> SelectedRows { get; set; } = new();
 	public void Dispose()
 	{

@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 
 	<FluentMenu @bind-Open="_open" Anchor="view-actions-selector" UseMenuService="true" HorizontalPosition="HorizontalPosition.Right">
-		@if (SpaceView.Settings.CanDeleteRows)
+		@if (SpaceView.CanDeleteRecords(User))
 		{
 			<FluentMenuItem Disabled="@(SelectedRows.Count == 0)" OnClick="_deleteSelectedRecords">
 				@LOC("Delete Selected")

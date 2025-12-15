@@ -612,7 +612,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 	private void _setRowEditable(TfDataRow row)
 	{
-		if (!_spaceView.Settings.CanUpdateRows) return;
+		if (!_spaceView!.CanUpdateRecords(_currentUser)) return;
 		var rowId = row.GetRowId();
 		if (!_editedDataRows.Contains(rowId))
 		{
@@ -628,7 +628,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 	private void _rowDoubleClick(TfDataRow row)
 	{
-		if (!_spaceView.Settings.CanUpdateRows) return;
+		if (!_spaceView!.CanUpdateRecords(_currentUser)) return;
 		var rowId = row.GetRowId();
 		if (!_editedDataRows.Contains(rowId))
 		{

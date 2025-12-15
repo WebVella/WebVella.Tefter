@@ -1,0 +1,75 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+@if (ReadOnly)
+{
+    <table class="tf-grid">
+        <tbody class="tf-grid-tbody">
+            <tr class="tf-grid-tr">
+                <td class="tf-grid-td">
+                    <div>
+                        @_roleDict[TfConstants.ADMIN_ROLE_ID].Name
+                    </div>
+                </td>
+            </tr>
+            @foreach (var roleId in Values)
+            {
+                <tr class="tf-grid-tr">
+                    <td class="tf-grid-td">
+                        <div>
+                            @_roleDict[roleId].Name
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <TucSelect TOption="TfRole"
+               Items="@_options"
+               SelectedOption="_selectedRole"
+               SelectedOptionChanged="@((x) => _addOption(x))"
+               Placeholder="@LOC("select...")"
+               OptionValue="@((p) => p.Id.ToString())"
+               OptionText="@((p) => p.Name)"
+               Disabled="_options.Count == 0"
+               Style="width:100%;margin-bottom:10px;" />
+
+    <table class="tf-grid">
+        <colgroup>
+            <col style="width:1%;" />
+            <col />
+        </colgroup>
+        <tbody class="tf-grid-tbody">
+            <tr class="tf-grid-tr">
+                <td class="tf-grid-td">
+                    <FluentButton IconStart="@TfConstants.GetIcon("LockClosed")" Disabled="true"
+                                  Appearance="@Appearance.Stealth" />
+                </td>
+                <td class="tf-grid-td">
+                    <div>
+                        @_roleDict[TfConstants.ADMIN_ROLE_ID].Name
+                    </div>
+                </td>
+            </tr>
+            @foreach (var roleId in Values)
+            {
+                if (!_roleDict.ContainsKey(roleId)) continue;
+                <tr class="tf-grid-tr">
+                    <td class="tf-grid-td">
+                        <FluentButton IconStart="@TfConstants.GetIcon("DismissCircle")!.WithColor(Color.Error)"
+                                      OnClick="@(() => _removeOption("delete",roleId))"
+                                      Appearance="@Appearance.Stealth" />
+                    </td>
+                    <td class="tf-grid-td">
+                        <div>
+                            @_roleDict[roleId].Name
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
