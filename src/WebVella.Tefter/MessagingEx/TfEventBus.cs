@@ -5,12 +5,23 @@ public partial interface ITfEventBus
 	IDisposable Subscribe<T>(
 		Action<T?> handler,
 		string? key = null);
+	
+	public IDisposable Subscribe<T>(
+		Func<T?, ValueTask> handler,
+		string? key = null);
+
 	ValueTask<IAsyncDisposable> SubscribeAsync<T>(
 		Action<T?> handler,
 		string? key = null);
+
+	ValueTask<IAsyncDisposable> SubscribeAsync<T>(
+	   Func<T?, ValueTask> handler,
+	   string? key = null);
+
 	void Publish(
 		string? key = null,
 		ITfEventPayload? payload = null);
+
 	ValueTask PublishAsync(
 		string? key = null,
 		ITfEventPayload? payload = null);
@@ -39,7 +50,8 @@ public partial class TfEventBus : ITfEventBus
 		{
 			TargetType = typeT,
 			Key = key,
-			HandlerWrapper = wrapper
+			HandlerWrapper = wrapper,
+			IsAsync = false
 		};
 
 		_semaphore.Wait();
@@ -75,7 +87,8 @@ public partial class TfEventBus : ITfEventBus
 		{
 			TargetType = typeT,
 			Key = key,
-			HandlerWrapper = wrapper
+			HandlerWrapper = wrapper,
+			IsAsync = false
 		};
 
 		await _semaphore.WaitAsync();
@@ -89,6 +102,76 @@ public partial class TfEventBus : ITfEventBus
 			_semaphore.Release();
 		}
 
+
+		return new Unsubscriber(_subscribers, subscription, _semaphore);
+	}
+
+	public IDisposable Subscribe<T>(
+		Func<T?, ValueTask> handler,
+		string? key = null)
+	{
+		Type typeT = typeof(T);
+
+		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
+			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
+
+		if (handler == null) throw new ArgumentNullException(nameof(handler));
+
+		Func<ITfEventPayload?, ValueTask> asyncWrapper = (payload) => handler((T?)payload);
+
+		var subscription = new Subscription
+		{
+			TargetType = typeT,
+			Key = key,
+			AsyncHandlerWrapper = asyncWrapper,
+			IsAsync = true 
+		};
+
+		_semaphore.Wait();
+
+		try
+		{
+			_subscribers.Add(subscription);
+		}
+		finally
+		{
+			_semaphore.Release();
+		}
+
+		return new Unsubscriber(_subscribers, subscription, _semaphore);
+	}
+
+	public async ValueTask<IAsyncDisposable> SubscribeAsync<T>(
+		Func<T?, ValueTask> handler,
+		string? key = null)
+	{
+		Type typeT = typeof(T);
+
+		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
+			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
+
+		if (handler == null) throw new ArgumentNullException(nameof(handler));
+
+		Func<ITfEventPayload?, ValueTask> asyncWrapper = (payload) => handler((T?)payload);
+
+		var subscription = new Subscription
+		{
+			TargetType = typeT,
+			Key = key,
+			AsyncHandlerWrapper = asyncWrapper,
+			IsAsync = true 
+		};
+
+		await _semaphore.WaitAsync();
+
+		try
+		{
+			_subscribers.Add(subscription);
+		}
+		finally
+		{
+			_semaphore.Release();
+		}
 
 		return new Unsubscriber(_subscribers, subscription, _semaphore);
 	}
@@ -116,11 +199,11 @@ public partial class TfEventBus : ITfEventBus
 			{
 				if (payload is null)
 				{
-					sub.HandlerWrapper(payload);
+					sub.HandlerWrapper!(payload);
 				}
 				else if (sub.TargetType.IsAssignableFrom(payload.GetType()))
 				{
-					sub.HandlerWrapper(payload);
+					sub.HandlerWrapper!(payload);
 				}
 			}
 		}
@@ -143,27 +226,34 @@ public partial class TfEventBus : ITfEventBus
 			_semaphore.Release();
 		}
 
+		List<ValueTask> tasks = new List<ValueTask>();
+
 		foreach (var subscription in subscriptionsSnapshot)
 		{
 			if (subscription.Key is null || subscription.Key == key)
 			{
-				if (payload is null)
+				bool typeMatches = (payload is null) || subscription.TargetType.IsAssignableFrom(payload.GetType());
+
+				if (typeMatches)
 				{
-					subscription.HandlerWrapper(payload);
-				}
-				else if (subscription.TargetType.IsAssignableFrom(payload.GetType()))
-				{
-					subscription.HandlerWrapper(payload);
+					if (subscription.IsAsync)
+						tasks.Add(subscription.AsyncHandlerWrapper!(payload));
+					else
+						subscription.HandlerWrapper!(payload);
 				}
 			}
 		}
+
+		await Task.WhenAll(tasks.Select(vt => vt.AsTask()));
 	}
 
 	private class Subscription
 	{
 		public required Type TargetType { get; set; }
 		public string? Key { get; set; } = null;
-		public required Action<ITfEventPayload?> HandlerWrapper { get; set; }
+		public Action<ITfEventPayload?>? HandlerWrapper { get; set; }
+		public Func<ITfEventPayload?, ValueTask>? AsyncHandlerWrapper { get; set; }
+		public required bool IsAsync { get; set; }
 	}
 
 	private class Unsubscriber : IDisposable, IAsyncDisposable
