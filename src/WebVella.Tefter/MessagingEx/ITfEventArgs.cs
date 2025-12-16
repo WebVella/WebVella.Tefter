@@ -1,3 +1,3 @@
 ﻿namespace WebVella.Tefter.MessagingEx;
 
-public interface ITfEventPayload { }
+public interface ITfEventArgs {}

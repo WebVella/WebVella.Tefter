@@ -3,28 +3,28 @@
 public partial interface ITfEventBus
 {
 	IDisposable Subscribe<T>(
-		Action<T?> handler,
+		Action<string?, T?> handler,
 		string? key = null);
-	
+
 	public IDisposable Subscribe<T>(
-		Func<T?, ValueTask> handler,
+		Func<string?, T?, ValueTask> handler,
 		string? key = null);
 
 	ValueTask<IAsyncDisposable> SubscribeAsync<T>(
-		Action<T?> handler,
+		Action<string?, T?> handler,
 		string? key = null);
 
 	ValueTask<IAsyncDisposable> SubscribeAsync<T>(
-	   Func<T?, ValueTask> handler,
+	   Func<string?, T?, ValueTask> handler,
 	   string? key = null);
 
 	void Publish(
 		string? key = null,
-		ITfEventPayload? payload = null);
+		ITfEventArgs? args = null);
 
 	ValueTask PublishAsync(
 		string? key = null,
-		ITfEventPayload? payload = null);
+		ITfEventArgs? args = null);
 }
 
 public partial class TfEventBus : ITfEventBus
@@ -33,18 +33,18 @@ public partial class TfEventBus : ITfEventBus
 	private readonly List<Subscription> _subscribers = new List<Subscription>();
 
 	public IDisposable Subscribe<T>(
-		Action<T?> handler,
+		Action<string?, T?> handler,
 		string? key = null)
 	{
 		Type typeT = typeof(T);
 
-		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
-			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
+		if (!typeof(ITfEventArgs).IsAssignableFrom(typeT))
+			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventArgs");
 
 		if (handler == null) throw new ArgumentNullException(nameof(handler));
 
 
-		Action<ITfEventPayload?> wrapper = (payload) => handler((T?)payload);
+		Action<string?, ITfEventArgs?> wrapper = (key, args) => handler(key, (T?)args);
 
 		var subscription = new Subscription
 		{
@@ -70,18 +70,18 @@ public partial class TfEventBus : ITfEventBus
 	}
 
 	public async ValueTask<IAsyncDisposable> SubscribeAsync<T>(
-		Action<T?> handler,
+		Action<string?, T?> handler,
 		string? key = null)
 	{
 		Type typeT = typeof(T);
 
-		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
-			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
+		if (!typeof(ITfEventArgs).IsAssignableFrom(typeT))
+			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventArgs");
 
 		if (handler == null) throw new ArgumentNullException(nameof(handler));
 
 
-		Action<ITfEventPayload?> wrapper = (payload) => handler((T?)payload);
+		Action<string?, ITfEventArgs?> wrapper = (key, args) => handler(key, (T?)args);
 
 		var subscription = new Subscription
 		{
@@ -107,24 +107,24 @@ public partial class TfEventBus : ITfEventBus
 	}
 
 	public IDisposable Subscribe<T>(
-		Func<T?, ValueTask> handler,
+		Func<string?, T?, ValueTask> handler,
 		string? key = null)
 	{
 		Type typeT = typeof(T);
 
-		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
-			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
+		if (!typeof(ITfEventArgs).IsAssignableFrom(typeT))
+			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventArgs");
 
 		if (handler == null) throw new ArgumentNullException(nameof(handler));
 
-		Func<ITfEventPayload?, ValueTask> asyncWrapper = (payload) => handler((T?)payload);
+		Func<ITfEventArgs?, ValueTask> asyncWrapper = (args) => handler(key, (T?)args);
 
 		var subscription = new Subscription
 		{
 			TargetType = typeT,
 			Key = key,
 			AsyncHandlerWrapper = asyncWrapper,
-			IsAsync = true 
+			IsAsync = true
 		};
 
 		_semaphore.Wait();
@@ -142,24 +142,24 @@ public partial class TfEventBus : ITfEventBus
 	}
 
 	public async ValueTask<IAsyncDisposable> SubscribeAsync<T>(
-		Func<T?, ValueTask> handler,
+		Func<string?, T?, ValueTask> handler,
 		string? key = null)
 	{
 		Type typeT = typeof(T);
 
-		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
-			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
+		if (!typeof(ITfEventArgs).IsAssignableFrom(typeT))
+			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventArgs");
 
 		if (handler == null) throw new ArgumentNullException(nameof(handler));
 
-		Func<ITfEventPayload?, ValueTask> asyncWrapper = (payload) => handler((T?)payload);
+		Func<ITfEventArgs?, ValueTask> asyncWrapper = (args) => handler(key, (T?)args);
 
 		var subscription = new Subscription
 		{
 			TargetType = typeT,
 			Key = key,
 			AsyncHandlerWrapper = asyncWrapper,
-			IsAsync = true 
+			IsAsync = true
 		};
 
 		await _semaphore.WaitAsync();
@@ -178,7 +178,7 @@ public partial class TfEventBus : ITfEventBus
 
 	public void Publish(
 		string? key = null,
-		ITfEventPayload? payload = null)
+		ITfEventArgs? args = null)
 	{
 		List<Subscription> snapshot;
 
@@ -197,13 +197,13 @@ public partial class TfEventBus : ITfEventBus
 		{
 			if (sub.Key is null || sub.Key == key)
 			{
-				if (payload is null)
+				if (args is null)
 				{
-					sub.HandlerWrapper!(payload);
+					sub.HandlerWrapper!(key, args);
 				}
-				else if (sub.TargetType.IsAssignableFrom(payload.GetType()))
+				else if (sub.TargetType.IsAssignableFrom(args.GetType()))
 				{
-					sub.HandlerWrapper!(payload);
+					sub.HandlerWrapper!(key, args);
 				}
 			}
 		}
@@ -211,7 +211,7 @@ public partial class TfEventBus : ITfEventBus
 
 	public async ValueTask PublishAsync(
 		string? key = null,
-		ITfEventPayload? payload = null)
+		ITfEventArgs? args = null)
 	{
 		List<Subscription> subscriptionsSnapshot;
 
@@ -232,14 +232,14 @@ public partial class TfEventBus : ITfEventBus
 		{
 			if (subscription.Key is null || subscription.Key == key)
 			{
-				bool typeMatches = (payload is null) || subscription.TargetType.IsAssignableFrom(payload.GetType());
+				bool typeMatches = (args is null) || subscription.TargetType.IsAssignableFrom(args.GetType());
 
 				if (typeMatches)
 				{
 					if (subscription.IsAsync)
-						tasks.Add(subscription.AsyncHandlerWrapper!(payload));
+						tasks.Add(subscription.AsyncHandlerWrapper!(args));
 					else
-						subscription.HandlerWrapper!(payload);
+						subscription.HandlerWrapper!(key, args);
 				}
 			}
 		}
@@ -251,8 +251,8 @@ public partial class TfEventBus : ITfEventBus
 	{
 		public required Type TargetType { get; set; }
 		public string? Key { get; set; } = null;
-		public Action<ITfEventPayload?>? HandlerWrapper { get; set; }
-		public Func<ITfEventPayload?, ValueTask>? AsyncHandlerWrapper { get; set; }
+		public Action<string?, ITfEventArgs?>? HandlerWrapper { get; set; }
+		public Func<ITfEventArgs?, ValueTask>? AsyncHandlerWrapper { get; set; }
 		public required bool IsAsync { get; set; }
 	}
 
