@@ -32,6 +32,7 @@ public partial class TfEventBus : ITfEventBus
 	private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 	private readonly List<Subscription> _subscribers = new List<Subscription>();
 
+
 	public IDisposable Subscribe<T>(
 		Action<string?, T?> handler,
 		string? key = null)
@@ -41,30 +42,27 @@ public partial class TfEventBus : ITfEventBus
 		if (!typeof(ITfEventArgs).IsAssignableFrom(typeT))
 			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventArgs");
 
-		if (handler == null) throw new ArgumentNullException(nameof(handler));
-
+		ArgumentNullException.ThrowIfNull(handler);
 
 		Action<string?, ITfEventArgs?> wrapper = (key, args) => handler(key, (T?)args);
-
-		var subscription = new Subscription
-		{
-			TargetType = typeT,
-			Key = key,
-			HandlerWrapper = wrapper,
-			IsAsync = false
+		
+		var subscription = new Subscription { 
+			TargetType = typeT, 
+			Key = key, 
+			HandlerWrapper = wrapper, 
+			IsAsync = false 
 		};
 
 		_semaphore.Wait();
-
-		try
-		{
-			_subscribers.Add(subscription);
+		
+		try 
+		{ 
+			_subscribers.Add(subscription); 
 		}
-		finally
-		{
-			_semaphore.Release();
+		finally 
+		{ 
+			_semaphore.Release(); 
 		}
-
 
 		return new Unsubscriber(_subscribers, subscription, _semaphore);
 	}
@@ -78,30 +76,27 @@ public partial class TfEventBus : ITfEventBus
 		if (!typeof(ITfEventArgs).IsAssignableFrom(typeT))
 			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventArgs");
 
-		if (handler == null) throw new ArgumentNullException(nameof(handler));
-
+		ArgumentNullException.ThrowIfNull(handler);
 
 		Action<string?, ITfEventArgs?> wrapper = (key, args) => handler(key, (T?)args);
-
-		var subscription = new Subscription
-		{
-			TargetType = typeT,
-			Key = key,
-			HandlerWrapper = wrapper,
-			IsAsync = false
+		
+		var subscription = new Subscription { 
+			TargetType = typeT, 
+			Key = key, 
+			HandlerWrapper = wrapper, 
+			IsAsync = false 
 		};
 
 		await _semaphore.WaitAsync();
 
 		try
-		{
-			_subscribers.Add(subscription);
+		{ 
+			_subscribers.Add(subscription); 
 		}
-		finally
+		finally 
 		{
-			_semaphore.Release();
+			_semaphore.Release(); 
 		}
-
 
 		return new Unsubscriber(_subscribers, subscription, _semaphore);
 	}
@@ -115,27 +110,26 @@ public partial class TfEventBus : ITfEventBus
 		if (!typeof(ITfEventArgs).IsAssignableFrom(typeT))
 			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventArgs");
 
-		if (handler == null) throw new ArgumentNullException(nameof(handler));
+		ArgumentNullException.ThrowIfNull(handler);
 
-		Func<ITfEventArgs?, ValueTask> asyncWrapper = (args) => handler(key, (T?)args);
-
-		var subscription = new Subscription
-		{
-			TargetType = typeT,
-			Key = key,
-			AsyncHandlerWrapper = asyncWrapper,
-			IsAsync = true
+		Func<string?, ITfEventArgs?, ValueTask> asyncWrapper = (k, args) => handler(k, (T?)args);
+		
+		var subscription = new Subscription { 
+			TargetType = typeT, 
+			Key = key, 
+			AsyncHandlerWrapper = asyncWrapper, 
+			IsAsync = true 
 		};
 
 		_semaphore.Wait();
 
-		try
+		try 
 		{
-			_subscribers.Add(subscription);
+			_subscribers.Add(subscription); 
 		}
-		finally
+		finally 
 		{
-			_semaphore.Release();
+			_semaphore.Release(); 
 		}
 
 		return new Unsubscriber(_subscribers, subscription, _semaphore);
@@ -150,27 +144,25 @@ public partial class TfEventBus : ITfEventBus
 		if (!typeof(ITfEventArgs).IsAssignableFrom(typeT))
 			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventArgs");
 
-		if (handler == null) throw new ArgumentNullException(nameof(handler));
+		ArgumentNullException.ThrowIfNull(handler);
 
-		Func<ITfEventArgs?, ValueTask> asyncWrapper = (args) => handler(key, (T?)args);
+		Func<string?, ITfEventArgs?, ValueTask> asyncWrapper = (k, args) => handler(k, (T?)args);
 
-		var subscription = new Subscription
-		{
-			TargetType = typeT,
-			Key = key,
-			AsyncHandlerWrapper = asyncWrapper,
-			IsAsync = true
+		var subscription = new Subscription { 
+			TargetType = typeT, 
+			Key = key, 
+			AsyncHandlerWrapper = asyncWrapper, 
+			IsAsync = true 
 		};
 
 		await _semaphore.WaitAsync();
-
-		try
+		try 
 		{
-			_subscribers.Add(subscription);
+			_subscribers.Add(subscription); 
 		}
-		finally
+		finally 
 		{
-			_semaphore.Release();
+			_semaphore.Release(); 
 		}
 
 		return new Unsubscriber(_subscribers, subscription, _semaphore);
@@ -183,7 +175,6 @@ public partial class TfEventBus : ITfEventBus
 		List<Subscription> snapshot;
 
 		_semaphore.Wait();
-
 		try
 		{
 			snapshot = _subscribers.ToList();
@@ -197,13 +188,24 @@ public partial class TfEventBus : ITfEventBus
 		{
 			if (sub.Key is null || sub.Key == key)
 			{
-				if (args is null)
+				bool typeMatches = (args is null) || sub.TargetType.IsAssignableFrom(args.GetType());
+
+				if (typeMatches)
 				{
-					sub.HandlerWrapper!(key, args);
-				}
-				else if (sub.TargetType.IsAssignableFrom(args.GetType()))
-				{
-					sub.HandlerWrapper!(key, args);
+					ValueTask handlerTask;
+					if (sub.IsAsync)
+					{
+						handlerTask = sub.AsyncHandlerWrapper!(key, args);
+					}
+					else
+					{
+						// Wraps sync method in Task.Run to ensure no context is captured and offload work.
+						handlerTask = new ValueTask(Task.Run(() => sub.HandlerWrapper!(key, args)));
+					}
+
+					// Safely blocks on the task using ConfigureAwait(false).
+					// This minimizes deadlock risk while preserving the logic of waiting for completion.
+					handlerTask.AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
 				}
 			}
 		}
@@ -217,13 +219,13 @@ public partial class TfEventBus : ITfEventBus
 
 		await _semaphore.WaitAsync();
 
-		try
+		try 
 		{
-			subscriptionsSnapshot = _subscribers.ToList();
+			subscriptionsSnapshot = _subscribers.ToList(); 
 		}
-		finally
+		finally 
 		{
-			_semaphore.Release();
+			_semaphore.Release(); 
 		}
 
 		List<ValueTask> tasks = new List<ValueTask>();
@@ -237,9 +239,13 @@ public partial class TfEventBus : ITfEventBus
 				if (typeMatches)
 				{
 					if (subscription.IsAsync)
-						tasks.Add(subscription.AsyncHandlerWrapper!(args));
+					{
+						tasks.Add(subscription.AsyncHandlerWrapper!(key, args));
+					}
 					else
-						subscription.HandlerWrapper!(key, args);
+					{
+						tasks.Add(new ValueTask(Task.Run(() => subscription.HandlerWrapper!(key, args))));
+					}
 				}
 			}
 		}
@@ -247,12 +253,13 @@ public partial class TfEventBus : ITfEventBus
 		await Task.WhenAll(tasks.Select(vt => vt.AsTask()));
 	}
 
+
 	private class Subscription
 	{
 		public required Type TargetType { get; set; }
 		public string? Key { get; set; } = null;
 		public Action<string?, ITfEventArgs?>? HandlerWrapper { get; set; }
-		public Func<ITfEventArgs?, ValueTask>? AsyncHandlerWrapper { get; set; }
+		public Func<string?, ITfEventArgs?, ValueTask>? AsyncHandlerWrapper { get; set; }
 		public required bool IsAsync { get; set; }
 	}
 
