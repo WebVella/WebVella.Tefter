@@ -1623,24 +1623,6 @@ public partial class TfService : ITfService
 					.WithMessage(
 						$"Column is marked not nullable. Default value is required. Specified default value is empty or not correct for selected provider data type.");
 
-				RuleFor(column => column.Expression)
-					.Must((column, expression) =>
-					{
-						return (string.IsNullOrWhiteSpace(column.Expression) && string.IsNullOrWhiteSpace(column.ExpressionJson)) ||
-						   (!string.IsNullOrWhiteSpace(column.Expression) && !string.IsNullOrWhiteSpace(column.ExpressionJson));
-					})
-					.WithMessage("There database column expression or expression json is missing.");
-
-				RuleFor(column => column.Expression)
-					.Must((column, expression) =>
-					{
-						if(string.IsNullOrWhiteSpace(column.Expression))
-							return true;
-
-						return string.IsNullOrWhiteSpace(column.SourceName);
-					})
-					.WithMessage("There database column expression or expression json is missing.");
-
 			});
 
 			RuleSet("create", () =>
@@ -1703,18 +1685,6 @@ public partial class TfService : ITfService
 						return existingColumn.DbType == dbType;
 					})
 					.WithMessage("There database type of column cannot be changed.");
-
-				RuleFor(column => column.Expression)
-					.Must((column, expression) =>
-					{
-						var existingColumn = tfService.GetDataProviderColumn(column.Id);
-						if (existingColumn is null)
-							return true;
-
-						return (string.IsNullOrWhiteSpace(existingColumn.Expression) && string.IsNullOrWhiteSpace(expression)) ||
-							   (!string.IsNullOrWhiteSpace(existingColumn.Expression) && !string.IsNullOrWhiteSpace(expression));
-					})
-					.WithMessage("There database column expression type cannot be changed.");
 			});
 
 			RuleSet("delete", () =>

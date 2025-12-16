@@ -241,10 +241,31 @@ internal static class ResultUtils
 		}
 
 		editContext.NotifyValidationStateChanged();
+
+		string? errorMessage = null;
+		if (exception.InnerException is not null)
+		{
+			errorMessage = exception.InnerException.Message;
+		}
+		else
+		{
+			errorMessage = exception.Message;
+		}
+		if (String.IsNullOrWhiteSpace(errorMessage) && validationErrors.Count > 0)
+		{
+			errorMessage = validationErrors[0].Message;
+		}
+
+
 		if (generalErrors.Count > 0 && validationErrors.Count == 0)
 		{
-			toastService.ShowToast(ToastIntent.Error, toastErrorMessage);
+			toastService.ShowToast(ToastIntent.Error, String.IsNullOrWhiteSpace(toastErrorMessage) ? errorMessage : toastErrorMessage);
 			SendErrorsToNotifications(notificationErrorTitle, generalErrors, null, messageService);
+		}
+		else
+		{
+
+			toastService.ShowToast(ToastIntent.Warning, $"Invalid Data: {errorMessage}");
 		}
 	}
 }
