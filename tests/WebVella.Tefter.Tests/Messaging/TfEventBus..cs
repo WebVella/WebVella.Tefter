@@ -1,6 +1,6 @@
 ﻿using WebVella.Tefter.MessagingEx;
 
-namespace WebVella.Tefter.Tests.Services;
+namespace WebVella.Tefter.Tests.Messaging;
 
 [Collection("TfEventBusTests")]
 public partial class TfEventBusTests : BaseTest
@@ -55,11 +55,11 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var mockHandler = new Mock<Action<LoginEvent>>();
 
-			IDisposable subscription = _bus.Subscribe<LoginEvent>(mockHandler.Object, "USER_LOGIN");
+			IDisposable subscription = _bus.Subscribe<LoginEvent>(handler: mockHandler.Object, key: "USER_LOGIN");
 
-			_bus.Publish("USER_LOGIN", payload: new LoginEvent());
+			_bus.Publish(key: "USER_LOGIN", payload: new LoginEvent());
 
-			_bus.Publish("OTHER_KEY", payload: new LoginEvent());
+			_bus.Publish(key: "OTHER_KEY", payload: new LoginEvent());
 
 			_bus.Publish(payload: new LoginEvent());
 
@@ -76,9 +76,9 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var mockHandler = new Mock<Action<LoginEvent>>();
 
-			var subscription = _bus.Subscribe<LoginEvent>(mockHandler.Object, null);
+			var subscription = _bus.Subscribe<LoginEvent>(handler: mockHandler.Object, key: null);
 
-			_bus.Publish("USER_LOGIN", payload: new LoginEvent());
+			_bus.Publish(key: "USER_LOGIN", payload: new LoginEvent());
 
 			_bus.Publish(payload: new LoginEvent());
 
@@ -95,9 +95,9 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var mockHandler = new Mock<Action<LoginEvent>>();
 
-			var subscription = await _bus.SubscribeAsync<LoginEvent>(mockHandler.Object, null);
+			var subscription = await _bus.SubscribeAsync<LoginEvent>(handler: mockHandler.Object, key: null);
 
-			await _bus.PublishAsync("USER_LOGIN", payload: new LoginEvent());
+			await _bus.PublishAsync(key: "USER_LOGIN", payload: new LoginEvent());
 
 			await _bus.PublishAsync(payload: new LoginEvent());
 
@@ -115,7 +115,7 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var mockHandler = new Mock<Action<LoginEvent>>();
 
-			var subscription = _bus.Subscribe<LoginEvent>(mockHandler.Object, null);
+			var subscription = _bus.Subscribe<LoginEvent>(handler: mockHandler.Object, key: null);
 
 			_bus.Publish(payload: new LoginEvent());
 
@@ -217,6 +217,7 @@ public partial class TfEventBusTests : BaseTest
 			await subscription.DisposeAsync();
 		}
 	}
+
 
 	[Fact]
 	public async Task TfEventBusTests_Subscribe_WithAsyncHandler_AddsSubscription_AndIDisposableRemovesIt()
