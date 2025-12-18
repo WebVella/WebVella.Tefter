@@ -2,27 +2,51 @@
 
 public partial interface ITfEventBus
 {
-	IDisposable Subscribe<T>(
+	public IDisposable Subscribe<T>(
+		Action<string?, T?> handler,
+		Guid key);
+
+	public IDisposable Subscribe<T>(
 		Action<string?, T?> handler,
 		string? key = null);
 
 	public IDisposable Subscribe<T>(
 		Func<string?, T?, ValueTask> handler,
+		Guid key);
+
+	public IDisposable Subscribe<T>(
+		Func<string?, T?, ValueTask> handler,
 		string? key = null);
 
-	ValueTask<IAsyncDisposable> SubscribeAsync<T>(
+	public ValueTask<IAsyncDisposable> SubscribeAsync<T>(
+		Action<string?, T?> handler,
+		Guid key);
+
+	public ValueTask<IAsyncDisposable> SubscribeAsync<T>(
 		Action<string?, T?> handler,
 		string? key = null);
 
-	ValueTask<IAsyncDisposable> SubscribeAsync<T>(
+	public ValueTask<IAsyncDisposable> SubscribeAsync<T>(
+		Func<string?, T?, ValueTask> handler,
+		Guid key);
+
+	public ValueTask<IAsyncDisposable> SubscribeAsync<T>(
 	   Func<string?, T?, ValueTask> handler,
 	   string? key = null);
 
-	void Publish(
+	public void Publish(
+		Guid key,
+		ITfEventArgs? args = null);
+
+	public void Publish(
 		string? key = null,
 		ITfEventArgs? args = null);
 
-	ValueTask PublishAsync(
+	public ValueTask PublishAsync(
+		Guid key,
+		ITfEventArgs? args = null);
+
+	public ValueTask PublishAsync(
 		string? key = null,
 		ITfEventArgs? args = null);
 }
@@ -32,6 +56,12 @@ public partial class TfEventBus : ITfEventBus
 	private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 	private readonly List<Subscription> _subscribers = new List<Subscription>();
 
+	public IDisposable Subscribe<T>(
+		Action<string?, T?> handler,
+		Guid key)
+	{
+		return Subscribe(handler, key.ToString().ToLowerInvariant());
+	}
 
 	public IDisposable Subscribe<T>(
 		Action<string?, T?> handler,
@@ -65,6 +95,13 @@ public partial class TfEventBus : ITfEventBus
 		}
 
 		return new Unsubscriber(_subscribers, subscription, _semaphore);
+	}
+
+	public async ValueTask<IAsyncDisposable> SubscribeAsync<T>(
+		Action<string?, T?> handler,
+		Guid key)
+	{
+		return await SubscribeAsync(handler, key.ToString().ToLowerInvariant());	
 	}
 
 	public async ValueTask<IAsyncDisposable> SubscribeAsync<T>(
@@ -103,6 +140,13 @@ public partial class TfEventBus : ITfEventBus
 
 	public IDisposable Subscribe<T>(
 		Func<string?, T?, ValueTask> handler,
+		Guid key)
+	{
+		return Subscribe(handler, key.ToString().ToLowerInvariant());
+	}
+
+	public IDisposable Subscribe<T>(
+		Func<string?, T?, ValueTask> handler,
 		string? key = null)
 	{
 		Type typeT = typeof(T);
@@ -133,6 +177,14 @@ public partial class TfEventBus : ITfEventBus
 		}
 
 		return new Unsubscriber(_subscribers, subscription, _semaphore);
+	}
+
+
+	public async ValueTask<IAsyncDisposable> SubscribeAsync<T>(
+		Func<string?, T?, ValueTask> handler,
+		Guid key)
+	{
+		return await SubscribeAsync(handler, key.ToString().ToLowerInvariant());
 	}
 
 	public async ValueTask<IAsyncDisposable> SubscribeAsync<T>(
@@ -166,6 +218,14 @@ public partial class TfEventBus : ITfEventBus
 		}
 
 		return new Unsubscriber(_subscribers, subscription, _semaphore);
+	}
+
+
+	public void Publish(
+		Guid key,
+		ITfEventArgs? args = null)
+	{
+		Publish(key.ToString().ToLowerInvariant(), args);
 	}
 
 	public void Publish(
@@ -209,6 +269,13 @@ public partial class TfEventBus : ITfEventBus
 				}
 			}
 		}
+	}
+
+	public async ValueTask PublishAsync(
+		Guid key,
+		ITfEventArgs? args = null)
+	{
+		await PublishAsync(key.ToString().ToLowerInvariant(), args);
 	}
 
 	public async ValueTask PublishAsync(
