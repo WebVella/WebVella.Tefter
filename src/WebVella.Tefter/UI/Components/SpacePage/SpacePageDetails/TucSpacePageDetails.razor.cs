@@ -1,22 +1,26 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
+
+public partial class TucSpacePageDetails : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private bool _isRemoving = false;
 	private TfSpacePage? _spacePage = null;
 	private TfSpace? _space = null;
-	public TfNavigationState? _navState = null;
-	public void Dispose()
+	private TfNavigationState? _navState = null;
+	private IAsyncDisposable _spacePageUpdatedEventSubscriber = null!;
+
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.Dispose();
+		await _spacePageUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
+		_spacePageUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageUpdatedEventPayload>(
+			handler: On_SpacePageUpdatedEventAsync);
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -28,13 +32,8 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 		});
 	}
 
-	private async Task On_SpacePageChanged(object args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+	private async Task On_SpacePageUpdatedEventAsync(string? key, TfSpacePageUpdatedEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -104,8 +103,10 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 					break;
 				}
 			}
+
 			if (firstPageId is not null)
-				Navigator.NavigateTo(string.Format(TfConstants.SpacePagePageUrl, _spacePage.SpaceId, firstPageId.Value));
+				Navigator.NavigateTo(string.Format(TfConstants.SpacePagePageUrl, _spacePage.SpaceId,
+					firstPageId.Value));
 			else
 				Navigator.NavigateTo(TfConstants.HomePageUrl);
 		}
@@ -130,20 +131,20 @@ public partial class TucSpacePageDetails : TfBaseComponent, IDisposable
 			ToastService.ShowError(LOC("Space page not found"));
 			return;
 		}
+
 		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(
-		spPage,
-		new ()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			spPage,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
+		if (result is { Cancelled: false, Data: not null })
 		{
 			ToastService.ShowSuccess(LOC("Space page successfully saved!"));
 		}
 	}
-
 }

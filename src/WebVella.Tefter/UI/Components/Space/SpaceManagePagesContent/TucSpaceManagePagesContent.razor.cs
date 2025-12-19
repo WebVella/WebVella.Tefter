@@ -1,32 +1,30 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
+public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private TfSpace? _space = null;
 	private List<TfSpacePage> _spacePages = new();
 	private TfNavigationState _navState = null!;
-	public bool _submitting = false;
+	private bool _submitting = false;
+	private IAsyncDisposable _spacePageEventSubscriber = null!;
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
-		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
+		await _spacePageEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.SpacePageCreatedEvent += On_SpacePageChanged;
-		TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
-		TfEventProvider.SpacePageDeletedEvent += On_SpacePageChanged;
 		Navigator.LocationChanged += On_NavigationStateChanged;
+		_spacePageEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageEventPayload>(
+			handler: On_SpacePageEventAsync);
 	}
 
-	private async Task On_SpacePageChanged(object args)
-	{
-		await _init(TfAuthLayout.GetState().NavigationState);
-	}
+	private async Task On_SpacePageEventAsync(string? key, TfSpacePageEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -45,23 +43,23 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 
 		try
 		{
-			if (_space is null)
-				_space = TfService.GetSpace(_navState.SpaceId.Value);
+			_space ??= TfService.GetSpace(_navState.SpaceId.Value);
 			if (_space is null) throw new Exception("Space not found");
 			_spacePages = TfService.GetSpacePages(_space.Id);
 		}
 		finally
 		{
-			UriInitialized = _navState?.Uri ?? String.Empty;
+			UriInitialized = _navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
 
 	private async Task _addPage()
 	{
+		if(_space is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(
 			new TfSpacePage() { SpaceId = _space.Id },
-			new ()
+			new()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -69,9 +67,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-		}
+		if (result is { Cancelled: false, Data: not null }){}
 	}
 
 	private async Task _removePage(TfSpacePage node)
@@ -158,7 +154,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 
 		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(
 			node,
-			new ()
+			new()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -166,8 +162,6 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IDisposable
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-		}
+		if (result is { Cancelled: false, Data: not null }){}
 	}
 }

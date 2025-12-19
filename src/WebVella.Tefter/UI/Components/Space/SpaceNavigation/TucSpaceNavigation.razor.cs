@@ -1,59 +1,57 @@
-﻿using Microsoft.FluentUI.AspNetCore.Components.Utilities;
+﻿namespace WebVella.Tefter.UI.Components;
 
-namespace WebVella.Tefter.UI.Components;
-
-public partial class TucSpaceNavigation : TfBaseComponent, IDisposable
+public partial class TucSpaceNavigation : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private List<TfMenuItem> _menu = new();
 	private string? _dragClass = null;
 	CancellationTokenSource? _cancellationTokenSource = null!;
-	private int _throttleMS = 500;
-
-	private string _dragStaticOpenClass
-	{
-		get
-		{
-			if (_menu.Count == 0)
-				return "tf-drag-container--dragging";
-			return "";
-		}
-	}
-
-
-	public void Dispose()
+	private readonly int _throttleMs = 500;
+	private IAsyncDisposable _spaceUpdatedEventSubscriber = null!;
+	private IAsyncDisposable _spacePageEventSubscriber = null!;
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.Dispose();
+		await _spaceUpdatedEventSubscriber.DisposeAsync();
+		await _spacePageEventSubscriber.DisposeAsync();
 	}
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
 		_menu = TfAuthLayout.GetState().Menu;
 		_initMenu();
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.SpaceUpdatedEvent += On_SpaceOrPageUpdated;
-		TfEventProvider.SpacePageCreatedEvent += On_SpaceOrPageUpdated;
-		TfEventProvider.SpacePageUpdatedEvent += On_SpaceOrPageUpdated;
-		TfEventProvider.SpacePageDeletedEvent += On_SpaceOrPageUpdated;
+		_spacePageEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageEventPayload>(
+			handler: On_SpacePageEventAsync);
+		_spaceUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceUpdatedEventPayload>(
+			handler:On_SpaceUpdatedEventAsync);		
 		EnableRenderLock();
 		_cancellationTokenSource = new();
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
-		_menu = TfService.GetAppState(Navigator, TfAuthLayout.GetState().User, Navigator.Uri, null).Menu;
+		_menu = TfService.GetAppState(Navigator, TfAuthLayout.GetState().User, Navigator.Uri).Menu;
 		_initMenu();
 		RegenRenderLock();
 		StateHasChanged();
 	}
 
-	private async Task On_SpaceOrPageUpdated(object args)
+	private async Task On_SpaceUpdatedEventAsync(string? key, TfSpaceUpdatedEventPayload? payload)
 	{
-		_menu = TfService.GetAppState(Navigator, TfAuthLayout.GetState().User, Navigator.Uri, null).Menu;
+		_menu = TfService.GetAppState(Navigator, TfAuthLayout.GetState().User, Navigator.Uri).Menu;
 		_initMenu();
 		RegenRenderLock();
-		await InvokeAsync(StateHasChanged);
+		await InvokeAsync(StateHasChanged);		
+	}
+
+	private async Task On_SpacePageEventAsync(string? key, TfSpacePageEventPayload? payload)
+	{
+		_menu = TfService.GetAppState(Navigator, TfAuthLayout.GetState().User, Navigator.Uri).Menu;
+		_initMenu();
+		RegenRenderLock();
+		await InvokeAsync(StateHasChanged);		
+		
 	}
 
 	private async Task _onDragOver()
@@ -75,7 +73,7 @@ public partial class TucSpaceNavigation : TfBaseComponent, IDisposable
 		try
 		{
 			_cancellationTokenSource = new();
-			await Task.Delay(_throttleMS);
+			await Task.Delay(_throttleMs);
 			if (_cancellationTokenSource.IsCancellationRequested)
 			{
 				return;
@@ -105,7 +103,7 @@ public partial class TucSpaceNavigation : TfBaseComponent, IDisposable
 		_dragClass = null;
 		RegenRenderLock();
 		await InvokeAsync(StateHasChanged);
-		var dialog = await DialogService.ShowDialogAsync<TucSpacePageImportFromFilesDialog>(
+		_ = await DialogService.ShowDialogAsync<TucSpacePageImportFromFilesDialog>(
 			files,
 			new()
 			{
@@ -114,12 +112,6 @@ public partial class TucSpaceNavigation : TfBaseComponent, IDisposable
 				Width = TfConstants.DialogWidthExtraLarge,
 				TrapFocus = false,
 			});
-
-		//var result = await dialog.Result;
-		//if (!result.Cancelled && result.Data != null)
-		//{
-		//	TfService.DeleteFiles(files);
-		//}
 	}
 
 	private void _initMenu()
@@ -208,7 +200,6 @@ public partial class TucSpaceNavigation : TfBaseComponent, IDisposable
 			ProcessException(ex);
 		}
 	}	
-	
 	private async Task _deletePage(TfMenuItem item)
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this page deleted?")))
@@ -217,19 +208,15 @@ public partial class TucSpaceNavigation : TfBaseComponent, IDisposable
 		{
 			ToastService.ShowSuccess(LOC("Space page moved!"));
 			var pages = TfService.DeleteSpacePage(item.Data!.PageId!.Value);
-			if (pages.Count > 0)
-			{
-				Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl, pages[0].SpaceId, pages[0].Id));
-			}
-			else
-			{
-				Navigator.NavigateTo(TfConstants.HomePageUrl);
-			}			
-	
+			Navigator.NavigateTo(pages.Count > 0
+				? String.Format(TfConstants.SpacePagePageUrl, pages[0].SpaceId, pages[0].Id)
+				: TfConstants.HomePageUrl);
 		}
 		catch (Exception ex)
 		{
 			ProcessException(ex);
 		}
-	}		
+	}
+	private string _getDragStaticOpenClass()
+	=> _menu.Count == 0 ? "tf-drag-container--dragging" : "";
 }

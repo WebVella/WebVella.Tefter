@@ -1,31 +1,33 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceHeader : TfBaseComponent, IDisposable
+public partial class TucSpaceHeader : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 
 	private TfSpace? _space = null!;
-	private bool _spacesActive = false;
-	public void Dispose()
+	private IAsyncDisposable _spaceUpdatedEventSubscriber = null!;	
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.Dispose();
+		await _spaceUpdatedEventSubscriber.DisposeAsync();
 	}
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
 		_space = TfAuthLayout.GetState().Space;
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.SpaceUpdatedEvent += On_SpaceUpdated;
+		_spaceUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceUpdatedEventPayload>(
+			handler:On_SpaceUpdatedEventAsync);
 	}
 	
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
 		_space = TfAuthLayout.GetState().Space;
 		StateHasChanged();
-	}	
-	
-	private async Task On_SpaceUpdated(TfSpaceUpdatedEvent args)
+	}
+
+	private async Task On_SpaceUpdatedEventAsync(string? key, TfSpaceUpdatedEventPayload? payload)
 	{
-		_space = args.Payload;
+		if(_space is null) return;
+		_space = payload!.Space;
 		await InvokeAsync(StateHasChanged);
 	}
 

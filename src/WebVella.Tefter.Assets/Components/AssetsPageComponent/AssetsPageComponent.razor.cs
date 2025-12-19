@@ -1,18 +1,20 @@
-﻿namespace WebVella.Tefter.Assets.Components;
+﻿using WebVella.Tefter.MessagingEx;
+
+namespace WebVella.Tefter.Assets.Components;
 
 public partial class AssetsPageComponent : TfBaseComponent, IAsyncDisposable
 {
     [Inject] protected IAssetsService AssetsService { get; set; } = null!;
-    [Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;    
+    [Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;  
     [Parameter] public Guid SpacePageId { get; set; }
 
     private AssetsSpacePageComponentOptions _options = new();
     private List<AssetsFolder> _folders = new();
     private AssetsFolder? _folderSelected;    
-    
+    private IAsyncDisposable _spacePageUpdatedEventSubscriber = null!;	
     public async ValueTask DisposeAsync()
     {
-        await TfEventProvider.DisposeAsync();
+        await _spacePageUpdatedEventSubscriber.DisposeAsync();
     }    
     
     protected override void OnInitialized()
@@ -20,17 +22,16 @@ public partial class AssetsPageComponent : TfBaseComponent, IAsyncDisposable
         _init();
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
-            TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
+            _spacePageUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageUpdatedEventPayload>(
+                handler:On_SpacePageUpdatedEventAsync);
     }
 
-    private Task On_SpacePageChanged(TfSpacePageUpdatedEvent args)
+    private Task On_SpacePageUpdatedEventAsync(string? key, TfSpacePageUpdatedEventPayload? payload)
     {
-        if (args.IsUserApplicable(this))
-            _init();
-
+        _init();
         return Task.CompletedTask;
     }
 

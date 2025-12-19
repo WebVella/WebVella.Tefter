@@ -83,7 +83,7 @@
                     <div>@LOC("When a page is deleted it will delete any data provider data. Only presentation configuration will be removed.")</div>
                     <div>
                         <FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white"
-                                      OnClick="_deletePage">
+                                      OnClick="_deletePage" Disabled="_isDeleting">
                             @LOC("Delete this Page")
                             <FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
                         </FluentButton>

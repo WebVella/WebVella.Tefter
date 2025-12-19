@@ -1,9 +1,11 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDisposable
+public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncDisposable
 {
 	#region << Init >>
+
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 
 	// State
@@ -13,13 +15,15 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 	private TfDataset? _spaceData = null;
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
 	private ReadOnlyDictionary<Guid, ITfSpaceViewColumnTypeAddon> _typeMetaDict = null!;
-	public bool _submitting = false;
-	public Dictionary<Guid,TfRole> _roleDict = new();
-	public List<TfRole> _rolesTotal = new();
-	public void Dispose()
+	private bool _submitting = false;
+	private Dictionary<Guid, TfRole> _roleDict = new();
+	private List<TfRole> _rolesTotal = new();
+	private IAsyncDisposable _spaceViewColumnUpdatedEventSubscriber = null!;
+
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.Dispose();
+		await _spaceViewColumnUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -27,7 +31,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		await base.OnInitializedAsync();
 		if (Context is null)
 			throw new Exception("Context cannot be null");
-		_roleDict = TfService.GetRoles().ToDictionary(x=> x.Id);
+		_roleDict = (await TfService.GetRolesAsync()).ToDictionary(x => x.Id);
 		await _init(TfAuthLayout.GetState().NavigationState);
 		_isDataLoading = false;
 	}
@@ -39,7 +43,9 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		{
 			Navigator.LocationChanged += On_NavigationStateChanged;
 			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewUpdated;
-			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewColumnUpdated;
+			_spaceViewColumnUpdatedEventSubscriber =
+				await TfEventBus.SubscribeAsync<TfSpaceViewColumnUpdatedEventPayload>(
+					handler: On_SpaceViewColumnUpdatedEventAsync);
 		}
 	}
 
@@ -56,14 +62,13 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 
 	private async Task On_SpaceViewUpdated(TfSpaceViewUpdatedEvent args)
 	{
-		if(args.UserId != TfAuthLayout.GetState().User.Id) return;
-		await _init(TfAuthLayout.GetState().NavigationState);
-	}	
-	private async Task On_SpaceViewColumnUpdated(TfSpaceViewColumnsChangedEvent args)
-	{
-		if(args.UserId != TfAuthLayout.GetState().User.Id) return;
+		if (args.UserId != TfAuthLayout.GetState().User.Id) return;
 		await _init(TfAuthLayout.GetState().NavigationState);
 	}
+
+	private async Task On_SpaceViewColumnUpdatedEventAsync(string? key, TfSpaceViewColumnUpdatedEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
+
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -78,7 +83,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 			if (options is null || options.SpaceViewId is null)
 				return;
 			_spaceView = TfService.GetSpaceView(options.SpaceViewId.Value);
-			if(_spaceView is null) throw new Exception("View no longer exists");
+			if (_spaceView is null) throw new Exception("View no longer exists");
 			_spaceViewColumns = TfService.GetSpaceViewColumnsList(_spaceView.Id);
 			_spaceData = TfService.GetDataset(_spaceView.DatasetId);
 			if (_spaceData is null) throw new Exception("Dataset no longer exists");
@@ -90,28 +95,28 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 			totalIds.AddRange(_spaceView.Settings.CanDeleteRoles.ToList());
 			foreach (var roleId in totalIds)
 			{
-				if(roleId == TfConstants.ADMIN_ROLE_ID) continue;
-				if(!_roleDict.ContainsKey(roleId)) continue;
-				if (_rolesTotal.Any(x=> x.Id == roleId)) continue;
+				if (roleId == TfConstants.ADMIN_ROLE_ID) continue;
+				if (!_roleDict.ContainsKey(roleId)) continue;
+				if (_rolesTotal.Any(x => x.Id == roleId)) continue;
 
 				_rolesTotal.Add(_roleDict[roleId]);
 			}
-			_rolesTotal = _rolesTotal.OrderBy(x=> x.Name).ToList();
 
+			_rolesTotal = _rolesTotal.OrderBy(x => x.Name).ToList();
 		}
 		finally
 		{
 			_isDataLoading = false;
-			UriInitialized = _navState?.Uri ?? String.Empty;
+			UriInitialized = _navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-	
+
 	private async Task _editSpaceView()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewManageDialog>(
 			_spaceView!,
-			new ()
+			new()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -120,7 +125,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 			});
 		var result = await dialog.Result;
 		if (result is { Cancelled: false, Data: not null }) { }
-	}	
+	}
 
 	private async Task _importColumns()
 	{
@@ -134,7 +139,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 				ToastService.ShowSuccess(LOC("No new columns found in dataset"));
 				return;
 			}
-			_spaceViewColumns =  viewColumns;
+
+			_spaceViewColumns = viewColumns;
 			ToastService.ShowSuccess(LOC("View columns were added!"));
 		}
 		catch (Exception ex)
@@ -145,15 +151,14 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		{
 			_submitting = false;
 			await InvokeAsync(StateHasChanged);
-		}		
-		
+		}
 	}
 
 	private async Task _addColumn()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewColumnManageDialog>(
 			new TfSpaceViewColumn() with { SpaceViewId = _spaceView!.Id },
-			new ()
+			new()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -168,10 +173,9 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 
 	private async Task _editColumn(TfSpaceViewColumn column)
 	{
-
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewColumnManageDialog>(
 			column,
-			new ()
+			new()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -205,7 +209,6 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 			_submitting = false;
 			await InvokeAsync(StateHasChanged);
 		}
-
 	}
 
 	private async Task _moveColumn(TfSpaceViewColumn column, bool isUp)
@@ -213,7 +216,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 		if (_submitting) return;
 		try
 		{
-			if(isUp)
+			if (isUp)
 				await TfService.MoveSpaceViewColumnUp(column.Id);
 			else
 				await TfService.MoveSpaceViewColumnDown(column.Id);
@@ -228,9 +231,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 			_submitting = false;
 			await InvokeAsync(StateHasChanged);
 		}
+	}
 
-	}	
-	
 	private async Task _onPresetsChanged(List<TfSpaceViewPreset> presets)
 	{
 		if (_submitting) return;
@@ -249,7 +251,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IDispos
 			_submitting = false;
 			await InvokeAsync(StateHasChanged);
 		}
-	}	
-	
+	}
+
 	#endregion
 }

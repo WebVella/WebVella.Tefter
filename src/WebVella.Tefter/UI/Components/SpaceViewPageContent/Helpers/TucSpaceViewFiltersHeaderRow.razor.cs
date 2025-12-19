@@ -1,12 +1,9 @@
-﻿using DocumentFormat.OpenXml.Office2021.Excel.NamedSheetViews;
-using DocumentFormat.OpenXml.Spreadsheet;
-using WebVella.Tefter.Models;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDisposable
 {
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	[Parameter] public List<TfDataProvider> AllDataProviders { get; set; } = new();
 	[Parameter] public List<TfSharedColumn> AllSharedColumns { get; set; } = new();
 	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
@@ -15,25 +12,24 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 	[CascadingParameter(Name = "TucSpaceViewPageContent")]
 	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;
 
-	public Dictionary<string, TfDatabaseColumnType> _typeDict = new();
-	public List<TfFilterQuery> _filters = new();
-	public Dictionary<string, TfFilterQuery> _columnQueryFilterDict = new();
-	public Dictionary<string, TfFilterBase> _columnBaseFilterDict = new();
+	private Dictionary<string, TfDatabaseColumnType> _typeDict = new();
+	private List<TfFilterQuery> _filters = new();
+	private Dictionary<string, TfFilterQuery> _columnQueryFilterDict = new();
+	private Dictionary<string, TfFilterBase> _columnBaseFilterDict = new();
 
-	public Dictionary<string, TfFilterQuery> _popoverQueryFilterDict = new();
-	public Dictionary<string, TfFilterBase> _popoverBaseFilterDict = new();
-	public Guid? _openedFilterId = null;
+	private readonly Dictionary<string, TfFilterQuery> _popoverQueryFilterDict = new();
+	private readonly Dictionary<string, TfFilterBase> _popoverBaseFilterDict = new();
+	private Guid? _openedFilterId = null;
 	private bool _hasPinnedData = false;
+	
+	private IAsyncDisposable _spaceViewColumnUpdatedEventSubscriber = null!;
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await TfEventProvider.DisposeAsync();
+		await _spaceViewColumnUpdatedEventSubscriber.DisposeAsync();
 	}
 
-	protected override void OnInitialized()
-	{
-		_init();
-	}
+	protected override void OnInitialized() => _init();
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -42,17 +38,17 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 		{
 			Navigator.LocationChanged += On_NavigationStateChanged;
 			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewChanged;
-			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewColumnsChangedEvent;
+			_spaceViewColumnUpdatedEventSubscriber =
+				await TfEventBus.SubscribeAsync<TfSpaceViewColumnUpdatedEventPayload>(
+					handler: On_SpaceViewColumnUpdatedEventAsync);
 		}
 	}
 
 	private void _init()
 	{
-		string? pinnedDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName, null);
-		string? pinnedDataIdentityValue = Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName, null);
-		_hasPinnedData = false;
-		if (!String.IsNullOrWhiteSpace(pinnedDataIdentity) && !String.IsNullOrWhiteSpace(pinnedDataIdentityValue))
-			_hasPinnedData = true;
+		string? pinnedDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName);
+		string? pinnedDataIdentityValue = Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName);
+		_hasPinnedData = !String.IsNullOrWhiteSpace(pinnedDataIdentity) && !String.IsNullOrWhiteSpace(pinnedDataIdentityValue);
 
 		_typeDict = SpaceViewColumns.ToQueryNameTypeDictionary(dataProviders: AllDataProviders,
 			sharedColumns: AllSharedColumns);
@@ -139,22 +135,19 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 	private async Task On_SpaceViewChanged(TfSpaceViewUpdatedEvent args)
 	{
 		if (!args.IsUserApplicable(this)) return;
-		await InvokeAsync(async () =>
+		await InvokeAsync(() =>
 		{
 			_init();
 			StateHasChanged();
 		});
 	}
 
-	private async Task On_SpaceViewColumnsChangedEvent(TfSpaceViewColumnsChangedEvent args)
+	private async Task On_SpaceViewColumnUpdatedEventAsync(string? key, TfSpaceViewColumnUpdatedEventPayload? payload)
 	{
-		if (!args.IsUserApplicable(this)) return;
-		await InvokeAsync(async () =>
-		{
-			_init();
-			StateHasChanged();
-		});
+		_init();
+		await InvokeAsync(StateHasChanged);
 	}
+
 
 	private async Task _valueChanged(string queryName, object? valueObj, 
 		bool processMethod = false, object? methodObj = null)

@@ -1,17 +1,19 @@
-﻿namespace WebVella.Tefter.Talk.Components;
+﻿using WebVella.Tefter.MessagingEx;
+
+namespace WebVella.Tefter.Talk.Components;
 
 public partial class TalkPageComponent : TfBaseComponent, IAsyncDisposable
 {
     [Inject] protected ITalkService TalkService { get; set; } = null!;
-    [Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+    [Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;  
     [Parameter] public Guid SpacePageId { get; set; }
     private TalkSpacePageComponentOptions _options = new();
     private List<TalkChannel> _channels = new();
     private TalkChannel? _channelSelected;
-
+    private IAsyncDisposable _spacePageUpdatedEventSubscriber = null!;	
     public async ValueTask DisposeAsync()
     {
-        await TfEventProvider.DisposeAsync();
+        await _spacePageUpdatedEventSubscriber.DisposeAsync();
     }
 
     protected override void OnInitialized()
@@ -19,17 +21,16 @@ public partial class TalkPageComponent : TfBaseComponent, IAsyncDisposable
         _init();
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
-            TfEventProvider.SpacePageUpdatedEvent += On_SpacePageChanged;
+            _spacePageUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageUpdatedEventPayload>(
+                handler:On_SpacePageUpdatedEventAsync);
     }
 
-    private Task On_SpacePageChanged(TfSpacePageUpdatedEvent args)
+    private Task On_SpacePageUpdatedEventAsync(string? key, TfSpacePageUpdatedEventPayload? payload)
     {
-        if (args.IsUserApplicable(this))
-            _init();
-
+        _init();
         return Task.CompletedTask;
     }
 

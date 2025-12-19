@@ -23,7 +23,7 @@ public partial interface ITfService
 	/// </summary>
 	/// <param name="id">The unique identifier of the space.</param>
 	/// <returns>The <see cref="TfSpace"/> object if found; otherwise, null.</returns>
-	public TfSpace GetSpace(
+	public TfSpace? GetSpace(
 		Guid id);
 
 	/// <summary>
@@ -162,7 +162,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfSpace GetSpace(
+	public TfSpace? GetSpace(
 		Guid id)
 	{
 		try
@@ -230,8 +230,9 @@ public partial class TfService : ITfService
 				scope.Complete();
 				
 				var result = GetSpace(space.Id);
-				PublishEventWithScope(new TfSpaceCreatedEvent(result));
-				
+				_eventBus.Publish(
+					key: null,
+					payload: new TfSpaceCreatedEventPayload(result));					
 				return result;
 			}
 		}
@@ -294,7 +295,9 @@ public partial class TfService : ITfService
 				scope.Complete();
 				
 				var result = GetSpace(space.Id);
-				PublishEventWithScope(new TfSpaceUpdatedEvent(result));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfSpaceUpdatedEventPayload(result));	
 				
 				return result;
 			}
@@ -345,7 +348,9 @@ public partial class TfService : ITfService
 				scope.Complete();
 				
 				var result = GetSpace(id);
-				PublishEventWithScope(new TfSpaceUpdatedEvent(result));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfSpaceUpdatedEventPayload(result));	
 			}
 		}
 		catch (Exception ex)
@@ -395,7 +400,9 @@ public partial class TfService : ITfService
 				scope.Complete();
 				
 				var result = GetSpace(id);
-				PublishEventWithScope(new TfSpaceUpdatedEvent(result));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfSpaceUpdatedEventPayload(result));	
 			}
 		}
 		catch (Exception ex)
@@ -459,8 +466,9 @@ public partial class TfService : ITfService
 				}
 
 				scope.Complete();
-				
-				PublishEventWithScope(new TfSpaceUpdatedEvent(space));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfSpaceDeletedEventPayload(space));					
 			}
 		}
 		catch (Exception ex)
@@ -477,7 +485,9 @@ public partial class TfService : ITfService
 			throw new Exception("Space not found");
 		space.IsPrivate = isPrivate;
 		var result = UpdateSpace(space);
-		PublishEventWithScope(new TfSpaceUpdatedEvent(space));
+		_eventBus.Publish(
+			key: null,
+			payload: new TfSpaceUpdatedEventPayload(result));	
 		return result;
 	}	
 

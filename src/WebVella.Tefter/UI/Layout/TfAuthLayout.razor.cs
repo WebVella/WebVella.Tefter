@@ -21,12 +21,14 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	private DesignThemeModes _themeMode = DesignThemeModes.System;
 
 	private IAsyncDisposable _bookmarkEventSubscriber = null!;
+	private IAsyncDisposable _spaceUpdatedEventSubscriber = null!;	
 
 	public TfState GetState() => _state;
 
 	public async ValueTask DisposeAsync()
 	{
 		await _bookmarkEventSubscriber.DisposeAsync();
+		await _spaceUpdatedEventSubscriber.DisposeAsync();
 		_locationChangingHandler?.Dispose();
 	}
 
@@ -60,10 +62,11 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		{
 			_locationChangingHandler = Navigator.RegisterLocationChangingHandler(Navigator_LocationChanging);
 			TfEventProvider.UserUpdatedEvent += On_UserUpdated;
-			TfEventProvider.SpaceUpdatedEvent += On_SpaceUpdated;
 			_bookmarkEventSubscriber = await TfEventBus.SubscribeAsync<TfBookmarkEventPayload>(
 				handler: On_BookmarkEventAsync,
 				key: _currentUser.Id);
+			_spaceUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceUpdatedEventPayload>(
+				handler:On_SpaceUpdatedEventAsync);			
 		}
 	}
 
@@ -80,16 +83,13 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		});
 	}
 
-	private async Task On_SpaceUpdated(TfSpaceUpdatedEvent args)
+	private async Task On_SpaceUpdatedEventAsync(string? key, TfSpaceUpdatedEventPayload? payload)
 	{
-		await InvokeAsync(async () =>
+		if (payload is not null && payload.Space.Id == _state.Space?.Id)
 		{
-			if (args.Payload.Id == _state.Space?.Id)
-			{
-				_init(Navigator.Uri, args.Payload);
-				await InvokeAsync(StateHasChanged);
-			}
-		});
+			_init(Navigator.Uri, payload.Space);
+			await InvokeAsync(StateHasChanged);
+		}		
 	}
 
 	private Task On_BookmarkEventAsync(string? key, TfBookmarkEventPayload? payload)

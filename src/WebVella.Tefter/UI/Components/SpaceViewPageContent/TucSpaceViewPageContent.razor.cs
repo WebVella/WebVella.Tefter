@@ -4,11 +4,12 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 {
 	#region << Init >>
 
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 
 	// State
-	private DotNetObjectReference<TucSpaceViewPageContent> _objectRef;
+	private DotNetObjectReference<TucSpaceViewPageContent> _objectRef = null!;
 	private bool _isDataLoading = false;
 	private bool _selectAllLoading = false;
 	private ReadOnlyDictionary<Guid, ITfSpaceViewColumnTypeAddon> _columnTypeMetaDict = null!;
@@ -27,18 +28,19 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private List<Guid> _selectedDataRows = new();
 	private List<Guid> _editedDataRows = new();
 	private bool _editAll = false;
-	private Dictionary<string, object> _contextViewData = new();
-	private string _tableId = "space-view-table";
+	private readonly string _tableId = "space-view-table";
 	private RenderFragment _caretDownInactive = null!;
 	private RenderFragment _caretDown = null!;
 	private RenderFragment _caretUp = null!;
 	private bool _hasPinnedData = false;
-
+	private IAsyncDisposable _spacePageUpdatedEventSubscriber = null!;
+	private IAsyncDisposable _spaceViewColumnUpdatedEventSubscriber = null!;
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await TfEventProvider.DisposeAsync();
-		_objectRef?.Dispose();
+		await _spacePageUpdatedEventSubscriber.DisposeAsync();
+		await _spaceViewColumnUpdatedEventSubscriber.DisposeAsync();
+		_objectRef.Dispose();
 		try
 		{
 			await JSRuntime.InvokeAsync<bool>("Tefter.removeColumnResizeListener", ComponentId);
@@ -89,9 +91,14 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			Navigator.LocationChanged += On_NavigationStateChanged;
 			TfEventProvider.UserUpdatedEvent += On_UserChanged;
 			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewUpdated;
-			TfEventProvider.SpaceViewColumnsChangedEvent += On_SpaceViewColumnsChanged;
+
 			TfEventProvider.SpaceViewDataChangedEvent += On_SpaceViewDataChanged;
-			TfEventProvider.SpacePageUpdatedEvent += On_SpacePageUpdated;
+			
+			_spaceViewColumnUpdatedEventSubscriber =
+				await TfEventBus.SubscribeAsync<TfSpaceViewColumnUpdatedEventPayload>(
+					handler: On_SpaceViewColumnUpdatedEventAsync);			
+			_spacePageUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageUpdatedEventPayload>(
+				handler: On_SpacePageUpdatedEventAsync);
 			try
 			{
 				await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable", _tableId);
@@ -132,15 +139,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		});
 	}
 
-	private async Task On_SpaceViewColumnsChanged(TfSpaceViewColumnsChangedEvent args)
+	private async Task On_SpaceViewColumnUpdatedEventAsync(string? key, TfSpaceViewColumnUpdatedEventPayload? payload)
 	{
-		await InvokeAsync(async () =>
-		{
-			if (args.UserId != TfAuthLayout.GetState().User.Id) return;
-			if (args.SpaceViewId != _spaceView?.Id) return;
-			_spaceViewColumns = args.Payload;
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
+		if(payload is null) return;
+		var column = payload.SpaceViewColumns.Single(x=> x.Id == payload.ColumnId);
+		if (column.SpaceViewId != _spaceView?.Id) return;
+		_spaceViewColumns = payload.SpaceViewColumns;
+		await _init(TfAuthLayout.GetState().NavigationState);
 	}
 
 	private async Task On_SpaceViewUpdated(TfSpaceViewUpdatedEvent args)
@@ -159,7 +164,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 	private async Task On_SpaceViewDataChanged(TfSpaceViewDataChangedEvent args)
 	{
-		await InvokeAsync(async () =>
+		await InvokeAsync(() =>
 		{
 			if (args.UserId != TfAuthLayout.GetState().User.Id) return;
 			if (args.SpaceViewId != _spaceView?.Id) return;
@@ -167,15 +172,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		});
 	}
 
-	private async Task On_SpacePageUpdated(TfSpacePageUpdatedEvent args)
+	private async Task On_SpacePageUpdatedEventAsync(string? key, TfSpacePageUpdatedEventPayload? payload)
 	{
-		await InvokeAsync(async () =>
-		{
-			if (args.Payload.Id != _spacePage?.Id) return;
-			_spacePage = args.Payload;
-			await InvokeAsync(StateHasChanged);
-		});
+		if (payload is null || payload.SpacePage.Id != _spacePage?.Id) return;
+		_spacePage = payload.SpacePage;
+		await InvokeAsync(StateHasChanged);
 	}
+
 
 	private async Task _init(TfNavigationState navState, bool showLoading = true)
 	{
@@ -189,7 +192,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			}
 
 
-			Guid? oldViewId = _spaceView is not null ? _spaceView.Id : null;
+			Guid? oldViewId = _spaceView?.Id;
 			_spaceView = null;
 			// if (_navState.SpaceId is null || _navState.SpacePageId is null)
 			// 	return;
@@ -203,7 +206,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			if (_space is null)
 				return;
 			if (_spacePage.Type != TfSpacePageType.Page &&
-				_spacePage.ComponentType.FullName != typeof(TucSpaceViewSpacePageAddon).FullName)
+			    _spacePage.ComponentType.FullName != typeof(TucSpaceViewSpacePageAddon).FullName)
 				return;
 			var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(_spacePage.ComponentOptionsJson);
 			if (options is null || options.SpaceViewId is null)
@@ -217,9 +220,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 			if (oldViewId != options.SpaceViewId.Value)
 			{
-				_contextViewData = new();
 				_dataset = TfService.GetDataset(_spaceView.DatasetId);
-				_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _dataset.DataProviderId);
+				_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _dataset!.DataProviderId);
 				_selectedDataRows = new();
 				_editedDataRows = new();
 			}
@@ -239,19 +241,19 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 			_spaceViewColumns = TfService.GetSpaceViewColumnsList(_spaceView.Id);
 
-			string? pinnedDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName, null);
-			string? pinnedDataIdentityValue = Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName, null);
-			_hasPinnedData = false;
-			if (!String.IsNullOrWhiteSpace(pinnedDataIdentity) && !String.IsNullOrWhiteSpace(pinnedDataIdentityValue))
-				_hasPinnedData = true;
+			string? pinnedDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName);
+			string? pinnedDataIdentityValue = Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName);
+			_hasPinnedData = !string.IsNullOrWhiteSpace(pinnedDataIdentity) &&
+			                 !string.IsNullOrWhiteSpace(pinnedDataIdentityValue);
 
 			if (_hasPinnedData)
 			{
 				//Hardcoded relation is requested
-				TfRelDataIdentityQueryInfo relInfo = new (){ 
-					DataIdentity  = pinnedDataIdentity!, 
+				TfRelDataIdentityQueryInfo relInfo = new()
+				{
+					DataIdentity = pinnedDataIdentity!,
 					RelDataIdentity = pinnedDataIdentity!,
-					RelIdentityValues = new List<string>{ pinnedDataIdentityValue! }
+					RelIdentityValues = [pinnedDataIdentityValue!]
 				};
 				_data = TfService.QueryDataProvider(_dataProvider,
 					sorts: _dataset.SortOrders,
@@ -284,7 +286,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		}
 		finally
 		{
-			UriInitialized = _navState?.Uri ?? String.Empty;
+			UriInitialized = _navState.Uri;
 			if (showLoading)
 			{
 				_isDataLoading = false;
@@ -309,12 +311,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 	private async Task _addPreset()
 	{
-		var context = new TfPresetFilterManagementContext
-		{
-			Item = null,
-			DateSet = _dataset,
-			SpaceView = _spaceView
-		};
+		var context = new TfPresetFilterManagementContext { Item = null, DateSet = _dataset, SpaceView = _spaceView };
 		var dialog = await DialogService.ShowDialogAsync<TucPresetFilterManageDialog>(
 			context,
 			new()
@@ -337,11 +334,11 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	public async Task OnSearch(string value)
 	{
 		if (_isDataLoading) return;
-		var queryDict = new Dictionary<string, object> { { TfConstants.SearchQueryName, value } };
+		var queryDict = new Dictionary<string, object?> { { TfConstants.SearchQueryName, value } };
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
-	public async Task OnFilter(List<TfFilterQuery> filters)
+	public async Task OnFilter(List<TfFilterQuery>? filters)
 	{
 		if (_isDataLoading) return;
 		var queryDict = new Dictionary<string, object?>();
@@ -354,7 +351,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
-	public async Task OnSort(List<TfSortQuery> sorts)
+	public async Task OnSort(List<TfSortQuery>? sorts)
 	{
 		if (_isDataLoading) return;
 		var queryDict = new Dictionary<string, object?>();
@@ -387,11 +384,14 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		{
 			_ = await TfService.RemoveSpaceViewPersonalizations(
 				userId: _currentUser.Id,
-				spaceViewId: _spaceView.Id,
+				spaceViewId: _spaceView!.Id,
 				presetId: _preset?.Id
 			);
 		}
-		catch { }
+		catch (Exception)
+		{
+			//Do nothing
+		}
 	}
 
 	//Select Handlers
@@ -404,15 +404,18 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			await Task.Delay(1);
 			_selectedDataRows = TfService.QueryDatasetIdList(
 				datasetId: _spaceView!.DatasetId,
-				presetFilters: _preset is not null ? _preset.Filters : null,
-				presetSorts: _preset is not null ? _preset.SortOrders : null,
-				userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _allDataProviders,
-					_allSharedColumns),
+				presetFilters: _preset?.Filters,
+				presetSorts: _preset?.SortOrders,
+				userFilters: _navState.Filters.ConvertQueryFilterToList(_spaceViewColumns, _allDataProviders!,
+					_allSharedColumns!),
 				userSorts: _navState.Sorts.ConvertQuerySortToList(_spaceViewColumns),
 				userSearch: _navState.Search
 			);
 		}
-		catch { }
+		catch (Exception)
+		{
+			//Do nothing
+		}
 		finally
 		{
 			_selectAllLoading = false;
@@ -430,7 +433,10 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			await Task.Delay(1);
 			_selectedDataRows = new();
 		}
-		catch { }
+		catch (Exception)
+		{
+			//Do nothing
+		}
 		finally
 		{
 			_selectAllLoading = false;
@@ -457,7 +463,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 	public bool GetEditAll() => _editAll;
 
-	public void OnDeleteRows(List<Guid> tfIds)
+	public void OnDeleteRows(List<Guid>? tfIds)
 	{
 		if (_spaceView is null) return;
 		if (tfIds is null || tfIds.Count == 0) return;
@@ -465,7 +471,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		{
 			var spaceData = TfService.GetDataset(_spaceView.DatasetId);
 			TfService.DeleteDataProviderRowsByTfId(
-				providerId: spaceData.DataProviderId,
+				providerId: spaceData!.DataProviderId,
 				idList: _selectedDataRows
 			);
 			ToastService.ShowSuccess(LOC("Records deleted"));
@@ -477,7 +483,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		}
 	}
 
-	public void OnDataChange(Dictionary<Guid, Dictionary<string, object>> change)
+	public void OnDataChange(Dictionary<Guid, Dictionary<string, object>>? change)
 	{
 		if (_data is null || change is null || change.Keys.Count == 0) return;
 		foreach (var rowId in change.Keys)
@@ -495,7 +501,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		StateHasChanged();
 	}
 
-	public void OnEditRows(List<Guid> tfIds)
+	public void OnEditRows(List<Guid>? tfIds)
 	{
 		if (tfIds is null || tfIds.Count == 0) return;
 		_editedDataRows = _editedDataRows.Union(tfIds).ToList();
@@ -509,8 +515,10 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 	private string _getNoDataString()
 	{
-		var last30Jobs = TfService.GetDataProviderSynchronizationTasks(_data.QueryInfo.DataProviderId, page: 1, pageSize: 30);
-		var syncRunning = last30Jobs.Any(x => x.Status == TfSynchronizationStatus.Pending || x.Status == TfSynchronizationStatus.InProgress);
+		var last30Jobs =
+			TfService.GetDataProviderSynchronizationTasks(_data!.QueryInfo.DataProviderId, page: 1, pageSize: 30);
+		var syncRunning = last30Jobs.Any(x =>
+			x.Status == TfSynchronizationStatus.Pending || x.Status == TfSynchronizationStatus.InProgress);
 		if (syncRunning)
 			return LOC("Data import is currently running. Please try again in a minute.");
 		return LOC("No data");
@@ -520,7 +528,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		if (user is null) return "";
 		return JsonSerializer.Serialize(user.Settings.ViewPresetColumnPersonalizations)
-			   + JsonSerializer.Serialize(user.Settings.ViewPresetSortPersonalizations);
+		       + JsonSerializer.Serialize(user.Settings.ViewPresetSortPersonalizations);
 	}
 
 	private async Task _onRowChanged(TfSpaceViewColumnDataChange change)
@@ -554,11 +562,10 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				Guid tfId = row.GetRowId();
 				if (changedRowTfId != tfId) continue;
 
-				for (int j = 0; j < _data.Columns.Count; j++)
+				foreach (var column in _data.Columns)
 				{
-					TfDataColumn column = _data.Columns[j];
 					if (column.Origin == TfDataColumnOriginType.System ||
-						column.Origin == TfDataColumnOriginType.Identity) continue;
+					    column.Origin == TfDataColumnOriginType.Identity) continue;
 					row[column.Name] = changedRow[column.Name];
 				}
 			}
@@ -602,7 +609,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		var allSelected = true;
 		for (int i = 0; i < _data.Rows.Count; i++)
 		{
-			var rowId = (Guid)_data.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+			var rowId = (Guid)(_data.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME] ?? Guid.Empty);
 			if (!_selectedDataRows.Contains(rowId))
 			{
 				allSelected = false;
@@ -645,16 +652,23 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	[JSInvokable("OnColumnSort")]
 	public async void OnColumnSort(int position, bool hasShift)
 	{
-		if (_isDataLoading == true) return;
-		var column = _spaceViewColumns.SingleOrDefault(x => x.Position == position);
-		if (column is null) return;
-		var sorts = TfService.CalculateViewPresetSortPersonalization(
-			currentSorts: _navState.Sorts ?? new(),
-			spaceViewId: _spaceView.Id,
-			spaceViewColumnId: column.Id,
-			hasShiftKey: hasShift);
+		try
+		{
+			if (_isDataLoading) return;
+			var column = _spaceViewColumns.SingleOrDefault(x => x.Position == position);
+			if (column is null) return;
+			var sorts = TfService.CalculateViewPresetSortPersonalization(
+				currentSorts: _navState.Sorts ?? new(),
+				spaceViewId: _spaceView!.Id,
+				spaceViewColumnId: column.Id,
+				hasShiftKey: hasShift);
 
-		await OnSort(sorts is null ? new List<TfSortQuery>() : sorts);
+			await OnSort(sorts);
+		}
+		catch (Exception)
+		{
+			// nothing
+		}
 	}
 
 	[JSInvokable("OnColumnResized")]
@@ -664,7 +678,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		if (column is null) return;
 		await TfService.SetViewPresetColumnPersonalization(
 			userId: _currentUser.Id,
-			spaceViewId: _spaceView.Id,
+			spaceViewId: _spaceView!.Id,
 			presetId: _preset?.Id,
 			spaceViewColumnId: column.Id,
 			width: width);

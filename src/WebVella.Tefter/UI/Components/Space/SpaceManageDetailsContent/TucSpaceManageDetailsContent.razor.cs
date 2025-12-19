@@ -1,22 +1,24 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
+
+public partial class TucSpaceManageDetailsContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
-	private TfSpace _space = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
+	private TfSpace? _space = null;
 	private TfNavigationState _navState = null!;
-	public void Dispose()
+	private IAsyncDisposable _spaceEventSubscriber = null!;
+
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.Dispose();
+		await _spaceEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.SpaceCreatedEvent += On_SpaceChange;
-		TfEventProvider.SpaceUpdatedEvent += On_SpaceChange;
-		TfEventProvider.SpaceDeletedEvent += On_SpaceChange;
+		_spaceEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceEventPayload>(
+			handler: On_SpaceEventAsync);
 	}
 
 
@@ -29,13 +31,9 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 		});
 	}
 
-	private async Task On_SpaceChange(object args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+	private async Task On_SpaceEventAsync(string? key, TfSpaceEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
+
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -49,28 +47,30 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IDisposable
 		}
 		finally
 		{
-			UriInitialized = _navState?.Uri ?? String.Empty;
+			UriInitialized = _navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
 
 	private async Task _editSpace()
 	{
+		if(_space is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceManageDialog>(
-		_space,
-		new ()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			_space,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 
 	private async Task _deleteSpace()
 	{
+		if(_space is null) return;
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this space deleted?")))
 			return;
 		try
