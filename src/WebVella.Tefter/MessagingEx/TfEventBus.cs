@@ -36,19 +36,19 @@ public partial interface ITfEventBus
 
 	public void Publish(
 		Guid key,
-		ITfEventPayload? args = null);
+		ITfEventPayload? payload = null);
 
 	public void Publish(
 		string? key = null,
-		ITfEventPayload? args = null);
+		ITfEventPayload? payload = null);
 
 	public ValueTask PublishAsync(
 		Guid key,
-		ITfEventPayload? args = null);
+		ITfEventPayload? payload = null);
 
 	public ValueTask PublishAsync(
 		string? key = null,
-		ITfEventPayload? args = null);
+		ITfEventPayload? payload = null);
 }
 
 public partial class TfEventBus : ITfEventBus
