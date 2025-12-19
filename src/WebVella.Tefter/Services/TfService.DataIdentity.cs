@@ -69,7 +69,9 @@ public partial class TfService : ITfService
 				throw new TfDboServiceException("Insert<TfDataIdentity> failed.");
 
 			var result = GetDataIdentity(dataIdentity.DataIdentity);
-			PublishEventWithScope(new TfDataIdentityCreatedEvent(result));
+			_eventBus.Publish(
+				key: null,
+				payload: new TfDataIdentityCreatedEventPayload(result));			
 			return result;
 
 		}
@@ -97,7 +99,9 @@ public partial class TfService : ITfService
 
 
 			var result = GetDataIdentity(dataIdentity.DataIdentity);
-			PublishEventWithScope(new TfDataIdentityUpdatedEvent(result));
+			_eventBus.Publish(
+				key: null,
+				payload: new TfDataIdentityUpdatedEventPayload(result));				
 			return result;
 
 		}
@@ -126,8 +130,9 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfBookmark> failed.");
 
 				scope.Complete();
-				
-				PublishEventWithScope(new TfDataIdentityDeletedEvent(existingIdentity));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfDataIdentityDeletedEventPayload(existingIdentity));					
 			}
 		}
 		catch (Exception ex)

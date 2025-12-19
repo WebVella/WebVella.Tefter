@@ -1,12 +1,14 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisposable
+public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private TfDataIdentity? _identity = null;
-
-	public void Dispose()
+	private IAsyncDisposable _dataIdentityEventSubscriber = null!;
+	
+	
+	public async ValueTask DisposeAsync()
 	{
-		TfEventProvider.Dispose();
+		await _dataIdentityEventSubscriber.DisposeAsync();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
@@ -14,17 +16,17 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 	{
 		await base.OnInitializedAsync();
 		await _init(navState:TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.DataIdentityUpdatedEvent += On_DataIdentityUpdated;
 		Navigator.LocationChanged += On_NavigationStateChanged;
+		_dataIdentityEventSubscriber = await TfEventBus.SubscribeAsync<TfDataIdentityEventPayload>(
+			handler:On_DataIdentityEventAsync, 
+			key:TfAuthLayout.GetState().User.Id);
 	}
 
-	private async Task On_DataIdentityUpdated(TfDataIdentityUpdatedEvent args)
+	private async Task On_DataIdentityEventAsync(string? key, TfDataIdentityEventPayload? payload)
 	{
-		await InvokeAsync(async () =>
-		{
-			await _init(navState: TfAuthLayout.GetState().NavigationState, identity: args.Payload);
-		});
-	}
+		if (payload is null) return;
+		await _init(navState: TfAuthLayout.GetState().NavigationState, identity: payload.DataIdentity);
+	}		
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -58,6 +60,7 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 
 	private async Task _editIdentity()
 	{
+		if(_identity is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucDataIdentityManageDialog>(
 		_identity,
 		new ()
@@ -68,11 +71,12 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IDisp
 			TrapFocus = false
 		});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 
 	private async Task _deleteIdentity()
 	{
+		if(_identity is null) return;
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this identity deleted?")))
 			return;
 		try

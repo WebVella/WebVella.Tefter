@@ -99,7 +99,7 @@
                     <div>@LOC("Deleting this shared column will remove all its data, but will not alter the data of any related data providers or applications.")</div>
                     <div>
                         <FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white"
-                                      OnClick="_deleteItem">
+                                      OnClick="_deleteItem" Disabled="_isDeleting">
                             @LOC("Delete this Shared column")
                             <FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
                         </FluentButton>

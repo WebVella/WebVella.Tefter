@@ -5,40 +5,6 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 {
 	public event Func<SampleGlobalEvent,Task> SampleGlobalEvent;
 	
-	//bookmark
-	public event Func<TfBookmarkCreatedEvent,Task> BookmarkCreatedEvent;	
-	public event Func<TfBookmarkUpdatedEvent,Task> BookmarkUpdatedEvent;	
-	public event Func<TfBookmarkDeletedEvent,Task> BookmarkDeletedEvent;	
-	
-	//data identity
-	public event Func<TfDataIdentityCreatedEvent,Task> DataIdentityCreatedEvent;
-	public event Func<TfDataIdentityUpdatedEvent,Task> DataIdentityUpdatedEvent;
-	public event Func<TfDataIdentityDeletedEvent,Task> DataIdentityDeletedEvent;		
-	
-	//data provider
-	public event Func<TfDataProviderCreatedEvent,Task> DataProviderCreatedEvent;
-	public event Func<TfDataProviderUpdatedEvent,Task> DataProviderUpdatedEvent;
-	public event Func<TfDataProviderDeletedEvent,Task> DataProviderDeletedEvent;			
-	
-	//dataset
-	public event Func<TfDatasetCreatedEvent,Task> DatasetCreatedEvent;
-	public event Func<TfDatasetUpdatedEvent,Task> DatasetUpdatedEvent;
-	public event Func<TfDatasetDeletedEvent,Task> DatasetDeletedEvent;		
-	
-	//repository file
-	public event Func<TfRepositoryFileCreatedEvent,Task> RepositoryFileCreatedEvent;
-	public event Func<TfRepositoryFileUpdatedEvent,Task> RepositoryFileUpdatedEvent;
-	public event Func<TfRepositoryFileDeletedEvent,Task> RepositoryFileDeletedEvent;		
-	
-	//role
-	public event Func<TfRoleCreatedEvent,Task> RoleCreatedEvent;
-	public event Func<TfRoleUpdatedEvent,Task> RoleUpdatedEvent;
-	public event Func<TfRoleDeletedEvent,Task> RoleDeletedEvent;		
-	
-	//shared column
-	public event Func<TfSharedColumnCreatedEvent,Task> SharedColumnCreatedEvent;
-	public event Func<TfSharedColumnUpdatedEvent,Task> SharedColumnUpdatedEvent;
-	public event Func<TfSharedColumnDeletedEvent,Task> SharedColumnDeletedEvent;			
 	
 	//space
 	public event Func<TfSpaceCreatedEvent,Task> SpaceCreatedEvent;
@@ -74,86 +40,6 @@ public partial class TfGlobalEventProvider : IAsyncDisposable
 	{
 		if (obj is SampleGlobalEvent)
 			SampleGlobalEvent?.Invoke((SampleGlobalEvent)obj);
-		
-		//bookmark
-		if (obj is TfBookmarkCreatedEvent)
-			BookmarkCreatedEvent?.Invoke((TfBookmarkCreatedEvent)obj);
-		if (obj is TfBookmarkUpdatedEvent)
-			BookmarkUpdatedEvent?.Invoke((TfBookmarkUpdatedEvent)obj);
-		if (obj is TfBookmarkDeletedEvent)
-			BookmarkDeletedEvent?.Invoke((TfBookmarkDeletedEvent)obj);		
-		
-		//data identity
-		if (obj is TfDataIdentityCreatedEvent)
-			DataIdentityCreatedEvent?.Invoke((TfDataIdentityCreatedEvent)obj);		
-		
-		if (obj is TfDataIdentityUpdatedEvent)
-			DataIdentityUpdatedEvent?.Invoke((TfDataIdentityUpdatedEvent)obj);
-	
-		if (obj is TfDataIdentityDeletedEvent)
-			DataIdentityDeletedEvent?.Invoke((TfDataIdentityDeletedEvent)obj);				
-		
-		//data provider
-		if (obj is TfDataProviderCreatedEvent)
-			DataProviderCreatedEvent?.Invoke((TfDataProviderCreatedEvent)obj);		
-		
-		if (obj is TfDataProviderUpdatedEvent)
-			DataProviderUpdatedEvent?.Invoke((TfDataProviderUpdatedEvent)obj);
-	
-		if (obj is TfDataProviderDeletedEvent)
-			DataProviderDeletedEvent?.Invoke((TfDataProviderDeletedEvent)obj);			
-		
-		
-		//dataset
-		if (obj is TfDatasetCreatedEvent)
-			DatasetCreatedEvent?.Invoke((TfDatasetCreatedEvent)obj);		
-		
-		if (obj is TfDatasetUpdatedEvent)
-			DatasetUpdatedEvent?.Invoke((TfDatasetUpdatedEvent)obj);
-	
-		if (obj is TfDatasetDeletedEvent)
-			DatasetDeletedEvent?.Invoke((TfDatasetDeletedEvent)obj);				
-		
-		//repository file
-		if (obj is TfRepositoryFileCreatedEvent)
-			RepositoryFileCreatedEvent?.Invoke((TfRepositoryFileCreatedEvent)obj);		
-		
-		if (obj is TfRepositoryFileUpdatedEvent)
-			RepositoryFileUpdatedEvent?.Invoke((TfRepositoryFileUpdatedEvent)obj);
-	
-		if (obj is TfRepositoryFileDeletedEvent)
-			RepositoryFileDeletedEvent?.Invoke((TfRepositoryFileDeletedEvent)obj);				
-		
-		//role
-		if (obj is TfRoleCreatedEvent)
-			RoleCreatedEvent?.Invoke((TfRoleCreatedEvent)obj);		
-		
-		if (obj is TfRoleUpdatedEvent)
-			RoleUpdatedEvent?.Invoke((TfRoleUpdatedEvent)obj);
-	
-		if (obj is TfRoleDeletedEvent)
-			RoleDeletedEvent?.Invoke((TfRoleDeletedEvent)obj);			
-		
-		
-		//role
-		if (obj is TfRoleCreatedEvent)
-			RoleCreatedEvent?.Invoke((TfRoleCreatedEvent)obj);		
-		
-		if (obj is TfRoleUpdatedEvent)
-			RoleUpdatedEvent?.Invoke((TfRoleUpdatedEvent)obj);
-	
-		if (obj is TfRoleDeletedEvent)
-			RoleDeletedEvent?.Invoke((TfRoleDeletedEvent)obj);			
-		
-		//shared column
-		if (obj is TfSharedColumnCreatedEvent)
-			SharedColumnCreatedEvent?.Invoke((TfSharedColumnCreatedEvent)obj);		
-		
-		if (obj is TfSharedColumnUpdatedEvent)
-			SharedColumnUpdatedEvent?.Invoke((TfSharedColumnUpdatedEvent)obj);
-	
-		if (obj is TfSharedColumnDeletedEvent)
-			SharedColumnDeletedEvent?.Invoke((TfSharedColumnDeletedEvent)obj);			
 		
 		//space
 		if (obj is TfSpaceCreatedEvent)

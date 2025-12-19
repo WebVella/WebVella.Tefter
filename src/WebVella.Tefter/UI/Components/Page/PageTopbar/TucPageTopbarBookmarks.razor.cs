@@ -2,18 +2,17 @@
 
 public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 
 	private List<TfBookmark> _allUserBookmarks = new();
 
 	private TfBookmark? _activePin = null;
-	private string _pinBtnId = "tf-page-top-pin-selector";
-
+	private readonly string _pinBtnId = "tf-page-top-pin-selector";
+	private readonly string _bookmarkBtnId = "tf-page-top-bookmark";
+	
 	private TfBookmark? _activeBookmark = null;
 	private bool _bookmarkMenuOpen = false;
-	private string _bookmarkBtnId = "tf-page-top-bookmark";
-	//TODO RUMEN: Event subscriber
+
 	private IAsyncDisposable _bookmarkEventSubscriber = null!;
 
 	#region << Lifecycle >>
@@ -21,22 +20,13 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.BookmarkCreatedEvent -= On_BookmarkCreatedEvent;
-		TfEventProvider.BookmarkUpdatedEvent -= On_BookmarkUpdatedEvent;
-		TfEventProvider.BookmarkDeletedEvent -= On_BookmarkDeletedEvent;
-		//TODO RUMEN: Event subscriber
 		await _bookmarkEventSubscriber.DisposeAsync();
-		await TfEventProvider.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		_init(forceInit: false);
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.BookmarkCreatedEvent += On_BookmarkCreatedEvent;
-		TfEventProvider.BookmarkUpdatedEvent += On_BookmarkUpdatedEvent;
-		TfEventProvider.BookmarkDeletedEvent += On_BookmarkDeletedEvent;
-		//TODO RUMEN: Event subscriber
 		_bookmarkEventSubscriber = await TfEventBus.SubscribeAsync<TfBookmarkEventPayload>(
 			handler:On_BookmarkEventAsync, 
 			key:TfAuthLayout.GetState().User.Id);
@@ -45,40 +35,11 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 	#endregion
 
 	#region << Event Listeners >>
-	//TODO RUMEN: Event subscriber
 	private async Task On_BookmarkEventAsync(string? key, TfBookmarkEventPayload? payload)
 	{
 		_init(forceInit: true);
 		await InvokeAsync(StateHasChanged);
 	}
-
-	private async Task On_BookmarkCreatedEvent(TfBookmarkCreatedEvent args)
-	{
-		if (args.IsUserApplicable(this))
-		{
-			_init(forceInit: true);
-			await InvokeAsync(StateHasChanged);
-		}
-	}
-
-	private async Task On_BookmarkUpdatedEvent(TfBookmarkUpdatedEvent args)
-	{
-		if (args.IsUserApplicable(this))
-		{
-			_init(forceInit: true);
-			await InvokeAsync(StateHasChanged);
-		}
-	}
-
-	private async Task On_BookmarkDeletedEvent(TfBookmarkDeletedEvent args)
-	{
-		if (args.IsUserApplicable(this))
-		{
-			_init(forceInit: true);
-			await InvokeAsync(StateHasChanged);
-		}
-	}
-
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
 		_init(forceInit: true);
@@ -126,7 +87,7 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 					Id = Guid.NewGuid(),
 					UserId = state.User.Id,
 					SpacePageId = state.SpacePage.Id,
-					Name = state.SpacePage.Name!,
+					Name = state.SpacePage.Name,
 					Description = state.SpacePage.Description ?? String.Empty,
 					Type = TfBookmarkType.Page
 				};
@@ -166,7 +127,7 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 					UserId = state.User.Id,
 					SpacePageId = state.SpacePage.Id,
 					Name =
-						state.SpacePage.Name ?? "unknown space" + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
+						state.SpacePage.Name,
 					Description = state.SpacePage.Description ?? String.Empty,
 					Url = new Uri(Navigator.Uri).PathAndQuery,
 					Type = TfBookmarkType.URL
@@ -243,13 +204,13 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 		}
 	}
 
-	private Microsoft.FluentUI.AspNetCore.Components.Color _getLinkColor()
+	private Color _getLinkColor()
 	{
-		if (_activeBookmark is null) return Microsoft.FluentUI.AspNetCore.Components.Color.Neutral;
+		if (_activeBookmark is null || String.IsNullOrWhiteSpace(_activeBookmark.Url)) return Color.Neutral;
 		if (Navigator.IsSpaceViewSavedUrlChanged(_activeBookmark.Url))
-			return Microsoft.FluentUI.AspNetCore.Components.Color.Warning;
+			return Color.Warning;
 
-		return Microsoft.FluentUI.AspNetCore.Components.Color.Neutral;
+		return Color.Neutral;
 	}
 
 	#endregion

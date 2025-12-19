@@ -155,7 +155,9 @@ public partial class TfService : ITfService
 			throw new TfDatabaseException("Failed to insert synchronization task.");
 
 		var result = GetDataProvider(providerId);
-		PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
+		_eventBus.Publish(
+			key: null,
+			payload: new TfDataProviderUpdatedEventPayload(result));		
 		return task.Id;
 	}
 
@@ -179,7 +181,9 @@ public partial class TfService : ITfService
 		});
 		
 		var result = GetDataProvider(providerId);
-		PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
+		_eventBus.Publish(
+			key: null,
+			payload: new TfDataProviderUpdatedEventPayload(result));		
 	}
 	public void UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns)
 	{
@@ -197,7 +201,9 @@ public partial class TfService : ITfService
 		});
 		
 		var result = GetDataProvider(providerId);
-		PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
+		_eventBus.Publish(
+			key: null,
+			payload: new TfDataProviderUpdatedEventPayload(result));		
 	}
 	public void UpdateSychronizationTask(
 		Guid taskId,

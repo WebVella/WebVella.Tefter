@@ -1,31 +1,30 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisposable
+
+public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private TfSharedColumn? _column = null;
 	private bool _isDeleting = false;
+	private ReadOnlyCollection<TfDataProvider> _dataProviders = null!;
+	private IAsyncDisposable _sharedColumnUpdatedEventSubscriber = null!;
 
-	internal ReadOnlyCollection<TfDataProvider> _dataProviders = null!;
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
-		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
+		await _sharedColumnUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.SharedColumnUpdatedEvent += On_SharedColumnUpdated;
 		Navigator.LocationChanged += On_NavigationStateChanged;
+		_sharedColumnUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSharedColumnUpdatedEventPayload>(
+			handler: On_SharedColumnUpdatedEventAsync);
 	}
 
-	private async Task On_SharedColumnUpdated(TfSharedColumnUpdatedEvent args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(navState: TfAuthLayout.GetState().NavigationState, column: args.Payload);
-		});
-	}
+	private async Task On_SharedColumnUpdatedEventAsync(string? key, TfSharedColumnUpdatedEventPayload? payload)
+		=> await _init(navState: TfAuthLayout.GetState().NavigationState, column: payload?.SharedColumn);
+
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -50,7 +49,8 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 				if (routeData.SharedColumnId is not null)
 					_column = TfService.GetSharedColumn(routeData.SharedColumnId.Value);
 			}
-			if(_column is null) return;
+
+			if (_column is null) return;
 			_dataProviders = TfService.GetSharedColumnConnectedDataProviders(_column.Id);
 		}
 		finally
@@ -62,25 +62,28 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 
 	private async Task _editItem()
 	{
+		if(_column is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucSharedColumnManageDialog>(
-				_column,
-				new ()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge,
-					TrapFocus = false
-				});
+			_column,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
+		if (result is { Cancelled: false, Data: not null })
 		{
-
 		}
 	}
 
 	private async Task _deleteItem()
 	{
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?") + "\r\n" + LOC("This will delete all related data too!")))
+		if(_column is null) return;
+		if (!await JSRuntime.InvokeAsync<bool>("confirm",
+			    LOC("Are you sure that you need this column deleted?") + "\r\n" +
+			    LOC("This will delete all related data too!")))
 			return;
 		try
 		{
@@ -89,10 +92,9 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 			TfService.DeleteSharedColumn(_column.Id);
 			ToastService.ShowSuccess(LOC("The column was successfully deleted!"));
 			var allColumns = TfService.GetSharedColumns();
-			if (allColumns.Count > 0)
-				Navigator.NavigateTo(String.Format(TfConstants.AdminSharedColumnDetailsPageUrl, allColumns[0].Id));
-			else
-				Navigator.NavigateTo(TfConstants.AdminSharedColumnsPageUrl);
+			Navigator.NavigateTo(allColumns.Count > 0
+				? String.Format(TfConstants.AdminSharedColumnDetailsPageUrl, allColumns[0].Id)
+				: TfConstants.AdminSharedColumnsPageUrl);
 		}
 		catch (Exception ex)
 		{
@@ -104,9 +106,11 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IDisp
 			await InvokeAsync(StateHasChanged);
 		}
 	}
+
 	private string? _getProviderImplementation(TfDataProvider provider)
 	{
-		if (provider.Identities is null || provider.Identities.Count == 0)
+		if(_column is null) return null;
+		if (provider.Identities.Count == 0)
 			return null;
 
 		var implementation = provider.Identities.FirstOrDefault(x => x.DataIdentity == _column.DataIdentity);

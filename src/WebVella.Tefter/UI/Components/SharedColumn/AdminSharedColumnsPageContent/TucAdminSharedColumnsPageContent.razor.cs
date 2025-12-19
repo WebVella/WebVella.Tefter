@@ -1,31 +1,28 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminSharedColumnsPageContent :TfBaseComponent,IDisposable
+
+public partial class TucAdminSharedColumnsPageContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private bool _isLoading = false;
 	private List<TfSharedColumn> _items = new();
+	private IAsyncDisposable _sharedColumnEventSubscriber = null!;
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
-		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
+		await _sharedColumnEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.SharedColumnCreatedEvent += On_UserChanged;
-		TfEventProvider.SharedColumnUpdatedEvent += On_UserChanged;
 		Navigator.LocationChanged += On_NavigationStateChanged;
+		_sharedColumnEventSubscriber = await TfEventBus.SubscribeAsync<TfSharedColumnEventPayload>(
+			handler: On_SharedColumnEventAsync);
 	}
 
-	private async Task On_UserChanged(object args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+	private async Task On_SharedColumnEventAsync(string? key, TfSharedColumnEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -50,19 +47,20 @@ public partial class TucAdminSharedColumnsPageContent :TfBaseComponent,IDisposab
 			UriInitialized = navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
-	}	
-	private async Task onAddClick()
+	}
+
+	private async Task _onAddClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSharedColumnManageDialog>(
-		new TfSharedColumn(), 
-		new ()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			new TfSharedColumn(),
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 }

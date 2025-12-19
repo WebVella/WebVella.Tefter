@@ -1,32 +1,35 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucAdminDataProvidersPageContent : TfBaseComponent,IDisposable
+public partial class TucAdminDataProvidersPageContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private bool _isLoading = false;
 	private List<TfDataProvider> _items = new();
+	private IAsyncDisposable _dataIdentityUpdatedEventSubscriber = null!;
+	private IAsyncDisposable _providerCreatedEventSubscriber = null!;			
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
-		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
+		await _dataIdentityUpdatedEventSubscriber.DisposeAsync();		
+		await _providerCreatedEventSubscriber.DisposeAsync();		
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.DataProviderCreatedEvent += On_UserChanged;
-		TfEventProvider.DataIdentityUpdatedEvent += On_UserChanged;
 		Navigator.LocationChanged += On_NavigationStateChanged;
+		_dataIdentityUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataIdentityUpdatedEventPayload>(
+			handler: On_DataIdentityUpdatedEventAsync,
+			key: TfAuthLayout.GetState().User.Id);
+		_providerCreatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataProviderCreatedEventPayload>(
+			handler:On_DataProviderCreatedEventAsync);		
 	}
 
-	private async Task On_UserChanged(object args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+	private async Task On_DataIdentityUpdatedEventAsync(string? key, TfDataIdentityUpdatedEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
+	private async Task On_DataProviderCreatedEventAsync(string? key, TfDataProviderCreatedEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -54,18 +57,18 @@ public partial class TucAdminDataProvidersPageContent : TfBaseComponent,IDisposa
 	}
 
 
-	private async Task addItem()
+	private async Task _addItem()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderManageDialog>(
-		new TfDataProvider(),
-		new ()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			new TfDataProvider(),
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 }

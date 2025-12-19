@@ -13,7 +13,7 @@ public partial interface ITfService
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	public TfDataProvider GetDataProvider(
+	public TfDataProvider? GetDataProvider(
 		Guid id);
 
 	/// <summary>
@@ -99,7 +99,7 @@ public partial class TfService : ITfService
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	public TfDataProvider GetDataProvider(
+	public TfDataProvider? GetDataProvider(
 		Guid id)
 	{
 		try
@@ -460,9 +460,9 @@ public partial class TfService : ITfService
 
 
 				scope.Complete();
-
-				PublishEventWithScope(new TfDataProviderCreatedEvent(provider));
-				
+				_eventBus.Publish(
+					key: null,
+					payload: new TfDataProviderCreatedEventPayload(provider));	
 				return provider;
 			}
 		}
@@ -504,7 +504,9 @@ public partial class TfService : ITfService
 				throw new TfDboServiceException("Update<TfDataProviderDbo> failed.");
 
 			var result = GetDataProvider(updateModel.Id);
-			PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
+			_eventBus.Publish(
+				key: null,
+				payload: new TfDataProviderUpdatedEventPayload(result));				
 
 			return result;
 		}
@@ -567,9 +569,9 @@ public partial class TfService : ITfService
 
 				_dbManager.SaveChanges(dbBuilder);
 				scope.Complete();
-				
-				PublishEventWithScope(new TfDataProviderDeletedEvent(provider));
-			
+				_eventBus.Publish(
+					key: null,
+					payload: new TfDataProviderDeletedEventPayload(provider));					
 			}
 		}
 		catch (Exception ex)

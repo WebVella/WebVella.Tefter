@@ -1,25 +1,28 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDisposable
+public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
+
 	TfDataProvider? _provider = null;
 	List<TfDataset> _items = new();
+	private IAsyncDisposable _datasetEventSubscriber = null!;
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.Dispose();
+		await _datasetEventSubscriber.DisposeAsync();
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
 
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.DatasetCreatedEvent += On_DatasetChanged;
-		TfEventProvider.DatasetUpdatedEvent += On_DatasetChanged;
-		TfEventProvider.DatasetDeletedEvent += On_DatasetChanged;
+		_datasetEventSubscriber = await TfEventBus.SubscribeAsync<TfDatasetEventPayload>(
+			handler: On_DatasetEventAsync);
 	}
+
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
 		InvokeAsync(async () =>
@@ -29,13 +32,8 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 		});
 	}
 
-	private async Task On_DatasetChanged(object  args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+	private async Task On_DatasetEventAsync(string? key, TfDatasetEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -47,10 +45,11 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 				await InvokeAsync(StateHasChanged);
 				return;
 			}
+
 			_provider = TfService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
-			_items = TfService.GetDatasets(providerId:_provider.Id);
+			_items = TfService.GetDatasets(providerId: _provider.Id);
 		}
 		finally
 		{
@@ -62,31 +61,31 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 	private async Task _createDataset()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetManageDialog>(
-		new TfDataset() { DataProviderId = _provider!.Id },
-		new ()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			new TfDataset() { DataProviderId = _provider!.Id },
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 
 	private async Task _editDataset(TfDataset dataset)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetManageDialog>(
-				dataset,
-				new ()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge,
-					TrapFocus = false
-				});
+			dataset,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 
 	private async Task _deleteDataset(TfDataset dataset)
@@ -97,7 +96,6 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 		{
 			TfService.DeleteDataset(dataset.Id);
 			ToastService.ShowSuccess(LOC("The implementation was successfully deleted!"));
-
 		}
 		catch (Exception ex)
 		{
@@ -108,61 +106,60 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IDis
 	private async Task _manageColumns(TfDataset dataset)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetColumnsDialog>(
-				dataset,
-				new ()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge,
-					TrapFocus = false
-				});
+			dataset,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 
 	private async Task _manageFilters(TfDataset dataset)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetFiltersDialog>(
-				dataset,
-				new ()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthExtraLarge,
-					TrapFocus = false
-				});
+			dataset,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthExtraLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 
 	private async Task _manageSort(TfDataset dataset)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetSortOrderDialog>(
-				dataset,
-				new ()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge,
-					TrapFocus = false
-				});
+			dataset,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 
 	private async Task _viewData(TfDataset dataset)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetDataDialog>(
-				dataset,
-				new ()
-				{
-					PreventDismissOnOverlayClick = false,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthFullScreen,
-					TrapFocus = false
-				});
+			dataset,
+			new()
+			{
+				PreventDismissOnOverlayClick = false,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthFullScreen,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
-
 }

@@ -1,21 +1,28 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposable
+
+public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private TfDataProvider? _provider = null;
 	private List<TfDataProvider> _connectedProviders = new();
-	public void Dispose()
+	
+	private IAsyncDisposable _dataProviderUpdatedEventSubscriber = null!;
+
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.Dispose();
+		await _dataProviderUpdatedEventSubscriber.DisposeAsync();
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
 
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
+		_dataProviderUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataProviderUpdatedEventPayload>(
+			handler: On_DataProviderUpdatedEventAsync);
 	}
+
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
 		InvokeAsync(async () =>
@@ -25,13 +32,8 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 		});
 	}
 
-	private async Task On_DataProviderUpdated(TfDataProviderUpdatedEvent args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+	private async Task On_DataProviderUpdatedEventAsync(string? key, TfDataProviderUpdatedEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -43,6 +45,7 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 				await InvokeAsync(StateHasChanged);
 				return;
 			}
+
 			_provider = TfService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
@@ -58,31 +61,31 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 	private async Task _implementDataIdentity()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderIdentityManageDialog>(
-		new TfDataProviderIdentity() { DataProviderId = _provider!.Id },
-		new ()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			new TfDataProviderIdentity() { DataProviderId = _provider!.Id },
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 
 	private async Task _editIdentity(TfDataProviderIdentity identity)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderIdentityManageDialog>(
-				identity,
-				new ()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge,
-					TrapFocus = false
-				});
+			identity,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 
 	private async Task _deleteIdentity(TfDataProviderIdentity identity)
@@ -102,9 +105,10 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IDisposab
 
 	private string _showCommonIdentities(TfDataProvider subProvider)
 	{
+		if (_provider is null) return "n/a";
 		var commonIdentities = _provider.Identities
-							.Select(x => x.DataIdentity)
-							.Intersect(subProvider.Identities.Select(x => x.DataIdentity)).ToList();
+			.Select(x => x.DataIdentity)
+			.Intersect(subProvider.Identities.Select(x => x.DataIdentity)).ToList();
 		if (commonIdentities.Count == 0) return "n/a";
 		return String.Join(", ", commonIdentities);
 	}

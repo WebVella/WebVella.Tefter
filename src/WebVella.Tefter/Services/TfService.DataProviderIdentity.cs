@@ -185,7 +185,9 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				var result = GetDataProvider(dataIdentity.DataProviderId);
-				PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfDataProviderUpdatedEventPayload(result));		
 				return result;
 			}
 		}
@@ -260,7 +262,9 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 				var result = GetDataProvider(dataIdentity.DataProviderId);
-				PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfDataProviderUpdatedEventPayload(result));		
 				return result;				
 			}
 		}
@@ -312,7 +316,9 @@ public partial class TfService : ITfService
 				scope.Complete();
 				
 				var result = GetDataProvider(dataIdentity.DataProviderId);
-				PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfDataProviderUpdatedEventPayload(result));		
 				return result;
 			}
 		}

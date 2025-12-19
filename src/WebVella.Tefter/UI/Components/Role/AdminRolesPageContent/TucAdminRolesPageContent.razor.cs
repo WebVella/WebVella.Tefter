@@ -1,30 +1,22 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminRolesPageContent :TfBaseComponent,IDisposable
+public partial class TucAdminRolesPageContent :TfBaseComponent,IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private bool _isLoading = false;
 	private List<TfRole> _items = new();
-
-	public void Dispose()
+	private IAsyncDisposable _roleEventSubscriber = null!;
+	public async ValueTask DisposeAsync()
 	{
-		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
+		await _roleEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.RoleCreatedEvent += On_RoleChanged;
-		TfEventProvider.RoleUpdatedEvent += On_RoleChanged;
 		Navigator.LocationChanged += On_NavigationStateChanged;
-	}
-
-	private async Task On_RoleChanged(object args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
+		_roleEventSubscriber = await TfEventBus.SubscribeAsync<TfRoleEventPayload>(
+			handler: On_RoleEventAsync);		
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -37,7 +29,8 @@ public partial class TucAdminRolesPageContent :TfBaseComponent,IDisposable
 			}
 		});
 	}
-
+	private async Task On_RoleEventAsync(string? key, TfRoleEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 	private async Task _init(TfNavigationState navState)
 	{
 		try
@@ -52,7 +45,7 @@ public partial class TucAdminRolesPageContent :TfBaseComponent,IDisposable
 		}
 	}
 	
-	private async Task addRole()
+	private async Task _addRole()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucRoleManageDialog>(
 			new TfRole(),
@@ -64,6 +57,6 @@ public partial class TucAdminRolesPageContent :TfBaseComponent,IDisposable
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}		
 }

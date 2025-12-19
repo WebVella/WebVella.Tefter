@@ -217,7 +217,9 @@ public partial class TfService : ITfService
 
 				if (!sendEvent)
 				{
-					PublishEventWithScope(new TfDataProviderUpdatedEvent(provider));
+					_eventBus.Publish(
+						key: null,
+						payload: new TfDataProviderUpdatedEventPayload(provider));		
 				}
 
 				return provider;
@@ -282,7 +284,9 @@ public partial class TfService : ITfService
 				if (provider is null)
 					throw new TfException("Failed to create new data provider column");
 
-				PublishEventWithScope(new TfDataProviderUpdatedEvent(provider));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfDataProviderUpdatedEventPayload(provider));		
 				return provider;
 			}
 		}
@@ -333,7 +337,9 @@ public partial class TfService : ITfService
 			UpdateDatabaseColumn(provider, column, existingColumn);
 
 			var result = GetDataProvider(column.DataProviderId);
-			PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
+			_eventBus.Publish(
+				key: null,
+				payload: new TfDataProviderUpdatedEventPayload(result));		
 			return result;
 		}
 		catch (Exception ex)
@@ -390,7 +396,9 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				var result = GetDataProvider(column.DataProviderId);
-				PublishEventWithScope(new TfDataProviderUpdatedEvent(result));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfDataProviderUpdatedEventPayload(result));		
 				return result;
 			}
 		}

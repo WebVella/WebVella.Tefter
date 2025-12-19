@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 <TucLayoutPageContent Title="@LOC("Shared Columns")" Icon="DatabaseLink">
     <Toolbar>
-        <FluentButton OnClick="onAddClick" Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">
+        <FluentButton OnClick="_onAddClick" Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">
             @LOC("New Column")
         </FluentButton>
         <TucPageSearch/>

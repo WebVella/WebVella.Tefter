@@ -1,31 +1,37 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminDataIdentitiesPageContent : TfBaseComponent,IDisposable
+
+public partial class TucAdminDataIdentitiesPageContent : TfBaseComponent, IAsyncDisposable
 {
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private bool _isLoading = false;
 	private List<TfDataIdentity> _items = new();
+	private IAsyncDisposable _dataIdentityEventSubscriber = null!;
+	private IAsyncDisposable _providerCreatedEventSubscriber = null!;
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
-		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
+		await _dataIdentityEventSubscriber.DisposeAsync();
+		await _providerCreatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.DataProviderCreatedEvent += On_UserChanged;
-		TfEventProvider.DataIdentityUpdatedEvent += On_UserChanged;
 		Navigator.LocationChanged += On_NavigationStateChanged;
+		_dataIdentityEventSubscriber = await TfEventBus.SubscribeAsync<TfDataIdentityEventPayload>(
+			handler: On_DataIdentityEventAsync,
+			key: TfAuthLayout.GetState().User.Id);
+		_providerCreatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataProviderCreatedEventPayload>(
+			handler: On_DataProviderCreatedEventAsync);
 	}
 
-	private async Task On_UserChanged(object args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+	private async Task On_DataIdentityEventAsync(string? key, TfDataIdentityEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
+
+	private async Task On_DataProviderCreatedEventAsync(string? key, TfDataProviderCreatedEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -50,21 +56,21 @@ public partial class TucAdminDataIdentitiesPageContent : TfBaseComponent,IDispos
 			UriInitialized = navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
-	}	
-	
-	private async Task onAddClick()
+	}
+
+	private async Task _onAddClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataIdentityManageDialog>(
-		new TfDataIdentity(),
-		new ()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			new TfDataIdentity(),
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
+		if (result is { Cancelled: false, Data: not null })
 		{
 			var item = (TfDataIdentity)result.Data;
 			Navigator.NavigateTo(string.Format(TfConstants.AdminDataIdentityDetailsPageUrl, item.DataIdentity));

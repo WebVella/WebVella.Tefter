@@ -1,21 +1,26 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent, IDisposable
+
+public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private bool _isLoading = true;
 	private List<TfMenuItem> _menu = new();
+	private IAsyncDisposable _dataProviderUpdatedEventSubscriber = null!;
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.Dispose();
+		await _dataProviderUpdatedEventSubscriber.DisposeAsync();
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
+		_dataProviderUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataProviderUpdatedEventPayload>(
+			handler: On_DataProviderUpdatedEventAsync);
 	}
+
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
 		InvokeAsync(async () =>
@@ -25,20 +30,15 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 		});
 	}
 
-	private async Task On_DataProviderUpdated(TfDataProviderUpdatedEvent args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+	private async Task On_DataProviderUpdatedEventAsync(string? key, TfDataProviderUpdatedEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private async Task _init(TfNavigationState navState)
 	{
 		try
 		{
 			_menu = new();
-			if(navState is null || navState.DataProviderId is null) return;
+			if (navState.DataProviderId is null) return;
 			var provider = TfService.GetDataProvider(navState.DataProviderId.Value);
 			if (provider is null) return;
 			_menu.Add(new TfMenuItem
@@ -56,14 +56,14 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 				Selected = navState.HasNode(RouteDataNode.Schema, 3),
 				Text = LOC("Columns"),
 				//IconCollapsed = TfConstants.GetIcon("Table"),
-				BadgeContent = provider.Columns.Count == 0 
-					? null 
-					: builder => { 
-						builder.OpenElement(0,"span");
-						builder.AddContent(1,provider.Columns.Count);
+				BadgeContent = provider.Columns.Count == 0
+					? null
+					: builder =>
+					{
+						builder.OpenElement(0, "span");
+						builder.AddContent(1, provider.Columns.Count);
 						builder.CloseElement();
 					}
-
 			});
 			_menu.Add(new TfMenuItem
 			{
@@ -97,7 +97,6 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 				Text = LOC("Datasets"),
 				//IconCollapsed = TfConstants.GetIcon("DatabaseWindow")
 			});
-
 		}
 		finally
 		{

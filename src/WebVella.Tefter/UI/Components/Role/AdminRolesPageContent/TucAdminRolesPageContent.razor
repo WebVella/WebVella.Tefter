@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 <TucLayoutPageContent Title="@LOC("Roles")" Icon="KeyMultiple">
     <Toolbar>
-        <FluentButton OnClick="addRole" Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">
+        <FluentButton OnClick="_addRole" Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">
             @LOC("New Role")
         </FluentButton>
         <TucPageSearch/>

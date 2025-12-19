@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 <TucLayoutPageContent Title="@LOC("Data providers")" Icon="Database">
     <Toolbar>
-        <FluentButton OnClick="addItem" Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">
+        <FluentButton OnClick="_addItem" Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">
             @LOC("New Provider")
         </FluentButton>
         <TucPageSearch/>

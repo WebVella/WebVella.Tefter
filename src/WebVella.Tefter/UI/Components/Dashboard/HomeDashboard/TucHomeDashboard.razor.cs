@@ -1,11 +1,8 @@
-﻿using WebVella.Tefter.UI.Pages;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
-
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private List<TfDashboardItem> _dashboard = new();
 	private List<TfBookmark> _allBookmarks = new();
 	private List<TfTag> _tags = new();
@@ -21,21 +18,23 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 
 	private TucMyBookmarksTab _activeTab = TucMyBookmarksTab.Bookmarks;
 
+	private IDisposable _bookmarkEventSubscriber = null!;
+	
+	
 	public void Dispose()
 	{
-		TfEventProvider.BookmarkUpdatedEvent -= On_BookmarkChangedEvent;
-		TfEventProvider.BookmarkDeletedEvent -= On_BookmarkChangedEvent;
 		Navigator.LocationChanged -= On_LocationChanged;
-		TfEventProvider.Dispose();
+		_bookmarkEventSubscriber.Dispose();
 	}
 
 	protected override void OnInitialized()
 	{
 		_initBookmarks();
 		_init();
-		TfEventProvider.BookmarkUpdatedEvent += On_BookmarkChangedEvent;
-		TfEventProvider.BookmarkDeletedEvent += On_BookmarkChangedEvent;
 		Navigator.LocationChanged += On_LocationChanged;
+		_bookmarkEventSubscriber = TfEventBus.Subscribe<TfBookmarkEventPayload>(
+			handler:On_BookmarkEventAsync, 
+			key:TfAuthLayout.GetState().User.Id);		
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -46,16 +45,12 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 				_refSearch.FocusAsync();
 		}
 	}
-
-	private async Task On_BookmarkChangedEvent(TfGlobalEvent args)
+	private async Task On_BookmarkEventAsync(string? key, TfBookmarkEventPayload? payload)
 	{
-		if (args.IsUserApplicable(this))
-		{
-			_initBookmarks();
-			_init();
-			await InvokeAsync(StateHasChanged);
-		}
-	}
+		_initBookmarks();
+		_init();
+		await InvokeAsync(StateHasChanged);
+	}		
 
 	private void On_LocationChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -301,7 +296,7 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 			SpacePageId = bookmark.SpacePageId,
 			DataIdentity = TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
 			RelDataIdentity = TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
-			RelIdentityValues = new List<string> { bookmark.Id.ToSha1()}
+			RelIdentityValues = [bookmark.Id.ToSha1()]
 		};
 		var dialog = await DialogService.ShowDialogAsync<TucSpacePageQuickViewDialog>(
 			context,

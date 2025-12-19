@@ -1,33 +1,32 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDisposable
+public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private List<TfRepositoryFile>? _items = null;
 
-	FluentInputFile fileUploader = null!;
-	int progressPercent = 0;
-	List<FluentInputFileEventArgs> Files = new();
+	private FluentInputFile _fileUploader = null!;
+	private int _progressPercent = 0;
+	private List<FluentInputFileEventArgs> _files = new();
 	private TfNavigationState _navState = null!;
 	private string? _search = null;
-	private string _uploadId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
-
+	private readonly string _uploadId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 	private FluentSearch? _refSearch = null;
+	private IAsyncDisposable _repositoryFileEventSubscriber = null!;
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
-		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
+		await _repositoryFileEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
 		await _init(TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.RepositoryFileCreatedEvent += On_RepositoryFileChanged;
-		TfEventProvider.RepositoryFileUpdatedEvent += On_RepositoryFileChanged;
-		TfEventProvider.RepositoryFileDeletedEvent += On_RepositoryFileChanged;
 		Navigator.LocationChanged += On_NavigationStateChanged;
+		_repositoryFileEventSubscriber = await TfEventBus.SubscribeAsync<TfRepositoryFileEventPayload>(
+			handler: On_RepositoryFileEventAsync);
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -47,14 +46,8 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 		});
 	}
 
-
-	private async Task On_RepositoryFileChanged(object args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+	private async Task On_RepositoryFileEventAsync(string? key, TfRepositoryFileEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -65,32 +58,32 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 		}
 		finally
 		{
-			UriInitialized = _navState?.Uri ?? String.Empty;
+			UriInitialized = _navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
 
 	private void _onCompleted(IEnumerable<FluentInputFileEventArgs> files)
 	{
-		Files = files.ToList();
-		progressPercent = fileUploader!.ProgressPercent;
+		_files = files.ToList();
+		_progressPercent = _fileUploader.ProgressPercent;
 
-		if (Files.Count > 0)
+		if (_files.Count > 0)
 		{
-			var file = Files[0];
+			var file = _files[0];
 			try
 			{
 				_ = TfService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
-					CreatedBy = TfAuthLayout.GetState().User?.Id,
-					LocalFilePath = file.LocalFile.ToString(),
+					CreatedBy = TfAuthLayout.GetState().User.Id,
+					LocalFilePath = file.LocalFile?.ToString(),
 					Filename = file.Name,
 				});
 
 				ToastService.ShowSuccess(LOC("File uploaded successfully!"));
 
-				progressPercent = 0;
+				_progressPercent = 0;
 			}
 			catch (Exception ex)
 			{
@@ -98,7 +91,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 			}
 			finally
 			{
-				progressPercent = 0;
+				_progressPercent = 0;
 				file.LocalFile?.Delete();
 			}
 		}
@@ -106,14 +99,14 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 
 	private void _onProgress(FluentInputFileEventArgs e)
 	{
-		progressPercent = e.ProgressPercent;
+		_progressPercent = e.ProgressPercent;
 	}
 
 	private async Task _editFile(TfRepositoryFile file)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucFileRepositoryFileUpdateDialog>(
 			file,
-			new ()
+			new()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -121,7 +114,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
+		if (result is { Cancelled: false, Data: not null })
 		{
 			ToastService.ShowSuccess(LOC("File successfully updated!"));
 		}
@@ -142,12 +135,12 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IDispo
 		}
 	}
 
-	private async Task _searchValueChanged(string search)
+	private async Task _searchValueChanged(string? search)
 	{
 		search = search?.Trim();
 		if (_search == search) return;
 		_search = search;
-		var queryDict = new Dictionary<string, object> { { TfConstants.SearchQueryName, _search } };
+		var queryDict = new Dictionary<string, object?> { { TfConstants.SearchQueryName, _search } };
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 

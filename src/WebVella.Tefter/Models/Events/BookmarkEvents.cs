@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.Models;
-
 /// <summary>
 /// Base payload for all bookmark-related events.
 /// Use base class to subscribe to all derivatives

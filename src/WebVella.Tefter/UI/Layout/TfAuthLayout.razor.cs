@@ -2,9 +2,10 @@
 
 public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 {
-	[Inject] public ITfService TfService { get; set; } = null!;
-	[Inject] protected ITfConfigurationService TfConfigurationService { get; set; } = null!;
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
+	[Inject] public ITfService TfService { get; set; } = null!;
+
 	[Inject] protected NavigationManager Navigator { get; set; } = null!;
 	[Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
@@ -19,14 +20,14 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	private TfColor _accentColor = TfColor.Red500;
 	private DesignThemeModes _themeMode = DesignThemeModes.System;
 
+	private IAsyncDisposable _bookmarkEventSubscriber = null!;
 
 	public TfState GetState() => _state;
 
-	public ValueTask DisposeAsync()
+	public async ValueTask DisposeAsync()
 	{
-		TfEventProvider.Dispose();
+		await _bookmarkEventSubscriber.DisposeAsync();
 		_locationChangingHandler?.Dispose();
-		return ValueTask.CompletedTask;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -60,9 +61,9 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			_locationChangingHandler = Navigator.RegisterLocationChangingHandler(Navigator_LocationChanging);
 			TfEventProvider.UserUpdatedEvent += On_UserUpdated;
 			TfEventProvider.SpaceUpdatedEvent += On_SpaceUpdated;
-			TfEventProvider.BookmarkCreatedEvent += On_BookmarkChangedEvent;
-			TfEventProvider.BookmarkUpdatedEvent += On_BookmarkChangedEvent;
-			TfEventProvider.BookmarkDeletedEvent += On_BookmarkChangedEvent;
+			_bookmarkEventSubscriber = await TfEventBus.SubscribeAsync<TfBookmarkEventPayload>(
+				handler: On_BookmarkEventAsync,
+				key: _currentUser.Id);
 		}
 	}
 
@@ -91,12 +92,10 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		});
 	}
 
-	private async Task On_BookmarkChangedEvent(TfGlobalEvent args)
+	private Task On_BookmarkEventAsync(string? key, TfBookmarkEventPayload? payload)
 	{
-		if (args.IsUserApplicable(_currentUser))
-		{
-			_state.UserBookmarks = TfService.GetBookmarksForUser(_currentUser.Id);
-		}
+		_state.UserBookmarks = TfService.GetBookmarksForUser(_currentUser.Id);
+		return Task.CompletedTask;
 	}
 
 
@@ -120,10 +119,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	private void _init(string url, TfSpace? space = null)
 	{
-		if (String.IsNullOrWhiteSpace(_state.Uri))
-			_state = TfService.GetAppState(Navigator, _currentUser, url, null, space);
-		else
-			_state = TfService.GetAppState(Navigator, _currentUser, url, _state, space);
+		_state = TfService.GetAppState(Navigator, _currentUser, url, String.IsNullOrWhiteSpace(_state.Uri) ? null : _state, space);
 
 		if (_state.NavigationState.RouteNodes.Count == 0) { }
 		else if (_state.NavigationState.RouteNodes[0] == RouteDataNode.Home)
@@ -138,7 +134,8 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		{
 			_accentColor = TfColor.Amber500;
 		}
-		_themeMode = _currentUser?.Settings?.ThemeMode ?? DesignThemeModes.System;
+
+		_themeMode = _currentUser.Settings.ThemeMode;
 	}
 
 	private bool _checkAccess(string url)

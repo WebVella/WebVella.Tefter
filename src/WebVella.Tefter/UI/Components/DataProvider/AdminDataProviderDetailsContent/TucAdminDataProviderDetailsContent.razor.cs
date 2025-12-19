@@ -1,24 +1,26 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisposable
+public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private TfDataProvider? _provider = null;
 	private TfDataProviderDisplaySettingsScreenRegion? _dynamicComponentContext = null;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private bool _isDeleting = false;
+	private IAsyncDisposable _dataProviderUpdatedEventSubscriber = null!;
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.Dispose();
+		await _dataProviderUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
+		_dataProviderUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataProviderUpdatedEventPayload>(
+			handler: On_DataProviderUpdatedEventAsync);
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -30,13 +32,8 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 		});
 	}
 
-	private async Task On_DataProviderUpdated(TfDataProviderUpdatedEvent args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+	private async Task On_DataProviderUpdatedEventAsync(string? key, TfDataProviderUpdatedEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -78,7 +75,7 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
+		if (result is { Cancelled: false, Data: not null })
 		{
 		}
 	}
@@ -87,7 +84,7 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm",
 			    LOC("Are you sure that you need this data provider deleted?") + "\r\n" +
-			    LOC("Will proceeed only if there are not existing columns attached")))
+			    LOC("Will proceed only if there are not existing columns attached")))
 			return;
 
 		if (_provider is null) return;
@@ -96,7 +93,6 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IDisp
 			_isDeleting = true;
 			await InvokeAsync(StateHasChanged);
 			TfService.DeleteDataProvider(_provider.Id);
-			var providers = TfService.GetDataProviders();
 			_provider = null;
 			ToastService.ShowSuccess(LOC("Data provider was successfully deleted"));
 			Navigator.NavigateTo(TfConstants.AdminDataProvidersPageUrl, true);

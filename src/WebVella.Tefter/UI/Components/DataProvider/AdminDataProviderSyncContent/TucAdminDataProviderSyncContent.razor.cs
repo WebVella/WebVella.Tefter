@@ -1,25 +1,29 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposable
+public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private TfDataProvider? _provider = null;
 	private TfNavigationState _navState = new();
 
 	private string _nextSyncronization = null!;
 	private List<TfDataProviderSynchronizeTask> _syncTasks = new();
+	private IAsyncDisposable _dataProviderUpdatedEventSubscriber = null!;
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.Dispose();
+		await _dataProviderUpdatedEventSubscriber.DisposeAsync();
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
+		_dataProviderUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataProviderUpdatedEventPayload>(
+			handler: On_DataProviderUpdatedEventAsync);
 	}
+
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
 		InvokeAsync(async () =>
@@ -29,13 +33,8 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 		});
 	}
 
-	private async Task On_DataProviderUpdated(TfDataProviderUpdatedEvent args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+	private async Task On_DataProviderUpdatedEventAsync(string? key, TfDataProviderUpdatedEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -45,6 +44,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 			await InvokeAsync(StateHasChanged);
 			return;
 		}
+
 		_navState = navState;
 		try
 		{
@@ -57,29 +57,32 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 			if (providerNextTaskCreatedOn is not null)
 				_nextSyncronization = providerNextTaskCreatedOn.Value.ToString(TfConstants.DateTimeFormat);
 
-			_syncTasks = TfService.GetDataProviderSynchronizationTasks(_provider.Id, _navState.Page, _navState.PageSize ?? TfConstants.PageSize);
+			_syncTasks = TfService.GetDataProviderSynchronizationTasks(_provider.Id, _navState.Page,
+				_navState.PageSize ?? TfConstants.PageSize);
 		}
 		finally
 		{
-			UriInitialized = _navState?.Uri ?? String.Empty;
+			UriInitialized = _navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
+
 	private async Task _onViewLogClick(TfDataProviderSynchronizeTask task)
 	{
 		_ = await DialogService.ShowDialogAsync<TucDataProviderSyncLogDialog>(
-				task,
-				new ()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthExtraLarge,
-					TrapFocus = false
-				});
-
+			task,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthExtraLarge,
+				TrapFocus = false
+			});
 	}
+
 	private void _synchronizeNow()
 	{
+		if (_provider is null) return;
 		if (_provider.Columns.Count == 0)
 		{
 			ToastService.ShowWarning(LOC("No provider columns created yet!"));
@@ -89,35 +92,33 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IDisposa
 		TfService.TriggerSynchronization(_provider!.Id);
 		ToastService.ShowSuccess(LOC("Synchronization task created!"));
 	}
+
 	private async Task _editSchedule()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderSyncManageDialog>(_provider!,
-				new ()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge,
-					TrapFocus = false
-				});
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null) { }
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 
 	private async Task _goLastPage()
 	{
 		if (_navState.Page == -1) return;
-		var queryDict = new Dictionary<string, object?>{
-			{ TfConstants.PageQueryName, -1}
-		};
+		var queryDict = new Dictionary<string, object?> { { TfConstants.PageQueryName, -1 } };
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
+
 	private async Task _goOnPage(int page)
 	{
 		if (page < 1 && page != -1) page = 1;
 		if (_navState.Page == page) return;
-		var queryDict = new Dictionary<string, object?>{
-			{ TfConstants.PageQueryName, page}
-		};
+		var queryDict = new Dictionary<string, object?> { { TfConstants.PageQueryName, page } };
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 

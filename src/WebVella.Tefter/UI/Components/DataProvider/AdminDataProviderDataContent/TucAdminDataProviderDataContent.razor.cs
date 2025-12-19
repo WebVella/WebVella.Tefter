@@ -1,30 +1,32 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposable
+public partial class TucAdminDataProviderDataContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private TfDataProvider? _provider = null;
 	private TfNavigationState _navState = null!;
 	private bool _isDataLoading = false;
 	private bool _showSystemColumns = false;
-	private bool _showJoinKeyColumns = false;
 	private bool _showProviderColumns = true;
 	private long _totalRows = 0;
 	private TfDataTable? _data = null;
 	private bool _syncRunning = false;
 	private Guid? _deletedRowId = null;
+	private IAsyncDisposable _dataProviderUpdatedEventSubscriber = null!;
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.Dispose();
+		await _dataProviderUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
+
+		_dataProviderUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataProviderUpdatedEventPayload>(
+			handler: On_DataProviderUpdatedEventAsync);
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -36,13 +38,8 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 		});
 	}
 
-	private async Task On_DataProviderUpdated(TfDataProviderUpdatedEvent args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+	private async Task On_DataProviderUpdatedEventAsync(string? key, TfDataProviderUpdatedEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -52,10 +49,10 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			await InvokeAsync(StateHasChanged);
 			return;
 		}
-		_navState = navState;		
+
+		_navState = navState;
 		try
 		{
-
 			_provider = TfService.GetDataProvider(_navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
@@ -87,13 +84,13 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 					{
 						await _deleteRow(row);
 					});
-				};				
+				};
 			}
 		}
 		finally
 		{
 			_isDataLoading = false;
-			UriInitialized = _navState?.Uri ?? String.Empty;
+			UriInitialized = _navState.Uri;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
@@ -133,7 +130,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
+		if (result is { Cancelled: false, Data: not null })
 		{
 			await _init(TfAuthLayout.GetState().NavigationState);
 			await InvokeAsync(StateHasChanged);
@@ -153,7 +150,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
+		if (result is { Cancelled: false, Data: not null })
 		{
 			await _init(TfAuthLayout.GetState().NavigationState);
 			await InvokeAsync(StateHasChanged);
@@ -163,15 +160,15 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 	private async Task _deleteRow(TfDataRow row)
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this record deleted?")))
-			return;		
-		if(_deletedRowId is not null)
+			return;
+		if (_deletedRowId is not null)
 			return;
 		try
 		{
 			_deletedRowId = row.GetRowId();
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
-			
+
 			TfService.DeleteDataProviderRowByTfId(_provider!, _deletedRowId.Value);
 			await _init(TfAuthLayout.GetState().NavigationState);
 		}
@@ -202,7 +199,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IDisposa
 			return _showSystemColumns;
 		else if (column.Origin == TfDataColumnOriginType.SharedColumn
 		         || column.Origin == TfDataColumnOriginType.JoinedProviderColumn)
-			return _showJoinKeyColumns;
+			return false;
 		return _showProviderColumns;
 	}
 

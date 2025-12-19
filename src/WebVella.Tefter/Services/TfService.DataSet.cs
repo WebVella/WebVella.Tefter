@@ -192,7 +192,10 @@ public partial class TfService : ITfService
 
 				var result = GetDataset(newDataset.Id) ??
 				             throw new Exception($"GetDataset failed for id: {newDataset.Id}");
-				PublishEventWithScope(new TfDatasetCreatedEvent(result));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfDatasetCreatedEventPayload(result));	
+
 				return result;
 			}
 		}
@@ -234,7 +237,9 @@ public partial class TfService : ITfService
 				scope.Complete();
 				var result = GetDataset(dbo.Id) ??
 				             throw new Exception($"UpdateDataset failed for id: {updateDataset.Id}");
-				PublishEventWithScope(new TfDatasetUpdatedEvent(result));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfDatasetUpdatedEventPayload(result));					
 
 				return result;
 			}
@@ -254,7 +259,9 @@ public partial class TfService : ITfService
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var dataset = GetDataset(id);
-
+				if(dataset is null)
+					throw new Exception("Dataset not found.");
+				
 				new TfDatasetValidator(this)
 					.ValidateDelete(dataset)
 					.ToValidationException()
@@ -276,8 +283,9 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfDatasetDbo> failed.");
 
 				scope.Complete();
-
-				PublishEventWithScope(new TfDatasetDeletedEvent(dataset));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfDatasetDeletedEventPayload(dataset));
 			}
 		}
 		catch (Exception ex)
@@ -327,7 +335,9 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				var result = GetDataset(dataset.Id) ?? throw new Exception($"CopyDataset failed for id: {originalId}");
-				PublishEventWithScope(new TfDatasetCreatedEvent(result));
+				_eventBus.Publish(
+					key: null,
+					payload: new TfDatasetCreatedEventPayload(result));	
 				return result;
 			}
 		}

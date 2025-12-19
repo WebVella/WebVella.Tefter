@@ -1,20 +1,26 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDisposable
+
+public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private TfDataProvider? _provider = null;
 	private Guid? _deletedColumnId = null;
-	public void Dispose()
+	private IAsyncDisposable _dataProviderUpdatedEventSubscriber = null!;
+
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.Dispose();
+		await _dataProviderUpdatedEventSubscriber.DisposeAsync();
 	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.DataProviderUpdatedEvent += On_DataProviderUpdated;
+		_dataProviderUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataProviderUpdatedEventPayload>(
+			handler: On_DataProviderUpdatedEventAsync);
 	}
+
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
 		InvokeAsync(async () =>
@@ -23,13 +29,9 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 				await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
-	private async Task On_DataProviderUpdated(TfDataProviderUpdatedEvent args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+
+	private async Task On_DataProviderUpdatedEventAsync(string? key, TfDataProviderUpdatedEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -41,6 +43,7 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 				await InvokeAsync(StateHasChanged);
 				return;
 			}
+
 			_provider = TfService.GetDataProvider(navState.DataProviderId.Value);
 			if (_provider is null)
 				return;
@@ -55,16 +58,15 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 	private async Task _editColumn(TfDataProviderColumn column)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderColumnManageDialog>(
-				column,
-				new ()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge,
-					TrapFocus = false
-				});
+			column,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		_ = await dialog.Result;
-
 	}
 
 	private async Task _deleteColumn(TfDataProviderColumn column)
@@ -72,11 +74,14 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 		if (_deletedColumnId is not null) return;
 		_deletedColumnId = column.Id;
 
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?") + "\r\n" + LOC("This will delete all related data too!")))
+		if (!await JSRuntime.InvokeAsync<bool>("confirm",
+			    LOC("Are you sure that you need this column deleted?") + "\r\n" +
+			    LOC("This will delete all related data too!")))
 		{
 			_deletedColumnId = null;
 			return;
 		}
+
 		await InvokeAsync(StateHasChanged);
 		try
 		{
@@ -93,35 +98,34 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IDispo
 			await InvokeAsync(StateHasChanged);
 		}
 	}
+
 	private async Task _addColumn()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderColumnManageDialog>(
-		new TfDataProviderColumn() { DataProviderId = _provider!.Id },
-		new ()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			new TfDataProviderColumn() { DataProviderId = _provider!.Id },
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		_ = await dialog.Result;
-
 	}
 
 	private async Task _importFromSource()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataProviderImportSchemaDialog>(
-				_provider!,
-				new ()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthFullScreen,
-					TrapFocus = false,
-
-				});
+			_provider!,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthFullScreen,
+				TrapFocus = false,
+			});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
+		if (result is { Cancelled: false, Data: not null })
 		{
 			//ToastService.ShowSuccess(LOC("Column successfully created!"));
 		}

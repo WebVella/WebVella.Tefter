@@ -260,7 +260,9 @@ public partial class TfService : ITfService
 			if (!success)
 				throw new TfDboServiceException("Insert<RoleDbo> failed");
 			var result = GetRole(roleDbo.Id);
-			PublishEventWithScope(new TfRoleCreatedEvent(result));
+			_eventBus.Publish(
+				key: null,
+				payload: new TfRoleCreatedEventPayload(result));			
 			
 			return result;
 		}
@@ -291,7 +293,9 @@ public partial class TfService : ITfService
 				throw new TfDboServiceException("Update<RoleDbo> failed");
 
 			var result = GetRole(roleDbo.Id);
-			PublishEventWithScope(new TfRoleUpdatedEvent(result));
+			_eventBus.Publish(
+				key: null,
+				payload: new TfRoleUpdatedEventPayload(result));				
 			return result;
 		}
 		catch (Exception ex)
@@ -315,8 +319,9 @@ public partial class TfService : ITfService
 			var success = _dboManager.Delete<RoleDbo>(role.Id);
 			if (!success)
 				throw new TfDboServiceException("Delete<RoleDbo> failed");
-			
-			PublishEventWithScope(new TfRoleDeletedEvent(role));
+			_eventBus.Publish(
+				key: null,
+				payload: new TfRoleDeletedEventPayload(role));				
 		}
 		catch (Exception ex)
 		{

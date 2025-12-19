@@ -2,9 +2,9 @@
 @inherits TfBaseComponent
 <TucLayoutPageContent Title="@LOC("Files")" Icon="Folder">
 	<Toolbar>
-		@if (progressPercent < 100)
+		@if (_progressPercent < 100)
 		{
-			<TucProgress Value="progressPercent" Visible="@(progressPercent > 0)" />
+			<TucProgress Value="_progressPercent" Visible="@(_progressPercent > 0)" />
 		}
 		else
 		{
@@ -15,9 +15,9 @@
 		}
 		@if (!(String.IsNullOrWhiteSpace(_search) && (_items is null || _items.Count == 0)))
 		{
-			<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0)"
+			<FluentButton Id="@_uploadId" Disabled="@(_progressPercent > 0)"
 						  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">@LOC("Upload file")</FluentButton>
-			<FluentInputFile @ref="@fileUploader"
+			<FluentInputFile @ref="@_fileUploader"
 							 DragDropZoneVisible="false"
 							 Mode="InputFileMode.SaveToTemporaryFolder"
 							 Multiple="false"
@@ -36,9 +36,9 @@
 			<FluentMessageBar Title="@LOC("No Files")" AllowDismiss="false"
 							  Intent="@MessageIntent.Info">@LOC("No files are created yet")</FluentMessageBar>
 			<div style="padding:var(--tf-padding)">
-				<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0)"
+				<FluentButton Id="@_uploadId" Disabled="@(_progressPercent > 0)"
 							  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">@LOC("Upload file")</FluentButton>
-				<FluentInputFile @ref="@fileUploader"
+				<FluentInputFile @ref="@_fileUploader"
 								 DragDropZoneVisible="false"
 								 Mode="InputFileMode.SaveToTemporaryFolder"
 								 Multiple="false"
