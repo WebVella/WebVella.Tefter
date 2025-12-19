@@ -12,13 +12,13 @@ public partial class TfEventBusTests : BaseTest
 	public class InvalidEventPayload { } // does not implement ITfEventPayload
 
 
-	private readonly ITfEventBus _bus;
+	private readonly ITfEventBusEx _bus;
 
 	public TfEventBusTests() : base()
 	{
 		Assert.NotNull(ServiceProvider);
 
-		_bus = ServiceProvider.GetService<ITfEventBus>();
+		_bus = ServiceProvider.GetService<ITfEventBusEx>();
 
 		Assert.NotNull(_bus);
 	}
@@ -366,7 +366,7 @@ public partial class TfEventBusTests : BaseTest
 
 	private int GetSubscriptionCount()
 	{
-		var field = typeof(TfEventBus).GetField("_subscribers", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+		var field = typeof(TfEventBusEx).GetField("_subscribers", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 		var subscribers = field?.GetValue(_bus) as System.Collections.IList;
 		return subscribers?.Count ?? 0;
 	}

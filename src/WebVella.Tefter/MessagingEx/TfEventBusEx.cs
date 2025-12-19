@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.MessagingEx;
 
-public partial interface ITfEventBus
+public partial interface ITfEventBusEx
 {
 	public IDisposable Subscribe<T>(
 		Action<string?, T?> handler,
@@ -51,7 +51,7 @@ public partial interface ITfEventBus
 		ITfEventPayload? payload = null);
 }
 
-public partial class TfEventBus : ITfEventBus
+public partial class TfEventBusEx : ITfEventBusEx
 {
 	private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 	private readonly List<Subscription> _subscribers = new List<Subscription>();
