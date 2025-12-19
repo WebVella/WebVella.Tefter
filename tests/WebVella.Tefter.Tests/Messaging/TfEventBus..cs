@@ -4,12 +4,12 @@ namespace WebVella.Tefter.Tests.Messaging;
 
 public partial class TfEventBusTests : BaseTest
 {
-	public class TestEvent : ITfEventArgs {}
-	public class LoginEvent : ITfEventArgs {}
-	public class ClickEvent : ITfEventArgs {}
-	public class SystemEvent : ITfEventArgs {}
-	public class InheritedLoginEvent : LoginEvent {}
-	public class InvalidEventArgs { } // does not implement ITfEventArgs
+	public class TestEventPayload : ITfEventPayload {}
+	public class LoginEventPayload : ITfEventPayload {}
+	public class ClickEventPayload : ITfEventPayload {}
+	public class SystemEventPayload : ITfEventPayload {}
+	public class InheritedLoginEventPayload : LoginEventPayload {}
+	public class InvalidEventPayload { } // does not implement ITfEventPayload
 
 
 	private readonly ITfEventBus _bus;
@@ -30,7 +30,7 @@ public partial class TfEventBusTests : BaseTest
 		{
 			Assert.Throws<ArgumentException>(() =>
 			{
-				_bus.Subscribe<InvalidEventArgs>((_, _) => { });
+				_bus.Subscribe<InvalidEventPayload>((_, _) => { });
 			});
 		}
 	}
@@ -42,7 +42,7 @@ public partial class TfEventBusTests : BaseTest
 		{
 			await Assert.ThrowsAsync<ArgumentException>(async () =>
 			{
-				await _bus.SubscribeAsync<InvalidEventArgs>((_, _) => { });
+				await _bus.SubscribeAsync<InvalidEventPayload>((_, _) => { });
 			});
 		}
 	}
@@ -52,20 +52,20 @@ public partial class TfEventBusTests : BaseTest
 	{
 		using (locker.Lock())
 		{
-			var mockHandler = new Mock<Action<string?, LoginEvent>>();
+			var mockHandler = new Mock<Action<string?, LoginEventPayload>>();
 
-			IDisposable subscription = _bus.Subscribe<LoginEvent>(handler: mockHandler.Object, key: "USER_LOGIN");
+			IDisposable subscription = _bus.Subscribe<LoginEventPayload>(handler: mockHandler.Object, key: "USER_LOGIN");
 
-			_bus.Publish(key: "USER_LOGIN", args: new LoginEvent());
+			_bus.Publish(key: "USER_LOGIN", args: new LoginEventPayload());
 
-			_bus.Publish(key: "OTHER_KEY", args: new LoginEvent());
+			_bus.Publish(key: "OTHER_KEY", args: new LoginEventPayload());
 
-			_bus.Publish(args: new LoginEvent());
+			_bus.Publish(args: new LoginEventPayload());
 
 			mockHandler.Verify(
 				h => h(
 					It.Is<string?>(key => true), 
-					It.IsAny<LoginEvent>()                     
+					It.IsAny<LoginEventPayload>()                     
 				),
 				Times.Once
 			);
@@ -79,18 +79,18 @@ public partial class TfEventBusTests : BaseTest
 	{
 		using (locker.Lock())
 		{
-			var mockHandler = new Mock<Action<string?,LoginEvent>>();
+			var mockHandler = new Mock<Action<string?,LoginEventPayload>>();
 
-			var subscription = _bus.Subscribe<LoginEvent>(handler: mockHandler.Object, key: null);
+			var subscription = _bus.Subscribe<LoginEventPayload>(handler: mockHandler.Object, key: null);
 
-			_bus.Publish(key: "USER_LOGIN", args: new LoginEvent());
+			_bus.Publish(key: "USER_LOGIN", args: new LoginEventPayload());
 
-			_bus.Publish(args: new LoginEvent());
+			_bus.Publish(args: new LoginEventPayload());
 
 			mockHandler.Verify(
 				h => h(
 					It.Is<string?>(key => true),
-					It.IsAny<LoginEvent>()
+					It.IsAny<LoginEventPayload>()
 				),
 				Times.Exactly(2)
 			);
@@ -104,18 +104,18 @@ public partial class TfEventBusTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			var mockHandler = new Mock<Action<string?,LoginEvent>>();
+			var mockHandler = new Mock<Action<string?,LoginEventPayload>>();
 
-			var subscription = await _bus.SubscribeAsync<LoginEvent>(handler: mockHandler.Object, key: null);
+			var subscription = await _bus.SubscribeAsync<LoginEventPayload>(handler: mockHandler.Object, key: null);
 
-			await _bus.PublishAsync(key: "USER_LOGIN", args: new LoginEvent());
+			await _bus.PublishAsync(key: "USER_LOGIN", args: new LoginEventPayload());
 
-			await _bus.PublishAsync(args: new LoginEvent());
+			await _bus.PublishAsync(args: new LoginEventPayload());
 
 			mockHandler.Verify(
 				h => h(
 					It.Is<string?>(key => true),
-					It.IsAny<LoginEvent>()
+					It.IsAny<LoginEventPayload>()
 				),
 				Times.Exactly(2)
 			);
@@ -130,18 +130,18 @@ public partial class TfEventBusTests : BaseTest
 	{
 		using (locker.Lock())
 		{
-			var mockHandler = new Mock<Action<string?,LoginEvent>>();
+			var mockHandler = new Mock<Action<string?,LoginEventPayload>>();
 
-			var subscription = _bus.Subscribe<LoginEvent>(handler: mockHandler.Object, key: null);
+			var subscription = _bus.Subscribe<LoginEventPayload>(handler: mockHandler.Object, key: null);
 
-			_bus.Publish(args: new LoginEvent());
+			_bus.Publish(args: new LoginEventPayload());
 
-			_bus.Publish(args: new InheritedLoginEvent());
+			_bus.Publish(args: new InheritedLoginEventPayload());
 
 			mockHandler.Verify(
 				h => h(
 					It.Is<string?>(key => true),
-					It.IsAny<LoginEvent>()
+					It.IsAny<LoginEventPayload>()
 				),
 				Times.Exactly(2)
 			);
@@ -155,18 +155,18 @@ public partial class TfEventBusTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			var mockHandler = new Mock<Action<string?,LoginEvent>>();
+			var mockHandler = new Mock<Action<string?,LoginEventPayload>>();
 
-			var subscription = await _bus.SubscribeAsync<LoginEvent>(handler: mockHandler.Object);
+			var subscription = await _bus.SubscribeAsync<LoginEventPayload>(handler: mockHandler.Object);
 
-			await _bus.PublishAsync(args: new LoginEvent());
+			await _bus.PublishAsync(args: new LoginEventPayload());
 
-			await _bus.PublishAsync(args: new InheritedLoginEvent());
+			await _bus.PublishAsync(args: new InheritedLoginEventPayload());
 
 			mockHandler.Verify(
 				h => h(
 					It.Is<string?>(key => true),
-					It.IsAny<LoginEvent>()
+					It.IsAny<LoginEventPayload>()
 				),
 				Times.Exactly(2)
 			);
@@ -180,18 +180,18 @@ public partial class TfEventBusTests : BaseTest
 	{
 		using (locker.Lock())
 		{
-			var mockHandler = new Mock<Action<string?,ITfEventArgs>>();
+			var mockHandler = new Mock<Action<string?,ITfEventPayload>>();
 
-			var subscription = _bus.Subscribe<ITfEventArgs>(handler: mockHandler.Object);
+			var subscription = _bus.Subscribe<ITfEventPayload>(handler: mockHandler.Object);
 
-			_bus.Publish(args: new LoginEvent());
-			_bus.Publish(args: new ClickEvent());
-			_bus.Publish(args: new SystemEvent());
+			_bus.Publish(args: new LoginEventPayload());
+			_bus.Publish(args: new ClickEventPayload());
+			_bus.Publish(args: new SystemEventPayload());
 
 			mockHandler.Verify(
 				h => h(
 					It.Is<string?>(key => true),
-					It.IsAny<ITfEventArgs>()
+					It.IsAny<ITfEventPayload>()
 				),
 				Times.Exactly(3)
 			);
@@ -205,18 +205,18 @@ public partial class TfEventBusTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			var mockHandler = new Mock<Action<string?,ITfEventArgs>>();
+			var mockHandler = new Mock<Action<string?,ITfEventPayload>>();
 
-			var subscription = await _bus.SubscribeAsync<ITfEventArgs>(handler: mockHandler.Object);
+			var subscription = await _bus.SubscribeAsync<ITfEventPayload>(handler: mockHandler.Object);
 
-			await _bus.PublishAsync(args: new LoginEvent());
-			await _bus.PublishAsync(args: new ClickEvent());
-			await _bus.PublishAsync(args: new SystemEvent());
+			await _bus.PublishAsync(args: new LoginEventPayload());
+			await _bus.PublishAsync(args: new ClickEventPayload());
+			await _bus.PublishAsync(args: new SystemEventPayload());
 
 			mockHandler.Verify(
 				h => h(
 					It.Is<string?>(key => true),
-					It.IsAny<ITfEventArgs>()
+					It.IsAny<ITfEventPayload>()
 				),
 				Times.Exactly(3)
 			);
@@ -231,9 +231,9 @@ public partial class TfEventBusTests : BaseTest
 		using (locker.Lock())
 		{
 			string? receivedKey = null;
-			ITfEventArgs? receivedArgs = new LoginEvent();
+			ITfEventPayload? receivedArgs = new LoginEventPayload();
 
-			var subscription = _bus.Subscribe<LoginEvent>((key,args) => { receivedKey = key; receivedArgs = args; } );
+			var subscription = _bus.Subscribe<LoginEventPayload>((key,args) => { receivedKey = key; receivedArgs = args; } );
 
 			_bus.Publish();
 
@@ -249,9 +249,9 @@ public partial class TfEventBusTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			string? receivedKey = null;
-			ITfEventArgs? receivedArgs = new LoginEvent();
+			ITfEventPayload? receivedArgs = new LoginEventPayload();
 
-			var subscription = await _bus.SubscribeAsync<LoginEvent>((key, args) => { receivedKey = key; receivedArgs = args; });
+			var subscription = await _bus.SubscribeAsync<LoginEventPayload>((key, args) => { receivedKey = key; receivedArgs = args; });
 
 			await _bus.PublishAsync();
 
@@ -268,22 +268,22 @@ public partial class TfEventBusTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			var callCount = 0;
-			Func<string?, TestEvent?, ValueTask> handler = (k,p) =>
+			Func<string?, TestEventPayload?, ValueTask> handler = (k,p) =>
 			{
 				callCount++;
 				return ValueTask.CompletedTask;
 			};
 
-			IDisposable subscription = _bus.Subscribe<TestEvent>(handler);
+			IDisposable subscription = _bus.Subscribe<TestEventPayload>(handler);
 
 			Assert.Equal(1, GetSubscriptionCount());
-			await _bus.PublishAsync(args: new TestEvent());
+			await _bus.PublishAsync(args: new TestEventPayload());
 			Assert.Equal(1, callCount);
 
 			subscription.Dispose();
 
 			Assert.Equal(0, GetSubscriptionCount());
-			await _bus.PublishAsync(args: new TestEvent());
+			await _bus.PublishAsync(args: new TestEventPayload());
 			Assert.Equal(1, callCount);
 		}
 	}
@@ -295,19 +295,19 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var key = "SpecificKey";
 			var called = false;
-			Func<string?,TestEvent?, ValueTask> handler = (k,p) =>
+			Func<string?,TestEventPayload?, ValueTask> handler = (k,p) =>
 			{
 				called = true;
 				return ValueTask.CompletedTask;
 			};
 
-			using (var subscription = _bus.Subscribe<TestEvent>(handler, key))
+			using (var subscription = _bus.Subscribe<TestEventPayload>(handler, key))
 			{
-				await _bus.PublishAsync(key: key, args: new TestEvent());
+				await _bus.PublishAsync(key: key, args: new TestEventPayload());
 				Assert.True(called);
 
 				called = false;
-				await _bus.PublishAsync(key: "OtherKey", args: new TestEvent());
+				await _bus.PublishAsync(key: "OtherKey", args: new TestEventPayload());
 				Assert.False(called);
 			}
 		}
@@ -319,20 +319,20 @@ public partial class TfEventBusTests : BaseTest
 	{
 		using (locker.Lock())
 		{
-			var mockHandler = new Mock<Action<string?,LoginEvent>>();
+			var mockHandler = new Mock<Action<string?,LoginEventPayload>>();
 
-			var subscription = _bus.Subscribe<LoginEvent>(handler: mockHandler.Object);
+			var subscription = _bus.Subscribe<LoginEventPayload>(handler: mockHandler.Object);
 
-			_bus.Publish(args: new LoginEvent());
+			_bus.Publish(args: new LoginEventPayload());
 
 			subscription.Dispose();
 
-			_bus.Publish(args: new LoginEvent());
+			_bus.Publish(args: new LoginEventPayload());
 
 			mockHandler.Verify(
 				h => h(
 					It.Is<string?>(key => true),
-					It.IsAny<LoginEvent>()
+					It.IsAny<LoginEventPayload>()
 				),
 				Times.Once
 			);
@@ -344,20 +344,20 @@ public partial class TfEventBusTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			var mockHandler = new Mock<Action<string?,LoginEvent>>();
+			var mockHandler = new Mock<Action<string?,LoginEventPayload>>();
 
-			IAsyncDisposable? subscription = await _bus.SubscribeAsync<LoginEvent>(handler: mockHandler.Object);
+			IAsyncDisposable? subscription = await _bus.SubscribeAsync<LoginEventPayload>(handler: mockHandler.Object);
 
-			await _bus.PublishAsync(args: new LoginEvent());
+			await _bus.PublishAsync(args: new LoginEventPayload());
 
 			await subscription.DisposeAsync();
 
-			await _bus.PublishAsync(args: new LoginEvent());
+			await _bus.PublishAsync(args: new LoginEventPayload());
 
 			mockHandler.Verify(
 				h => h(
 					It.Is<string?>(key => true),
-					It.IsAny<LoginEvent>()
+					It.IsAny<LoginEventPayload>()
 				),
 				Times.Once
 			);

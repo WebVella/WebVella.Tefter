@@ -36,19 +36,19 @@ public partial interface ITfEventBus
 
 	public void Publish(
 		Guid key,
-		ITfEventArgs? args = null);
+		ITfEventPayload? args = null);
 
 	public void Publish(
 		string? key = null,
-		ITfEventArgs? args = null);
+		ITfEventPayload? args = null);
 
 	public ValueTask PublishAsync(
 		Guid key,
-		ITfEventArgs? args = null);
+		ITfEventPayload? args = null);
 
 	public ValueTask PublishAsync(
 		string? key = null,
-		ITfEventArgs? args = null);
+		ITfEventPayload? args = null);
 }
 
 public partial class TfEventBus : ITfEventBus
@@ -69,12 +69,12 @@ public partial class TfEventBus : ITfEventBus
 	{
 		Type typeT = typeof(T);
 
-		if (!typeof(ITfEventArgs).IsAssignableFrom(typeT))
-			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventArgs");
+		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
+			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
 
 		ArgumentNullException.ThrowIfNull(handler);
 
-		Action<string?, ITfEventArgs?> wrapper = (key, args) => handler(key, (T?)args);
+		Action<string?, ITfEventPayload?> wrapper = (key, args) => handler(key, (T?)args);
 		
 		var subscription = new Subscription { 
 			TargetType = typeT, 
@@ -110,12 +110,12 @@ public partial class TfEventBus : ITfEventBus
 	{
 		Type typeT = typeof(T);
 
-		if (!typeof(ITfEventArgs).IsAssignableFrom(typeT))
-			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventArgs");
+		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
+			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
 
 		ArgumentNullException.ThrowIfNull(handler);
 
-		Action<string?, ITfEventArgs?> wrapper = (key, args) => handler(key, (T?)args);
+		Action<string?, ITfEventPayload?> wrapper = (key, args) => handler(key, (T?)args);
 		
 		var subscription = new Subscription { 
 			TargetType = typeT, 
@@ -151,12 +151,12 @@ public partial class TfEventBus : ITfEventBus
 	{
 		Type typeT = typeof(T);
 
-		if (!typeof(ITfEventArgs).IsAssignableFrom(typeT))
-			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventArgs");
+		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
+			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
 
 		ArgumentNullException.ThrowIfNull(handler);
 
-		Func<string?, ITfEventArgs?, ValueTask> asyncWrapper = (k, args) => handler(k, (T?)args);
+		Func<string?, ITfEventPayload?, ValueTask> asyncWrapper = (k, args) => handler(k, (T?)args);
 		
 		var subscription = new Subscription { 
 			TargetType = typeT, 
@@ -193,12 +193,12 @@ public partial class TfEventBus : ITfEventBus
 	{
 		Type typeT = typeof(T);
 
-		if (!typeof(ITfEventArgs).IsAssignableFrom(typeT))
-			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventArgs");
+		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
+			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
 
 		ArgumentNullException.ThrowIfNull(handler);
 
-		Func<string?, ITfEventArgs?, ValueTask> asyncWrapper = (k, args) => handler(k, (T?)args);
+		Func<string?, ITfEventPayload?, ValueTask> asyncWrapper = (k, args) => handler(k, (T?)args);
 
 		var subscription = new Subscription { 
 			TargetType = typeT, 
@@ -223,14 +223,14 @@ public partial class TfEventBus : ITfEventBus
 
 	public void Publish(
 		Guid key,
-		ITfEventArgs? args = null)
+		ITfEventPayload? args = null)
 	{
 		Publish(key.ToString().ToLowerInvariant(), args);
 	}
 
 	public void Publish(
 		string? key = null,
-		ITfEventArgs? args = null)
+		ITfEventPayload? args = null)
 	{
 		List<Subscription> snapshot;
 
@@ -273,14 +273,14 @@ public partial class TfEventBus : ITfEventBus
 
 	public async ValueTask PublishAsync(
 		Guid key,
-		ITfEventArgs? args = null)
+		ITfEventPayload? args = null)
 	{
 		await PublishAsync(key.ToString().ToLowerInvariant(), args);
 	}
 
 	public async ValueTask PublishAsync(
 		string? key = null,
-		ITfEventArgs? args = null)
+		ITfEventPayload? args = null)
 	{
 		List<Subscription> subscriptionsSnapshot;
 
@@ -325,8 +325,8 @@ public partial class TfEventBus : ITfEventBus
 	{
 		public required Type TargetType { get; set; }
 		public string? Key { get; set; } = null;
-		public Action<string?, ITfEventArgs?>? HandlerWrapper { get; set; }
-		public Func<string?, ITfEventArgs?, ValueTask>? AsyncHandlerWrapper { get; set; }
+		public Action<string?, ITfEventPayload?>? HandlerWrapper { get; set; }
+		public Func<string?, ITfEventPayload?, ValueTask>? AsyncHandlerWrapper { get; set; }
 		public required bool IsAsync { get; set; }
 	}
 
