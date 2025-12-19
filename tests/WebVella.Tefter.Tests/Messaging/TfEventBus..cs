@@ -268,10 +268,10 @@ public partial class TfEventBusTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			var callCount = 0;
-			Func<string?, TestEventPayload?, ValueTask> handler = (k,p) =>
+			Func<string?, TestEventPayload?, Task> handler = (k,p) =>
 			{
 				callCount++;
-				return ValueTask.CompletedTask;
+				return Task.CompletedTask;
 			};
 
 			IDisposable subscription = _bus.Subscribe<TestEventPayload>(handler);
@@ -295,10 +295,10 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var key = "SpecificKey";
 			var called = false;
-			Func<string?,TestEventPayload?, ValueTask> handler = (k,p) =>
+			Func<string?,TestEventPayload?, Task> handler = (k,p) =>
 			{
 				called = true;
-				return ValueTask.CompletedTask;
+				return Task.CompletedTask;
 			};
 
 			using (var subscription = _bus.Subscribe<TestEventPayload>(handler, key))
