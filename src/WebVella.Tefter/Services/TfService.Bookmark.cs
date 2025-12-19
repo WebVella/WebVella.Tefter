@@ -1,8 +1,4 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.FluentUI.AspNetCore.Components.DesignTokens;
-
-namespace WebVella.Tefter.Services;
+﻿namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -125,7 +121,10 @@ public partial class TfService
 
 				scope.Complete();
 				bookmark = GetBookmark(bookmark.Id)!;
-				PublishEventWithScope(new TfBookmarkCreatedEvent(bookmark));
+				_eventBus.Publish(
+					key: bookmark.UserId,
+					payload: new TfBookmarkCreatedEventPayload(bookmark));
+				//PublishEventWithScope(new TfBookmarkCreatedEvent(bookmark));
 				return bookmark;
 			}
 		}
@@ -136,9 +135,8 @@ public partial class TfService
 	}
 
 	public TfBookmark CreateBookmark(
-			TfCreatePinDataBookmarkModel submit)
+		TfCreatePinDataBookmarkModel submit)
 	{
-
 		try
 		{
 			if (submit.SelectedRowIds.Count == 0)
@@ -154,7 +152,6 @@ public partial class TfService
 				SpacePageId = submit.SpacePage.Id,
 				Type = TfBookmarkType.DataProviderRows,
 				UserId = submit.User.Id,
-
 			};
 
 			new TfBookmarkValidator(this)
@@ -176,8 +173,8 @@ public partial class TfService
 					dataIdentity: TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
 					identityValue: bookmark.Id.ToSha1(),
 					relatedDataIdentity: TfConstants.TEFTER_DEFAULT_OBJECT_NAME,
-					relatedDataIdentityValues: submit.SelectedRowIds.Select(x=> x.ToSha1()).ToList()
-					);
+					relatedDataIdentityValues: submit.SelectedRowIds.Select(x => x.ToSha1()).ToList()
+				);
 
 				scope.Complete();
 				bookmark = GetBookmark(bookmark.Id)!;
@@ -262,7 +259,6 @@ public partial class TfService
 					throw new TfDboServiceException("Delete<TfBookmark> failed.");
 
 
-
 				scope.Complete();
 				PublishEventWithScope(new TfBookmarkDeletedEvent(existingBookmark));
 			}
@@ -336,7 +332,7 @@ public partial class TfService
 					.Must((bookmark, url) =>
 					{
 						if (bookmark.Type == TfBookmarkType.URL
-							&& String.IsNullOrEmpty(url)) return false;
+						    && String.IsNullOrEmpty(url)) return false;
 
 						return true;
 					})
@@ -346,7 +342,7 @@ public partial class TfService
 					.Must((bookmark, identity) =>
 					{
 						if (bookmark.Type == TfBookmarkType.DataProviderRows
-							&& String.IsNullOrEmpty(identity)) return false;
+						    && String.IsNullOrEmpty(identity)) return false;
 
 						return true;
 					})
@@ -358,7 +354,6 @@ public partial class TfService
 				RuleFor(bookmark => bookmark.Id)
 					.Must((bookmark, id) => { return tfService.GetBookmark(id) == null; })
 					.WithMessage("There is already existing bookmark with specified identifier.");
-
 			});
 
 			RuleSet("update", () =>
@@ -369,7 +364,6 @@ public partial class TfService
 						return tfService.GetBookmark(id) != null;
 					})
 					.WithMessage("There is not existing bookmark with specified identifier.");
-
 			});
 
 			RuleSet("delete", () =>

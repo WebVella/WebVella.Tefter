@@ -3,6 +3,7 @@
 public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 {
 	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 
 	private List<TfBookmark> _allUserBookmarks = new();
 
@@ -12,14 +13,19 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 	private TfBookmark? _activeBookmark = null;
 	private bool _bookmarkMenuOpen = false;
 	private string _bookmarkBtnId = "tf-page-top-bookmark";
+	//TODO RUMEN: Event subscriber
+	private IAsyncDisposable _bookmarkEventSubscriber = null!;
 
 	#region << Lifecycle >>
+
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 		TfEventProvider.BookmarkCreatedEvent -= On_BookmarkCreatedEvent;
 		TfEventProvider.BookmarkUpdatedEvent -= On_BookmarkUpdatedEvent;
 		TfEventProvider.BookmarkDeletedEvent -= On_BookmarkDeletedEvent;
+		//TODO RUMEN: Event subscriber
+		await _bookmarkEventSubscriber.DisposeAsync();
 		await TfEventProvider.DisposeAsync();
 	}
 
@@ -30,11 +36,21 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 		TfEventProvider.BookmarkCreatedEvent += On_BookmarkCreatedEvent;
 		TfEventProvider.BookmarkUpdatedEvent += On_BookmarkUpdatedEvent;
 		TfEventProvider.BookmarkDeletedEvent += On_BookmarkDeletedEvent;
+		//TODO RUMEN: Event subscriber
+		_bookmarkEventSubscriber = await TfEventBus.SubscribeAsync<TfBookmarkEventPayload>(
+			handler:On_BookmarkEventAsync, 
+			key:TfAuthLayout.GetState().User.Id);
 	}
 
 	#endregion
 
 	#region << Event Listeners >>
+	//TODO RUMEN: Event subscriber
+	private async Task On_BookmarkEventAsync(string? key, TfBookmarkEventPayload? payload)
+	{
+		_init(forceInit: true);
+		await InvokeAsync(StateHasChanged);
+	}
 
 	private async Task On_BookmarkCreatedEvent(TfBookmarkCreatedEvent args)
 	{
@@ -73,7 +89,6 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 
 	private void _init(bool forceInit = false)
 	{
-
 		_allUserBookmarks = new();
 		var state = TfAuthLayout.GetState();
 		if (forceInit)
@@ -84,18 +99,19 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 		{
 			_allUserBookmarks.AddRange(state.UserBookmarks);
 		}
+
 		_activePin = null;
 		if (state.SpacePage is not null)
-			_activePin = _allUserBookmarks.FirstOrDefault(x => x.SpacePageId == state.SpacePage.Id && String.IsNullOrWhiteSpace(x.Url));
+			_activePin = _allUserBookmarks.FirstOrDefault(x =>
+				x.SpacePageId == state.SpacePage.Id && String.IsNullOrWhiteSpace(x.Url));
 		_activeBookmark = null;
 
 		if (state.NavigationState.ActiveSaveId is not null)
 			_activeBookmark = _allUserBookmarks.FirstOrDefault(x => x.Id == state.NavigationState.ActiveSaveId.Value);
-
-
 	}
 
 	#region << Pin >>
+
 	private Task _onPinClick()
 	{
 		var state = TfAuthLayout.GetState();
@@ -105,7 +121,6 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 		{
 			if (_activePin is null)
 			{
-
 				var bookmark = new TfBookmark
 				{
 					Id = Guid.NewGuid(),
@@ -113,11 +128,10 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 					SpacePageId = state.SpacePage.Id,
 					Name = state.SpacePage.Name!,
 					Description = state.SpacePage.Description ?? String.Empty,
-					Type = TfBookmarkType.Page 
+					Type = TfBookmarkType.Page
 				};
 				TfService.CreateBookmark(bookmark);
 				ToastService.ShowSuccess(LOC("Page Pinned"));
-
 			}
 			else
 			{
@@ -129,13 +143,14 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 		{
 			ProcessException(ex);
 		}
+
 		return Task.CompletedTask;
 	}
-
 
 	#endregion
 
 	#region << Bookmark >>
+
 	private async Task _onBookmarkClick()
 	{
 		var state = TfAuthLayout.GetState();
@@ -150,7 +165,8 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 					Id = Guid.NewGuid(),
 					UserId = state.User.Id,
 					SpacePageId = state.SpacePage.Id,
-					Name = state.SpacePage.Name ?? "unknown space" + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
+					Name =
+						state.SpacePage.Name ?? "unknown space" + " " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
 					Description = state.SpacePage.Description ?? String.Empty,
 					Url = new Uri(Navigator.Uri).PathAndQuery,
 					Type = TfBookmarkType.URL
@@ -175,14 +191,14 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 		if (_activeBookmark is null) return;
 
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewBookmarkManageDialog>(
-				_activeBookmark,
-				new()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge,
-					TrapFocus = false
-				});
+			_activeBookmark,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
 		_ = await dialog.Result;
 	}
 
@@ -210,7 +226,6 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 	{
 		try
 		{
-
 			if (_activeBookmark is null)
 				return;
 
