@@ -18,7 +18,7 @@ public partial class TfEventBusTests : BaseTest
 	{
 		Assert.NotNull(ServiceProvider);
 
-		_bus = ServiceProvider.GetService<ITfEventBusEx>();
+		_bus = ServiceProvider.GetService<ITfEventBusEx>()!;
 
 		Assert.NotNull(_bus);
 	}
@@ -54,7 +54,7 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var mockHandler = new Mock<Action<string?, LoginEventPayload>>();
 
-			IDisposable subscription = _bus.Subscribe<LoginEventPayload>(handler: mockHandler.Object, key: "USER_LOGIN");
+			IDisposable subscription = _bus.Subscribe<LoginEventPayload>(handler: mockHandler.Object!, key: "USER_LOGIN");
 
 			_bus.Publish(key: "USER_LOGIN", payload: new LoginEventPayload());
 
@@ -81,7 +81,7 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var mockHandler = new Mock<Action<string?,LoginEventPayload>>();
 
-			var subscription = _bus.Subscribe<LoginEventPayload>(handler: mockHandler.Object, key: null);
+			var subscription = _bus.Subscribe<LoginEventPayload>(handler: mockHandler.Object!, key: null);
 
 			_bus.Publish(key: "USER_LOGIN", payload: new LoginEventPayload());
 
@@ -106,7 +106,7 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var mockHandler = new Mock<Action<string?,LoginEventPayload>>();
 
-			var subscription = await _bus.SubscribeAsync<LoginEventPayload>(handler: mockHandler.Object, key: null);
+			var subscription = await _bus.SubscribeAsync<LoginEventPayload>(handler: mockHandler.Object!, key: null);
 
 			await _bus.PublishAsync(key: "USER_LOGIN", payload: new LoginEventPayload());
 
@@ -132,7 +132,7 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var mockHandler = new Mock<Action<string?,LoginEventPayload>>();
 
-			var subscription = _bus.Subscribe<LoginEventPayload>(handler: mockHandler.Object, key: null);
+			var subscription = _bus.Subscribe<LoginEventPayload>(handler: mockHandler.Object!, key: null);
 
 			_bus.Publish(payload: new LoginEventPayload());
 
@@ -157,7 +157,7 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var mockHandler = new Mock<Action<string?,LoginEventPayload>>();
 
-			var subscription = await _bus.SubscribeAsync<LoginEventPayload>(handler: mockHandler.Object);
+			var subscription = await _bus.SubscribeAsync<LoginEventPayload>(handler: mockHandler.Object!);
 
 			await _bus.PublishAsync(payload: new LoginEventPayload());
 
@@ -182,7 +182,7 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var mockHandler = new Mock<Action<string?,ITfEventPayload>>();
 
-			var subscription = _bus.Subscribe<ITfEventPayload>(handler: mockHandler.Object);
+			var subscription = _bus.Subscribe<ITfEventPayload>(handler: mockHandler.Object!);
 
 			_bus.Publish(payload: new LoginEventPayload());
 			_bus.Publish(payload: new ClickEventPayload());
@@ -207,7 +207,7 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var mockHandler = new Mock<Action<string?,ITfEventPayload>>();
 
-			var subscription = await _bus.SubscribeAsync<ITfEventPayload>(handler: mockHandler.Object);
+			var subscription = await _bus.SubscribeAsync<ITfEventPayload>(handler: mockHandler.Object!);
 
 			await _bus.PublishAsync(payload: new LoginEventPayload());
 			await _bus.PublishAsync(payload: new ClickEventPayload());
@@ -321,7 +321,7 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var mockHandler = new Mock<Action<string?,LoginEventPayload>>();
 
-			var subscription = _bus.Subscribe<LoginEventPayload>(handler: mockHandler.Object);
+			var subscription = _bus.Subscribe<LoginEventPayload>(handler: mockHandler.Object!);
 
 			_bus.Publish(payload: new LoginEventPayload());
 
@@ -346,7 +346,7 @@ public partial class TfEventBusTests : BaseTest
 		{
 			var mockHandler = new Mock<Action<string?,LoginEventPayload>>();
 
-			IAsyncDisposable? subscription = await _bus.SubscribeAsync<LoginEventPayload>(handler: mockHandler.Object);
+			IAsyncDisposable? subscription = await _bus.SubscribeAsync<LoginEventPayload>(handler: mockHandler.Object!);
 
 			await _bus.PublishAsync(payload: new LoginEventPayload());
 
