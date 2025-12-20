@@ -2,7 +2,6 @@
 
 public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	[Parameter] public List<TfDataProvider> AllDataProviders { get; set; } = new();
 	[Parameter] public List<TfSharedColumn> AllSharedColumns { get; set; } = new();
@@ -23,10 +22,12 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 	private bool _hasPinnedData = false;
 	
 	private IAsyncDisposable _spaceViewColumnUpdatedEventSubscriber = null!;
+	private IAsyncDisposable _spaceViewUpdatedEventSubscriber = null!;
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 		await _spaceViewColumnUpdatedEventSubscriber.DisposeAsync();
+		await _spaceViewUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override void OnInitialized() => _init();
@@ -37,10 +38,12 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 		if (firstRender)
 		{
 			Navigator.LocationChanged += On_NavigationStateChanged;
-			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewChanged;
 			_spaceViewColumnUpdatedEventSubscriber =
 				await TfEventBus.SubscribeAsync<TfSpaceViewColumnUpdatedEventPayload>(
 					handler: On_SpaceViewColumnUpdatedEventAsync);
+			_spaceViewUpdatedEventSubscriber =
+				await TfEventBus.SubscribeAsync<TfSpaceViewUpdatedEventPayload>(
+					handler: On_SpaceViewUpdatedEventAsync);			
 		}
 	}
 
@@ -132,14 +135,10 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 		StateHasChanged();
 	}
 
-	private async Task On_SpaceViewChanged(TfSpaceViewUpdatedEvent args)
+	private async Task On_SpaceViewUpdatedEventAsync(string? key, TfSpaceViewUpdatedEventPayload? payload)
 	{
-		if (!args.IsUserApplicable(this)) return;
-		await InvokeAsync(() =>
-		{
-			_init();
-			StateHasChanged();
-		});
+		_init();
+		await InvokeAsync(StateHasChanged);
 	}
 
 	private async Task On_SpaceViewColumnUpdatedEventAsync(string? key, TfSpaceViewColumnUpdatedEventPayload? payload)

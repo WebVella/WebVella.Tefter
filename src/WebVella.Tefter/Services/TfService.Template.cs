@@ -208,8 +208,10 @@ public partial class TfService : ITfService
 			var resultTemplate = GetTemplate(template.Id);
 
 			contentProcessor.OnCreated(resultTemplate, _serviceProvider);
+			_eventBus.Publish(
+				key: null,
+				payload: new TfTemplateCreatedEventPayload(resultTemplate!));	
 
-			PublishEventWithScope(new TfTemplateCreatedEvent(resultTemplate));
 			return resultTemplate;
 		}
 		catch (Exception ex)
@@ -311,8 +313,10 @@ public partial class TfService : ITfService
 			var resultTemplate = GetTemplate(template.Id);
 
 			contentProcessor.OnUpdated(resultTemplate, _serviceProvider);
+			_eventBus.Publish(
+				key: null,
+				payload: new TfTemplateUpdatedEventPayload(resultTemplate!));	
 
-			PublishEventWithScope(new TfTemplateUpdatedEvent(resultTemplate));
 			return resultTemplate;
 		}
 		catch (Exception ex)
@@ -366,8 +370,9 @@ public partial class TfService : ITfService
 			}
 
 			contentProcessor.OnDeleted(existingTemplate, _serviceProvider);
-			
-			PublishEventWithScope(new TfTemplateDeletedEvent(existingTemplate));
+			_eventBus.Publish(
+				key: null,
+				payload: new TfTemplateDeletedEventPayload(existingTemplate));			
 		}
 		catch (Exception ex)
 		{
@@ -493,7 +498,9 @@ public partial class TfService : ITfService
 				UserId = template.CreatedBy?.Id
 			};
 			var result = UpdateTemplate(form);
-			PublishEventWithScope(new TfTemplateUpdatedEvent(result));
+			_eventBus.Publish(
+				key: null,
+				payload: new TfTemplateUpdatedEventPayload(result!));			
 			return result;
 		}
 		catch (Exception ex)

@@ -2,7 +2,6 @@
 
 public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	[Inject] public ITfService TfService { get; set; } = null!;
 
@@ -22,6 +21,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	private IAsyncDisposable _bookmarkEventSubscriber = null!;
 	private IAsyncDisposable _spaceUpdatedEventSubscriber = null!;	
+	private IAsyncDisposable _userUpdatedEventSubscriber = null!;	
 
 	public TfState GetState() => _state;
 
@@ -29,6 +29,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	{
 		await _bookmarkEventSubscriber.DisposeAsync();
 		await _spaceUpdatedEventSubscriber.DisposeAsync();
+		await _userUpdatedEventSubscriber.DisposeAsync();
 		_locationChangingHandler?.Dispose();
 	}
 
@@ -61,26 +62,26 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		if (firstRender)
 		{
 			_locationChangingHandler = Navigator.RegisterLocationChangingHandler(Navigator_LocationChanging);
-			TfEventProvider.UserUpdatedEvent += On_UserUpdated;
 			_bookmarkEventSubscriber = await TfEventBus.SubscribeAsync<TfBookmarkEventPayload>(
 				handler: On_BookmarkEventAsync,
 				key: _currentUser.Id);
 			_spaceUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceUpdatedEventPayload>(
 				handler:On_SpaceUpdatedEventAsync);			
+			_userUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfUserUpdatedEventPayload>(
+				handler:On_UserUpdatedEventAsync);			
 		}
 	}
 
-	private async Task On_UserUpdated(TfUserUpdatedEvent args)
+	private async Task On_UserUpdatedEventAsync(string? key, TfUserUpdatedEventPayload? payload)
 	{
-		await InvokeAsync(async () =>
+		if(payload is null) return;
+		if (payload.User.Id == _state.User.Id)
 		{
-			if (args.Payload.Id == _state.User.Id)
-			{
-				_currentUser = args.Payload;
-				_init(Navigator.Uri);
-				await InvokeAsync(StateHasChanged);
-			}
-		});
+			_currentUser = payload.User;
+			_init(Navigator.Uri);
+			await InvokeAsync(StateHasChanged);
+		}		
+		
 	}
 
 	private async Task On_SpaceUpdatedEventAsync(string? key, TfSpaceUpdatedEventPayload? payload)

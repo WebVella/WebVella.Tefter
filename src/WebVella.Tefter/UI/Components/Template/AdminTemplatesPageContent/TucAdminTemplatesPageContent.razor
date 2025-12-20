@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 <TucLayoutPageContent Title="@LOC("Templates")" Icon="CalendarTemplate">
     <Toolbar>
-        <FluentButton OnClick="onAddClick" Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">
+        <FluentButton OnClick="_onAddClick" Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Add")">
             @LOC("New Template")
         </FluentButton>
         <TucPageSearch/>

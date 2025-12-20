@@ -1,10 +1,13 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposable
+
+public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IAsyncDisposable
 {
 	// Dependency Injection
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
-	[CascadingParameter(Name = "TucSpaceViewPageContent")] 
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
+
+	[CascadingParameter(Name = "TucSpaceViewPageContent")]
 	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;
+
 	[Parameter] public TfSpacePageAddonContext Context { get; set; } = null!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
 	[Parameter] public TfDataset SpaceData { get; set; } = null!;
@@ -18,11 +21,12 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposab
 	private Guid _initedSpaceViewId = Guid.Empty;
 	private bool _hasPinnedData = false;
 
+	private IAsyncDisposable _userUpdatedEventSubscriber = null!;
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.Dispose();
+		await _userUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -31,12 +35,13 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposab
 		_navState = TfAuthLayout.GetState().NavigationState;
 		await _init(_navState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		TfEventProvider.UserUpdatedEvent += On_UserChanged;
+		_userUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfUserUpdatedEventPayload>(
+			handler: On_UserUpdatedEventAsync);
 	}
 
 	protected override async Task OnParametersSetAsync()
 	{
-		if(_initedSpaceViewId != SpaceView.Id)
+		if (_initedSpaceViewId != SpaceView.Id)
 			await _init(TfAuthLayout.GetState().NavigationState);
 	}
 
@@ -48,37 +53,36 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposab
 				await _init(TfAuthLayout.GetState().NavigationState);
 		});
 	}
-	private async Task On_UserChanged(TfUserUpdatedEvent args)
+
+	private async Task On_UserUpdatedEventAsync(string? key, TfUserUpdatedEventPayload? payload)
 	{
-		await InvokeAsync(async () =>
-		{
-			if (Context is not null)
-				Context.CurrentUser = args.Payload;
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
+		if (payload is null) return;
+		Context.CurrentUser = payload.User;
+		await _init(TfAuthLayout.GetState().NavigationState);
 	}
+
 	private async Task _init(TfNavigationState navState)
 	{
 		_navState = navState;
 		try
 		{
-			string? pinnedDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName, null);
-			string? pinnedDataIdentityValue = Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName, null);
-			_hasPinnedData = false;
-			if (!String.IsNullOrWhiteSpace(pinnedDataIdentity) && !String.IsNullOrWhiteSpace(pinnedDataIdentityValue))
-				_hasPinnedData = true;
+			string? pinnedDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName);
+			string? pinnedDataIdentityValue =
+				Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName);
+			_hasPinnedData = !string.IsNullOrWhiteSpace(pinnedDataIdentity) && !string.IsNullOrWhiteSpace(pinnedDataIdentityValue);
 
 			_hasViewPersonalization = Context.CurrentUser.Settings.ViewPresetColumnPersonalizations.Any(x =>
 				x.SpaceViewId == SpaceView.Id && x.PresetId == SpaceViewPreset?.Id);
 			if (!_hasViewPersonalization)
 			{
-				_hasViewPersonalization = Context.CurrentUser.Settings.ViewPresetSortPersonalizations.Any(x => x.SpaceViewId == SpaceView.Id
-				 && x.PresetId == SpaceViewPreset?.Id);
+				_hasViewPersonalization = Context.CurrentUser.Settings.ViewPresetSortPersonalizations.Any(x =>
+					x.SpaceViewId == SpaceView.Id
+					&& x.PresetId == SpaceViewPreset?.Id);
 			}
 		}
 		finally
 		{
-			UriInitialized = _navState?.Uri ?? String.Empty;
+			UriInitialized = _navState.Uri;
 			_initedSpaceViewId = SpaceView.Id;
 			await InvokeAsync(StateHasChanged);
 		}
@@ -88,7 +92,6 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposab
 
 	private Task _onAddRowClick()
 	{
-		if (Data is null) return Task.CompletedTask;
 		try
 		{
 			var result = TfService.InsertRowInDataTable(Data);
@@ -99,6 +102,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IDisposab
 		{
 			ProcessException(ex);
 		}
+
 		return Task.CompletedTask;
 	}
 

@@ -1,32 +1,32 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IDisposable
+public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private TfTemplate? _template = null;
 	private List<TfDatasetAsOption> _spaceDataSelection = new();
 	private TfTemplateProcessorDisplaySettingsScreenRegion? _dynamicComponentContext = null;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private ITfTemplateProcessorAddon? _processor = null;
 	private TfNavigationState _navState = null!;
-	public void Dispose()
+	private IAsyncDisposable _templateUpdatedEventSubscriber = null!;	
+	public async ValueTask DisposeAsync()
 	{
-		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
+		await _templateUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.TemplateUpdatedEvent += On_TemplateUpdated;
 		Navigator.LocationChanged += On_NavigationStateChanged;
+		_templateUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfTemplateUpdatedEventPayload>(
+			handler:On_TemplateUpdatedEventAsync);		
 	}
 
-	private async Task On_TemplateUpdated(TfTemplateUpdatedEvent args)
+	private async Task On_TemplateUpdatedEventAsync(string? key, TfTemplateUpdatedEventPayload? payload)
 	{
-		await InvokeAsync(async () =>
-		{
-			await _init(navState: TfAuthLayout.GetState().NavigationState, template: args.Payload);
-		});
+		if(payload is null) return;
+		await _init(navState: TfAuthLayout.GetState().NavigationState, template: payload.Template);
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)

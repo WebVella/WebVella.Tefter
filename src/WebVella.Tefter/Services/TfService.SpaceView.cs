@@ -307,7 +307,9 @@ public partial class TfService
 				throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
 
 			var spaceView = GetSpaceView(spaceViewId);
-			await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView));
+			await _eventBus.PublishAsync(
+				key: null,
+				payload: new TfSpaceViewUpdatedEventPayload(spaceView!));				
 		}
 		catch (Exception ex)
 		{
@@ -402,7 +404,9 @@ public partial class TfService
 			throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
 
 		var spaceView = GetSpaceView(spaceViewId);
-		await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView));
+		await _eventBus.PublishAsync(
+			key: null,
+			payload: new TfSpaceViewUpdatedEventPayload(spaceView!));			
 	}
 
 	public async Task UpdateSpaceViewPreset(
@@ -475,7 +479,9 @@ public partial class TfService
 			throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
 
 		var spaceView = GetSpaceView(spaceViewId);
-		await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView));
+		await _eventBus.PublishAsync(
+			key: null,
+			payload: new TfSpaceViewUpdatedEventPayload(spaceView!));
 	}
 
 	public async Task CopySpaceViewPreset(
@@ -524,7 +530,9 @@ public partial class TfService
 			throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
 
 		var spaceView = GetSpaceView(spaceViewId);
-		await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView));		
+		await _eventBus.PublishAsync(
+			key: null,
+			payload: new TfSpaceViewUpdatedEventPayload(spaceView!));	
 	}
 	
 	public async Task MoveSpaceViewPreset(
@@ -556,7 +564,9 @@ public partial class TfService
 			throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
 
 		var spaceView = GetSpaceView(spaceViewId);
-		await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView));		
+		await _eventBus.PublishAsync(
+			key: null,
+			payload: new TfSpaceViewUpdatedEventPayload(spaceView!));		
 	}	
 	
 	public async Task RemoveSpaceViewPreset(
@@ -586,7 +596,9 @@ public partial class TfService
 			throw new TfDboServiceException("Update<TfSpaceViewDbo> failed.");
 
 		var spaceView = GetSpaceView(spaceViewId);
-		await PublishEventWithScopeAsync(new TfSpaceViewUpdatedEvent(spaceView));		
+		await _eventBus.PublishAsync(
+			key: null,
+			payload: new TfSpaceViewUpdatedEventPayload(spaceView!));	
 	}	
 	
 	private TfSpaceView? ConvertDboToModel(

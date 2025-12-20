@@ -1,7 +1,10 @@
-﻿namespace WebVella.Tefter.UI.Addons;
+﻿using WebVella.Tefter.MessagingEx;
+
+namespace WebVella.Tefter.UI.Addons;
 
 public partial class TucTalkCommentsCountViewColumnTypeRead : ComponentBase
 {
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	[Inject] public IDialogService DialogService { get; set; } = null!;
 	[Parameter] public List<long?>? Value { get; set; }
 	[Parameter] public TfSpaceViewColumnReadMode Context { get; set; } = null!;
@@ -9,6 +12,7 @@ public partial class TucTalkCommentsCountViewColumnTypeRead : ComponentBase
 	
     private async Task _onClick()
 	{
+		if(Context.DataTable is null) return;
 		var panelContext = new TalkThreadPanelContext
 		{
 			ChannelId = Context.GetSettings<TfTalkCommentsCountViewColumnTypeSettings>().ChannelId,
@@ -34,13 +38,19 @@ public partial class TucTalkCommentsCountViewColumnTypeRead : ComponentBase
                 var change = ((TalkThreadPanelContext)instance.Content).CountChange;
 				if(change == 0) return;
                 if (ColumnName is null) return;
-                var changeRequest = new Dictionary<Guid, Dictionary<string, long>>();
-                changeRequest[Context.RowId] = new();
-                changeRequest[Context.RowId][ColumnName] = change;
+                var changeRequest = new Dictionary<Guid, Dictionary<string, long>>
+                {
+	                [Context.RowId] = new()
+	                {
+		                [ColumnName] = change
+	                }
+                };
                 var dataChange = Context.DataTable.ApplyCountChange(
                     countChange: changeRequest);
                 if (dataChange is null) return;
-                await Context.TfService.PublishEventWithScopeAsync(new TfSpaceViewDataChangedEvent(Context.ViewColumn.SpaceViewId,dataChange));
+                await TfEventBus.PublishAsync(
+	                key: null,
+	                payload: new TfSpaceViewDataUpdatedEventPayload(Context.ViewColumn.SpaceViewId,dataChange));	    
             })
 		});
 	}	

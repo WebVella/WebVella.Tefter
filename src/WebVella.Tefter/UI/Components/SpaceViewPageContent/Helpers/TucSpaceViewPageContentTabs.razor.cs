@@ -3,7 +3,7 @@
 public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDisposable
 {
 	// Dependency Injection
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
 	[Parameter] public TfSpacePage SpacePage { get; set; } = null!;
 	[Parameter] public TfDataset SpaceData { get; set; } = null!;
@@ -11,12 +11,11 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 	private List<TfMenuItem> _menu = new();
 	private TfNavigationState? _navState = null!;
 	private Guid _initedViewId = Guid.Empty;
-
+	private IAsyncDisposable _spaceViewUpdatedEventSubscriber = null!;
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		TfEventProvider.SpaceViewUpdatedEvent -= On_SpaceViewUpdated;
-		await TfEventProvider.DisposeAsync();
+		await _spaceViewUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -31,12 +30,14 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 			_init();
 	}
 
-	protected override void OnAfterRender(bool firstRender)
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
 			Navigator.LocationChanged += On_NavigationStateChanged;
-			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewUpdated;
+			_spaceViewUpdatedEventSubscriber =
+				await TfEventBus.SubscribeAsync<TfSpaceViewUpdatedEventPayload>(
+					handler: On_SpaceViewUpdatedEventAsync);
 		}
 	}
 
@@ -52,13 +53,11 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 		});
 	}
 
-	private async Task On_SpaceViewUpdated(TfSpaceViewUpdatedEvent args)
+	private async Task On_SpaceViewUpdatedEventAsync(string? key, TfSpaceViewUpdatedEventPayload? payload)
 	{
-		await InvokeAsync(async () =>
-		{
-			_init(newView: args.Payload);
-			await InvokeAsync(StateHasChanged);
-		});
+		if(payload is null) return;
+		_init(newView: payload.SpaceView);
+		await InvokeAsync(StateHasChanged);		
 	}
 
 	private void _init(TfSpaceView? newView = null)

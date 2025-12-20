@@ -1,32 +1,28 @@
 ﻿namespace WebVella.Tefter.UI.Components;
 
-public partial class TucAdminUsersPageContent : TfBaseComponent, IDisposable
+public partial class TucAdminUsersPageContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
+	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	private bool _isLoading = false;
 	private List<TfUser> _items = new();
+	private IAsyncDisposable _userEventSubscriber = null!;
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
-		TfEventProvider.Dispose();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
+		await _userEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await _init(TfAuthLayout.GetState().NavigationState);
-		TfEventProvider.UserCreatedEvent += On_UserChanged;
-		TfEventProvider.UserUpdatedEvent += On_UserChanged;
 		Navigator.LocationChanged += On_NavigationStateChanged;
+		_userEventSubscriber = await TfEventBus.SubscribeAsync<TfUserEventPayload>(
+			handler: On_UserEventAsync);
 	}
 
-	private async Task On_UserChanged(object args)
-	{
-		await InvokeAsync(async () =>
-		{
-			await _init(TfAuthLayout.GetState().NavigationState);
-		});
-	}
+	private async Task On_UserEventAsync(string? key, TfUserEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -52,7 +48,7 @@ public partial class TucAdminUsersPageContent : TfBaseComponent, IDisposable
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-	
+
 	private async Task addItem()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucUserManageDialog>(
@@ -66,5 +62,5 @@ public partial class TucAdminUsersPageContent : TfBaseComponent, IDisposable
 			});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null) { }
-	}	
+	}
 }

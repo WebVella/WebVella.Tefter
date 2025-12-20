@@ -4,7 +4,6 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 {
 	#region << Init >>
 
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
 	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 
@@ -19,11 +18,13 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 	private Dictionary<Guid, TfRole> _roleDict = new();
 	private List<TfRole> _rolesTotal = new();
 	private IAsyncDisposable _spaceViewColumnUpdatedEventSubscriber = null!;
+	private IAsyncDisposable _spaceViewUpdatedEventSubscriber = null!;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 		await _spaceViewColumnUpdatedEventSubscriber.DisposeAsync();
+		await _spaceViewUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -42,7 +43,9 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 		if (firstRender)
 		{
 			Navigator.LocationChanged += On_NavigationStateChanged;
-			TfEventProvider.SpaceViewUpdatedEvent += On_SpaceViewUpdated;
+			_spaceViewUpdatedEventSubscriber =
+				await TfEventBus.SubscribeAsync<TfSpaceViewUpdatedEventPayload>(
+					handler: On_SpaceViewUpdatedEventAsync);
 			_spaceViewColumnUpdatedEventSubscriber =
 				await TfEventBus.SubscribeAsync<TfSpaceViewColumnUpdatedEventPayload>(
 					handler: On_SpaceViewColumnUpdatedEventAsync);
@@ -60,11 +63,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 		});
 	}
 
-	private async Task On_SpaceViewUpdated(TfSpaceViewUpdatedEvent args)
-	{
-		if (args.UserId != TfAuthLayout.GetState().User.Id) return;
-		await _init(TfAuthLayout.GetState().NavigationState);
-	}
+	private async Task On_SpaceViewUpdatedEventAsync(string? key, TfSpaceViewUpdatedEventPayload? payload)
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private async Task On_SpaceViewColumnUpdatedEventAsync(string? key, TfSpaceViewColumnUpdatedEventPayload? payload)
 		=> await _init(TfAuthLayout.GetState().NavigationState);
