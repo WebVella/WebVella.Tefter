@@ -1,57 +1,57 @@
-﻿namespace WebVella.Tefter.MessagingEx;
+﻿namespace WebVella.Tefter.UI.EventsBus;
 
-public partial interface ITfEventBusEx
+public interface ITfEventBus
 {
-	public IDisposable Subscribe<T>(
+	IDisposable Subscribe<T>(
 		Action<string?, T?> handler,
 		Guid key);
 
-	public IDisposable Subscribe<T>(
-		Action<string?, T?> handler,
-		string? key = null);
-
-	public IDisposable Subscribe<T>(
-		Func<string?, T?, Task> handler,
-		Guid key);
-
-	public IDisposable Subscribe<T>(
-		Func<string?, T?, Task> handler,
-		string? key = null);
-
-	public Task<IAsyncDisposable> SubscribeAsync<T>(
-		Action<string?, T?> handler,
-		Guid key);
-
-	public Task<IAsyncDisposable> SubscribeAsync<T>(
+	IDisposable Subscribe<T>(
 		Action<string?, T?> handler,
 		string? key = null);
 
-	public Task<IAsyncDisposable> SubscribeAsync<T>(
+	IDisposable Subscribe<T>(
 		Func<string?, T?, Task> handler,
 		Guid key);
 
-	public Task<IAsyncDisposable> SubscribeAsync<T>(
+	IDisposable Subscribe<T>(
+		Func<string?, T?, Task> handler,
+		string? key = null);
+
+	Task<IAsyncDisposable> SubscribeAsync<T>(
+		Action<string?, T?> handler,
+		Guid key);
+
+	Task<IAsyncDisposable> SubscribeAsync<T>(
+		Action<string?, T?> handler,
+		string? key = null);
+
+	Task<IAsyncDisposable> SubscribeAsync<T>(
+		Func<string?, T?, Task> handler,
+		Guid key);
+
+	Task<IAsyncDisposable> SubscribeAsync<T>(
 	   Func<string?, T?, Task> handler,
 	   string? key = null);
 
-	public void Publish(
+	void Publish(
 		Guid key,
 		ITfEventPayload? payload = null);
 
-	public void Publish(
+	void Publish(
 		string? key = null,
 		ITfEventPayload? payload = null);
 
-	public Task PublishAsync(
+	Task PublishAsync(
 		Guid key,
 		ITfEventPayload? payload = null);
 
-	public Task PublishAsync(
+	Task PublishAsync(
 		string? key = null,
 		ITfEventPayload? payload = null);
 }
 
-public partial class TfEventBusEx : ITfEventBusEx
+public class TfEventBus : ITfEventBus
 {
 	private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 	private readonly List<Subscription> _subscribers = new List<Subscription>();
@@ -68,13 +68,13 @@ public partial class TfEventBusEx : ITfEventBusEx
 
 		ArgumentNullException.ThrowIfNull(handler);
 
-		Action<string?, ITfEventPayload?> wrapper = (k, args) => handler(k, (T?)args);
+		void Wrapper(string? k, ITfEventPayload? args) => handler(k, (T?)args);
 
 		var subscription = new Subscription
 		{
 			TargetType = typeT,
 			Key = key,
-			HandlerWrapper = wrapper,
+			HandlerWrapper = Wrapper,
 			IsAsync = false
 		};
 
@@ -96,13 +96,13 @@ public partial class TfEventBusEx : ITfEventBusEx
 
 		ArgumentNullException.ThrowIfNull(handler);
 
-		Func<string?, ITfEventPayload?, Task> asyncWrapper = (k, args) => handler(k, (T?)args);
+		Task AsyncWrapper(string? k, ITfEventPayload? args) => handler(k, (T?)args);
 
 		var subscription = new Subscription
 		{
 			TargetType = typeT,
 			Key = key,
-			AsyncHandlerWrapper = asyncWrapper,
+			AsyncHandlerWrapper = AsyncWrapper,
 			IsAsync = true
 		};
 
@@ -126,13 +126,13 @@ public partial class TfEventBusEx : ITfEventBusEx
 
 		ArgumentNullException.ThrowIfNull(handler);
 
-		Action<string?, ITfEventPayload?> wrapper = (k, args) => handler(k, (T?)args);
+		void Wrapper(string? k, ITfEventPayload? args) => handler(k, (T?)args);
 
 		var subscription = new Subscription
 		{
 			TargetType = typeT,
 			Key = key,
-			HandlerWrapper = wrapper,
+			HandlerWrapper = Wrapper,
 			IsAsync = false
 		};
 
@@ -154,13 +154,13 @@ public partial class TfEventBusEx : ITfEventBusEx
 
 		ArgumentNullException.ThrowIfNull(handler);
 
-		Func<string?, ITfEventPayload?, Task> asyncWrapper = (k, args) => handler(k, (T?)args);
+		Task AsyncWrapper(string? k, ITfEventPayload? args) => handler(k, (T?)args);
 
 		var subscription = new Subscription
 		{
 			TargetType = typeT,
 			Key = key,
-			AsyncHandlerWrapper = asyncWrapper,
+			AsyncHandlerWrapper = AsyncWrapper,
 			IsAsync = true
 		};
 
@@ -187,6 +187,7 @@ public partial class TfEventBusEx : ITfEventBusEx
 		{
 			if (sub.Key is null || sub.Key == key)
 			{
+				// ReSharper disable once CanSimplifyIsAssignableFrom
 				bool typeMatches = (args is null) || sub.TargetType.IsAssignableFrom(args.GetType());
 				if (typeMatches)
 				{
@@ -217,6 +218,7 @@ public partial class TfEventBusEx : ITfEventBusEx
 		{
 			if (subscription.Key is null || subscription.Key == key)
 			{
+				// ReSharper disable once CanSimplifyIsAssignableFrom
 				bool typeMatches = (args is null) || subscription.TargetType.IsAssignableFrom(args.GetType());
 				if (typeMatches)
 				{
@@ -233,38 +235,28 @@ public partial class TfEventBusEx : ITfEventBusEx
 
 	private class Subscription
 	{
-		public required Type TargetType { get; set; }
-		public string? Key { get; set; }
-		public Action<string?, ITfEventPayload?>? HandlerWrapper { get; set; }
-		public Func<string?, ITfEventPayload?, Task>? AsyncHandlerWrapper { get; set; }
-		public required bool IsAsync { get; set; }
+		public required Type TargetType { get; init; }
+		public string? Key { get; init; }
+		public Action<string?, ITfEventPayload?>? HandlerWrapper { get; init; }
+		public Func<string?, ITfEventPayload?, Task>? AsyncHandlerWrapper { get; init; }
+		public required bool IsAsync { get; init; }
 	}
 
-	private class Unsubscriber : IDisposable, IAsyncDisposable
+	private class Unsubscriber(List<Subscription> subscribers, Subscription subscription, SemaphoreSlim semaphore)
+		: IDisposable, IAsyncDisposable
 	{
-		private readonly List<Subscription> _subscribers;
-		private readonly Subscription _subscription;
-		private readonly SemaphoreSlim _semaphore;
-
-		public Unsubscriber(List<Subscription> subscribers, Subscription subscription, SemaphoreSlim semaphore)
-		{
-			_subscribers = subscribers;
-			_subscription = subscription;
-			_semaphore = semaphore;
-		}
-
 		public void Dispose()
 		{
-			_semaphore.Wait();
-			try { _subscribers.Remove(_subscription); }
-			finally { _semaphore.Release(); }
+			semaphore.Wait();
+			try { subscribers.Remove(subscription); }
+			finally { semaphore.Release(); }
 		}
 
 		public async ValueTask DisposeAsync()
 		{
-			await _semaphore.WaitAsync();
-			try { _subscribers.Remove(_subscription); }
-			finally { _semaphore.Release(); }
+			await semaphore.WaitAsync();
+			try { subscribers.Remove(subscription); }
+			finally { semaphore.Release(); }
 		}
 	}
 }

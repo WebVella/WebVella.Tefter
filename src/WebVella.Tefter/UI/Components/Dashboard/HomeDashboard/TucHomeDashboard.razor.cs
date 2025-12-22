@@ -1,8 +1,10 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
+
+namespace WebVella.Tefter.UI.Components;
 
 public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 {
-	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
+	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	private List<TfDashboardItem> _dashboard = new();
 	private List<TfBookmark> _allBookmarks = new();
 	private List<TfTag> _tags = new();

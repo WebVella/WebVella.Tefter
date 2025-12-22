@@ -1,8 +1,10 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
+
+namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
+	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	[Parameter] public List<TfDataProvider> AllDataProviders { get; set; } = new();
 	[Parameter] public List<TfSharedColumn> AllSharedColumns { get; set; } = new();
 	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;

@@ -1,8 +1,10 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
+
+namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
+	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	private TfSpace? _space = null;
 	private List<TfSpacePage> _spacePages = new();
 	private TfNavigationState _navState = null!;

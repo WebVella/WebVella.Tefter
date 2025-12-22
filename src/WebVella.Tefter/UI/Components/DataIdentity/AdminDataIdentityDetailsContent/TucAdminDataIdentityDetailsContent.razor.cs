@@ -1,7 +1,9 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
+
+namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
+	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	private TfDataIdentity? _identity = null;
 	private IAsyncDisposable _dataIdentityEventSubscriber = null!;
 	

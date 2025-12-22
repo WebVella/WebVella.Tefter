@@ -1,8 +1,10 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
+
+namespace WebVella.Tefter.UI.Components;
 
 public partial class TucAdminUserDetailsContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
+	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	private TfUser? _user = null;
 	private List<TfRole> _roleOptions = new();
 	private TfRole? _selectedRole = null;

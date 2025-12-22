@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Services;
+﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
+
+namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -13,7 +15,7 @@ public partial class TfService : ITfService
 	private readonly ITfDatabaseManager _dbManager;
 	private readonly ITfMetaService _metaService;
 	private readonly ITfDatabaseService _dbService;
-	private readonly ITfEventBusEx _eventBus;
+	private readonly ITfEventBus _eventBus;
 	private readonly ILogger<TfService> _logger;
 	private readonly IStringLocalizer<TfService> LOC;
 
@@ -22,7 +24,7 @@ public partial class TfService : ITfService
 		ITfConfigurationService config,
 		ITfMetaService metaService,
 		ITfDatabaseService dbService,
-		ITfEventBusEx eventBus,
+		ITfEventBus eventBus,
 		ITfDatabaseManager dbManager,
 		ILogger<TfService> logger)
 	{

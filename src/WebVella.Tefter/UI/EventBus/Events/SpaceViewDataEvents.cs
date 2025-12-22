@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Models;
+﻿namespace WebVella.Tefter.UI.EventsBus;
 
 /// <summary>
 /// Base payload for all bookmark-related events.

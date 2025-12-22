@@ -1,10 +1,8 @@
-﻿using WebVella.Tefter.MessagingEx;
-
-namespace WebVella.Tefter.UI.Addons;
+﻿namespace WebVella.Tefter.UI.Addons;
 
 public partial class TucFolderAssetsCountViewColumnTypeRead : ComponentBase
 {
-	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
+	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	[Inject] public IDialogService DialogService { get; set; } = null!;
 	[Parameter] public List<long?>? Value { get; set; }
 	[Parameter] public TfSpaceViewColumnReadMode Context { get; set; } = null!;

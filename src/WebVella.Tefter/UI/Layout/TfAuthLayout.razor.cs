@@ -1,8 +1,10 @@
-﻿namespace WebVella.Tefter.UI.Layout;
+﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
+
+namespace WebVella.Tefter.UI.Layout;
 
 public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 {
-	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
+	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	[Inject] public ITfService TfService { get; set; } = null!;
 
 	[Inject] protected NavigationManager Navigator { get; set; } = null!;

@@ -1,7 +1,9 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
+
+namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;
+	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	private TfTemplate? _template = null;
 	private List<TfDatasetAsOption> _spaceDataSelection = new();
 	private TfTemplateProcessorDisplaySettingsScreenRegion? _dynamicComponentContext = null;

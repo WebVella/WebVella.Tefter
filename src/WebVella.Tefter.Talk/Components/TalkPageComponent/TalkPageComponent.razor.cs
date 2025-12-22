@@ -1,11 +1,9 @@
-﻿using WebVella.Tefter.MessagingEx;
-
-namespace WebVella.Tefter.Talk.Components;
+﻿namespace WebVella.Tefter.Talk.Components;
 
 public partial class TalkPageComponent : TfBaseComponent, IAsyncDisposable
 {
     [Inject] protected ITalkService TalkService { get; set; } = null!;
-    [Inject] protected ITfEventBusEx TfEventBus { get; set; } = null!;  
+    [Inject] protected ITfEventBus TfEventBus { get; set; } = null!;  
     [Parameter] public Guid SpacePageId { get; set; }
     private TalkSpacePageComponentOptions _options = new();
     private List<TalkChannel> _channels = new();
@@ -37,6 +35,7 @@ public partial class TalkPageComponent : TfBaseComponent, IAsyncDisposable
     private void _init()
     {
         var spacePage = TfService.GetSpacePage(SpacePageId);
+        if(spacePage is null) return;
         _options = new TalkSpacePageComponentOptions();
         if (!String.IsNullOrWhiteSpace(spacePage.ComponentOptionsJson))
             _options = JsonSerializer.Deserialize<TalkSpacePageComponentOptions>(spacePage.ComponentOptionsJson) ??
