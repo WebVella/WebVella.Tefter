@@ -192,8 +192,12 @@ public class TfEventBus : ITfEventBus
 				if (typeMatches)
 				{
 					Task handlerTask = sub.IsAsync
-						? sub.AsyncHandlerWrapper!(key, args)
-						: Task.Run(() => sub.HandlerWrapper!(key, args));
+						? RunSafeAsync(() => sub.AsyncHandlerWrapper!(key, args))
+						: Task.Run(() =>
+						{
+							try { sub.HandlerWrapper!(key, args); }
+							catch (Exception ex) { Console.WriteLine($"Sync handler failed: {ex}"); }
+						});
 
 					// Blocking wait for Task
 					handlerTask.ConfigureAwait(false).GetAwaiter().GetResult();
@@ -223,14 +227,24 @@ public class TfEventBus : ITfEventBus
 				if (typeMatches)
 				{
 					tasks.Add(subscription.IsAsync
-						? subscription.AsyncHandlerWrapper!(key, args)
-						: Task.Run(() => subscription.HandlerWrapper!(key, args)));
+						? RunSafeAsync(() => subscription.AsyncHandlerWrapper!(key, args))
+						: Task.Run(() =>
+						{
+							try { subscription.HandlerWrapper!(key, args); } catch (Exception) { }
+						}));
+
 				}
 			}
 		}
 
 		await Task.WhenAll(tasks);
 	}
+
+	static async Task RunSafeAsync(Func<Task> handler)
+	{
+		try { await handler(); } catch { }
+	}
+
 	#endregion
 
 	private class Subscription
