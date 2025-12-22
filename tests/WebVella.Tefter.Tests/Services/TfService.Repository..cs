@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Tests.Services;
+﻿using System.Web;
+
+namespace WebVella.Tefter.Tests.Services;
 
 public partial class TfServiceTest : BaseTest
 {
@@ -53,7 +55,75 @@ public partial class TfServiceTest : BaseTest
 			}
 		}
 	}
+	
+	[Fact]
+	public async Task Repository_CRUD_WithSpaceInName()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var filesResult = tfService.GetRepositoryFiles();
+				var fileName = "test name.bin";
+				var tmpFilePath = CreateTmpFile("This is a test content1.");
+				var createResult = tfService.CreateRepositoryFile(fileName, tmpFilePath);
+
+				var fileResult = tfService.GetRepositoryFile(fileName);
+				fileResult.Filename.Should().Be(fileName);
+
+				filesResult = tfService.GetRepositoryFiles();
+				filesResult.Count.Should().Be(1);
+				filesResult[0].Filename.Should().Be(fileName);
+
+				fileResult = tfService.GetRepositoryFileByUri($"tefter://fs/repository/{fileName}");
+				fileResult.Filename.Should().Be(fileName);
+
+				filesResult = tfService.GetRepositoryFiles();
+				filesResult.Count.Should().Be(1);
+				filesResult[0].Filename.Should().Be(fileName);				
+				
+				//cleanup by deleting blob storage folder
+				Directory.Delete(tfService.BlobStoragePath, true);
+			}
+		}
+	}	
+
+	[Fact]
+	public async Task Repository_CRUD_WithSpecialSymbolsInName()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var filesResult = tfService.GetRepositoryFiles();
+				var fileName = "testname=!.bin";
+				var tmpFilePath = CreateTmpFile("This is a test content1.");
+				var createResult = tfService.CreateRepositoryFile(fileName, tmpFilePath);
+
+				var fileResult = tfService.GetRepositoryFile(fileName);
+				fileResult.Filename.Should().Be(fileName);
+				filesResult = tfService.GetRepositoryFiles();
+				filesResult.Count.Should().Be(1);
+				filesResult[0].Filename.Should().Be(fileName);
+				
+				fileResult = tfService.GetRepositoryFileByUri($"tefter://fs/repository/{HttpUtility.UrlEncode(fileName)}");
+				fileResult.Filename.Should().Be(fileName);
+				filesResult = tfService.GetRepositoryFiles();
+				filesResult.Count.Should().Be(1);
+				filesResult[0].Filename.Should().Be(fileName);				
+				
+				//cleanup by deleting blob storage folder
+				Directory.Delete(tfService.BlobStoragePath, true);
+			}
+		}
+	}		
+	
 	public static string CreateTmpFile(string content)
 	{
 		var tmpFilePath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";

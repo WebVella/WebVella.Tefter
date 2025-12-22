@@ -996,9 +996,9 @@ public partial class TfService : ITfService
 
 			scope.Complete();
 
-			await _eventBus.PublishAsync(
-				key: null,
-				payload: new TfUserUpdatedEventPayload(await GetUserAsync(userDbo.Id)!));	
+			// await _eventBus.PublishAsync(
+			// 	key: null,
+			// 	payload: new TfUserUpdatedEventPayload(await GetUserAsync(userDbo.Id)!));	
 		}
 
 		return await GetUserAsync(userDbo.Id);
@@ -1088,9 +1088,9 @@ public partial class TfService : ITfService
 			}
 
 			scope.Complete();
-			await _eventBus.PublishAsync(
-				key: null,
-				payload: new TfUserUpdatedEventPayload(await GetUserAsync(userDbo.Id)!));	
+			// await _eventBus.PublishAsync(
+			// 	key: null,
+			// 	payload: new TfUserUpdatedEventPayload(await GetUserAsync(userDbo.Id)!));	
 		}
 
 		return await GetUserAsync(userDbo.Id);
@@ -1274,9 +1274,9 @@ public partial class TfService : ITfService
 
 		await SaveUserAsync(userBld.Build());
 		var result = GetUser(userId);
-		await _eventBus.PublishAsync(
-			key: null,
-			payload: new TfUserUpdatedEventPayload(result!));		
+		// await _eventBus.PublishAsync(
+		// 	key: null,
+		// 	payload: new TfUserUpdatedEventPayload(result!));		
 
 		return result;
 	}
@@ -1288,9 +1288,9 @@ public partial class TfService : ITfService
 		userBld.WithCultureCode(cultureCode);
 		await SaveUserAsync(userBld.Build());
 		var result = GetUser(userId);
-		await _eventBus.PublishAsync(
-			key: null,
-			payload: new TfUserUpdatedEventPayload(result!));
+		// await _eventBus.PublishAsync(
+		// 	key: null,
+		// 	payload: new TfUserUpdatedEventPayload(result!));
 		return result;
 	}
 
@@ -1301,9 +1301,9 @@ public partial class TfService : ITfService
 		userBld.WithThemeMode(themeMode);
 		await SaveUserAsync(userBld.Build());
 		var result = GetUser(userId);
-		await _eventBus.PublishAsync(
-			key: null,
-			payload: new TfUserUpdatedEventPayload(result!));
+		// await _eventBus.PublishAsync(
+		// 	key: null,
+		// 	payload: new TfUserUpdatedEventPayload(result!));
 		return result;
 	}
 	
@@ -1315,9 +1315,9 @@ public partial class TfService : ITfService
 		userBld.WithPageSize(pageSize);
 		await SaveUserAsync(userBld.Build());
 		var result = GetUser(userId);
-		await _eventBus.PublishAsync(
-			key: null,
-			payload: new TfUserUpdatedEventPayload(result!));
+		// await _eventBus.PublishAsync(
+		// 	key: null,
+		// 	payload: new TfUserUpdatedEventPayload(result!));
 		return result;
 	}
 
@@ -1354,9 +1354,9 @@ public partial class TfService : ITfService
 		userBld.WithViewPresetColumnPersonalizations(allPersonalization);
 		await SaveUserAsync(userBld.Build());
 		var result = GetUser(userId);
-		await _eventBus.PublishAsync(
-			key: null,
-			payload: new TfUserUpdatedEventPayload(result!));
+		// await _eventBus.PublishAsync(
+		// 	key: null,
+		// 	payload: new TfUserUpdatedEventPayload(result!));
 		return result;
 	}
 
@@ -1430,9 +1430,9 @@ public partial class TfService : ITfService
 		userBld.WithViewPresetSortPersonalizations(otherSorts);
 		await SaveUserAsync(userBld.Build());
 		var result = GetUser(userId);
-		await _eventBus.PublishAsync(
-			key: null,
-			payload: new TfUserUpdatedEventPayload(result!));
+		// await _eventBus.PublishAsync(
+		// 	key: null,
+		// 	payload: new TfUserUpdatedEventPayload(result!));
 		return result;
 	}
 

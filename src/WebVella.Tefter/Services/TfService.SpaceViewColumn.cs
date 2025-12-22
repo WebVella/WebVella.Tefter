@@ -202,9 +202,9 @@ public partial class TfService : ITfService
 			if (!success)
 				throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
 			var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
-			await _eventBus.PublishAsync(
-				key: null,
-				payload: new TfSpaceViewColumnUpdatedEventPayload(spaceViewColumn.SpaceViewId, viewColumns));						
+			// await _eventBus.PublishAsync(
+			// 	key: null,
+			// 	payload: new TfSpaceViewColumnUpdatedEventPayload(spaceViewColumn.SpaceViewId, viewColumns));						
 			return viewColumns.Single(x => x.Id == spaceViewColumn.Id);
 		}
 		catch (Exception ex)
@@ -255,9 +255,9 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 				var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
-				await _eventBus.PublishAsync(
-					key: null,
-					payload: new TfSpaceViewColumnUpdatedEventPayload(spaceViewColumn.SpaceViewId, viewColumns));							
+				// await _eventBus.PublishAsync(
+				// 	key: null,
+				// 	payload: new TfSpaceViewColumnUpdatedEventPayload(spaceViewColumn.SpaceViewId, viewColumns));							
 			}
 		}
 		catch (Exception ex)
@@ -307,9 +307,9 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
-				await _eventBus.PublishAsync(
-					key: null,
-					payload: new TfSpaceViewColumnUpdatedEventPayload(spaceViewColumn.SpaceViewId, viewColumns));							
+				// await _eventBus.PublishAsync(
+				// 	key: null,
+				// 	payload: new TfSpaceViewColumnUpdatedEventPayload(spaceViewColumn.SpaceViewId, viewColumns));							
 			}
 		}
 		catch (Exception ex)
@@ -354,9 +354,9 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
-				await _eventBus.PublishAsync(
-					key: null,
-					payload: new TfSpaceViewColumnUpdatedEventPayload(spaceViewColumn.SpaceViewId, viewColumns));					
+				// await _eventBus.PublishAsync(
+				// 	key: null,
+				// 	payload: new TfSpaceViewColumnUpdatedEventPayload(spaceViewColumn.SpaceViewId, viewColumns));					
 			}
 		}
 		catch (Exception ex)

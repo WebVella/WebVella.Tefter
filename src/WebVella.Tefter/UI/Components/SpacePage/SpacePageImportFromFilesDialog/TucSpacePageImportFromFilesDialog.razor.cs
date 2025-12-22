@@ -106,8 +106,9 @@ public partial class TucSpacePageImportFromFilesDialog : TfBaseComponent,
 				await _updateProgress(item, message);
 			});
 		};
-		item.User = TfAuthLayout.GetState().User;
-		item.Space = TfAuthLayout.GetState().Space;
+		var state = TfAuthLayout.GetState();
+		item.User = state.User;
+		item.Space = state.Space!;
 
 		await TfService.SpacePageCreateFromFileAsync(item);
 
@@ -141,6 +142,14 @@ public partial class TucSpacePageImportFromFilesDialog : TfBaseComponent,
 		{
 			// Ignore errors if element is not found or JS is not available
 		}
+	}
+
+	private async Task _showLogMessagesChanged(bool newValue)
+	{
+		await Task.Delay(100);
+		await InvokeAsync(StateHasChanged);
+		_showLogMessages = newValue;
+		await InvokeAsync(StateHasChanged);
 	}
 
 

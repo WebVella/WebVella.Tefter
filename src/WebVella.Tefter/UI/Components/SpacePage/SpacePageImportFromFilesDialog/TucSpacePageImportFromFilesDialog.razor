@@ -79,7 +79,7 @@
                         </div>
                     }
                     <div class="tf-import-wizard__aside__header__right__switch" title="@LOC("view log details")">
-                        <FluentSwitch @bind-Value="_showLogMessages" CheckedMessage="less info" UncheckedMessage="more info"/>
+                        <FluentSwitch Value="_showLogMessages" ValueChanged="@((x) => _showLogMessagesChanged(x))" CheckedMessage="less info" UncheckedMessage="more info"/>
                     </div>
                 </div>
             </div>

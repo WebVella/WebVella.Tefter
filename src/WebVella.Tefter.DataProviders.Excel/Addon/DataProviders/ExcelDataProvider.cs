@@ -177,9 +177,7 @@ public class ExcelDataProvider : ITfDataProviderAddon
         if (settings.Filepath.ToLowerInvariant().StartsWith("tefter://"))
         {
             var tfService = provider.ServiceProvider.GetService<ITfService>();
-
             var file = tfService!.GetRepositoryFileByUri(settings.Filepath);
-
             if (file is null)
                 throw new Exception($"File '{settings.Filepath}' is not found.");
 

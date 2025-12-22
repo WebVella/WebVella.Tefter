@@ -145,8 +145,18 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 
 	private async Task On_SpaceViewColumnUpdatedEventAsync(string? key, TfSpaceViewColumnUpdatedEventPayload? payload)
 	{
-		_init();
-		await InvokeAsync(StateHasChanged);
+		try
+		{
+			Console.WriteLine("TucSpaceViewFiltersHeaderRow 1");
+			await InvokeAsync(StateHasChanged);
+			_init();
+			await InvokeAsync(StateHasChanged);
+			Console.WriteLine("TucSpaceViewFiltersHeaderRow 2");
+		}
+		catch (Exception e)
+		{
+			
+		}
 	}
 
 

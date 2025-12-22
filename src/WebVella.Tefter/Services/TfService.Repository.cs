@@ -1,4 +1,5 @@
-﻿using Nito.AsyncEx.Synchronous;
+﻿using Microsoft.AspNetCore.Http.Extensions;
+using Nito.AsyncEx.Synchronous;
 
 namespace WebVella.Tefter.Services;
 
@@ -72,8 +73,9 @@ public partial class TfService : ITfService
 
 				if (uri.Segments.Length != 3)
 					throw new TfException("Invalid tefter uri");
-
+				
 				filename = uri.Segments.Last();
+				filename = HttpUtility.UrlDecode(filename);
 			}
 			catch (Exception ex)
 			{

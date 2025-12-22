@@ -48,9 +48,9 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 			_spaceViewUpdatedEventSubscriber =
 				await TfEventBus.SubscribeAsync<TfSpaceViewUpdatedEventPayload>(
 					handler: On_SpaceViewUpdatedEventAsync);
-			_spaceViewColumnUpdatedEventSubscriber =
-				await TfEventBus.SubscribeAsync<TfSpaceViewColumnUpdatedEventPayload>(
-					handler: On_SpaceViewColumnUpdatedEventAsync);
+			// _spaceViewColumnUpdatedEventSubscriber =
+			// 	await TfEventBus.SubscribeAsync<TfSpaceViewColumnUpdatedEventPayload>(
+			// 		handler: On_SpaceViewColumnUpdatedEventAsync);
 		}
 	}
 
@@ -69,7 +69,13 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private async Task On_SpaceViewColumnUpdatedEventAsync(string? key, TfSpaceViewColumnUpdatedEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
+	{
+		Console.WriteLine("TucSpaceViewManageTabPageContent 1");
+		await InvokeAsync(StateHasChanged);
+		await _init(TfAuthLayout.GetState().NavigationState);
+		await InvokeAsync(StateHasChanged);
+		Console.WriteLine("TucSpaceViewManageTabPageContent 2");
+	}
 
 
 	private async Task _init(TfNavigationState navState)

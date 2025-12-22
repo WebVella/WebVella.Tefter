@@ -31,8 +31,8 @@ public interface ITfEventBus
 		Guid key);
 
 	Task<IAsyncDisposable> SubscribeAsync<T>(
-	   Func<string?, T?, Task> handler,
-	   string? key = null);
+		Func<string?, T?, Task> handler,
+		string? key = null);
 
 	void Publish(
 		Guid key,
@@ -57,6 +57,7 @@ public class TfEventBus : ITfEventBus
 	private readonly List<Subscription> _subscribers = new List<Subscription>();
 
 	#region Subscribe Sync
+
 	public IDisposable Subscribe<T>(Action<string?, T?> handler, Guid key)
 		=> Subscribe(handler, key.ToString().ToLowerInvariant());
 
@@ -72,10 +73,7 @@ public class TfEventBus : ITfEventBus
 
 		var subscription = new Subscription
 		{
-			TargetType = typeT,
-			Key = key,
-			HandlerWrapper = Wrapper,
-			IsAsync = false
+			TargetType = typeT, Key = key, HandlerWrapper = Wrapper, IsAsync = false
 		};
 
 		_semaphore.Wait();
@@ -100,10 +98,7 @@ public class TfEventBus : ITfEventBus
 
 		var subscription = new Subscription
 		{
-			TargetType = typeT,
-			Key = key,
-			AsyncHandlerWrapper = AsyncWrapper,
-			IsAsync = true
+			TargetType = typeT, Key = key, AsyncHandlerWrapper = AsyncWrapper, IsAsync = true
 		};
 
 		_semaphore.Wait();
@@ -112,9 +107,11 @@ public class TfEventBus : ITfEventBus
 
 		return new Unsubscriber(_subscribers, subscription, _semaphore);
 	}
+
 	#endregion
 
 	#region Subscribe Async
+
 	public async Task<IAsyncDisposable> SubscribeAsync<T>(Action<string?, T?> handler, Guid key)
 		=> await SubscribeAsync(handler, key.ToString().ToLowerInvariant());
 
@@ -130,10 +127,7 @@ public class TfEventBus : ITfEventBus
 
 		var subscription = new Subscription
 		{
-			TargetType = typeT,
-			Key = key,
-			HandlerWrapper = Wrapper,
-			IsAsync = false
+			TargetType = typeT, Key = key, HandlerWrapper = Wrapper, IsAsync = false
 		};
 
 		await _semaphore.WaitAsync();
@@ -158,10 +152,7 @@ public class TfEventBus : ITfEventBus
 
 		var subscription = new Subscription
 		{
-			TargetType = typeT,
-			Key = key,
-			AsyncHandlerWrapper = AsyncWrapper,
-			IsAsync = true
+			TargetType = typeT, Key = key, AsyncHandlerWrapper = AsyncWrapper, IsAsync = true
 		};
 
 		await _semaphore.WaitAsync();
@@ -170,9 +161,11 @@ public class TfEventBus : ITfEventBus
 
 		return new Unsubscriber(_subscribers, subscription, _semaphore);
 	}
+
 	#endregion
 
 	#region Publish
+
 	public void Publish(Guid key, ITfEventPayload? args = null)
 		=> Publish(key.ToString().ToLowerInvariant(), args);
 
@@ -191,16 +184,21 @@ public class TfEventBus : ITfEventBus
 				bool typeMatches = (args is null) || sub.TargetType.IsAssignableFrom(args.GetType());
 				if (typeMatches)
 				{
-					Task handlerTask = sub.IsAsync
-						? RunSafeAsync(() => sub.AsyncHandlerWrapper!(key, args))
-						: Task.Run(() =>
+					if (sub.IsAsync)
+					{
+						_ = RunSafeAsync(() => sub.AsyncHandlerWrapper!(key, args));
+					}
+					else
+					{
+						_= Task.Run(() =>
 						{
 							try { sub.HandlerWrapper!(key, args); }
-							catch (Exception ex) { Console.WriteLine($"Sync handler failed: {ex}"); }
+							catch (Exception)
+							{
+								//Ignore
+							}
 						});
-
-					// Blocking wait for Task
-					handlerTask.ConfigureAwait(false).GetAwaiter().GetResult();
+					}					
 				}
 			}
 		}
@@ -216,8 +214,6 @@ public class TfEventBus : ITfEventBus
 		try { snapshot = _subscribers.ToList(); }
 		finally { _semaphore.Release(); }
 
-		List<Task> tasks = new List<Task>();
-
 		foreach (var subscription in snapshot)
 		{
 			if (subscription.Key is null || subscription.Key == key)
@@ -226,23 +222,35 @@ public class TfEventBus : ITfEventBus
 				bool typeMatches = (args is null) || subscription.TargetType.IsAssignableFrom(args.GetType());
 				if (typeMatches)
 				{
-					tasks.Add(subscription.IsAsync
-						? RunSafeAsync(() => subscription.AsyncHandlerWrapper!(key, args))
-						: Task.Run(() =>
+					if (subscription.IsAsync)
+					{
+						_ = RunSafeAsync(() => subscription.AsyncHandlerWrapper!(key, args));
+					}
+					else
+					{
+						_= Task.Run(() =>
 						{
-							try { subscription.HandlerWrapper!(key, args); } catch (Exception) { }
-						}));
-
+							try { subscription.HandlerWrapper!(key, args); }
+							catch (Exception)
+							{
+								//Ignore
+							}
+						});
+					}
 				}
 			}
 		}
-
-		await Task.WhenAll(tasks);
 	}
 
-	static async Task RunSafeAsync(Func<Task> handler)
+	static Task RunSafeAsync(Func<Task> handler)
 	{
-		try { await handler(); } catch { }
+		try { _ = handler(); }
+		catch (Exception)
+		{
+			//Ignore
+		}
+
+		return Task.CompletedTask;
 	}
 
 	#endregion
