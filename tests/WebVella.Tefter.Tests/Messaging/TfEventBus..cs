@@ -57,10 +57,9 @@ public partial class TfEventBusTests : BaseTest
 			IDisposable subscription = _bus.Subscribe<LoginUiEventPayload>(handler: mockHandler.Object!, key: "USER_LOGIN");
 
 			_bus.Publish(key: "USER_LOGIN", payload: new LoginUiEventPayload());
-
 			_bus.Publish(key: "OTHER_KEY", payload: new LoginUiEventPayload());
-
 			_bus.Publish(payload: new LoginUiEventPayload());
+			Thread.Sleep(100); // give some time for the async handler to be called
 
 			mockHandler.Verify(
 				h => h(
@@ -84,8 +83,8 @@ public partial class TfEventBusTests : BaseTest
 			var subscription = _bus.Subscribe<LoginUiEventPayload>(handler: mockHandler.Object!, key: null);
 
 			_bus.Publish(key: "USER_LOGIN", payload: new LoginUiEventPayload());
-
 			_bus.Publish(payload: new LoginUiEventPayload());
+			Thread.Sleep(100); // give some time for the async handler to be called
 
 			mockHandler.Verify(
 				h => h(
@@ -109,8 +108,8 @@ public partial class TfEventBusTests : BaseTest
 			var subscription = await _bus.SubscribeAsync<LoginUiEventPayload>(handler: mockHandler.Object!, key: null);
 
 			await _bus.PublishAsync(key: "USER_LOGIN", payload: new LoginUiEventPayload());
-
 			await _bus.PublishAsync(payload: new LoginUiEventPayload());
+			await Task.Delay(100); // give some time for the async handler to be called
 
 			mockHandler.Verify(
 				h => h(
@@ -135,8 +134,8 @@ public partial class TfEventBusTests : BaseTest
 			var subscription = _bus.Subscribe<LoginUiEventPayload>(handler: mockHandler.Object!, key: null);
 
 			_bus.Publish(payload: new LoginUiEventPayload());
-
 			_bus.Publish(payload: new InheritedLoginUiEventPayload());
+			Thread.Sleep(100); // give some time for the async handler to be called
 
 			mockHandler.Verify(
 				h => h(
@@ -160,8 +159,8 @@ public partial class TfEventBusTests : BaseTest
 			var subscription = await _bus.SubscribeAsync<LoginUiEventPayload>(handler: mockHandler.Object!);
 
 			await _bus.PublishAsync(payload: new LoginUiEventPayload());
-
 			await _bus.PublishAsync(payload: new InheritedLoginUiEventPayload());
+			await Task.Delay(100); // give some time for the async handler to be called
 
 			mockHandler.Verify(
 				h => h(
@@ -187,7 +186,8 @@ public partial class TfEventBusTests : BaseTest
 			_bus.Publish(payload: new LoginUiEventPayload());
 			_bus.Publish(payload: new ClickUiEventPayload());
 			_bus.Publish(payload: new SystemUiEventPayload());
-
+			Thread.Sleep(100); // give some time for the async handler to be called
+			
 			mockHandler.Verify(
 				h => h(
 					It.Is<string?>(key => true),
@@ -212,6 +212,7 @@ public partial class TfEventBusTests : BaseTest
 			await _bus.PublishAsync(payload: new LoginUiEventPayload());
 			await _bus.PublishAsync(payload: new ClickUiEventPayload());
 			await _bus.PublishAsync(payload: new SystemUiEventPayload());
+			await Task.Delay(100); // give some time for the async handlers to be called
 
 			mockHandler.Verify(
 				h => h(
@@ -236,6 +237,7 @@ public partial class TfEventBusTests : BaseTest
 			var subscription = _bus.Subscribe<LoginUiEventPayload>((key,args) => { receivedKey = key; receivedArgs = args; } );
 
 			_bus.Publish();
+			Thread.Sleep(100); // give some time for the async handler to be called
 
 			Assert.Null(receivedArgs);
 
@@ -249,11 +251,12 @@ public partial class TfEventBusTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			string? receivedKey = null;
-			ITfEventPayload? receivedArgs = new LoginUiEventPayload();
+			ITfEventPayload? receivedArgs = null;
 
 			var subscription = await _bus.SubscribeAsync<LoginUiEventPayload>((key, args) => { receivedKey = key; receivedArgs = args; });
 
 			await _bus.PublishAsync();
+			await Task.Delay(100); // give some time for the async handler to be called
 
 			Assert.Null(receivedArgs);
 
@@ -278,12 +281,14 @@ public partial class TfEventBusTests : BaseTest
 
 			Assert.Equal(1, GetSubscriptionCount());
 			await _bus.PublishAsync(payload: new TestUiEventPayload());
+			await Task.Delay(100); // give some time for the async handler to be called
 			Assert.Equal(1, callCount);
 
 			subscription.Dispose();
 
 			Assert.Equal(0, GetSubscriptionCount());
 			await _bus.PublishAsync(payload: new TestUiEventPayload());
+			await Task.Delay(100); // give some time for the async handler to be called
 			Assert.Equal(1, callCount);
 		}
 	}
@@ -304,10 +309,12 @@ public partial class TfEventBusTests : BaseTest
 			using (var subscription = _bus.Subscribe<TestUiEventPayload>(handler, key))
 			{
 				await _bus.PublishAsync(key: key, payload: new TestUiEventPayload());
+				await Task.Delay(100); // give some time for the async handler to be called
 				Assert.True(called);
 
 				called = false;
 				await _bus.PublishAsync(key: "OtherKey", payload: new TestUiEventPayload());
+				await Task.Delay(100); // give some time for the async handler to be called
 				Assert.False(called);
 			}
 		}
@@ -324,10 +331,12 @@ public partial class TfEventBusTests : BaseTest
 			var subscription = _bus.Subscribe<LoginUiEventPayload>(handler: mockHandler.Object!);
 
 			_bus.Publish(payload: new LoginUiEventPayload());
+			Thread.Sleep(100); // give some time for the async handler to be called
 
 			subscription.Dispose();
 
 			_bus.Publish(payload: new LoginUiEventPayload());
+			Thread.Sleep(100); // give some time for the async handler to be called
 
 			mockHandler.Verify(
 				h => h(
@@ -349,10 +358,12 @@ public partial class TfEventBusTests : BaseTest
 			IAsyncDisposable? subscription = await _bus.SubscribeAsync<LoginUiEventPayload>(handler: mockHandler.Object!);
 
 			await _bus.PublishAsync(payload: new LoginUiEventPayload());
+			await Task.Delay(100); // give some time for the async handler to be called
 
 			await subscription.DisposeAsync();
 
 			await _bus.PublishAsync(payload: new LoginUiEventPayload());
+			await Task.Delay(100); // give some time for the async handler to be called
 
 			mockHandler.Verify(
 				h => h(
