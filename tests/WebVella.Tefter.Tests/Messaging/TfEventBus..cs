@@ -316,6 +316,8 @@ public partial class TfEventBusTests : BaseTest
 				await _bus.PublishAsync(key: "OtherKey", payload: new TestUiEventPayload());
 				await Task.Delay(100); // give some time for the async handler to be called
 				Assert.False(called);
+
+				subscription.Dispose();
 			}
 		}
 	}
@@ -372,6 +374,99 @@ public partial class TfEventBusTests : BaseTest
 				),
 				Times.Once
 			);
+		}
+	}
+
+	[Fact]
+	public void TfEventBusTests_Subscribe_WithMatchKeyPredicate_SyncHandler()
+	{
+		using (locker.Lock())
+		{
+			var mockHandler = new Mock<Action<string?, LoginUiEventPayload>>();
+
+			// match only when key equals "MATCH"
+			IDisposable subscription = _bus.Subscribe<LoginUiEventPayload>(mockHandler.Object!, k => k == "MATCH");
+
+			_bus.Publish(key: "MATCH", payload: new LoginUiEventPayload());
+			_bus.Publish(key: "OTHER", payload: new LoginUiEventPayload());
+			_bus.Publish(payload: new LoginUiEventPayload()); // null key should not match
+			Thread.Sleep(100);
+
+			mockHandler.Verify(h => h(It.IsAny<string?>(), It.IsAny<LoginUiEventPayload>()), Times.Once);
+
+			subscription.Dispose();
+		}
+	}
+
+	[Fact]
+	public async Task TfEventBusTests_Subscribe_WithMatchKeyPredicate_AsyncHandler()
+	{
+		using (await locker.LockAsync())
+		{
+			var called = 0;
+			Func<string?, LoginUiEventPayload?, Task> handler = (k, p) =>
+			{
+				called++;
+				return Task.CompletedTask;
+			};
+
+			// match keys that start with "A"
+			using (var subscription = _bus.Subscribe<LoginUiEventPayload>(handler,
+				k => !string.IsNullOrEmpty(k) && k.StartsWith("A")))
+			{
+				await _bus.PublishAsync(key: "A1", payload: new LoginUiEventPayload());
+				await _bus.PublishAsync(key: "B1", payload: new LoginUiEventPayload());
+				await _bus.PublishAsync(payload: new LoginUiEventPayload()); // null key should not match
+				await Task.Delay(100);
+
+				Assert.Equal(1, called);
+
+				subscription.Dispose();
+			}
+		}
+	}
+
+	[Fact]
+	public async Task TfEventBusTests_SubscribeAsync_WithMatchKeyPredicate_SyncHandler()
+	{
+		using (await locker.LockAsync())
+		{
+			var mockHandler = new Mock<Action<string?, LoginUiEventPayload>>();
+
+			// match when key contains "ok"
+			var subscription = await _bus.SubscribeAsync<LoginUiEventPayload>(mockHandler.Object!,
+				k => k != null && k.Contains("ok"));
+
+			await _bus.PublishAsync(key: "ok-key", payload: new LoginUiEventPayload());
+			await _bus.PublishAsync(key: "n_o_k-key", payload: new LoginUiEventPayload());
+			await Task.Delay(100);
+
+			mockHandler.Verify(h => h(It.IsAny<string?>(), It.IsAny<LoginUiEventPayload>()), Times.Once);
+
+			await subscription.DisposeAsync();
+		}
+	}
+
+	[Fact]
+	public async Task TfEventBusTests_SubscribeAsync_WithMatchKeyPredicate_AsyncHandler()
+	{
+		using (await locker.LockAsync())
+		{
+			var called = 0;
+			Func<string?, LoginUiEventPayload?, Task> handler = (k, p) =>
+			{
+				called++;
+				return Task.CompletedTask;
+			};
+
+			var subscription = await _bus.SubscribeAsync<LoginUiEventPayload>(handler,k => k == "special");
+			await _bus.PublishAsync(key: "special", payload: new LoginUiEventPayload());
+			await _bus.PublishAsync(key: "other", payload: new LoginUiEventPayload());
+			await Task.Delay(100);
+
+			Assert.Equal(1, called);
+
+			await subscription.DisposeAsync();
 		}
 	}
 

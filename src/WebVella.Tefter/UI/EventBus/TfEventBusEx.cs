@@ -3,6 +3,14 @@
 public interface ITfEventBus
 {
 	IDisposable Subscribe<T>(
+		Action<string?, T?> 
+		handler, Func<string?, bool> matchKey);
+
+	IDisposable Subscribe<T>(
+		Func<string?, T?, Task> handler,
+		Func<string?, bool> matchKey);
+
+	IDisposable Subscribe<T>(
 		Action<string?, T?> handler,
 		Guid key);
 
@@ -17,6 +25,14 @@ public interface ITfEventBus
 	IDisposable Subscribe<T>(
 		Func<string?, T?, Task> handler,
 		string? key = null);
+
+	Task<IAsyncDisposable> SubscribeAsync<T>(
+		Action<string?, T?> handler,
+		Func<string?, bool> matchKey);
+
+	Task<IAsyncDisposable> SubscribeAsync<T>(
+		Func<string?, T?, Task> handler,
+		Func<string?, bool> matchKey);
 
 	Task<IAsyncDisposable> SubscribeAsync<T>(
 		Action<string?, T?> handler,
@@ -63,6 +79,11 @@ public class TfEventBus : ITfEventBus
 
 	public IDisposable Subscribe<T>(Action<string?, T?> handler, string? key = null)
 	{
+		return Subscribe<T>(handler, publishedKey => key is null || publishedKey == key);
+	}
+
+	public IDisposable Subscribe<T>(Action<string?, T?> handler, Func<string?, bool> matchKey)
+	{
 		Type typeT = typeof(T);
 		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
 			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
@@ -73,7 +94,10 @@ public class TfEventBus : ITfEventBus
 
 		var subscription = new Subscription
 		{
-			TargetType = typeT, Key = key, HandlerWrapper = Wrapper, IsAsync = false
+			TargetType = typeT,
+			KeyPredicate = matchKey,
+			HandlerWrapper = Wrapper, 
+			IsAsync = false
 		};
 
 		_semaphore.Wait();
@@ -88,6 +112,11 @@ public class TfEventBus : ITfEventBus
 
 	public IDisposable Subscribe<T>(Func<string?, T?, Task> handler, string? key = null)
 	{
+		return Subscribe<T>(handler, publishedKey => key is null || publishedKey == key);
+	}
+
+	public IDisposable Subscribe<T>(Func<string?, T?, Task> handler, Func<string?, bool> matchKey)
+	{
 		Type typeT = typeof(T);
 		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
 			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
@@ -98,7 +127,10 @@ public class TfEventBus : ITfEventBus
 
 		var subscription = new Subscription
 		{
-			TargetType = typeT, Key = key, AsyncHandlerWrapper = AsyncWrapper, IsAsync = true
+			TargetType = typeT,
+			KeyPredicate = matchKey,
+			AsyncHandlerWrapper = AsyncWrapper, 
+			IsAsync = true
 		};
 
 		_semaphore.Wait();
@@ -117,6 +149,11 @@ public class TfEventBus : ITfEventBus
 
 	public async Task<IAsyncDisposable> SubscribeAsync<T>(Action<string?, T?> handler, string? key = null)
 	{
+		return await SubscribeAsync<T>(handler, publishedKey => key is null || publishedKey == key);
+	}
+
+	public async Task<IAsyncDisposable> SubscribeAsync<T>(Action<string?, T?> handler, Func<string?, bool> matchKey)
+	{
 		Type typeT = typeof(T);
 		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
 			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
@@ -127,7 +164,10 @@ public class TfEventBus : ITfEventBus
 
 		var subscription = new Subscription
 		{
-			TargetType = typeT, Key = key, HandlerWrapper = Wrapper, IsAsync = false
+			TargetType = typeT,
+			KeyPredicate = matchKey,
+			HandlerWrapper = Wrapper, 
+			IsAsync = false
 		};
 
 		await _semaphore.WaitAsync();
@@ -142,6 +182,11 @@ public class TfEventBus : ITfEventBus
 
 	public async Task<IAsyncDisposable> SubscribeAsync<T>(Func<string?, T?, Task> handler, string? key = null)
 	{
+		return await SubscribeAsync<T>(handler, publishedKey => key is null || publishedKey == key);
+	}
+
+	public async Task<IAsyncDisposable> SubscribeAsync<T>(Func<string?, T?, Task> handler, Func<string?, bool> matchKey)
+	{
 		Type typeT = typeof(T);
 		if (!typeof(ITfEventPayload).IsAssignableFrom(typeT))
 			throw new ArgumentException($"Type {typeT.Name} must implement ITfEventPayload");
@@ -152,7 +197,10 @@ public class TfEventBus : ITfEventBus
 
 		var subscription = new Subscription
 		{
-			TargetType = typeT, Key = key, AsyncHandlerWrapper = AsyncWrapper, IsAsync = true
+			TargetType = typeT,
+			KeyPredicate = matchKey, 
+			AsyncHandlerWrapper = AsyncWrapper, 
+			IsAsync = true
 		};
 
 		await _semaphore.WaitAsync();
@@ -178,7 +226,7 @@ public class TfEventBus : ITfEventBus
 
 		foreach (var sub in snapshot)
 		{
-			if (sub.Key is null || sub.Key == key)
+			if (sub.KeyPredicate(key))
 			{
 				// ReSharper disable once CanSimplifyIsAssignableFrom
 				bool typeMatches = (args is null) || sub.TargetType.IsAssignableFrom(args.GetType());
@@ -216,7 +264,7 @@ public class TfEventBus : ITfEventBus
 
 		foreach (var subscription in snapshot)
 		{
-			if (subscription.Key is null || subscription.Key == key)
+			if (subscription.KeyPredicate(key))
 			{
 				// ReSharper disable once CanSimplifyIsAssignableFrom
 				bool typeMatches = (args is null) || subscription.TargetType.IsAssignableFrom(args.GetType());
@@ -258,7 +306,7 @@ public class TfEventBus : ITfEventBus
 	private class Subscription
 	{
 		public required Type TargetType { get; init; }
-		public string? Key { get; init; }
+		public required Func<string?, bool> KeyPredicate { get; init; }
 		public Action<string?, ITfEventPayload?>? HandlerWrapper { get; init; }
 		public Func<string?, ITfEventPayload?, Task>? AsyncHandlerWrapper { get; init; }
 		public required bool IsAsync { get; init; }
