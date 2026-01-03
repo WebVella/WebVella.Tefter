@@ -1,10 +1,7 @@
-﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	private TfDataProvider? _provider = null;
 	private List<TfDataProvider> _connectedProviders = new();
 	
@@ -22,7 +19,8 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IAsyncDis
 
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_dataProviderUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataProviderUpdatedEventPayload>(
-			handler: On_DataProviderUpdatedEventAsync);
+			handler: On_DataProviderUpdatedEventAsync,
+			matchKey: (_) => true);
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -35,7 +33,14 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IAsyncDis
 	}
 
 	private async Task On_DataProviderUpdatedEventAsync(string? key, TfDataProviderUpdatedEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
+	{
+		if(payload is null) return;
+		if(payload.DataProvider.Id != _provider?.Id) return;
+		if(key == TfAuthLayout.GetSessionId().ToString())
+			await _init(TfAuthLayout.GetState().NavigationState);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}			
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -96,8 +101,9 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IAsyncDis
 			return;
 		try
 		{
-			TfService.DeleteDataProviderIdentity(identity.Id);
+			var result = TfService.DeleteDataProviderIdentity(identity.Id);
 			ToastService.ShowSuccess(LOC("The identity is successfully deleted!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId().ToString(),new TfDataProviderDeletedEventPayload(result));
 		}
 		catch (Exception ex)
 		{

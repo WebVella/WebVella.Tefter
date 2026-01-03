@@ -8,9 +8,11 @@
             <FluentSearch Value="@_search" ValueChanged="_searchChanged"
                           Immediate="true" AutoComplete="off" Style="order:3"
                           ImmediateDelay="200" @ref="_searchInput" Placeholder="@LOC("search spaces...")"/>
-            <FluentButton OnClick="_adminNavigation" Style="order:1" Appearance="Appearance.Outline">@LOC("Administration")</FluentButton>
-            <FluentButton OnClick="_addSpace" Style="order:2" Appearance="Appearance.Outline">@LOC("New Space")</FluentButton>  
-         
+            @if (Content?.IsAdmin ?? false)
+            {
+                <FluentButton OnClick="_adminNavigation" Style="order:1" Appearance="Appearance.Outline">@LOC("Administration")</FluentButton>
+                <FluentButton OnClick="_addSpace" Style="order:2" Appearance="Appearance.Outline">@LOC("New Space")</FluentButton>
+            }
         </FluentStack>
     </FluentStack>
 </FluentDialogHeader>

@@ -183,12 +183,8 @@ public partial class TfService : ITfService
 				_dbManager.SaveChanges(dbBuilder);
 
 				scope.Complete();
-
-				var result = GetDataProvider(dataIdentity.DataProviderId);
-				_eventBus.Publish(
-					key: null,
-					payload: new TfDataProviderUpdatedEventPayload(result));		
-				return result;
+	
+				return GetDataProvider(dataIdentity.DataProviderId);
 			}
 		}
 		catch (Exception ex)
@@ -261,11 +257,7 @@ public partial class TfService : ITfService
 				_dbManager.SaveChanges(dbBuilder);
 
 				scope.Complete();
-				var result = GetDataProvider(dataIdentity.DataProviderId);
-				_eventBus.Publish(
-					key: null,
-					payload: new TfDataProviderUpdatedEventPayload(result));		
-				return result;				
+				return GetDataProvider(dataIdentity.DataProviderId);				
 			}
 		}
 		catch (Exception ex)
@@ -314,12 +306,8 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfDataProviderIdentityDbo> failed.");
 
 				scope.Complete();
-				
-				var result = GetDataProvider(dataIdentity.DataProviderId);
-				_eventBus.Publish(
-					key: null,
-					payload: new TfDataProviderUpdatedEventPayload(result));		
-				return result;
+
+				return GetDataProvider(dataIdentity.DataProviderId);
 			}
 		}
 		catch (Exception ex)

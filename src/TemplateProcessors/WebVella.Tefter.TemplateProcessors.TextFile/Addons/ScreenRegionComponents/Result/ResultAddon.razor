@@ -119,11 +119,11 @@ else
 							<div>
 								@if (!_showDetails)
 								{
-									<a href="javascript:void(0)" @onclick=@(_ => _showDetails = true)>@LOC("show details")</a>
+									<a href="javascript:void(0)" @onclick=@(() => _showDetails = true)>@LOC("show details")</a>
 								}
 								else
 								{
-									<a href="javascript:void(0)" @onclick=@(_ => _showDetails = false)>@LOC("hide details")</a>
+									<a href="javascript:void(0)" @onclick=@(() => _showDetails = false)>@LOC("hide details")</a>
 								}
 							</div>
 						</td>

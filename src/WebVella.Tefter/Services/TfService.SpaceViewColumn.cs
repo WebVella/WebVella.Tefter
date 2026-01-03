@@ -126,10 +126,6 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				var viewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
-			
-				await _eventBus.PublishAsync(
-					key: null,
-					payload: new TfSpaceViewColumnUpdatedEventPayload(spaceViewColumn.SpaceViewId, viewColumns));				
 				return viewColumns.Single(x => x.Id == spaceViewColumn.Id);
 			}
 		}

@@ -43,9 +43,11 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			TfService.UpdateBookmark(_form);
+			var result = TfService.UpdateBookmark(_form);
 			ToastService.ShowSuccess(LOC($"{(_isBookmark ? "Bookmark" : "URL")} updated"));
-
+			await TfEventBus.PublishAsync(
+				key: TfAuthLayout.GetUserId(),
+				payload: new TfBookmarkUpdatedEventPayload(result));		
 			await Dialog.CloseAsync(_form);
 		}
 		catch (Exception ex)

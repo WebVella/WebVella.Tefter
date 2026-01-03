@@ -1,7 +1,4 @@
-﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
-
-namespace WebVella.Tefter.Services;
-
+﻿namespace WebVella.Tefter.Services;
 public partial interface ITfService
 {
 }
@@ -15,7 +12,6 @@ public partial class TfService : ITfService
 	private readonly ITfDatabaseManager _dbManager;
 	private readonly ITfMetaService _metaService;
 	private readonly ITfDatabaseService _dbService;
-	private readonly ITfEventBus _eventBus;
 	private readonly ILogger<TfService> _logger;
 	private readonly IStringLocalizer<TfService> LOC;
 
@@ -24,7 +20,6 @@ public partial class TfService : ITfService
 		ITfConfigurationService config,
 		ITfMetaService metaService,
 		ITfDatabaseService dbService,
-		ITfEventBus eventBus,
 		ITfDatabaseManager dbManager,
 		ILogger<TfService> logger)
 	{
@@ -35,7 +30,6 @@ public partial class TfService : ITfService
 		_dbManager = dbManager;
 		_logger = logger;
 		_dboManager = serviceProvider.GetService<ITfDboManager>();
-		_eventBus = eventBus;
 		
 		var tefterInstanceId = GetSetting(TfConstants.TEFTER_INSTANCE_SETTING_KEY).Value;
 		var blobStoragePath = Path.Combine(_config.BlobStoragePath, tefterInstanceId);

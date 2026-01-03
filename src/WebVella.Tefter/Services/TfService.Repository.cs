@@ -214,9 +214,6 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Insert repository file record into database failed");
 
 				scope.Complete();
-				_eventBus.Publish(
-					key: null,
-					payload: new TfRepositoryFileCreatedEventPayload(file));				
 				return file;
 			}
 		}
@@ -263,9 +260,6 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Insert repository file record into database failed");
 
 				scope.Complete();
-				_eventBus.Publish(
-					key: null,
-					payload: new TfRepositoryFileCreatedEventPayload(file));					
 				return file;
 			}
 		}
@@ -313,12 +307,7 @@ public partial class TfService : ITfService
 				UpdateBlob(repFile.Id, localPath);
 
 				scope.Complete();
-				var result = GetRepositoryFile(filename);
-			
-				_eventBus.Publish(
-					key: null,
-					payload: new TfRepositoryFileUpdatedEventPayload(result!));					
-				return result!;
+				return GetRepositoryFile(filename)!;
 			}
 		}
 		catch (Exception ex)
@@ -356,9 +345,6 @@ public partial class TfService : ITfService
 
 				DeleteBlob(existingFile.Id);
 				scope.Complete();
-				_eventBus.Publish(
-					key: null,
-					payload: new TfRepositoryFileDeletedEventPayload(existingFile));					
 			}
 		}
 		catch (Exception ex)

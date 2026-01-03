@@ -1,7 +1,10 @@
-﻿namespace WebVella.Tefter.UI.Addons;
+﻿using WebVella.Tefter.UI.Layout;
+
+namespace WebVella.Tefter.UI.Addons;
 
 public partial class TucTalkCommentsCountViewColumnTypeRead : ComponentBase
 {
+	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = null!;
 	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	[Inject] public IDialogService DialogService { get; set; } = null!;
 	[Parameter] public List<long?>? Value { get; set; }
@@ -47,7 +50,7 @@ public partial class TucTalkCommentsCountViewColumnTypeRead : ComponentBase
                     countChange: changeRequest);
                 if (dataChange is null) return;
                 await TfEventBus.PublishAsync(
-	                key: null,
+	                key: TfAuthLayout.GetSessionId().ToString(),
 	                payload: new TfSpaceViewDataUpdatedEventPayload(Context.ViewColumn.SpaceViewId,dataChange));	    
             })
 		});

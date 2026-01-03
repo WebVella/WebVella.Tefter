@@ -4,7 +4,7 @@ public partial class TucSpaceViewBookmarkPinDataDialog : TfFormBaseComponent, ID
 {
 	[Parameter] public TfCreatePinDataBookmarkModel? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
-	private string _error = string.Empty;
+	private readonly string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private TfCreatePinDataBookmarkModel _form = new();
 	private List<TfTag> _tags = new();
@@ -19,7 +19,7 @@ public partial class TucSpaceViewBookmarkPinDataDialog : TfFormBaseComponent, ID
 		if (Content.SelectedRowIds.Count == 0) throw new Exception("SelectedRowIds is required");
 		_form = Content with { Name = string.Empty };
 		_onDescriptionChanged(_form.Description);
-		base.InitForm(_form);
+		InitForm(_form);
 	}
 
 
@@ -38,9 +38,11 @@ public partial class TucSpaceViewBookmarkPinDataDialog : TfFormBaseComponent, ID
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			
-			TfService.CreateBookmark(_form);
+			var result = TfService.CreateBookmark(_form);
 			ToastService.ShowSuccess(LOC($"Records pinned"));
-
+			await TfEventBus.PublishAsync(
+				key: TfAuthLayout.GetUserId(),
+				payload: new TfBookmarkCreatedEventPayload(result));
 			await Dialog.CloseAsync(_form);
 		}
 		catch (Exception ex)

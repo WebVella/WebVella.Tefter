@@ -1,10 +1,7 @@
-﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	private TfDataProvider? _provider = null;
 	private Guid? _deletedColumnId = null;
 	private IAsyncDisposable _dataProviderUpdatedEventSubscriber = null!;
@@ -87,8 +84,10 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IAsync
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			TfService.DeleteDataProviderColumn(_deletedColumnId.Value);
+			var provider = TfService.DeleteDataProviderColumn(_deletedColumnId.Value);
 			ToastService.ShowSuccess(LOC("The column was successfully deleted!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId().ToString(),new TfDataProviderUpdatedEventPayload(provider));
+			_provider = null;
 		}
 		catch (Exception ex)
 		{

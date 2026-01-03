@@ -30,7 +30,7 @@ public partial interface ITfService
 	/// <param name="column"></param>
 	/// <returns></returns>
 	public TfDataProvider CreateDataProviderColumn(
-		TfDataProviderColumn column, bool sendEvent = false);
+		TfDataProviderColumn column);
 
 	public TfDataProvider CreateDataProviderColumn(
 		TfUpsertDataProviderColumn column);
@@ -182,16 +182,14 @@ public partial class TfService : ITfService
 	/// <param name="column"></param>
 	/// <returns></returns>
 	public TfDataProvider CreateDataProviderColumn(
-		TfDataProviderColumn column, bool sendEvent = false)
+		TfDataProviderColumn column)
 	{
 		try
 		{
-			if (column != null && column.Id == Guid.Empty)
+			if (column.Id == Guid.Empty)
 				column.Id = Guid.NewGuid();
 
-			TfDataProvider provider = null;
-			if (column is not null)
-				provider = GetDataProvider(column.DataProviderId);
+			TfDataProvider provider = GetDataProvider(column.DataProviderId);;
 
 			new TfDataProviderColumnValidator(this, provider)
 				.ValidateCreate(column)
@@ -214,14 +212,6 @@ public partial class TfService : ITfService
 					throw new TfException("Failed to create new data provider column");
 
 				scope.Complete();
-
-				if (!sendEvent)
-				{
-					_eventBus.Publish(
-						key: null,
-						payload: new TfDataProviderUpdatedEventPayload(provider));		
-				}
-
 				return provider;
 			}
 		}
@@ -271,7 +261,7 @@ public partial class TfService : ITfService
 					if (!validationResult.IsValid)
 						continue;
 
-					CreateDataProviderColumn(column, sendEvent: true);
+					CreateDataProviderColumn(column);
 				}
 
 				validationResults
@@ -283,10 +273,7 @@ public partial class TfService : ITfService
 				provider = GetDataProvider(columns[0].DataProviderId);
 				if (provider is null)
 					throw new TfException("Failed to create new data provider column");
-
-				_eventBus.Publish(
-					key: null,
-					payload: new TfDataProviderUpdatedEventPayload(provider));		
+	
 				return provider;
 			}
 		}
@@ -336,11 +323,7 @@ public partial class TfService : ITfService
 
 			UpdateDatabaseColumn(provider, column, existingColumn);
 
-			var result = GetDataProvider(column.DataProviderId);
-			_eventBus.Publish(
-				key: null,
-				payload: new TfDataProviderUpdatedEventPayload(result));		
-			return result;
+			return GetDataProvider(column.DataProviderId);
 		}
 		catch (Exception ex)
 		{
@@ -395,11 +378,7 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				var result = GetDataProvider(column.DataProviderId);
-				_eventBus.Publish(
-					key: null,
-					payload: new TfDataProviderUpdatedEventPayload(result));		
-				return result;
+				return GetDataProvider(column.DataProviderId);
 			}
 		}
 		catch (Exception ex)

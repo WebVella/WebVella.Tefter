@@ -1,11 +1,7 @@
-﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
-
 	TfDataProvider? _provider = null;
 	List<TfDataset> _items = new();
 	private IAsyncDisposable _datasetEventSubscriber = null!;

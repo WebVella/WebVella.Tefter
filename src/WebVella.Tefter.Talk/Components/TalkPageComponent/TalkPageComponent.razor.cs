@@ -3,7 +3,6 @@
 public partial class TalkPageComponent : TfBaseComponent, IAsyncDisposable
 {
     [Inject] protected ITalkService TalkService { get; set; } = null!;
-    [Inject] protected ITfEventBus TfEventBus { get; set; } = null!;  
     [Parameter] public Guid SpacePageId { get; set; }
     private TalkSpacePageComponentOptions _options = new();
     private List<TalkChannel> _channels = new();

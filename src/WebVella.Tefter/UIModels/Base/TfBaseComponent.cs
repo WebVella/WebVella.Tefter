@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
-using WebVella.Tefter.UI.Layout;
-
+using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
 namespace WebVella.Tefter.Models;
 
 public class TfBaseComponent : ComponentBase
@@ -17,6 +16,7 @@ public class TfBaseComponent : ComponentBase
 	[Inject] protected ITfService TfService { get; set; } = null!;
 	[Inject] protected ITfMetaService TfMetaService { get; set; } = null!;
 	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = null!;
+	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
 	protected IStringLocalizer LC = null!;

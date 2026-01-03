@@ -1,10 +1,7 @@
-﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 {
-	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	private List<TfDashboardItem> _dashboard = new();
 	private List<TfBookmark> _allBookmarks = new();
 	private List<TfTag> _tags = new();
@@ -36,7 +33,7 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 		Navigator.LocationChanged += On_LocationChanged;
 		_bookmarkEventSubscriber = TfEventBus.Subscribe<TfBookmarkEventPayload>(
 			handler:On_BookmarkEventAsync, 
-			key:TfAuthLayout.GetState().User.Id);		
+			matchKey: (key) => key == TfAuthLayout.GetUserId().ToString());		
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -326,11 +323,13 @@ public partial class TucHomeDashboard : TfBaseComponent, IDisposable
 		_ = await dialog.Result;
 	}
 
-	private Task _onRemove(TfBookmark bookmark)
+	private async Task _onRemove(TfBookmark bookmark)
 	{
 		TfService.DeleteBookmark(bookmark.Id);
+		await TfEventBus.PublishAsync(
+			key: TfAuthLayout.GetUserId(),
+			payload: new TfBookmarkDeletedEventPayload(bookmark));			
 		ToastService.ShowSuccess(LOC("Bookmark removed"));
-		return Task.CompletedTask;
 	}
 	private async Task _goLastPage()
 	{

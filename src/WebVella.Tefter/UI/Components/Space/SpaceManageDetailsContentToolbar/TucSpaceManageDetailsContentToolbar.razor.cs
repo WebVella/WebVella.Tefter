@@ -1,10 +1,7 @@
-﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	private bool _isLoading = true;
 	private List<TfMenuItem> _menu = new();
 	private IAsyncDisposable _spaceUpdatedEventSubscriber = null!;

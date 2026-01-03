@@ -1,6 +1,4 @@
-﻿using Nito.AsyncEx.Synchronous;
-
-namespace WebVella.Tefter.Services;
+﻿namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -19,7 +17,7 @@ public partial interface ITfService
 		string dataIdentity);
 }
 
-public partial class TfService : ITfService
+public partial class TfService
 {
 	public List<TfDataIdentity> GetDataIdentities(string? search = null)
 	{
@@ -64,15 +62,11 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
-			var success = _dboManager.Insert<TfDataIdentity>(dataIdentity);
+			var success = _dboManager.Insert(dataIdentity);
 			if (!success)
 				throw new TfDboServiceException("Insert<TfDataIdentity> failed.");
-
-			var result = GetDataIdentity(dataIdentity.DataIdentity);
-			_eventBus.Publish(
-				key: null,
-				payload: new TfDataIdentityCreatedEventPayload(result));			
-			return result;
+	
+			return GetDataIdentity(dataIdentity.DataIdentity);
 
 		}
 		catch (Exception ex)
@@ -92,18 +86,11 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
-			var success = _dboManager.Update<TfDataIdentity>(nameof(TfDataIdentity.DataIdentity),dataIdentity);
+			var success = _dboManager.Update(nameof(TfDataIdentity.DataIdentity),dataIdentity);
 
 			if (!success)
 				throw new TfDboServiceException("Update<TfDataIdentity> failed.");
-
-
-			var result = GetDataIdentity(dataIdentity.DataIdentity);
-			_eventBus.Publish(
-				key: null,
-				payload: new TfDataIdentityUpdatedEventPayload(result));				
-			return result;
-
+			return GetDataIdentity(dataIdentity.DataIdentity);
 		}
 		catch (Exception ex)
 		{
@@ -116,24 +103,15 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
-			{
-				new TfDataIdentityValidator(this)
-					.ValidateDelete(dataIdentity)
-					.ToValidationException()
-					.ThrowIfContainsErrors();
-				var existingIdentity = GetDataIdentity(dataIdentity);
-
-				bool success = _dboManager.Delete<TfDataIdentity,string>(nameof(TfDataIdentity.DataIdentity), dataIdentity);
-
-				if (!success)
-					throw new TfDboServiceException("Delete<TfBookmark> failed.");
-
-				scope.Complete();
-				_eventBus.Publish(
-					key: null,
-					payload: new TfDataIdentityDeletedEventPayload(existingIdentity));					
-			}
+			using var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY);
+			new TfDataIdentityValidator(this)
+				.ValidateDelete(dataIdentity)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
+			bool success = _dboManager.Delete<TfDataIdentity,string>(nameof(TfDataIdentity.DataIdentity), dataIdentity);
+			if (!success)
+				throw new TfDboServiceException("Delete<TfBookmark> failed.");
+			scope.Complete();
 		}
 		catch (Exception ex)
 		{

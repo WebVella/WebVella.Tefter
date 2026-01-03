@@ -1,25 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using Microsoft.FluentUI.AspNetCore.Components;
-using Moq;
 using Nito.AsyncEx;
-using System;
 using System.Text;
-using System.Text.Json;
 using WebVella.Tefter.Database;
 using WebVella.Tefter.Database.Dbo;
-using WebVella.Tefter.Authentication;
-using WebVella.Tefter.Messaging;
 using WebVella.Tefter.Migrations;
-using WebVella.Tefter.Utility;
 using WebVella.Tefter.Services;
-using WebVella.BlazorTrace;
-using System.Threading;
-
 
 namespace WebVella.Tefter.UI.Tests;
 public class BaseTest
@@ -28,12 +17,6 @@ public class BaseTest
 	public Mock<ITfConfigurationService> TfConfigurationServiceMock;
 	public Mock<AuthenticationStateProvider> AuthenticationStateProviderMock;
 	public Mock<ILogger> LoggerMock;
-	//messaging
-	internal Mock<ITfChannelEventRouter> TfChannelEventRouterMock;
-	public Mock<ITfEventBus> TfEventBusMock;
-	public Mock<TfUserEventProvider> TfUserEventProviderMock;
-	public Mock<TfGlobalEventProvider> TfGlobalEventProviderMock;
-
 	public Mock<ITfCryptoService> TfCryptoServiceMock;
 	public Mock<ITfCryptoServiceConfiguration> TfCryptoServiceConfigurationMock;
 	public Mock<ITfTransactionRollbackNotifyService> TfTransactionRollbackNotifyServiceMock;
@@ -75,23 +58,6 @@ public class BaseTest
 
 		TfConfigurationServiceMock = new Mock<ITfConfigurationService>();
 		Context.Services.AddSingleton(typeof(ITfConfigurationService), Services => TfConfigurationServiceMock.Object);
-
-		#region << Messaging >>
-		TfChannelEventRouterMock = new Mock<ITfChannelEventRouter>();
-		Context.Services.AddSingleton(typeof(ITfChannelEventRouter), Services => TfChannelEventRouterMock.Object);
-
-		TfEventBusMock = new Mock<ITfEventBus>();
-		Context.Services.AddTransient(typeof(ITfEventBus), Services => TfEventBusMock.Object);
-
-		TfUserEventProviderMock = new Mock<TfUserEventProvider>(TfEventBusMock.Object, AuthenticationStateProviderMock.Object);
-		Context.Services.AddTransient(typeof(TfUserEventProvider), Services => TfUserEventProviderMock.Object);
-
-		TfGlobalEventProviderMock = new Mock<TfGlobalEventProvider>(TfEventBusMock.Object);
-		TfGlobalEventProvider globalProvider = new TfGlobalEventProvider(
-			TfEventBusMock.Object,
-			AuthenticationStateProviderMock.Object);		
-		Context.Services.AddSingleton(typeof(TfGlobalEventProvider), Services => globalProvider);
-		#endregion
 
 		TfCryptoServiceMock = new Mock<ITfCryptoService>();
 		Context.Services.AddSingleton(typeof(ITfCryptoService), Services => TfCryptoServiceMock.Object);

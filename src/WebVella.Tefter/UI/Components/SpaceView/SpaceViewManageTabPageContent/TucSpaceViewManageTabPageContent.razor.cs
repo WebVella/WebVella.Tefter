@@ -1,12 +1,8 @@
-﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncDisposable
 {
 	#region << Init >>
-
-	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 
 	// State
@@ -48,9 +44,9 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 			_spaceViewUpdatedEventSubscriber =
 				await TfEventBus.SubscribeAsync<TfSpaceViewUpdatedEventPayload>(
 					handler: On_SpaceViewUpdatedEventAsync);
-			// _spaceViewColumnUpdatedEventSubscriber =
-			// 	await TfEventBus.SubscribeAsync<TfSpaceViewColumnUpdatedEventPayload>(
-			// 		handler: On_SpaceViewColumnUpdatedEventAsync);
+			_spaceViewColumnUpdatedEventSubscriber =
+				await TfEventBus.SubscribeAsync<TfSpaceViewColumnUpdatedEventPayload>(
+					handler: On_SpaceViewColumnUpdatedEventAsync);
 		}
 	}
 
@@ -69,13 +65,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 	private async Task On_SpaceViewColumnUpdatedEventAsync(string? key, TfSpaceViewColumnUpdatedEventPayload? payload)
-	{
-		Console.WriteLine("TucSpaceViewManageTabPageContent 1");
-		await InvokeAsync(StateHasChanged);
-		await _init(TfAuthLayout.GetState().NavigationState);
-		await InvokeAsync(StateHasChanged);
-		Console.WriteLine("TucSpaceViewManageTabPageContent 2");
-	}
+		=> await _init(TfAuthLayout.GetState().NavigationState);
 
 
 	private async Task _init(TfNavigationState navState)

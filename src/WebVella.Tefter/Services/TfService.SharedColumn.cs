@@ -93,13 +93,7 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Insert<TfSharedColumn> failed");
 
 				scope.Complete();
-				var result = GetSharedColumn(column.Id);
-
-				_eventBus.Publish(
-					key: null,
-					payload: new TfSharedColumnCreatedEventPayload(result));					
-
-				return result;
+				return GetSharedColumn(column.Id);
 			}
 		}
 		catch (Exception ex)
@@ -129,11 +123,7 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Update<TfSharedColumn> failed");
 
 				scope.Complete();
-				var result = GetSharedColumn(column.Id);
-				_eventBus.Publish(
-					key: null,
-					payload: new TfSharedColumnUpdatedEventPayload(result));					
-				return result;
+				return GetSharedColumn(column.Id);
 			}
 		}
 		catch (Exception ex)
@@ -164,9 +154,6 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfSharedColumn> failed");
 
 				scope.Complete();
-				_eventBus.Publish(
-					key: null,
-					payload: new TfSharedColumnDeletedEventPayload(column));					
 			}
 		}
 		catch (Exception ex)

@@ -1,11 +1,8 @@
-﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDisposable
 {
 	// Dependency Injection
-	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
 	[Parameter] public TfSpacePage SpacePage { get; set; } = null!;
 	[Parameter] public TfDataset SpaceData { get; set; } = null!;

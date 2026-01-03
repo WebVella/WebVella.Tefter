@@ -18,13 +18,13 @@ global using WebVella.Tefter.Addons;
 global using WebVella.Tefter.Models;
 global using WebVella.Tefter.Migrations;
 global using WebVella.Tefter.Utility;
+global using WebVella.Tefter.UI.EventsBus;
 
 global using WebVella.Tefter.EmailSender;
 global using WebVella.Tefter.EmailSender.Models;
 global using WebVella.Tefter.EmailSender.Services;
 global using WebVella.Tefter.EmailSender.Components;
 global using WebVella.Tefter.EmailSender.Addons;
-global using WebVella.Tefter.Messaging;
 
 global using FluentValidation;
 global using FluentValidation.Results;

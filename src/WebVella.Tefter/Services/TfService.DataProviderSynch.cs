@@ -153,11 +153,6 @@ public partial class TfService : ITfService
 		var success = _dboManager.Insert<TfDataProviderSynchronizeTaskDbo>(task);
 		if (!success)
 			throw new TfDatabaseException("Failed to insert synchronization task.");
-
-		var result = GetDataProvider(providerId);
-		_eventBus.Publish(
-			key: null,
-			payload: new TfDataProviderUpdatedEventPayload(result));		
 		return task.Id;
 	}
 
@@ -179,11 +174,6 @@ public partial class TfService : ITfService
 			SynchScheduleEnabled = syncScheduleEnabled,
 			SynchScheduleMinutes = syncScheduleMinutes
 		});
-		
-		var result = GetDataProvider(providerId);
-		_eventBus.Publish(
-			key: null,
-			payload: new TfDataProviderUpdatedEventPayload(result));		
 	}
 	public void UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns)
 	{
@@ -199,11 +189,6 @@ public partial class TfService : ITfService
 			SynchScheduleEnabled = provider.SynchScheduleEnabled,
 			SynchScheduleMinutes = provider.SynchScheduleMinutes
 		});
-		
-		var result = GetDataProvider(providerId);
-		_eventBus.Publish(
-			key: null,
-			payload: new TfDataProviderUpdatedEventPayload(result));		
 	}
 	public void UpdateSychronizationTask(
 		Guid taskId,

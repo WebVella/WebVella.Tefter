@@ -5,7 +5,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 	[Parameter] public TfDataProvider? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
-	private string _error = string.Empty;
+	private readonly string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
@@ -57,7 +57,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 				AutoInitialize = false
 			};
 		}
-		base.InitForm(_form);
+		InitForm(_form);
 	}
 
 	private void _initDynamicComponent()
@@ -109,6 +109,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 					SynchScheduleMinutes = _form.SynchScheduleMinutes,
 					AutoInitialize = _form.AutoInitialize
 				});
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(),new TfDataProviderCreatedEventPayload(provider));				
 			}
 			else
 			{
@@ -121,6 +122,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 					SynchScheduleEnabled = _form.SynchScheduleEnabled,
 					SynchScheduleMinutes = _form.SynchScheduleMinutes,
 				});
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(),new TfDataProviderUpdatedEventPayload(provider));
 			}
 			await Dialog.CloseAsync(provider);
 		}

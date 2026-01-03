@@ -1,0 +1,17 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+
+@if (_show)
+{
+    <div class="tf-page-topbar__alert__wrapper">
+        <div class="tf-page-topbar__alert">
+            <div class="tf-page-topbar__alert__icon">
+                <FluentIcon Value="@TfConstants.GetIcon("Alert", variant: IconVariant.Filled)"></FluentIcon>
+            </div>
+            <div class="tf-page-topbar__alert__message">@LOC("page outdated!")</div>
+            <div class="tf-page-topbar__alert__link">
+                <a href="#" onclick="@_reload" onclick:prevendDefault="true">@LOC("reload")</a>
+            </div>
+        </div>
+    </div>
+}

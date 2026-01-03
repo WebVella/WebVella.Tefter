@@ -12,6 +12,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 	[Inject] protected IToastService ToastService { get; set; } = null!;
 
+	private readonly Guid _sessionId = Guid.NewGuid();
 	private TfState _state = new();
 	private TfUser _currentUser = new();
 	private bool _isLoaded = false;
@@ -22,10 +23,12 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	private DesignThemeModes _themeMode = DesignThemeModes.System;
 
 	private IAsyncDisposable _bookmarkEventSubscriber = null!;
-	private IAsyncDisposable _spaceUpdatedEventSubscriber = null!;	
-	private IAsyncDisposable _userUpdatedEventSubscriber = null!;	
+	private IAsyncDisposable _spaceUpdatedEventSubscriber = null!;
+	private IAsyncDisposable _userUpdatedEventSubscriber = null!;
 
 	public TfState GetState() => _state;
+	public Guid GetSessionId() => _sessionId;
+	public Guid GetUserId() => _state.User.Id;
 
 	public async ValueTask DisposeAsync()
 	{
@@ -54,7 +57,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 		if (!_checkAccess(Navigator.Uri))
 			Navigator.NavigateTo(string.Format(TfConstants.NoAccessPage));
 		//init state
-		_init(Navigator.Uri);
+		await _init(Navigator.Uri);
 		_urlInitialized = Navigator.Uri;
 		_isLoaded = true;
 	}
@@ -66,33 +69,32 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			_locationChangingHandler = Navigator.RegisterLocationChangingHandler(Navigator_LocationChanging);
 			_bookmarkEventSubscriber = await TfEventBus.SubscribeAsync<TfBookmarkEventPayload>(
 				handler: On_BookmarkEventAsync,
-				key: _currentUser.Id);
+				matchKey: (key) => key == GetUserId().ToString());
 			_spaceUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceUpdatedEventPayload>(
-				handler:On_SpaceUpdatedEventAsync);			
+				handler: On_SpaceUpdatedEventAsync);
 			_userUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfUserUpdatedEventPayload>(
-				handler:On_UserUpdatedEventAsync);			
+				handler: On_UserUpdatedEventAsync);
 		}
 	}
 
 	private async Task On_UserUpdatedEventAsync(string? key, TfUserUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
+		if (payload is null) return;
 		if (payload.User.Id == _state.User.Id)
 		{
 			_currentUser = payload.User;
-			_init(Navigator.Uri);
+			await _init(Navigator.Uri);
 			await InvokeAsync(StateHasChanged);
-		}		
-		
+		}
 	}
 
 	private async Task On_SpaceUpdatedEventAsync(string? key, TfSpaceUpdatedEventPayload? payload)
 	{
 		if (payload is not null && payload.Space.Id == _state.Space?.Id)
 		{
-			_init(Navigator.Uri, payload.Space);
+			await _init(Navigator.Uri, payload.Space);
 			await InvokeAsync(StateHasChanged);
-		}		
+		}
 	}
 
 	private Task On_BookmarkEventAsync(string? key, TfBookmarkEventPayload? payload)
@@ -102,7 +104,7 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	}
 
 
-	private ValueTask Navigator_LocationChanging(LocationChangingContext args)
+	private async ValueTask Navigator_LocationChanging(LocationChangingContext args)
 	{
 		if (_urlInitialized != args.TargetLocation)
 		{
@@ -110,19 +112,29 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 			{
 				ToastService.ShowError("Access Denied");
 				args.PreventNavigation();
-				return ValueTask.CompletedTask;
+				return;
 			}
 
-			_init(args.TargetLocation);
+			await _init(args.TargetLocation);
 			_urlInitialized = args.TargetLocation;
 		}
-
-		return ValueTask.CompletedTask;
 	}
 
-	private void _init(string url, TfSpace? space = null)
+	private async Task _init(string url, TfSpace? space = null)
 	{
-		_state = TfService.GetAppState(Navigator, _currentUser, url, String.IsNullOrWhiteSpace(_state.Uri) ? null : _state, space);
+		_state = new TfState();
+		try
+		{
+			_state = TfService.GetAppState(Navigator, _currentUser, url,
+				String.IsNullOrWhiteSpace(_state.Uri) ? null : _state, space);
+		}
+		catch (Exception ex)
+		{
+			_isLoaded = false;
+			await InvokeAsync(StateHasChanged);
+			await Navigator.ToErrorPage(JsRuntime, ex.Message);
+			return;
+		}
 
 		if (_state.NavigationState.RouteNodes.Count == 0) { }
 		else if (_state.NavigationState.RouteNodes[0] == RouteDataNode.Home)

@@ -1,11 +1,7 @@
-﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucAdminDataIdentitiesPageContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected TfGlobalEventProvider TfEventProvider { get; set; } = null!;
-	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	private bool _isLoading = false;
 	private List<TfDataIdentity> _items = new();
 	private IAsyncDisposable _dataIdentityEventSubscriber = null!;
@@ -24,16 +20,30 @@ public partial class TucAdminDataIdentitiesPageContent : TfBaseComponent, IAsync
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_dataIdentityEventSubscriber = await TfEventBus.SubscribeAsync<TfDataIdentityEventPayload>(
 			handler: On_DataIdentityEventAsync,
-			key: TfAuthLayout.GetState().User.Id);
-		_providerCreatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataProviderCreatedEventPayload>(
-			handler: On_DataProviderCreatedEventAsync);
+			matchKey: (_) => true);
+		_providerCreatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataProviderEventPayload>(
+			handler: On_DataProviderEventAsync,
+			matchKey: (_) => true);
 	}
 
 	private async Task On_DataIdentityEventAsync(string? key, TfDataIdentityEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
+	{
+		if(payload is null) return;
+		if(key == TfAuthLayout.GetSessionId().ToString())
+			await _init(TfAuthLayout.GetState().NavigationState);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}
 
-	private async Task On_DataProviderCreatedEventAsync(string? key, TfDataProviderCreatedEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
+
+	private async Task On_DataProviderEventAsync(string? key, TfDataProviderEventPayload? payload)
+	{
+		if(payload is null) return;
+		if(key == TfAuthLayout.GetSessionId().ToString())
+			await _init(TfAuthLayout.GetState().NavigationState);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}		
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{

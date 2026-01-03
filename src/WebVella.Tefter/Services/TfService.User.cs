@@ -561,9 +561,6 @@ public partial class TfService : ITfService
 			}
 
 			scope.Complete();
-			_eventBus.Publish(
-				key: null,
-				payload: new TfUserUpdatedEventPayload(GetUser(userDbo.Id)!));	
 		}
 
 		return GetUser(userDbo.Id);
@@ -630,10 +627,6 @@ public partial class TfService : ITfService
 			}
 
 			scope.Complete();
-
-			_eventBus.Publish(
-				key: null,
-				payload: new TfUserUpdatedEventPayload(GetUser(userDbo.Id)!));	
 		}
 
 		return GetUser(userDbo.Id);

@@ -298,9 +298,6 @@ public partial class TfService : ITfService
 
 				allPages = GetSpacePages(spacePage.SpaceId);
 				var createdPage = FindPageById(spacePage.Id, allPages);
-				_eventBus.Publish(
-					key: null,
-					payload: new TfSpacePageCreatedEventPayload(createdPage));					
 				return (spacePage.Id, allPages);
 			}
 		}
@@ -598,9 +595,6 @@ public partial class TfService : ITfService
 
 				allPages = GetSpacePages(spacePage.SpaceId);
 				var updatedPage = FindPageById(spacePage.Id, allPages);
-				_eventBus.Publish(
-					key: null,
-					payload: new TfSpacePageUpdatedEventPayload(updatedPage!));					
 				return allPages;
 			}
 		}
@@ -622,10 +616,6 @@ public partial class TfService : ITfService
 			nameof(TfSpacePageDbo.ComponentSettingsJson));
 		if (!success)
 			throw new TfDboServiceException("Update<TfSpacePageDbo> failed");
-
-		_eventBus.Publish(
-			key: null,
-			payload: new TfSpacePageUpdatedEventPayload(GetSpacePage(spacePageId)!));			
 	}
 
 	public List<TfSpacePage> DeleteSpacePage(
@@ -731,9 +721,6 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				allPages = GetSpacePages(spacePage.SpaceId);
-				_eventBus.Publish(
-					key: null,
-					payload: new TfSpacePageDeletedEventPayload(spacePage));					
 				return allPages;
 			}
 		}

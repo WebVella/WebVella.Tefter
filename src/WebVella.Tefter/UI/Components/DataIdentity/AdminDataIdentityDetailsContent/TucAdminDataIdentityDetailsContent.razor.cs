@@ -1,16 +1,13 @@
-﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	private TfDataIdentity? _identity = null;
-	private IAsyncDisposable _dataIdentityEventSubscriber = null!;
+	private IAsyncDisposable _dataIdentityUpdatedEventSubscriber = null!;
 	
 	
 	public async ValueTask DisposeAsync()
 	{
-		await _dataIdentityEventSubscriber.DisposeAsync();
+		await _dataIdentityUpdatedEventSubscriber.DisposeAsync();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 
@@ -19,15 +16,21 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IAsyn
 		await base.OnInitializedAsync();
 		await _init(navState:TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
-		_dataIdentityEventSubscriber = await TfEventBus.SubscribeAsync<TfDataIdentityEventPayload>(
-			handler:On_DataIdentityEventAsync, 
-			key:TfAuthLayout.GetState().User.Id);
+		_dataIdentityUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataIdentityUpdatedEventPayload>(
+			handler:On_DataIdentityUpdatedEventAsync,
+			matchKey: (_) => true);
 	}
 
-	private async Task On_DataIdentityEventAsync(string? key, TfDataIdentityEventPayload? payload)
+	private async Task On_DataIdentityUpdatedEventAsync(string? key, TfDataIdentityUpdatedEventPayload? payload)
 	{
 		if (payload is null) return;
-		await _init(navState: TfAuthLayout.GetState().NavigationState, identity: payload.DataIdentity);
+		if(payload.DataIdentity.DataIdentity != _identity?.DataIdentity) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
+			await _init(navState: TfAuthLayout.GetState().NavigationState, identity: payload.DataIdentity);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+
+
 	}		
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -85,6 +88,8 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IAsyn
 		{
 			TfService.DeleteDataIdentity(_identity.DataIdentity);
 			ToastService.ShowSuccess(LOC("Data identity removed"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfDataIdentityDeletedEventPayload(_identity));			
 		}
 		catch (Exception ex)
 		{

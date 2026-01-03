@@ -4,7 +4,7 @@ public partial class TucDataIdentityManageDialog : TfFormBaseComponent, IDialogC
 	[Parameter] public TfDataIdentity? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
-	private string _error = string.Empty;
+	private readonly string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
@@ -15,9 +15,9 @@ public partial class TucDataIdentityManageDialog : TfFormBaseComponent, IDialogC
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		base.InitForm(_form);
+		InitForm(_form);
 		if (Content is null) throw new Exception("Content is null");
-		if (Content.DataIdentity is null) _isCreate = true;
+		if (String.IsNullOrWhiteSpace(Content.DataIdentity)) _isCreate = true;
 		_title = _isCreate ? LOC("Create Identity") : LOC("Manage Identity");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
@@ -26,11 +26,11 @@ public partial class TucDataIdentityManageDialog : TfFormBaseComponent, IDialogC
 		{
 			_form = new TfDataIdentity()
 			{
-				DataIdentity = Content.DataIdentity ?? String.Empty,
+				DataIdentity = Content.DataIdentity,
 				Label = Content.Label
 			};
 		}
-		base.InitForm(_form);
+		InitForm(_form);
 	}
 
 	private async Task _save()
@@ -47,17 +47,21 @@ public partial class TucDataIdentityManageDialog : TfFormBaseComponent, IDialogC
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new TfDataIdentity();
+			TfDataIdentity result;
 
 			if (_isCreate)
 			{
 				result = TfService.CreateDataIdentity(_form);
 				ToastService.ShowSuccess(LOC("Data identity created"));
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfDataIdentityCreatedEventPayload(result));
 			}
 			else
 			{
 				result = TfService.UpdateDataIdentity(_form);
 				ToastService.ShowSuccess(LOC("Data identity updated"));
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfDataIdentityUpdatedEventPayload(result));				
 			}
 
 			await Dialog.CloseAsync(result);

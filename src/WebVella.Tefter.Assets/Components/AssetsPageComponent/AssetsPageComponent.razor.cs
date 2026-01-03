@@ -3,7 +3,6 @@
 public partial class AssetsPageComponent : TfBaseComponent, IAsyncDisposable
 {
     [Inject] protected IAssetsService AssetsService { get; set; } = null!;
-    [Inject] protected ITfEventBus TfEventBus { get; set; } = null!;  
     [Parameter] public Guid SpacePageId { get; set; }
 
     private AssetsSpacePageComponentOptions _options = new();

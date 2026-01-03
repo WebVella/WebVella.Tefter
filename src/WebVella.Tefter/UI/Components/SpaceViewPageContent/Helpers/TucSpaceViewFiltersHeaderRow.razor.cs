@@ -1,10 +1,7 @@
-﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	[Parameter] public List<TfDataProvider> AllDataProviders { get; set; } = new();
 	[Parameter] public List<TfSharedColumn> AllSharedColumns { get; set; } = new();
 	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
@@ -22,9 +19,10 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 	private readonly Dictionary<string, TfFilterBase> _popoverBaseFilterDict = new();
 	private Guid? _openedFilterId = null;
 	private bool _hasPinnedData = false;
-	
+
 	private IAsyncDisposable _spaceViewColumnUpdatedEventSubscriber = null!;
 	private IAsyncDisposable _spaceViewUpdatedEventSubscriber = null!;
+
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
@@ -45,7 +43,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 					handler: On_SpaceViewColumnUpdatedEventAsync);
 			_spaceViewUpdatedEventSubscriber =
 				await TfEventBus.SubscribeAsync<TfSpaceViewUpdatedEventPayload>(
-					handler: On_SpaceViewUpdatedEventAsync);			
+					handler: On_SpaceViewUpdatedEventAsync);
 		}
 	}
 
@@ -53,7 +51,8 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 	{
 		string? pinnedDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName);
 		string? pinnedDataIdentityValue = Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName);
-		_hasPinnedData = !String.IsNullOrWhiteSpace(pinnedDataIdentity) && !String.IsNullOrWhiteSpace(pinnedDataIdentityValue);
+		_hasPinnedData = !String.IsNullOrWhiteSpace(pinnedDataIdentity) &&
+		                 !String.IsNullOrWhiteSpace(pinnedDataIdentityValue);
 
 		_typeDict = SpaceViewColumns.ToQueryNameTypeDictionary(dataProviders: AllDataProviders,
 			sharedColumns: AllSharedColumns);
@@ -145,22 +144,12 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 
 	private async Task On_SpaceViewColumnUpdatedEventAsync(string? key, TfSpaceViewColumnUpdatedEventPayload? payload)
 	{
-		try
-		{
-			Console.WriteLine("TucSpaceViewFiltersHeaderRow 1");
-			await InvokeAsync(StateHasChanged);
-			_init();
-			await InvokeAsync(StateHasChanged);
-			Console.WriteLine("TucSpaceViewFiltersHeaderRow 2");
-		}
-		catch (Exception e)
-		{
-			
-		}
+		_init();
+		await InvokeAsync(StateHasChanged);
 	}
 
 
-	private async Task _valueChanged(string queryName, object? valueObj, 
+	private async Task _valueChanged(string queryName, object? valueObj,
 		bool processMethod = false, object? methodObj = null)
 	{
 		var updateObj = _filters.FirstOrDefault(x => x.QueryName == queryName);
@@ -180,6 +169,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 				if (methodObj is not null) value = (int)methodObj;
 				updateObj.Method = value;
 			}
+
 			{
 				var value = (Option<string>?)valueObj;
 				baseFilter.ValueOptionChanged(value);
@@ -196,6 +186,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 				if (methodObj is not null) value = (int)methodObj;
 				updateObj.Method = value;
 			}
+
 			{
 				baseFilter.ValueStringChanged(((string?)valueObj)?.Trim());
 				updateObj.Value = baseFilter.Value;
@@ -210,6 +201,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 				if (methodObj is not null) value = (int)methodObj;
 				updateObj.Method = value;
 			}
+
 			{
 				var value = (string?)valueObj;
 				if (!String.IsNullOrWhiteSpace(value) && !Guid.TryParse(value, out Guid _))
@@ -229,6 +221,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 				if (methodObj is not null) value = (int)methodObj;
 				updateObj.Method = value;
 			}
+
 			{
 				baseFilter.ValueChanged((decimal?)(long?)valueObj);
 				updateObj.Value = baseFilter.Value;
@@ -243,6 +236,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 				if (methodObj is not null) value = (int)methodObj;
 				updateObj.Method = value;
 			}
+
 			{
 				baseFilter.ValueChanged((decimal?)valueObj);
 				updateObj.Value = baseFilter.Value;
@@ -258,6 +252,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 				if (methodObj is not null) value = (int)methodObj;
 				updateObj.Method = value;
 			}
+
 			{
 				baseFilter.ValueChanged(((string?)valueObj)?.Trim());
 				updateObj.Value = baseFilter.Value;
@@ -266,20 +261,21 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 		else throw new Exception("Unsupported TucFilterBase in _valueChanged");
 
 
-		await TucSpaceViewPageContent.OnFilter(_filters.Where(x => !String.IsNullOrWhiteSpace(x.Value) || x.Method != 0).ToList());
+		await TucSpaceViewPageContent.OnFilter(_filters.Where(x => !String.IsNullOrWhiteSpace(x.Value) || x.Method != 0)
+			.ToList());
 	}
 
 	private void _popoverOpenChanged(bool opened, TfSpaceViewColumn column)
 	{
 		_openedFilterId = opened ? column.Id : null;
-		if(!opened)
+		if (!opened)
 			_resetColumnPopover(column.QueryName);
 	}
 
 	private async Task _popoverSubmit(TfSpaceViewColumn column)
 	{
 		var popoverQueryFilter = _popoverQueryFilterDict[column.QueryName];
-		await _valueChanged(column.QueryName, popoverQueryFilter.Value,true,popoverQueryFilter.Method);
+		await _valueChanged(column.QueryName, popoverQueryFilter.Value, true, popoverQueryFilter.Method);
 		_openedFilterId = null;
 	}
 

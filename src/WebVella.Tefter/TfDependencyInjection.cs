@@ -1,7 +1,4 @@
-﻿using ITfEventBus = WebVella.Tefter.Messaging.ITfEventBus;
-using TfEventBus = WebVella.Tefter.Messaging.TfEventBus;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public static class TfDependencyInjection
 {
@@ -58,11 +55,11 @@ public static class TfDependencyInjection
 		});
 
 		//messaging
-		services.AddSingleton<WebVella.Tefter.UI.EventsBus.ITfEventBus, WebVella.Tefter.UI.EventsBus.TfEventBus>();
-		services.AddSingleton<ITfChannelEventRouter, TfChannelEventRouter>();
-		services.AddTransient<ITfEventBus, TfEventBus>();
-		services.AddTransient<TfUserEventProvider, TfUserEventProvider>();
-		services.AddTransient<TfGlobalEventProvider, TfGlobalEventProvider>();
+		services.AddSingleton<ITfEventBus, TfEventBus>();
+		// services.AddSingleton<ITfChannelEventRouter, TfChannelEventRouter>();
+		// services.AddTransient<ITfEventBus, TfEventBus>();
+		// services.AddTransient<TfUserEventProvider, TfUserEventProvider>();
+		// services.AddTransient<TfGlobalEventProvider, TfGlobalEventProvider>();
 
 		services.AddSingleton<ITfCryptoService, TfCryptoService>();
 		services.AddSingleton<ITfCryptoServiceConfiguration, TfCryptoServiceConfiguration>();

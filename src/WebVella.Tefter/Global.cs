@@ -45,7 +45,6 @@ global using WebVella.Tefter.Jobs;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Database.Dbo;
 global using WebVella.Tefter.Authentication;
-global using WebVella.Tefter.Messaging;
 global using WebVella.Tefter.UI.EventsBus;
 global using WebVella.Tefter.Migrations;
 global using WebVella.Tefter.Addons;

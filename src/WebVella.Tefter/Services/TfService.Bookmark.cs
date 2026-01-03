@@ -121,9 +121,6 @@ public partial class TfService
 
 				scope.Complete();
 				bookmark = GetBookmark(bookmark.Id)!;
-				_eventBus.Publish(
-					key: bookmark.UserId,
-					payload: new TfBookmarkCreatedEventPayload(bookmark));
 				return bookmark;
 			}
 		}
@@ -177,9 +174,6 @@ public partial class TfService
 
 				scope.Complete();
 				bookmark = GetBookmark(bookmark.Id)!;
-				_eventBus.Publish(
-					key: bookmark.UserId,
-					payload: new TfBookmarkCreatedEventPayload(bookmark));				
 				return bookmark;
 			}
 		}
@@ -213,9 +207,6 @@ public partial class TfService
 				scope.Complete();
 
 				bookmark = GetBookmark(bookmark.Id)!;
-				_eventBus.Publish(
-					key: bookmark.UserId,
-					payload: new TfBookmarkUpdatedEventPayload(bookmark));				
 				return bookmark;
 			}
 		}
@@ -263,10 +254,6 @@ public partial class TfService
 
 
 				scope.Complete();
-				
-				_eventBus.Publish(
-					key: existingBookmark.UserId,
-					payload: new TfBookmarkDeletedEventPayload(existingBookmark));				
 			}
 		}
 		catch (Exception ex)

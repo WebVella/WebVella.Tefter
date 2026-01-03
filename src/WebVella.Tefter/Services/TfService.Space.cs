@@ -229,11 +229,7 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 				
-				var result = GetSpace(space.Id);
-				_eventBus.Publish(
-					key: null,
-					payload: new TfSpaceCreatedEventPayload(result));					
-				return result;
+				return GetSpace(space.Id)!;
 			}
 		}
 		catch (Exception ex)
@@ -294,12 +290,7 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 				
-				var result = GetSpace(space.Id);
-				_eventBus.Publish(
-					key: null,
-					payload: new TfSpaceUpdatedEventPayload(result));	
-				
-				return result;
+				return GetSpace(space.Id)!;
 			}
 		}
 		catch (Exception ex)
@@ -346,11 +337,6 @@ public partial class TfService : ITfService
 				}
 
 				scope.Complete();
-				
-				var result = GetSpace(id);
-				_eventBus.Publish(
-					key: null,
-					payload: new TfSpaceUpdatedEventPayload(result));	
 			}
 		}
 		catch (Exception ex)
@@ -398,11 +384,6 @@ public partial class TfService : ITfService
 				}
 
 				scope.Complete();
-				
-				var result = GetSpace(id);
-				_eventBus.Publish(
-					key: null,
-					payload: new TfSpaceUpdatedEventPayload(result));	
 			}
 		}
 		catch (Exception ex)
@@ -466,9 +447,7 @@ public partial class TfService : ITfService
 				}
 
 				scope.Complete();
-				_eventBus.Publish(
-					key: null,
-					payload: new TfSpaceDeletedEventPayload(space));					
+			
 			}
 		}
 		catch (Exception ex)
@@ -484,11 +463,7 @@ public partial class TfService : ITfService
 		if (space is null)
 			throw new Exception("Space not found");
 		space.IsPrivate = isPrivate;
-		var result = UpdateSpace(space);
-		_eventBus.Publish(
-			key: null,
-			payload: new TfSpaceUpdatedEventPayload(result));	
-		return result;
+		return UpdateSpace(space);
 	}	
 
 	public void AddSpacesRole(

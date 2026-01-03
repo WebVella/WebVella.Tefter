@@ -71,7 +71,7 @@ public partial interface ITfService
 		Guid id);
 
 	/// <summary>
-	/// Gets the total number of rows in the data provider table for the specified data provider Id.
+	/// Gets the total number of rows in the data provider table for the specified data provider id.
 	/// </summary>
 	/// <param name="dataProviderId">The unique identifier of the data provider.</param>
 	/// <returns>The total number of rows in the data provider table.</returns>
@@ -229,7 +229,8 @@ public partial class TfService : ITfService
 
 			var providerTypes = _metaService.GetDataProviderTypes();
 
-			var providersDbo = _dboManager.GetList<TfDataProviderDbo>();
+			var providersDbo = _dboManager.GetList<TfDataProviderDbo>(
+				order:new TfOrderSettings(nameof(TfDataProviderDbo.Index),OrderDirection.ASC));
 
 			foreach (var dbo in providersDbo)
 			{
@@ -329,7 +330,7 @@ public partial class TfService : ITfService
 			{
 				var providerIndex = createModel.Index;
 
-				//find lowest available index
+				//find the lowest available index
 				if (createModel.Index == -1)
 				{
 					var existingProviderIndexes = GetDataProviders()
@@ -460,9 +461,6 @@ public partial class TfService : ITfService
 
 
 				scope.Complete();
-				_eventBus.Publish(
-					key: null,
-					payload: new TfDataProviderCreatedEventPayload(provider));	
 				return provider;
 			}
 		}
@@ -503,12 +501,7 @@ public partial class TfService : ITfService
 			if (!success)
 				throw new TfDboServiceException("Update<TfDataProviderDbo> failed.");
 
-			var result = GetDataProvider(updateModel.Id);
-			_eventBus.Publish(
-				key: null,
-				payload: new TfDataProviderUpdatedEventPayload(result));				
-
-			return result;
+			return GetDataProvider(updateModel.Id)!;
 		}
 		catch (Exception ex)
 		{
@@ -569,9 +562,6 @@ public partial class TfService : ITfService
 
 				_dbManager.SaveChanges(dbBuilder);
 				scope.Complete();
-				_eventBus.Publish(
-					key: null,
-					payload: new TfDataProviderDeletedEventPayload(provider));					
 			}
 		}
 		catch (Exception ex)

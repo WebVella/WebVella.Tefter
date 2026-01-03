@@ -16,7 +16,7 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 	private TfUpsertDataProviderColumn _form = new();
 	private Dictionary<TfDatabaseColumnType, List<string>> _providerColumnTypeToSourceTypes = new();
 	private List<DatabaseColumnTypeInfo> _providerColumnTypeOptions = new();
-	private List<TfDataProviderColumnSearchType> _searchTypes = new();
+	private readonly List<TfDataProviderColumnSearchType> _searchTypes = new();
 	
 	private TfDataProviderColumnDataInputType _inputType = TfDataProviderColumnDataInputType.LocalInput;
 
@@ -197,11 +197,13 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 			{
 				_provider = TfService.CreateDataProviderColumn(submit);
 				ToastService.ShowSuccess(LOC("Data provider column was created successfully"));
+				await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId(),new TfDataProviderUpdatedEventPayload(_provider));		
 			}
 			else
 			{
 				_provider = TfService.UpdateDataProviderColumn(submit);
 				ToastService.ShowSuccess(LOC("Data provider column was updated successfully"));
+				await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId(),new TfDataProviderUpdatedEventPayload(_provider));		
 			}
 
 			if (

@@ -5,7 +5,7 @@ public partial interface ITfService
 	public Task<TfAdminDashboardData> GetAdminDashboardData();
 }
 
-public partial class TfService : ITfService
+public partial class TfService
 {
 	public Task<TfAdminDashboardData> GetAdminDashboardData()
 	{

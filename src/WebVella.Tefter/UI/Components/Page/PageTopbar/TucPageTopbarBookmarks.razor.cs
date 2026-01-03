@@ -1,11 +1,7 @@
-﻿using ITfEventBus = WebVella.Tefter.UI.EventsBus.ITfEventBus;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 
 public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
-
 	private List<TfBookmark> _allUserBookmarks = new();
 
 	private TfBookmark? _activePin = null;
@@ -31,7 +27,7 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_bookmarkEventSubscriber = await TfEventBus.SubscribeAsync<TfBookmarkEventPayload>(
 			handler:On_BookmarkEventAsync, 
-			key:TfAuthLayout.GetState().User.Id);
+			matchKey: (key) => key == TfAuthLayout.GetUserId().ToString());
 	}
 
 	#endregion
@@ -75,10 +71,10 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 
 	#region << Pin >>
 
-	private Task _onPinClick()
+	private async Task _onPinClick()
 	{
 		var state = TfAuthLayout.GetState();
-		if (state.SpacePage is null) return Task.CompletedTask;
+		if (state.SpacePage is null) return;
 
 		try
 		{
@@ -93,21 +89,25 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 					Description = state.SpacePage.Description ?? String.Empty,
 					Type = TfBookmarkType.Page
 				};
-				TfService.CreateBookmark(bookmark);
+				var result = TfService.CreateBookmark(bookmark);
 				ToastService.ShowSuccess(LOC("Page Pinned"));
+				await TfEventBus.PublishAsync(
+					key: TfAuthLayout.GetUserId(),
+					payload: new TfBookmarkCreatedEventPayload(result));				
 			}
 			else
 			{
 				TfService.DeleteBookmark(_activePin.Id);
 				ToastService.ShowSuccess(LOC("Page unpinned"));
+				await TfEventBus.PublishAsync(
+					key: TfAuthLayout.GetUserId(),
+					payload: new TfBookmarkDeletedEventPayload(_activePin!));						
 			}
 		}
 		catch (Exception ex)
 		{
 			ProcessException(ex);
 		}
-
-		return Task.CompletedTask;
 	}
 
 	#endregion
@@ -134,8 +134,11 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 					Url = new Uri(Navigator.Uri).PathAndQuery,
 					Type = TfBookmarkType.URL
 				};
-				TfService.CreateBookmark(bookmark);
+				var result = TfService.CreateBookmark(bookmark);
 				ToastService.ShowSuccess(LOC("URL Saved"));
+				await TfEventBus.PublishAsync(
+					key: TfAuthLayout.GetUserId(),
+					payload: new TfBookmarkCreatedEventPayload(result));				
 				await Navigator.ApplyChangeToUrlQuery(TfConstants.ActiveSaveQueryName, bookmark.Id);
 			}
 			catch (Exception ex)
@@ -172,8 +175,11 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 		try
 		{
 			var submit = _activeBookmark with { Url = new Uri(Navigator.Uri).PathAndQuery };
-			TfService.UpdateBookmark(submit);
+			var result = TfService.UpdateBookmark(submit);
 			ToastService.ShowSuccess(LOC("URL updated"));
+			await TfEventBus.PublishAsync(
+				key: TfAuthLayout.GetUserId(),
+				payload: new TfBookmarkUpdatedEventPayload(result));					
 		}
 		catch (Exception ex)
 		{
@@ -193,6 +199,9 @@ public partial class TucPageTopbarBookmarks : TfBaseComponent, IAsyncDisposable
 				return;
 
 			TfService.DeleteBookmark(_activeBookmark.Id);
+			await TfEventBus.PublishAsync(
+				key: TfAuthLayout.GetUserId(),
+				payload: new TfBookmarkDeletedEventPayload(_activeBookmark!));				
 			ToastService.ShowSuccess(LOC("Save URL removed"));
 			await Navigator.ApplyChangeToUrlQuery(TfConstants.ActiveSaveQueryName, null);
 		}

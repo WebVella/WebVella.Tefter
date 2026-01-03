@@ -20,6 +20,7 @@ global using WebVella.Tefter.Talk.Components;
 global using WebVella.Tefter.Talk.Addons;
 global using WebVella.Tefter.Talk.Models;
 global using WebVella.Tefter.Talk.Services;
+global using WebVella.Tefter.UI.EventsBus;
 
 global using FluentValidation;
 global using FluentValidation.Results;

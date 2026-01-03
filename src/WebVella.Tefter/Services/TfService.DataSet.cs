@@ -192,10 +192,6 @@ public partial class TfService : ITfService
 
 				var result = GetDataset(newDataset.Id) ??
 				             throw new Exception($"GetDataset failed for id: {newDataset.Id}");
-				_eventBus.Publish(
-					key: null,
-					payload: new TfDatasetCreatedEventPayload(result));	
-
 				return result;
 			}
 		}
@@ -237,10 +233,6 @@ public partial class TfService : ITfService
 				scope.Complete();
 				var result = GetDataset(dbo.Id) ??
 				             throw new Exception($"UpdateDataset failed for id: {updateDataset.Id}");
-				_eventBus.Publish(
-					key: null,
-					payload: new TfDatasetUpdatedEventPayload(result));					
-
 				return result;
 			}
 		}
@@ -283,9 +275,6 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfDatasetDbo> failed.");
 
 				scope.Complete();
-				_eventBus.Publish(
-					key: null,
-					payload: new TfDatasetDeletedEventPayload(dataset));
 			}
 		}
 		catch (Exception ex)
@@ -335,9 +324,6 @@ public partial class TfService : ITfService
 				scope.Complete();
 
 				var result = GetDataset(dataset.Id) ?? throw new Exception($"CopyDataset failed for id: {originalId}");
-				_eventBus.Publish(
-					key: null,
-					payload: new TfDatasetCreatedEventPayload(result));	
 				return result;
 			}
 		}

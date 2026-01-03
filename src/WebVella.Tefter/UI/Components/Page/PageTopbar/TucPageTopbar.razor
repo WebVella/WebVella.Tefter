@@ -8,25 +8,26 @@
         <TucPageTopbarBreadcrumb />
     </div>
     <div class="tf-page-topbar__right">
-        <TucPageTopbarBookmarks />
-        <TucNotificationCenter />
+        <TucPageTopbarScreenAlert/>
+        <TucPageTopbarBookmarks/>
+        <TucNotificationCenter/>
         <TucAnchor Href="#" OnClick="() => _userMenuVisible = !_userMenuVisible"
                    Id="user-menu-toggle" Appearance="@Appearance.Outline">
-            <TucAvatar User="state.User" UseUserColor="false" />
+            <TucAvatar User="state.User" UseUserColor="false"/>
         </TucAnchor>
         <FluentMenu Width="200px" @bind-Open="_userMenuVisible" Anchor="user-menu-toggle" UseMenuService="true" Class="tf-override">
             <FluentMenuItem Disabled="true">
                 @state.User.FirstName @state.User.LastName
-                <span slot="start"><FluentIcon Value="@TfConstants.GetIcon("Person")!.WithColor(Color.Neutral)" Slot="start" /></span>
+                <span slot="start"><FluentIcon Value="@TfConstants.GetIcon("Person")!.WithColor(Color.Neutral)" Slot="start"/></span>
             </FluentMenuItem>
-            <FluentDivider Style="margin-top:10px" />
+            <FluentDivider Style="margin-top:10px"/>
             <FluentMenuItem OnClick="_visualPreferencesHandler">
                 @LOC("Followed Tags")
-                <span slot="start"><FluentIcon Value="@(new CustomIcons.HashTag())" Slot="start" /></span>
+                <span slot="start"><FluentIcon Value="@(new CustomIcons.HashTag())" Slot="start"/></span>
             </FluentMenuItem>
             <FluentMenuItem OnClick="_visualPreferencesHandler">
                 @LOC("Visual Preferences")
-                <span slot="start"><FluentIcon Value="@TfConstants.GetIcon("Color")" Slot="start" /></span>
+                <span slot="start"><FluentIcon Value="@TfConstants.GetIcon("Color")" Slot="start"/></span>
             </FluentMenuItem>
 
             @* @if (_isSetAsStartupUri()) *@
@@ -53,7 +54,7 @@
                 @LOC("Logout")
                 <span slot="start">
                     <FluentIcon Value="@TfConstants.GetIcon("SignOut")"
-                                Slot="start" />
+                                Slot="start"/>
                 </span>
             </FluentMenuItem>
         </FluentMenu>
