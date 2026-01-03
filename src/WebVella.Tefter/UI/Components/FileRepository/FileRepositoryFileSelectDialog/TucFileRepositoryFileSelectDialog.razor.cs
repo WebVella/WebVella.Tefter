@@ -67,6 +67,8 @@ public partial class TucFileRepositoryFileSelectDialog : TfBaseComponent, IDialo
 				});
 				await Dialog.CloseAsync(result.Uri.ToString());
 				ToastService.ShowSuccess(LOC("File uploaded successfully!"));
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfRepositoryFileCreatedEventPayload(result));	
 
 				progressPercent = 0;
 			}

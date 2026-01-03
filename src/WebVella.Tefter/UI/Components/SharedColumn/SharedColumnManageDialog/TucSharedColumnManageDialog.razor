@@ -29,7 +29,7 @@
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<TucSelect SelectedOption="@_selectedColumnType"
-					           SelectedOptionChanged="((x) => _selectedColumnType = x)"					           
+					           SelectedOptionChanged="((x) => _selectedColumnType = x!)"					           
 							   TOption="DatabaseColumnTypeInfo"
 							   Items="@_columnTypeOptions" Style="width:100%"
 							   OptionValue="@(p => ((int)p.Type).ToString())"
@@ -48,7 +48,7 @@
 									   Items="_allDataIdentities"
 									   Height="@TfConstants.ComboPanelHeight"
 									   SelectedOption="@_form.DataIdentity"
-									   SelectedOptionChanged="((x) => _form.DataIdentity = x)"									   
+									   SelectedOptionChanged="((x) => _form.DataIdentity = x!)"									   
 									   Placeholder="@LOC("select or add...")"
 									Disabled="!_isCreate" Style="flex:1 1 auto" />
 						}
@@ -57,7 +57,7 @@
 							<FluentTextField Placeholder="@LOC("no identities yet")" Disabled="true" Style="flex:1 1 auto" />
 						
 						}
-						<FluentButton Title="@LOC("Create a new data identity")" OnClick="addDataIdentity"
+						<FluentButton Title="@LOC("Create a new data identity")" OnClick="_addDataIdentity"
 									  Appearance="@Appearance.Outline">
 							<FluentIcon Value="@TfConstants.GetIcon("Add")" />
 						</FluentButton>

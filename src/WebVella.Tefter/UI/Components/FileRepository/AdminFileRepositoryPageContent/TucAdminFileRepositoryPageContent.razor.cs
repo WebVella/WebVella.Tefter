@@ -25,7 +25,8 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IAsync
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_repositoryFileEventSubscriber = await TfEventBus.SubscribeAsync<TfRepositoryFileEventPayload>(
-			handler: On_RepositoryFileEventAsync);
+			handler: On_RepositoryFileEventAsync,
+			matchKey: (_) => true);
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -46,7 +47,14 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IAsync
 	}
 
 	private async Task On_RepositoryFileEventAsync(string? key, TfRepositoryFileEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
+	{
+		if(payload is null) return;
+		if(key == TfAuthLayout.GetSessionId().ToString())
+			await _init(TfAuthLayout.GetState().NavigationState);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}		
+
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -127,6 +135,8 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IAsync
 		{
 			TfService.DeleteRepositoryFile(file.Filename);
 			ToastService.ShowSuccess(LOC("The file was successfully deleted!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfRepositoryFileDeletedEventPayload(file));				
 		}
 		catch (Exception ex)
 		{

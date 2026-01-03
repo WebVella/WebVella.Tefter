@@ -19,11 +19,19 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposa
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_spacePageEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageEventPayload>(
-			handler: On_SpacePageEventAsync);
+			handler: On_SpacePageEventAsync,
+			matchKey: (_) => true);
 	}
 
 	private async Task On_SpacePageEventAsync(string? key, TfSpacePageEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
+	{
+		if(payload is null) return;
+		if(payload.SpacePage.SpaceId != _space?.Id) return;
+		if(key == TfAuthLayout.GetSessionId().ToString())
+			await _init(TfAuthLayout.GetState().NavigationState);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}	
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -82,6 +90,8 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposa
 		{
 			TfService.DeleteSpacePage(node.Id);
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpacePageDeletedEventPayload(node));					
 		}
 		catch (Exception ex)
 		{
@@ -104,8 +114,9 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposa
 		try
 		{
 			TfService.MoveSpacePage(args.Item1.Id, args.Item2);
-
 			ToastService.ShowSuccess(LOC("Space page updated!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpacePageUpdatedEventPayload(args.Item1));				
 		}
 		catch (Exception ex)
 		{
@@ -127,9 +138,11 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposa
 
 		try
 		{
-			TfService.CopySpacePage(nodeId);
-
+			var (pageId,pages) = TfService.CopySpacePage(nodeId);
+			var page = pages.Single(x=> x.Id == pageId);
 			ToastService.ShowSuccess(LOC("Space page updated!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpacePageCreatedEventPayload(page));					
 		}
 		catch (Exception ex)
 		{

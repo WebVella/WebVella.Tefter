@@ -103,10 +103,12 @@ public partial class TucPageTopbar : TfBaseComponent, IAsyncDisposable
 			if (TfAuthLayout.GetState().User.Settings.ThemeMode == DesignThemeModes.Light)
 				newMode = DesignThemeModes.Dark;
 
-			_ = await TfService.SetUserTheme(
+			var user = await TfService.SetUserTheme(
 				userId: TfAuthLayout.GetState().User.Id,
 				themeMode: newMode
 			);
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfUserUpdatedEventPayload(user));					
 		}
 		catch (Exception ex)
 		{

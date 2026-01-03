@@ -15,7 +15,8 @@ public partial class TucAdminRolesPageContent :TfBaseComponent,IAsyncDisposable
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_roleEventSubscriber = await TfEventBus.SubscribeAsync<TfRoleEventPayload>(
-			handler: On_RoleEventAsync);		
+			handler: On_RoleEventAsync,
+			matchKey: (_) => true);		
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -29,7 +30,14 @@ public partial class TucAdminRolesPageContent :TfBaseComponent,IAsyncDisposable
 		});
 	}
 	private async Task On_RoleEventAsync(string? key, TfRoleEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
+	{
+		if(payload is null) return;
+		if(key == TfAuthLayout.GetSessionId().ToString())
+			await _init(TfAuthLayout.GetState().NavigationState);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}	
+
 	private async Task _init(TfNavigationState navState)
 	{
 		try

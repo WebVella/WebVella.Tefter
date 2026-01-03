@@ -71,30 +71,29 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 				handler: On_BookmarkEventAsync,
 				matchKey: (key) => key == GetUserId().ToString());
 			_spaceUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceUpdatedEventPayload>(
-				handler: On_SpaceUpdatedEventAsync);
+				handler: On_SpaceUpdatedEventAsync,
+				matchKey: (_) => true);
 			_userUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfUserUpdatedEventPayload>(
-				handler: On_UserUpdatedEventAsync);
+				handler: On_UserUpdatedEventAsync,
+				matchKey: (_) => true);
 		}
 	}
 
 	private async Task On_UserUpdatedEventAsync(string? key, TfUserUpdatedEventPayload? payload)
 	{
-		if (payload is null) return;
-		if (payload.User.Id == _state.User.Id)
-		{
-			_currentUser = payload.User;
-			await _init(Navigator.Uri);
-			await InvokeAsync(StateHasChanged);
-		}
-	}
+		if(payload is null) return;
+		if(payload.User.Id != _state.User.Id) return;
+		_currentUser = payload.User;
+		await _init(Navigator.Uri);
+		await InvokeAsync(StateHasChanged);
+	}		
 
 	private async Task On_SpaceUpdatedEventAsync(string? key, TfSpaceUpdatedEventPayload? payload)
 	{
-		if (payload is not null && payload.Space.Id == _state.Space?.Id)
-		{
-			await _init(Navigator.Uri, payload.Space);
-			await InvokeAsync(StateHasChanged);
-		}
+		if(payload is null) return;
+		if(payload.Space.Id != _state.Space?.Id) return;
+		await _init(Navigator.Uri, payload.Space);
+		await InvokeAsync(StateHasChanged);
 	}
 
 	private Task On_BookmarkEventAsync(string? key, TfBookmarkEventPayload? payload)

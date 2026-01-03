@@ -48,8 +48,8 @@ public partial class TucSpacePageImportFromFilesDialog : TfBaseComponent,
 				));
 			}
 		}
-		await Dialog.CancelAsync();
 
+		await Dialog.CancelAsync();
 	}
 
 	private void _initMenu()
@@ -110,8 +110,10 @@ public partial class TucSpacePageImportFromFilesDialog : TfBaseComponent,
 		item.User = state.User;
 		item.Space = state.Space!;
 
-		await TfService.SpacePageCreateFromFileAsync(item);
-
+		var page = await TfService.SpacePageCreateFromFileAsync(item);
+		if (page is not null)
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpacePageCreatedEventPayload(page));
 		await InvokeAsync(StateHasChanged);
 		await Task.Delay(100);
 		var selectedIndex = _context.Items.FindIndex(x => x.LocalPath == _selectedItem.LocalPath);
@@ -128,7 +130,7 @@ public partial class TucSpacePageImportFromFilesDialog : TfBaseComponent,
 		}
 	}
 
-	private async Task _updateProgress(TfSpacePageCreateFromFileContextItem item, TfProgressStreamItem message)
+	private async Task _updateProgress(TfSpacePageCreateFromFileContextItem _, TfProgressStreamItem message)
 	{
 		_initMenu();
 		await InvokeAsync(StateHasChanged);
@@ -155,8 +157,8 @@ public partial class TucSpacePageImportFromFilesDialog : TfBaseComponent,
 
 	private record TucPageImportFromFilesDialogStats
 	{
-		public int ProcessedSuccess { get; set; } = 0;
-		public int ProcessedWarning { get; set; } = 0;
-		public int ProcessedError { get; set; } = 0;
+		public int ProcessedSuccess { get; init; } = 0;
+		public int ProcessedWarning { get; init; } = 0;
+		public int ProcessedError { get; init; } = 0;
 	}
 }

@@ -17,7 +17,8 @@ public partial class TucSpacePageManageTabContent : TfBaseComponent, IAsyncDispo
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_spacePageUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageUpdatedEventPayload>(
-			handler: On_SpacePageUpdatedEventAsync);
+			handler: On_SpacePageUpdatedEventAsync,
+			matchKey: (_) => true);
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -30,7 +31,14 @@ public partial class TucSpacePageManageTabContent : TfBaseComponent, IAsyncDispo
 	}
 
 	private async Task On_SpacePageUpdatedEventAsync(string? key, TfSpacePageUpdatedEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
+	{
+		if(payload is null) return;
+		if(payload.SpacePage.Id != _spacePage.Id) return;
+		if(key == TfAuthLayout.GetSessionId().ToString())
+			await _init(TfAuthLayout.GetState().NavigationState);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}		
 
 	private async Task _init(TfNavigationState navState)
 	{

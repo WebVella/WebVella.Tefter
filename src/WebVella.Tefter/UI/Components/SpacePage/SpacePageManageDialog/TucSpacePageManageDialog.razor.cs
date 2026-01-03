@@ -179,12 +179,16 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 				);
 				newPage = pageList.Single(x => x.Id == pageId); 
 				ToastService.ShowSuccess(LOC("Space page created!"));
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfSpacePageCreatedEventPayload(newPage));					
 			}
 			else
 			{
 				var pageList = TfService.UpdateSpacePage(spacePage:submit);
 				newPage = pageList.Single(x => x.Id == submit.Id); 
 				ToastService.ShowSuccess(LOC("Space page updated!"));
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfSpacePageUpdatedEventPayload(newPage));				
 			}
 
 			_parentNodeOptions = _getParents();

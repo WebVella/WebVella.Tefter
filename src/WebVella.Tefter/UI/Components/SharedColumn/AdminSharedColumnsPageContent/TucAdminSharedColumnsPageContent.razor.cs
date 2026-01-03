@@ -17,11 +17,18 @@ public partial class TucAdminSharedColumnsPageContent : TfBaseComponent, IAsyncD
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_sharedColumnEventSubscriber = await TfEventBus.SubscribeAsync<TfSharedColumnEventPayload>(
-			handler: On_SharedColumnEventAsync);
+			handler: On_SharedColumnEventAsync,
+			matchKey: (_) => true);
 	}
 
 	private async Task On_SharedColumnEventAsync(string? key, TfSharedColumnEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
+	{
+		if(payload is null) return;
+		if(key == TfAuthLayout.GetSessionId().ToString())
+			await _init(TfAuthLayout.GetState().NavigationState);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}		
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{

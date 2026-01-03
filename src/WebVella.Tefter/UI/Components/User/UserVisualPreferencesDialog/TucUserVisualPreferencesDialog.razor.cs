@@ -34,7 +34,8 @@ public partial class TucUserVisualPreferencesDialog : TfBaseComponent, IDialogCo
 
 			var result = await TfService.UpdateUserVisualPreferencesAsync(Content!.Id,_mode, _culture, _color ?? TfConstants.DefaultThemeColor);
 			ToastService.ShowSuccess(LOC("User account was successfully updated!"));
-
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfUserUpdatedEventPayload(result));	
 			await Dialog.CloseAsync(result);
 		}
 		catch (Exception ex)

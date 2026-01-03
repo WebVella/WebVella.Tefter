@@ -4,11 +4,11 @@ public partial class TucSpaceManageDialog : TfFormBaseComponent, IDialogContentC
 	[Parameter] public TfSpace? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
-	private string _error = string.Empty;
+	private readonly string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
-	private Icon _iconBtn;
+	private Icon _iconBtn = null!;
 	private bool _isCreate = false;
 	private TfSpace _form = new();
 	protected override async Task OnInitializedAsync()
@@ -36,7 +36,7 @@ public partial class TucSpaceManageDialog : TfFormBaseComponent, IDialogContentC
 				FluentIconName = Content.FluentIconName,
 			};
 		}
-		base.InitForm(_form);
+		InitForm(_form);
 	}
 	private async Task _save()
 	{
@@ -54,16 +54,20 @@ public partial class TucSpaceManageDialog : TfFormBaseComponent, IDialogContentC
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new TfSpace();
+			TfSpace result;
 			if (_isCreate)
 			{
 				result = TfService.CreateSpace(_form);
 				ToastService.ShowSuccess(LOC("Space created successfully!"));
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfSpaceCreatedEventPayload(result));					
 			}
 			else
 			{
 				result = TfService.UpdateSpace(_form);
 				ToastService.ShowSuccess(LOC("Space updated successfully!"));
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfSpaceUpdatedEventPayload(result));						
 			}
 
 			await Dialog.CloseAsync(result);

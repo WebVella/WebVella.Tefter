@@ -17,7 +17,8 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IAsyncDispo
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_spaceEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceEventPayload>(
-			handler: On_SpaceEventAsync);
+			handler: On_SpaceEventAsync,
+			matchKey: (_) => true);
 	}
 
 
@@ -31,8 +32,14 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IAsyncDispo
 	}
 
 	private async Task On_SpaceEventAsync(string? key, TfSpaceEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
-
+	{
+		if (payload is null) return;
+		if(payload.Space.Id != _space?.Id) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
+			await _init(TfAuthLayout.GetState().NavigationState);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -53,7 +60,7 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IAsyncDispo
 
 	private async Task _editSpace()
 	{
-		if(_space is null) return;
+		if (_space is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceManageDialog>(
 			_space,
 			new()
@@ -69,13 +76,15 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IAsyncDispo
 
 	private async Task _deleteSpace()
 	{
-		if(_space is null) return;
+		if (_space is null) return;
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this space deleted?")))
 			return;
 		try
 		{
 			TfService.DeleteSpace(_space.Id);
 			ToastService.ShowSuccess(LOC("Space deleted"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceDeletedEventPayload(_space));					
 			Navigator.NavigateTo(TfConstants.HomePageUrl);
 		}
 		catch (Exception ex)

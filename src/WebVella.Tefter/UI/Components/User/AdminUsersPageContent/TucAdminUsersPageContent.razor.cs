@@ -17,11 +17,18 @@ public partial class TucAdminUsersPageContent : TfBaseComponent, IAsyncDisposabl
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_userEventSubscriber = await TfEventBus.SubscribeAsync<TfUserEventPayload>(
-			handler: On_UserEventAsync);
+			handler: On_UserEventAsync,
+			matchKey: (_) => true);
 	}
 
 	private async Task On_UserEventAsync(string? key, TfUserEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
+	{
+		if(payload is null) return;
+		if(key == TfAuthLayout.GetSessionId().ToString())
+			await _init(TfAuthLayout.GetState().NavigationState);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}		
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{

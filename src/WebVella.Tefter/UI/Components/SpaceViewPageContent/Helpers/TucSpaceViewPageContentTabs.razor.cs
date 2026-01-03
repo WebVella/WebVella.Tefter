@@ -36,7 +36,8 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 			Navigator.LocationChanged += On_NavigationStateChanged;
 			_spaceViewUpdatedEventSubscriber =
 				await TfEventBus.SubscribeAsync<TfSpaceViewUpdatedEventPayload>(
-					handler: On_SpaceViewUpdatedEventAsync);
+					handler: On_SpaceViewUpdatedEventAsync,
+					matchKey: (_) => true);
 		}
 	}
 
@@ -55,9 +56,15 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 	private async Task On_SpaceViewUpdatedEventAsync(string? key, TfSpaceViewUpdatedEventPayload? payload)
 	{
 		if(payload is null) return;
-		_init(newView: payload.SpaceView);
-		await InvokeAsync(StateHasChanged);		
-	}
+		if(key == TfAuthLayout.GetSessionId().ToString())
+		{
+			_init(newView: payload.SpaceView);
+			await InvokeAsync(StateHasChanged);		
+		}
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}		
+
 
 	private void _init(TfSpaceView? newView = null)
 	{

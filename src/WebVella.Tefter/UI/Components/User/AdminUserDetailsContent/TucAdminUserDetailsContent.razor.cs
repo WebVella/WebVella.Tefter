@@ -20,14 +20,19 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IAsyncDisposa
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_userUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfUserUpdatedEventPayload>(
-			handler: On_UserUpdatedEventAsync);
+			handler: On_UserUpdatedEventAsync,
+			matchKey: (_) => true);
 	}
 
 	private async Task On_UserUpdatedEventAsync(string? key, TfUserUpdatedEventPayload? payload)
 	{
 		if(payload is null) return;
-		await _init(navState: TfAuthLayout.GetState().NavigationState, user: payload.User);
-	}
+		if(payload.User.Id != _user?.Id) return;
+		if(key == TfAuthLayout.GetSessionId().ToString())
+			await _init(navState: TfAuthLayout.GetState().NavigationState, user: payload.User);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}	
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -90,6 +95,8 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IAsyncDisposa
 			_user = await TfService.AddUserToRoleAsync(userId: _user.Id, roleId: _selectedRole.Id);
 			_roleOptions = (await TfService.GetRolesAsync()).Where(x => _user.Roles.All(u => x.Id != u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User role added"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfUserUpdatedEventPayload(_user));				
 		}
 		catch (Exception ex)
 		{
@@ -115,6 +122,8 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IAsyncDisposa
 			_user = await TfService.RemoveUserFromRoleAsync(userId: _user.Id, roleId: role.Id);
 			_roleOptions = (await TfService.GetRolesAsync()).Where(x => _user.Roles.All(u => x.Id != u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User role removed"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfUserUpdatedEventPayload(_user));					
 		}
 		catch (Exception ex)
 		{

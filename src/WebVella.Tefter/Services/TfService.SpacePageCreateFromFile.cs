@@ -1,19 +1,14 @@
-﻿using Microsoft.FluentUI.AspNetCore.Components.DesignTokens;
-using Nito.AsyncEx.Synchronous;
-using WebVella.Tefter.Models;
-using JsonSerializer = System.Text.Json.JsonSerializer;
-
-namespace WebVella.Tefter.Services;
+﻿namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
-	Task SpacePageCreateFromFileAsync(
+	Task<TfSpacePage?> SpacePageCreateFromFileAsync(
 		TfSpacePageCreateFromFileContextItem item);
 }
 
 public partial class TfService
 {
-	public async Task SpacePageCreateFromFileAsync(
+	public async Task<TfSpacePage?> SpacePageCreateFromFileAsync(
 		TfSpacePageCreateFromFileContextItem item)
 	{
 		var dataProviderTypes = _metaService.GetDataProviderTypes();
@@ -73,7 +68,7 @@ public partial class TfService
 				Message = "No suitable Data Provider that can process the file was found!",
 				Type = TfProgressStreamItemType.Warning
 			});
-			return;
+			return null;
 		}
 
 		using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
@@ -92,7 +87,7 @@ public partial class TfService
 						if (i > 0)
 							checkedName = $"{checkedName}-{i}";
 
-						if (!dataProviders.Any(x => x.Name == checkedName))
+						if (dataProviders.All(x => x.Name != checkedName))
 						{
 							providerName = checkedName;
 							break;
@@ -112,7 +107,7 @@ public partial class TfService
 					ProviderType = item.ProcessContext.UsedDataProviderAddon!,
 					SettingsJson = item.ProcessContext.DataProviderCreationRequest.SettingsJson ?? "{}",
 					SynchPrimaryKeyColumns =
-						item.ProcessContext.DataProviderCreationRequest.SynchPrimaryKeyColumns ?? new(),
+						item.ProcessContext.DataProviderCreationRequest.SynchPrimaryKeyColumns,
 					SynchScheduleMinutes = item.ProcessContext.DataProviderCreationRequest.SynchScheduleMinutes,
 					SynchScheduleEnabled = false,
 					AutoInitialize = true,
@@ -146,7 +141,7 @@ public partial class TfService
 						Message = $"Page was not created, due to unknown error!",
 						Type = TfProgressStreamItemType.Error
 					});
-					return;
+					return null;
 				}
 				var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(item.ProcessContext.SpacePage.ComponentOptionsJson);
 				if (options is null || options.SpaceViewId is null)
@@ -156,7 +151,7 @@ public partial class TfService
 						Message = $"View was not created, due to unknown error!",
 						Type = TfProgressStreamItemType.Error
 					});
-					return;
+					return null;
 				}
 
 				item.ProcessContext.SpaceView = GetSpaceView(options.SpaceViewId.Value);
@@ -167,7 +162,7 @@ public partial class TfService
 						Message = $"View was not created, due to unknown error!",
 						Type = TfProgressStreamItemType.Error
 					});
-					return;
+					return null;
 				}
 				#endregion
 
@@ -262,8 +257,13 @@ public partial class TfService
 				{
 					DeleteRepositoryFile(fileName);
 				}
-				catch (Exception) { }
+				catch (Exception)
+				{
+					//ignore
+				}
 			}
 		}
+		
+		return item.ProcessContext.SpacePage;
 	}
 }

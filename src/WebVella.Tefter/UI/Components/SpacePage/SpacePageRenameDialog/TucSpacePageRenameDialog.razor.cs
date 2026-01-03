@@ -57,11 +57,13 @@ public partial class TucSpacePageRenameDialog : TfBaseComponent, IDialogContentC
 
 		try
 		{
-			TfService.RenameSpacePage(
+			var page = TfService.RenameSpacePage(
 				pageId: Content!.Id,
 				name: _name
 			);
-
+			ToastService.ShowSuccess(LOC("Page Renamed"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpacePageUpdatedEventPayload(page));	
 			await Dialog.CloseAsync();
 		}
 		catch (Exception ex)

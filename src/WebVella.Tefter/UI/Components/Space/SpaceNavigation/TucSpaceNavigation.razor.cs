@@ -8,6 +8,7 @@ public partial class TucSpaceNavigation : TfBaseComponent, IAsyncDisposable
 	private readonly int _throttleMs = 500;
 	private IAsyncDisposable _spaceUpdatedEventSubscriber = null!;
 	private IAsyncDisposable _spacePageEventSubscriber = null!;
+
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
@@ -21,9 +22,11 @@ public partial class TucSpaceNavigation : TfBaseComponent, IAsyncDisposable
 		_initMenu();
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_spacePageEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageEventPayload>(
-			handler: On_SpacePageEventAsync);
+			handler: On_SpacePageEventAsync,
+			matchKey: (_) => true);
 		_spaceUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceUpdatedEventPayload>(
-			handler:On_SpaceUpdatedEventAsync);		
+			handler: On_SpaceUpdatedEventAsync,
+			matchKey: (_) => true);
 		EnableRenderLock();
 		_cancellationTokenSource = new();
 	}
@@ -38,19 +41,32 @@ public partial class TucSpaceNavigation : TfBaseComponent, IAsyncDisposable
 
 	private async Task On_SpaceUpdatedEventAsync(string? key, TfSpaceUpdatedEventPayload? payload)
 	{
-		_menu = TfService.GetAppState(Navigator, TfAuthLayout.GetState().User, Navigator.Uri).Menu;
-		_initMenu();
-		RegenRenderLock();
-		await InvokeAsync(StateHasChanged);		
+		if (payload is null) return;
+		if (payload.Space.Id != TfAuthLayout.GetState().NavigationState.SpaceId) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
+		{
+			_menu = TfService.GetAppState(Navigator, TfAuthLayout.GetState().User, Navigator.Uri).Menu;
+			_initMenu();
+			RegenRenderLock();
+			await InvokeAsync(StateHasChanged);
+		}
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
 	}
 
 	private async Task On_SpacePageEventAsync(string? key, TfSpacePageEventPayload? payload)
 	{
-		_menu = TfService.GetAppState(Navigator, TfAuthLayout.GetState().User, Navigator.Uri).Menu;
-		_initMenu();
-		RegenRenderLock();
-		await InvokeAsync(StateHasChanged);		
-		
+		if (payload is null) return;
+		if (payload.SpacePage.Id != TfAuthLayout.GetState().NavigationState.SpacePageId) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
+		{
+			_menu = TfService.GetAppState(Navigator, TfAuthLayout.GetState().User, Navigator.Uri).Menu;
+			_initMenu();
+			RegenRenderLock();
+			await InvokeAsync(StateHasChanged);
+		}
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
 	}
 
 	private async Task _onDragOver()
@@ -124,7 +140,7 @@ public partial class TucSpaceNavigation : TfBaseComponent, IAsyncDisposable
 	private void _initMenuItem(TfMenuItem item)
 	{
 		if (!TfAuthLayout.GetState().User.IsAdmin) return;
-		if(item.Actions.Count > 0) return;
+		if (item.Actions.Count > 0) return;
 		item.Actions.Add(new TfMenuItem()
 		{
 			Text = LOC("Manage Page"),
@@ -139,74 +155,85 @@ public partial class TucSpaceNavigation : TfBaseComponent, IAsyncDisposable
 			IconExpanded = TfConstants.GetIcon("Copy"),
 			OnClick = EventCallback.Factory.Create(this, () => _copyPage(item))
 		});
-		item.Actions.Add(new TfMenuItem(){IsDivider = true});
+		item.Actions.Add(new TfMenuItem() { IsDivider = true });
 		item.Actions.Add(new TfMenuItem()
 		{
 			Text = LOC("Move up"),
 			IconCollapsed = TfConstants.GetIcon("ArrowUp"),
 			IconExpanded = TfConstants.GetIcon("ArrowUp"),
 			OnClick = EventCallback.Factory.Create(this, () => _movePage(item, true))
-		});			
+		});
 		item.Actions.Add(new TfMenuItem()
 		{
 			Text = LOC("Move down"),
 			IconCollapsed = TfConstants.GetIcon("ArrowDown"),
 			IconExpanded = TfConstants.GetIcon("ArrowDown"),
 			OnClick = EventCallback.Factory.Create(this, () => _movePage(item, false))
-		});			
-		item.Actions.Add(new TfMenuItem(){IsDivider = true});
+		});
+		item.Actions.Add(new TfMenuItem() { IsDivider = true });
 		item.Actions.Add(new TfMenuItem()
 		{
 			Text = LOC("Delete Page"),
 			IconCollapsed = TfConstants.GetIcon("Delete")!.WithColor(Color.Error),
 			IconExpanded = TfConstants.GetIcon("Delete")!.WithColor(Color.Error),
 			OnClick = EventCallback.Factory.Create(this, async () => await _deletePage(item))
-		});		
+		});
 		foreach (var child in item.Items)
 		{
 			_initMenuItem(child);
 		}
-		
 	}
 
 	private void _managePage(TfMenuItem item)
 	{
 		var pageManageUrl = String.Format(TfConstants.SpacePagePageManageUrl, TfAuthLayout.GetState().Space!.Id,
 			item.Data!.PageId!);
-		Navigator.NavigateTo(pageManageUrl.GenerateWithLocalAndQueryAsReturnUrl(Navigator.Uri)!);		
+		Navigator.NavigateTo(pageManageUrl.GenerateWithLocalAndQueryAsReturnUrl(Navigator.Uri)!);
 	}
-	private void _copyPage(TfMenuItem item)
+
+	private async Task _copyPage(TfMenuItem item)
 	{
 		try
 		{
-			TfService.CopySpacePage(item.Data!.PageId!.Value);
+			var (pageId, pages) = TfService.CopySpacePage(item.Data!.PageId!.Value);
+			var page = pages.Single(x => x.Id == pageId);
 			ToastService.ShowSuccess(LOC("Space page copied!"));
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpacePageCreatedEventPayload(page));
 		}
 		catch (Exception ex)
 		{
 			ProcessException(ex);
 		}
-	}	
-	private void _movePage(TfMenuItem item, bool isUp)
+	}
+
+	private async Task _movePage(TfMenuItem item, bool isUp)
 	{
 		try
 		{
 			TfService.MoveSpacePage(item.Data!.PageId!.Value, isUp);
 			ToastService.ShowSuccess(LOC("Space page moved!"));
+			var page = TfService.GetSpacePage(item.Data!.PageId!.Value)!;
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpacePageUpdatedEventPayload(page));
 		}
 		catch (Exception ex)
 		{
 			ProcessException(ex);
 		}
-	}	
+	}
+
 	private async Task _deletePage(TfMenuItem item)
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this page deleted?")))
-			return;		
+			return;
 		try
 		{
-			ToastService.ShowSuccess(LOC("Space page moved!"));
 			var pages = TfService.DeleteSpacePage(item.Data!.PageId!.Value);
+			ToastService.ShowSuccess(LOC("Space page deleted!"));
+			var page = TfService.GetSpacePage(item.Data!.PageId!.Value)!;
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpacePageDeletedEventPayload(page));
 			Navigator.NavigateTo(pages.Count > 0
 				? String.Format(TfConstants.SpacePagePageUrl, pages[0].SpaceId, pages[0].Id)
 				: TfConstants.HomePageUrl);
@@ -216,6 +243,7 @@ public partial class TucSpaceNavigation : TfBaseComponent, IAsyncDisposable
 			ProcessException(ex);
 		}
 	}
+
 	private string _getDragStaticOpenClass()
-	=> _menu.Count == 0 ? "tf-drag-container--dragging" : "";
+		=> _menu.Count == 0 ? "tf-drag-container--dragging" : "";
 }

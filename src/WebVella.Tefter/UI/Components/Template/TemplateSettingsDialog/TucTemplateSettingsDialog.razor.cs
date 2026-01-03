@@ -45,6 +45,8 @@ public partial class TucTemplateSettingsDialog : TfBaseComponent, IDialogContent
 			await InvokeAsync(StateHasChanged);
 			var template = TfService.UpdateTemplateSettings(Content.Id, _form);
 			ToastService.ShowSuccess(LOC("Template settings successfully updated"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfTemplateUpdatedEventPayload(template));				
 			await Dialog.CloseAsync(template);
 		}
 		catch (Exception ex)

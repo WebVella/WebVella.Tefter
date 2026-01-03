@@ -18,12 +18,19 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IAsyn
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_sharedColumnUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSharedColumnUpdatedEventPayload>(
-			handler: On_SharedColumnUpdatedEventAsync);
+			handler: On_SharedColumnUpdatedEventAsync,
+			matchKey: (_) => true);
 	}
 
 	private async Task On_SharedColumnUpdatedEventAsync(string? key, TfSharedColumnUpdatedEventPayload? payload)
-		=> await _init(navState: TfAuthLayout.GetState().NavigationState, column: payload?.SharedColumn);
-
+	{
+		if (payload is null) return;
+		if(payload.SharedColumn.Id != _column?.Id) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
+			await _init(navState: TfAuthLayout.GetState().NavigationState, column: payload.SharedColumn);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -61,7 +68,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IAsyn
 
 	private async Task _editItem()
 	{
-		if(_column is null) return;
+		if (_column is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucSharedColumnManageDialog>(
 			_column,
 			new()
@@ -79,7 +86,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IAsyn
 
 	private async Task _deleteItem()
 	{
-		if(_column is null) return;
+		if (_column is null) return;
 		if (!await JSRuntime.InvokeAsync<bool>("confirm",
 			    LOC("Are you sure that you need this column deleted?") + "\r\n" +
 			    LOC("This will delete all related data too!")))
@@ -90,6 +97,8 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IAsyn
 			await InvokeAsync(StateHasChanged);
 			TfService.DeleteSharedColumn(_column.Id);
 			ToastService.ShowSuccess(LOC("The column was successfully deleted!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSharedColumnDeletedEventPayload(_column));				
 			var allColumns = TfService.GetSharedColumns();
 			Navigator.NavigateTo(allColumns.Count > 0
 				? String.Format(TfConstants.AdminSharedColumnDetailsPageUrl, allColumns[0].Id)
@@ -108,7 +117,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IAsyn
 
 	private string? _getProviderImplementation(TfDataProvider provider)
 	{
-		if(_column is null) return null;
+		if (_column is null) return null;
 		if (provider.Identities.Count == 0)
 			return null;
 

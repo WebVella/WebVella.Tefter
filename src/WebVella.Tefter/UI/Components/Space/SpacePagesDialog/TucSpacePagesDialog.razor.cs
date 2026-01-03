@@ -65,6 +65,8 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 			TfService.DeleteSpacePage(node.Id);
 			_init();
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpacePageDeletedEventPayload(node));				
 		}
 		catch (Exception ex)
 		{
@@ -88,6 +90,8 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 			TfService.MoveSpacePage(args.Item1.Id, args.Item2);
 			_init();
 			ToastService.ShowSuccess(LOC("Space page updated!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpacePageUpdatedEventPayload(args.Item1));				
 		}
 		catch (Exception ex)
 		{
@@ -109,9 +113,12 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 
 		try
 		{
-			TfService.CopySpacePage(nodeId);
+			var (pageId, pages) = TfService.CopySpacePage(nodeId);
 			_init();
 			ToastService.ShowSuccess(LOC("Space page updated!"));
+			var page = pages.Single(x => x.Id == pageId);
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpacePageCreatedEventPayload(page));					
 		}
 		catch (Exception ex)
 		{

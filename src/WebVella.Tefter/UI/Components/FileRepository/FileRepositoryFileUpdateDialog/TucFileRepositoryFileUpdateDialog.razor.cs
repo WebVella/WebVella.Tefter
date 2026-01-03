@@ -69,6 +69,8 @@ public partial class TucFileRepositoryFileUpdateDialog : TfFormBaseComponent, ID
 			};
 			var item = TfService.UpdateRepositoryFile(submit);
 			ToastService.ShowSuccess("File successfully updated");
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfRepositoryFileUpdatedEventPayload(item));				
 			await Dialog.CloseAsync(item);
 		}
 		catch (Exception ex)

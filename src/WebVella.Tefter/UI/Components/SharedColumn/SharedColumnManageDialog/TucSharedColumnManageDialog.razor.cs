@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfSharedColumn?>
 {
 	[Parameter] public TfSharedColumn? Content { get; set; }
@@ -35,6 +33,7 @@ public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogC
 				dbName = dbName.Substring(3);
 			}
 
+			// ReSharper disable once WithExpressionModifiesAllMembers
 			_form = _form with
 			{
 				Id = Content.Id,
@@ -50,7 +49,7 @@ public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogC
 			_form.DataIdentity = _allDataIdentities.Count > 0 ? _allDataIdentities[0] : String.Empty;
 		}
 		_selectedColumnType = _columnTypeOptions.Single(x=> x.Type == _form.DbType);
-		base.InitForm(_form);
+		InitForm(_form);
 	}
 
 	private async Task _save()
@@ -77,11 +76,15 @@ public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogC
 			{
 				sharedColumn = TfService.CreateSharedColumn(submit);
 				ToastService.ShowSuccess(LOC("Shared column successfully created"));
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfSharedColumnCreatedEventPayload(sharedColumn));					
 			}
 			else
 			{
 				sharedColumn = TfService.UpdateSharedColumn(submit);
 				ToastService.ShowSuccess(LOC("Shared column successfully updated"));
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfSharedColumnUpdatedEventPayload(sharedColumn));				
 			}
 			await Dialog.CloseAsync(sharedColumn);
 		}
@@ -101,7 +104,7 @@ public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogC
 	}
 
 
-	private async Task addDataIdentity()
+	private async Task _addDataIdentity()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDataIdentityManageDialog>(
 		new TfDataIdentity(),
@@ -113,7 +116,7 @@ public partial class TucSharedColumnManageDialog : TfFormBaseComponent, IDialogC
 			TrapFocus = false
 		});
 		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
+		if (result is { Cancelled: false, Data: not null })
 		{
 			var item = (TfDataIdentity)result.Data;
 			_allDataIdentities.Add(item.DataIdentity);

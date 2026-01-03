@@ -97,11 +97,15 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 			{
 				template = TfService.CreateTemplate(submit);
 				ToastService.ShowSuccess(LOC("Template successfully created"));
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfTemplateCreatedEventPayload(template));					
 			}
 			else
 			{
 				template = TfService.UpdateTemplate(submit);
 				ToastService.ShowSuccess(LOC("Template successfully updated"));
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfTemplateUpdatedEventPayload(template));					
 			}
 
 			await Dialog.CloseAsync(template);

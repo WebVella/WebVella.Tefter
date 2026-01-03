@@ -58,7 +58,7 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 		}
 		else if (_currentStep == TfUseTemplateDialogStep.ResultPreview)
 		{
-			if (_resultPreviewComponentContext.ValidatePreviewResult is not null)
+			if (_resultPreviewComponentContext?.ValidatePreviewResult is not null)
 			{
 				var validationErrors = _resultPreviewComponentContext.ValidatePreviewResult();
 				if (validationErrors.Count == 0)
@@ -84,8 +84,8 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 		_selectedTemplate = template;
 		_initDynamicComponent();
 
-		_resultPreviewComponentContext.Template = _selectedTemplate;
-		_resultComponentContext.Template = _selectedTemplate;
+		_resultPreviewComponentContext?.Template = _selectedTemplate;
+		_resultComponentContext?.Template = _selectedTemplate;
 		_next();
 	}
 
@@ -115,12 +115,12 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 	}
 	private void _customSettingsChanged(string value)
 	{
-		_resultPreviewComponentContext.CustomSettingsJson = value;
-		_resultComponentContext.CustomSettingsJson = value;
+		_resultPreviewComponentContext?.CustomSettingsJson = value;
+		_resultComponentContext?.CustomSettingsJson = value;
 	}
 	private void _previewResultChanged(ITfTemplatePreviewResult value)
 	{
-		_resultComponentContext.Preview = value;
+		_resultComponentContext?.Preview = value;
 	}
 	private ITfTemplateProcessorAddon? _getProcessor()
 	{

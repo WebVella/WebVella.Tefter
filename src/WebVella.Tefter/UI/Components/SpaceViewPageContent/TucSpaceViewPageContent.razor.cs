@@ -3,6 +3,7 @@
 public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 {
 	#region << Init >>
+
 	[Parameter] public TfSpacePageAddonContext? Context { get; set; } = null;
 
 	// State
@@ -32,9 +33,10 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private bool _hasPinnedData = false;
 	private IAsyncDisposable _spacePageUpdatedEventSubscriber = null!;
 	private IAsyncDisposable _spaceViewColumnUpdatedEventSubscriber = null!;
-	private IAsyncDisposable _spaceViewDataUpdatedEventSubscriber = null!;	
-	private IAsyncDisposable _spaceViewUpdatedEventSubscriber = null!;	
-	private IAsyncDisposable _userUpdatedEventSubscriber = null!;	
+	private IAsyncDisposable _spaceViewDataUpdatedEventSubscriber = null!;
+	private IAsyncDisposable _spaceViewUpdatedEventSubscriber = null!;
+	private IAsyncDisposable _userUpdatedEventSubscriber = null!;
+
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
@@ -92,18 +94,21 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		if (firstRender)
 		{
 			Navigator.LocationChanged += On_NavigationStateChanged;
-		
+
 			_spaceViewColumnUpdatedEventSubscriber =
 				await TfEventBus.SubscribeAsync<TfSpaceViewColumnUpdatedEventPayload>(
-					handler: On_SpaceViewColumnUpdatedEventAsync);			
+					handler: On_SpaceViewColumnUpdatedEventAsync,
+					matchKey: (_) => true);
 			_spacePageUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageUpdatedEventPayload>(
 				handler: On_SpacePageUpdatedEventAsync);
 			_spaceViewDataUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceViewDataUpdatedEventPayload>(
-				handler:On_SpaceViewDataUpdatedEventAsync);			
+				handler: On_SpaceViewDataUpdatedEventAsync,
+				matchKey: (_) => true);
 			_spaceViewUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceViewUpdatedEventPayload>(
-				handler:On_SpaceViewUpdatedEventAsync);					
+				handler: On_SpaceViewUpdatedEventAsync,
+				matchKey: (_) => true);
 			_userUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfUserUpdatedEventPayload>(
-				handler:On_UserUpdatedEventAsync);					
+				handler: On_UserUpdatedEventAsync);
 			try
 			{
 				await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable", _tableId);
@@ -132,41 +137,55 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 	private async Task On_UserUpdatedEventAsync(string? key, TfUserUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
+		if (payload is null) return;
 		var contextHash = _getUserChangeHash(Context!.CurrentUser);
 		var payloadHash = _getUserChangeHash(payload.User);
 
 		if (contextHash == payloadHash) return;
 
 		Context.CurrentUser = payload.User;
-		await _init(TfAuthLayout.GetState().NavigationState);		
+		await _init(TfAuthLayout.GetState().NavigationState);
 	}
 
 	private async Task On_SpaceViewColumnUpdatedEventAsync(string? key, TfSpaceViewColumnUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
-		var column = payload.SpaceViewColumns.Single(x=> x.Id == payload.ColumnId);
+		if (payload is null) return;
+		var column = payload.SpaceViewColumns.Single(x => x.Id == payload.ColumnId);
 		if (column.SpaceViewId != _spaceView?.Id) return;
-		_spaceViewColumns = payload.SpaceViewColumns;
-		await _init(TfAuthLayout.GetState().NavigationState);
-		await InvokeAsync(StateHasChanged);
+		if (key == TfAuthLayout.GetSessionId().ToString())
+		{
+			_spaceViewColumns = payload.SpaceViewColumns;
+			await _init(TfAuthLayout.GetState().NavigationState);
+			await InvokeAsync(StateHasChanged);
+		}
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
 	}
 
 	private async Task On_SpaceViewUpdatedEventAsync(string? key, TfSpaceViewUpdatedEventPayload? payload)
 	{
-		if (payload is null || payload.SpaceView.Id != _spaceView?.Id) return;
-		_isDataLoading = true;
-		await InvokeAsync(StateHasChanged);
-		await _init(TfAuthLayout.GetState().NavigationState);
-		_isDataLoading = false;
-		await InvokeAsync(StateHasChanged);		
-	}
+		if(payload is null) return;
+		if (payload.SpaceView.Id != _spaceView?.Id) return;
+		if(key == TfAuthLayout.GetSessionId().ToString())
+		{
+			_isDataLoading = true;
+			await InvokeAsync(StateHasChanged);
+			await _init(TfAuthLayout.GetState().NavigationState);
+			_isDataLoading = false;
+			await InvokeAsync(StateHasChanged);
+		}
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}			
 
-	private Task On_SpaceViewDataUpdatedEventAsync(string? key, TfSpaceViewDataUpdatedEventPayload? payload)
+	private async Task On_SpaceViewDataUpdatedEventAsync(string? key, TfSpaceViewDataUpdatedEventPayload? payload)
 	{
-		if (payload is null || payload.SpaceViewId != _spaceView?.Id) return Task.CompletedTask;
-		OnDataChange(payload.DataDictionary);
-		return Task.CompletedTask;
+		if (payload is null) return;
+		if (payload.SpaceViewId != _spaceView?.Id) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
+			OnDataChange(payload.DataDictionary);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
 	}
 
 	private async Task On_SpacePageUpdatedEventAsync(string? key, TfSpacePageUpdatedEventPayload? payload)

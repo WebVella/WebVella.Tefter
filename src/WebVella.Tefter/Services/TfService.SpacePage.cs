@@ -22,7 +22,7 @@ public partial interface ITfService
 	public void UpdateSpacePageComponentOptions(
 		Guid spacePageId, string optionsJson);
 
-	public void RenameSpacePage(
+	public TfSpacePage RenameSpacePage(
 		Guid pageId,
 		string name);
 
@@ -307,7 +307,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void RenameSpacePage(
+	public TfSpacePage RenameSpacePage(
 		Guid pageId,
 		string name)
 	{
@@ -322,8 +322,9 @@ public partial class TfService : ITfService
 				.ThrowIfContainsErrors();
 		}
 
-		page.Name = name;
+		page!.Name = name;
 		_ = UpdateSpacePage(page);
+		return GetSpacePage(pageId)!;
 	}
 
 	public List<TfSpacePage> UpdateSpacePage(
