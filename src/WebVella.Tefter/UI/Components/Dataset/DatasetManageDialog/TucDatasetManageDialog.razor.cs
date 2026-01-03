@@ -64,6 +64,8 @@ public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogConten
 				};				
 				result = TfService.CreateDataset(submit);
 				ToastService.ShowSuccess(LOC("Dataset successfully created!"));
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfDatasetCreatedEventPayload(result));					
 			}
 			else
 			{
@@ -78,6 +80,8 @@ public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogConten
 				};				
 				result = TfService.UpdateDataset(submit);
 				ToastService.ShowSuccess(LOC("Dataset successfully updated!"));
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfDatasetUpdatedEventPayload(result));					
 			}
 
 			await Dialog.CloseAsync(result);

@@ -37,6 +37,8 @@ public partial class TucDatasetSortOrderDialog : TfBaseComponent, IDialogContent
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			TfService.UpdateDatasetSorts(_dataset.Id, _dataset.SortOrders);
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfDatasetUpdatedEventPayload(_dataset));				
 			await Dialog.CloseAsync(_dataset);
 		}
 		catch (Exception ex)

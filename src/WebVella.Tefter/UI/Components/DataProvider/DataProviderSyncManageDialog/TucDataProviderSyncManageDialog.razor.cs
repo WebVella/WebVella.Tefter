@@ -45,7 +45,7 @@ public partial class TucDataProviderSyncManageDialog : TfFormBaseComponent, IDia
 			await InvokeAsync(StateHasChanged);
 
 			TfService.UpdateDataProviderSunchronization(_form.Id,_form.SynchScheduleMinutes,_form.SynchScheduleEnabled);
-			var provider = TfService.GetDataProvider(_form.Id);
+			var provider = TfService.GetDataProvider(_form.Id)!;
 			ToastService.ShowSuccess(LOC("Provider synchronization is updated"));
 			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),new TfDataProviderUpdatedEventPayload(provider));
 			await Dialog.CloseAsync(provider);

@@ -197,22 +197,19 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 			{
 				_provider = TfService.CreateDataProviderColumn(submit);
 				ToastService.ShowSuccess(LOC("Data provider column was created successfully"));
-				await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId(),new TfDataProviderUpdatedEventPayload(_provider));		
 			}
 			else
 			{
 				_provider = TfService.UpdateDataProviderColumn(submit);
 				ToastService.ShowSuccess(LOC("Data provider column was updated successfully"));
-				await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId(),new TfDataProviderUpdatedEventPayload(_provider));		
 			}
-
 			if (
 				(_isCreate && submit.IncludeInTableSearch)
 				|| Content?.IncludeInTableSearch != submit.IncludeInTableSearch)
 			{
 				TfService.TriggerSynchronization(_provider.Id);
 			}
-
+			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId(),new TfDataProviderUpdatedEventPayload(_provider));
 			await Dialog.CloseAsync(_provider);
 		}
 		catch (Exception ex)

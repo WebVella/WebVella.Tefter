@@ -35,6 +35,8 @@ public partial class TucDatasetFiltersDialog : TfBaseComponent, IDialogContentCo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			TfService.UpdateDatasetFilters(_dataset.Id, _dataset.Filters);
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfDatasetUpdatedEventPayload(_dataset));				
 			await Dialog.CloseAsync(_dataset);
 		}
 		catch (Exception ex)

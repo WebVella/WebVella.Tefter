@@ -114,16 +114,13 @@ public partial class TucDataProviderIdentityManageDialog : TfFormBaseComponent, 
 			{
 				provider = TfService.CreateDataProviderIdentity(submit);
 				ToastService.ShowSuccess(LOC("Data identity is implemented"));
-				await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId(),new TfDataProviderUpdatedEventPayload(provider));
-				
 			}
 			else
 			{
 				provider = TfService.UpdateDataProviderIdentity(submit);
 				ToastService.ShowSuccess(LOC("Data identity implementation is updated"));
-				await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId(),new TfDataProviderUpdatedEventPayload(provider));
 			}
-
+			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId(),new TfDataProviderUpdatedEventPayload(provider));
 			await Dialog.CloseAsync(provider);
 		}
 		catch (Exception ex)

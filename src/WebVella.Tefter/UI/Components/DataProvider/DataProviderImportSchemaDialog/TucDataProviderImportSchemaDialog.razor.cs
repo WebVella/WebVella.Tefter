@@ -137,6 +137,7 @@ public sealed partial class TucDataProviderImportSchemaDialog : TfBaseComponent,
 			}
 
 			var provider = TfService.CreateBulkDataProviderColumn(Content!.Id, _newColumns);
+			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId(),new TfDataProviderUpdatedEventPayload(provider));
 			await Dialog.CloseAsync(provider);
 		}
 		catch (TfValidationException ex)

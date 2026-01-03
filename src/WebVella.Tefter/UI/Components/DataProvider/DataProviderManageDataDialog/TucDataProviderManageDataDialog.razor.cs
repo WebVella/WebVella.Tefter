@@ -92,8 +92,7 @@ public partial class TucDataProviderManageDataDialog : TfBaseComponent, IDialogC
 					Content.Provider.Id,
 					_form);
 			}
-
-
+			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId(),new TfDataProviderDataChangedEventPayload(Content.Provider));
 			await Dialog.CloseAsync(result);
 		}
 		catch (TfException valEx)

@@ -65,6 +65,8 @@ public partial class TucDatasetColumnsDialog : TfBaseComponent, IDialogContentCo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			TfService.UpdataDatasetColumns(_dataset.Id, _items);
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfDatasetUpdatedEventPayload(_dataset));	
 			await Dialog.CloseAsync(_dataset);
 		}
 		catch (Exception ex)

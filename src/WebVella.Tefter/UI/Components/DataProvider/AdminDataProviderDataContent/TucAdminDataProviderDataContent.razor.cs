@@ -25,7 +25,8 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IAsyncDi
 		Navigator.LocationChanged += On_NavigationStateChanged;
 
 		_dataProviderUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataProviderUpdatedEventPayload>(
-			handler: On_DataProviderUpdatedEventAsync);
+			handler: On_DataProviderUpdatedEventAsync,
+			matchKey: (_) => true);
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -38,7 +39,14 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IAsyncDi
 	}
 
 	private async Task On_DataProviderUpdatedEventAsync(string? key, TfDataProviderUpdatedEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
+	{
+		if(payload is null) return;
+		if(payload.DataProvider.Id != _provider?.Id) return;
+		if(key == TfAuthLayout.GetSessionId().ToString())
+			await _init(TfAuthLayout.GetState().NavigationState);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}			
 
 	private async Task _init(TfNavigationState navState)
 	{

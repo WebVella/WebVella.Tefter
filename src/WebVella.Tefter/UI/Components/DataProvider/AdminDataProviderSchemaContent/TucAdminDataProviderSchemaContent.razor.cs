@@ -17,7 +17,8 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IAsync
 		await _init(TfAuthLayout.GetState().NavigationState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_dataProviderUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfDataProviderUpdatedEventPayload>(
-			handler: On_DataProviderUpdatedEventAsync);
+			handler: On_DataProviderUpdatedEventAsync,
+			matchKey: (_) => true);
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -30,7 +31,14 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IAsync
 	}
 
 	private async Task On_DataProviderUpdatedEventAsync(string? key, TfDataProviderUpdatedEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
+	{
+		if (payload is null) return;
+		if (payload.DataProvider.Id != _provider?.Id) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
+			await _init(TfAuthLayout.GetState().NavigationState);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -86,7 +94,8 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IAsync
 		{
 			var provider = TfService.DeleteDataProviderColumn(_deletedColumnId.Value);
 			ToastService.ShowSuccess(LOC("The column was successfully deleted!"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId().ToString(),new TfDataProviderUpdatedEventPayload(provider));
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId().ToString(),
+				new TfDataProviderUpdatedEventPayload(provider));
 			_provider = null;
 		}
 		catch (Exception ex)

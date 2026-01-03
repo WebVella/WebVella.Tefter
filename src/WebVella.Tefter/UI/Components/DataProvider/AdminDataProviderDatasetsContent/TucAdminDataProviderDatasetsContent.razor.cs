@@ -18,7 +18,8 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IAsy
 
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_datasetEventSubscriber = await TfEventBus.SubscribeAsync<TfDatasetEventPayload>(
-			handler: On_DatasetEventAsync);
+			handler: On_DatasetEventAsync,
+			matchKey: (_) => true);
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -31,7 +32,14 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IAsy
 	}
 
 	private async Task On_DatasetEventAsync(string? key, TfDatasetEventPayload? payload)
-		=> await _init(TfAuthLayout.GetState().NavigationState);
+	{
+		if(payload is null) return;
+		if(payload.Dataset.DataProviderId != _provider?.Id) return;
+		if(key == TfAuthLayout.GetSessionId().ToString())
+			await _init(TfAuthLayout.GetState().NavigationState);
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());		
+	}
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -94,6 +102,8 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IAsy
 		{
 			TfService.DeleteDataset(dataset.Id);
 			ToastService.ShowSuccess(LOC("The implementation was successfully deleted!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfDatasetDeletedEventPayload(dataset));				
 		}
 		catch (Exception ex)
 		{

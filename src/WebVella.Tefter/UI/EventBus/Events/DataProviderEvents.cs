@@ -7,4 +7,5 @@ public abstract record TfDataProviderEventPayload(TfDataProvider DataProvider) :
 public record TfDataProviderCreatedEventPayload(TfDataProvider DataProvider) : TfDataProviderEventPayload(DataProvider);
 public record TfDataProviderUpdatedEventPayload(TfDataProvider DataProvider) : TfDataProviderEventPayload(DataProvider);
 public record TfDataProviderDeletedEventPayload(TfDataProvider DataProvider) : TfDataProviderEventPayload(DataProvider);
+public record TfDataProviderDataChangedEventPayload(TfDataProvider DataProvider) : TfDataProviderEventPayload(DataProvider);
 
