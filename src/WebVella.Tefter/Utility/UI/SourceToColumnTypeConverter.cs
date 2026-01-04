@@ -16,8 +16,8 @@ public static class SourceToColumnTypeConverter
 
 		// Place checks higher in if-else statement to give higher priority to type.
 
-		if (short.TryParse(str, out shortValue)) return TfDatabaseColumnType.ShortInteger;
-		else if (Int32.TryParse(str, out intValue)) return TfDatabaseColumnType.Integer;
+		if (short.TryParse(str, out shortValue)) return TfDatabaseColumnType.LongInteger;
+		else if (Int32.TryParse(str, out intValue)) return TfDatabaseColumnType.LongInteger;
 		else if (Int64.TryParse(str, out bigintValue)) return TfDatabaseColumnType.LongInteger;
 		else if (Guid.TryParse(str, out guidValue)) return TfDatabaseColumnType.Guid;
 		else if (bool.TryParse(str, out boolValue)) return TfDatabaseColumnType.Boolean;
@@ -26,7 +26,6 @@ public static class SourceToColumnTypeConverter
 		else if (DateOnly.TryParse(str, culture, out dateOnlyValue)) return TfDatabaseColumnType.DateOnly;
 		else if (!String.IsNullOrWhiteSpace(importFormat) && DateTime.TryParseExact(str, importFormat, culture, DateTimeStyles.None, out dateTimeValue)) return TfDatabaseColumnType.DateOnly;
 		else if (DateTime.TryParse(str, culture, out dateTimeValue)) return TfDatabaseColumnType.DateTime;
-		else if (str.Length <= 4000) return TfDatabaseColumnType.ShortText;
 		else return TfDatabaseColumnType.Text;
 
 	}

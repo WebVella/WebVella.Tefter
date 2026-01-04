@@ -1,4 +1,5 @@
-﻿using ClosedXML.Excel;
+﻿using System.Text.RegularExpressions;
+using ClosedXML.Excel;
 using WebVella.Tefter.DataProviders.Excel.Models;
 using WebVella.Tefter.Utility;
 
@@ -131,6 +132,23 @@ public class ExcelDataProviderUtility
                     continue;
                 }
 
+                var allColumnsAreBlank = true;
+                for (int i = 1; i <= totalColumns; i++)
+                {
+                    var cell = ws.Cell(row.RowNumber(), i);
+                    if (!cell.Value.IsBlank)
+                    {
+                        allColumnsAreBlank = false;
+                        break;
+                    }
+                }
+
+                if (allColumnsAreBlank)
+                {
+                    rowIndex++;
+                    continue;
+                }
+
                 for (int i = 1; i <= totalColumns; i++)
                 {
                     if (!colNameDict.ContainsKey(i))
@@ -146,44 +164,6 @@ public class ExcelDataProviderUtility
                         suggestedColumnTypes: suggestedColumnTypes,
                         suggestedSourceColumnTypes: suggestedSourceColumnTypes,
                         culture: culture);
-
-
-                    var cellValue = cell.Value.ToString();
-
-                    if (cell.Value.IsDateTime && !String.IsNullOrWhiteSpace(cellValue))
-                    {
-                        //check for dateonly
-                        var cellDateTime = cell.Value.GetDateTime();
-                        if (cellDateTime.Hour == 0 && cellDateTime is { Minute: 0, Second: 0 })
-                        {
-                            cellValue = DateOnly.FromDateTime(cellDateTime).ToString();
-                        }
-                    }
-
-                    if (!result.SourceColumnDefaultValue.ContainsKey(columnName)
-                        && !String.IsNullOrWhiteSpace(cellValue))
-                        result.SourceColumnDefaultValue[columnName] = cellValue;
-
-                    string? importFormat = null;
-                    if (cell.Style is not null)
-                    {
-                        if (cell.Style.DateFormat is not null
-                            && String.IsNullOrWhiteSpace(cell.Style.DateFormat.Format))
-                        {
-                            importFormat = cell.Style.DateFormat.Format;
-                        }
-                    }
-
-
-                    TfDatabaseColumnType type =
-                        SourceToColumnTypeConverter.GetDataTypeFromString(cellValue, culture, importFormat);
-
-                    if (!suggestedColumnTypes.ContainsKey(columnName)) suggestedColumnTypes[columnName] = new();
-                    suggestedColumnTypes[columnName].Add(type);
-
-                    if (!suggestedSourceColumnTypes.ContainsKey(columnName))
-                        suggestedSourceColumnTypes[columnName] = new();
-                    suggestedSourceColumnTypes[columnName].Add(GetSourceTypeFromCell(cell));
                 }
 
                 rowIndex++;
@@ -200,6 +180,12 @@ public class ExcelDataProviderUtility
                 columnType = suggestedColumnTypes[key].GetTypeFromOptions();
 
             result.SourceColumnDefaultDbType[key] = columnType;
+        }
+
+        foreach (var providerDataType in provider.GetSupportedSourceDataTypes())
+        {
+            var supportedDbList = provider.GetDatabaseColumnTypesForSourceDataType(providerDataType);
+            result.SourceTypeSupportedDbTypes[providerDataType] = supportedDbList.ToList();
         }
 
         foreach (var columnName in suggestedSourceColumnTypes.Keys)
@@ -335,7 +321,19 @@ public class ExcelDataProviderUtility
         Dictionary<string, List<TfExcelColumnType>> suggestedSourceColumnTypes,
         CultureInfo culture)
     {
+        //Try Get formating from cell style or something
+        var intendedType = GetIntendedDataType(cell);
+
         TfDatabaseColumnType type = TfDatabaseColumnType.Text;
+        if (intendedType == XLDataType.Boolean)
+            type = TfDatabaseColumnType.Boolean;
+        else if (intendedType == XLDataType.Number)
+            type = TfDatabaseColumnType.Number;
+        else if (intendedType == XLDataType.TimeSpan)
+            type = TfDatabaseColumnType.Number;
+        else if (intendedType == XLDataType.DateTime)
+            type = TfDatabaseColumnType.DateOnly;
+
         AddToSuggestedDictionaries(
             columnName: columnName,
             cell: cell,
@@ -375,22 +373,23 @@ public class ExcelDataProviderUtility
         if (!String.IsNullOrWhiteSpace(str))
         {
             result.SourceColumnDefaultValue.TryAdd(columnName, str);
-            
+
             if (short.TryParse(str, out short shortValue))
-                type = TfDatabaseColumnType.ShortInteger;
+                type = TfDatabaseColumnType.LongInteger;
             else if (Int32.TryParse(str, out int intValue))
-                type = TfDatabaseColumnType.Integer;
+                type = TfDatabaseColumnType.LongInteger;
             else if (Int64.TryParse(str, out long bigintValue))
                 type = TfDatabaseColumnType.LongInteger;
             else if (decimal.TryParse(str, culture, out decimal decimalValue))
                 type = TfDatabaseColumnType.Number;
         }
+
         AddToSuggestedDictionaries(
             columnName: columnName,
             cell: cell,
             type: type,
             suggestedColumnTypes: suggestedColumnTypes,
-            suggestedSourceColumnTypes: suggestedSourceColumnTypes);        
+            suggestedSourceColumnTypes: suggestedSourceColumnTypes);
     }
 
     private void ProcessCellAsText(string columnName, IXLCell cell,
@@ -404,19 +403,7 @@ public class ExcelDataProviderUtility
         var cellValue = cell.Value.ToString();
         if (!String.IsNullOrWhiteSpace(cellValue))
         {
-            if (cell.Value.IsDateTime)
-            {
-                //check for dateonly
-                var cellDateTime = cell.Value.GetDateTime();
-                if (cellDateTime.Hour == 0 && cellDateTime is { Minute: 0, Second: 0 })
-                {
-                    cellValue = DateOnly.FromDateTime(cellDateTime).ToString();
-                }
-            }
-
-            if (!result.SourceColumnDefaultValue.ContainsKey(columnName)
-                && !String.IsNullOrWhiteSpace(cellValue))
-                result.SourceColumnDefaultValue[columnName] = cellValue;
+            result.SourceColumnDefaultValue.TryAdd(columnName, cellValue);
 
             string? importFormat = null;
             if (cell.Style is not null)
@@ -446,7 +433,19 @@ public class ExcelDataProviderUtility
         Dictionary<string, List<TfExcelColumnType>> suggestedSourceColumnTypes,
         CultureInfo culture)
     {
+        //Try Get formating from cell style or something
+        var intendedType = GetIntendedDataType(cell);
+
         TfDatabaseColumnType type = TfDatabaseColumnType.Text;
+        if (intendedType == XLDataType.Boolean)
+            type = TfDatabaseColumnType.Boolean;
+        else if (intendedType == XLDataType.Number)
+            type = TfDatabaseColumnType.Number;
+        else if (intendedType == XLDataType.TimeSpan)
+            type = TfDatabaseColumnType.Number;
+        else if (intendedType == XLDataType.DateTime)
+            type = TfDatabaseColumnType.DateOnly;
+
 
         AddToSuggestedDictionaries(
             columnName: columnName,
@@ -462,6 +461,44 @@ public class ExcelDataProviderUtility
         Dictionary<string, List<TfExcelColumnType>> suggestedSourceColumnTypes,
         CultureInfo culture)
     {
+        TfDatabaseColumnType type = TfDatabaseColumnType.DateTime;
+        var cellValue = cell.Value.ToString();
+        if (!String.IsNullOrWhiteSpace(cellValue))
+        {
+            var value = cell.Value.GetDateTime();
+
+            if (value is { Hour: 0, Minute: 0, Second: 0 })
+                type = TfDatabaseColumnType.DateOnly;
+
+            string? importFormat = null;
+            if (cell.Style is not null)
+            {
+                if (cell.Style.DateFormat is not null
+                    && String.IsNullOrWhiteSpace(cell.Style.DateFormat.Format))
+                {
+                    importFormat = cell.Style.DateFormat.Format;
+                }
+            }
+
+
+            if (type == TfDatabaseColumnType.DateOnly)
+            {
+                cellValue = DateOnly.FromDateTime(value).ToString(importFormat, culture);
+                result.SourceColumnDefaultValue.TryAdd(columnName, cellValue);
+            }
+            else
+            {
+                cellValue = value.ToString(importFormat, culture);
+                result.SourceColumnDefaultValue.TryAdd(columnName, cellValue);
+            }
+        }
+
+        AddToSuggestedDictionaries(
+            columnName: columnName,
+            cell: cell,
+            type: type,
+            suggestedColumnTypes: suggestedColumnTypes,
+            suggestedSourceColumnTypes: suggestedSourceColumnTypes);
     }
 
     private void ProcessCellAsTimeSpan(string columnName, IXLCell cell,
@@ -491,5 +528,71 @@ public class ExcelDataProviderUtility
         if (!suggestedSourceColumnTypes.ContainsKey(columnName))
             suggestedSourceColumnTypes[columnName] = new();
         suggestedSourceColumnTypes[columnName].Add(GetSourceTypeFromCell(cell));
+    }
+
+    private XLDataType GetIntendedDataType(IXLCell cell)
+    {
+        // 1. If the cell has a value, return the actual type.
+        if (!cell.IsEmpty())
+        {
+            return cell.DataType;
+        }
+
+        var numberFormat = cell.Style.NumberFormat;
+
+        // 2. Check for Text Format explicitly
+        // ID 49 is the standard "@" text format
+        if (numberFormat.NumberFormatId == 49 || numberFormat.Format == "@")
+        {
+            return XLDataType.Text;
+        }
+
+        // 3. Check for Standard Date/Time IDs
+        // Excel standard IDs: 14-22 are dates/times, 45-47 are duration/time
+        if ((numberFormat.NumberFormatId >= 14 && numberFormat.NumberFormatId <= 22) ||
+            (numberFormat.NumberFormatId >= 45 && numberFormat.NumberFormatId <= 47))
+        {
+            return XLDataType.DateTime;
+        }
+
+        // 4. Check for Standard Number IDs
+        // 1-13 are various number/currency, 37-44 are accounting, 48 is scientific
+        if ((numberFormat.NumberFormatId >= 1 && numberFormat.NumberFormatId <= 13) ||
+            (numberFormat.NumberFormatId >= 37 && numberFormat.NumberFormatId <= 44) ||
+            numberFormat.NumberFormatId == 48)
+        {
+            return XLDataType.Number;
+        }
+
+        // 5. Analyze Custom Format Strings (if ID is not standard)
+        // If the format contains typical date characters not enclosed in quotes
+        if (IsCustomDateFormat(numberFormat.Format))
+        {
+            return XLDataType.DateTime;
+        }
+
+        if (IsCustomNumberFormat(numberFormat.Format))
+        {
+            return XLDataType.Number;
+        }
+
+        // Default to Text or String if "General" (ID 0) or unknown
+        return XLDataType.Text;
+    }
+
+    private bool IsCustomDateFormat(string formatCode)
+    {
+        // Remove literal text enclosed in quotes "..." to avoid false positives
+        string codeWithoutLiterals = Regex.Replace(formatCode, "\"[^\"]*\"", "");
+
+        // Look for date/time tokens: y, m, d, h, s, am/pm
+        // NOTE: 'm' is tricky as it can be month or minute, but usually implies Date/Time context
+        return Regex.IsMatch(codeWithoutLiterals, @"[ymdhs]|am\/pm", RegexOptions.IgnoreCase);
+    }
+
+    private bool IsCustomNumberFormat(string formatCode)
+    {
+        // Simple check for number placeholders
+        return formatCode.IndexOfAny(new[] { '0', '#', '?' }) >= 0;
     }
 }

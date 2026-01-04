@@ -27,6 +27,9 @@
       <None Update="Files\data.xlsx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Files\industrial-hub-fixed.xlsx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
