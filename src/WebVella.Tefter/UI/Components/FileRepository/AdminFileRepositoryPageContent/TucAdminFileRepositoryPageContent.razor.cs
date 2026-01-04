@@ -70,7 +70,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IAsync
 		}
 	}
 
-	private void _onCompleted(IEnumerable<FluentInputFileEventArgs> files)
+	private async Task _onCompleted(IEnumerable<FluentInputFileEventArgs> files)
 	{
 		_files = files.ToList();
 		_progressPercent = _fileUploader.ProgressPercent;
@@ -80,7 +80,7 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IAsync
 			var file = _files[0];
 			try
 			{
-				_ = TfService.CreateRepositoryFile(new TfFileForm
+				var result = TfService.CreateRepositoryFile(new TfFileForm
 				{
 					Id = null,
 					CreatedBy = TfAuthLayout.GetState().User.Id,
@@ -89,7 +89,8 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IAsync
 				});
 
 				ToastService.ShowSuccess(LOC("File uploaded successfully!"));
-
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfRepositoryFileCreatedEventPayload(result));	
 				_progressPercent = 0;
 			}
 			catch (Exception ex)
