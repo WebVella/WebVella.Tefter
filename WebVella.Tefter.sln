@@ -95,6 +95,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pg-init", "pg-init", "{7DC2
 		Docker\pg-init\init.sql = Docker\pg-init\init.sql
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.DataProviders.Excel.Tests", "tests\WebVella.Tefter.DataProviders.Excel.Tests\WebVella.Tefter.DataProviders.Excel.Tests.csproj", "{6B412A7B-082E-4394-8E91-695E363EF44C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -204,6 +206,10 @@ Global
 		{FB7A6579-59B6-4032-B6C7-80637ABC5A52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB7A6579-59B6-4032-B6C7-80637ABC5A52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB7A6579-59B6-4032-B6C7-80637ABC5A52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B412A7B-082E-4394-8E91-695E363EF44C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B412A7B-082E-4394-8E91-695E363EF44C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B412A7B-082E-4394-8E91-695E363EF44C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B412A7B-082E-4394-8E91-695E363EF44C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -227,6 +233,7 @@ Global
 		{AB7FD3AF-11EF-426D-BDC2-1B45216EEC09} = {FBDDD2A3-E610-424E-B64E-58B4662A4583}
 		{FB7A6579-59B6-4032-B6C7-80637ABC5A52} = {FBDDD2A3-E610-424E-B64E-58B4662A4583}
 		{7DC27614-46A2-40D3-9694-3204990D40B6} = {75A65CF5-1A85-4B19-9A54-63CAF3AA221B}
+		{6B412A7B-082E-4394-8E91-695E363EF44C} = {FBDDD2A3-E610-424E-B64E-58B4662A4583}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C1A4AC87-0ABF-4D69-AB37-06B038019BBB}
