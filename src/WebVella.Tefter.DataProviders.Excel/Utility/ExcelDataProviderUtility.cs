@@ -199,10 +199,30 @@ public class ExcelDataProviderUtility
         return result;
     }
 
-    private TfExcelColumnType GetSourceTypeFromCell(IXLCell cell)
+    private TfExcelColumnType GetSourceTypeFromCell(IXLCell cell, TfDatabaseColumnType type)
     {
         switch (cell.DataType)
         {
+            case XLDataType.Blank:
+            {
+                switch (type)
+                {
+                    case TfDatabaseColumnType.ShortInteger:
+                    case TfDatabaseColumnType.Integer:
+                    case TfDatabaseColumnType.LongInteger:
+                    case TfDatabaseColumnType.Number:
+                        return TfExcelColumnType.Number;
+                    case TfDatabaseColumnType.Boolean:
+                        return TfExcelColumnType.Boolean;          
+                    case TfDatabaseColumnType.DateOnly:
+                    case TfDatabaseColumnType.DateTime:
+                        return TfExcelColumnType.DateTime;                
+                    case TfDatabaseColumnType.Guid:
+                        return TfExcelColumnType.Guid;                         
+                    default:
+                        return TfExcelColumnType.Text;
+                }
+            }
             case XLDataType.Boolean:
                 return TfExcelColumnType.Boolean;
             case XLDataType.Number:
@@ -211,7 +231,26 @@ public class ExcelDataProviderUtility
             case XLDataType.DateTime:
                 return TfExcelColumnType.DateTime;
             default:
-                return TfExcelColumnType.Text;
+            {
+                switch (type)
+                {
+                    case TfDatabaseColumnType.ShortInteger:
+                    case TfDatabaseColumnType.Integer:
+                    case TfDatabaseColumnType.LongInteger:
+                    case TfDatabaseColumnType.Number:
+                        return TfExcelColumnType.Number;
+                    case TfDatabaseColumnType.Boolean:
+                        return TfExcelColumnType.Boolean;          
+                    case TfDatabaseColumnType.DateOnly:
+                    case TfDatabaseColumnType.DateTime:
+                        return TfExcelColumnType.DateTime;    
+                    case TfDatabaseColumnType.Guid:
+                        return TfExcelColumnType.Guid;                           
+                    default:
+                        return TfExcelColumnType.Text;
+                }
+            }
+                
         }
     }
 
@@ -527,7 +566,7 @@ public class ExcelDataProviderUtility
 
         if (!suggestedSourceColumnTypes.ContainsKey(columnName))
             suggestedSourceColumnTypes[columnName] = new();
-        suggestedSourceColumnTypes[columnName].Add(GetSourceTypeFromCell(cell));
+        suggestedSourceColumnTypes[columnName].Add(GetSourceTypeFromCell(cell,type));
     }
 
     private XLDataType GetIntendedDataType(IXLCell cell)
