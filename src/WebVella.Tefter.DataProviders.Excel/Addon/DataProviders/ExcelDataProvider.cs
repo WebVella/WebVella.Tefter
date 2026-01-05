@@ -377,6 +377,23 @@ public class ExcelDataProvider : ITfDataProviderAddon
             //Starts from 2 as the first row is the header
             for (int rowPosition = 2; rowPosition <= totalRecords; rowPosition++)
             {
+                //Ignore empty rows
+                var allColumnsAreBlank = true;
+                foreach (var dbColumn in sourceColumns)
+                {
+                    var colPosition = colNamePositionDict[dbColumn.SourceName];
+                    var cell = ws.Cell(rowPosition, colPosition);
+                    if (!cell.Value.IsBlank)
+                    {
+                        allColumnsAreBlank = false;
+                        break;
+                    }                    
+                }
+                if (allColumnsAreBlank)
+                {
+                    continue;
+                }
+
                 TfDataProviderDataRow row = new TfDataProviderDataRow();
                 foreach (var dbColumn in sourceColumns)
                 {

@@ -27,7 +27,10 @@
       <None Update="Files\data.xlsx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Files\industrial-hub-fixed.xlsx">
+      <None Update="Files\edge-case1.xlsx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Files\edge-case2.xlsx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

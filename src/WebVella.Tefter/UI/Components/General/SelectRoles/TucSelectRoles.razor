@@ -5,13 +5,6 @@
 {
     <table class="tf-grid">
         <tbody class="tf-grid-tbody">
-            <tr class="tf-grid-tr">
-                <td class="tf-grid-td">
-                    <div>
-                        @_roleDict[TfConstants.ADMIN_ROLE_ID].Name
-                    </div>
-                </td>
-            </tr>
             @foreach (var roleId in Values)
             {
                 <tr class="tf-grid-tr">
@@ -43,17 +36,6 @@ else
             <col />
         </colgroup>
         <tbody class="tf-grid-tbody">
-            <tr class="tf-grid-tr">
-                <td class="tf-grid-td">
-                    <FluentButton IconStart="@TfConstants.GetIcon("LockClosed")" Disabled="true"
-                                  Appearance="@Appearance.Stealth" />
-                </td>
-                <td class="tf-grid-td">
-                    <div>
-                        @_roleDict[TfConstants.ADMIN_ROLE_ID].Name
-                    </div>
-                </td>
-            </tr>
             @foreach (var roleId in Values)
             {
                 if (!_roleDict.ContainsKey(roleId)) continue;
@@ -70,6 +52,16 @@ else
                     </td>
                 </tr>
             }
-        </tbody>
+    @if (Values.Count == 0)
+    {
+        <tr class="tf-grid-tr">
+            <td class="tf-grid-td" colspan="2">
+                <div style="color:var(--neutral-foreground-hint)">
+                @LOC("no roles selected")
+                </div>
+            </td>
+        </tr>
+    }
+    </tbody>
     </table>
 }

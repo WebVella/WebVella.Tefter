@@ -18,7 +18,7 @@ else if (_navState.ManageTab == "columns")
         <ToolbarTemplate>
             <FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceView">
                 @LOC("Edit")
-                <FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
+                <FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start"/>
             </FluentButton>
         </ToolbarTemplate>
         <ChildContent>
@@ -28,109 +28,103 @@ else if (_navState.ManageTab == "columns")
                                      Style="width:100%"></FluentTextField>
                 </FluentGridItem>
                 <FluentGridItem xs="3">
-                    <FluentInputLabel Label="@LOC("FilterType")" />
+                    <FluentInputLabel Label="@LOC("FilterType")"/>
                     <FluentTextField ReadOnly="true" Value="@_spaceView.Settings.FitlerType.ToDescriptionString()"
                                      Style="width:100%"></FluentTextField>
                 </FluentGridItem>
                 <FluentGridItem xs="3">
-                    <FluentInputLabel Label="@LOC("Freeze Starting Columns")" />
+                    <FluentInputLabel Label="@LOC("Freeze Starting Columns")"/>
                     <FluentNumberField TValue="int?" Value=@_spaceView.Settings.FreezeStartingNColumns
-                                       ReadOnly="true" Style="width:100%" />
+                                       ReadOnly="true" Style="width:100%"/>
                 </FluentGridItem>
                 <FluentGridItem xs="3">
-                    <FluentInputLabel Label="@LOC("Freeze Final Columns")" />
+                    <FluentInputLabel Label="@LOC("Freeze Final Columns")"/>
                     <FluentNumberField TValue="int?" Value=@_spaceView.Settings.FreezeFinalNColumns
-                                       ReadOnly="true" Style="width:100%" />
+                                       ReadOnly="true" Style="width:100%"/>
                 </FluentGridItem>
             </FluentGrid>
             <FluentGrid>
                 <FluentGridItem xs="12">
-                    <FluentInputLabel Label="@LOC("Data manipulation")" />
+                    <FluentInputLabel Label="@LOC("Data manipulation")"/>
                     <table class="tf-grid">
                         <colgroup>
-                            <col />
-                            <col style="width:100px" />
-                            <col style="width:100px" />
-                            <col style="width:100px" />
+                            <col/>
+                            <col style="width:100px"/>
+                            <col style="width:100px"/>
+                            <col style="width:100px"/>
                         </colgroup>
                         <thead class="tf-grid-thead">
-                            <tr class="tf-grid-thead-bkg"></tr>
-                            <tr class="tf-grid-tr">
-                                <th>@LOC("role")</th>
-                                <th>@LOC("create")</th>
-                                <th>@LOC("update")</th>
-                                <th>@LOC("delete")</th>
-                            </tr>
+                        <tr class="tf-grid-thead-bkg"></tr>
+                        <tr class="tf-grid-tr">
+                            <th>@LOC("role")</th>
+                            <th>@LOC("create")</th>
+                            <th>@LOC("update")</th>
+                            <th>@LOC("delete")</th>
+                        </tr>
                         </thead>
                         <tbody class="tf-grid-tbody">
+                        @foreach (var role in _rolesTotal)
+                        {
                             <tr class="tf-grid-tr">
                                 <td class="tf-grid-td">
                                     <div>
-                                        @_roleDict[TfConstants.ADMIN_ROLE_ID].Name
+                                        @role.Name
                                     </div>
                                 </td>
                                 <td class="tf-grid-td">
                                     <div>
-                                        <FluentIcon Value="@TfConstants.GetIcon("Checkmark")!.WithColor(Color.Success)" />
+                                        @if (_spaceView.Settings.CanCreateRoles.Contains(role.Id))
+                                        {
+                                            <FluentIcon
+                                                Value="@TfConstants.GetIcon("Checkmark")!.WithColor(Color.Success)"/>
+                                        }
+                                        else
+                                        {
+                                            <FluentIcon
+                                                Value="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)"/>
+                                        }
                                     </div>
                                 </td>
                                 <td class="tf-grid-td">
                                     <div>
-                                        <FluentIcon Value="@TfConstants.GetIcon("Checkmark")!.WithColor(Color.Success)" />
+                                        @if (_spaceView.Settings.CanUpdateRoles.Contains(role.Id))
+                                        {
+                                            <FluentIcon
+                                                Value="@TfConstants.GetIcon("Checkmark")!.WithColor(Color.Success)"/>
+                                        }
+                                        else
+                                        {
+                                            <FluentIcon
+                                                Value="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)"/>
+                                        }
                                     </div>
                                 </td>
                                 <td class="tf-grid-td">
                                     <div>
-                                        <FluentIcon Value="@TfConstants.GetIcon("Checkmark")!.WithColor(Color.Success)" />
+                                        @if (_spaceView.Settings.CanDeleteRoles.Contains(role.Id))
+                                        {
+                                            <FluentIcon
+                                                Value="@TfConstants.GetIcon("Checkmark")!.WithColor(Color.Success)"/>
+                                        }
+                                        else
+                                        {
+                                            <FluentIcon
+                                                Value="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)"/>
+                                        }
                                     </div>
                                 </td>
                             </tr>
-                            @foreach (var role in _rolesTotal)
-                            {
-                                <tr class="tf-grid-tr">
-                                    <td class="tf-grid-td">
-                                        <div>
-                                            @role.Name
-                                        </div>
-                                    </td>
-                                    <td class="tf-grid-td">
-                                        <div>
-                                            @if (_spaceView.Settings.CanCreateRoles.Contains(role.Id))
-                                            {
-                                                <FluentIcon Value="@TfConstants.GetIcon("Checkmark")!.WithColor(Color.Success)" />
-                                            }
-                                            else
-                                            {
-                                                <FluentIcon Value="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)" />
-                                            }
-                                        </div>
-                                    </td>
-                                    <td class="tf-grid-td">
-                                        <div>
-                                            @if (_spaceView.Settings.CanUpdateRoles.Contains(role.Id))
-                                            {
-                                                <FluentIcon Value="@TfConstants.GetIcon("Checkmark")!.WithColor(Color.Success)" />
-                                            }
-                                            else
-                                            {
-                                                <FluentIcon Value="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)" />
-                                            }
-                                        </div>
-                                    </td>
-                                    <td class="tf-grid-td">
-                                        <div>
-                                            @if (_spaceView.Settings.CanDeleteRoles.Contains(role.Id))
-                                            {
-                                                <FluentIcon Value="@TfConstants.GetIcon("Checkmark")!.WithColor(Color.Success)" />
-                                            }
-                                            else
-                                            {
-                                                <FluentIcon Value="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)" />
-                                            }
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
+                        }
+                        @if (_rolesTotal.Count == 0)
+                        {
+                            <tr class="tf-grid-tr">
+                                <td class="tf-grid-td">
+                                    <div style="color:var(--neutral-foreground-hint)">
+                                        @LOC("no roles selected")
+                                    </div>
+                                </td>
+                            </tr>
+                        }
                         </tbody>
                     </table>
                 </FluentGridItem>
@@ -140,11 +134,11 @@ else if (_navState.ManageTab == "columns")
     <TucCard Title="@LOC("Presented Columns")" Style="margin-top:var(--tf-card-space)">
         <ToolbarTemplate>
             <FluentButton OnClick="_importColumns" Appearance="@Appearance.Outline" Disabled="_submitting">
-                <FluentIcon Value="@TfConstants.GetIcon("ArrowDownload")" Color="@Color.Accent" Slot="start" />
+                <FluentIcon Value="@TfConstants.GetIcon("ArrowDownload")" Color="@Color.Accent" Slot="start"/>
                 @LOC("Import Missing from Dataset")
             </FluentButton>
             <FluentButton OnClick="_addColumn" Appearance="@Appearance.Outline" Disabled="_submitting">
-                <FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start" />
+                <FluentIcon Value="@TfConstants.GetIcon("Add")" Color="@Color.Accent" Slot="start"/>
                 @LOC("Add new")
             </FluentButton>
         </ToolbarTemplate>
@@ -158,69 +152,70 @@ else if (_navState.ManageTab == "columns")
             {
                 <table class="tf-grid">
                     <tbody class="tf-grid-tbody">
-                        @foreach (var context in _spaceViewColumns.OrderBy(x => x.Position))
-                        {
-                            <tr @key=@Guid.NewGuid() class="tf-grid-tr">
-                                <td class="tf-grid-td" style="width:1%;">
+                    @foreach (var context in _spaceViewColumns.OrderBy(x => x.Position))
+                    {
+                        <tr @key=@Guid.NewGuid() class="tf-grid-tr">
+                            <td class="tf-grid-td" style="width:1%;">
+                                <div>
+                                    <FluentStack Wrap="false">
+                                        <FluentButton Appearance="@Appearance.Outline"
+                                                      OnClick="@(() => _editColumn(context))"
+                                                      Title="@LOC("Edit column")"
+                                                      Disabled="_submitting"
+                                                      IconStart="@TfConstants.GetIcon("Edit")"/>
+                                        <FluentButton Appearance="@Appearance.Outline"
+                                                      OnClick="@(() => _deleteColumn(context))"
+                                                      Title="@LOC("Delete column")"
+                                                      Disabled="_submitting">
+                                            <FluentIcon Color="@Color.Error"
+                                                        Value="@TfConstants.GetIcon("Delete")"/>
+                                        </FluentButton>
+                                        <FluentButton Appearance="@Appearance.Outline"
+                                                      OnClick="@(() => _moveColumn(context, true))"
+                                                      Title="@LOC("Move up")"
+                                                      Disabled="@(_submitting || context.Position == 1)"
+                                                      IconStart="@TfConstants.GetIcon("ArrowUp")"/>
+                                        <FluentButton Appearance="@Appearance.Outline"
+                                                      OnClick="@(() => _moveColumn(context, false))"
+                                                      Title="@LOC("Move down")"
+                                                      Disabled="@(_submitting || context.Position == _spaceViewColumns.Count)"
+                                                      IconStart="@TfConstants.GetIcon("ArrowDown")"/>
+                                    </FluentStack>
+                                </div>
+                            </td>
+                            <td class="tf-grid-td" style="width:20px;">
+                                <div>@context.Position</div>
+                            </td>
+                            <td class="tf-grid-td">
+                                <div>
+                                    <div>@(!String.IsNullOrWhiteSpace(context.Title) ? context.Title : LOC("(no title)"))</div>
+                                    <div class="td-description">@context.QueryName</div>
+                                </div>
+                            </td>
+                            <td class="tf-grid-td">
+                                @if (_typeMetaDict.ContainsKey(context.TypeId))
+                                {
                                     <div>
-                                        <FluentStack Wrap="false">
-                                            <FluentButton Appearance="@Appearance.Outline"
-                                                          OnClick="@(() => _editColumn(context))"
-                                                          Title="@LOC("Edit column")"
-                                                          Disabled="_submitting"
-                                                          IconStart="@TfConstants.GetIcon("Edit")" />
-                                            <FluentButton Appearance="@Appearance.Outline"
-                                                          OnClick="@(() => _deleteColumn(context))"
-                                                          Title="@LOC("Delete column")"
-                                                          Disabled="_submitting">
-                                                <FluentIcon Color="@Color.Error"
-                                                            Value="@TfConstants.GetIcon("Delete")" />
-                                            </FluentButton>
-                                            <FluentButton Appearance="@Appearance.Outline"
-                                                          OnClick="@(() => _moveColumn(context, true))"
-                                                          Title="@LOC("Move up")"
-                                                          Disabled="@(_submitting || context.Position == 1)"
-                                                          IconStart="@TfConstants.GetIcon("ArrowUp")" />
-                                            <FluentButton Appearance="@Appearance.Outline"
-                                                          OnClick="@(() => _moveColumn(context, false))"
-                                                          Title="@LOC("Move down")"
-                                                          Disabled="@(_submitting || context.Position == _spaceViewColumns.Count)"
-                                                          IconStart="@TfConstants.GetIcon("ArrowDown")" />
-                                        </FluentStack>
-                                    </div>
-                                </td>
-                                <td class="tf-grid-td" style="width:20px;">
-                                    <div>@context.Position</div>
-                                </td>
-                                <td class="tf-grid-td">
-                                    <div>
-                                        <div>@(!String.IsNullOrWhiteSpace(context.Title) ? context.Title : LOC("(no title)"))</div>
-                                        <div class="td-description">@context.QueryName</div>
-                                    </div>
-                                </td>
-                                <td class="tf-grid-td">
-                                    @if (_typeMetaDict.ContainsKey(context.TypeId))
-                                    {
                                         <div>
-                                            <div>
-                                                <FluentStack>
-                                                    <FluentIcon Value="@TfConstants.GetIcon(_typeMetaDict[context.TypeId].AddonFluentIconName)"
-                                                                Color="@Color.Accent" />
-                                                    <div>@_typeMetaDict[context.TypeId].AddonName</div>
-                                                </FluentStack>
-                                            </div>
-                                            <div class="td-description">
-                                                @_typeMetaDict[context.TypeId].AddonDescription
-                                            </div>
+                                            <FluentStack>
+                                                <FluentIcon
+                                                    Value="@TfConstants.GetIcon(_typeMetaDict[context.TypeId].AddonFluentIconName)"
+                                                    Color="@Color.Accent"/>
+                                                <div>@_typeMetaDict[context.TypeId].AddonName</div>
+                                            </FluentStack>
                                         </div>
-                                    }
-                                    else
-                                    {
-                                        <div style="color:var(--error)">@LOC("unknown")</div>
-                                    }
-                                </td>
-                            </tr>
-                        }
+                                        <div class="td-description">
+                                            @_typeMetaDict[context.TypeId].AddonDescription
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="color:var(--error)">@LOC("unknown")</div>
+                                }
+                            </td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
             }
@@ -231,7 +226,7 @@ else if (_navState.ManageTab == "presets")
 {
     <TucPresetFiltersCard Title="@LOC("Preset Filters")" Dataset="_spaceData" Items="_spaceView.Presets"
                           SpaceView="_spaceView"
-                          ItemsChanged="_onPresetsChanged" Style="margin-top:var(--tf-card-space)" />
+                          ItemsChanged="_onPresetsChanged" Style="margin-top:var(--tf-card-space)"/>
 }
 else
 {

@@ -109,7 +109,6 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 			totalIds.AddRange(_spaceView.Settings.CanDeleteRoles.ToList());
 			foreach (var roleId in totalIds)
 			{
-				if (roleId == TfConstants.ADMIN_ROLE_ID) continue;
 				if (!_roleDict.ContainsKey(roleId)) continue;
 				if (_rolesTotal.Any(x => x.Id == roleId)) continue;
 

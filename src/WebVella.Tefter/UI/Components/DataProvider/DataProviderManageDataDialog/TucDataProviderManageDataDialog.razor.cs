@@ -66,18 +66,7 @@ public partial class TucDataProviderManageDataDialog : TfBaseComponent, IDialogC
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
-			var newDt = Content!.Data.NewTable();
-			TfDataRow newRow = newDt.NewRow();
-			foreach (var column in Content.Provider.Columns)
-			{
-				var dbName = column.DbName!;
-				newRow[dbName] = _form[dbName];
-				if (_form.ContainsKey(dbName) && _form[dbName] is not null)
-				{
-					newRow[dbName] = _form[dbName]!;
-				}
-			}
-
+			
 			TfDataProviderDataRow result;
 			if (Content.RowId is null)
 			{

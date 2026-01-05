@@ -96,7 +96,6 @@ public partial class TucAdminDataProviderSchemaContent : TfBaseComponent, IAsync
 			ToastService.ShowSuccess(LOC("The column was successfully deleted!"));
 			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId().ToString(),
 				new TfDataProviderUpdatedEventPayload(provider));
-			_provider = null;
 		}
 		catch (Exception ex)
 		{

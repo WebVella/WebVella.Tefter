@@ -162,7 +162,7 @@ public enum TfDataProviderColumnRuleSet
 
 public enum TfDataProviderColumnDataInputType
 {
-	[Description("local - manual input")]
+	[Description("local - value")]
 	LocalInput = 0,
 	[Description("local - calculated with formula")]
 	LocalCalculated = 1,

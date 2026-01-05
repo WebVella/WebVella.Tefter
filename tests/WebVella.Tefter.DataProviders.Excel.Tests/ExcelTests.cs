@@ -56,9 +56,9 @@ public class UnitTest1
     }
     
     [Fact]
-    public void CheckDataParse2()
+    public void CheckDataEdgeCase1()
     {
-        var fileName = "industrial-hub-fixed.xlsx";
+        var fileName = "edge-case1.xlsx";
         MemoryStream inputContext = new TestUtility().LoadFileStream(fileName);
         var (isSuccess, message, schemaInfo) =
             new ExcelDataProviderUtility().CheckExcelFile(inputContext, filepath: fileName,
@@ -103,4 +103,28 @@ public class UnitTest1
         schemaInfo.SourceTypeSupportedDbTypes["BOOLEAN"].Count().Should().Be(1);
         schemaInfo.SynchPrimaryKeyColumns.Count().Should().Be(0);        
     }    
+ [Fact]
+    public void CheckDataEdgeCase2()
+    {
+        var fileName = "edge-case2.xlsx";
+        MemoryStream inputContext = new TestUtility().LoadFileStream(fileName);
+        var (isSuccess, message, schemaInfo) =
+            new ExcelDataProviderUtility().CheckExcelFile(inputContext, filepath: fileName,
+                provider: new ExcelDataProvider());        
+        isSuccess.Should().BeTrue();
+        message.Should().Be("File check successful");
+        schemaInfo.Should().NotBeNull();
+        schemaInfo.SourceColumnDefaultDbType["Index"].Should().Be(TfDatabaseColumnType.DateOnly);
+        
+        schemaInfo.SourceColumnDefaultSourceType["Index"].Should().Be("DATETIME");
+        
+        schemaInfo.SourceColumnDefaultValue["Index"].Should().Be("2.01.01");
+        
+        schemaInfo.SourceTypeSupportedDbTypes.Count().Should().Be(4);
+        schemaInfo.SourceTypeSupportedDbTypes["TEXT"].Count().Should().Be(3);
+        schemaInfo.SourceTypeSupportedDbTypes["NUMBER"].Count().Should().Be(4);
+        schemaInfo.SourceTypeSupportedDbTypes["DATETIME"].Count().Should().Be(2);
+        schemaInfo.SourceTypeSupportedDbTypes["BOOLEAN"].Count().Should().Be(1);
+        schemaInfo.SynchPrimaryKeyColumns.Count().Should().Be(0);        
+    }        
 }

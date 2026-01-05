@@ -4,14 +4,14 @@ html:root {
   --warning: var(--tf-amber-500);
   --error: var(--tf-red-500);
   --info: var(--tf-sky-500);
-  --highlight-bg:  oklch(79.5% .184 86.047 / 25%);
-  --neutral-layer-floating:var(--neutral-layer-2);
+  --highlight-bg: oklch(79.5% .184 86.047 / 25%);
+  --neutral-layer-floating: var(--neutral-layer-2);
 }
 
 /*Buttons*/
 fluent-button:focus-visible,
-fluent-button:focus{
-  &::part(control){
+fluent-button:focus {
+  &::part(control) {
     outline: 1px solid color-mix(in srgb, var(--neutral-fill-secondary-active) 50%, var(--accent-fill-rest) 50%) !important;
     outline-offset: 0 !important;
   }
@@ -19,11 +19,11 @@ fluent-button:focus{
 
 /* From */
 .fluent-input-label,
-.tf-input-description{
+.tf-input-description {
   color: var(--neutral-foreground-hint) !important;
 }
 
-.tf-input-description{
+.tf-input-description {
   font-style: italic;
 }
 
@@ -40,33 +40,33 @@ fluent-text-field {
 }
 
 fluent-number-field {
-    &::part(control) {
-        padding-right: 0;
-    }
+  &::part(control) {
+    padding-right: 0;
+  }
 }
 
 fluent-switch::part(label) {
-    margin-inline-end: 0;
+  margin-inline-end: 0;
 }
 
 fluent-select {
-    --max-height:200px;
-    min-width:unset;
-    fluent-option {
-        --neutral-fill-stealth-rest: transparent;
-        --neutral-fill-stealth-hover: color-mix(in srgb, var(--fill-color), var(--accent-fill-rest) 10%);
-    }
-/*    &::part(control){
-        width:unset;
+  --max-height: 200px;
+  min-width: unset;
+  fluent-option {
+    --neutral-fill-stealth-rest: transparent;
+    --neutral-fill-stealth-hover: color-mix(in srgb, var(--fill-color), var(--accent-fill-rest) 10%);
+  }
 
-    }*/
+     //&::part(listbox){
+     //  --fill-color: var(--neutral-layer-3);
+     // }
 
 }
 
 .listbox {
-    z-index: 20;
-    position: relative;
-    --max-height: 200px;
+  z-index: 20;
+  position: relative;
+  --max-height: 200px;
 }
 
 /*Badge*/
@@ -92,11 +92,12 @@ div[class ^='fluent-messagebar'],
 }
 
 .fluent-messagebar {
-  .title{
+  .title {
     display: block;
-    font-size:var(--type-ramp-plus-1-font-size);
+    font-size: var(--type-ramp-plus-1-font-size);
     line-height: var(--type-ramp-plus-1-line-height);
   }
+
   &.intent-success {
     --success: var(--tf-green-500);
     border-color: var(--tf-green-200) !important;
@@ -143,11 +144,12 @@ div[class ^='fluent-messagebar'],
 }
 
 /*Menu*/
-fluent-menu{
-  --neutral-layer-floating:var(--neutral-layer-1);
+fluent-menu {
+  --neutral-layer-floating: var(--neutral-layer-1);
 }
-fluent-menu-item{
-  &::part(start){
+
+fluent-menu-item {
+  &::part(start) {
     display: flex;
     align-items: center;
     line-height: 100%;
@@ -155,18 +157,28 @@ fluent-menu-item{
 }
 
 /*Dialog*/
-.fluent-dialog-main::part(control){
+.fluent-dialog-main::part(control) {
   --dialog-padding: var(--tf-padding) !important;
 }
+
 .fluent-dialog-main.right::part(control),
 .fluent-dialog-main.left::part(control) {
   --dialog-padding: 0px !important;
 }
-.tf-modal-no-body-padding::part(control){
+
+.tf-modal-no-body-padding::part(control) {
   --dialog-padding: 0px !important;
 }
 
-.fluent-dialog-footer{
-  padding-top:30px !important;
+.fluent-dialog-footer {
+  padding-top: 30px !important;
   justify-content: center !important;
+}
+
+.fluent-dialog-body{
+  fluent-select{
+    &::part(listbox){
+      --fill-color: var(--neutral-layer-2);
+    }    
+  }
 }

@@ -681,10 +681,6 @@ fluent-switch::part(label) {
 fluent-select {
   --max-height: 200px;
   min-width: unset;
-  /*    &::part(control){
-        width:unset;
-
-    }*/
 }
 fluent-select fluent-option {
   --neutral-fill-stealth-rest: transparent;
@@ -776,6 +772,9 @@ fluent-menu-item::part(start) {
 .fluent-dialog-footer {
   padding-top: 30px !important;
   justify-content: center !important;
+}
+.fluent-dialog-body fluent-select::part(listbox) {
+  --fill-color: var(--neutral-layer-2);
 }
 .tf-card {
   border: 1px solid var(--neutral-stroke-rest);

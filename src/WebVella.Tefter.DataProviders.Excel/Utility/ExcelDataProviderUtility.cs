@@ -131,7 +131,7 @@ public class ExcelDataProviderUtility
                     rowIndex++;
                     continue;
                 }
-
+                //ignore blank rows
                 var allColumnsAreBlank = true;
                 for (int i = 1; i <= totalColumns; i++)
                 {
@@ -142,13 +142,12 @@ public class ExcelDataProviderUtility
                         break;
                     }
                 }
-
                 if (allColumnsAreBlank)
                 {
                     rowIndex++;
                     continue;
                 }
-
+                //process if not blank
                 for (int i = 1; i <= totalColumns; i++)
                 {
                     if (!colNameDict.ContainsKey(i))

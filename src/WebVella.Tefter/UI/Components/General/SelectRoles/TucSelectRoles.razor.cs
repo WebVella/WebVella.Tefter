@@ -22,7 +22,7 @@ public partial class TucSelectRoles : TfBaseComponent
 		await base.OnInitializedAsync();
 		var allRoles = TfService.GetRoles();
 		_roleDict = allRoles.ToDictionary(x => x.Id);
-		_allRoles = allRoles.Where(x => x.Id != TfConstants.ADMIN_ROLE_ID).ToList();
+		_allRoles = allRoles.ToList();
 	}
 
 	protected override void OnParametersSet()

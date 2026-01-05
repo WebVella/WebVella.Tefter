@@ -103,7 +103,7 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IAsyncDis
 		{
 			var result = TfService.DeleteDataProviderIdentity(identity.Id);
 			ToastService.ShowSuccess(LOC("The identity is successfully deleted!"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId().ToString(),new TfDataProviderDeletedEventPayload(result));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId().ToString(),new TfDataProviderUpdatedEventPayload(result));
 		}
 		catch (Exception ex)
 		{
