@@ -168,7 +168,7 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 				SourceName = _form.SourceName,
 				SourceType = _form.SourceType,
 				RuleSet = _form.RuleSet,
-				Expression = _form.Expression,
+				Expression = _form.Expression?.Trim(),
 				ExpressionJson = String.IsNullOrWhiteSpace(_form.ExpressionJson) ? "{}" : _form.ExpressionJson,
 			};
 

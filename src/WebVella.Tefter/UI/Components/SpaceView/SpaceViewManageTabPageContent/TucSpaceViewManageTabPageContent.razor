@@ -24,8 +24,15 @@ else if (_navState.ManageTab == "columns")
         <ChildContent>
             <FluentGrid>
                 <FluentGridItem xs="3">
-                    <FluentTextField Label="@LOC("Dataset")" ReadOnly="true" Value="@_spaceData!.Name"
-                                     Style="width:100%"></FluentTextField>
+                    <FluentInputLabel Label="@LOC("Dataset")"/>
+                    <FluentStack HorizontalGap="5">
+                        <FluentTextField ReadOnly="true" Value="@_spaceData!.Name"
+                                         Style="width:100%"></FluentTextField>
+                        @if (_currentUser.IsAdmin)
+                        {
+                            <FluentAnchor Appearance="Appearance.Outline" Href="@(String.Format(TfConstants.AdminDataProviderDatasetsPageUrl, _spaceData.DataProviderId))" IconStart="@TfConstants.GetIcon("Eye")"/>
+                        }
+                    </FluentStack>
                 </FluentGridItem>
                 <FluentGridItem xs="3">
                     <FluentInputLabel Label="@LOC("FilterType")"/>

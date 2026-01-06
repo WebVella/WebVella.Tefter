@@ -112,7 +112,8 @@ public class ViewColumnTypeExtTests
 				name: TfConstants.TEFTER_ITEM_ID_PROP_NAME,
 				dbType: TfDatabaseColumnType.Guid,
 				isNullable:false,
-				origin: TfDataColumnOriginType.CurrentProvider			
+				origin: TfDataColumnOriginType.CurrentProvider,
+				isReadOnly:false
 			));		
 		dt.Columns.Add(
 			new TfDataColumn(
@@ -120,7 +121,8 @@ public class ViewColumnTypeExtTests
 				name: columnName,
 				dbType: TfDatabaseColumnType.Guid,
 				isNullable:true,
-				origin: TfDataColumnOriginType.CurrentProvider			
+				origin: TfDataColumnOriginType.CurrentProvider,
+				isReadOnly:false
 			));
 		dt.Rows.Add(new TfDataRow(dt,new object[]
 		{

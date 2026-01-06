@@ -187,8 +187,7 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 				builder.CloseElement();
 			};
 		//Editable columns
-		if (column.Origin == TfDataColumnOriginType.CurrentProvider
-		    || column.Origin == TfDataColumnOriginType.SharedColumn)
+		if (!column.IsReadOnly)
 		{
 			var values = _initValue(context);
 

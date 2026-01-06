@@ -52,11 +52,15 @@ public class TfDataProviderColumn
 	[TfDboModelProperty("include_in_table_search")]
 	public bool IncludeInTableSearch { get; set; }
 
+	//The formulate provided to PostgreSQL
 	[TfDboModelProperty("expression")]
 	public string? Expression { get; set; } = null;
 
+	//Internal object that helps the user to generate and how the expression was generated 
 	[TfDboModelProperty("expression_json")]
 	public string? ExpressionJson { get; set; } = null;
+	
+	public bool IsReadOnly { get => !String.IsNullOrWhiteSpace(Expression); }
 
 	public void FixPrefix(
 		string prefix)

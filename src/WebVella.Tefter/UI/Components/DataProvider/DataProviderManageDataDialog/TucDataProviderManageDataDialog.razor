@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 @* Header *@
 <FluentDialogHeader ShowDismiss="true">
-	<FluentLabel Typo="Typography.PaneHeader">@LOC("Add data row")</FluentLabel>
+	<FluentLabel Typo="Typography.PaneHeader">@(!Content!.RowId.HasValue ? LOC("Add data row"):LOC("Manage data row"))</FluentLabel>
 </FluentDialogHeader>
 
 @* Footer *@
@@ -28,9 +28,16 @@
 		<FluentGrid>
 			<FluentGridItem xs="12">
 				<FluentInputLabel Label="@column.DbName" />
-				<TucDbTypeInput DbType=@column.DbType Placeholder="@_placeholders[column.DbName!]" Value="@_form[column.DbName!]"
-				                ValueChanged="@((x)=> _valueChanged(x,column))" Style="width:100%"
-				                Class="@(_validationErrors.Any(x=> x.PropertyName == column.DbName) ? "invalid" : "")" />
+				@if (column.IsReadOnly)
+				{
+					<FluentTextField Disabled="true" Value="@LOC("readonly")" Style="width:100%"/>
+				}
+				else
+				{
+					<TucDbTypeInput DbType=@column.DbType Placeholder="@_placeholders[column.DbName!]" Value="@_form[column.DbName!]"
+					                ValueChanged="@((x) => _valueChanged(x, column))" Style="width:100%"
+					                Class="@(_validationErrors.Any(x => x.PropertyName == column.DbName) ? "invalid" : "")"/>
+				}
 				<TucValidationMessage Field="@(column.DbName)" Errors="_validationErrors"/>
 			</FluentGridItem>
 		</FluentGrid>

@@ -9,6 +9,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 	// State
 	private bool _isDataLoading = true;
 	private TfNavigationState _navState = null!;
+	private TfUser _currentUser = null!;
 	private TfSpaceView? _spaceView = null;
 	private TfDataset? _spaceData = null;
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
@@ -32,7 +33,9 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 		if (Context is null)
 			throw new Exception("Context cannot be null");
 		_roleDict = (await TfService.GetRolesAsync()).ToDictionary(x => x.Id);
-		await _init(TfAuthLayout.GetState().NavigationState);
+		var state = TfAuthLayout.GetState();
+		_currentUser = state.User;
+		await _init(state.NavigationState);
 		_isDataLoading = false;
 	}
 
@@ -155,8 +158,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 
 			_spaceViewColumns = viewColumns;
 			ToastService.ShowSuccess(LOC("View columns were added!"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpaceViewUpdatedEventPayload(_spaceView!));			
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpaceViewUpdatedEventPayload(_spaceView!));
 		}
 		catch (Exception ex)
 		{
@@ -214,8 +217,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 			_submitting = true;
 			await TfService.DeleteSpaceViewColumn(column.Id);
 			ToastService.ShowSuccess(LOC("Space View updated!"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpaceViewUpdatedEventPayload(_spaceView!));			
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpaceViewUpdatedEventPayload(_spaceView!));
 		}
 		catch (Exception ex)
 		{
@@ -238,8 +241,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 			else
 				await TfService.MoveSpaceViewColumnDown(column.Id);
 			ToastService.ShowSuccess(LOC("Space View updated!"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpaceViewUpdatedEventPayload(_spaceView!));				
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpaceViewUpdatedEventPayload(_spaceView!));
 		}
 		catch (Exception ex)
 		{

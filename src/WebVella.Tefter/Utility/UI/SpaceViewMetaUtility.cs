@@ -113,7 +113,7 @@ public class SpaceViewMetaUtility
 
 			#endregion
 
-			#region << Column Context >>
+			#region << Column Context && Edit Mode >>
 
 			foreach (TfSpaceViewColumn column in _spaceViewColumns)
 			{
