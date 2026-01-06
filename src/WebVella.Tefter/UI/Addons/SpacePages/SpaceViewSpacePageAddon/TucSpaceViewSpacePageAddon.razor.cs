@@ -106,8 +106,12 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		if (jsonOptions.SpaceViewId.HasValue)
 		{
 			var view = tfService.GetSpaceView(jsonOptions.SpaceViewId.Value);
-			if(view is not null)
+			if (view is not null)
+			{
 				tfService.DeleteSpaceView(jsonOptions.SpaceViewId.Value);
+				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+					payload: new TfSpaceViewDeletedEventPayload(view));						
+			}
 		}
 	}
 

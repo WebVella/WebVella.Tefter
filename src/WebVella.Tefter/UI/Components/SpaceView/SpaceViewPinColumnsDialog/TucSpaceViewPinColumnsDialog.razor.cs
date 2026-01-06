@@ -116,7 +116,8 @@ public partial class TucSpaceViewPinColumnsDialog : TfBaseComponent, IDialogCont
 				FreezeStartingNColumns = _leftPosition,
 				FreezeFinalNColumns = _rightPosition
 			});
-
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(Content!));		
 			await Dialog.CloseAsync();
 		}
 		catch (Exception ex)

@@ -49,6 +49,8 @@ public partial class TucSpaceViewPageContentColumnActions : TfBaseComponent
 			else
 				await TfService.MoveSpaceViewColumnDown(Column.Id);
 			ToastService.ShowSuccess(LOC("Column moved!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(TfService.GetSpaceView(Column.SpaceViewId)!));			
 		}
 		catch (Exception ex)
 		{
@@ -68,6 +70,8 @@ public partial class TucSpaceViewPageContentColumnActions : TfBaseComponent
 		{
 			await TfService.DeleteSpaceViewColumn(Column.Id);
 			ToastService.ShowSuccess(LOC("Column removed!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(TfService.GetSpaceView(Column.SpaceViewId)!));			
 		}
 		catch (Exception ex)
 		{

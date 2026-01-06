@@ -2,13 +2,13 @@
 
 public enum TfTemplateResultType
 {
-	[Description("Files")]
+	[Description("File")]
 	[FluentIcon("Document")]
 	File = 0,
-	[Description("Emails")]
+	[Description("Email")]
 	[FluentIcon("Mail")]
 	Email = 1,
-	[Description("Texts")]
+	[Description("Text")]
 	[FluentIcon("ScanText")]
 	Text = 2,
 }

@@ -130,7 +130,9 @@ public partial class TucAdminRoleDetailsContent : TfBaseComponent, IAsyncDisposa
 			_userOptions = (await TfService.GetUsersAsync()).Where(x => _roleUsers.All(u => x.Id != u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User added to role"));
 			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfRoleUpdatedEventPayload(_role));				
+				payload: new TfRoleUpdatedEventPayload(_role));			
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfUserUpdatedEventPayload(_selectedUser));				
 		}
 		catch (Exception ex)
 		{

@@ -92,6 +92,8 @@ public partial class TucSpacePageManageContent : TfBaseComponent, IAsyncDisposab
 			TfService.DeleteSpacePage(_spacePage.Id);
 			var pages = TfService.GetSpacePages(_space.Id);
 			ToastService.ShowSuccess(LOC("Page was successfully deleted"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpacePageDeletedEventPayload(_spacePage));				
 			Navigator.NavigateTo(pages.Count > 0
 				? String.Format(TfConstants.SpacePagePageUrl, _space.Id, pages[0].Id)
 				: TfConstants.HomePageUrl);

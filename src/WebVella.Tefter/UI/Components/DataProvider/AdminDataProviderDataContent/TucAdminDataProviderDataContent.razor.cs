@@ -121,6 +121,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IAsyncDi
 			return;
 		TfService.DeleteAllProviderRows(_provider!.Id);
 		ToastService.ShowSuccess(LOC("Data provider data deletion is triggered!"));
+		await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),new TfDataProviderDataChangedEventPayload(_provider!));
 		Navigator.ReloadCurrentUrl();
 	}
 
@@ -178,6 +179,7 @@ public partial class TucAdminDataProviderDataContent : TfBaseComponent, IAsyncDi
 
 			TfService.DeleteDataProviderRowByTfId(_provider!, _deletedRowId.Value);
 			await _init(TfAuthLayout.GetState().NavigationState);
+			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),new TfDataProviderDataChangedEventPayload(_provider!));
 		}
 		catch (Exception ex)
 		{

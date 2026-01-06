@@ -58,6 +58,8 @@ public partial class TucPageTopbar : TfBaseComponent, IAsyncDisposable
 				url: uri.PathAndQuery
 			);
 			ToastService.ShowSuccess(LOC("Startup URL was successfully changed!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfUserUpdatedEventPayload(TfAuthLayout.GetState().User));			
 		}
 		catch (Exception ex)
 		{
@@ -74,6 +76,8 @@ public partial class TucPageTopbar : TfBaseComponent, IAsyncDisposable
 				url: null
 			);
 			ToastService.ShowSuccess(LOC("Startup URL was successfully changed!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfUserUpdatedEventPayload(TfAuthLayout.GetState().User));			
 		}
 		catch (Exception ex)
 		{

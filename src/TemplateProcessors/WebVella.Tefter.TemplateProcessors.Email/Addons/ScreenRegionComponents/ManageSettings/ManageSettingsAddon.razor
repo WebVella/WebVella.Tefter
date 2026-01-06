@@ -14,6 +14,7 @@ else
 					<FluentGridItem xs="6">
 						<FluentInputLabel Label="@LOC("From")" />
 						<FluentTextField @bind-Value=@_form.Sender
+						                 Placeholder="accepts {{templates}}"
 										 @bind-Value:after=_valueChanged
 										 TextFieldType="TextFieldType.Text" Style="width:100%" />
 						<FluentValidationMessage For="@(() => _form.Sender)" />
@@ -21,6 +22,7 @@ else
 					<FluentGridItem xs="6">
 						<FluentInputLabel Label="@LOC("To")" />
 						<FluentTextField @bind-Value=@_form.Recipients
+						                 Placeholder="accepts {{templates}}"
 										 @bind-Value:after=_valueChanged TextFieldType="TextFieldType.Text" Style="width:100%" />
 						<FluentValidationMessage For="@(() => _form.Recipients)" />
 					</FluentGridItem>
@@ -28,25 +30,28 @@ else
 				<FluentGrid>
 					<FluentGridItem xs="6">
 						<FluentInputLabel Label="@LOC("Cc")" />
-						<FluentTextField @bind-Value=@_form.CcRecipients @bind-Value:after=_valueChanged TextFieldType="TextFieldType.Text" Style="width:100%" />
+						<FluentTextField @bind-Value=@_form.CcRecipients @bind-Value:after=_valueChanged TextFieldType="TextFieldType.Text" Style="width:100%" 
+						                 Placeholder="accepts {{templates}}"/>
 						<FluentValidationMessage For="@(() => _form.CcRecipients)" />
 					</FluentGridItem>
 					<FluentGridItem xs="6">
 						<FluentInputLabel Label="@LOC("Bcc")" />
-						<FluentTextField @bind-Value=@_form.BccRecipients @bind-Value:after=_valueChanged TextFieldType="TextFieldType.Text" Style="width:100%" />
+						<FluentTextField @bind-Value=@_form.BccRecipients @bind-Value:after=_valueChanged TextFieldType="TextFieldType.Text" Style="width:100%" 
+						                 Placeholder="accepts {{templates}}"/>
 						<FluentValidationMessage For="@(() => _form.BccRecipients)" />
 					</FluentGridItem>
 				</FluentGrid>
 				<FluentGrid>
 					<FluentGridItem xs="12">
 						<FluentInputLabel Label="@LOC("Subject")" />
-						<FluentTextField @bind-Value=@_form.Subject @bind-Value:after=_valueChanged TextFieldType="TextFieldType.Text" Style="width:100%" />
+						<FluentTextField @bind-Value=@_form.Subject @bind-Value:after=_valueChanged TextFieldType="TextFieldType.Text" Style="width:100%" 
+						                 Placeholder="accepts {{templates}}"/>
 						<FluentValidationMessage For="@(() => _form.Subject)" />
 					</FluentGridItem>
 				</FluentGrid>
 				<FluentGrid>
 					<FluentGridItem xs="12">
-						<FluentInputLabel Label="@LOC("Content")" />
+						<FluentInputLabel Label="@LOC("Content (accepts templates)")" />
 						<TucEditor @bind-Value=@_form.HtmlContent @bind-Value:after=_valueChanged Size="TfEditorSize.Large" />
 						<FluentValidationMessage For="@(() => _form.HtmlContent)" />
 					</FluentGridItem>

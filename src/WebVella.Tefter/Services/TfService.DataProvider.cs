@@ -383,7 +383,7 @@ public partial class TfService : ITfService
 				if (!success)
 					throw new TfDboServiceException("Insert<TfDataProviderIdentityDbo> failed");
 
-				//Create default identity
+				#region << Create default identity >>
 				_ = CreateDataProviderIdentity(new TfDataProviderIdentity
 				{
 					Id = createModel.Id,
@@ -391,7 +391,34 @@ public partial class TfService : ITfService
 					DataProviderId = createModel.Id,
 					Columns = new List<string> { TfConstants.TEFTER_ID_COLUMN_NAME }
 				});
+				#endregion
 
+				#region << Create Default Dataset >>
+				//get unique dataset name
+				var index = 0;
+				var presentDataSetNamesHS = GetDatasets().Select(x => x.Name).ToHashSet();
+				var datasetName = provider.Name;
+				do
+				{
+					if (!presentDataSetNamesHS.Contains(datasetName))
+						break;
+
+					index++;
+					datasetName = $"{provider.Name} {index}";
+				} 
+				while (true);
+
+				TfCreateDataset createDatasetModel = new TfCreateDataset
+				{
+					Id = Guid.NewGuid(),
+					Name = datasetName,
+					Filters = new(),
+					Columns = new(),//when no columns specified all columns are added to the dataset
+					DataProviderId = provider.Id
+				};
+				CreateDataset(createDatasetModel);				
+				#endregion
+				
 				if (createModel.AutoInitialize)
 				{
 					//Import schema
@@ -433,30 +460,7 @@ public partial class TfService : ITfService
 						//Trigger Initial Sync
 						TriggerSynchronization(provider.Id);
 					}
-
-					//get unique dataset name
-					var index = 0;
-					var presentDataSetNamesHS = GetDatasets().Select(x => x.Name).ToHashSet();
-					var datasetName = provider.Name;
-					do
-					{
-						if (!presentDataSetNamesHS.Contains(datasetName))
-							break;
-
-						index++;
-						datasetName = $"{provider.Name} {index}";
-					} 
-					while (true);
-
-					TfCreateDataset createDatasetModel = new TfCreateDataset
-					{
-						Id = Guid.NewGuid(),
-						Name = datasetName,
-						Filters = new(),
-						Columns = new(),//when no columns specified all columns are added to the dataset
-						DataProviderId = provider.Id
-					};
-					CreateDataset(createDatasetModel);
+				
 				}
 
 

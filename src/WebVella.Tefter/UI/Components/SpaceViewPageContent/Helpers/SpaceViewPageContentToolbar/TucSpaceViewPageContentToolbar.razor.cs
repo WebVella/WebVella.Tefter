@@ -88,20 +88,20 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IAsyncDis
 
 	private async Task _searchChanged(string value) => await TucSpaceViewPageContent.OnSearch(value);
 
-	private Task _onAddRowClick()
+	private async Task _onAddRowClick()
 	{
 		try
 		{
 			var result = TfService.InsertRowInDataTable(Data);
 			TucSpaceViewPageContent.OnNewRow(result);
 			ToastService.ShowSuccess(LOC("Row added"));
+			var provider = TfService.GetDataProvider(result.QueryInfo.DataProviderId);
+			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),new TfDataProviderDataChangedEventPayload(provider!));
 		}
 		catch (Exception ex)
 		{
 			ProcessException(ex);
 		}
-
-		return Task.CompletedTask;
 	}
 
 	private void _onEditAllClick()

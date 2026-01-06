@@ -101,7 +101,7 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IAsy
 		try
 		{
 			TfService.DeleteDataset(dataset.Id);
-			ToastService.ShowSuccess(LOC("The implementation was successfully deleted!"));
+			ToastService.ShowSuccess(LOC("The dataset was successfully deleted!"));
 			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
 				payload: new TfDatasetDeletedEventPayload(dataset));				
 		}
@@ -111,6 +111,21 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IAsy
 		}
 	}
 
+	private async Task _copyDataset(TfDataset dataset)
+	{
+		try
+		{
+			TfService.CopyDataset(dataset.Id);
+			ToastService.ShowSuccess(LOC("The dataset was successfully copied!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfDatasetDeletedEventPayload(dataset));				
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+	}	
+	
 	private async Task _manageColumns(TfDataset dataset)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetColumnsDialog>(

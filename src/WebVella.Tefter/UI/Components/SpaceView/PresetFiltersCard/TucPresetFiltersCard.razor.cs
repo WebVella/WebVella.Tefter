@@ -45,6 +45,8 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 		{
 			await TfService.RemoveSpaceViewPreset(SpaceView.Id, nodeId);
 			ToastService.ShowSuccess(LOC("Preset successfully copied!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(SpaceView));			
 		}
 		catch (Exception ex)
 		{
@@ -65,6 +67,8 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 		{
 			await TfService.MoveSpaceViewPreset(SpaceView.Id, args.Item1, args.Item2);
 			ToastService.ShowSuccess(LOC("Preset successfully moved!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(SpaceView));			
 		}
 		catch (Exception ex)
 		{
@@ -85,6 +89,8 @@ public partial class TucPresetFiltersCard : TfBaseComponent
 		{
 			await TfService.CopySpaceViewPreset(SpaceView.Id, presetId);
 			ToastService.ShowSuccess(LOC("Preset successfully copied!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(SpaceView));					
 		}
 		catch (Exception ex)
 		{

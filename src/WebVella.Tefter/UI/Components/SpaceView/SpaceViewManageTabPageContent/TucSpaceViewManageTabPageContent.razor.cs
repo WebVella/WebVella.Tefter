@@ -155,6 +155,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 
 			_spaceViewColumns = viewColumns;
 			ToastService.ShowSuccess(LOC("View columns were added!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(_spaceView!));			
 		}
 		catch (Exception ex)
 		{
@@ -212,6 +214,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 			_submitting = true;
 			await TfService.DeleteSpaceViewColumn(column.Id);
 			ToastService.ShowSuccess(LOC("Space View updated!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(_spaceView!));			
 		}
 		catch (Exception ex)
 		{
@@ -234,6 +238,8 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 			else
 				await TfService.MoveSpaceViewColumnDown(column.Id);
 			ToastService.ShowSuccess(LOC("Space View updated!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(_spaceView!));				
 		}
 		catch (Exception ex)
 		{

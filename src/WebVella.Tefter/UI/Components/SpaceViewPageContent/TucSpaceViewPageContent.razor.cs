@@ -403,6 +403,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				spaceViewId: _spaceView!.Id,
 				presetId: _preset?.Id
 			);
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfUserUpdatedEventPayload(TfAuthLayout.GetState().User));				
 		}
 		catch (Exception)
 		{
@@ -491,6 +493,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				idList: _selectedDataRows
 			);
 			ToastService.ShowSuccess(LOC("Records deleted"));
+			TfEventBus.Publish(TfAuthLayout.GetSessionId().ToString(),new TfDataProviderDataChangedEventPayload(_dataProvider!));
 			Navigator.ReloadCurrentUrl();
 		}
 		catch (Exception ex)
@@ -567,7 +570,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			var changedRow = value.Rows[0];
 			var changedRowTfId = changedRow.GetRowId();
 
-			TfService.SaveDataTable(value);
+			var result = TfService.SaveDataTable(value);
 
 			//Apply changed to the datatable
 			if (_data is null || _data.Rows.Count == 0 || _data.Rows.Count == 0) return;
@@ -589,6 +592,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			_generateMeta();
 			await InvokeAsync(StateHasChanged);
 			ToastService.ShowSuccess(LOC("Data was updated"));
+			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),new TfDataProviderDataChangedEventPayload(_dataProvider!));
 		}
 		catch (Exception ex)
 		{
@@ -698,6 +702,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			presetId: _preset?.Id,
 			spaceViewColumnId: column.Id,
 			width: width);
+		await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+			payload: new TfUserUpdatedEventPayload(TfAuthLayout.GetState().User));			
 	}
 
 	#endregion

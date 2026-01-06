@@ -105,7 +105,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IAsyncDis
 		try
 		{
 			TfService.DeleteTemplate(_template.Id);
-			var templates = TfService.GetTemplates(type: _template.ResultType);
+			var templates = TfService.GetTemplates();
 			ToastService.ShowSuccess(LOC("Template removed"));
 			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
 				payload: new TfTemplateDeletedEventPayload(_template));

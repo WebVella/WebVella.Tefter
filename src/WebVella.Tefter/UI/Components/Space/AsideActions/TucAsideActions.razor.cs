@@ -104,6 +104,8 @@ public partial class TucAsideActions : TfBaseComponent
 		{
 			TfService.DeleteSpace(state.Space.Id);
 			ToastService.ShowSuccess(LOC("Space deleted"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceDeletedEventPayload(state.Space));				
 			Navigator.NavigateTo(TfConstants.HomePageUrl);
 		}
 		catch (Exception ex)

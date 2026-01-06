@@ -118,7 +118,8 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			{
 				await TfService.UpdateSpaceViewColumn(_form);
 			}
-
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(_spaceView));
 			await Dialog.CloseAsync(result);
 		}
 		catch (Exception ex)
@@ -144,6 +145,8 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			await InvokeAsync(StateHasChanged);
 
 			await TfService.DeleteSpaceViewColumn(_form.Id);
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(_spaceView));			
 			await Dialog.CloseAsync((TfSpaceViewColumn?)null);
 		}
 		catch (Exception ex)

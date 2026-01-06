@@ -7,7 +7,7 @@ public partial interface ITfService
 	public TfTemplate GetTemplate(
 		Guid id);
 
-	public List<TfTemplate> GetTemplates(string? search = null, TfTemplateResultType? type = null);
+	public List<TfTemplate> GetTemplates(string? search = null, List<TfTemplateResultType>? types = null);
 
 	public List<TfTemplate> GetSpaceDataTemplates(Guid spaceDataId, string? search = null);
 
@@ -67,7 +67,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfTemplate> GetTemplates(string? search = null, TfTemplateResultType? type = null)
+	public List<TfTemplate> GetTemplates(string? search = null,  List<TfTemplateResultType>? types = null)
 	{
 		try
 		{
@@ -75,9 +75,12 @@ public partial class TfService : ITfService
 
 			var dt = _dbService.ExecuteSqlQueryCommand(SQL);
 			var searchProcessed = search?.Trim().ToLowerInvariant() ?? String.Empty;
+			if (types is null)
+				types = new();
+			
 			return ToTemplateList(dt).Where(x =>
 				(String.IsNullOrWhiteSpace(search) || x.Name.ToLowerInvariant().Contains(searchProcessed))
-				&& (type is null || x.ResultType == type)).ToList();
+				&& types.Contains(x.ResultType)).ToList();
 		}
 		catch (Exception ex)
 		{

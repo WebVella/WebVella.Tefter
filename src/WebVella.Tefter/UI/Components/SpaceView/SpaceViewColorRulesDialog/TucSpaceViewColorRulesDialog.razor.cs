@@ -127,7 +127,8 @@ public partial class TucSpaceViewColorRulesDialog : TfBaseComponent, IDialogCont
 			await InvokeAsync(StateHasChanged);
 
 			await TfService.UpdateSpaceViewSettings(Content!.Id, Content.Settings with {ColoringRules = _rules});
-
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(Content!));		
 			await Dialog.CloseAsync();
 		}
 		catch (Exception ex)

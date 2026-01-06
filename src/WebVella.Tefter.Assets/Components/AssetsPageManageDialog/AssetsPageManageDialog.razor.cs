@@ -40,8 +40,12 @@ public partial class AssetsPageManageDialog : TfFormBaseComponent, IDialogConten
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			TfService.UpdateSpacePageComponentOptions(Content.SpacePageId,JsonSerializer.Serialize(_form));
+			var result = TfService.UpdateSpacePageComponentOptions(Content.SpacePageId,JsonSerializer.Serialize(_form));
+			
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpacePageUpdatedEventPayload(result));				
 			ToastService.ShowSuccess(LOC("Settings successfully updated!"));
+			
 			await Dialog.CloseAsync();
 		}
 		catch (Exception ex)

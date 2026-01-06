@@ -5,8 +5,8 @@
 	var rightTagEncoded = "&rcub;&rcub;";
 }
 <div>
-	<p>@LOC("Each field of the template can use template tags with the selected data, following these rules:")</p>
-	<h3>@LOC("General Rules")</h3>
+	<p>@((MarkupString)LOC("<u>Each field</u> of the template can use template tags with the selected data.(eg. From, To, Body) The rules are:"))</p>
+	<h4>@LOC("General Rules")</h4>
 	<ul>
 		<li>@((MarkupString)LOC("Each template tag must start with '{0}' and end with '{1}'", leftTagEncoded, rightTagEncoded))</li>
 		<li>@LOC("The template requires the exact name of the data column to match the name used in the data provider.")</li>
@@ -16,7 +16,7 @@
 		<li>@LOC("Templates in a single line fields will produce result from the first data row. If you need another row, use index.")</li>
 	</ul>
 
-	<h3>@LOC("Vertical data transposition")</h3>
+	<h4>@LOC("Vertical data transposition")</h4>
 	<p>@LOC("This is is the default flow. Example if there are 3 rows of data:")</p>
 	<div class="example-row">
 		<div class="example-col left">
@@ -60,7 +60,7 @@
 				</table>
 		</div>
 	</div>
-	<h3>@LOC("Horizontal data transposition")</h3>
+	<h4 style="margin-top:1rem">@LOC("Horizontal data transposition")</h4>
 	<p>@LOC("This flow can be applied by the 'F'(flow) template setting with value 'H' (horizontal). Example if there are 3 rows of data:")</p>
 	<div class="example-row">
 		<div class="example-col left">
@@ -106,7 +106,7 @@
 				</table>
 		</div>
 	</div>
-	<h3>@LOC("Selecting data by index")</h3>
+	<h4 style="margin-top:1rem">@LOC("Selecting data by index")</h4>
 	<p>@((MarkupString)LOC("You can select a specific row to be processed by its index. <u>Important</u>: The index starts at 0, meaning the first row has an index of 0. Example if there are 3 rows of data:"))</p>
 	<div class="example-row">
 		<div class="example-col left">

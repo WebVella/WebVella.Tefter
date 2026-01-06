@@ -7,6 +7,7 @@ public abstract class TucBaseSpacePageComponent : ComponentBase, ITfSpacePageAdd
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; } =  null!;
 	[Inject] protected ITfService TfService { get; set; } = null!;
 	[Inject] protected ITfMetaService TfMetaService { get; set; } = null!;
+	[Inject] protected ITfEventBus TfEventBus { get; set; } = null!;
 	[CascadingParameter(Name = "TfAuthLayout")] public TfAuthLayout TfAuthLayout { get; set; } = null!;
 	public virtual Guid AddonId { get; init; } = Guid.NewGuid();
 	public virtual string AddonName { get; init; } = null!;

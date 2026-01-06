@@ -9,3 +9,5 @@ public abstract record TfSpaceViewEventPayload(TfSpaceView SpaceView)
 
 public record TfSpaceViewUpdatedEventPayload(TfSpaceView SpaceView)
 	: TfSpaceViewEventPayload(SpaceView);
+public record TfSpaceViewDeletedEventPayload(TfSpaceView SpaceView)
+	: TfSpaceViewEventPayload(SpaceView);	

@@ -28,7 +28,7 @@
 						<ChildContent>
 							<table class="tf-grid">
 								<colgroup>
-									<col style="width:100px;min-width:100px" />
+									<col style="width:140px;min-width:140px" />
 									<col />
 									<col />
 									<col style="width:100px;min-width:100px" />
@@ -39,7 +39,7 @@
 								<thead class="tf-grid-thead">
 									<tr class="tf-grid-thead-bkg"></tr>
 									<tr class="tf-grid-tr">
-										<th class="tf-grid-th" style="width:110px;min-width:110px;"></th>
+										<th class="tf-grid-th"></th>
 										<th class="tf-grid-th">name</th>
 										<th class="tf-grid-th">connected data</th>
 										<th class="tf-grid-th">columns</th>
@@ -63,6 +63,9 @@
 														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _deleteDataset(context))" Title="@LOC("Delete")">
 															<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")" />
 														</FluentButton>
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(() => _copyDataset(context))" Title="@LOC("Copy")">
+															<FluentIcon Value="@TfConstants.GetIcon("Copy")" />
+														</FluentButton>														
 													</FluentStack>
 												</div>
 											</td>

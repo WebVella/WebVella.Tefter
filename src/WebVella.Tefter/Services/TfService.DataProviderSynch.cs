@@ -18,7 +18,7 @@ public partial interface ITfService
 		TfSynchronizationPolicy synchPolicy);
 
 	internal void TriggerSynchronization(Guid providerId);
-	internal void UpdateDataProviderSunchronization(Guid providerId, short syncScheduleMinutes, bool syncScheduleEnabled);
+	internal void UpdateDataProviderSynchronization(Guid providerId, short syncScheduleMinutes, bool syncScheduleEnabled);
 	internal void UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns);
 
 	internal void UpdateSychronizationTask(
@@ -160,7 +160,7 @@ public partial class TfService : ITfService
 	{
 		CreateSynchronizationTask(providerId, new TfSynchronizationPolicy());
 	}
-	public void UpdateDataProviderSunchronization(Guid providerId, short syncScheduleMinutes, bool syncScheduleEnabled)
+	public void UpdateDataProviderSynchronization(Guid providerId, short syncScheduleMinutes, bool syncScheduleEnabled)
 	{
 		var provider = GetDataProvider(providerId);
 		if (provider is null)

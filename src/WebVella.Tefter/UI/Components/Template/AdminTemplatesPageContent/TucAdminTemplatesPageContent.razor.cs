@@ -4,6 +4,7 @@ public partial class TucAdminTemplatesPageContent : TfBaseComponent, IAsyncDispo
 {
 	private bool _isLoading = false;
 	private List<TfTemplate> _items = new();
+	private List<TfTemplateResultType> _toggledTypes = new();
 	private IAsyncDisposable _templateEventSubscriber = null!;
 
 	public async ValueTask DisposeAsync()
@@ -45,7 +46,9 @@ public partial class TucAdminTemplatesPageContent : TfBaseComponent, IAsyncDispo
 	{
 		try
 		{
-			_items = TfService.GetTemplates(navState.Search).ToList();
+			_toggledTypes = Navigator.GetListEnumFromQuery<TfTemplateResultType>(TfConstants.TabQueryName)
+			                ?? Enum.GetValues<TfTemplateResultType>().ToList();
+			_items = TfService.GetTemplates(navState.Search, _toggledTypes);
 		}
 		finally
 		{
@@ -68,5 +71,17 @@ public partial class TucAdminTemplatesPageContent : TfBaseComponent, IAsyncDispo
 			});
 		var result = await dialog.Result;
 		if (result is { Cancelled: false, Data: not null }) { }
+	}
+
+	private async Task _toggleType(TfTemplateResultType type)
+	{
+		var newList = _toggledTypes.ToList();
+		if(newList.Contains(type))
+			newList.Remove(type);
+		else
+			newList.Add(type);
+		
+		await Navigator.ApplyChangeToUrlQuery(TfConstants.TabQueryName,newList);
+
 	}
 }

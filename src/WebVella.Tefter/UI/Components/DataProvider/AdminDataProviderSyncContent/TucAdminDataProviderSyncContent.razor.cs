@@ -135,8 +135,9 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IAsyncDi
 		try
 		{
 			TfService.UpdateDataProviderSynchPrimaryKeyColumns(_provider!.Id, columns);
-			_provider = TfService.GetDataProvider(_provider!.Id);
+			_provider = TfService.GetDataProvider(_provider!.Id)!;
 			ToastService.ShowSuccess("Data provider updated!");
+			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),new TfDataProviderUpdatedEventPayload(_provider));			
 		}
 		catch (Exception ex)
 		{

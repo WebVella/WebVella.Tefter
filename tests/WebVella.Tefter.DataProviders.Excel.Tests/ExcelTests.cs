@@ -4,7 +4,7 @@ using WebVella.Tefter.DataProviders.Excel.Addons;
 
 namespace WebVella.Tefter.DataProviders.Excel.Tests;
 
-public class UnitTest1
+public class GeneralTests
 {
     [Fact]
     public void CheckDataParse()

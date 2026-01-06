@@ -6,11 +6,18 @@
             @LOC("New Template")
         </FluentButton>
         <TucPageSearch/>
+        @foreach (var type in Enum.GetValues<TfTemplateResultType>())
+        {
+            <FluentButton OnClick="@(()=>_toggleType(type))" Appearance="@Appearance.Outline" 
+                          Title="@type.ToDescriptionString()"
+                          IconStart="@TfConstants.GetIcon(type.GetFluentIcon())!.WithColor(_toggledTypes.Contains(type) ? Color.Accent : Color.Disabled)"/>
+        }
     </Toolbar>
     <ChildContent>
         <table class="tf-grid">
             <colgroup>
-                <col span="1" style="width: 20px;min-width: 20px">
+                <col style="width: 20px;min-width: 20px">
+                <col style="width: 160px;min-width: 160px"/>
                 <col/>
             </colgroup>
             <thead>
@@ -21,6 +28,7 @@
             }
             <tr>
                 <th></th>
+                <th>@LOC("type")</th>
                 <th>@LOC("name")</th>
             </tr>
             </thead>
@@ -38,9 +46,19 @@
                     <td>
                         <div class="tf-grid-td-hover"></div>
                         <div>
-                            @item.Name
+                            <FluentStack VerticalAlignment="VerticalAlignment.Center">
+                                <FluentIcon Value="@TfConstants.GetIcon(item.ResultType.GetFluentIcon())"></FluentIcon>
+                                <div>@item.ResultType.ToDescriptionString()</div>
+                            </FluentStack>
+                            
                         </div>
                     </td>
+                    <td>
+                        <div class="tf-grid-td-hover"></div>
+                        <div>
+                            @item.Name
+                        </div>
+                    </td>                    
                 </tr>
             }
             @if (_items.Count == 0)

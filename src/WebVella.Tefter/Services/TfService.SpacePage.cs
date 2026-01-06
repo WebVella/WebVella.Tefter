@@ -19,7 +19,7 @@ public partial interface ITfService
 	public List<TfSpacePage> UpdateSpacePage(
 		TfSpacePage spacePage);
 
-	public void UpdateSpacePageComponentOptions(
+	public TfSpacePage UpdateSpacePageComponentOptions(
 		Guid spacePageId, string optionsJson);
 
 	public TfSpacePage RenameSpacePage(
@@ -594,9 +594,7 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				allPages = GetSpacePages(spacePage.SpaceId);
-				var updatedPage = FindPageById(spacePage.Id, allPages);
-				return allPages;
+				return GetSpacePages(spacePage.SpaceId);
 			}
 		}
 		catch (Exception ex)
@@ -605,7 +603,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void UpdateSpacePageComponentOptions(
+	public TfSpacePage UpdateSpacePageComponentOptions(
 		Guid spacePageId, string optionsJson)
 	{
 		var spacePage = GetSpacePage(spacePageId);
@@ -617,6 +615,7 @@ public partial class TfService : ITfService
 			nameof(TfSpacePageDbo.ComponentSettingsJson));
 		if (!success)
 			throw new TfDboServiceException("Update<TfSpacePageDbo> failed");
+		return GetSpacePage(spacePageId)!;
 	}
 
 	public List<TfSpacePage> DeleteSpacePage(

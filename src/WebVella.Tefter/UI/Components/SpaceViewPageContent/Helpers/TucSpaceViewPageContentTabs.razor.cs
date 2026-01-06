@@ -236,6 +236,8 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 		{
 			await TfService.RemoveSpaceViewPreset(SpaceView.Id, preset.Id);
 			ToastService.ShowSuccess(LOC("Preset successfully removed!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(SpaceView));			
 		}
 		catch (Exception ex)
 		{
@@ -253,6 +255,8 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 		{
 			await TfService.MoveSpaceViewPreset(SpaceView.Id, preset.Id, isUp);
 			ToastService.ShowSuccess(LOC("Preset successfully moved!"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfSpaceViewUpdatedEventPayload(SpaceView));			
 		}
 		catch (Exception ex)
 		{
