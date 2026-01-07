@@ -35,7 +35,7 @@ public class TfDataProviderColumn
 	public string? DefaultValue { get; set; }
 
 	[TfDboModelProperty("auto_default_value")]
-	public bool AutoDefaultValue { get; set; } = true;
+	public bool AutoDefaultValue { get; set; } 
 
 	[TfDboModelProperty("is_nullable")]
 	public bool IsNullable { get; set; } = true;

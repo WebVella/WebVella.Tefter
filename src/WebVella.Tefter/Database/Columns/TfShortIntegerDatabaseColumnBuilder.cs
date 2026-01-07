@@ -31,9 +31,19 @@ public class TfShortIntegerDatabaseColumnBuilder : TfDatabaseColumnBuilder
     internal override TfShortIntegerDatabaseColumnBuilder WithLastCommited(DateTime lastCommited)
     {
         base.WithLastCommited(lastCommited);
-
         return this;
     }
+
+	public TfShortIntegerDatabaseColumnBuilder WithAutoDefaultValue()
+	{
+		_autoDefaultValue = true;
+		return this;
+	}
+	public TfShortIntegerDatabaseColumnBuilder WithoutAutoDefaultValue()
+	{
+		_autoDefaultValue = false;
+		return this;
+	}
 
 	public TfShortIntegerDatabaseColumnBuilder AsExpression(string expression)
 	{
@@ -51,6 +61,7 @@ public class TfShortIntegerDatabaseColumnBuilder : TfDatabaseColumnBuilder
             Name = _name,   
             Type = TfDatabaseColumnType.ShortInteger,
 			Expression = _expression,
+			AutoDefaultValue = _autoDefaultValue
 		}; 
     }
 }

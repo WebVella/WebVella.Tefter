@@ -287,7 +287,9 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 							else
 							{
 								short? columnDefaultValue = (short?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
-								typeof(TfShortIntegerDatabaseColumn), defaultValue);
+									typeof(TfShortIntegerDatabaseColumn), defaultValue);
+
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_SHORT_INT_COLUMN_AUTO_DEFAULT_VALUE;
 
 								var columnBuider = columnCollectionBuilder
 									.AddShortIntegerColumnBuilder(meta.Id, columnName)
@@ -297,6 +299,11 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 									columnBuider.Nullable();
 								else
 									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
 
 								columnBuider.WithLastCommited(meta.LastCommited);
 							}
@@ -314,7 +321,9 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 							else
 							{
 								int? columnDefaultValue = (int?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
-								typeof(TfIntegerDatabaseColumn), defaultValue);
+									typeof(TfIntegerDatabaseColumn), defaultValue);
+
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_INT_COLUMN_AUTO_DEFAULT_VALUE;
 
 								var columnBuider = columnCollectionBuilder
 									.AddIntegerColumnBuilder(meta.Id, columnName)
@@ -324,6 +333,11 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 									columnBuider.Nullable();
 								else
 									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
 
 								columnBuider.WithLastCommited(meta.LastCommited);
 							}
@@ -341,7 +355,9 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 							else
 							{
 								long? columnDefaultValue = (long?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
-								typeof(TfLongIntegerDatabaseColumn), defaultValue);
+									typeof(TfLongIntegerDatabaseColumn), defaultValue);
+
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_LONG_INT_COLUMN_AUTO_DEFAULT_VALUE;
 
 								var columnBuider = columnCollectionBuilder
 									.AddLongIntegerColumnBuilder(meta.Id, columnName)
@@ -351,6 +367,11 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 									columnBuider.Nullable();
 								else
 									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
 
 								columnBuider.WithLastCommited(meta.LastCommited);
 							}
@@ -792,7 +813,9 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 							else
 							{
 								short? columnDefaultValue = (short?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
-								typeof(TfShortIntegerDatabaseColumn), defaultValue);
+									typeof(TfShortIntegerDatabaseColumn), defaultValue);
+
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_SHORT_INT_COLUMN_AUTO_DEFAULT_VALUE;
 
 								var columnBuider = columnCollectionBuilder
 									.AddShortIntegerColumnBuilder(meta.Id, columnName)
@@ -802,6 +825,11 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 									columnBuider.Nullable();
 								else
 									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
 
 								columnBuider.WithLastCommited(meta.LastCommited);
 							}
@@ -819,7 +847,9 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 							else
 							{
 								int? columnDefaultValue = (int?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
-								typeof(TfIntegerDatabaseColumn), defaultValue);
+									typeof(TfIntegerDatabaseColumn), defaultValue);
+
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_INT_COLUMN_AUTO_DEFAULT_VALUE;
 
 								var columnBuider = columnCollectionBuilder
 									.AddIntegerColumnBuilder(meta.Id, columnName)
@@ -829,6 +859,11 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 									columnBuider.Nullable();
 								else
 									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
 
 								columnBuider.WithLastCommited(meta.LastCommited);
 							}
@@ -846,7 +881,9 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 							else
 							{
 								long? columnDefaultValue = (long?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
-								typeof(TfLongIntegerDatabaseColumn), defaultValue);
+									typeof(TfLongIntegerDatabaseColumn), defaultValue);
+
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_LONG_INT_COLUMN_AUTO_DEFAULT_VALUE;
 
 								var columnBuider = columnCollectionBuilder
 									.AddLongIntegerColumnBuilder(meta.Id, columnName)
@@ -856,6 +893,11 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 									columnBuider.Nullable();
 								else
 									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
 
 								columnBuider.WithLastCommited(meta.LastCommited);
 							}

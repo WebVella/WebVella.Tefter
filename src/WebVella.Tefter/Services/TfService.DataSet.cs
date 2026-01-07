@@ -751,8 +751,10 @@ public partial class TfService : ITfService
 			RuleSet("create", () =>
 			{
 				RuleFor(dataset => dataset.Id)
-					.Must((dataset, id) => { return tfService.GetDataset(id) == null; })
-					.WithMessage("There is already existing dataset with specified identifier.");
+					.Must((dataset, id) => { 
+						return tfService.GetDataset(id) == null; 
+					})
+					.WithMessage("There is already existing dataset with specified identifier.");=
 
 				RuleFor(dataset => dataset.Name)
 					.Must((dataset, name) =>

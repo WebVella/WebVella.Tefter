@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public record TfIntegerDatabaseColumn : TfDatabaseColumn
+public record TfIntegerDatabaseColumn : TfDatabaseColumnWithAutoDefaultValue
 {
     internal override string DatabaseColumnType => "INTEGER";
 }

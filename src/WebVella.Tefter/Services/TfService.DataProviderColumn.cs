@@ -189,7 +189,7 @@ public partial class TfService : ITfService
 			if (column.Id == Guid.Empty)
 				column.Id = Guid.NewGuid();
 
-			TfDataProvider provider = GetDataProvider(column.DataProviderId);;
+			TfDataProvider provider = GetDataProvider(column.DataProviderId); 
 
 			new TfDataProviderColumnValidator(this, provider)
 				.ValidateCreate(column)
@@ -214,6 +214,16 @@ public partial class TfService : ITfService
 				scope.Complete();
 				return provider;
 			}
+		}
+		catch (TfDatabaseUpdateException dbEx)
+		{
+			var valEx = new TfException("Database update failed during data provider column update.");
+			foreach (var log in dbEx.Result.Log)
+			{
+				if (log.Success == false)
+					valEx.UpsertDataList(column.DbName, $"Error:{log.SqlError}  Sql Statement:{log.Statement}");
+			}
+			throw valEx;
 		}
 		catch (Exception ex)
 		{
@@ -273,7 +283,7 @@ public partial class TfService : ITfService
 				provider = GetDataProvider(columns[0].DataProviderId);
 				if (provider is null)
 					throw new TfException("Failed to create new data provider column");
-	
+
 				return provider;
 			}
 		}
@@ -324,6 +334,16 @@ public partial class TfService : ITfService
 			UpdateDatabaseColumn(provider, column, existingColumn);
 
 			return GetDataProvider(column.DataProviderId);
+		}
+		catch(TfDatabaseUpdateException dbEx)
+		{
+			var valEx = new TfException("Database update failed during data provider column update.");
+			foreach(var log in dbEx.Result.Log)
+			{
+				if(log.Success == false)
+					valEx.UpsertDataList(column.DbName, $"Error:{log.SqlError}  Sql Statement:{log.Statement}" );
+			}
+			throw valEx;
 		}
 		catch (Exception ex)
 		{
@@ -414,8 +434,7 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.AddBooleanColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
 
 							if (column.DefaultValue is not null)
 								c.WithDefaultValue(Convert.ToBoolean(column.DefaultValue));
@@ -445,8 +464,8 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.AddTextColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
 							c.WithDefaultValue(column.DefaultValue);
 						});
 
@@ -474,8 +493,8 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.AddShortTextColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
 							c.WithDefaultValue(column.DefaultValue);
 						});
 
@@ -503,8 +522,8 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.AddGuidColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
 							if (column.AutoDefaultValue)
 								c.WithAutoDefaultValue();
 							else
@@ -538,8 +557,8 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.AddDateColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
 							if (column.AutoDefaultValue)
 								c.WithAutoDefaultValue();
 							else
@@ -577,8 +596,8 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.AddDateTimeColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
 							if (column.AutoDefaultValue)
 								c.WithAutoDefaultValue();
 							else
@@ -615,8 +634,8 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.AddNumberColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
 							if (column.DefaultValue is not null)
 							{
 								var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
@@ -647,12 +666,17 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.AddShortIntegerColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
-							if (column.DefaultValue is not null)
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
 							{
-								var number = short.Parse(column.DefaultValue);
-								c.WithDefaultValue(number);
+								if (column.DefaultValue is not null)
+								{
+									var number = short.Parse(column.DefaultValue);
+									c.WithDefaultValue(number);
+								}
 							}
 						});
 						if (column.IsSearchable || column.IsSortable)
@@ -679,12 +703,17 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.AddIntegerColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
-							if (column.DefaultValue is not null)
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
 							{
-								var number = int.Parse(column.DefaultValue);
-								c.WithDefaultValue(number);
+								if (column.DefaultValue is not null)
+								{
+									var number = int.Parse(column.DefaultValue);
+									c.WithDefaultValue(number);
+								}
 							}
 						});
 						if (column.IsSearchable || column.IsSortable)
@@ -711,12 +740,17 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.AddLongIntegerColumn(column.DbName!, c =>
 					{
-						if (column.IsNullable) c.Nullable();
-						else c.NotNullable();
-						if (column.DefaultValue is not null)
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
+						if (column.AutoDefaultValue)
+							c.WithAutoDefaultValue();
+						else
 						{
-							var number = long.Parse(column.DefaultValue);
-							c.WithDefaultValue(number);
+							if (column.DefaultValue is not null)
+							{
+								var number = long.Parse(column.DefaultValue);
+								c.WithDefaultValue(number);
+							}
 						}
 					});
 						if (column.IsSearchable || column.IsSortable)
@@ -746,7 +780,7 @@ public partial class TfService : ITfService
 
 		var result = _dbManager.SaveChanges(dbBuilder);
 		if (!result.IsSuccess)
-			throw new TfException("Failed to save changes to database schema");
+			throw new TfDatabaseUpdateException(result);
 	}
 
 	private void UpdateDatabaseColumn(
@@ -775,8 +809,7 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.WithBooleanColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
 
 							if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
 							{
@@ -816,8 +849,7 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.WithTextColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
 
 							if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
 							{
@@ -857,8 +889,7 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.WithShortTextColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
 
 							if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
 							{
@@ -898,8 +929,7 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.WithGuidColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
 							if (column.AutoDefaultValue)
 								c.WithAutoDefaultValue();
 							else
@@ -941,8 +971,8 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.WithDateColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
 							if (column.AutoDefaultValue)
 								c.WithAutoDefaultValue();
 							else
@@ -988,8 +1018,8 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.WithDateTimeColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
 							if (column.AutoDefaultValue)
 								c.WithAutoDefaultValue();
 							else
@@ -1034,8 +1064,8 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.WithNumberColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
 							if (column.DefaultValue is not null)
 							{
 								var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
@@ -1075,12 +1105,17 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.WithShortIntegerColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
-							if (column.DefaultValue is not null)
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
 							{
-								var number = short.Parse(column.DefaultValue);
-								c.WithDefaultValue(number);
+								if (column.DefaultValue is not null)
+								{
+									var number = short.Parse(column.DefaultValue);
+									c.WithDefaultValue(number);
+								}
 							}
 						});
 
@@ -1116,12 +1151,17 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.WithIntegerColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
-							if (column.DefaultValue is not null)
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
 							{
-								var number = int.Parse(column.DefaultValue);
-								c.WithDefaultValue(number);
+								if (column.DefaultValue is not null)
+								{
+									var number = int.Parse(column.DefaultValue);
+									c.WithDefaultValue(number);
+								}
 							}
 						});
 
@@ -1157,12 +1197,17 @@ public partial class TfService : ITfService
 					{
 						columnsBuilder.WithLongIntegerColumn(column.DbName!, c =>
 						{
-							if (column.IsNullable) c.Nullable();
-							else c.NotNullable();
-							if (column.DefaultValue is not null)
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
 							{
-								var number = long.Parse(column.DefaultValue);
-								c.WithDefaultValue(number);
+								if (column.DefaultValue is not null)
+								{
+									var number = long.Parse(column.DefaultValue);
+									c.WithDefaultValue(number);
+								}
 							}
 						});
 
@@ -1212,7 +1257,7 @@ public partial class TfService : ITfService
 
 		var result = _dbManager.SaveChanges(dbBuilder);
 		if (!result.IsSuccess)
-			throw new TfException("Failed to save changes to database schema");
+			throw new TfDatabaseUpdateException(result);
 	}
 
 	#endregion

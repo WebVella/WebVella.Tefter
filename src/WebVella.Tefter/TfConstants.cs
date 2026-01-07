@@ -23,6 +23,9 @@ public partial class TfConstants
 	public const int DB_MAX_OBJECT_NAME_LENGTH = 50;
 	public const string DB_OBJECT_NAME_VALIDATION_PATTERN = "^[a-z](?!.*__)[a-z0-9_]*[a-z0-9]$";
 
+	public const string DB_SHORT_INT_COLUMN_AUTO_DEFAULT_VALUE = "_tefter_get_random_by_type('smallint'::text)";
+	public const string DB_INT_COLUMN_AUTO_DEFAULT_VALUE = "_tefter_get_random_by_type('integer'::text)";
+	public const string DB_LONG_INT_COLUMN_AUTO_DEFAULT_VALUE = "_tefter_get_random_by_type('bigint'::text)";
 	public const string DB_GUID_COLUMN_AUTO_DEFAULT_VALUE = "uuid_generate_v1()";
 	public const string DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE = "clock_timestamp()";
 	public const string DB_SHORT_TEXT_COLUMN_AUTO_SHA1_DEFAULT_VALUE = "_tefter_gen_random_sha1()";

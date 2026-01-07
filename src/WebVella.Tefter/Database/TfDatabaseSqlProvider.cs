@@ -39,6 +39,26 @@ $$ LANGUAGE plpgsql;
 ");
 		sb.AppendLine();
 
+
+		sb.AppendLine(@"
+CREATE OR REPLACE FUNCTION public._tefter_get_random_by_type(target_type text) 
+RETURNS bigint AS $$
+DECLARE
+    max_val numeric;
+BEGIN
+    CASE lower(target_type)
+        WHEN 'smallint' THEN max_val := 32767;
+        WHEN 'integer'  THEN max_val := 2147483647;
+        WHEN 'bigint'   THEN max_val := 9223372036854775807;
+        ELSE max_val := 1; 
+    END CASE;
+
+    RETURN floor(random() * (max_val + 1))::bigint;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+");
+		sb.AppendLine();
+
 		return sb.ToString(); ;
     }
 

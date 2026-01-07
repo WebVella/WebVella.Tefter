@@ -31,9 +31,19 @@ public class TfLongIntegerDatabaseColumnBuilder : TfDatabaseColumnBuilder
     internal override TfLongIntegerDatabaseColumnBuilder WithLastCommited(DateTime lastCommited)
     {
         base.WithLastCommited(lastCommited);
-
         return this;
     }
+
+	public TfLongIntegerDatabaseColumnBuilder WithAutoDefaultValue()
+	{
+		_autoDefaultValue = true;
+		return this;
+	}
+	public TfLongIntegerDatabaseColumnBuilder WithoutAutoDefaultValue()
+	{
+		_autoDefaultValue = false;
+		return this;
+	}
 
 	public TfLongIntegerDatabaseColumnBuilder AsExpression(string expression)
 	{
@@ -51,6 +61,7 @@ public class TfLongIntegerDatabaseColumnBuilder : TfDatabaseColumnBuilder
             Name = _name,   
             Type = TfDatabaseColumnType.LongInteger,
 			Expression = _expression,
-        }; 
+			AutoDefaultValue = _autoDefaultValue
+		}; 
     }
 }
