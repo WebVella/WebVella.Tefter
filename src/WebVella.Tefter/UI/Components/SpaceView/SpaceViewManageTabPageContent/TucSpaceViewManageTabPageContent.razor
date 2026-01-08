@@ -16,8 +16,12 @@ else if (_navState.ManageTab == "columns")
 {
     <TucCard Title="@LOC("Settings")">
         <ToolbarTemplate>
+            <FluentButton Appearance="@Appearance.Outline" OnClick="_changeDataset">
+                @LOC("Change Dataset")
+                <FluentIcon Value="@TfConstants.GetIcon("DatabaseLink")" Color="@Color.Accent" Slot="start"/>
+            </FluentButton>            
             <FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceView">
-                @LOC("Edit")
+                @LOC("Edit Setting")
                 <FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start"/>
             </FluentButton>
         </ToolbarTemplate>

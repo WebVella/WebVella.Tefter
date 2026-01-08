@@ -11,7 +11,7 @@ public record TfSpacePage
 	public string? Description { get; set; }
 	public short? Position { get; set; }
 	public Guid? ComponentId { get; set; }
-	public Type ComponentType { get; internal set; }
+	public Type ComponentType { get; internal set; } = null!;
 	public string ComponentOptionsJson { get; set; } = "{}";
 	public List<TfSpacePage> ChildPages { get; set; } = new();
 	public TfSpacePage? ParentPage { get; set; } = null;

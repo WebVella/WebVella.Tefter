@@ -142,6 +142,21 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 		var result = await dialog.Result;
 		if (result is { Cancelled: false, Data: not null }) { }
 	}
+	
+	private async Task _changeDataset()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewChangeDatasetDialog>(
+			_spaceView!,
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthSmall,
+				TrapFocus = false
+			});
+		var result = await dialog.Result;
+		if (result is { Cancelled: false, Data: not null }) { }
+	}	
 
 	private async Task _importColumns()
 	{

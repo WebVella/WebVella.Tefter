@@ -1,0 +1,43 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+    <FluentLabel Typo="Typography.PaneHeader">@LOC("Change dataset")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+    @if (String.IsNullOrWhiteSpace(_error))
+    {
+        <FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
+                      Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+    }
+    <FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+    @if (!string.IsNullOrWhiteSpace(_error))
+    {
+        <FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+    }
+    else
+    {
+        <FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+                        FormName="submit-form" class="tf-form" novalidate>
+            <DataAnnotationsValidator />
+            <FluentGrid>
+                <FluentGridItem xs="12">
+                    <FluentInputLabel Label="@LOC("Dataset")" />
+                    <TucSelect Required="true" Style="width:100%" TOption="TfDataset"
+                               SelectedOption="@_allDatasets.FirstOrDefault(x=> x.Id == _form.DatasetId)"
+                               SelectedOptionChanged="@((x)=> _datasetChanged(x))"
+                               OptionValue="@((p)=> p.Id.ToString())"
+                               OptionText="@((p) => p.Name)"
+                               Items="@_allDatasets" />
+                    <FluentValidationMessage For="@(() => _form.DatasetId)" />
+                </FluentGridItem>
+            </FluentGrid>
+        </FluentEditForm>
+    }
+</FluentDialogBody>

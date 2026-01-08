@@ -19,6 +19,7 @@
     align-items: center;
     justify-content: center;
     background: var(--accent-fill-rest);
+    background: color-mix(in srgb, var(--tf-layout-aside-background), var(--accent-fill-rest) 50%);
     svg{
       --accent-fill-rest: var(--foreground-on-accent-rest-large);
       width: var(--tf-svg-size) !important;
@@ -31,8 +32,9 @@
     padding-left: var(--tf-padding);
     &__title {
       overflow: hidden;
-      line-height: var(--type-ramp-plus-1-line-height);
-      font-size: var(--type-ramp-plus-1-font-size);
+      line-height: 1.15em;
+      font-size: var(--type-ramp-minus-1-font-size);
+      color:var(--neutral-foreground-hint);
     }    
   }
  

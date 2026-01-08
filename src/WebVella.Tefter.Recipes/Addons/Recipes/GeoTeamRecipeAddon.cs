@@ -34,7 +34,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
         int dataProviderIndex = 1;
         string dataProviderPrefix = $"dp{dataProviderIndex}_";
         var spaceId = new Guid("116a3baa-cd02-4926-8a76-639a2e15a011");
-        var spaceDataId = new Guid("1a363406-6cb8-418b-95b2-9c72fb5d5fe9");
+        var spaceDataId = dataProviderId;
         var spaceViewId = new Guid("52363483-1d9b-4e7d-afe1-1602b7a7697f");
         var spacePageId = new Guid("831ce409-febb-40c3-a9b3-74af0c3bb8d3");
         var template1Id = new Guid("3ec7ec15-e3bb-4854-8688-0227e5efa646");
@@ -414,40 +414,6 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                 DataIdentities = []
             }
         });
-
-        #endregion
-
-        #region << Dataset >>
-
-        Steps.Add(new TfCreateDatasetRecipeStep
-        {
-            Instance = new TfRecipeStepInstance
-            {
-                Visible = false,
-                StepId = new Guid("1e8bec9f-e4ea-452c-9bb2-04dbb5f43e98"),
-                StepMenuTitle = "Create space data",
-            },
-            Data = new TfCreateDatasetRecipeStepData()
-            {
-                SpaceDataId = spaceDataId,
-                DataProviderId = dataProviderId,
-                SpaceId = spaceId,
-                Name = "World Cities",
-                Position = 100,
-                Columns =
-                [
-                    $"{dataIdentity}.{talkCountSharedColumnName}",
-                    $"{dataIdentity}.{assetsCountSharedColumnName}",
-                    $"{dataProviderPrefix}city",
-                    $"{dataProviderPrefix}country",
-                    $"{dataProviderPrefix}population",
-                    $"{dataProviderPrefix}id"
-                ],
-                Filters = new(),
-                SortOrders = [new TfSort { ColumnName = $"{dataProviderPrefix}city", Direction = TfSortDirection.ASC }]
-            }
-        });
-
         #endregion
 
         #region << Space >>

@@ -410,7 +410,7 @@ public partial class TfService : ITfService
 
 				TfCreateDataset createDatasetModel = new TfCreateDataset
 				{
-					Id = Guid.NewGuid(),
+					Id = provider.Id, //same Id as the provider is the default dataset
 					Name = datasetName,
 					Filters = new(),
 					Columns = new(),//when no columns specified all columns are added to the dataset
@@ -551,7 +551,15 @@ public partial class TfService : ITfService
 					if (!success)
 						throw new TfDboServiceException("Delete<TfDataProviderIdentityDbo> failed.");
 				}
+				var datasets = GetDatasets(providerId:provider.Id);
+				foreach (var dataset in datasets)
+				{
+					success = _dboManager.Delete<TfDatasetDbo>(dataset.Id);
 
+					if (!success)
+						throw new TfDboServiceException("Delete<TfDatasetDbo> failed.");
+				}				
+				
 				success = _dboManager.Delete<TfDataProviderDbo>(id);
 
 				if (!success)

@@ -207,7 +207,6 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				await InvokeAsync(StateHasChanged);
 			}
 
-
 			Guid? oldViewId = _spaceView?.Id;
 			_spaceView = null;
 			// if (_navState.SpaceId is null || _navState.SpacePageId is null)
@@ -233,15 +232,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 			_allDataProviders = TfService.GetDataProviders().ToList();
 			_allSharedColumns = TfService.GetSharedColumns();
-
 			if (oldViewId != options.SpaceViewId.Value)
 			{
-				_dataset = TfService.GetDataset(_spaceView.DatasetId);
-				_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _dataset!.DataProviderId);
 				_selectedDataRows = new();
 				_editedDataRows = new();
 			}
-
+			_dataset = TfService.GetDataset(_spaceView.DatasetId);
+			_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _dataset!.DataProviderId);
 			if (_dataset is null || _dataProvider is null)
 			{
 				throw new Exception("Dataset or DataProvider was not found");

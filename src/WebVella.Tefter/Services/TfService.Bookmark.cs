@@ -5,7 +5,7 @@ public partial interface ITfService
 	public List<TfBookmark> GetBookmarksForUser(
 		Guid userId);
 
-	List<TfBookmark> GetAllBookmarksForSpacePageWithoutTags(
+	List<TfBookmark> GetBookmarksForSpacePage(
 		Guid spacePageId);
 
 	public TfBookmark? GetBookmark(
@@ -50,7 +50,7 @@ public partial class TfService
 		}
 	}
 
-	public List<TfBookmark> GetAllBookmarksForSpacePageWithoutTags(
+	public List<TfBookmark> GetBookmarksForSpacePage(
 		Guid spacePageId)
 	{
 		try
@@ -261,6 +261,7 @@ public partial class TfService
 			throw ProcessException(ex);
 		}
 	}
+
 
 	private void MaintainBookmarkTags(TfBookmark bookmark)
 	{

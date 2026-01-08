@@ -23,7 +23,7 @@ public partial class TucDatasetManageDialog : TfFormBaseComponent, IDialogConten
 		_provider = TfService.GetDataProvider(Content.DataProviderId);
 		if(_provider is null) throw new Exception("DataProviderId not found");
 
-		_title = _isCreate ? LOC("Create dataset in {0}", _provider.Name) : LOC("Manage dataset in {0}", _provider.Name);
+		_title = _isCreate ? LOC("Create dataset in") : LOC("Manage dataset");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.GetIcon("Add")! : TfConstants.GetIcon("Save")!;
 		if (_isCreate)

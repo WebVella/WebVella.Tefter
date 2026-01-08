@@ -687,10 +687,16 @@ public partial class TfService : ITfService
 
 				foreach (var pageToDelete in pagesToDelete)
 				{
-					var bookmarks = GetAllBookmarksForSpacePageWithoutTags(pageToDelete.Id);
+					//Bookmarks
+					var bookmarks = GetBookmarksForSpacePage(pageToDelete.Id);
 					foreach (var bookmark in bookmarks)
 						DeleteBookmark(bookmark.Id);
-
+					//Tags
+					var tags = GetSpacePageTags(pageToDelete.Id);
+					foreach (var tag in tags)
+						_deleteSpacePagePageTagRelation(tagId:tag.Id,pageId:pageToDelete.Id);					
+					
+					
 					if (!_dboManager.Delete<TfSpacePageDbo>(pageToDelete.Id))
 						throw new TfDboServiceException("Delete<TfSpacePageDbo> failed");
 
@@ -814,6 +820,25 @@ public partial class TfService : ITfService
 		return allPages.FirstOrDefault(x => x.ComponentOptionsJson.Contains(spaceViewId.ToString()));
 	}
 
+	private void _deleteSpacePagePageTagRelation(
+		Guid tagId, Guid pageId)
+	{
+		try
+		{
+			Dictionary<string, Guid> deleteKey = new Dictionary<string, Guid>();
+			deleteKey.Add(nameof(TfSpacePageTag.SpacePageId), pageId);
+			deleteKey.Add(nameof(TfBookmarkTag.TagId), tagId);
+
+			var success = _dboManager.Delete<TfSpacePageTag>(deleteKey);
+			if (!success)
+				throw new TfDboServiceException("Delete<TfSpacePageTag> failed.");
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}	
+	
 	private TfSpacePage ConvertDboToModel(
 		TfSpacePageDbo dbo)
 	{

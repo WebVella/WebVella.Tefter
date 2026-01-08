@@ -2110,6 +2110,7 @@ fluent-menu-item::part(start) {
   align-items: center;
   justify-content: center;
   background: var(--accent-fill-rest);
+  background: color-mix(in srgb, var(--tf-layout-aside-background), var(--accent-fill-rest) 50%);
 }
 .tf-space-header__icon svg {
   --accent-fill-rest: var(--foreground-on-accent-rest-large);
@@ -2122,8 +2123,9 @@ fluent-menu-item::part(start) {
 }
 .tf-space-header__meta__title {
   overflow: hidden;
-  line-height: var(--type-ramp-plus-1-line-height);
-  font-size: var(--type-ramp-plus-1-font-size);
+  line-height: 1.15em;
+  font-size: var(--type-ramp-minus-1-font-size);
+  color: var(--neutral-foreground-hint);
 }
 .tf-space-actions {
   --tf-padding-actions: calc(var(--tf-padding) / 2);
