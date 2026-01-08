@@ -294,14 +294,23 @@ public partial class TfService : ITfService
 		if (rowDict is not null && rowDict.ContainsKey(column.DbName!))
 		{
 			var valueObject = rowDict[column.DbName!];
-			var processedValueObject = ValidateProcessColumnValue(provider, column, valueObject, errors);
-			if (column.IsUnique)
+			if (valueObject is null)
 			{
-				if (!IsUniqueValue(provider, column, processedValueObject, tfId))
-					errors.Add(column.DbName!, "Value must be unique");
-			}
+				if (column.IsUnique)
+					return GetColumnUniqueValue(provider, column);
 
-			return processedValueObject;
+				return GetColumnDefaultValue(column);
+			}
+			else
+			{
+				var processedValueObject = ValidateProcessColumnValue(provider, column, valueObject, errors);
+				if (column.IsUnique)
+				{
+					if (!IsUniqueValue(provider, column, processedValueObject, tfId))
+						errors.Add(column.DbName!, "Value must be unique");
+				}
+				return processedValueObject;
+			}
 		}
 
 		if (column.IsUnique)

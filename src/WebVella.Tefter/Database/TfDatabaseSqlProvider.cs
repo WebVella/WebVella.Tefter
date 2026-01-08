@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Database;
+﻿using Microsoft.FluentUI.AspNetCore.Components.DesignTokens;
+
+namespace WebVella.Tefter.Database;
 
 internal static class TfDatabaseSqlProvider
 {
@@ -350,16 +352,42 @@ $$ LANGUAGE plpgsql;
 			else
 			{
 				sb.Append($"ALTER TABLE \"{tableName}\" ");
-				if (!column.IsNullable)
-					sb.Append($" ALTER COLUMN \"{column.Name}\" SET NOT NULL , ");
-				else
-					sb.Append($" ALTER COLUMN \"{column.Name}\" DROP NOT NULL , ");
-
 				var defaultValue = TfDatabaseUtility.ConvertDbColumnDefaultValueToDatabaseDefaultValue(column);
 				if (defaultValue != null)
 					sb.Append($" ALTER COLUMN \"{column.Name}\" SET DEFAULT {defaultValue}; ");
 				else
 					sb.Append($" ALTER COLUMN \"{column.Name}\" DROP DEFAULT; ");
+
+				//set default values for existing nulls before setting not null constraint
+				if (!column.IsNullable)
+				{
+					if (column.Type == TfDatabaseColumnType.Guid)
+					{
+						sb.Append($"UPDATE \"{tableName}\" SET \"{column.Name}\" = {TfConstants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE} WHERE \"{column.Name}\" IS NULL;");
+					}
+					else if (column.Type == TfDatabaseColumnType.DateTime || column.Type == TfDatabaseColumnType.DateOnly)
+					{
+						sb.Append($"UPDATE \"{tableName}\" SET \"{column.Name}\" = {TfConstants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE} WHERE \"{column.Name}\" IS NULL;");
+					}
+					else if (column.Type == TfDatabaseColumnType.ShortInteger)
+					{
+						sb.Append($"UPDATE \"{tableName}\" SET \"{column.Name}\" = {TfConstants.DB_SHORT_INT_COLUMN_AUTO_DEFAULT_VALUE} WHERE \"{column.Name}\" IS NULL;");
+					}
+					else if (column.Type == TfDatabaseColumnType.Integer)
+					{
+						sb.Append($"UPDATE \"{tableName}\" SET \"{column.Name}\" = {TfConstants.DB_INT_COLUMN_AUTO_DEFAULT_VALUE} WHERE \"{column.Name}\" IS NULL;");
+					}
+					else if (column.Type == TfDatabaseColumnType.LongInteger)
+					{
+						sb.Append($"UPDATE \"{tableName}\" SET \"{column.Name}\" = {TfConstants.DB_LONG_INT_COLUMN_AUTO_DEFAULT_VALUE} WHERE \"{column.Name}\" IS NULL;");
+					}
+				}
+
+				sb.Append($"ALTER TABLE \"{tableName}\" ");
+				if (!column.IsNullable)
+					sb.Append($" ALTER COLUMN \"{column.Name}\" SET NOT NULL; ");
+				else
+					sb.Append($" ALTER COLUMN \"{column.Name}\" DROP NOT NULL; ");
 			}
 
             return sb.ToString();

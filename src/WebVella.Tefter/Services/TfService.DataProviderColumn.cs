@@ -320,20 +320,25 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
-			var existingColumn = _dboManager.Get<TfDataProviderColumn>(column.Id);
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var existingColumn = _dboManager.Get<TfDataProviderColumn>(column.Id);
 
-			var success = _dboManager.Update<TfDataProviderColumn>(column);
+				var success = _dboManager.Update<TfDataProviderColumn>(column);
 
-			if (!success)
-				throw new TfDboServiceException("Update<TfDataProviderColumn> failed.");
+				if (!success)
+					throw new TfDboServiceException("Update<TfDataProviderColumn> failed.");
 
-			provider = GetDataProvider(column.DataProviderId);
-			if (provider is null)
-				throw new TfException("Failed to create new data provider column");
+				provider = GetDataProvider(column.DataProviderId);
+				if (provider is null)
+					throw new TfException("Failed to create new data provider column");
 
-			UpdateDatabaseColumn(provider, column, existingColumn);
+				UpdateDatabaseColumn(provider, column, existingColumn);
 
-			return GetDataProvider(column.DataProviderId);
+				scope.Complete();
+
+				return GetDataProvider(column.DataProviderId);
+			}
 		}
 		catch(TfDatabaseUpdateException dbEx)
 		{
