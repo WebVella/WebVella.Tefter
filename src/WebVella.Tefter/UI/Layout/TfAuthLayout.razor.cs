@@ -22,9 +22,9 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 	private TfColor _accentColor = TfColor.Red500;
 	private DesignThemeModes _themeMode = DesignThemeModes.System;
 
-	private IAsyncDisposable _bookmarkEventSubscriber = null!;
-	private IAsyncDisposable _spaceUpdatedEventSubscriber = null!;
-	private IAsyncDisposable _userUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _bookmarkEventSubscriber = null;
+	private IAsyncDisposable? _spaceUpdatedEventSubscriber = null;
+	private IAsyncDisposable? _userUpdatedEventSubscriber = null;
 
 	public TfState GetState() => _state;
 	public Guid GetSessionId() => _sessionId;
@@ -32,9 +32,12 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	public async ValueTask DisposeAsync()
 	{
-		await _bookmarkEventSubscriber.DisposeAsync();
-		await _spaceUpdatedEventSubscriber.DisposeAsync();
-		await _userUpdatedEventSubscriber.DisposeAsync();
+		if (_bookmarkEventSubscriber is not null)
+			await _bookmarkEventSubscriber.DisposeAsync();
+		if (_spaceUpdatedEventSubscriber is not null)
+			await _spaceUpdatedEventSubscriber.DisposeAsync();
+		if (_userUpdatedEventSubscriber is not null)
+			await _userUpdatedEventSubscriber.DisposeAsync();
 		_locationChangingHandler?.Dispose();
 	}
 
@@ -81,17 +84,17 @@ public partial class TfAuthLayout : LayoutComponentBase, IAsyncDisposable
 
 	private async Task On_UserUpdatedEventAsync(string? key, TfUserUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(payload.User.Id != _state.User.Id) return;
+		if (payload is null) return;
+		if (payload.User.Id != _state.User.Id) return;
 		_currentUser = payload.User;
 		await _init(Navigator.Uri);
 		await InvokeAsync(StateHasChanged);
-	}		
+	}
 
 	private async Task On_SpaceUpdatedEventAsync(string? key, TfSpaceUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(payload.Space.Id != _state.Space?.Id) return;
+		if (payload is null) return;
+		if (payload.Space.Id != _state.Space?.Id) return;
 		await _init(Navigator.Uri, payload.Space);
 		await InvokeAsync(StateHasChanged);
 	}

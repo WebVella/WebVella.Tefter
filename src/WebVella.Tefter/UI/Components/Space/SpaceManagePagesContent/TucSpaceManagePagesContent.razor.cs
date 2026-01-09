@@ -6,12 +6,13 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposa
 	private List<TfSpacePage> _spacePages = new();
 	private TfNavigationState _navState = null!;
 	private bool _submitting = false;
-	private IAsyncDisposable _spacePageEventSubscriber = null!;
+	private IAsyncDisposable? _spacePageEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _spacePageEventSubscriber.DisposeAsync();
+		if (_spacePageEventSubscriber is not null)
+			await _spacePageEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -25,13 +26,13 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposa
 
 	private async Task On_SpacePageEventAsync(string? key, TfSpacePageEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(payload.SpacePage.SpaceId != _space?.Id) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (payload.SpacePage.SpaceId != _space?.Id) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}	
+	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -63,7 +64,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposa
 
 	private async Task _addPage()
 	{
-		if(_space is null) return;
+		if (_space is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucSpacePageManageDialog>(
 			new TfSpacePage() { SpaceId = _space.Id },
 			new()
@@ -74,7 +75,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposa
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
-		if (result is { Cancelled: false, Data: not null }){}
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 
 	private async Task _removePage(TfSpacePage node)
@@ -90,8 +91,8 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposa
 		{
 			TfService.DeleteSpacePage(node.Id);
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpacePageDeletedEventPayload(node));					
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpacePageDeletedEventPayload(node));
 		}
 		catch (Exception ex)
 		{
@@ -115,8 +116,8 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposa
 		{
 			TfService.MoveSpacePage(args.Item1.Id, args.Item2);
 			ToastService.ShowSuccess(LOC("Space page updated!"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpacePageUpdatedEventPayload(args.Item1));				
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpacePageUpdatedEventPayload(args.Item1));
 		}
 		catch (Exception ex)
 		{
@@ -138,11 +139,11 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposa
 
 		try
 		{
-			var (pageId,pages) = TfService.CopySpacePage(nodeId);
-			var page = pages.Single(x=> x.Id == pageId);
+			var (pageId, pages) = TfService.CopySpacePage(nodeId);
+			var page = pages.Single(x => x.Id == pageId);
 			ToastService.ShowSuccess(LOC("Space page updated!"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpacePageCreatedEventPayload(page));					
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpacePageCreatedEventPayload(page));
 		}
 		catch (Exception ex)
 		{
@@ -174,6 +175,6 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposa
 				TrapFocus = false
 			});
 		var result = await dialog.Result;
-		if (result is { Cancelled: false, Data: not null }){}
+		if (result is { Cancelled: false, Data: not null }) { }
 	}
 }

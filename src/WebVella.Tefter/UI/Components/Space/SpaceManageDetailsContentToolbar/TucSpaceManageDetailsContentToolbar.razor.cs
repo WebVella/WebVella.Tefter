@@ -4,12 +4,13 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IAsy
 {
 	private bool _isLoading = true;
 	private List<TfMenuItem> _menu = new();
-	private IAsyncDisposable _spaceUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _spaceUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _spaceUpdatedEventSubscriber.DisposeAsync();
+		if (_spaceUpdatedEventSubscriber is not null)
+			await _spaceUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -32,14 +33,14 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IAsy
 
 	private async Task On_SpaceUpdatedEventAsync(string? key, TfSpaceUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
+		if (payload is null) return;
 		var navState = TfAuthLayout.GetState().NavigationState;
-		if(payload.Space.Id != navState.SpaceId) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload.Space.Id != navState.SpaceId) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(navState);
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}		
+	}
 
 	private async Task _init(TfNavigationState navState)
 	{

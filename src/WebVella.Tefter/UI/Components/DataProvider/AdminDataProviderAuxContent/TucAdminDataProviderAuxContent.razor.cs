@@ -5,12 +5,13 @@ public partial class TucAdminDataProviderAuxContent : TfBaseComponent, IAsyncDis
 	private TfDataProvider? _provider = null;
 	private List<TfDataProvider> _connectedProviders = new();
 	
-	private IAsyncDisposable _dataProviderUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _dataProviderUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _dataProviderUpdatedEventSubscriber.DisposeAsync();
+		if(_dataProviderUpdatedEventSubscriber is not null)
+			await _dataProviderUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()

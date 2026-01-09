@@ -20,14 +20,16 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 	private Guid? _openedFilterId = null;
 	private bool _hasPinnedData = false;
 
-	private IAsyncDisposable _spaceViewColumnUpdatedEventSubscriber = null!;
-	private IAsyncDisposable _spaceViewUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _spaceViewColumnUpdatedEventSubscriber = null;
+	private IAsyncDisposable? _spaceViewUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _spaceViewColumnUpdatedEventSubscriber.DisposeAsync();
-		await _spaceViewUpdatedEventSubscriber.DisposeAsync();
+		if (_spaceViewColumnUpdatedEventSubscriber is not null)
+			await _spaceViewColumnUpdatedEventSubscriber.DisposeAsync();
+		if (_spaceViewUpdatedEventSubscriber is not null)
+			await _spaceViewUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override void OnInitialized() => _init();
@@ -140,30 +142,29 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 
 	private async Task On_SpaceViewUpdatedEventAsync(string? key, TfSpaceViewUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 		{
 			_init();
 			await InvokeAsync(StateHasChanged);
 		}
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}		
+	}
 
 
 	private async Task On_SpaceViewColumnUpdatedEventAsync(string? key, TfSpaceViewColumnUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(SpaceViewColumns.All(x => x.Id != payload.ColumnId)) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (SpaceViewColumns.All(x => x.Id != payload.ColumnId)) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 		{
 			_init();
 			await InvokeAsync(StateHasChanged);
 		}
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}		
-
+	}
 
 
 	private async Task _valueChanged(string queryName, object? valueObj,

@@ -7,12 +7,13 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IAsyncDi
 
 	private string _nextSyncronization = null!;
 	private List<TfDataProviderSynchronizeTask> _syncTasks = new();
-	private IAsyncDisposable _dataProviderUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _dataProviderUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _dataProviderUpdatedEventSubscriber.DisposeAsync();
+		if (_dataProviderUpdatedEventSubscriber is not null)
+			await _dataProviderUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -35,13 +36,13 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IAsyncDi
 
 	private async Task On_DataProviderUpdatedEventAsync(string? key, TfDataProviderUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(payload.DataProvider.Id != _provider?.Id) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (payload.DataProvider.Id != _provider?.Id) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}		
+	}
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -137,7 +138,8 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IAsyncDi
 			TfService.UpdateDataProviderSynchPrimaryKeyColumns(_provider!.Id, columns);
 			_provider = TfService.GetDataProvider(_provider!.Id)!;
 			ToastService.ShowSuccess("Data provider updated!");
-			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),new TfDataProviderUpdatedEventPayload(_provider));			
+			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),
+				new TfDataProviderUpdatedEventPayload(_provider));
 		}
 		catch (Exception ex)
 		{

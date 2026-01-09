@@ -4,12 +4,13 @@ public partial class TucSpacePageManageTabContent : TfBaseComponent, IAsyncDispo
 {
 	private TfSpace _space = null!;
 	private TfSpacePage _spacePage = null!;
-	private IAsyncDisposable _spacePageUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _spacePageUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _spacePageUpdatedEventSubscriber.DisposeAsync();
+		if(_spacePageUpdatedEventSubscriber is not null)
+			await _spacePageUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()

@@ -11,12 +11,13 @@ public partial class TucAdminFileRepositoryPageContent : TfBaseComponent, IAsync
 	private string? _search = null;
 	private readonly string _uploadId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 	private FluentSearch? _refSearch = null;
-	private IAsyncDisposable _repositoryFileEventSubscriber = null!;
+	private IAsyncDisposable? _repositoryFileEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _repositoryFileEventSubscriber.DisposeAsync();
+		if(_repositoryFileEventSubscriber is not null)
+			await _repositoryFileEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()

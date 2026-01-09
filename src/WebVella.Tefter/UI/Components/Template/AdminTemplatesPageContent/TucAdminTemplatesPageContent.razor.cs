@@ -5,12 +5,13 @@ public partial class TucAdminTemplatesPageContent : TfBaseComponent, IAsyncDispo
 	private bool _isLoading = false;
 	private List<TfTemplate> _items = new();
 	private List<TfTemplateResultType> _toggledTypes = new();
-	private IAsyncDisposable _templateEventSubscriber = null!;
+	private IAsyncDisposable? _templateEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _templateEventSubscriber.DisposeAsync();
+		if (_templateEventSubscriber is not null)
+			await _templateEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -24,12 +25,12 @@ public partial class TucAdminTemplatesPageContent : TfBaseComponent, IAsyncDispo
 
 	private async Task On_TemplateEventAsync(string? key, TfTemplateEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}		
+	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -76,12 +77,11 @@ public partial class TucAdminTemplatesPageContent : TfBaseComponent, IAsyncDispo
 	private async Task _toggleType(TfTemplateResultType type)
 	{
 		var newList = _toggledTypes.ToList();
-		if(newList.Contains(type))
+		if (newList.Contains(type))
 			newList.Remove(type);
 		else
 			newList.Add(type);
-		
-		await Navigator.ApplyChangeToUrlQuery(TfConstants.TabQueryName,newList);
 
+		await Navigator.ApplyChangeToUrlQuery(TfConstants.TabQueryName, newList);
 	}
 }

@@ -2,12 +2,13 @@
 public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IAsyncDisposable
 {
 	private TfDataIdentity? _identity = null;
-	private IAsyncDisposable _dataIdentityUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _dataIdentityUpdatedEventSubscriber = null;
 	
 	
 	public async ValueTask DisposeAsync()
 	{
-		await _dataIdentityUpdatedEventSubscriber.DisposeAsync();
+		if(_dataIdentityUpdatedEventSubscriber is not null)
+			await _dataIdentityUpdatedEventSubscriber.DisposeAsync();
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 	}
 

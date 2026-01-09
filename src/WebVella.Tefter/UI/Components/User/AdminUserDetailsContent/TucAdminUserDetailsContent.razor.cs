@@ -7,12 +7,13 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IAsyncDisposa
 	private TfRole? _selectedRole = null;
 	private bool _submitting = false;
 	private Guid? _removingRoleId = null;
-	private IAsyncDisposable _userUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _userUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _userUpdatedEventSubscriber.DisposeAsync();
+		if (_userUpdatedEventSubscriber is not null)
+			await _userUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -26,13 +27,13 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IAsyncDisposa
 
 	private async Task On_UserUpdatedEventAsync(string? key, TfUserUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(payload.User.Id != _user?.Id) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (payload.User.Id != _user?.Id) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(navState: TfAuthLayout.GetState().NavigationState, user: payload.User);
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}	
+	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{
@@ -69,7 +70,7 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IAsyncDisposa
 
 	private async Task _editUser()
 	{
-		if(_user is null) return;
+		if (_user is null) return;
 		var dialog = await DialogService.ShowDialogAsync<TucUserManageDialog>(
 			_user,
 			new()
@@ -85,7 +86,7 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IAsyncDisposa
 
 	private async Task _addRole()
 	{
-		if(_user is null) return;
+		if (_user is null) return;
 		if (_submitting) return;
 
 		if (_selectedRole is null) return;
@@ -95,10 +96,10 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IAsyncDisposa
 			_user = await TfService.AddUserToRoleAsync(userId: _user.Id, roleId: _selectedRole.Id);
 			_roleOptions = (await TfService.GetRolesAsync()).Where(x => _user.Roles.All(u => x.Id != u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User role added"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfUserUpdatedEventPayload(_user));				
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfRoleUpdatedEventPayload(_selectedRole));					
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfUserUpdatedEventPayload(_user));
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfRoleUpdatedEventPayload(_selectedRole));
 		}
 		catch (Exception ex)
 		{
@@ -114,7 +115,7 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IAsyncDisposa
 
 	private async Task _removeRole(TfRole role)
 	{
-		if(_user is null) return;
+		if (_user is null) return;
 		if (_removingRoleId is not null) return;
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this role unassigned?")))
 			return;
@@ -124,8 +125,8 @@ public partial class TucAdminUserDetailsContent : TfBaseComponent, IAsyncDisposa
 			_user = await TfService.RemoveUserFromRoleAsync(userId: _user.Id, roleId: role.Id);
 			_roleOptions = (await TfService.GetRolesAsync()).Where(x => _user.Roles.All(u => x.Id != u.Id)).ToList();
 			ToastService.ShowSuccess(LOC("User role removed"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfUserUpdatedEventPayload(_user));					
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfUserUpdatedEventPayload(_user));
 		}
 		catch (Exception ex)
 		{

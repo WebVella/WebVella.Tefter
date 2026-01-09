@@ -10,11 +10,13 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 	private List<TfMenuItem> _menu = new();
 	private TfNavigationState? _navState = null!;
 	private Guid _initedViewId = Guid.Empty;
-	private IAsyncDisposable _spaceViewUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _spaceViewUpdatedEventSubscriber = null;
+
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _spaceViewUpdatedEventSubscriber.DisposeAsync();
+		if (_spaceViewUpdatedEventSubscriber is not null)
+			await _spaceViewUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -55,15 +57,15 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 
 	private async Task On_SpaceViewUpdatedEventAsync(string? key, TfSpaceViewUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 		{
 			_init(newView: payload.SpaceView);
-			await InvokeAsync(StateHasChanged);		
+			await InvokeAsync(StateHasChanged);
 		}
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}		
+	}
 
 
 	private void _init(TfSpaceView? newView = null)
@@ -74,7 +76,8 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 		{
 			_menu = new();
 			string? pinnedDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName, null);
-			string? pinnedDataIdentityValue = Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName, null);
+			string? pinnedDataIdentityValue =
+				Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName, null);
 			var hasPinnedData = false;
 			if (!String.IsNullOrWhiteSpace(pinnedDataIdentity) && !String.IsNullOrWhiteSpace(pinnedDataIdentityValue))
 				hasPinnedData = true;
@@ -91,6 +94,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 					_menu.Add(_getMenuItem(prItem, first, true));
 					first = false;
 				}
+
 				if (!hasPinnedData)
 				{
 					foreach (var menuItem in _menu)
@@ -111,6 +115,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 						Url = String.Format(TfConstants.SpacePagePageUrl, SpacePage.SpaceId, SpacePage.Id)
 					});
 				}
+
 				_menu.Add(new TfMenuItem
 				{
 					Id = "space-view-pinned-data-tab",
@@ -144,7 +149,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 			else
 			{
 				url = Navigator.GetLocalUrl().ApplyChangeToUrlQuery(TfConstants.PresetIdQueryName,
-						preset.Id.ToString());
+					preset.Id.ToString());
 			}
 		}
 
@@ -206,7 +211,7 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 	private void _setSelection(TfMenuItem menuItem, Guid? currrentPresetId)
 	{
 		menuItem.Selected = currrentPresetId is not null
-							&& menuItem.IdTree.Contains(currrentPresetId.Value.ToString());
+		                    && menuItem.IdTree.Contains(currrentPresetId.Value.ToString());
 
 		foreach (var child in menuItem.Items)
 		{
@@ -236,8 +241,8 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 		{
 			await TfService.RemoveSpaceViewPreset(SpaceView.Id, preset.Id);
 			ToastService.ShowSuccess(LOC("Preset successfully removed!"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpaceViewUpdatedEventPayload(SpaceView));			
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpaceViewUpdatedEventPayload(SpaceView));
 		}
 		catch (Exception ex)
 		{
@@ -255,8 +260,8 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 		{
 			await TfService.MoveSpaceViewPreset(SpaceView.Id, preset.Id, isUp);
 			ToastService.ShowSuccess(LOC("Preset successfully moved!"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpaceViewUpdatedEventPayload(SpaceView));			
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpaceViewUpdatedEventPayload(SpaceView));
 		}
 		catch (Exception ex)
 		{

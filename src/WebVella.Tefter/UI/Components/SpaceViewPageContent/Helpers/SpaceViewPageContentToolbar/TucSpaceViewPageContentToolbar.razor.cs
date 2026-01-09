@@ -19,12 +19,13 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IAsyncDis
 	private Guid _initedSpaceViewId = Guid.Empty;
 	private bool _hasPinnedData = false;
 
-	private IAsyncDisposable _userUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _userUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _userUpdatedEventSubscriber.DisposeAsync();
+		if (_userUpdatedEventSubscriber is not null)
+			await _userUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -67,7 +68,8 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IAsyncDis
 			string? pinnedDataIdentity = Navigator.GetStringFromQuery(TfConstants.DataIdentityIdQueryName);
 			string? pinnedDataIdentityValue =
 				Navigator.GetStringFromQuery(TfConstants.DataIdentityValueQueryName);
-			_hasPinnedData = !string.IsNullOrWhiteSpace(pinnedDataIdentity) && !string.IsNullOrWhiteSpace(pinnedDataIdentityValue);
+			_hasPinnedData = !string.IsNullOrWhiteSpace(pinnedDataIdentity) &&
+			                 !string.IsNullOrWhiteSpace(pinnedDataIdentityValue);
 
 			_hasViewPersonalization = Context.CurrentUser.Settings.ViewPresetColumnPersonalizations.Any(x =>
 				x.SpaceViewId == SpaceView.Id && x.PresetId == SpaceViewPreset?.Id);
@@ -96,7 +98,8 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IAsyncDis
 			TucSpaceViewPageContent.OnNewRow(result);
 			ToastService.ShowSuccess(LOC("Row added"));
 			var provider = TfService.GetDataProvider(result.QueryInfo.DataProviderId);
-			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),new TfDataProviderDataChangedEventPayload(provider!));
+			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),
+				new TfDataProviderDataChangedEventPayload(provider!));
 		}
 		catch (Exception ex)
 		{

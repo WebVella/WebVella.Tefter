@@ -4,12 +4,13 @@ public partial class TucAdminUsersPageContent : TfBaseComponent, IAsyncDisposabl
 {
 	private bool _isLoading = false;
 	private List<TfUser> _items = new();
-	private IAsyncDisposable _userEventSubscriber = null!;
+	private IAsyncDisposable? _userEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _userEventSubscriber.DisposeAsync();
+		if (_userEventSubscriber is not null)
+			await _userEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -23,12 +24,12 @@ public partial class TucAdminUsersPageContent : TfBaseComponent, IAsyncDisposabl
 
 	private async Task On_UserEventAsync(string? key, TfUserEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}		
+	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{

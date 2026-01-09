@@ -7,12 +7,13 @@ public partial class TucSpacePageManageContent : TfBaseComponent, IAsyncDisposab
 	private TfSpacePage _spacePage = null!;
 	private List<TfTag> _pageTags = new();
 	private TfSpacePageAddonMeta? _component = null;
-	private IAsyncDisposable _spacePageUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _spacePageUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _spacePageUpdatedEventSubscriber.DisposeAsync();
+		if (_spacePageUpdatedEventSubscriber is not null)
+			await _spacePageUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -35,14 +36,13 @@ public partial class TucSpacePageManageContent : TfBaseComponent, IAsyncDisposab
 
 	private async Task On_SpacePageUpdatedEventAsync(string? key, TfSpacePageUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(payload.SpacePage.Id != _spacePage.Id) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (payload.SpacePage.Id != _spacePage.Id) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}	
-
+	}
 
 
 	private async Task _init(TfNavigationState navState)
@@ -54,7 +54,8 @@ public partial class TucSpacePageManageContent : TfBaseComponent, IAsyncDisposab
 			_space = TfService.GetSpace(navState.SpaceId.Value) ?? throw new Exception("Space not found");
 			if (navState.SpacePageId is null)
 				throw new Exception("Page Id not found in URL");
-			_spacePage = TfService.GetSpacePage(navState.SpacePageId.Value) ?? throw new Exception("Space page not found");
+			_spacePage = TfService.GetSpacePage(navState.SpacePageId.Value) ??
+			             throw new Exception("Space page not found");
 			var pageMeta = TfMetaService.GetSpacePagesComponentsMeta();
 			_component = pageMeta.FirstOrDefault(x => x.Instance.AddonId == _spacePage.ComponentId);
 
@@ -92,8 +93,8 @@ public partial class TucSpacePageManageContent : TfBaseComponent, IAsyncDisposab
 			TfService.DeleteSpacePage(_spacePage.Id);
 			var pages = TfService.GetSpacePages(_space.Id);
 			ToastService.ShowSuccess(LOC("Page was successfully deleted"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpacePageDeletedEventPayload(_spacePage));				
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpacePageDeletedEventPayload(_spacePage));
 			Navigator.NavigateTo(pages.Count > 0
 				? String.Format(TfConstants.SpacePagePageUrl, _space.Id, pages[0].Id)
 				: TfConstants.HomePageUrl);

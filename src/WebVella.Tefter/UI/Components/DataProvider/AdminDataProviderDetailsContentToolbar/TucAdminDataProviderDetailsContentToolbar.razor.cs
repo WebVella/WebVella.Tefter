@@ -4,12 +4,13 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 {
 	private bool _isLoading = true;
 	private List<TfMenuItem> _menu = new();
-	private IAsyncDisposable _dataProviderUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _dataProviderUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _dataProviderUpdatedEventSubscriber.DisposeAsync();
+		if (_dataProviderUpdatedEventSubscriber is not null)
+			await _dataProviderUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -32,19 +33,19 @@ public partial class TucAdminDataProviderDetailsContentToolbar : TfBaseComponent
 
 	private async Task On_DataProviderUpdatedEventAsync(string? key, TfDataProviderUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
+		if (payload is null) return;
 		if (key == TfAuthLayout.GetSessionId().ToString())
 		{
 			var navState = TfAuthLayout.GetState().NavigationState;
-			if(navState.DataProviderId is null 
-			   || navState.DataProviderId.Value != payload.DataProvider.Id) return;
-			
+			if (navState.DataProviderId is null
+			    || navState.DataProviderId.Value != payload.DataProvider.Id) return;
+
 			await _init(navState);
 		}
-			
+
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}		
+	}
 
 
 	private async Task _init(TfNavigationState navState)

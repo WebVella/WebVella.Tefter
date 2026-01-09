@@ -17,14 +17,17 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 	private bool _submitting = false;
 	private Dictionary<Guid, TfRole> _roleDict = new();
 	private List<TfRole> _rolesTotal = new();
-	private IAsyncDisposable _spaceViewColumnUpdatedEventSubscriber = null!;
-	private IAsyncDisposable _spaceViewUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _spaceViewColumnUpdatedEventSubscriber = null;
+	private IAsyncDisposable? _spaceViewUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _spaceViewColumnUpdatedEventSubscriber.DisposeAsync();
-		await _spaceViewUpdatedEventSubscriber.DisposeAsync();
+
+		if (_spaceViewColumnUpdatedEventSubscriber is not null)
+			await _spaceViewColumnUpdatedEventSubscriber.DisposeAsync();
+		if (_spaceViewUpdatedEventSubscriber is not null)
+			await _spaceViewUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -103,7 +106,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 			if (_spaceView is null) throw new Exception("View no longer exists");
 			_spaceViewColumns = TfService.GetSpaceViewColumnsList(_spaceView.Id);
 			_spaceData = TfService.GetDataset(_spaceView.DatasetId);
-			if (_spaceData is null) throw new Exception("Dataset no longer exists");
+
 			_typeMetaDict = TfMetaService.GetSpaceViewColumnTypeDictionary();
 
 			_rolesTotal.Clear();
@@ -142,7 +145,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 		var result = await dialog.Result;
 		if (result is { Cancelled: false, Data: not null }) { }
 	}
-	
+
 	private async Task _changeDataset()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucSpaceViewChangeDatasetDialog>(
@@ -156,7 +159,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 			});
 		var result = await dialog.Result;
 		if (result is { Cancelled: false, Data: not null }) { }
-	}	
+	}
 
 	private async Task _importColumns()
 	{

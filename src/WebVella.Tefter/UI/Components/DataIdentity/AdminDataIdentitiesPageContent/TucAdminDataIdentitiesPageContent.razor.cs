@@ -4,14 +4,16 @@ public partial class TucAdminDataIdentitiesPageContent : TfBaseComponent, IAsync
 {
 	private bool _isLoading = false;
 	private List<TfDataIdentity> _items = new();
-	private IAsyncDisposable _dataIdentityEventSubscriber = null!;
-	private IAsyncDisposable _providerCreatedEventSubscriber = null!;
+	private IAsyncDisposable? _dataIdentityEventSubscriber = null;
+	private IAsyncDisposable? _providerCreatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _dataIdentityEventSubscriber.DisposeAsync();
-		await _providerCreatedEventSubscriber.DisposeAsync();
+		if (_dataIdentityEventSubscriber is not null)
+			await _dataIdentityEventSubscriber.DisposeAsync();
+		if (_providerCreatedEventSubscriber is not null)
+			await _providerCreatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -28,8 +30,8 @@ public partial class TucAdminDataIdentitiesPageContent : TfBaseComponent, IAsync
 
 	private async Task On_DataIdentityEventAsync(string? key, TfDataIdentityEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
@@ -38,12 +40,12 @@ public partial class TucAdminDataIdentitiesPageContent : TfBaseComponent, IAsync
 
 	private async Task On_DataProviderEventAsync(string? key, TfDataProviderEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}		
+	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{

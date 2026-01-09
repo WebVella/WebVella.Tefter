@@ -4,12 +4,13 @@ public partial class TucAdminDataProvidersPageContent : TfBaseComponent, IAsyncD
 {
 	private bool _isLoading = false;
 	private List<TfDataProvider> _items = new();
-	private IAsyncDisposable _providerCreatedEventSubscriber = null!;			
+	private IAsyncDisposable? _providerCreatedEventSubscriber = null;			
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _providerCreatedEventSubscriber.DisposeAsync();		
+		if(_providerCreatedEventSubscriber is not null)
+			await _providerCreatedEventSubscriber.DisposeAsync();		
 	}
 
 	protected override async Task OnInitializedAsync()

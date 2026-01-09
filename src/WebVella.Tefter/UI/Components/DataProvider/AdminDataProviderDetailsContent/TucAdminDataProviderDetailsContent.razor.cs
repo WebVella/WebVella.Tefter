@@ -6,12 +6,13 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IAsyn
 	private TfDataProviderDisplaySettingsScreenRegion? _dynamicComponentContext = null;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private bool _isDeleting = false;
-	private IAsyncDisposable _dataProviderUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _dataProviderUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _dataProviderUpdatedEventSubscriber.DisposeAsync();
+		if (_dataProviderUpdatedEventSubscriber is not null)
+			await _dataProviderUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -34,13 +35,13 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IAsyn
 
 	private async Task On_DataProviderUpdatedEventAsync(string? key, TfDataProviderUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(payload.DataProvider.Id != _provider?.Id) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (payload.DataProvider.Id != _provider?.Id) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}		
+	}
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -101,7 +102,8 @@ public partial class TucAdminDataProviderDetailsContent : TfBaseComponent, IAsyn
 			await InvokeAsync(StateHasChanged);
 			TfService.DeleteDataProvider(_provider.Id);
 			ToastService.ShowSuccess(LOC("Data provider was successfully deleted"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId().ToString(),new TfDataProviderDeletedEventPayload(_provider));
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId().ToString(),
+				new TfDataProviderDeletedEventPayload(_provider));
 			_provider = null;
 			Navigator.NavigateTo(TfConstants.AdminDataProvidersPageUrl, true);
 		}

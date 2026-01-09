@@ -30,11 +30,18 @@ else if (_navState.ManageTab == "columns")
                 <FluentGridItem xs="3">
                     <FluentInputLabel Label="@LOC("Dataset")"/>
                     <FluentStack HorizontalGap="5">
-                        <FluentTextField ReadOnly="true" Value="@_spaceData!.Name"
-                                         Style="width:100%"></FluentTextField>
-                        @if (_currentUser.IsAdmin)
+                        @if (_spaceData is not null)
                         {
-                            <FluentAnchor Appearance="Appearance.Outline" Href="@(String.Format(TfConstants.AdminDataProviderDatasetsPageUrl, _spaceData.DataProviderId))" IconStart="@TfConstants.GetIcon("Eye")"/>
+                            <FluentTextField ReadOnly="true" Value="@_spaceData!.Name"
+                                             Style="width:100%"></FluentTextField>
+                            @if (_currentUser.IsAdmin)
+                            {
+                                <FluentAnchor Appearance="Appearance.Outline" Href="@(String.Format(TfConstants.AdminDataProviderDatasetsPageUrl, _spaceData.DataProviderId))" IconStart="@TfConstants.GetIcon("Eye")"/>
+                            }
+                        }
+                        else
+                        {
+                            <FluentMessageBar AllowDismiss="false" Intent="MessageIntent.Error">@LOC("Dataset no longer exists")</FluentMessageBar>                         
                         }
                     </FluentStack>
                 </FluentGridItem>

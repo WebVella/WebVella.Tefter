@@ -7,13 +7,15 @@ public partial class AssetsPageComponent : TfBaseComponent, IAsyncDisposable
 
     private AssetsSpacePageComponentOptions _options = new();
     private List<AssetsFolder> _folders = new();
-    private AssetsFolder? _folderSelected;    
-    private IAsyncDisposable _spacePageUpdatedEventSubscriber = null!;	
+    private AssetsFolder? _folderSelected;
+    private IAsyncDisposable? _spacePageUpdatedEventSubscriber = null;
+
     public async ValueTask DisposeAsync()
     {
-        await _spacePageUpdatedEventSubscriber.DisposeAsync();
-    }    
-    
+        if (_spacePageUpdatedEventSubscriber is not null)
+            await _spacePageUpdatedEventSubscriber.DisposeAsync();
+    }
+
     protected override void OnInitialized()
     {
         _init();
@@ -23,7 +25,7 @@ public partial class AssetsPageComponent : TfBaseComponent, IAsyncDisposable
     {
         if (firstRender)
             _spacePageUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageUpdatedEventPayload>(
-                handler:On_SpacePageUpdatedEventAsync);
+                handler: On_SpacePageUpdatedEventAsync);
     }
 
     private Task On_SpacePageUpdatedEventAsync(string? key, TfSpacePageUpdatedEventPayload? payload)
@@ -40,14 +42,14 @@ public partial class AssetsPageComponent : TfBaseComponent, IAsyncDisposable
             _options = JsonSerializer.Deserialize<AssetsSpacePageComponentOptions>(spacePage.ComponentOptionsJson) ??
                        new AssetsSpacePageComponentOptions();
         _folders = AssetsService.GetFolders();
-        
+
         _folderSelected = _folders.FirstOrDefault(x => x.Id == _options.FolderId);
     }
 
     private async Task _editFolder()
     {
         var dialog = await DialogService.ShowDialogAsync<AssetsPageManageDialog>(
-            new AssetsPageManageDialogContext(){ Options = _options,Folders = _folders, SpacePageId = SpacePageId},
+            new AssetsPageManageDialogContext() { Options = _options, Folders = _folders, SpacePageId = SpacePageId },
             new()
             {
                 PreventDismissOnOverlayClick = true,

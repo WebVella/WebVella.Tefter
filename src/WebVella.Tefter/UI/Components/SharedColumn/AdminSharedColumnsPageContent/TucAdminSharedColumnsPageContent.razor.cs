@@ -4,12 +4,13 @@ public partial class TucAdminSharedColumnsPageContent : TfBaseComponent, IAsyncD
 {
 	private bool _isLoading = false;
 	private List<TfSharedColumn> _items = new();
-	private IAsyncDisposable _sharedColumnEventSubscriber = null!;
+	private IAsyncDisposable? _sharedColumnEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _sharedColumnEventSubscriber.DisposeAsync();
+		if (_sharedColumnEventSubscriber is not null)
+			await _sharedColumnEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -23,12 +24,12 @@ public partial class TucAdminSharedColumnsPageContent : TfBaseComponent, IAsyncD
 
 	private async Task On_SharedColumnEventAsync(string? key, TfSharedColumnEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}		
+	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
 	{

@@ -4,12 +4,13 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IAsyncDispo
 {
 	private TfSpace? _space = null;
 	private TfNavigationState _navState = null!;
-	private IAsyncDisposable _spaceEventSubscriber = null!;
+	private IAsyncDisposable? _spaceEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _spaceEventSubscriber.DisposeAsync();
+		if (_spaceEventSubscriber is not null)
+			await _spaceEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -34,7 +35,7 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IAsyncDispo
 	private async Task On_SpaceEventAsync(string? key, TfSpaceEventPayload? payload)
 	{
 		if (payload is null) return;
-		if(payload.Space.Id != _space?.Id) return;
+		if (payload.Space.Id != _space?.Id) return;
 		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
@@ -83,8 +84,8 @@ public partial class TucSpaceManageDetailsContent : TfBaseComponent, IAsyncDispo
 		{
 			TfService.DeleteSpace(_space.Id);
 			ToastService.ShowSuccess(LOC("Space deleted"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpaceDeletedEventPayload(_space));					
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpaceDeletedEventPayload(_space));
 			Navigator.NavigateTo(TfConstants.HomePageUrl);
 		}
 		catch (Exception ex)

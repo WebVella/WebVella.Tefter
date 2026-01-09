@@ -7,10 +7,12 @@ public partial class TalkPageComponent : TfBaseComponent, IAsyncDisposable
     private TalkSpacePageComponentOptions _options = new();
     private List<TalkChannel> _channels = new();
     private TalkChannel? _channelSelected;
-    private IAsyncDisposable _spacePageUpdatedEventSubscriber = null!;	
+    private IAsyncDisposable? _spacePageUpdatedEventSubscriber = null;
+
     public async ValueTask DisposeAsync()
     {
-        await _spacePageUpdatedEventSubscriber.DisposeAsync();
+        if (_spacePageUpdatedEventSubscriber is not null)
+            await _spacePageUpdatedEventSubscriber.DisposeAsync();
     }
 
     protected override void OnInitialized()
@@ -22,7 +24,7 @@ public partial class TalkPageComponent : TfBaseComponent, IAsyncDisposable
     {
         if (firstRender)
             _spacePageUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageUpdatedEventPayload>(
-                handler:On_SpacePageUpdatedEventAsync);
+                handler: On_SpacePageUpdatedEventAsync);
     }
 
     private Task On_SpacePageUpdatedEventAsync(string? key, TfSpacePageUpdatedEventPayload? payload)
@@ -34,13 +36,13 @@ public partial class TalkPageComponent : TfBaseComponent, IAsyncDisposable
     private void _init()
     {
         var spacePage = TfService.GetSpacePage(SpacePageId);
-        if(spacePage is null) return;
+        if (spacePage is null) return;
         _options = new TalkSpacePageComponentOptions();
         if (!String.IsNullOrWhiteSpace(spacePage.ComponentOptionsJson))
             _options = JsonSerializer.Deserialize<TalkSpacePageComponentOptions>(spacePage.ComponentOptionsJson) ??
                        new TalkSpacePageComponentOptions();
         _channels = TalkService.GetChannels();
-        
+
         _channelSelected = _channels.FirstOrDefault(x => x.Id == _options.ChannelId);
     }
 

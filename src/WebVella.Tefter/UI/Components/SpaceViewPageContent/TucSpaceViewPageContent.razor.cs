@@ -31,20 +31,25 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private RenderFragment _caretDown = null!;
 	private RenderFragment _caretUp = null!;
 	private bool _hasPinnedData = false;
-	private IAsyncDisposable _spacePageUpdatedEventSubscriber = null!;
-	private IAsyncDisposable _spaceViewColumnUpdatedEventSubscriber = null!;
-	private IAsyncDisposable _spaceViewDataUpdatedEventSubscriber = null!;
-	private IAsyncDisposable _spaceViewUpdatedEventSubscriber = null!;
-	private IAsyncDisposable _userUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _spacePageUpdatedEventSubscriber = null;
+	private IAsyncDisposable? _spaceViewColumnUpdatedEventSubscriber = null;
+	private IAsyncDisposable? _spaceViewDataUpdatedEventSubscriber = null;
+	private IAsyncDisposable? _spaceViewUpdatedEventSubscriber = null;
+	private IAsyncDisposable? _userUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _spacePageUpdatedEventSubscriber.DisposeAsync();
-		await _spaceViewColumnUpdatedEventSubscriber.DisposeAsync();
-		await _spaceViewDataUpdatedEventSubscriber.DisposeAsync();
-		await _spaceViewUpdatedEventSubscriber.DisposeAsync();
-		await _userUpdatedEventSubscriber.DisposeAsync();
+		if (_spacePageUpdatedEventSubscriber is not null)
+			await _spacePageUpdatedEventSubscriber.DisposeAsync();
+		if (_spaceViewColumnUpdatedEventSubscriber is not null)
+			await _spaceViewColumnUpdatedEventSubscriber.DisposeAsync();
+		if (_spaceViewDataUpdatedEventSubscriber is not null)
+			await _spaceViewDataUpdatedEventSubscriber.DisposeAsync();
+		if (_spaceViewUpdatedEventSubscriber is not null)
+			await _spaceViewUpdatedEventSubscriber.DisposeAsync();
+		if (_userUpdatedEventSubscriber is not null)
+			await _userUpdatedEventSubscriber.DisposeAsync();
 		_objectRef.Dispose();
 		try
 		{
@@ -164,9 +169,9 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 	private async Task On_SpaceViewUpdatedEventAsync(string? key, TfSpaceViewUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
+		if (payload is null) return;
 		if (payload.SpaceView.Id != _spaceView?.Id) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (key == TfAuthLayout.GetSessionId().ToString())
 		{
 			_isDataLoading = true;
 			await InvokeAsync(StateHasChanged);
@@ -176,7 +181,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		}
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}			
+	}
 
 	private async Task On_SpaceViewDataUpdatedEventAsync(string? key, TfSpaceViewDataUpdatedEventPayload? payload)
 	{
@@ -237,11 +242,17 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				_selectedDataRows = new();
 				_editedDataRows = new();
 			}
+
 			_dataset = TfService.GetDataset(_spaceView.DatasetId);
-			_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _dataset!.DataProviderId);
-			if (_dataset is null || _dataProvider is null)
+			if (_dataset is null)
 			{
-				throw new Exception("Dataset or DataProvider was not found");
+				throw new Exception("Dataset was not found");
+			}
+
+			_dataProvider = _allDataProviders.FirstOrDefault(x => x.Id == _dataset!.DataProviderId);
+			if (_dataProvider is null)
+			{
+				throw new Exception("Dataset was not found");
 			}
 
 			_currentUser = Context!.CurrentUser;
@@ -400,8 +411,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				spaceViewId: _spaceView!.Id,
 				presetId: _preset?.Id
 			);
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfUserUpdatedEventPayload(TfAuthLayout.GetState().User));				
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfUserUpdatedEventPayload(TfAuthLayout.GetState().User));
 		}
 		catch (Exception)
 		{
@@ -490,7 +501,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				idList: _selectedDataRows
 			);
 			ToastService.ShowSuccess(LOC("Records deleted"));
-			TfEventBus.Publish(TfAuthLayout.GetSessionId().ToString(),new TfDataProviderDataChangedEventPayload(_dataProvider!));
+			TfEventBus.Publish(TfAuthLayout.GetSessionId().ToString(),
+				new TfDataProviderDataChangedEventPayload(_dataProvider!));
 			Navigator.ReloadCurrentUrl();
 		}
 		catch (Exception ex)
@@ -589,7 +601,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			_generateMeta();
 			await InvokeAsync(StateHasChanged);
 			ToastService.ShowSuccess(LOC("Data was updated"));
-			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),new TfDataProviderDataChangedEventPayload(_dataProvider!));
+			await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),
+				new TfDataProviderDataChangedEventPayload(_dataProvider!));
 		}
 		catch (Exception ex)
 		{
@@ -699,8 +712,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			presetId: _preset?.Id,
 			spaceViewColumnId: column.Id,
 			width: width);
-		await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-			payload: new TfUserUpdatedEventPayload(TfAuthLayout.GetState().User));			
+		await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+			payload: new TfUserUpdatedEventPayload(TfAuthLayout.GetState().User));
 	}
 
 	#endregion

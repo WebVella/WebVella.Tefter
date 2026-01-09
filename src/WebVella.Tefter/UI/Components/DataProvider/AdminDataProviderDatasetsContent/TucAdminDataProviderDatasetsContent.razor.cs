@@ -4,12 +4,13 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IAsy
 {
 	TfDataProvider? _provider = null;
 	List<TfDataset> _items = new();
-	private IAsyncDisposable _datasetEventSubscriber = null!;
+	private IAsyncDisposable? _datasetEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _datasetEventSubscriber.DisposeAsync();
+		if (_datasetEventSubscriber is not null)
+			await _datasetEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -33,12 +34,12 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IAsy
 
 	private async Task On_DatasetEventAsync(string? key, TfDatasetEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(payload.Dataset.DataProviderId != _provider?.Id) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (payload.Dataset.DataProviderId != _provider?.Id) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
-			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());		
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
 	}
 
 	private async Task _init(TfNavigationState navState)
@@ -102,8 +103,8 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IAsy
 		{
 			TfService.DeleteDataset(dataset.Id);
 			ToastService.ShowSuccess(LOC("The dataset was successfully deleted!"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfDatasetDeletedEventPayload(dataset));				
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfDatasetDeletedEventPayload(dataset));
 		}
 		catch (Exception ex)
 		{
@@ -117,15 +118,15 @@ public partial class TucAdminDataProviderDatasetsContent : TfBaseComponent, IAsy
 		{
 			TfService.CopyDataset(dataset.Id);
 			ToastService.ShowSuccess(LOC("The dataset was successfully copied!"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfDatasetDeletedEventPayload(dataset));				
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfDatasetDeletedEventPayload(dataset));
 		}
 		catch (Exception ex)
 		{
 			ProcessException(ex);
 		}
-	}	
-	
+	}
+
 	private async Task _manageColumns(TfDataset dataset)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucDatasetColumnsDialog>(

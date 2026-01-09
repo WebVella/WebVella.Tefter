@@ -1,13 +1,16 @@
 ﻿namespace WebVella.Tefter.UI.Components;
-public partial class TucAdminRolesPageContent :TfBaseComponent,IAsyncDisposable
+
+public partial class TucAdminRolesPageContent : TfBaseComponent, IAsyncDisposable
 {
 	private bool _isLoading = false;
 	private List<TfRole> _items = new();
-	private IAsyncDisposable _roleEventSubscriber = null!;
+	private IAsyncDisposable? _roleEventSubscriber = null;
+
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _roleEventSubscriber.DisposeAsync();
+		if (_roleEventSubscriber is not null)
+			await _roleEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -16,7 +19,7 @@ public partial class TucAdminRolesPageContent :TfBaseComponent,IAsyncDisposable
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_roleEventSubscriber = await TfEventBus.SubscribeAsync<TfRoleEventPayload>(
 			handler: On_RoleEventAsync,
-			matchKey: (_) => true);		
+			matchKey: (_) => true);
 	}
 
 	private void On_NavigationStateChanged(object? caller, LocationChangedEventArgs args)
@@ -29,14 +32,15 @@ public partial class TucAdminRolesPageContent :TfBaseComponent,IAsyncDisposable
 			}
 		});
 	}
+
 	private async Task On_RoleEventAsync(string? key, TfRoleEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}	
+	}
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -51,12 +55,12 @@ public partial class TucAdminRolesPageContent :TfBaseComponent,IAsyncDisposable
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-	
+
 	private async Task _addRole()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TucRoleManageDialog>(
 			new TfRole(),
-			new ()
+			new()
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
@@ -65,5 +69,5 @@ public partial class TucAdminRolesPageContent :TfBaseComponent,IAsyncDisposable
 			});
 		var result = await dialog.Result;
 		if (result is { Cancelled: false, Data: not null }) { }
-	}		
+	}
 }

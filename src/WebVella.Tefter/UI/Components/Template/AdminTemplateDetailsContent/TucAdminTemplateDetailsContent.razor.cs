@@ -8,12 +8,13 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IAsyncDis
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private ITfTemplateProcessorAddon? _processor = null;
 	private TfNavigationState _navState = null!;
-	private IAsyncDisposable _templateUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _templateUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _templateUpdatedEventSubscriber.DisposeAsync();
+		if (_templateUpdatedEventSubscriber is not null)
+			await _templateUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()

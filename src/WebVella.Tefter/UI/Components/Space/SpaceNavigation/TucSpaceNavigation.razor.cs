@@ -6,14 +6,16 @@ public partial class TucSpaceNavigation : TfBaseComponent, IAsyncDisposable
 	private string? _dragClass = null;
 	CancellationTokenSource? _cancellationTokenSource = null!;
 	private readonly int _throttleMs = 500;
-	private IAsyncDisposable _spaceUpdatedEventSubscriber = null!;
-	private IAsyncDisposable _spacePageEventSubscriber = null!;
+	private IAsyncDisposable? _spaceUpdatedEventSubscriber = null;
+	private IAsyncDisposable? _spacePageEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _spaceUpdatedEventSubscriber.DisposeAsync();
-		await _spacePageEventSubscriber.DisposeAsync();
+		if (_spaceUpdatedEventSubscriber is not null)
+			await _spaceUpdatedEventSubscriber.DisposeAsync();
+		if (_spacePageEventSubscriber is not null)
+			await _spacePageEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()

@@ -6,12 +6,13 @@ public partial class TucSpacePageDetails : TfBaseComponent, IAsyncDisposable
 	private TfSpacePage? _spacePage = null;
 	private TfSpace? _space = null;
 	private TfNavigationState? _navState = null;
-	private IAsyncDisposable _spacePageUpdatedEventSubscriber = null!;
+	private IAsyncDisposable? _spacePageUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
-		await _spacePageUpdatedEventSubscriber.DisposeAsync();
+		if (_spacePageUpdatedEventSubscriber is not null)
+			await _spacePageUpdatedEventSubscriber.DisposeAsync();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -34,13 +35,13 @@ public partial class TucSpacePageDetails : TfBaseComponent, IAsyncDisposable
 
 	private async Task On_SpacePageUpdatedEventAsync(string? key, TfSpacePageUpdatedEventPayload? payload)
 	{
-		if(payload is null) return;
-		if(payload.SpacePage.Id != _spacePage?.Id) return;
-		if(key == TfAuthLayout.GetSessionId().ToString())
+		if (payload is null) return;
+		if (payload.SpacePage.Id != _spacePage?.Id) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
-	}	
+	}
 
 	private async Task _init(TfNavigationState navState)
 	{
@@ -99,9 +100,9 @@ public partial class TucSpacePageDetails : TfBaseComponent, IAsyncDisposable
 		{
 			TfService.DeleteSpacePage(_spacePage.Id);
 			ToastService.ShowSuccess(LOC("Space page deleted!"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpacePageDeletedEventPayload(_spacePage));				
-			
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpacePageDeletedEventPayload(_spacePage));
+
 			var spacePages = TfService.GetSpacePages(_spacePage.SpaceId);
 			Guid? firstPageId = null;
 			foreach (var page in spacePages)
