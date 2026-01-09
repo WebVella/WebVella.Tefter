@@ -640,9 +640,12 @@ public partial class TfService : ITfService
 
 		var lastSynchTask = GetLastSynchronizationTask(provider.Id);
 
-		if (lastSynchTask is null)
+		if (lastSynchTask is null || lastSynchTask.CompletedOn is null)
 			return DateTime.Now;
 
+		//TODO RUMEN: Added lastSynchTask.CompletedOn is null as there was a case when this was null
+		// 1. Check if the second part of the if above is correct
+		//2. Check why if there is an error here the whole system collapses
 		return lastSynchTask.CompletedOn!.Value.AddMinutes(provider.SynchScheduleMinutes);
 	}
 
