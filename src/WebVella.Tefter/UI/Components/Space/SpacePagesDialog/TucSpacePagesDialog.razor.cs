@@ -116,7 +116,7 @@ public partial class TucSpacePagesDialog : TfBaseComponent, IDialogContentCompon
 			var (pageId, pages) = TfService.CopySpacePage(nodeId);
 			_init();
 			ToastService.ShowSuccess(LOC("Space page updated!"));
-			var page = pages.Single(x => x.Id == pageId);
+			var page = TfService.FindPageById(pageId,pages)!;
 			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
 				payload: new TfSpacePageCreatedEventPayload(page));					
 		}

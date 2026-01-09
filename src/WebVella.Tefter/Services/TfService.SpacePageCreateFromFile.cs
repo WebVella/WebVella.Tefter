@@ -128,7 +128,7 @@ public partial class TfService
 					ComponentId = new TucSpaceViewSpacePageAddon().AddonId,
 					ComponentOptionsJson = JsonSerializer.Serialize(new TfSpaceViewSpacePageAddonOptions()
 					{
-						DatasetId = providerDataSets[0].Id
+						CreatePageDatasetId = providerDataSets[0].Id
 					}),
 					Type = TfSpacePageType.Page,
 					FluentIconName = "Table"

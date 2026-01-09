@@ -198,7 +198,7 @@ public partial class TucSpaceNavigation : TfBaseComponent, IAsyncDisposable
 		try
 		{
 			var (pageId, pages) = TfService.CopySpacePage(item.Data!.PageId!.Value);
-			var page = pages.Single(x => x.Id == pageId);
+			var page = TfService.FindPageById(pageId,pages)!;
 			ToastService.ShowSuccess(LOC("Space page copied!"));
 			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
 				payload: new TfSpacePageCreatedEventPayload(page));

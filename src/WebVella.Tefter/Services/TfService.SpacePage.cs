@@ -13,6 +13,10 @@ public partial interface ITfService
 	public TfSpacePage? GetSpacePage(
 		Guid pageId);
 
+	public TfSpacePage? FindPageById(
+		Guid id,
+		List<TfSpacePage> pages);
+
 	public (Guid, List<TfSpacePage>) CreateSpacePage(
 		TfSpacePage spacePage);
 
@@ -142,7 +146,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private TfSpacePage? FindPageById(
+	public TfSpacePage? FindPageById(
 		Guid id,
 		List<TfSpacePage> pages)
 	{
@@ -298,7 +302,7 @@ public partial class TfService : ITfService
 
 				allPages = GetSpacePages(spacePage.SpaceId);
 				var createdPage = FindPageById(spacePage.Id, allPages);
-				return (spacePage.Id, allPages);
+				return (createdPage.Id, allPages);
 			}
 		}
 		catch (Exception ex)
@@ -771,11 +775,12 @@ public partial class TfService : ITfService
 						queue.Enqueue(childPage);
 					}
 				}
-
+				Guid? copyId = null;
 				foreach (var pageToCreate in pagesToCreate)
 				{
 					//if page is space view page, remove the space view id from options
 					//in order to create a new space view when creating the page
+					//but set the proper dataset
 					if (pageToCreate.ComponentId == new Guid(TucSpaceViewSpacePageAddon.Id))
 					{
 						var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(
@@ -783,17 +788,23 @@ public partial class TfService : ITfService
 
 						if (options.SpaceViewId.HasValue)
 						{
+							var spaceView = GetSpaceView(options.SpaceViewId.Value);
+							if (spaceView is null)
+								throw new Exception("SpaceView no longer exists for this page");
 							options.SpaceViewId = null;
+							options.CreatePageDatasetId = spaceView.DatasetId;
 							pageToCreate.ComponentOptionsJson = JsonSerializer.Serialize(options);
 						}
 					}
 
-					CreateSpacePage(pageToCreate);
+					var (createdPageId, pages) = CreateSpacePage(pageToCreate);
+					if(copyId is null)
+						copyId = createdPageId;
 				}
 
 				scope.Complete();
 
-				return (pageToCopy.Id, GetSpacePages(pageToCopy.SpaceId));
+				return (copyId ?? pageToCopy.Id, GetSpacePages(pageToCopy.SpaceId));
 			}
 		}
 		catch (Exception ex)
@@ -1059,7 +1070,7 @@ public partial class TfService : ITfService
 			});
 		}
 
-		private TfSpacePage FindPageById(
+		public TfSpacePage FindPageById(
 			Guid id,
 			List<TfSpacePage> pages)
 		{

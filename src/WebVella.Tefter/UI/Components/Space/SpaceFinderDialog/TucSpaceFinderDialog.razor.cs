@@ -120,22 +120,9 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 
 	private async Task _selectSpace(TfSpaceFinderItem option)
 	{
-		var spacePages = TfService.GetSpacePages(option.Space.Id);
-		string? navigateUrl = null;
-
-		foreach (var page in spacePages)
-		{
-			navigateUrl = await _getNavigateToUrl(page, option.Space.Id);
-			if (navigateUrl is not null) break;
-		}
-
-		navigateUrl ??= String.Format(TfConstants.SpacePageUrl, option.Space.Id);
-		
+		string navigateUrl = TfService.GetSpaceDefaultUrl(option.Space.Id);
 		Navigator.NavigateTo(navigateUrl, false);
 		await Dialog.CloseAsync();
-
-
-		
 	}
 
 	[JSInvokable("OnArrowHandler")]
@@ -168,20 +155,4 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 		await _selectSpace(_options[_selectedIndex]);
 	}
 
-	private async Task<string?> _getNavigateToUrl(TfSpacePage page, Guid spaceId)
-	{
-		if (page.Type == TfSpacePageType.Page)
-		{
-			return String.Format(TfConstants.SpacePagePageUrl, spaceId, page.Id);
-		}
-
-		foreach (var childPage in page.ChildPages)
-		{
-			var url = await _getNavigateToUrl(childPage, spaceId);
-			if (url is not null)
-				return url;
-		}
-
-		return null;
-	}
 }

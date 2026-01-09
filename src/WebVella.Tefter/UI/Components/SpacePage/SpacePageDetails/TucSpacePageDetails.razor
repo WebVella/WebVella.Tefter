@@ -1,7 +1,9 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-
-@if (_spacePage is null)
+@if (_isLoading)
+{
+}
+else if (_spacePage is null)
 {
 	<FluentMessageBar Title="No page found"
 					  Style="border: 1px solid var(--neutral-stroke-rest)"

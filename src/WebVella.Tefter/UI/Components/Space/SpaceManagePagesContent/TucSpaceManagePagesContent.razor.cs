@@ -140,7 +140,7 @@ public partial class TucSpaceManagePagesContent : TfBaseComponent, IAsyncDisposa
 		try
 		{
 			var (pageId, pages) = TfService.CopySpacePage(nodeId);
-			var page = pages.Single(x => x.Id == pageId);
+			var page = TfService.FindPageById(pageId,pages)!;
 			ToastService.ShowSuccess(LOC("Space page updated!"));
 			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
 				payload: new TfSpacePageCreatedEventPayload(page));

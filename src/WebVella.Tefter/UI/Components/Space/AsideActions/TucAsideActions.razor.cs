@@ -32,7 +32,8 @@ public partial class TucAsideActions : TfBaseComponent
 		{
 			var(pageId,pages) = TfService.CopySpacePage(state.SpacePage.Id);
 			ToastService.ShowSuccess(LOC("Space page updated!"));
-			var page = pages.Single(x=> x.Id == pageId);
+			
+			var page = TfService.FindPageById(pageId,pages)!;
 			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
 				payload: new TfSpacePageCreatedEventPayload(page));				
 			Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl,page.SpaceId,page.Id));

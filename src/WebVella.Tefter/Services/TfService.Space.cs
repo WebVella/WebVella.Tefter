@@ -84,6 +84,8 @@ public partial interface ITfService
 	public void AddSpacesRole(
 		List<TfSpace> spaces,
 		TfRole role);
+
+	public string GetSpaceDefaultUrl(Guid spaceId);
 }
 
 public partial class TfService : ITfService
@@ -552,6 +554,37 @@ public partial class TfService : ITfService
 			throw ProcessException(ex);
 		}
 	}
+
+	public string GetSpaceDefaultUrl(Guid spaceId)
+	{
+		var spacePages = GetSpacePages(spaceId);
+		string? navigateUrl = null;
+
+		foreach (var page in spacePages)
+		{
+			navigateUrl = GetNavigateToUrl(page, spaceId);
+			if (navigateUrl is not null) break;
+		}
+
+		return navigateUrl ??= String.Format(TfConstants.SpacePageUrl, spaceId);		
+	}
+
+	private string? GetNavigateToUrl(TfSpacePage page, Guid spaceId)
+	{
+		if (page.Type == TfSpacePageType.Page)
+		{
+			return String.Format(TfConstants.SpacePagePageUrl, spaceId, page.Id);
+		}
+
+		foreach (var childPage in page.ChildPages)
+		{
+			var url = GetNavigateToUrl(childPage, spaceId);
+			if (url is not null)
+				return url;
+		}
+
+		return null;
+	}	
 
 	private TfSpace ConvertDboToModel(
 		TfSpaceDbo dbo)

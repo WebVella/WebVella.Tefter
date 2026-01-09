@@ -17,12 +17,12 @@ else if (Context.Mode == TfComponentMode.Create)
 			else
 			{
 				<TucSelect SelectedOption="@_selectedDataset"
-						   SelectedOptionChanged="@(async (x) => await _valueChanged(nameof(_options.DatasetId),x))"
+						   SelectedOptionChanged="@(async (x) => await _valueChanged(nameof(_options.CreatePageDatasetId),x))"
 						   TOption="TfDataset" Placeholder="@LOC("select dataset ...")"
 						   Items="@_allDatasets" Style="width:100%" 
 						   OptionValue="@((p)=> p.Id.ToString())"
 						   OptionText="@(p => p.Name)" Label="@LOC("Dataset")" />
-				<TucValidationMessage Field="@(nameof(_options.DatasetId))" Errors="ValidationErrors" />
+				<TucValidationMessage Field="@(nameof(_options.CreatePageDatasetId))" Errors="ValidationErrors" />
 			}
 		</FluentGridItem>
 	</FluentGrid>

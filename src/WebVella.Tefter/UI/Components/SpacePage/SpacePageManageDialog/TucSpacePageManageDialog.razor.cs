@@ -177,7 +177,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 				var(pageId,pageList) = TfService.CreateSpacePage(
 					spacePage: submit
 				);
-				newPage = pageList.Single(x => x.Id == pageId); 
+				newPage = TfService.FindPageById(pageId,pageList)!;
 				ToastService.ShowSuccess(LOC("Space page created!"));
 				await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
 					payload: new TfSpacePageCreatedEventPayload(newPage));					

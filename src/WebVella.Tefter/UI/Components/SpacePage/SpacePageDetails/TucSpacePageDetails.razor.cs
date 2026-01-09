@@ -2,6 +2,7 @@
 
 public partial class TucSpacePageDetails : TfBaseComponent, IAsyncDisposable
 {
+	private bool _isLoading = true;
 	private bool _isRemoving = false;
 	private TfSpacePage? _spacePage = null;
 	private TfSpace? _space = null;
@@ -45,6 +46,8 @@ public partial class TucSpacePageDetails : TfBaseComponent, IAsyncDisposable
 
 	private async Task _init(TfNavigationState navState)
 	{
+		_isLoading = true;
+		await InvokeAsync(StateHasChanged);
 		_navState = navState;
 		try
 		{
@@ -53,12 +56,21 @@ public partial class TucSpacePageDetails : TfBaseComponent, IAsyncDisposable
 				_spacePage = TfService.GetSpacePage(_navState.SpacePageId.Value);
 				_space = null;
 				if (_spacePage is not null)
+				{
+					if (_spacePage.Type == TfSpacePageType.Folder)
+					{
+						string navigateUrl = TfService.GetSpaceDefaultUrl(_spacePage.SpaceId);
+						Navigator.NavigateTo(navigateUrl, true);
+						return;
+					}
 					_space = TfService.GetSpace(_spacePage.SpaceId);
+				}
 			}
 		}
 		finally
 		{
 			UriInitialized = _navState?.Uri ?? String.Empty;
+			_isLoading = false;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
