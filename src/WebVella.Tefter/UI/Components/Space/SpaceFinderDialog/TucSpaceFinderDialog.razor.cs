@@ -121,16 +121,21 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 	private async Task _selectSpace(TfSpaceFinderItem option)
 	{
 		var spacePages = TfService.GetSpacePages(option.Space.Id);
-		if (spacePages.Count > 0)
+		string? navigateUrl = null;
+
+		foreach (var page in spacePages)
 		{
-			Navigator.NavigateTo(String.Format(TfConstants.SpacePagePageUrl, option.Space.Id, spacePages[0].Id), false);
-			await Dialog.CloseAsync();
-			return;
+			navigateUrl = await _getNavigateToUrl(page, option.Space.Id);
+			if (navigateUrl is not null) break;
 		}
-		else
-		{
-			Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, option.Space.Id), false);
-		}
+
+		navigateUrl ??= String.Format(TfConstants.SpacePageUrl, option.Space.Id);
+		
+		Navigator.NavigateTo(navigateUrl, false);
+		await Dialog.CloseAsync();
+
+
+		
 	}
 
 	[JSInvokable("OnArrowHandler")]
@@ -161,5 +166,22 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 	public async Task OnEnterKeyHandler()
 	{
 		await _selectSpace(_options[_selectedIndex]);
+	}
+
+	private async Task<string?> _getNavigateToUrl(TfSpacePage page, Guid spaceId)
+	{
+		if (page.Type == TfSpacePageType.Page)
+		{
+			return String.Format(TfConstants.SpacePagePageUrl, spaceId, page.Id);
+		}
+
+		foreach (var childPage in page.ChildPages)
+		{
+			var url = await _getNavigateToUrl(childPage, spaceId);
+			if (url is not null)
+				return url;
+		}
+
+		return null;
 	}
 }

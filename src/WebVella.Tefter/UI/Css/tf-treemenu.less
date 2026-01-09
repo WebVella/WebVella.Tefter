@@ -49,10 +49,11 @@
         &__content {
             display: flex;
             width: 100%;
-            align-items: center;
+            align-items: start;
         }
 
         &__icon {
+            padding-top:1px;
             flex: 0 0 20px;
             display: flex;
             align-items: center;
@@ -84,10 +85,10 @@
 
         &__title {
             flex: 1 1 auto;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
+            //white-space: nowrap;
+            //overflow: hidden;
+            //text-overflow: ellipsis;
+            //display: inline-block;
 
             .tf-disabled & {
                 color: var(--neutral-foreground-hint);

@@ -2779,9 +2779,10 @@ fluent-menu-item::part(start) {
 .tf-treemenu__item__content {
   display: flex;
   width: 100%;
-  align-items: center;
+  align-items: start;
 }
 .tf-treemenu__item__icon {
+  padding-top: 1px;
   flex: 0 0 20px;
   display: flex;
   align-items: center;
@@ -2808,10 +2809,6 @@ fluent-menu-item::part(start) {
 }
 .tf-treemenu__item__title {
   flex: 1 1 auto;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: inline-block;
 }
 .tf-disabled .tf-treemenu__item__title {
   color: var(--neutral-foreground-hint);

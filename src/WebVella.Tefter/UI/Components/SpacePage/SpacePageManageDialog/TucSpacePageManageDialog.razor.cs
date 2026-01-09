@@ -89,7 +89,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 			{
 				Id = Content.Id,
 				SpaceId = Content.SpaceId,
-				Type = TfSpacePageType.Page,
+				Type = Content.Type,
 				ChildPages = Content.ChildPages,
 				ComponentId = Content.ComponentId,
 				ComponentOptionsJson = Content.ComponentOptionsJson,
