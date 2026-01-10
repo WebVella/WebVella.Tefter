@@ -116,7 +116,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			var orderSettings = new TfOrderSettings(nameof(TfDataProviderColumn.CreatedOn), OrderDirection.ASC);
+			var orderSettings = new TfOrderSettings(nameof(TfDataProviderColumn.DbName), OrderDirection.ASC);
 			return _dboManager.GetList<TfDataProviderColumn>(providerId,
 				nameof(TfDataProviderColumn.DataProviderId), order: orderSettings);
 		}
