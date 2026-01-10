@@ -132,7 +132,7 @@ public sealed class TfDataTable
 		QueryInfo = new TfDataTableQueryInfo(
 			this,
 			query.DataProviderId,
-			query.SpaceDataId,
+			query.DatasetId,
 			query.Page,
 			query.PageSize,
 			query.Search);

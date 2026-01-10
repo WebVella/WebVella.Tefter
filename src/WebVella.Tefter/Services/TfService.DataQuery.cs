@@ -159,8 +159,7 @@ public partial class TfService
 				tfService: this,
 				dbService: _dbService,
 				dataProvider: provider,
-				dataProviders: allDataProviders,
-				spaceData: null,
+				dataset: null,
 				userFilters: null,
 				userSorts: sorts,
 				userSearch: search,
@@ -189,7 +188,7 @@ public partial class TfService
 					Page = usedPage,
 					PageSize = usedPageSize,
 					DataProviderId = provider.Id,
-					SpaceDataId = null
+					DatasetId = null
 				},
 				dataTable
 			);
@@ -224,8 +223,7 @@ public partial class TfService
 				tfService: this,
 				dbService: _dbService,
 				dataProvider: provider,
-				dataProviders: allDataProviders,
-				spaceData: null,
+				dataset: null,
 				tfIds: tfIds,
 				userSorts: sorts,
 				relIdentityInfo: relIdentityInfo);
@@ -246,7 +244,7 @@ public partial class TfService
 					Page = null,
 					PageSize = null,
 					DataProviderId = provider.Id,
-					SpaceDataId = null
+					DatasetId = null
 				},
 				dataTable
 			);
@@ -264,14 +262,14 @@ public partial class TfService
 	{
 		try
 		{
-			var spaceData = GetDataset(datasetId);
-			if (spaceData is null)
+			var dataset = GetDataset(datasetId);
+			if (dataset is null)
 			{
-				throw new TfException("Found no existing space data for specified id.");
+				throw new TfException("Found no existing dataset for specified id.");
 			}
 
 
-			var provider = GetDataProvider(spaceData.DataProviderId);
+			var provider = GetDataProvider(dataset.DataProviderId);
 			if (provider is null)
 			{
 				throw new TfException("There is not existing provider for specified space data.");
@@ -282,9 +280,8 @@ public partial class TfService
 			var sqlBuilder = new SqlBuilder(
 				tfService: this,
 				dbService: _dbService,
-				dataProviders: allDataProviders,
 				dataProvider: provider,
-				spaceData: spaceData,
+				dataset: dataset,
 				tfIds: tfIds,
 				relIdentityInfo: relIdentityInfo);
 
@@ -304,7 +301,7 @@ public partial class TfService
 					Page = null,
 					PageSize = null,
 					DataProviderId = provider.Id,
-					SpaceDataId = datasetId,
+					DatasetId = datasetId,
 				},
 				dataTable
 			);
@@ -331,27 +328,22 @@ public partial class TfService
 	{
 		try
 		{
-			var spaceData = GetDataset(datasetId);
-			if (spaceData is null)
+			var dataset = GetDataset(datasetId);
+			if (dataset is null)
 			{
-				throw new TfException("Found no existing space data for specified id.");
+				throw new TfException("Found no existing dataset for specified id.");
 			}
 
 
-			var provider = GetDataProvider(spaceData.DataProviderId);
-			if (provider is null)
-			{
-				throw new TfException("There is not existing provider for specified space data.");
-			}
-
+			var provider = GetDataProvider(dataset.DataProviderId);
+			
 			var allDataProviders = GetDataProviders();
 
 			var sqlBuilder = new SqlBuilder(
 				tfService: this,
 				dbService: _dbService,
-				dataProvider: provider,
-				dataProviders: allDataProviders,
-				spaceData: spaceData,
+				dataProvider: provider!,
+				dataset: dataset,
 				presetSearch: presetSearch,
 				presetFilters: presetFilters,
 				presetSorts: presetSorts,
@@ -384,7 +376,7 @@ public partial class TfService
 					Page = usedPage,
 					PageSize = usedPageSize,
 					DataProviderId = provider.Id,
-					SpaceDataId = spaceData.Id
+					DatasetId = dataset.Id
 				},
 
 				dataTable

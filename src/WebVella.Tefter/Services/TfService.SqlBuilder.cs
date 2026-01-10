@@ -16,7 +16,7 @@ public partial class TfService : ITfService
 
 		private ITfService _tfService;
 		private TfDataProvider? _dataProvider = null;
-		private ReadOnlyCollection<TfDataProvider>? _allDataProviders = null;
+		//private ReadOnlyCollection<TfDataProvider>? _allDataProviders = null;
 		private TfDataset? _spaceData = null;
 
 		private ITfDatabaseService? _dbService = null;
@@ -27,7 +27,7 @@ public partial class TfService : ITfService
 		private List<SqlBuilderJoinData> _joinData = new();
 		private List<SqlBuilderSharedColumnData> _sharedColumnsData = new();
 
-		private TfFilterAnd _mainFilter;
+		private TfFilterAnd? _mainFilter;
 		private List<TfFilterBase> _filters = new();
 		private List<TfSort>? _sorts = null;
 		private List<TfFilterBase> _userFilters = new();
@@ -49,8 +49,7 @@ public partial class TfService : ITfService
 			ITfService tfService,
 			ITfDatabaseService dbService,
 			TfDataProvider dataProvider,
-			ReadOnlyCollection<TfDataProvider> dataProviders,
-			TfDataset? spaceData = null,
+			TfDataset? dataset = null,
 			string? presetSearch = null,
 			List<TfFilterBase>? presetFilters = null,
 			List<TfSort>? presetSorts = null,
@@ -66,10 +65,8 @@ public partial class TfService : ITfService
 
 			ArgumentNullException.ThrowIfNull(dataProvider);
 
-			ArgumentNullException.ThrowIfNull(dataProviders);
-
-			if (spaceData is not null && spaceData.Filters is not null)
-				_filters = spaceData.Filters;
+			if (dataset is not null && dataset.Filters is not null)
+				_filters = dataset.Filters;
 
 			if (userFilters is not null)
 				_userFilters = userFilters;
@@ -100,16 +97,14 @@ public partial class TfService : ITfService
 
 			_dataProvider = dataProvider;
 
-			_allDataProviders = dataProviders;
-
-			_spaceData = spaceData;
+			_spaceData = dataset;
 
 			_relIdentityInfo = relIdentityInfo;
 
 			InitColumns();
 
-			if (spaceData is not null && spaceData.Filters is not null)
-				_filters = spaceData.Filters;
+			if (dataset is not null && dataset.Filters is not null)
+				_filters = dataset.Filters;
 
 
 
@@ -119,8 +114,7 @@ public partial class TfService : ITfService
 			ITfService tfService,
 			ITfDatabaseService dbService,
 			TfDataProvider dataProvider,
-			ReadOnlyCollection<TfDataProvider> dataProviders,
-			TfDataset spaceData,
+			TfDataset dataset,
 			List<Guid> tfIds,
 			List<TfSort>? userSorts = null,
 			TfRelDataIdentityQueryInfo? relIdentityInfo = null)
@@ -128,8 +122,6 @@ public partial class TfService : ITfService
 			ArgumentNullException.ThrowIfNull(dbService);
 
 			ArgumentNullException.ThrowIfNull(dataProvider);
-
-			ArgumentNullException.ThrowIfNull(dataProviders);
 
 			ArgumentNullException.ThrowIfNull(tfIds);
 
@@ -160,11 +152,9 @@ public partial class TfService : ITfService
 
 			_dataProvider = dataProvider;
 
-			_allDataProviders = dataProviders;
-
 			_tfService = tfService;
 
-			_spaceData = spaceData;
+			_spaceData = dataset;
 
 			_relIdentityInfo = relIdentityInfo;
 
@@ -173,11 +163,11 @@ public partial class TfService : ITfService
 
 		private void InitColumns()
 		{
-			foreach (var column in _dataProvider.SystemColumns)
+			foreach (var column in _dataProvider!.SystemColumns)
 				AddAvailableColumn(Guid.Empty, column.DbName, column.DbType, isSystem: true);
 
 			foreach (var column in _dataProvider.Columns)
-				AddAvailableColumn(column.Id, column.DbName, column.DbType);
+				AddAvailableColumn(column.Id, column.DbName!, column.DbType);
 
 			foreach (var column in _dataProvider.SharedColumns)
 				AddAvailableColumn(column.Id, column.DbName, column.DbType, column.DataIdentity);
@@ -229,23 +219,32 @@ public partial class TfService : ITfService
 				bool spaceDataHasAtLeastOneValidColumn = false;
 				if (_spaceData.Columns.Any())
 				{
-					foreach (var columnName in _spaceData.Columns.Distinct())
+					if (_spaceData.Columns.Any(x => x == "*"))
 					{
-						if (_selectColumns.Any(x => x.DbName == columnName))
+						spaceDataHasAtLeastOneValidColumn = true;
+						_selectColumns = _availableColumns.ToList();
+					}
+					else
+					{
+
+						foreach (var columnName in _spaceData.Columns.Distinct())
 						{
-							spaceDataHasAtLeastOneValidColumn = true;
-							continue;
+							if (_selectColumns.Any(x => x.DbName == columnName))
+							{
+								spaceDataHasAtLeastOneValidColumn = true;
+								continue;
+							}
+
+							var column = _availableColumns.SingleOrDefault(x => x.DbName == columnName);
+							if (column is not null)
+							{
+								spaceDataHasAtLeastOneValidColumn = true;
+								_selectColumns.Add(column);
+
+							}
+
+							//ignore missing columns
 						}
-
-						var column = _availableColumns.SingleOrDefault(x => x.DbName == columnName);
-						if (column is not null)
-						{
-							spaceDataHasAtLeastOneValidColumn = true;
-							_selectColumns.Add(column);
-
-						}
-
-						//ignore missing columns
 					}
 
 					//add shared columns data
@@ -435,7 +434,7 @@ public partial class TfService : ITfService
 			Guid id,
 			string dbName,
 			TfDatabaseColumnType dbType,
-			string dataIdentity = null,
+			string? dataIdentity = null,
 			bool isSystem = false)
 		{
 			if (dataIdentity == null)
