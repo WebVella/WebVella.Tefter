@@ -94,7 +94,9 @@
 												<div>@context.CreatedOn.ToString(TfConstants.DateTimeFormat)</div>
 											</td>
 											<td class="tf-grid-td">
-												<div>@context.Status.ToDescriptionString()</div>
+												<div style="color:var(@context.Status.GetColor().Variable)">
+													@context.Status.ToDescriptionString()
+												</div>
 											</td>
 											<td class="tf-grid-td">
 												<div>@context.StartedOn?.ToString(TfConstants.DateTimeFormat)</div>

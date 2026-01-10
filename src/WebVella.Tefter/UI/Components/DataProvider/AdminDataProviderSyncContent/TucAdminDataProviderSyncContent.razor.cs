@@ -88,7 +88,7 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IAsyncDi
 			});
 	}
 
-	private void _synchronizeNow()
+	private async Task _synchronizeNow()
 	{
 		if (_provider is null) return;
 		if (_provider.Columns.Count == 0)
@@ -97,8 +97,21 @@ public partial class TucAdminDataProviderSyncContent : TfBaseComponent, IAsyncDi
 			return;
 		}
 
-		TfService.TriggerSynchronization(_provider!.Id);
+		var taskId = TfService.TriggerSynchronization(_provider!.Id);
 		ToastService.ShowSuccess(LOC("Synchronization task created!"));
+		await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),
+			new TfDataProviderUpdatedEventPayload(_provider));
+		
+		while (true)
+		{
+			await Task.Delay(5000);
+			if (TfService.GetDataProviderSynchronizationTaskIsComplete(taskId))
+			{
+				await TfEventBus.PublishAsync(TfAuthLayout.GetSessionId().ToString(),
+					new TfDataProviderUpdatedEventPayload(_provider));				
+				break;
+			}
+		}
 	}
 
 	private async Task _editSchedule()

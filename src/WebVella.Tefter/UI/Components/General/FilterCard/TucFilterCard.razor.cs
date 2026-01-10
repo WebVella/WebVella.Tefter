@@ -11,6 +11,7 @@ public partial class TucFilterCard : TfBaseComponent
 
 	internal string? _selectedColumn = null;
 	public bool _submitting = false;
+	public bool _addingFilterFromSelect = false;
 	List<TfFilterBase> _items = null!;
 
 	protected override void OnInitialized()
@@ -38,48 +39,57 @@ public partial class TucFilterCard : TfBaseComponent
 
 	public async Task AddColumnFilter(string dbColumn, Guid? parentId)
 	{
-		if(!_columnDict.ContainsKey(dbColumn)) return;
-		var column = _columnDict[dbColumn];
-		if (column is null) return;
-
-		switch (column.DbType)
+		if(_addingFilterFromSelect) return;
+		_addingFilterFromSelect = true;
+		try
 		{
-			case TfDatabaseColumnType.ShortInteger:
-			case TfDatabaseColumnType.Integer:
-			case TfDatabaseColumnType.LongInteger:
-			case TfDatabaseColumnType.Number:
-				{
-					await AddFilter(typeof(TfFilterNumeric), dbColumn, parentId);
-				}
-				break;
-			case TfDatabaseColumnType.Boolean:
-				{
-					await AddFilter(typeof(TfFilterBoolean), dbColumn, parentId);
-				}
-				break;
-			case TfDatabaseColumnType.DateOnly:
-			case TfDatabaseColumnType.DateTime:
-				{
-					await AddFilter(typeof(TfFilterDateTime), dbColumn, parentId);
-				}
-				break;
-			case TfDatabaseColumnType.ShortText:
-			case TfDatabaseColumnType.Text:
-				{
-					await AddFilter(typeof(TfFilterText), dbColumn, parentId);
-				}
-				break;
-			case TfDatabaseColumnType.Guid:
-				{
-					await AddFilter(typeof(TfFilterGuid), dbColumn, parentId);
-				}
-				break;
-			default: throw new Exception("Unsupported column data type");
+			if (!_columnDict.ContainsKey(dbColumn)) return;
+			var column = _columnDict[dbColumn];
+			if (column is null) return;
 
+			switch (column.DbType)
+			{
+				case TfDatabaseColumnType.ShortInteger:
+				case TfDatabaseColumnType.Integer:
+				case TfDatabaseColumnType.LongInteger:
+				case TfDatabaseColumnType.Number:
+					{
+						await AddFilter(typeof(TfFilterNumeric), dbColumn, parentId);
+					}
+					break;
+				case TfDatabaseColumnType.Boolean:
+					{
+						await AddFilter(typeof(TfFilterBoolean), dbColumn, parentId);
+					}
+					break;
+				case TfDatabaseColumnType.DateOnly:
+				case TfDatabaseColumnType.DateTime:
+					{
+						await AddFilter(typeof(TfFilterDateTime), dbColumn, parentId);
+					}
+					break;
+				case TfDatabaseColumnType.ShortText:
+				case TfDatabaseColumnType.Text:
+					{
+						await AddFilter(typeof(TfFilterText), dbColumn, parentId);
+					}
+					break;
+				case TfDatabaseColumnType.Guid:
+					{
+						await AddFilter(typeof(TfFilterGuid), dbColumn, parentId);
+					}
+					break;
+				default: throw new Exception("Unsupported column data type");
+
+			}
+
+			_selectedColumn = null;
+			await InvokeAsync(StateHasChanged);
 		}
-
-		_selectedColumn = null;
-		await InvokeAsync(StateHasChanged);
+		finally
+		{
+			_addingFilterFromSelect = false;
+		}
 	}
 
 	public async Task AddFilter(Type type, string dbName, Guid? parentId)

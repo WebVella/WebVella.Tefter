@@ -59,32 +59,40 @@
 			</TucCard>
 			<TucCard Title="@LOC("Data Provider implementations")">
 				<ChildContent>
-					<table class="tf-grid">
-						<colgroup></colgroup>
-						<colgroup style="width:1%"></colgroup>
-						<tbody class="tf-grid-tbody">
-						@foreach (var provider in _implementations)
-						{
-							<tr class="tf-grid-tr">
-								<td class="tf-grid-td">
-									<div>@provider.DataProvider</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>
-										<FluentButton Appearance="@Appearance.Outline"
-										              OnClick="@(() => _removeImplementation(provider))"
-										              Title="@LOC("Remove provider implementation")"
-										              Disabled="_submitting">
-											<FluentIcon Color="@Color.Error"
-											            Value="@TfConstants.GetIcon("Delete")" Slot="start"/>
-											<span>@LOC("remove")</span>
-										</FluentButton>
-									</div>
-								</td>
-							</tr>
-						}
-						</tbody>
-					</table>
+					@if (_implementations.Count > 0)
+					{
+						<table class="tf-grid">
+							<colgroup></colgroup>
+							<colgroup style="width:1%"></colgroup>
+							<tbody class="tf-grid-tbody">
+							@foreach (var provider in _implementations)
+							{
+								<tr class="tf-grid-tr">
+									<td class="tf-grid-td">
+										<div>@provider.DataProvider</div>
+									</td>
+									<td class="tf-grid-td">
+										<div>
+											<FluentButton Appearance="@Appearance.Outline"
+											              OnClick="@(() => _removeImplementation(provider))"
+											              Title="@LOC("Remove provider implementation")"
+											              Disabled="_submitting">
+												<FluentIcon Color="@Color.Error"
+												            Value="@TfConstants.GetIcon("Delete")" Slot="start"/>
+												<span>@LOC("remove")</span>
+											</FluentButton>
+										</div>
+									</td>
+								</tr>
+							}
+							</tbody>
+						</table>
+					}
+					else
+					{
+						<FluentMessageBar AllowDismiss="false"
+						                  Intent="MessageIntent.Info">@LOC("No provider implementations for this identity are created yet.")</FluentMessageBar>
+					}
 				</ChildContent>
 			</TucCard>
 			<TucCard Style="margin-top: var(--tf-card-space)">

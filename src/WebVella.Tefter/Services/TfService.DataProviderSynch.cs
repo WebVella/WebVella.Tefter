@@ -17,7 +17,7 @@ public partial interface ITfService
 		Guid providerId,
 		TfSynchronizationPolicy synchPolicy);
 
-	internal void TriggerSynchronization(Guid providerId);
+	internal Guid TriggerSynchronization(Guid providerId);
 	internal void UpdateDataProviderSynchronization(Guid providerId, short syncScheduleMinutes, bool syncScheduleEnabled);
 	internal void UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns);
 
@@ -36,8 +36,9 @@ public partial interface ITfService
 
 	public DateTime? GetDataProviderNextSynchronizationTime(Guid id);
 
-	List<TfDataProviderSynchronizeTask> GetDataProviderSynchronizationTasks(Guid providerId, int? page = null, int? pageSize = null,
+	public List<TfDataProviderSynchronizeTask> GetDataProviderSynchronizationTasks(Guid providerId, int? page = null, int? pageSize = null,
 		TfSynchronizationStatus? status = null);
+	public bool GetDataProviderSynchronizationTaskIsComplete(Guid taskId);	
 }
 
 public partial class TfService : ITfService
@@ -156,9 +157,9 @@ public partial class TfService : ITfService
 		return task.Id;
 	}
 
-	public void TriggerSynchronization(Guid providerId)
+	public Guid TriggerSynchronization(Guid providerId)
 	{
-		CreateSynchronizationTask(providerId, new TfSynchronizationPolicy());
+		return CreateSynchronizationTask(providerId, new TfSynchronizationPolicy());
 	}
 	public void UpdateDataProviderSynchronization(Guid providerId, short syncScheduleMinutes, bool syncScheduleEnabled)
 	{
@@ -213,7 +214,7 @@ public partial class TfService : ITfService
 		if (!success)
 			throw new TfDatabaseException("Failed to update synchronization task in database.");
 	}
-
+ 
 	#endregion
 
 	public TfDataProviderSourceSchemaInfo GetDataProviderSourceSchemaInfo(
@@ -320,8 +321,7 @@ public partial class TfService : ITfService
 
 			if (primaryKeyValidationSet.Contains(key))
 			{
-				throw new Exception("Provider data contains rows with " +
-					"duplicated value for specified synchronization key.");
+				throw new Exception($"Provider data contains rows with duplicated value for specified synchronization key '{key.Replace(TfConstants.SHARED_KEY_SEPARATOR, "<->")}'.");
 			}
 
 			primaryKeyValidationSet.Add(key);
@@ -658,6 +658,17 @@ public partial class TfService : ITfService
 			return tasks;
 
 		return tasks.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value).ToList();
+	}
+
+	public bool GetDataProviderSynchronizationTaskIsComplete(Guid taskId)
+	{
+		var dbo = _dboManager.Get<TfDataProviderSynchronizeTaskDbo>(taskId);
+		if (dbo == null) return true;
+		if (dbo.Status == TfSynchronizationStatus.Completed
+		    || dbo.Status == TfSynchronizationStatus.Failed)
+			return true;
+
+		return false;
 	}
 
 	public Task BulkSynchronize(

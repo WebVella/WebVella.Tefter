@@ -204,18 +204,6 @@ public sealed class TfDataTable
 			origin: TfDataColumnOriginType.System,
 			isReadOnly:true));
 
-		foreach (var identity in dataProvider.Identities)
-		{
-			string name = $"tf_ide_{identity.DataIdentity}";
-			columns.Add(new TfDataColumn(
-				this,
-				name,
-				TfDatabaseColumnType.ShortText,
-				isNullable: false,
-				origin: TfDataColumnOriginType.Identity,
-				isReadOnly:false));
-		}
-
 		foreach (var providerColumn in dataProvider.Columns)
 		{
 			if (onlyColumns != null && !onlyColumns.Contains(providerColumn.DbName))
@@ -228,8 +216,19 @@ public sealed class TfDataTable
 				isNullable: providerColumn.IsNullable,
 				origin: TfDataColumnOriginType.CurrentProvider,
 				isReadOnly:providerColumn.IsReadOnly));
+		}		
+		
+		foreach (var identity in dataProvider.Identities)
+		{
+			string name = $"tf_ide_{identity.DataIdentity}";
+			columns.Add(new TfDataColumn(
+				this,
+				name,
+				TfDatabaseColumnType.ShortText,
+				isNullable: false,
+				origin: TfDataColumnOriginType.Identity,
+				isReadOnly:false));
 		}
-
 
 		foreach (var sharedColumnData in sharedColumnsData )
 		{
