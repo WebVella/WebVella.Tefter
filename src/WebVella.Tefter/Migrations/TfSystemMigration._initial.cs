@@ -638,7 +638,13 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithConstraints(constraints =>
 			{
 				constraints
-					.AddPrimaryKeyConstraint("pk_space_data_id", c => { c.WithColumns("id"); });
+					.AddPrimaryKeyConstraint("pk_space_data_id", c => { c.WithColumns("id"); })
+					.AddForeignKeyConstraint("fk_dataset_data_provider", c =>
+					{
+						c.WithForeignTable("tf_data_provider")
+						.WithForeignColumns("id")
+						.WithColumns("data_provider_id");
+					});
 			})
 			.WithIndexes(indexes =>
 			{

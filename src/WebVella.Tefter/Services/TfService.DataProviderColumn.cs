@@ -217,7 +217,7 @@ public partial class TfService : ITfService
 		}
 		catch (TfDatabaseUpdateException dbEx)
 		{
-			var valEx = new TfException("Database update failed during data provider column update.");
+			var valEx = new TfValidationException("Database update failed during data provider column update.");
 			foreach (var log in dbEx.Result.Log)
 			{
 				if (log.Success == false)
@@ -342,7 +342,7 @@ public partial class TfService : ITfService
 		}
 		catch (TfDatabaseUpdateException dbEx)
 		{
-			var valEx = new TfException("Database update failed during data provider column update.");
+			var valEx = new TfValidationException("Database update failed during data provider column update.");
 			foreach (var log in dbEx.Result.Log)
 			{
 				if (log.Success == false)
