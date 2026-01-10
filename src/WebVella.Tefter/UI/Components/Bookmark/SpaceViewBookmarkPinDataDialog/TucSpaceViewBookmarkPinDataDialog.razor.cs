@@ -18,7 +18,7 @@ public partial class TucSpaceViewBookmarkPinDataDialog : TfFormBaseComponent, ID
 		if (Content.SpaceView is null) throw new Exception("SpaceView is required");
 		if (Content.SelectedRowIds.Count == 0) throw new Exception("SelectedRowIds is required");
 		_form = Content with { Name = string.Empty };
-		_onDescriptionChanged(_form.Description);
+		_onDescriptionChanged();
 		InitForm(_form);
 	}
 
@@ -61,15 +61,12 @@ public partial class TucSpaceViewBookmarkPinDataDialog : TfFormBaseComponent, ID
 		await Dialog.CancelAsync();
 	}
 
-	private void _onDescriptionChanged(string? description)
+	private void _onDescriptionChanged()
 	{
-		if (String.IsNullOrWhiteSpace(description))
-			return;
-		_form.Description = description;
-		_tags = new List<TfTag>();
-		if (!String.IsNullOrWhiteSpace(description))
+		_tags.Clear();
+		if (!String.IsNullOrWhiteSpace(_form.Description))
 		{
-			foreach (var item in TfConverters.GetUniqueTagsFromText(description))
+			foreach (var item in TfConverters.GetUniqueTagsFromText(_form.Description))
 			{
 				_tags.Add(new TfTag { Id = Guid.NewGuid(), Label = item });
 			}

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebVella.Tefter.Models;
 
-public class TfUser
+public record TfUser
 {
 	public Guid Id { get; init; }
 	public string Email { get; init; } = null!;

@@ -67,6 +67,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		await base.OnInitializedAsync();
 		if (Context is null)
 			throw new Exception("Context cannot be null");
+		_currentUser = Context!.CurrentUser;
 		_columnTypeMetaDict = TfMetaService.GetSpaceViewColumnTypeDictionary();
 		_objectRef = DotNetObjectReference.Create(this);
 		await _init(TfAuthLayout.GetState().NavigationState, false);
@@ -143,12 +144,12 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private async Task On_UserUpdatedEventAsync(string? key, TfUserUpdatedEventPayload? payload)
 	{
 		if (payload is null) return;
-		var contextHash = _getUserChangeHash(Context!.CurrentUser);
+		var contextHash = _getUserChangeHash(_currentUser);
 		var payloadHash = _getUserChangeHash(payload.User);
 
 		if (contextHash == payloadHash) return;
 
-		Context.CurrentUser = payload.User;
+		_currentUser = payload.User with {Id = payload.User.Id};
 		await _init(TfAuthLayout.GetState().NavigationState);
 	}
 
@@ -255,7 +256,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				throw new Exception("Dataset was not found");
 			}
 
-			_currentUser = Context!.CurrentUser;
+
 			_preset = null;
 			if (_navState.SpaceViewPresetId is not null)
 				_preset = _spaceView!.Presets.GetPresetById(_navState.SpaceViewPresetId.Value);
@@ -406,13 +407,13 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		try
 		{
-			_ = await TfService.RemoveSpaceViewPersonalizations(
+			var result = await TfService.RemoveSpaceViewPersonalizations(
 				userId: _currentUser.Id,
 				spaceViewId: _spaceView!.Id,
 				presetId: _preset?.Id
 			);
 			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
-				payload: new TfUserUpdatedEventPayload(TfAuthLayout.GetState().User));
+				payload: new TfUserUpdatedEventPayload(result));
 		}
 		catch (Exception)
 		{
@@ -564,22 +565,16 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		if (_data is null) return;
 		try
 		{
-			var value = _data.NewTableFromRowIds(change.RowId);
-			if (value.Rows.Count == 0)
-			{
-				ToastService.ShowError(LOC("Row with id {0} is not found", change.RowId));
-				return;
-			}
-
+			var rowDict = new Dictionary<string, object?>();
 			foreach (var columnName in change.DataChange.Keys)
 			{
-				value.Rows[0][columnName] = change.DataChange[columnName];
+				rowDict[columnName] = change.DataChange[columnName];
 			}
-
-			var changedRow = value.Rows[0];
-			var changedRowTfId = changedRow.GetRowId();
-
-			var result = TfService.SaveDataTable(value);
+			_ = TfService.UpdateProviderRow(
+				tfId:change.RowId,
+				providerId:_dataset!.DataProviderId,
+				rowDict:rowDict
+			);
 
 			//Apply changed to the datatable
 			if (_data is null || _data.Rows.Count == 0 || _data.Rows.Count == 0) return;
@@ -588,13 +583,14 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			{
 				TfDataRow row = _data.Rows[i];
 				Guid tfId = row.GetRowId();
-				if (changedRowTfId != tfId) continue;
+				if (change.RowId != tfId) continue;
 
 				foreach (var column in _data.Columns)
 				{
 					if (column.Origin == TfDataColumnOriginType.System ||
 					    column.Origin == TfDataColumnOriginType.Identity) continue;
-					row[column.Name] = changedRow[column.Name];
+					if(rowDict.ContainsKey(column.Name))
+						row[column.Name] = rowDict[column.Name];
 				}
 			}
 
@@ -706,14 +702,14 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	{
 		var column = _spaceViewColumns.SingleOrDefault(x => x.Position == position);
 		if (column is null) return;
-		await TfService.SetViewPresetColumnPersonalization(
+		var result = await TfService.SetViewPresetColumnPersonalization(
 			userId: _currentUser.Id,
 			spaceViewId: _spaceView!.Id,
 			presetId: _preset?.Id,
 			spaceViewColumnId: column.Id,
 			width: width);
 		await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
-			payload: new TfUserUpdatedEventPayload(TfAuthLayout.GetState().User));
+			payload: new TfUserUpdatedEventPayload(result));
 	}
 
 	#endregion

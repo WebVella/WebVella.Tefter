@@ -1,0 +1,27 @@
+﻿@import '_variables.less';
+
+/*Badge*/
+.tf-input-badge {
+  border-radius: calc(var(--control-corner-radius) * 1px);
+
+  &::part(control) {
+    padding: 7px 5px;
+
+  }
+
+  &--error {
+    --neutral-fill-secondary-rest: color-mix(in srgb, var(--neutral-layer-4), var(--error) 25%);
+    color: var(--foreground-on-accent-rest);
+  }
+  &--success {
+    --neutral-fill-secondary-rest: color-mix(in srgb, var(--neutral-layer-4), var(--success) 25%);
+    color: var(--foreground-on-accent-rest);
+  }
+}
+
+
+
+
+
+
+

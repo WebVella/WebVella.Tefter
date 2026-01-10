@@ -83,7 +83,7 @@
             </FluentGrid>
             <FluentGrid>
                 <FluentGridItem xs="6">
-                    <FluentTextField TextFieldType="@TextFieldType.Text" Value=@_form.Description ValueChanged="_onDescriptionChanged"
+                    <FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Description @bind-Value:after="_onDescriptionChanged"
                                      Label="@LOC("Description")" Style="width:100%" AutoComplete="off" Immediate="true" ImmediateDelay="200" />
                     <div class="tf-input-description">@LOC("can be hash-tagged (eg. #budget2025)")</div>
                     <FluentValidationMessage For="@(() => _form.Description)" />

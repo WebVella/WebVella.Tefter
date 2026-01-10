@@ -15,7 +15,7 @@
 		<FluentTextField Label="@LOC("Format")"
 		                 Value="@_form.Format" Style="width:100%" Immediate ImmediateDelay="500"
 		                 ValueChanged=@((x)=> _onSettingsChanged(nameof(_form.Format),x))
-		                 Placeholder="@LOC("eg. 'N3'")" />
+		                 Placeholder="@LOC("eg. 'N3', '€ ###.##'")" />
 		<TucValidationMessage Field="@(nameof(_form.Format))" Errors="Context.ValidationErrors"/>		
 	</FluentGridItem>
 	<FluentGridItem xs="6"></FluentGridItem>

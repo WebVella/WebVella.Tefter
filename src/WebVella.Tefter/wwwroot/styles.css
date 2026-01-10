@@ -691,17 +691,6 @@ fluent-select fluent-option {
   position: relative;
   --max-height: 200px;
 }
-/*Badge*/
-.tf-input-badge {
-  border-radius: calc(var(--control-corner-radius) * 1px);
-}
-.tf-input-badge::part(control) {
-  padding: 7px 5px;
-}
-.tf-input-badge--error {
-  background-color: var(--error);
-  color: var(--foreground-on-accent-rest);
-}
 /*Message bar*/
 div[class^='fluent-messagebar'],
 .fluent-messagebar-notification,
@@ -875,9 +864,6 @@ fluent-menu-item::part(start) {
 }
 .tf-card--filter .tf-filter-manage .tf-card--no-body .tf-card__content {
   display: none;
-}
-.tf-card fluent-badge {
-  --neutral-fill-secondary-rest: light-dark(var(--neutral-layer-4), var(--neutral-layer-2));
 }
 .tf-aside-actions {
   --tf-padding-actions: calc(var(--tf-padding) / 2);
@@ -1857,6 +1843,21 @@ fluent-menu-item::part(start) {
   padding: var(--tf-wizard-padding);
   flex: 0 0 auto;
 }
+/*Badge*/
+.tf-input-badge {
+  border-radius: calc(var(--control-corner-radius) * 1px);
+}
+.tf-input-badge::part(control) {
+  padding: 7px 5px;
+}
+.tf-input-badge--error {
+  --neutral-fill-secondary-rest: color-mix(in srgb, var(--neutral-layer-4), var(--error) 25%);
+  color: var(--foreground-on-accent-rest);
+}
+.tf-input-badge--success {
+  --neutral-fill-secondary-rest: color-mix(in srgb, var(--neutral-layer-4), var(--success) 25%);
+  color: var(--foreground-on-accent-rest);
+}
 .tf-layout-centered-content {
   height: 100vh;
   width: 100%;
@@ -2747,8 +2748,7 @@ fluent-menu-item::part(start) {
   margin: calc(var(--design-unit) * 1px) 0;
   text-decoration: none;
   min-height: calc(((var(--base-height-multiplier) + var(--density)) * var(--design-unit) + 1) * 1px);
-  padding-left: calc(var(--tf-padding) / 2);
-  padding-right: calc(var(--tf-padding) / 2);
+  padding: calc(var(--tf-padding) / 4) calc(var(--tf-padding) / 2);
   color: var(--neutral-foreground-rest);
   border-radius: calc(var(--control-corner-radius) * 1px);
   position: relative;
@@ -2782,7 +2782,7 @@ fluent-menu-item::part(start) {
   align-items: start;
 }
 .tf-treemenu__item__icon {
-  padding-top: 1px;
+  padding-top: 2px;
   flex: 0 0 20px;
   display: flex;
   align-items: center;
