@@ -241,6 +241,14 @@ public partial class TfService
 						return _tfService.GetDataProviderIdentities(dataIdentityKey).Count == 0;
 					})
 					.WithMessage("Data identity cannot be deleted while it is used by any data provider.");
+
+				RuleFor(dataIdentity => dataIdentity.DataIdentity)
+					.Must((dataIdentity, dataIdentityKey) =>
+					{
+						var sharedColumns = _tfService.GetSharedColumns();	
+						return sharedColumns.Count(x=>x.DataIdentity == dataIdentity.DataIdentity) == 0;
+					})
+					.WithMessage("Data identity cannot be deleted while it is used by any shared column.");
 			});
 
 		}

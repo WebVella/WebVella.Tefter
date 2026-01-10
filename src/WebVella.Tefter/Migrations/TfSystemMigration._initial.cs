@@ -201,6 +201,23 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 
 		#endregion
 
+		#region TABLE: DATA_IDENTITY
+		dbBuilder
+			.NewTableBuilder(Guid.NewGuid(), "tf_data_identity")
+			.WithColumns(columns =>
+			{
+				columns
+					.AddShortTextColumn("data_identity", c => { c.NotNullable(); })
+					.AddTextColumn("label", c => { });
+			})
+			.WithConstraints(constraints =>
+			{
+				constraints
+					.AddPrimaryKeyConstraint("pk_data_entity", c => { c.WithColumns("data_identity"); })
+					.AddUniqueKeyConstraint("ux_data_identity", c => { c.WithColumns("data_identity"); });
+			});
+		#endregion
+
 		#region  TABLE: SHARED_COLUMN
 
 		dbBuilder
@@ -218,7 +235,14 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				constraints
 					.AddPrimaryKeyConstraint("pk_shared_column_id", c => { c.WithColumns("id"); })
-					.AddUniqueKeyConstraint("ux_db_name", c => { c.WithColumns("db_name"); });
+					.AddUniqueKeyConstraint("ux_db_name", c => { c.WithColumns("db_name"); })
+					.AddForeignKeyConstraint("fk_shared_column_data_identity", fk =>
+					{
+						fk
+							.WithForeignTable("tf_data_identity")
+							.WithForeignColumns("data_identity")
+							.WithColumns("data_identity");
+					});
 			})
 			.WithIndexes(indexes =>
 			{
@@ -1015,22 +1039,6 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 					.AddBTreeIndex("ix_setting_name", i => { i.WithColumns("name"); });
 			});
 
-		#endregion
-
-		#region TABLE: DATA_IDENTITY
-		dbBuilder
-			.NewTableBuilder(Guid.NewGuid(), "tf_data_identity")
-			.WithColumns(columns =>
-			{
-				columns
-					.AddShortTextColumn("data_identity", c => { c.NotNullable(); })
-					.AddTextColumn("label", c => { });
-			})
-			.WithConstraints(constraints =>
-			{
-				constraints
-					.AddPrimaryKeyConstraint("pk_data_entity", c => { c.WithColumns("data_identity"); });
-			});
 		#endregion
 
 		#region  TABLE: DATA_PROVIDER_IDENTITY
