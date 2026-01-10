@@ -83,6 +83,10 @@
 								   OptionValue="@((p)=> p.Value)"
 								   Items="@context.ValueOptions" Style="width:300px" />
 					}
+					else
+					{
+						<FluentTextField Disabled="true" ReadOnly="true" Style="width:300px" Placeholder="@LOC("value not required")" />
+					}					
 				}
 				else if (Item is TfFilterDateTime)
 				{
@@ -108,6 +112,10 @@
 							</FluentTooltip>
 						</FluentStack>
 					}
+					else
+					{
+						<FluentTextField Disabled="true" ReadOnly="true" Style="width:300px" Placeholder="@LOC("value not required")" />
+					}					
 				}
 				else if (Item is TfFilterGuid)
 				{
@@ -127,6 +135,10 @@
 										 AutoComplete="off"
 										 Placeholder="@LOC("enter valid GUID")" Style="width:300px" />
 					}
+					else
+					{
+						<FluentTextField Disabled="true" ReadOnly="true" Style="width:300px" Placeholder="@LOC("value not required")" />
+					}					
 				}
 				else if (Item is TfFilterNumeric)
 				{
@@ -145,6 +157,10 @@
 										   Disabled="@Disabled" ReadOnly="ReadOnly"
 										   Placeholder="@LOC("enter valid decimal")" Style="width:300px" />
 					}
+					else
+					{
+						<FluentTextField Disabled="true" ReadOnly="true" Style="width:300px" Placeholder="@LOC("value not required")" />
+					}					
 				}
 				else if (Item is TfFilterText)
 				{
@@ -163,6 +179,10 @@
 										 Disabled="@Disabled" ReadOnly="ReadOnly"
 										 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 										 Style="width:300px" Placeholder="@LOC("no value")" />
+					}
+					else
+					{
+						<FluentTextField Disabled="true" ReadOnly="true" Style="width:300px" Placeholder="@LOC("value not required")" />
 					}
 				}
 				@if (!ReadOnly)

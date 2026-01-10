@@ -24,7 +24,7 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 		_iconBtn = TfConstants.GetIcon("Save")!;
 
 		_form = Content with { Id = Content.Id };
-		_onDescriptionChanged(_form.Description);
+		_onDescriptionChanged();
 		base.InitForm(_form);
 	}
 
@@ -66,13 +66,12 @@ public partial class TucSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDi
 		await Dialog.CancelAsync();
 	}
 
-	private void _onDescriptionChanged(string description)
+	private void _onDescriptionChanged()
 	{
-		_form.Description = description;
-		_form.Tags = new List<TfTag>();
-		if (!String.IsNullOrWhiteSpace(description))
+		_form.Tags.Clear();
+		if (!String.IsNullOrWhiteSpace(_form.Description))
 		{
-			foreach (var item in TfConverters.GetUniqueTagsFromText(description))
+			foreach (var item in TfConverters.GetUniqueTagsFromText(_form.Description))
 			{
 				_form.Tags.Add(new TfTag { Id = Guid.NewGuid(), Label = item });
 			}

@@ -27,32 +27,19 @@ public record TfDataset
 		get
 		{
 			var filterIds = new List<Guid>();
-			if(Filters is not null) 
-				Filters.ForEach(x=> GetFilterCount(x,filterIds));
+			if (Filters is not null)
+				Filters.ForEach(x => GetFilterCount(x, filterIds));
 
 			return filterIds.Count;
 		}
 	}
 
-	public int SortOrdersCount
-	{
-		get
-		{
-			return SortOrders.Count;
-		}
-	}
+	public int SortOrdersCount => SortOrders.Count;
 
 	private void GetFilterCount(TfFilterBase filter, List<Guid> filterIds)
 	{
+		filterIds.Add(filter.Id);
 		if (filter is TfFilterAnd)
-		{
-			var model = (TfFilterAnd)filter;
-			foreach (var item in model.Filters)
-			{
-				GetFilterCount(item,filterIds);
-			}
-		}
-		else if (filter is TfFilterAnd)
 		{
 			var model = (TfFilterAnd)filter;
 			foreach (var item in model.Filters)
@@ -60,9 +47,13 @@ public record TfDataset
 				GetFilterCount(item, filterIds);
 			}
 		}
-		else
+		else if (filter is TfFilterOr)
 		{
-			filterIds.Add(filter.Id);
+			var model = (TfFilterOr)filter;
+			foreach (var item in model.Filters)
+			{
+				GetFilterCount(item, filterIds);
+			}
 		}
 	}
 }
@@ -112,25 +103,20 @@ public class TfDatasetAsOption
 	public string Name { get; set; }
 }
 
-
 [DboCacheModel]
 [TfDboModel("tf_dataset")]
 internal class TfDatasetDbo
 {
-	[TfDboModelProperty("id")]
-	public Guid Id { get; set; }
+	[TfDboModelProperty("id")] public Guid Id { get; set; }
 
 	[TfDboModelProperty("data_provider_id")]
 	public Guid DataProviderId { get; set; }
 
-	[TfDboModelProperty("name")]
-	public string Name { get; set; }
+	[TfDboModelProperty("name")] public string Name { get; set; }
 
-	[TfDboModelProperty("filters_json")]
-	public string FiltersJson { get; set; }
+	[TfDboModelProperty("filters_json")] public string FiltersJson { get; set; }
 
-	[TfDboModelProperty("columns_json")]
-	public string ColumnsJson { get; set; }
+	[TfDboModelProperty("columns_json")] public string ColumnsJson { get; set; }
 
 	[TfDboModelProperty("sort_orders_json")]
 	public string SortOrdersJson { get; set; }

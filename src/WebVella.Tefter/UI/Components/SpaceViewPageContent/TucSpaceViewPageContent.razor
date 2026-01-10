@@ -151,9 +151,8 @@ else
                                     id="@($"row-{tfId}")">
                                     <td class="@GetSafeColumnMetaString(Guid.Empty, nameof(TfSpaceViewColumnPresentationMeta.BodyCellClass))"
                                         style="@GetSafeColumnMetaString(Guid.Empty, nameof(TfSpaceViewColumnPresentationMeta.BodyCellStyles))">
-                                        <div class="tf-grid-td-color"></div>
-                                        <div class="tf-grid-td-selection"></div>
                                         <div class="tf-grid-td-hover"></div>
+                                        <div class="tf-grid-td-selection"></div>
                                         @if (_rowMeta[tfId].EditMode)
                                         {
                                             @if (!_editAll)
@@ -207,10 +206,9 @@ else
                                         <td @key=@($"{tfId}__{column.Id}")
                                             class="@GetSafeColumnMetaString(column.Id, nameof(TfSpaceViewColumnPresentationMeta.BodyCellClass))"
                                             style="@GetSafeRegionContextString(tfId, column.Id, nameof(TfSpaceViewColumnBase.BodyCellStyles)) @GetSafeColumnMetaString(column.Id, nameof(TfSpaceViewColumnPresentationMeta.BodyCellStyles))">
-                                            <div class="tf-grid-td-color"
-                                                 style=""></div>
-                                            <div class="tf-grid-td-selection"></div>
                                             <div class="tf-grid-td-hover"></div>
+                                            <div class="tf-grid-td-selection"></div>
+                                            <div class="tf-grid-td-color"></div>
                                             @if (!_regionContextDict[tfId].ContainsKey(column.Id))
                                             {
                                             }

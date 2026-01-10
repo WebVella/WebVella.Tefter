@@ -15,7 +15,7 @@ public partial interface ITfService
 	TfDataProviderDataRow UpdateProviderRow(
 		Guid tfId,
 		Guid providerId,
-		Dictionary<string, object> rowDict);
+		Dictionary<string, object?> rowDict);
 
 	TfDataRow UpdateDatasetRow(
 		Guid tfId,
@@ -61,7 +61,7 @@ public partial class TfService : ITfService
 	public TfDataProviderDataRow UpdateProviderRow(
 		Guid tfId,
 		Guid providerId,
-		Dictionary<string, object> rowDict)
+		Dictionary<string, object?> rowDict)
 	{
 		UpdateRow(tfId, providerId, rowDict);
 		return GetProviderRow(GetDataProvider(providerId), tfId);

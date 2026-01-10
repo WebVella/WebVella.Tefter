@@ -23,7 +23,7 @@ public abstract class TfSpaceViewColumnBase(Dictionary<string, object> viewData)
 			if(ForegroundColor is not null)
 				sb.Append($"--tf-grid-td-color: var(--tf-{ForegroundColor.GetColor().Name}-500);");
 			if (BackgroundColor is not null)
-				sb.Append($"--tf-grid-td-fill: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-{BackgroundColor.GetColor().Name}-500) 10%);");
+				sb.Append($"--tf-grid-td-fill: color-mix(in srgb, var(--neutral-fill-rest), var(--tf-{BackgroundColor.GetColor().Name}-500) 5%);");
 			return sb.ToString();
 		}		
 	}

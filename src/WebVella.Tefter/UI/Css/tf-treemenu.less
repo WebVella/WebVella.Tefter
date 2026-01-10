@@ -9,8 +9,7 @@
         margin: calc(var(--design-unit) * 1px) 0;
         text-decoration: none;
         min-height: calc(((var(--base-height-multiplier) + var(--density)) * var(--design-unit) + 1) * 1px);
-        padding-left: calc(var(--tf-padding) / 2);
-        padding-right: calc(var(--tf-padding) / 2);
+        padding: calc(var(--tf-padding) / 4) calc(var(--tf-padding) / 2);
         color: var(--neutral-foreground-rest);
         border-radius: calc(var(--control-corner-radius) * 1px);
         position: relative;
@@ -53,7 +52,7 @@
         }
 
         &__icon {
-            padding-top:1px;
+            padding-top:2px;
             flex: 0 0 20px;
             display: flex;
             align-items: center;

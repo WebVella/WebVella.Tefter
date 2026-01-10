@@ -108,7 +108,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		{
 			_selectedPageComponent = _pageComponents.FirstOrDefault(x => x.ComponentId == _form.ComponentId);
 		}
-
+		_onDescriptionChanged();
 		base.InitForm(_form);
 	}
 
@@ -267,13 +267,12 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		StateHasChanged();
 	}
 
-	private void _onDescriptionChanged(string description)
+	private void _onDescriptionChanged()
 	{
-		_form.Description = description;
 		_pageTags.Clear();
-		if (!String.IsNullOrWhiteSpace(description))
+		if (!String.IsNullOrWhiteSpace(_form.Description))
 		{
-			foreach (var item in TfConverters.GetUniqueTagsFromText(description))
+			foreach (var item in TfConverters.GetUniqueTagsFromText(_form.Description))
 			{
 				_pageTags.Add(new TfTag { Id = Guid.NewGuid(), Label = item });
 			}
