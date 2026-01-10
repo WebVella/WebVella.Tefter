@@ -30,6 +30,9 @@ internal class TfDatabaseUtility
 	{
 		Func<TfNumberDatabaseColumn, string> numberDefaultValueFunc = (column) =>
 		{
+			if (column.AutoDefaultValue)
+				return TfConstants.DB_NUMBER_COLUMN_AUTO_DEFAULT_VALUE;
+
 			if (column.DefaultValue is null)
 				return "NULL";
 			else
@@ -154,6 +157,8 @@ internal class TfDatabaseUtility
 			if (string.IsNullOrWhiteSpace(defaultValue))
 				return null;
 
+			if (defaultValue == TfConstants.DB_NUMBER_COLUMN_AUTO_DEFAULT_VALUE)
+				return null;
 
 			var processedDefaultValue = defaultValue
 				.Replace("::numeric", "")
@@ -273,6 +278,7 @@ internal class TfDatabaseUtility
 			if (long.TryParse(processedDefaultValue, out var longValue))
 				return longValue;
 		}
+
 
 		throw new Exception($"Not supported default value \"{defaultValue}\" for column '{columnName}'");
 	}

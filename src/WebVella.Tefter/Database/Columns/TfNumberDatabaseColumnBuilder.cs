@@ -31,9 +31,19 @@ public class TfNumberDatabaseColumnBuilder : TfDatabaseColumnBuilder
     internal override TfNumberDatabaseColumnBuilder WithLastCommited(DateTime lastCommited)
     {
         base.WithLastCommited(lastCommited);
-
         return this;
     }
+
+	public TfNumberDatabaseColumnBuilder WithAutoDefaultValue()
+	{
+		_autoDefaultValue = true;
+		return this;
+	}
+	public TfNumberDatabaseColumnBuilder WithoutAutoDefaultValue()
+	{
+		_autoDefaultValue = false;
+		return this;
+	}
 
 	public TfNumberDatabaseColumnBuilder AsExpression(string expression)
 	{
@@ -51,6 +61,7 @@ public class TfNumberDatabaseColumnBuilder : TfDatabaseColumnBuilder
             Name = _name,   
             Type = TfDatabaseColumnType.Number,
 			Expression = _expression,
+			AutoDefaultValue = _autoDefaultValue
 		}; 
     }
 }

@@ -46,16 +46,20 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION public._tefter_get_random_by_type(target_type text) 
 RETURNS bigint AS $$
 DECLARE
-    max_val numeric;
+    -- Using bigint for the internal variable to match the return type
+    max_val bigint;
 BEGIN
     CASE lower(target_type)
         WHEN 'smallint' THEN max_val := 32767;
         WHEN 'integer'  THEN max_val := 2147483647;
-        WHEN 'bigint'   THEN max_val := 9223372036854775807;
+        -- Bigint and Numeric both use the maximum 64-bit integer limit here
+        WHEN 'bigint', 'numeric' THEN max_val := 9223372036854775807;
         ELSE max_val := 1; 
     END CASE;
 
-    RETURN floor(random() * (max_val + 1))::bigint;
+    -- floor(random() * (max_val + 1)) can cause overflow if max_val is the absolute 
+    -- maximum bigint value. Using (random() * max_val)::bigint is safer for large limits.
+    RETURN (random() * max_val)::bigint;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 ");

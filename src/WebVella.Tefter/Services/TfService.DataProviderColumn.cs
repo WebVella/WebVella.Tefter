@@ -641,10 +641,15 @@ public partial class TfService : ITfService
 						{
 							if (column.IsNullable) c.Nullable(); else c.NotNullable();
 
-							if (column.DefaultValue is not null)
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
 							{
-								var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
-								c.WithDefaultValue(number);
+								if (column.DefaultValue is not null)
+								{
+									var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
+									c.WithDefaultValue(number);
+								}
 							}
 						});
 						if (column.IsSearchable || column.IsSortable)
@@ -1071,10 +1076,15 @@ public partial class TfService : ITfService
 						{
 							if (column.IsNullable) c.Nullable(); else c.NotNullable();
 
-							if (column.DefaultValue is not null)
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
 							{
-								var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
-								c.WithDefaultValue(number);
+								if (column.DefaultValue is not null)
+								{
+									var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
+									c.WithDefaultValue(number);
+								}
 							}
 						});
 

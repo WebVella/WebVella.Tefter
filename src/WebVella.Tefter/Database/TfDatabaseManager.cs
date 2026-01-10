@@ -139,6 +139,8 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 							{
 								decimal? columnDefaultValue = (decimal?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfNumberDatabaseColumn), defaultValue);
 
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_NUMBER_COLUMN_AUTO_DEFAULT_VALUE;
+
 								var columnBuider = columnCollectionBuilder
 									.AddNumberColumnBuilder(meta.Id, columnName)
 									.WithDefaultValue(columnDefaultValue);
@@ -147,6 +149,11 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 									columnBuider.Nullable();
 								else
 									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
 
 								columnBuider.WithLastCommited(meta.LastCommited);
 							}
