@@ -213,7 +213,7 @@ public partial class TfService : ITfService
 				if (!string.IsNullOrWhiteSpace(column.Expression))
 					continue;
 
-				var value = GetColumnValue(provider, column!, null, rowDict, errors);
+				var value = GetColumnValue(provider, column!, tfId, rowDict, errors);
 				processedRowDict[column!.DbName!] = value;
 			}
 
