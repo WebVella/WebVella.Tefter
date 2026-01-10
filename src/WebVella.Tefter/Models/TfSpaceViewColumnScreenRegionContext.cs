@@ -1,16 +1,14 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿namespace WebVella.Tefter.Models;
 
-namespace WebVella.Tefter.Models;
-
-public abstract class TfSpaceViewColumnBase(Dictionary<string, object> viewData) : TfBaseScreenRegion
+public abstract class TfSpaceViewColumnBase(Dictionary<string, object?> viewData) : TfBaseScreenRegion
 {
 	public TfSpaceViewColumn ViewColumn { get; set; } = null!;
 	public ITfService TfService { get; init; } = null!;
 	public IServiceProvider ServiceProvider { get; init; } = null!;
 	
 	//When columns need to share data between rows (optimization)
-	private Dictionary<string, object> _viewData = viewData;
-	public Dictionary<string, object> ViewData { get => _viewData; }	
+	private Dictionary<string, object?> _viewData = viewData;
+	public Dictionary<string, object?> ViewData { get => _viewData; }	
 	
 	public TfColor? ForegroundColor { get; set; }	
 	public TfColor? BackgroundColor { get; set; }
@@ -29,7 +27,7 @@ public abstract class TfSpaceViewColumnBase(Dictionary<string, object> viewData)
 	}
 }
 
-public class TfSpaceViewColumnReadMode(Dictionary<string, object> viewData) : TfSpaceViewColumnBase(viewData)
+public class TfSpaceViewColumnReadMode(Dictionary<string, object?> viewData) : TfSpaceViewColumnBase(viewData)
 {
 	public TfDataTable? DataTable { get; set; } = null;
 	public Guid RowId { get; set; } = default;
@@ -53,7 +51,7 @@ public class TfSpaceViewColumnReadMode(Dictionary<string, object> viewData) : Tf
 	}
 }
 
-public class TfSpaceViewColumnEditMode(Dictionary<string, object> viewData) : TfSpaceViewColumnBase(viewData)
+public class TfSpaceViewColumnEditMode(Dictionary<string, object?> viewData) : TfSpaceViewColumnBase(viewData)
 {
 	public TfDataTable? DataTable { get; set; } = null;
 	public Guid RowId { get; set; } = default;
@@ -77,30 +75,25 @@ public class TfSpaceViewColumnEditMode(Dictionary<string, object> viewData) : Tf
 	}
 }
 
-public class TfSpaceViewColumnOptionsMode(Dictionary<string, object> viewData) : TfSpaceViewColumnBase(viewData)
+public class TfSpaceViewColumnOptionsMode(Dictionary<string, object?> viewData) : TfSpaceViewColumnBase(viewData)
 {
 	public List<ValidationError> ValidationErrors { get; set; } = new();
 	public EventCallback<string> SettingsChanged { get; set; }
 	public EventCallback<Tuple<string, string?>> DataMappingChanged { get; set; }
 }
 
-public class TfSpaceViewColumnExportExcelMode(Dictionary<string, object> viewData) : TfSpaceViewColumnBase(viewData)
+public class TfSpaceViewColumnExportExcelMode(Dictionary<string, object?> viewData) : TfSpaceViewColumnBase(viewData)
 {
 	public TfDataTable? DataTable { get; set; } = null;
 
 	public Guid RowId { get; set; } = default;
-
-	//When columns need to share data between rows (optimization)
-	public Dictionary<string, object> ViewData { get; private init; } = viewData;
 	public IXLCell ExcelCell { get; set; } = null!;
 }
 
-public class TfSpaceViewColumnExportCsvMode(Dictionary<string, object> viewData) : TfSpaceViewColumnBase(viewData)
+public class TfSpaceViewColumnExportCsvMode(Dictionary<string, object?> viewData) : TfSpaceViewColumnBase(viewData)
 {
 	public TfDataTable? DataTable { get; set; } = null;
 
 	public Guid RowId { get; set; } = default;
 
-	//When columns need to share data between rows (optimization)
-	public Dictionary<string, object> ViewData { get; private init; } = viewData;
 }

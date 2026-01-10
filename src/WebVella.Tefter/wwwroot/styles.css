@@ -1257,8 +1257,8 @@ fluent-menu-item::part(start) {
 }
 .tf-grid tbody tr {
   /*            &.tf-grid-tr--selected .tf-grid-td--check::after {
-                      background: var(--tf-amber-400);
-                  }*/
+                background: var(--tf-amber-400);
+            }*/
 }
 .tf-grid tbody tr > th,
 .tf-grid tbody tr > td {
@@ -1406,6 +1406,12 @@ fluent-menu-item::part(start) {
 .tf-grid tbody > tr > .tf-grid-td--check .check-content {
   padding: 0;
   display: flex;
+  align-items: start;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 .tf-grid thead > tr > .tf-grid-th--check .check-content .loading-button,
 .tf-grid tbody > tr > .tf-grid-th--check .check-content .loading-button,
@@ -1454,10 +1460,10 @@ fluent-menu-item::part(start) {
 .tf-grid tbody > tr > .tf-grid-td--check .check-content.multi fluent-button svg {
   --neutral-stroke-input-active: var(--neutral-stroke-rest);
 }
-.tf-grid thead > tr > .tf-grid-th--check .check-content.check fluent-button,
-.tf-grid tbody > tr > .tf-grid-th--check .check-content.check fluent-button,
-.tf-grid thead > tr > .tf-grid-td--check .check-content.check fluent-button,
-.tf-grid tbody > tr > .tf-grid-td--check .check-content.check fluent-button {
+.tf-grid thead > tr > .tf-grid-th--check .check-content fluent-button,
+.tf-grid tbody > tr > .tf-grid-th--check .check-content fluent-button,
+.tf-grid thead > tr > .tf-grid-td--check .check-content fluent-button,
+.tf-grid tbody > tr > .tf-grid-td--check .check-content fluent-button {
   position: absolute;
   top: 0;
   left: 0;
@@ -1465,23 +1471,32 @@ fluent-menu-item::part(start) {
   width: 100%;
   background: transparent !important;
 }
-.tf-grid thead > tr > .tf-grid-th--check .check-content.check fluent-button::part(control),
-.tf-grid tbody > tr > .tf-grid-th--check .check-content.check fluent-button::part(control),
-.tf-grid thead > tr > .tf-grid-td--check .check-content.check fluent-button::part(control),
-.tf-grid tbody > tr > .tf-grid-td--check .check-content.check fluent-button::part(control) {
+.tf-grid thead > tr > .tf-grid-th--check .check-content fluent-button::part(control),
+.tf-grid tbody > tr > .tf-grid-th--check .check-content fluent-button::part(control),
+.tf-grid thead > tr > .tf-grid-td--check .check-content fluent-button::part(control),
+.tf-grid tbody > tr > .tf-grid-td--check .check-content fluent-button::part(control) {
+  padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) 0;
   background: transparent !important;
   border: none;
+  display: flex;
+  align-items: start;
 }
-.tf-grid thead > tr > .tf-grid-th--check .check-content.check fluent-button:hover,
-.tf-grid tbody > tr > .tf-grid-th--check .check-content.check fluent-button:hover,
-.tf-grid thead > tr > .tf-grid-td--check .check-content.check fluent-button:hover,
-.tf-grid tbody > tr > .tf-grid-td--check .check-content.check fluent-button:hover {
+.tf-grid thead > tr > .tf-grid-th--check .check-content fluent-button:focus::part(control),
+.tf-grid tbody > tr > .tf-grid-th--check .check-content fluent-button:focus::part(control),
+.tf-grid thead > tr > .tf-grid-td--check .check-content fluent-button:focus::part(control),
+.tf-grid tbody > tr > .tf-grid-td--check .check-content fluent-button:focus::part(control) {
+  outline: none !important;
+}
+.tf-grid thead > tr > .tf-grid-th--check .check-content fluent-button:hover,
+.tf-grid tbody > tr > .tf-grid-th--check .check-content fluent-button:hover,
+.tf-grid thead > tr > .tf-grid-td--check .check-content fluent-button:hover,
+.tf-grid tbody > tr > .tf-grid-td--check .check-content fluent-button:hover {
   background: transparent !important;
 }
-.tf-grid thead > tr > .tf-grid-th--check .check-content.check fluent-button svg,
-.tf-grid tbody > tr > .tf-grid-th--check .check-content.check fluent-button svg,
-.tf-grid thead > tr > .tf-grid-td--check .check-content.check fluent-button svg,
-.tf-grid tbody > tr > .tf-grid-td--check .check-content.check fluent-button svg {
+.tf-grid thead > tr > .tf-grid-th--check .check-content fluent-button svg,
+.tf-grid tbody > tr > .tf-grid-th--check .check-content fluent-button svg,
+.tf-grid thead > tr > .tf-grid-td--check .check-content fluent-button svg,
+.tf-grid tbody > tr > .tf-grid-td--check .check-content fluent-button svg {
   --neutral-stroke-input-active: var(--neutral-stroke-rest);
 }
 .tf-grid thead > tr > th:first-child,
