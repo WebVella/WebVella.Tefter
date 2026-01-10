@@ -101,9 +101,7 @@ public partial class TucAdminSharedColumnDetailsContent : TfBaseComponent, IAsyn
 			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
 				payload: new TfSharedColumnDeletedEventPayload(_column));
 			var allColumns = TfService.GetSharedColumns();
-			Navigator.NavigateTo(allColumns.Count > 0
-				? String.Format(TfConstants.AdminSharedColumnDetailsPageUrl, allColumns[0].Id)
-				: TfConstants.AdminSharedColumnsPageUrl);
+			Navigator.NavigateTo(String.Format(TfConstants.AdminSharedColumnsPageUrl));
 		}
 		catch (Exception ex)
 		{
