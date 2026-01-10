@@ -1,5 +1,4 @@
-﻿using Nito.AsyncEx.Synchronous;
-using NpgsqlTypes;
+﻿using NpgsqlTypes;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WebVella.Tefter.Services;
@@ -38,7 +37,7 @@ public partial interface ITfService
 
 	public List<TfDataProviderSynchronizeTask> GetDataProviderSynchronizationTasks(Guid providerId, int? page = null, int? pageSize = null,
 		TfSynchronizationStatus? status = null);
-	public bool GetDataProviderSynchronizationTaskIsComplete(Guid taskId);	
+	public bool GetDataProviderSynchronizationTaskIsComplete(Guid taskId);
 }
 
 public partial class TfService : ITfService
@@ -134,6 +133,40 @@ public partial class TfService : ITfService
 		};
 	}
 
+	public List<TfDataProviderSynchronizeTask> GetNotCompletedSynchronizationTasks(
+		Guid providerId)
+	{
+		var orderSettings = new TfOrderSettings(
+		nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
+		OrderDirection.ASC);
+
+		var dbo = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskDbo>(
+				"SELECT * FROM tf_data_provider_synchronize_task WHERE data_provider_id = @data_provider_id AND completed_on IS NULL ORDER BY created_on ASC ",
+				new NpgsqlParameter("@data_provider_id", providerId));
+
+
+		var result = new List<TfDataProviderSynchronizeTask>();
+		if (dbo == null)
+			return result;
+
+		foreach (var dboItem in dbo)
+		{
+			var logEntries = JsonSerializer.Deserialize<List<TfDataProviderSychronizationLogEntry>>(dboItem.SynchLogJson ?? "[]");
+			result.Add(new TfDataProviderSynchronizeTask
+			{
+				Id = dboItem.Id,
+				DataProviderId = dboItem.DataProviderId,
+				CompletedOn = dboItem.CompletedOn,
+				CreatedOn = dboItem.CreatedOn,
+				Policy = JsonSerializer.Deserialize<TfSynchronizationPolicy>(dboItem.PolicyJson) ?? new(),
+				StartedOn = dboItem.StartedOn,
+				Status = dboItem.Status,
+				SynchronizationLog = new TfDataProviderSychronizationLog(logEntries!)
+			});
+		}
+		return result;
+	}
+
 	public Guid CreateSynchronizationTask(
 		Guid providerId,
 		TfSynchronizationPolicy synchPolicy)
@@ -214,7 +247,7 @@ public partial class TfService : ITfService
 		if (!success)
 			throw new TfDatabaseException("Failed to update synchronization task in database.");
 	}
- 
+
 	#endregion
 
 	public TfDataProviderSourceSchemaInfo GetDataProviderSourceSchemaInfo(
@@ -394,7 +427,7 @@ public partial class TfService : ITfService
 			List<string> columnKeyValues = new List<string>();
 			foreach (var column in provider.SynchPrimaryKeyColumns)
 			{
-				columnKeyValues.Add( $"{dr[column]}");
+				columnKeyValues.Add($"{dr[column]}");
 			}
 
 			return string.Join(TfConstants.SHARED_KEY_SEPARATOR, columnKeyValues) ?? string.Empty;
@@ -603,6 +636,11 @@ public partial class TfService : ITfService
 			if (!provider.SynchScheduleEnabled)
 				continue;
 
+			//if there is an in-progress task, skip
+			var notCompletedTasks = GetNotCompletedSynchronizationTasks(provider.Id);
+			if(notCompletedTasks.Any(x=>x.Status == TfSynchronizationStatus.InProgress))
+				continue;
+
 			var lastSynchTask = GetLastSynchronizationTask(provider.Id);
 
 			if (lastSynchTask is null)
@@ -643,9 +681,6 @@ public partial class TfService : ITfService
 		if (lastSynchTask is null || lastSynchTask.CompletedOn is null)
 			return DateTime.Now;
 
-		//TODO RUMEN: Added lastSynchTask.CompletedOn is null as there was a case when this was null
-		// 1. Check if the second part of the if above is correct
-		//2. Check why if there is an error here the whole system collapses
 		return lastSynchTask.CompletedOn!.Value.AddMinutes(provider.SynchScheduleMinutes);
 	}
 
@@ -665,7 +700,7 @@ public partial class TfService : ITfService
 		var dbo = _dboManager.Get<TfDataProviderSynchronizeTaskDbo>(taskId);
 		if (dbo == null) return true;
 		if (dbo.Status == TfSynchronizationStatus.Completed
-		    || dbo.Status == TfSynchronizationStatus.Failed)
+			|| dbo.Status == TfSynchronizationStatus.Failed)
 			return true;
 
 		return false;
@@ -755,7 +790,7 @@ public partial class TfService : ITfService
 				{
 					task.SynchronizationLog.Log($"start prepare new data for database insert");
 
-					PrepareQueryArrayParametersNew(provider, existingData, newData, 
+					PrepareQueryArrayParametersNew(provider, existingData, newData,
 						uniqueValuesDict, out columnList, out paramList);
 
 					task.SynchronizationLog.Log($"complete prepare new data for database insert");
@@ -898,7 +933,7 @@ public partial class TfService : ITfService
 		foreach (var column in provider.Columns)
 		{
 			//do not process expression columns
-			if (!string.IsNullOrWhiteSpace( column.Expression ) )
+			if (!string.IsNullOrWhiteSpace(column.Expression))
 				continue;
 
 			columnNames.Add(column.DbName!);
@@ -936,7 +971,7 @@ public partial class TfService : ITfService
 				case TfDatabaseColumnType.DateOnly:
 				case TfDatabaseColumnType.DateTime:
 					{
-						var parameter = new NpgsqlParameter($"@{column.DbName!}", NpgsqlDbType.Array | NpgsqlDbType.Timestamp );
+						var parameter = new NpgsqlParameter($"@{column.DbName!}", NpgsqlDbType.Array | NpgsqlDbType.Timestamp);
 						parameter.Value = new List<DateTime?>();
 						paramsDict.Add(column.DbName!, parameter);
 					}
@@ -1024,7 +1059,7 @@ public partial class TfService : ITfService
 			ProcessColumnsWithoutSource(columnsWithoutSource, paramsDict, searchSb,
 				existingDataRow, uniqueValuesDict);
 
-			ProcessColumnsWithSource(columnsWithSource, paramsDict, searchSb, 
+			ProcessColumnsWithSource(columnsWithSource, paramsDict, searchSb,
 				row, uniqueValuesDict);
 
 			#region <--- processs system columns data --->
@@ -1092,8 +1127,8 @@ public partial class TfService : ITfService
 					case TfDatabaseColumnType.Guid:
 						{
 							((List<Guid?>)paramsDict[column.DbName!].Value!).Add((Guid?)existingDataRow[column.DbName!]);
-							
-							if(column.IsUnique)
+
+							if (column.IsUnique)
 							{
 								if (!uniqueValuesDict.ContainsKey(column.DbName!))
 									uniqueValuesDict[column.DbName!] = new HashSet<Guid>();
@@ -1199,7 +1234,7 @@ public partial class TfService : ITfService
 					case TfDatabaseColumnType.LongInteger:
 						{
 							((List<long?>)paramsDict[column.DbName!].Value!).Add((long?)existingDataRow[column.DbName!]);
-							
+
 							if (column.IsUnique)
 							{
 								if (!uniqueValuesDict.ContainsKey(column.DbName!))
@@ -1212,7 +1247,7 @@ public partial class TfService : ITfService
 					case TfDatabaseColumnType.Number:
 						{
 							((List<decimal?>)paramsDict[column.DbName!].Value!).Add((decimal?)existingDataRow[column.DbName!]);
-							
+
 							if (column.IsUnique)
 							{
 								if (!uniqueValuesDict.ContainsKey(column.DbName!))

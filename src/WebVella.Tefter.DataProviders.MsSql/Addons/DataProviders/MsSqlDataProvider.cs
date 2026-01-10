@@ -118,17 +118,6 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 		{
 			connection.Open();
 
-			//TODO Rumen - rewrite code bellow to use GetSchemaTable
-			//DataTable dtSchema = null;
-
-			//using (var schemaCommand = new SqlCommand(settings.SqlQuery, connection))
-			//{
-			//	using (var reader = schemaCommand.ExecuteReader(CommandBehavior.SchemaOnly))
-			//	{
-			//		dtSchema = reader.GetSchemaTable();
-			//	}
-			//}
-
 			SqlCommand command = new SqlCommand($"WITH X AS ( {settings.SqlQuery} ) SELECT TOP 1 * FROM X", connection);
 
 			SqlDataAdapter adapter = new SqlDataAdapter(command);
@@ -190,7 +179,6 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 			foreach (var providerDataType in provider.ProviderType.GetSupportedSourceDataTypes())
 			{
 				var supportedDBList = provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(providerDataType);
-				//var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
 				schemaInfo.SourceTypeSupportedDbTypes[providerDataType] = supportedDBList.ToList();
 			}
 

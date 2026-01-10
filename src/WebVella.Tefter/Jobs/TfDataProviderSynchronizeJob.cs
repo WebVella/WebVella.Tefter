@@ -30,8 +30,8 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 		await Task.Delay(10 * 1000);
 
 #else
-		//initial 300 sec wait
-		await Task.Delay(300 * 1000);
+		//initial 120 sec wait
+		await Task.Delay(120 * 1000);
 #endif
 
 		SynchronizationContext.SetSynchronizationContext(new TfHostedServiceSynchContext());
