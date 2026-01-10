@@ -1,7 +1,5 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using NpgsqlTypes;
-using System.Reflection.Metadata.Ecma335;
 
 namespace WebVella.Tefter.Services;
 
@@ -63,6 +61,7 @@ public partial interface ITfService
 	);
 	TfDataTable InsertRowInDataTable(TfDataTable dt);
 
+	[Obsolete("Will be removed. Please don't use it.")]
 	public TfDataTable SaveDataTable(
 		TfDataTable table);
 
@@ -167,7 +166,7 @@ public partial class TfService
 				userSearch: search,
 				page: page,
 				pageSize: pageSize,
-				relIdentityInfo:relIdentityInfo);
+				relIdentityInfo: relIdentityInfo);
 
 			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
 
@@ -353,7 +352,7 @@ public partial class TfService
 				dataProvider: provider,
 				dataProviders: allDataProviders,
 				spaceData: spaceData,
-				presetSearch:presetSearch,
+				presetSearch: presetSearch,
 				presetFilters: presetFilters,
 				presetSorts: presetSorts,
 				userSearch: userSearch,
@@ -609,7 +608,7 @@ public partial class TfService
 			userSearch: userSearch,
 			userFilters: userFilters,
 			userSorts: userSorts,
-			presetSearch:presetSearch,
+			presetSearch: presetSearch,
 			presetFilters: presetFilters,
 			presetSorts: presetSorts,
 			page: null,
@@ -617,7 +616,7 @@ public partial class TfService
 			noRows: false,
 			returnOnlyTfIds: true,
 			relIdentityInfo: relIdentityInfo);
-	
+
 		for (int i = 0; i < dt.Rows.Count; i++)
 		{
 			result.Add((Guid)dt.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME]);
@@ -625,6 +624,7 @@ public partial class TfService
 		return result;
 	}
 
+	[Obsolete("Will be removed. Please don't use it.")]
 	public TfDataTable SaveDataTable(
 		TfDataTable table)
 	{
@@ -729,7 +729,7 @@ public partial class TfService
 
 		foreach (var column in provider.Columns)
 		{
-			if(!string.IsNullOrEmpty(column.Expression))
+			if (!string.IsNullOrEmpty(column.Expression))
 				continue;
 
 			if (column.IncludeInTableSearch)
@@ -1042,7 +1042,7 @@ public partial class TfService
 
 		foreach (var column in provider.Columns)
 		{
-			if(!string.IsNullOrEmpty(column.Expression))
+			if (!string.IsNullOrEmpty(column.Expression))
 				continue;
 
 			if (column.IncludeInTableSearch)
@@ -1208,8 +1208,8 @@ public partial class TfService
 		{
 			var tableColumn = row.DataTable.Columns[i];
 
-			var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == tableColumn.Name);	
-			if(providerColumn != null && !string.IsNullOrWhiteSpace(providerColumn.Expression))
+			var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == tableColumn.Name);
+			if (providerColumn != null && !string.IsNullOrWhiteSpace(providerColumn.Expression))
 				continue;
 
 			//ignore shared,identity and joined columns here
