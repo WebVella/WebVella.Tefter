@@ -21,12 +21,15 @@
 			<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
 				@if (_currentStep == TfUseTemplateDialogStep.SelectTemplate)
 				{
-					<FluentButton Appearance="Appearance.Accent" OnClick="@_next" IconEnd="@TfConstants.GetIcon("ArrowRight")">@LOC("Next")</FluentButton>
+					<FluentButton Appearance="Appearance.Accent" OnClick="@_next"
+					              IconEnd="@TfConstants.GetIcon("ArrowRight")">@LOC("Next")</FluentButton>
 				}
 				else if (_currentStep == TfUseTemplateDialogStep.ResultPreview)
 				{
-					<FluentButton Appearance="Appearance.Outline" OnClick="@_back" IconStart="@TfConstants.GetIcon("ArrowLeft")">@LOC("Back")</FluentButton>
-					<FluentButton Appearance="Appearance.Accent" OnClick="@_next" IconEnd="@TfConstants.GetIcon("Send")">@LOC("Submit")</FluentButton>
+					<FluentButton Appearance="Appearance.Outline" OnClick="@_back"
+					              IconStart="@TfConstants.GetIcon("ArrowLeft")">@LOC("Back")</FluentButton>
+					<FluentButton Appearance="Appearance.Accent" OnClick="@_next"
+					              IconEnd="@TfConstants.GetIcon("Send")">@LOC("Submit")</FluentButton>
 				}
 			</FluentStack>
 		</FluentStack>
@@ -36,7 +39,10 @@
 	{
 		@*         <FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
                       Loading="_isSubmitting" Disabled="_isSubmitting">
-            @_btnText
+            
+		
+
+		@_btnText
         </FluentButton> *@
 	}
 
@@ -47,7 +53,7 @@
 	@((MarkupString)_getEmbeddedStyles())
 	@if (_loading)
 	{
-		<TucLoadingPane />
+		<TucLoadingPane/>
 	}
 	else if (!string.IsNullOrWhiteSpace(_error))
 	{
@@ -55,73 +61,81 @@
 	}
 	else if (_currentStep == TfUseTemplateDialogStep.SelectTemplate)
 	{
-		<FluentSearch Placeholder="@LOC("search...")" AutoComplete="off" Autofocus="true" Value="@_search" ValueChanged="onSearch" Immediate="true" ImmediateDelay="500" />
+		<FluentSearch Placeholder="@LOC("search...")" AutoComplete="off" Autofocus="true" Value="@_search"
+		              ValueChanged="onSearch" Immediate="true" ImmediateDelay="500"/>
 		<table class="tf-grid" style="margin-top:1rem;">
 			<thead class="tf-grid-thead">
-				<tr class="tf-grid-thead-bkg"></tr>
-				<tr class="tf-grid-tr">
-					<th class="tf-grid-th" style="width:120px;min-width:120px;"></th>
-					<th class="tf-grid-th" style="width:30px;min-width:30px;"></th>
-					<th class="tf-grid-th">@LOC("name")</th>
-					<th class="tf-grid-th">@LOC("type")</th>
-				</tr>
+			<tr class="tf-grid-thead-bkg"></tr>
+			<tr class="tf-grid-tr">
+				<th class="tf-grid-th" style="width:120px;min-width:120px;"></th>
+				<th class="tf-grid-th" style="width:30px;min-width:30px;"></th>
+				<th class="tf-grid-th">@LOC("name")</th>
+				<th class="tf-grid-th">@LOC("type")</th>
+			</tr>
 			</thead>
 			<tbody class="tf-grid-tbody">
-				@foreach (var row in _templates)
-				{
-					var selected = row.Id == _selectedTemplate?.Id;
-					var rowProcessor = _getTemplateProcessorInstance(row.ContentProcessorType);
-					<tr @key=@(Guid.NewGuid()) class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
-						<td class="tf-grid-td">
-							<div class="tf-grid-td-selection"></div>
-							<div class="tf-grid-td-hover"></div>
-							<div>
-								@if (selected)
-								{
-									<FluentButton OnClick="@(_ => _selectTemplate(row))" Appearance="Appearance.Accent" Style="width:100%">selected</FluentButton>
-								}
-								else
-								{
-									<FluentButton OnClick="@(_ => _selectTemplate(row))" Appearance="Appearance.Outline" Style="width:100%">select</FluentButton>
-								}
+			@foreach (var row in _templates)
+			{
+				var selected = row.Id == _selectedTemplate?.Id;
+				var rowProcessor = _getTemplateProcessorInstance(row.ContentProcessorType);
+				<tr @key=@(Guid.NewGuid()) class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
+					<td class="tf-grid-td">
+						<div class="tf-grid-td-selection"></div>
+						<div class="tf-grid-td-hover"></div>
+						<div>
+							@if (selected)
+							{
+								<FluentButton OnClick="@(_ => _selectTemplate(row))" Appearance="Appearance.Accent"
+								              Style="width:100%">selected
+								</FluentButton>
+							}
+							else
+							{
+								<FluentButton OnClick="@(_ => _selectTemplate(row))" Appearance="Appearance.Outline"
+								              Style="width:100%">select
+								</FluentButton>
+							}
 
-							</div>
-						</td>
-						<td class="tf-grid-td">
-							<div class="tf-grid-td-selection"></div>
-							<div class="tf-grid-td-hover"></div>
-							<div>
-								<FluentIcon Value="@TfConstants.GetIcon(row.FluentIconName)!.WithColor(Color.Accent)" />
-							</div>
-						</td>
-						<td class="tf-grid-td">
-							<div class="tf-grid-td-selection"></div>
-							<div class="tf-grid-td-hover"></div>
-							<div>
-								<div>@row.Name</div>
-								<div class="td-description">@row.Description</div>
-							</div>
-						</td>
-						<td class="tf-grid-td">
-							<div class="tf-grid-td-selection"></div>
-							<div class="tf-grid-td-hover"></div>
-							<div>
-								<div>@rowProcessor?.Name</div>
-								<div class="td-description">@rowProcessor?.Description</div>
-							</div>
-						</td>
-					</tr>
-				}
-				@if (_templates.Count == 0)
-				{
-					<tr class="tf-grid-tr">
-						<td class="tf-grid-td" colspan="4">
-							<div>
-								@LOC("There are no templates applicable for this space dataset!")
-							</div>
-						</td>
-					</tr>
-				}
+						</div>
+					</td>
+					<td class="tf-grid-td">
+						<div class="tf-grid-td-selection"></div>
+						<div class="tf-grid-td-hover"></div>
+						<div>
+							@if (!String.IsNullOrWhiteSpace(row.FluentIconName))
+							{
+								<FluentIcon Value="@TfConstants.GetIcon(row.FluentIconName)!.WithColor(Color.Accent)"/>
+							}
+						</div>
+					</td>
+					<td class="tf-grid-td">
+						<div class="tf-grid-td-selection"></div>
+						<div class="tf-grid-td-hover"></div>
+						<div>
+							<div>@row.Name</div>
+							<div class="td-description">@row.Description</div>
+						</div>
+					</td>
+					<td class="tf-grid-td">
+						<div class="tf-grid-td-selection"></div>
+						<div class="tf-grid-td-hover"></div>
+						<div>
+							<div>@rowProcessor?.Name</div>
+							<div class="td-description">@rowProcessor?.Description</div>
+						</div>
+					</td>
+				</tr>
+			}
+			@if (_templates.Count == 0)
+			{
+				<tr class="tf-grid-tr">
+					<td class="tf-grid-td" colspan="4">
+						<div>
+							@LOC("There are no templates applicable for this space dataset!")
+						</div>
+					</td>
+				</tr>
+			}
 			</tbody>
 		</table>
 	}
@@ -129,78 +143,88 @@
 	{
 		<table class="tf-grid" style="margin-bottom:1rem;">
 			<tbody class="tf-grid-tbody">
-				<tr class="tf-grid-tr">
-					<td class="tf-grid-td" style="max-width:50px;width:50px;">
-						<div>
-							<FluentIcon Value="@TfConstants.GetIcon(_selectedTemplate.FluentIconName)!.WithColor(Color.Accent)" />
-						</div>
-					</td>
-					<td class="tf-grid-td">
-						<div>
-							<div>@_selectedTemplate.Name</div>
-							<div class="td-description">@_selectedTemplate.Description</div>
-						</div>
-					</td>
-					<td class="tf-grid-td">
-						<div>
-							<div>@_processor?.Name</div>
-							<div class="td-description">@_processor?.Description</div>
-						</div>
-					</td>
-					<td class="tf-grid-td" style="max-width:120px;width:120px;">
-						<div>
-							@LOC("{0} rows", Content.SelectedRowIds.Count)
-						</div>
-					</td>
-				</tr>
+			<tr class="tf-grid-tr">
+				<td class="tf-grid-td" style="max-width:50px;width:50px;">
+					<div>
+						@if (!String.IsNullOrWhiteSpace(_selectedTemplate?.FluentIconName))
+						{
+							<FluentIcon
+								Value="@TfConstants.GetIcon(_selectedTemplate.FluentIconName)!.WithColor(Color.Accent)"/>
+						}
+					</div>
+				</td>
+				<td class="tf-grid-td">
+					<div>
+						<div>@_selectedTemplate.Name</div>
+						<div class="td-description">@_selectedTemplate.Description</div>
+					</div>
+				</td>
+				<td class="tf-grid-td">
+					<div>
+						<div>@_processor?.Name</div>
+						<div class="td-description">@_processor?.Description</div>
+					</div>
+				</td>
+				<td class="tf-grid-td" style="max-width:120px;width:120px;">
+					<div>
+						@LOC("{0} rows", Content.SelectedRowIds.Count)
+					</div>
+				</td>
+			</tr>
 			</tbody>
 		</table>
 		@if (_processor is null)
 		{
-			<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("This template does not have a content processor definition")</FluentMessageBar>
+			<FluentMessageBar Intent="@MessageIntent.Error"
+			                  AllowDismiss="false">@LOC("This template does not have a content processor definition")</FluentMessageBar>
 		}
 		else
 		{
-			<TucScreenRegionComponent Region="_resultPreviewComponentContext" Scope="@_dynamicComponentScope" />
+			<TucScreenRegionComponent Region="_resultPreviewComponentContext" Scope="@_dynamicComponentScope"/>
 		}
 	}
 	else if (_currentStep == TfUseTemplateDialogStep.Result)
 	{
 		<table class="tf-grid" style="margin-bottom:1rem;">
 			<tbody class="tf-grid-tbody">
-				<tr class="tf-grid-tr">
-					<td class="tf-grid-td" style="max-width:50px;width:50px;">
-						<div>
-							<FluentIcon Value="@TfConstants.GetIcon(_selectedTemplate.FluentIconName)!.WithColor(Color.Accent)" />
-						</div>
-					</td>
-					<td class="tf-grid-td">
-						<div>
-							<div>@_selectedTemplate.Name</div>
-							<div class="td-description">@_selectedTemplate.Description</div>
-						</div>
-					</td>
-					<td class="tf-grid-td">
-						<div>
-							<div>@_processor?.Name</div>
-							<div class="td-description">@_processor?.Description</div>
-						</div>
-					</td>
-					<td class="tf-grid-td" style="max-width:120px;width:120px;">
-						<div>
-							@LOC("{0} rows", Content.SelectedRowIds.Count)
-						</div>
-					</td>
-				</tr>
+			<tr class="tf-grid-tr">
+				<td class="tf-grid-td" style="max-width:50px;width:50px;">
+					<div>
+						@if (!String.IsNullOrWhiteSpace(_selectedTemplate?.FluentIconName))
+						{
+							<FluentIcon
+								Value="@TfConstants.GetIcon(_selectedTemplate.FluentIconName)!.WithColor(Color.Accent)"/>
+						}
+					</div>
+				</td>
+				<td class="tf-grid-td">
+					<div>
+						<div>@_selectedTemplate.Name</div>
+						<div class="td-description">@_selectedTemplate.Description</div>
+					</div>
+				</td>
+				<td class="tf-grid-td">
+					<div>
+						<div>@_processor?.Name</div>
+						<div class="td-description">@_processor?.Description</div>
+					</div>
+				</td>
+				<td class="tf-grid-td" style="max-width:120px;width:120px;">
+					<div>
+						@LOC("{0} rows", Content.SelectedRowIds.Count)
+					</div>
+				</td>
+			</tr>
 			</tbody>
 		</table>
 		@if (_processor is null)
 		{
-			<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("This template does not have a content processor definition")</FluentMessageBar>
+			<FluentMessageBar Intent="@MessageIntent.Error"
+			                  AllowDismiss="false">@LOC("This template does not have a content processor definition")</FluentMessageBar>
 		}
 		else
 		{
-			<TucScreenRegionComponent Region="_resultComponentContext" Scope="@_dynamicComponentScope" />
+			<TucScreenRegionComponent Region="_resultComponentContext" Scope="@_dynamicComponentScope"/>
 		}
 	}
 

@@ -3,6 +3,8 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IAsyn
 {
 	private TfDataIdentity? _identity = null;
 	private IAsyncDisposable? _dataIdentityUpdatedEventSubscriber = null;
+	private List<TfDataIdentityImplementation> _implementations = new();
+	private bool _submitting = false;
 	
 	
 	public async ValueTask DisposeAsync()
@@ -56,6 +58,8 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IAsyn
 				if (navState.DataIdentityId is not null)
 					_identity = TfService.GetDataIdentity(navState.DataIdentityId);
 			}
+			if(_identity is not null)
+				_implementations = TfService.GetDataIdentityImplementations(_identity!.DataIdentity);
 		}
 		finally
 		{
@@ -83,19 +87,52 @@ public partial class TucAdminDataIdentityDetailsContent : TfBaseComponent, IAsyn
 	private async Task _deleteIdentity()
 	{
 		if(_identity is null) return;
+		if (_implementations.Count > 0)
+		{
+			ToastService.ShowWarning(LOC("Identity with existing implementations cannot be deleted. Remove them first"));
+			return;
+		}
+
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this identity deleted?")))
 			return;
 		try
 		{
+			_submitting = true;
+			await InvokeAsync(StateHasChanged);
 			TfService.DeleteDataIdentity(_identity.DataIdentity);
 			ToastService.ShowSuccess(LOC("Data identity removed"));
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfDataIdentityDeletedEventPayload(_identity));			
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfDataIdentityDeletedEventPayload(_identity));
+			Navigator.NavigateTo(TfConstants.AdminDataIdentitiesPageUrl);
 		}
 		catch (Exception ex)
 		{
 			ProcessException(ex);
 		}
+		finally
+		{
+			_submitting = false;
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private async Task _removeImplementation(TfDataIdentityImplementation implementation)
+	{
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this implementation removed?")))
+			return;
+		try
+		{
+			var result = TfService.DeleteDataProviderIdentity(implementation.Id);
+			ToastService.ShowSuccess(LOC("Data identity implementation was removed"));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfDataProviderUpdatedEventPayload(result));
+			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+				payload: new TfDataIdentityUpdatedEventPayload(_identity!));						
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}		
 	}
 
 }

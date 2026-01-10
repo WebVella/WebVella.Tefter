@@ -27,9 +27,12 @@ else if (state.NavigationState.HasNode(RouteDataNode.Space, 0))
     <FluentMenu Anchor="tf-space-header" Trigger="MouseButton.Right" Anchored="false" UseMenuService="true">
         <FluentMenuItem Disabled="true">
             @LOC("Current Space")
-            <span slot="start">
-                <FluentIcon Value="@(TfConstants.GetIcon(state.Space?.FluentIconName)!.WithColor("var(--neutral-foreground-hint)"))" Slot="start" />
-            </span>
+            @if (!String.IsNullOrWhiteSpace(state.Space?.FluentIconName))
+            {
+                <span slot="start">
+                    <FluentIcon Value="@(TfConstants.GetIcon(state.Space?.FluentIconName)!.WithColor("var(--neutral-foreground-hint)"))" Slot="start"/>
+                </span>
+            }
         </FluentMenuItem>
         <FluentDivider />
         <FluentMenuItem OnClick="@_manageCurrentSpace">

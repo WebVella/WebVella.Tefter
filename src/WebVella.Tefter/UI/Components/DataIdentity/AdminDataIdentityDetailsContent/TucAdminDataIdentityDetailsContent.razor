@@ -57,6 +57,36 @@
 					</FluentGrid>
 				</ChildContent>
 			</TucCard>
+			<TucCard Title="@LOC("Data Provider implementations")">
+				<ChildContent>
+					<table class="tf-grid">
+						<colgroup></colgroup>
+						<colgroup style="width:1%"></colgroup>
+						<tbody class="tf-grid-tbody">
+						@foreach (var provider in _implementations)
+						{
+							<tr class="tf-grid-tr">
+								<td class="tf-grid-td">
+									<div>@provider.DataProvider</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>
+										<FluentButton Appearance="@Appearance.Outline"
+										              OnClick="@(() => _removeImplementation(provider))"
+										              Title="@LOC("Remove provider implementation")"
+										              Disabled="_submitting">
+											<FluentIcon Color="@Color.Error"
+											            Value="@TfConstants.GetIcon("Delete")" Slot="start"/>
+											<span>@LOC("remove")</span>
+										</FluentButton>
+									</div>
+								</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				</ChildContent>
+			</TucCard>
 			<TucCard Style="margin-top: var(--tf-card-space)">
 				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween"
 				             VerticalAlignment="@VerticalAlignment.Center">
@@ -65,7 +95,7 @@
 						@if (_identity.IsSystem)
 						{
 							<FluentButton Appearance="@Appearance.Outline" Disabled=true
-							              Title="@LOC("System roles cannot be managed")">
+							              Title="@LOC("System identity cannot deleted")">
 								@LOC("Locked")
 								<FluentIcon Value="@TfConstants.GetIcon("LockClosed")" Slot="start"/>
 							</FluentButton>

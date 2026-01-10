@@ -67,7 +67,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfTemplate> GetTemplates(string? search = null,  List<TfTemplateResultType>? types = null)
+	public List<TfTemplate> GetTemplates(string? search = null, List<TfTemplateResultType>? types = null)
 	{
 		try
 		{
@@ -75,12 +75,13 @@ public partial class TfService : ITfService
 
 			var dt = _dbService.ExecuteSqlQueryCommand(SQL);
 			var searchProcessed = search?.Trim().ToLowerInvariant() ?? String.Empty;
-			if (types is null)
-				types = new();
+			if (types is not null)
+				return ToTemplateList(dt).Where(x =>
+					(String.IsNullOrWhiteSpace(search) || x.Name.ToLowerInvariant().Contains(searchProcessed))
+					&& types.Contains(x.ResultType)).ToList();
 			
 			return ToTemplateList(dt).Where(x =>
-				(String.IsNullOrWhiteSpace(search) || x.Name.ToLowerInvariant().Contains(searchProcessed))
-				&& types.Contains(x.ResultType)).ToList();
+				(String.IsNullOrWhiteSpace(search) || x.Name.ToLowerInvariant().Contains(searchProcessed))).ToList();			
 		}
 		catch (Exception ex)
 		{

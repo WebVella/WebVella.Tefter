@@ -16,9 +16,12 @@
                 <FluentMenuItem
                     Disabled="true">
                     @LOC("Current Page")
-                    <span slot="start">
-                        <FluentIcon Value="@(TfConstants.GetIcon(state.SpacePage?.FluentIconName)!.WithColor("var(--neutral-foreground-hint)"))" Slot="start" />
-                    </span>
+                    @if (!String.IsNullOrWhiteSpace(state.SpacePage?.FluentIconName))
+                    {
+                        <span slot="start">
+                            <FluentIcon Value="@(TfConstants.GetIcon(state.SpacePage?.FluentIconName)!.WithColor("var(--neutral-foreground-hint)"))" Slot="start"/>
+                        </span>
+                    }
                 </FluentMenuItem>
                 <FluentDivider/>
                 <FluentMenuItem
@@ -47,9 +50,12 @@
             <FluentMenuItem
                 Disabled="true">
                 @LOC("Current Space")
+                @if (!String.IsNullOrWhiteSpace(state.Space?.FluentIconName))
+                {
                 <span slot="start">
                     <FluentIcon Value="@(TfConstants.GetIcon(state.Space?.FluentIconName)!.WithColor("var(--neutral-foreground-hint)"))" Slot="start" />
                 </span>
+                }
             </FluentMenuItem>
             <FluentDivider/>            
             <FluentMenuItem

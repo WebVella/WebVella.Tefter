@@ -15,6 +15,9 @@ public partial interface ITfService
 
 	public void DeleteDataIdentity(
 		string dataIdentity);
+	
+	public List<TfDataIdentityImplementation> GetDataIdentityImplementations(
+		string dataIdentity);	
 }
 
 public partial class TfService
@@ -119,6 +122,24 @@ public partial class TfService
 		}
 	}
 
+	public List<TfDataIdentityImplementation> GetDataIdentityImplementations(
+		string dataIdentity)
+	{
+		var result = new List<TfDataIdentityImplementation>();
+		var dpIdentities = GetDataProviderIdentities(dataIdentity);
+		var providerDict = GetDataProviders().ToDictionary(x=> x.Id);
+
+		foreach (var dpId in dpIdentities)
+		{
+			result.Add(new TfDataIdentityImplementation()
+			{
+				Id = dpId.Id,
+				DataProvider = providerDict[dpId.DataProviderId].Name
+			});
+		}
+
+		return result.OrderBy(x=> x.DataProvider).ToList();
+	}
 
 
 	#region <--- validation --->
