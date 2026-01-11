@@ -20,7 +20,15 @@ public partial interface ITfService
 	TfDataRow UpdateDatasetRow(
 		Guid tfId,
 		Guid datasetId,
-		Dictionary<string, object> rowDict);
+		Dictionary<string, object?> rowDict);
+
+	List<TfDataProviderDataRow> UpdateProviderRows(
+		Guid providerId,
+		Dictionary<Guid,Dictionary<string, object?>> rowsDict);
+
+	TfDataTable UpdateDatasetRows(
+		Guid datasetId,
+		Dictionary<Guid,Dictionary<string, object?>> rowsDict);
 }
 
 public partial class TfService : ITfService
@@ -32,7 +40,7 @@ public partial class TfService : ITfService
 		try
 		{
 			var tfId = InsertRow(providerId, rowDict);
-			return GetProviderRow(GetDataProvider(providerId), tfId);
+			return GetProviderRow(GetDataProvider(providerId)!, tfId);
 		}
 		catch (Exception ex)
 		{
@@ -63,14 +71,43 @@ public partial class TfService : ITfService
 		Guid providerId,
 		Dictionary<string, object?> rowDict)
 	{
-		UpdateRow(tfId, providerId, rowDict);
-		return GetProviderRow(GetDataProvider(providerId), tfId);
+		UpdateRow(tfId, providerId, rowDict!);
+		return GetProviderRow(GetDataProvider(providerId)!, tfId);
+	}
+
+	public List<TfDataProviderDataRow> UpdateProviderRows(
+		Guid providerId,
+		Dictionary<Guid,Dictionary<string, object?>> rowsDict)
+	{
+		List<TfDataProviderDataRow> result = new List<TfDataProviderDataRow>();
+		using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+		{
+			var errors = new Dictionary<string, string>();
+			foreach (var tfId in rowsDict.Keys)
+			{
+				var rowDict = rowsDict[tfId];
+
+				if (rowDict is null)
+					errors.Add("", $"Row data dictionary for id {tfId} is not specified.");
+				else
+				{
+					UpdateRow(tfId, providerId, rowDict!);
+					var row = GetProviderRow(GetDataProvider(providerId)!, tfId);
+					result.Add(row);
+				}
+			}
+			
+			CheckProcessValidationErrors(errors);
+
+			scope.Complete();
+		}
+		return result;
 	}
 
 	public TfDataRow UpdateDatasetRow(
 		Guid tfId,
 		Guid datasetId,
-		Dictionary<string, object> rowDict)
+		Dictionary<string, object?> rowDict)
 	{
 		var errors = new Dictionary<string, string>();
 
@@ -84,6 +121,43 @@ public partial class TfService : ITfService
 		UpdateRow(tfId, dataset!.DataProviderId, rowDict);
 
 		return QueryDataset(datasetId, new List<Guid> { tfId }).Rows[0];
+	}
+
+	public TfDataTable UpdateDatasetRows(
+		Guid datasetId,
+		Dictionary<Guid,Dictionary<string, object?>> rowsDict)
+	{
+		var errors = new Dictionary<string, string>();
+		List<Guid> updatedRowIds = new List<Guid>();
+
+		var dataset = GetDataset(datasetId);
+
+		if (dataset is null)
+			errors.Add("datasetId", "Dataset with given id not found");
+
+		CheckProcessValidationErrors(errors);
+
+		using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+		{
+			foreach (var tfId in rowsDict.Keys)
+			{
+				var rowDict = rowsDict[tfId];
+
+				if (rowDict is null)
+					errors.Add("", $"Row data dictionary for id {tfId} is not specified.");
+				else
+				{
+					UpdateRow(tfId, dataset!.DataProviderId, rowDict!);
+					updatedRowIds.Add(tfId);
+				}
+			}
+
+			CheckProcessValidationErrors(errors);
+
+			scope.Complete();
+
+			return QueryDataset(datasetId, updatedRowIds);
+		}
 	}
 
 	#region <--- private methods --->
@@ -149,7 +223,7 @@ public partial class TfService : ITfService
 
 				if (sharedColumns.Any())
 				{
-					var insertedRow = GetProviderRow(GetDataProvider(providerId), (Guid)processedRowDict["tf_id"]!);
+					var insertedRow = GetProviderRow(GetDataProvider(providerId)!, (Guid)processedRowDict["tf_id"]!);
 
 					foreach (var sharedColumn in sharedColumns)
 					{
