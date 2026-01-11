@@ -219,7 +219,7 @@ public partial class TfService : ITfService
 				bool spaceDataHasAtLeastOneValidColumn = false;
 				if (_spaceData.Columns.Any())
 				{
-					if (_spaceData.Columns.Any(x => x == "*"))
+					if (_spaceData.Columns.Any(x => x == TfConstants.TF_DATASET_WILDCARD_COLUMN_SELECTOR))
 					{
 						spaceDataHasAtLeastOneValidColumn = true;
 						_selectColumns = _availableColumns.ToList();

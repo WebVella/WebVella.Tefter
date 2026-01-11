@@ -76,6 +76,8 @@ public class TfSpaceViewCreateModel
 	public Guid? DatasetId { get; set; } = null;
 	public List<TfSpaceViewPreset> Presets { get; set; } = new();
 	public TfSpaceViewSettings Settings { get; set; } = new TfSpaceViewSettings();
+
+	public Guid? TemplateId { get; set; } = null;
 }
 
 public record TfSpaceViewPreset

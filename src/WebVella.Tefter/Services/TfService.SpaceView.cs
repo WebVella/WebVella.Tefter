@@ -27,7 +27,7 @@ public partial interface ITfService
 
 	public void DeleteSpaceView(
 		Guid id);
-	
+
 	public Task AddSpaceViewPreset(
 		Guid spaceViewId,
 		TfSpaceViewPreset preset);
@@ -38,16 +38,16 @@ public partial interface ITfService
 
 	public Task CopySpaceViewPreset(
 		Guid spaceViewId,
-		Guid presetId);	
-	
+		Guid presetId);
+
 	public Task MoveSpaceViewPreset(
 		Guid spaceViewId,
 		Guid presetId,
-		bool isUp);		
-	
+		bool isUp);
+
 	public Task RemoveSpaceViewPreset(
 		Guid spaceViewId,
-		Guid presetId);		
+		Guid presetId);
 }
 
 public partial class TfService
@@ -143,6 +143,10 @@ public partial class TfService
 					columNameDbTypeDict[column.DbName!] = column.DbType;
 				}
 
+				TfSpaceView? spaceViewTemplate = spaceViewExt.TemplateId is null
+					? null
+					: GetSpaceView(spaceViewExt.TemplateId.Value);
+
 				#region << create view>>
 
 				{
@@ -152,7 +156,9 @@ public partial class TfService
 						Name = spaceViewExt.Name,
 						DatasetId = dataset.Id,
 						Presets = spaceViewExt.Presets,
-						SettingsJson = JsonSerializer.Serialize(spaceViewExt.Settings),
+						SettingsJson = spaceViewTemplate is null
+							? JsonSerializer.Serialize(spaceViewExt.Settings)
+							: JsonSerializer.Serialize(spaceViewTemplate.Settings),
 					};
 
 					spaceView = CreateSpaceView(spaceViewObj);
@@ -165,74 +171,94 @@ public partial class TfService
 				{
 					var availableTypes = GetAvailableSpaceViewColumnTypes();
 					var columnsToCreate = new List<TfSpaceViewColumn>();
-					short position = 1;
-
-
 					var columnsList = new List<string>();
-					columnsList.AddRange(dataset.Columns);
-					foreach (var identity in dataset.Identities)
+					if (spaceViewTemplate is null)
 					{
-						foreach (var column in identity.Columns)
+						//Replace wildcard selector
+						var wildCardIndex =
+							dataset.Columns.FindIndex(x => x == TfConstants.TF_DATASET_WILDCARD_COLUMN_SELECTOR);
+						if (wildCardIndex > -1)
 						{
-							columnsList.Add($"{identity.DataIdentity}.{column}");
-						}
-					}
-
-					//if no columns are found in the dataset add all provider columns
-					if (columnsList.Count == 0)
-					{
-						var datasetProvider = providers.Single(x => x.Id == dataset.DataProviderId);
-						datasetProvider.Columns.ToList().ForEach(x => columnsList.Add(x.DbName!));
-					}
-
-
-					foreach (var columnName in columnsList)
-					{
-						TfDatabaseColumnType? dbType = null;
-						if (!columnName.Contains("."))
-						{
-							dbType = columNameDbTypeDict.ContainsKey(columnName)
-								? columNameDbTypeDict[columnName]
-								: null;
-						}
-						else
-						{
-							var columnArray = columnName.Split('.');
-							dbType = columNameDbTypeDict.ContainsKey(columnArray[1])
-								? columNameDbTypeDict[columnArray[1]]
-								: null;
+							dataset.Columns.RemoveAt(wildCardIndex);
+							var provider = providers.Single(x => x.Id == dataset.DataProviderId);
+							dataset.Columns.InsertRange(wildCardIndex,
+								provider.Columns.Select(x => x.DbName!).ToList());
 						}
 
-						if (dbType is null) continue;
-
-						var columnType = ModelHelpers.GetColumnTypeForDbType(dbType.Value, availableTypes);
-						var tfColumn = new TfSpaceViewColumn
+						columnsList.AddRange(dataset.Columns);
+						foreach (var identity in dataset.Identities)
 						{
-							Id = Guid.NewGuid(),
-							SpaceViewId = spaceView.Id,
-							Position = position,
-							Title = NavigatorExt.ProcessForTitle(columnName),
-							QueryName = NavigatorExt.GenerateQueryName(),
-							TypeOptionsJson = "{}",
-							DataMapping = new(),
-							TypeId = Guid.Empty
-						};
-
-						if (columnType is not null)
-						{
-							tfColumn.TypeId = columnType.AddonId;
-							//TODO initialize type options with default values for the column type
-							//tfColumn.ComponentId = columnType.DefaultDisplayComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
-							//tfColumn.EditComponentId = columnType.DefaultEditComponentId ?? new Guid(TucTextEditColumnComponent.ID);
-							foreach (var mapper in columnType.DataMappingDefinitions)
+							foreach (var column in identity.Columns)
 							{
-								tfColumn.DataMapping[mapper.Alias] = columnName;
+								columnsList.Add($"{identity.DataIdentity}.{column}");
 							}
 						}
 
-						columnsToCreate.Add(tfColumn);
-						position++;
+						//if no columns are found in the dataset add all provider columns
+						if (columnsList.Count == 0)
+						{
+							var datasetProvider = providers.Single(x => x.Id == dataset.DataProviderId);
+							datasetProvider.Columns.ToList().ForEach(x => columnsList.Add(x.DbName!));
+						}
+
+						short position = 1;
+						foreach (var columnName in columnsList)
+						{
+							TfDatabaseColumnType? dbType = null;
+							if (!columnName.Contains("."))
+							{
+								dbType = columNameDbTypeDict.ContainsKey(columnName)
+									? columNameDbTypeDict[columnName]
+									: null;
+							}
+							else
+							{
+								var columnArray = columnName.Split('.');
+								dbType = columNameDbTypeDict.ContainsKey(columnArray[1])
+									? columNameDbTypeDict[columnArray[1]]
+									: null;
+							}
+
+							if (dbType is null) continue;
+
+							var columnType = ModelHelpers.GetColumnTypeForDbType(dbType.Value, availableTypes);
+							var tfColumn = new TfSpaceViewColumn
+							{
+								Id = Guid.NewGuid(),
+								SpaceViewId = spaceView.Id,
+								Position = position,
+								Title = NavigatorExt.ProcessForTitle(columnName),
+								QueryName = NavigatorExt.GenerateQueryName(),
+								TypeOptionsJson = "{}",
+								DataMapping = new(),
+								TypeId = Guid.Empty
+							};
+
+							if (columnType is not null)
+							{
+								tfColumn.TypeId = columnType.AddonId;
+								//TODO initialize type options with default values for the column type
+								//tfColumn.ComponentId = columnType.DefaultDisplayComponentId ?? new Guid(TucTextDisplayColumnComponent.ID);
+								//tfColumn.EditComponentId = columnType.DefaultEditComponentId ?? new Guid(TucTextEditColumnComponent.ID);
+								foreach (var mapper in columnType.DataMappingDefinitions)
+								{
+									tfColumn.DataMapping[mapper.Alias] = columnName;
+								}
+							}
+
+							columnsToCreate.Add(tfColumn);
+							position++;
+						}
 					}
+					else
+					{
+						foreach (var templateColumn in GetSpaceViewColumnsList(spaceViewTemplate.Id))
+						{
+							columnsToCreate.Add(
+								templateColumn with { Id = Guid.NewGuid(), SpaceViewId = spaceView.Id, });
+						}
+					}
+
 
 					foreach (var tfColumn in columnsToCreate)
 					{
@@ -490,15 +516,15 @@ public partial class TfService
 	{
 		var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceViewId);
 		if (existingSpaceView == null)
-			throw new TfValidationException("spaceViewId", "SpaceView not found.");		
+			throw new TfValidationException("spaceViewId", "SpaceView not found.");
 		var presets = new List<TfSpaceViewPreset>();
 		if (!String.IsNullOrWhiteSpace(existingSpaceView.PresetsJson) && existingSpaceView.PresetsJson != "[]")
 			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(existingSpaceView.PresetsJson) ?? new();
 
 		var sourcePreset = presets.GetPresetById(presetId);
 		if (sourcePreset is null)
-			throw new TfValidationException("preset", "Preset with this ID was not found.");		
-		
+			throw new TfValidationException("preset", "Preset with this ID was not found.");
+
 		if (sourcePreset.ParentId is not null)
 		{
 			var parent = presets.GetPresetById(sourcePreset.ParentId.Value);
@@ -517,8 +543,8 @@ public partial class TfService
 			{
 				presets.Insert(sourceIndex + 1, _copyPreset(sourcePreset, null));
 			}
-		}		
-		
+		}
+
 		existingSpaceView.PresetsJson =
 			JsonSerializer.Serialize(presets);
 
@@ -534,7 +560,7 @@ public partial class TfService
 		// 	key: null,
 		// 	payload: new TfSpaceViewUpdatedEventPayload(spaceView!));	
 	}
-	
+
 	public async Task MoveSpaceViewPreset(
 		Guid spaceViewId,
 		Guid presetId,
@@ -542,17 +568,17 @@ public partial class TfService
 	{
 		var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceViewId);
 		if (existingSpaceView == null)
-			throw new TfValidationException("spaceViewId", "SpaceView not found.");		
+			throw new TfValidationException("spaceViewId", "SpaceView not found.");
 		var presets = new List<TfSpaceViewPreset>();
 		if (!String.IsNullOrWhiteSpace(existingSpaceView.PresetsJson) && existingSpaceView.PresetsJson != "[]")
 			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(existingSpaceView.PresetsJson) ?? new();
 
 		var sourcePreset = presets.GetPresetById(presetId);
 		if (sourcePreset is null)
-			throw new TfValidationException("preset", "Preset with this ID was not found.");		
-		
+			throw new TfValidationException("preset", "Preset with this ID was not found.");
+
 		presets = _movePreset(presets, presetId, isUp);
-		
+
 		existingSpaceView.PresetsJson =
 			JsonSerializer.Serialize(presets);
 
@@ -567,23 +593,23 @@ public partial class TfService
 		// await _eventBus.PublishAsync(
 		// 	key: null,
 		// 	payload: new TfSpaceViewUpdatedEventPayload(spaceView!));		
-	}	
-	
+	}
+
 	public async Task RemoveSpaceViewPreset(
 		Guid spaceViewId,
 		Guid presetId)
 	{
 		var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceViewId);
 		if (existingSpaceView == null)
-			throw new TfValidationException("spaceViewId", "SpaceView not found.");		
+			throw new TfValidationException("spaceViewId", "SpaceView not found.");
 		var presets = new List<TfSpaceViewPreset>();
 		if (!String.IsNullOrWhiteSpace(existingSpaceView.PresetsJson) && existingSpaceView.PresetsJson != "[]")
 			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(existingSpaceView.PresetsJson) ?? new();
 
 		var sourcePreset = presets.GetPresetById(presetId);
 		if (sourcePreset is null)
-			throw new TfValidationException("preset", "Preset with this ID was not found.");		
-		
+			throw new TfValidationException("preset", "Preset with this ID was not found.");
+
 		presets = _removePreset(presets, presetId);
 		existingSpaceView.PresetsJson =
 			JsonSerializer.Serialize(presets);
@@ -599,8 +625,8 @@ public partial class TfService
 		// await _eventBus.PublishAsync(
 		// 	key: null,
 		// 	payload: new TfSpaceViewUpdatedEventPayload(spaceView!));	
-	}	
-	
+	}
+
 	private TfSpaceView? ConvertDboToModel(
 		TfSpaceViewDbo? dbo)
 	{
@@ -648,7 +674,8 @@ public partial class TfService
 	}
 
 	#region << private >>
-	private TfSpaceViewPreset _copyPreset(TfSpaceViewPreset item,Guid? parentId = null)
+
+	private TfSpaceViewPreset _copyPreset(TfSpaceViewPreset item, Guid? parentId = null)
 	{
 		var newItem = item with { Id = Guid.NewGuid(), ParentId = parentId };
 		var newNodes = new List<TfSpaceViewPreset>();
@@ -656,10 +683,11 @@ public partial class TfService
 		{
 			newNodes.Add(_copyPreset(node, newItem.Id));
 		}
+
 		newItem.Presets = newNodes;
 		return newItem;
-	}	
-	
+	}
+
 	private List<TfSpaceViewPreset> _movePreset(List<TfSpaceViewPreset> nodes, Guid nodeId, bool isUp)
 	{
 		if (nodes.Count == 0) return nodes;
@@ -681,8 +709,8 @@ public partial class TfService
 		}
 
 		return nodes;
-	}	
-	
+	}
+
 	private List<TfSpaceViewPreset> _removePreset(List<TfSpaceViewPreset> nodes, Guid nodeId)
 	{
 		if (nodes.Count == 0) return nodes;
@@ -697,9 +725,10 @@ public partial class TfService
 		}
 
 		return nodes;
-	}	
+	}
+
 	#endregion
-	
+
 	#region <--- validation --->
 
 	internal class TfSpaceViewValidator

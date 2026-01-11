@@ -2,9 +2,10 @@
 @inherits TfLocalizedViewColumnComponent
 
 <FluentGrid>
-	<FluentGridItem xs="12">
+	<FluentGridItem xs="6">
 		<FluentInputLabel Label="@LOC("Folder")"/>
 		<TucSelect TOption="AssetsFolder"
+		           Style="width: 100%"
 		           Items="FolderOptions"
 		           OptionValue="(x=> x.Id.ToString())"
 		           OptionText="(x=> x.Name)"

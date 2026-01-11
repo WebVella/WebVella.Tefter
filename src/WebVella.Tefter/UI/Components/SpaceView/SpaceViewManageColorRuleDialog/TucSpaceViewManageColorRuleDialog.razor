@@ -51,7 +51,7 @@
 					           Items="@_options" Style="width:100%"
 					           Placeholder="@LOC("select a add...")"
 					           OptionValue="(x => x.QueryName)"
-					           OptionText="@(x => x.Title ?? "no title")"/>
+					           OptionText="@(x => !String.IsNullOrWhiteSpace(x.Title) ? x.Title : "no title")"/>
 				</FluentStack>
 			</ToolbarTemplate>
 			<ChildContent>

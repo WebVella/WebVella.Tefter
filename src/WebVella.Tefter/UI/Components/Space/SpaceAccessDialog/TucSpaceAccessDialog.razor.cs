@@ -49,9 +49,10 @@ public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentCompo
 			_submitting = true;
 			TfService.AddSpacesRole(new List<TfSpace> { _space }, _selectedRole);
 			ToastService.ShowSuccess(LOC("Space role added"));
+			var space = TfService.GetSpace(_space.Id)!;
 			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpaceUpdatedEventPayload(_space));				
-			_init(TfService.GetSpace(_space.Id));
+				payload: new TfSpaceUpdatedEventPayload(space));				
+			_init(space);
 		}
 		catch (Exception ex)
 		{
@@ -74,9 +75,10 @@ public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentCompo
 			_removingRoleId = role.Id;
 			TfService.RemoveSpacesRole(new List<TfSpace> {_space }, role);
 			ToastService.ShowSuccess(LOC("Space role removed"));
+			var space = TfService.GetSpace(_space.Id)!;
 			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpaceUpdatedEventPayload(_space));			
-			_init(TfService.GetSpace(_space.Id));
+				payload: new TfSpaceUpdatedEventPayload(space));				
+			_init(space);
 		}
 		catch (Exception ex)
 		{
@@ -96,7 +98,7 @@ public partial class TucSpaceAccessDialog : TfBaseComponent, IDialogContentCompo
 			var space = TfService.SetSpacePrivacy(_space.Id, newValue);
 			ToastService.ShowSuccess(LOC("Space access changed"));
 			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpaceUpdatedEventPayload(_space));			
+				payload: new TfSpaceUpdatedEventPayload(space));				
 			_init(space);
 		}
 		catch (Exception ex)

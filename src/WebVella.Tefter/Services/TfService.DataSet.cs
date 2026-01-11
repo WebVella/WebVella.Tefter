@@ -133,6 +133,10 @@ public partial class TfService : ITfService
 					.ThrowIfContainsErrors();
 
 				var datasets = GetDatasets();
+				if (newDataset.Columns.Count == 0 && dataset.Identities.Count == 0)
+				{
+					newDataset.Columns.Add(TfConstants.TF_DATASET_WILDCARD_COLUMN_SELECTOR);
+				}
 
 				var dbo = ConvertModelToDbo(newDataset);
 				var success = _dboManager.Insert<TfDatasetDbo>(dbo!);

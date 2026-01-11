@@ -40,7 +40,7 @@ public partial class TucFilterQueryCard : TfBaseComponent
 		foreach (var column in ViewColumns)
 		{
 			_allOptions.Add(new TfFilterQuery { QueryName = column.QueryName });
-			_columnDict[column.QueryName] = column.Title ?? "no title";
+			_columnDict[column.QueryName] = !String.IsNullOrWhiteSpace(column.Title) ? column.Title : "no title";
 		}
 
 		_typeDict = ViewColumns.ToQueryNameTypeDictionary(dataProviders:AllProviders,sharedColumns:AllSharedColumns);
@@ -80,9 +80,6 @@ public partial class TucFilterQueryCard : TfBaseComponent
 				case TfDatabaseColumnType.Guid:
 					filter.Method = (int)(new TfFilterGuid().ComparisonMethod);
 					break;
-				default:
-					break;
-
 			}
 		}
 		var items = Items.ToList();
@@ -104,7 +101,7 @@ public partial class TucFilterQueryCard : TfBaseComponent
 		await ItemsChanged.InvokeAsync(items);
 	}
 
-	public async Task RemoveFilter(TfFilterQuery filter)
+	public async Task RemoveFilter(TfFilterQuery? filter)
 	{
 		if (filter is null) return;
 		var items = Items.ToList();

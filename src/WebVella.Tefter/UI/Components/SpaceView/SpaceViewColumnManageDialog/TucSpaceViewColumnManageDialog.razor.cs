@@ -22,6 +22,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	private TfSpaceView _spaceView = new();
 	private TfDataTable _sampleData = null!;
 	private Dictionary<string, List<string>> _optionsDict = new();
+	private List<string> _defaultFilterComparisonMethodOptions = new();
 
 	protected override void OnInitialized()
 	{
@@ -79,6 +80,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			SettingsChanged = EventCallback.Factory.Create<string>(this, _columnTypeSettingsChangedHandler),
 			DataMappingChanged = EventCallback.Factory.Create<Tuple<string, string?>>(this, _dataMappingValueChanged),
 		};
+		_initDefaultFilterTypeOption();
 	}
 
 	private async Task _save()
@@ -118,7 +120,8 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			{
 				await TfService.UpdateSpaceViewColumn(_form);
 			}
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
+
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
 				payload: new TfSpaceViewUpdatedEventPayload(_spaceView));
 			await Dialog.CloseAsync(result);
 		}
@@ -145,8 +148,8 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 			await InvokeAsync(StateHasChanged);
 
 			await TfService.DeleteSpaceViewColumn(_form.Id);
-			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpaceViewUpdatedEventPayload(_spaceView));			
+			await TfEventBus.PublishAsync(key: TfAuthLayout.GetSessionId(),
+				payload: new TfSpaceViewUpdatedEventPayload(_spaceView));
 			await Dialog.CloseAsync((TfSpaceViewColumn?)null);
 		}
 		catch (Exception ex)
@@ -213,6 +216,53 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 		}
 
 		_form.DataMapping = dataMapping;
+		_initDefaultFilterTypeOption();
+	}
+
+	private void _initDefaultFilterTypeOption()
+	{
+		_defaultFilterComparisonMethodOptions.Clear();
+
+		foreach (var key in _form.DataMapping.Keys)
+		{
+			var dbColumnName = _form.DataMapping[key];
+			if (String.IsNullOrWhiteSpace(dbColumnName)) continue;
+			var dbColumn = _sampleData.Columns[dbColumnName];
+			if (dbColumn is null) continue;
+			switch (dbColumn.DbType)
+			{
+				case TfDatabaseColumnType.ShortInteger:
+				case TfDatabaseColumnType.Integer:
+				case TfDatabaseColumnType.LongInteger:
+				case TfDatabaseColumnType.Number:
+					foreach (TfFilterNumericComparisonMethod item in Enum.GetValues<TfFilterNumericComparisonMethod>())
+						_defaultFilterComparisonMethodOptions.Add(item.ToDescriptionString());
+					break;
+				case TfDatabaseColumnType.Boolean:
+					foreach (TfFilterBooleanComparisonMethod item in Enum.GetValues<TfFilterBooleanComparisonMethod>())
+						_defaultFilterComparisonMethodOptions.Add(item.ToDescriptionString());
+					break;
+				case TfDatabaseColumnType.DateOnly:
+				case TfDatabaseColumnType.DateTime:
+					foreach (TfFilterDateTimeComparisonMethod item in
+					         Enum.GetValues<TfFilterDateTimeComparisonMethod>())
+						_defaultFilterComparisonMethodOptions.Add(item.ToDescriptionString());
+					break;
+				case TfDatabaseColumnType.ShortText:
+				case TfDatabaseColumnType.Text:
+					foreach (TfFilterTextComparisonMethod item in Enum.GetValues<TfFilterTextComparisonMethod>())
+						_defaultFilterComparisonMethodOptions.Add(item.ToDescriptionString());
+					break;
+				case TfDatabaseColumnType.Guid:
+					foreach (TfFilterGuidComparisonMethod item in Enum.GetValues<TfFilterGuidComparisonMethod>())
+						_defaultFilterComparisonMethodOptions.Add(item.ToDescriptionString());
+					break;
+			}
+		}
+
+		if (!String.IsNullOrWhiteSpace(_form.Settings.DefaultComparisonMethodDescription) &&
+		    !_defaultFilterComparisonMethodOptions.Contains(_form.Settings.DefaultComparisonMethodDescription))
+			_form.Settings.DefaultComparisonMethodDescription = null;
 	}
 
 	private async Task _columnTypeSettingsChangedHandler(string value)

@@ -66,6 +66,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 		var stateFilters = TfAuthLayout.GetState().NavigationState.Filters ?? new();
 		foreach (var column in SpaceViewColumns)
 		{
+			if(column.Settings.FilterPresentation == TfSpaceViewColumnSettingsFilterPresentation.Hidden) continue;
 			if (!_typeDict.ContainsKey(column.QueryName)) continue;
 
 			var columnFilter = stateFilters.FirstOrDefault(x => x.QueryName == column.QueryName);
@@ -74,6 +75,66 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 			{
 				_columnQueryFilterDict[column.QueryName] = columnFilter with { QueryName = columnFilter.QueryName };
 			}
+			else if(!String.IsNullOrWhiteSpace(column.Settings.DefaultComparisonMethodDescription))
+			{
+				var dbType = _typeDict[column.QueryName];
+				int method = 0;
+				switch (dbType)
+				{
+					case TfDatabaseColumnType.ShortInteger:
+					case TfDatabaseColumnType.Integer:
+					case TfDatabaseColumnType.LongInteger:
+					case TfDatabaseColumnType.Number:
+						{
+							TfFilterNumericComparisonMethod? methodEnum = Enum
+								.GetValues<TfFilterNumericComparisonMethod>().FirstOrDefault(x =>
+									x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
+							if (methodEnum is not null)
+								method = (int)methodEnum;
+						}
+						break;
+					case TfDatabaseColumnType.Boolean:
+						{
+							TfFilterBooleanComparisonMethod? methodEnum = Enum
+								.GetValues<TfFilterBooleanComparisonMethod>().FirstOrDefault(x =>
+									x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
+							if (methodEnum is not null)
+								method = (int)methodEnum;
+						}
+						break;
+					case TfDatabaseColumnType.DateOnly:
+					case TfDatabaseColumnType.DateTime:
+						{
+							TfFilterDateTimeComparisonMethod? methodEnum = Enum
+								.GetValues<TfFilterDateTimeComparisonMethod>().FirstOrDefault(x =>
+									x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
+							if (methodEnum is not null)
+								method = (int)methodEnum;
+						}						
+						break;
+					case TfDatabaseColumnType.ShortText:
+					case TfDatabaseColumnType.Text:
+						{
+							TfFilterTextComparisonMethod? methodEnum = Enum
+								.GetValues<TfFilterTextComparisonMethod>().FirstOrDefault(x =>
+									x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
+							if (methodEnum is not null)
+								method = (int)methodEnum;
+						}							
+						break;
+					case TfDatabaseColumnType.Guid:
+						{
+							TfFilterGuidComparisonMethod? methodEnum = Enum
+								.GetValues<TfFilterGuidComparisonMethod>().FirstOrDefault(x =>
+									x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
+							if (methodEnum is not null)
+								method = (int)methodEnum;
+						}							
+						break;
+				}				
+				_columnQueryFilterDict[column.QueryName] =
+					new TfFilterQuery() { QueryName = column.QueryName, Value = null, Method = method };
+			}			
 			else
 			{
 				_columnQueryFilterDict[column.QueryName] =
