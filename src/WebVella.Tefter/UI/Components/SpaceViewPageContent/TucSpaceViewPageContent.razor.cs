@@ -33,6 +33,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private bool _hasPinnedData = false;
 	private IAsyncDisposable? _spacePageUpdatedEventSubscriber = null;
 	private IAsyncDisposable? _spaceViewColumnUpdatedEventSubscriber = null;
+	private IAsyncDisposable? _spaceViewDataReloadEventSubscriber = null;
 	private IAsyncDisposable? _spaceViewDataUpdatedEventSubscriber = null;
 	private IAsyncDisposable? _spaceViewUpdatedEventSubscriber = null;
 	private IAsyncDisposable? _userUpdatedEventSubscriber = null;
@@ -44,6 +45,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			await _spacePageUpdatedEventSubscriber.DisposeAsync();
 		if (_spaceViewColumnUpdatedEventSubscriber is not null)
 			await _spaceViewColumnUpdatedEventSubscriber.DisposeAsync();
+		if (_spaceViewDataReloadEventSubscriber is not null)
+			await _spaceViewDataReloadEventSubscriber.DisposeAsync();
 		if (_spaceViewDataUpdatedEventSubscriber is not null)
 			await _spaceViewDataUpdatedEventSubscriber.DisposeAsync();
 		if (_spaceViewUpdatedEventSubscriber is not null)
@@ -107,6 +110,9 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 					matchKey: (_) => true);
 			_spacePageUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageUpdatedEventPayload>(
 				handler: On_SpacePageUpdatedEventAsync);
+			_spaceViewDataReloadEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceViewDataReloadEventPayload>(
+				handler: On_SpaceViewDataReloadEventAsync,
+				matchKey: (_) => true);
 			_spaceViewDataUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceViewDataUpdatedEventPayload>(
 				handler: On_SpaceViewDataUpdatedEventAsync,
 				matchKey: (_) => true);
@@ -115,6 +121,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				matchKey: (_) => true);
 			_userUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfUserUpdatedEventPayload>(
 				handler: On_UserUpdatedEventAsync);
+
+
 			try
 			{
 				await JSRuntime.InvokeVoidAsync("Tefter.makeTableResizable", _tableId);
@@ -149,7 +157,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 
 		if (contextHash == payloadHash) return;
 
-		_currentUser = payload.User with {Id = payload.User.Id};
+		_currentUser = payload.User with { Id = payload.User.Id };
 		await _init(TfAuthLayout.GetState().NavigationState);
 	}
 
@@ -179,6 +187,19 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			await _init(TfAuthLayout.GetState().NavigationState);
 			_isDataLoading = false;
 			await InvokeAsync(StateHasChanged);
+		}
+		else
+			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
+	}
+
+	private async Task On_SpaceViewDataReloadEventAsync(string? key, TfSpaceViewDataReloadEventPayload? payload)
+	{
+		if (payload is null) return;
+		if (payload.SpaceViewId != _spaceView?.Id) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
+		{
+			_selectedDataRows.Clear();
+			await _init(TfAuthLayout.GetState().NavigationState);
 		}
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
@@ -240,8 +261,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			_allSharedColumns = TfService.GetSharedColumns();
 			if (oldViewId != options.SpaceViewId.Value)
 			{
-				_selectedDataRows = new();
-				_editedDataRows = new();
+				_selectedDataRows.Clear();
+				_editedDataRows.Clear();
 			}
 
 			_dataset = TfService.GetDataset(_spaceView.DatasetId);
@@ -570,10 +591,11 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 			{
 				rowDict[columnName] = change.DataChange[columnName];
 			}
+
 			_ = TfService.UpdateProviderRow(
-				tfId:change.RowId,
-				providerId:_dataset!.DataProviderId,
-				rowDict:rowDict
+				tfId: change.RowId,
+				providerId: _dataset!.DataProviderId,
+				rowDict: rowDict
 			);
 
 			//Apply changed to the datatable
@@ -589,7 +611,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				{
 					if (column.Origin == TfDataColumnOriginType.System ||
 					    column.Origin == TfDataColumnOriginType.Identity) continue;
-					if(rowDict.ContainsKey(column.Name))
+					if (rowDict.ContainsKey(column.Name))
 						row[column.Name] = rowDict[column.Name];
 				}
 			}

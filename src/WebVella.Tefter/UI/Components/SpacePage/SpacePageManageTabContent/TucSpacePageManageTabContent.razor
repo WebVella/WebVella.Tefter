@@ -1,12 +1,12 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-<TucLayoutPageContent Title="@_spacePage.Name" Icon="@_spacePage.FluentIconName">
+<TucLayoutPageContent Title="@_spacePage?.Name" Icon="@_spacePage?.FluentIconName">
 	<Tabs>
 		<TucSpacePageManageContentToolbar/>
 	</Tabs>
 	<ChildContent>
 		<div style="padding:var(--tf-padding)">
-			@if (_spacePage.ComponentType is not null)
+			@if (_spacePage is not null && _spacePage is not null && _spacePage.ComponentType is not null)
 			{
 				<TucErrorBoundry>
 					<DynamicComponent Type="@_spacePage.ComponentType" Parameters="@_getDynamicComponentParams()"/>

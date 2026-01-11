@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using WebVella.Tefter.UI.Pages;
+
+namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IAsyncDisposable
 {
@@ -8,7 +10,7 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IAsyncDis
 
 	[Parameter] public TfSpacePageAddonContext Context { get; set; } = null!;
 	[Parameter] public TfSpaceView SpaceView { get; set; } = null!;
-	[Parameter] public TfDataset SpaceData { get; set; } = null!;
+	[Parameter] public TfDataset Dataset { get; set; } = null!;
 	[Parameter] public TfSpaceViewPreset? SpaceViewPreset { get; set; } = null;
 	[Parameter] public TfDataTable Data { get; set; } = null!;
 	[Parameter] public EventCallback<TfDataTable> DataChanged { get; set; }
@@ -110,5 +112,19 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IAsyncDis
 	private void _onEditAllClick()
 	{
 		TucSpaceViewPageContent.ToggleEditAll();
+	}
+
+	private TfSpaceViewToolBarActionScreenRegion _getToolbarActionsContext()
+	{
+		return new TfSpaceViewToolBarActionScreenRegion()
+		{
+			CurrentUser = Context.CurrentUser,
+			Data = Data,
+			SpaceView = SpaceView,
+			Dataset = Dataset,
+			SelectedDataRows =  SelectedRows,
+			SpacePage =  Context.SpacePage,
+			TucSpaceViewPageContent =  TucSpaceViewPageContent
+		};
 	}
 }

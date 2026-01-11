@@ -1,0 +1,11 @@
+﻿@namespace WebVella.Tefter.UI.Components
+@inherits TfBaseComponent
+<FluentButton Appearance="Appearance.Outline"
+              Disabled="(RegionContext.SelectedDataRows.Count == 0)"
+              IconStart="@TfConstants.GetIcon("CubeTree")"
+              OnClick="_clickHandler">
+    @LOC("Change Status")
+    <div slot="end">
+        <FluentBadge Appearance="Appearance.Neutral">@RegionContext.SelectedDataRows.Count</FluentBadge>
+    </div>
+</FluentButton>

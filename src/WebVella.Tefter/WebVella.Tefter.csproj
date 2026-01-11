@@ -94,9 +94,4 @@
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.3.2" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <AdditionalFiles Include="UI\Components\Dashboard\HomeDashboard\TucHomeDashboard.razor" />
-	  <AdditionalFiles Include="UI\Components\Page\HomePageDetailsContent\TucAdminPageDetailsContent.razor" />
-	  <AdditionalFiles Include="UI\Components\SpaceView\SpaceViewChangeDatasetDialog\TucSpaceViewManageDialog.razor" />
-	</ItemGroup>
 </Project>

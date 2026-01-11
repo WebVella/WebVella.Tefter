@@ -1599,7 +1599,7 @@ fluent-menu-item::part(start) {
   padding: 0;
   display: flex;
   flex-flow: row;
-  gap: 5px;
+  gap: 3px;
 }
 .tf-grid-tr--filters .filter-content fluent-text-field {
   flex: 1 1 auto;
