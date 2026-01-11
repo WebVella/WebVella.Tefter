@@ -25,6 +25,8 @@ public partial class TfServiceTest : BaseTest
 
 				Data_UpdateDatasetRow(provider, dataset);
 
+				Data_UpdateDatasetRows(provider, dataset);
+
 				Data_InsertProviderRow_ValidateUniqueValues(provider);
 
 				Data_InsertDatasetRow_ValidateUniqueValues(provider, dataset);
@@ -203,6 +205,81 @@ public partial class TfServiceTest : BaseTest
 
 			updateRow[$"dp{provider.Index}_short_text_column"].Should()
 			.Be(updatedRow[$"dp{provider.Index}_short_text_column"]);
+			updateRow[$"dp{provider.Index}_text_column"].Should()
+				.Be(updatedRow[$"dp{provider.Index}_text_column"]);
+			updateRow[$"dp{provider.Index}_date_column"].Should()
+				.Be(updatedRow[$"dp{provider.Index}_date_column"]);
+
+			//datetime comparison with tolerance of 2 milliseconds,
+			//because postgres datetime precision is 1 millisecond
+			((DateTime)updateRow[$"dp{provider.Index}_datetime_column"] -
+				(DateTime)updatedRow[$"dp{provider.Index}_datetime_column"])
+				.TotalMilliseconds.Should().BeLessThan(2);
+
+			updateRow[$"dp{provider.Index}_short_int_column"].Should()
+				.Be(updatedRow[$"dp{provider.Index}_short_int_column"]);
+			updateRow[$"dp{provider.Index}_int_column"].Should()
+				.Be(updatedRow[$"dp{provider.Index}_int_column"]);
+			updateRow[$"dp{provider.Index}_long_int_column"].Should()
+				.Be(updatedRow[$"dp{provider.Index}_long_int_column"]);
+			updateRow[$"dp{provider.Index}_number_column"].Should()
+				.Be(updatedRow[$"dp{provider.Index}_number_column"]);
+			updateRow[$"test_data_identity_1.sc_text"].Should()
+				.Be(updatedRow[$"test_data_identity_1.sc_text"]);
+			updateRow[$"test_data_identity_2.sc_int"].Should()
+				.Be(updatedRow[$"test_data_identity_2.sc_int"]);
+		}
+	}
+
+
+	private void Data_UpdateDatasetRows(TfDataProvider provider, TfDataset dataset)
+	{
+		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+		ITfService tfService = ServiceProvider.GetService<ITfService>();
+		var faker = new Faker("en");
+
+		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+		{
+			var newRow = new Dictionary<string, object>();
+
+			newRow[$"dp{provider.Index}_guid_column"] = Guid.NewGuid();
+			newRow[$"dp{provider.Index}_short_text_column"] = faker.Lorem.Sentence();
+			newRow[$"dp{provider.Index}_text_column"] = faker.Lorem.Lines();
+			newRow[$"dp{provider.Index}_date_column"] = faker.Date.PastDateOnly();
+			newRow[$"dp{provider.Index}_datetime_column"] = faker.Date.Future();
+			newRow[$"dp{provider.Index}_short_int_column"] = faker.Random.Short(0, 100);
+			newRow[$"dp{provider.Index}_int_column"] = faker.Random.Number(100, 1000);
+			newRow[$"dp{provider.Index}_long_int_column"] = faker.Random.Long(1000, 10000);
+			newRow[$"dp{provider.Index}_number_column"] = faker.Random.Decimal(100000, 1000000);
+
+			newRow["test_data_identity_1.sc_text"] = "this is shared columns text";
+			newRow["test_data_identity_2.sc_int"] = 0;
+
+			var insertedRow = tfService.InsertDatasetRow(dataset.Id, newRow);
+
+			Guid tfId = (Guid)insertedRow["tf_id"];
+			var updateRow = new Dictionary<string, object>();
+
+			updateRow[$"dp{provider.Index}_short_text_column"] = faker.Lorem.Sentence() + " upd";
+			updateRow[$"dp{provider.Index}_text_column"] = faker.Lorem.Lines() + " upd";
+			updateRow[$"dp{provider.Index}_date_column"] = faker.Date.PastDateOnly();
+			updateRow[$"dp{provider.Index}_datetime_column"] = faker.Date.Future();
+			updateRow[$"dp{provider.Index}_short_int_column"] = faker.Random.Short(0, 100);
+			updateRow[$"dp{provider.Index}_int_column"] = faker.Random.Number(100, 1000);
+			updateRow[$"dp{provider.Index}_long_int_column"] = faker.Random.Long(1000, 10000);
+			updateRow[$"dp{provider.Index}_number_column"] = faker.Random.Decimal(100000, 1000000);
+
+			updateRow["test_data_identity_1.sc_text"] = "this is shared columns text" + " upd";
+			updateRow["test_data_identity_2.sc_int"] = 1;
+
+			Dictionary<Guid, Dictionary<string, object?>> rowsToUpdate = new();
+			rowsToUpdate[tfId] = updateRow;
+			var resultTable = tfService.UpdateDatasetRows(dataset.Id, rowsToUpdate);
+
+			var updatedRow = resultTable.Rows[0];
+
+			updateRow[$"dp{provider.Index}_short_text_column"].Should()
+				.Be(updatedRow[$"dp{provider.Index}_short_text_column"]);
 			updateRow[$"dp{provider.Index}_text_column"].Should()
 				.Be(updatedRow[$"dp{provider.Index}_text_column"]);
 			updateRow[$"dp{provider.Index}_date_column"].Should()
