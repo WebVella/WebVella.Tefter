@@ -33,9 +33,23 @@ public partial class TucDatasetColumnsDialog : TfBaseComponent, IDialogContentCo
 		_allOptions = TfService.GetDatasetColumnOptions(_dataset.Id);
 		foreach (var column in _dataset.Columns)
 		{
+			if (column == TfConstants.TF_DATASET_WILDCARD_COLUMN_SELECTOR)
+			{
+				_items.Add(new TfDatasetColumn()
+				{
+					DataIdentity = null,
+					ColumnName = TfConstants.TF_DATASET_WILDCARD_COLUMN_SELECTOR,
+					SourceColumnName = null,
+					SourceCode = null,
+					SourceName = null,
+					SourceType = TfAuxDataSourceType.PrimaryDataProvider,
+					DbType = TfDatabaseColumnType.Text
+				});
+			}
 			var option = _allOptions.FirstOrDefault(x => x.ColumnName == column);
 			if (option != null)
 				_items.Add(option);
+			
 		}
 
 		foreach (var identity in _dataset.Identities)

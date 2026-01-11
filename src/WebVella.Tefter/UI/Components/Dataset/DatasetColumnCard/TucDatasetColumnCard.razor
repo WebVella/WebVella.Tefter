@@ -5,7 +5,7 @@
 	<TitleTemplate>
 		<FluentButton OnClick="_addAllColumns" IconStart="@TfConstants.GetIcon("AddSquareMultiple")"
 		              Appearance="@Appearance.Outline"
-		              Disabled="@(_options.Count == 0 || _submitting)">@LOC("All Available")</FluentButton>
+		              Disabled="@(_options.Count == 0 || _submitting || _hasAllColumns)">@LOC("(*) all provider columns")</FluentButton>
 	</TitleTemplate>
 	<ToolbarTemplate>
 		@if (_options.Count > 0)
@@ -15,7 +15,7 @@
 			           TOption="TfDatasetColumn" Required="false"
 			           OptionValue="@((p) => p.ColumnName)"
 			           OptionText="@(p => p.ColumnName)"
-			           Items="@_options" Width="300px" 
+			           Items="@_options" Width="300px"
 			           Placeholder="@LOC("select column to be added")"/>
 		}
 		else
@@ -25,6 +25,7 @@
 		}
 	</ToolbarTemplate>
 	<ChildContent>
+
 		@if (_items.Count == 0)
 		{
 			<FluentMessageBar AllowDismiss="false"
@@ -32,19 +33,64 @@
 		}
 		else
 		{
+			@if (_hasAllColumns)
+			{
+				<table class="tf-grid" style="margin-bottom: 0.5rem;">
+					<thead class="tf-grid-thead">
+					<tr class="tf-grid-thead-bkg"></tr>
+					<tr class="tf-grid-tr">
+						<th class="tf-grid-th"></th>
+						<th class="tf-grid-th">type</th>
+						<th class="tf-grid-th">tefter name</th>
+						<th class="tf-grid-th">data type</th>
+						<th class="tf-grid-th">source name</th>
+					</tr>
+					</thead>					
+					<tbody class="tf-grid-tbody">
+					<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+						<td class="tf-grid-td" style="width:1%;">
+							<div>
+								<FluentButton Appearance="@Appearance.Outline" OnClick="@_removeAllColumns"
+								              Title="@LOC("Delete column")"
+								              Disabled="_submitting">
+									<FluentIcon Color="@Color.Error" Value="@TfConstants.GetIcon("Delete")"/>
+								</FluentButton>
+							</div>
+						</td>
+						<td class="tf-grid-td" style="vertical-align:middle;width:120px;min-width:120px;">
+							<div>
+								<FluentBadge Fill="somevalue" Color="white" BackgroundColor="var(--tf-green-700)"
+								             Style="width:100%">primary column
+								</FluentBadge>
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div><strong>*</strong></div>
+						</td>						
+						<td class="tf-grid-td" colspan="2">
+							<div>(*) - current provider columns wildcard selector</div>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			}
+
 			<table class="tf-grid">
-				<thead class="tf-grid-thead">
-				<tr class="tf-grid-thead-bkg"></tr>
-				<tr class="tf-grid-tr">
-					<th class="tf-grid-th"></th>
-					<th class="tf-grid-th" style="width:120px;min-width:120px;">type</th>
-					<th class="tf-grid-th">tefter name</th>
-					<th class="tf-grid-th">data type</th>
-					<th class="tf-grid-th">source name</th>
-				</tr>
-				</thead>
+				@if (!_hasAllColumns)
+				{
+					<thead class="tf-grid-thead">
+					<tr class="tf-grid-thead-bkg"></tr>
+					<tr class="tf-grid-tr">
+						<th class="tf-grid-th"></th>
+						<th class="tf-grid-th">type</th>
+						<th class="tf-grid-th">tefter name</th>
+						<th class="tf-grid-th">data type</th>
+						<th class="tf-grid-th">source name</th>
+					</tr>
+					</thead>
+				}
 				<tbody class="tf-grid-tbody">
-				@foreach (var context in _items)
+				@foreach (var context in _items.Where(x=> x.ColumnName != TfConstants.TF_DATASET_WILDCARD_COLUMN_SELECTOR))
 				{
 					<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 						<td class="tf-grid-td" style="width:1%;">
@@ -56,7 +102,7 @@
 								</FluentButton>
 							</div>
 						</td>
-						<td class="tf-grid-td" style="vertical-align:middle">
+						<td class="tf-grid-td" style="vertical-align:middle;width:120px;min-width:120px;">
 							<div>
 								@if (context.SourceType == TfAuxDataSourceType.PrimaryDataProvider)
 								{

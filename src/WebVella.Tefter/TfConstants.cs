@@ -48,5 +48,6 @@ public partial class TfConstants
 	public static Guid ADMIN_ROLE_ID = new Guid("3a0c26c5-bd28-4cca-aaf7-5d225b4c3136");
 
 	public const string TF_SHARED_COLUMN_PREFIX = "sc_";
+	public const string TF_DATASET_WILDCARD_COLUMN_SELECTOR = "*";
 	//public const string TF_SPACE_SWITCH_AUX_KEY = "G";
 }

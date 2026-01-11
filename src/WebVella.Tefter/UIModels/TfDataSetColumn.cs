@@ -9,5 +9,4 @@ public record TfDatasetColumn
 	public string? SourceCode { get; set; }
 	public TfAuxDataSourceType SourceType { get; set; } = TfAuxDataSourceType.PrimaryDataProvider;
 	public TfDatabaseColumnType DbType { get; set; }
-
 }
