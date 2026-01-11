@@ -2099,11 +2099,11 @@ fluent-menu-item::part(start) {
   scrollbar-width: thin;
 }
 .tf-sidenav {
-  padding-top: var(--tf-padding);
+  padding-top: calc(var(--tf-padding) / 2);
 }
 .tf-sidenav .tf-treemenu__item {
-  padding-left: var(--tf-padding);
-  padding-right: var(--tf-padding);
+  padding-left: calc(var(--tf-padding) / 2);
+  padding-right: calc(var(--tf-padding) / 2);
 }
 .tf-space-header {
   position: relative;

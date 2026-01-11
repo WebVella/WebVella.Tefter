@@ -15,9 +15,9 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 	public override List<ValidationError> ValidateOptions()
 	{
 		ValidationErrors.Clear();
-		if (_options.CreatePageDatasetId is null)
+		if (_options.DatasetId is null)
 		{
-			ValidationErrors.Add(new ValidationError(nameof(_options.CreatePageDatasetId), "required"));
+			ValidationErrors.Add(new ValidationError(nameof(_options.DatasetId), "required"));
 		}
 
 		return ValidationErrors;
@@ -48,10 +48,11 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 			spaceView = new TfSpaceViewCreateModel
 			{
 				Id = Guid.NewGuid(),
-				DatasetId = jsonOptions.CreatePageDatasetId,
+				DatasetId = jsonOptions.DatasetId,
 				Name = context.SpacePage.Name,
 				Presets = new List<TfSpaceViewPreset>(),
 				Settings = new TfSpaceViewSettings(),
+				TemplateId = jsonOptions.SpaceViewTemplateId
 			};
 		}
 		else
@@ -81,12 +82,13 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 				Name = context.SpacePage.Name,
 				Presets = templateView.Presets,
 				Settings = templateView.Settings,
+				TemplateId = jsonOptions.SpaceViewTemplateId
 			};
 		}
 
 		var createdSpaceView = await tfService.CreateSpaceView(spaceView);
 		jsonOptions.SpaceViewId = createdSpaceView.Id;
-		jsonOptions.CreatePageDatasetId = createdSpaceView.DatasetId;
+		jsonOptions.DatasetId = createdSpaceView.DatasetId;
 		context.ComponentOptionsJson = JsonSerializer.Serialize(jsonOptions);
 		return context.ComponentOptionsJson;
 	}
@@ -149,9 +151,9 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 			_options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(Context!.ComponentOptionsJson) ??
 			           new();
 
-		if (_options.CreatePageDatasetId != null && _options.CreatePageDatasetId != Guid.Empty)
+		if (_options.DatasetId != null && _options.DatasetId != Guid.Empty)
 		{
-			_selectedDataset = _allDatasets.FirstOrDefault(x => x.Id == _options.CreatePageDatasetId);
+			_selectedDataset = _allDatasets.FirstOrDefault(x => x.Id == _options.DatasetId);
 		}
 	}
 
@@ -161,14 +163,14 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 
 	private async Task _valueChanged(string propName, object? payload)
 	{
-		if (propName == nameof(_options.CreatePageDatasetId))
+		if (propName == nameof(_options.DatasetId))
 		{
 			_selectedDataset = null;
-			_options.CreatePageDatasetId = null;
+			_options.DatasetId = null;
 			if (payload is not null)
 			{
 				_selectedDataset = (TfDataset)payload;
-				_options.CreatePageDatasetId = _selectedDataset.Id;
+				_options.DatasetId = _selectedDataset.Id;
 			}
 		}
 
@@ -180,7 +182,9 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 
 public class TfSpaceViewSpacePageAddonOptions
 {
-	[JsonPropertyName("DatasetId")] public Guid? CreatePageDatasetId { get; set; } = null;
-
+	//when creating page sets which dataset is selected by the user
+	[JsonPropertyName("DatasetId")] public Guid? DatasetId { get; set; } = null;
 	[JsonPropertyName("SpaceViewId")] public Guid? SpaceViewId { get; set; } = null;
+	//When coping a page the spaceViewId will be null and this sets template that should be followed
+	[JsonPropertyName("SpaceViewTemplateId")] public Guid? SpaceViewTemplateId { get; set; } = null;
 }

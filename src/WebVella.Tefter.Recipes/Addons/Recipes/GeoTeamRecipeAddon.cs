@@ -631,7 +631,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
                 ComponentOptionsJson = JsonSerializer.Serialize(new TfSpaceViewSpacePageAddonOptions
                 {
                     SpaceViewId = spaceViewId,
-                    CreatePageDatasetId = spaceDataId,
+                    DatasetId = spaceDataId,
                 })
             }
         });

@@ -27,7 +27,7 @@ public partial class TucSortQueryCard : TfBaseComponent
 		foreach (var column in ViewColumns)
 		{
 			_allOptions.Add(new TfSortQuery { Name = column.QueryName });
-			_columnDict[column.QueryName] = column.Title ?? "no title";
+			_columnDict[column.QueryName] = !String.IsNullOrWhiteSpace(column.Title) ? column.Title : "no title";
 		}
 		_regenOptionsAsync();
 

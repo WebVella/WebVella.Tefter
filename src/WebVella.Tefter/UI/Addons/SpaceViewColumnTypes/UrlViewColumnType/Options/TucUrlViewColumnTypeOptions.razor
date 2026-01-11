@@ -2,7 +2,7 @@
 @inherits TfLocalizedViewColumnComponent
 <FluentGrid>
 	<FluentGridItem xs="12">
-		<FluentTextField Label="@LOC("Confirmation message")"
+		<FluentTextField Label="@LOC("Change Confirmation message")"
 		                 Value="@_form.ChangeConfirmationMessage" Style="width:100%"
 		                 ValueChanged=@((x) => _onSettingsChanged(nameof(_form.ChangeConfirmationMessage), x))
 		                 Placeholder="@LOC("empty for no confirmation")"/>

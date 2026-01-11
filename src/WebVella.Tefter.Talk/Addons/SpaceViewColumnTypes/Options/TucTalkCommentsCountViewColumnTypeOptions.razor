@@ -2,9 +2,10 @@
 @inherits TfLocalizedViewColumnComponent
 
 <FluentGrid>
-	<FluentGridItem xs="12">
+	<FluentGridItem xs="6">
 		<FluentInputLabel Label="@LOC("Channel")"/>
 		<TucSelect TOption="TalkChannel"
+		           Style="width: 100%"
 		           Items="ChannelOptions"
 		           OptionValue="(x=> x.Id.ToString())"
 		           OptionText="(x=> x.Name)"

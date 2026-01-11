@@ -59,7 +59,6 @@ public partial class TucSpaceNavigation : TfBaseComponent, IAsyncDisposable
 	private async Task On_SpacePageEventAsync(string? key, TfSpacePageEventPayload? payload)
 	{
 		if (payload is null) return;
-		if (payload.SpacePage.Id != TfAuthLayout.GetState().NavigationState.SpacePageId) return;
 		if (key == TfAuthLayout.GetSessionId().ToString())
 		{
 			_menu = TfService.GetAppState(Navigator, TfAuthLayout.GetState().User, Navigator.Uri).Menu;

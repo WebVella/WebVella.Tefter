@@ -792,7 +792,8 @@ public partial class TfService : ITfService
 							if (spaceView is null)
 								throw new Exception("SpaceView no longer exists for this page");
 							options.SpaceViewId = null;
-							options.CreatePageDatasetId = spaceView.DatasetId;
+							options.DatasetId = spaceView.DatasetId;
+							options.SpaceViewTemplateId = spaceView.Id;
 							pageToCreate.ComponentOptionsJson = JsonSerializer.Serialize(options);
 						}
 					}

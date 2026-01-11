@@ -86,7 +86,28 @@
 						</FluentGridItem>
 					</FluentGrid>
 				}
-
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<TucSelect Required="true" TOption="TfSpaceViewColumnSettingsFilterPresentation"
+						           Items="@(Enum.GetValues<TfSpaceViewColumnSettingsFilterPresentation>().ToList())"
+						           OptionValue="@((p) => ((int)p).ToString())"
+						           OptionText="@((p) => p.ToDescriptionString())"
+						           SelectedOption="@_form.Settings.FilterPresentation"
+						           SelectedOptionChanged="((x) => _form.Settings.FilterPresentation = x)"
+						           Label="@LOC("Filter Presentation")" Style="width:100%"/>
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						@if (_form.Settings.FilterPresentation != TfSpaceViewColumnSettingsFilterPresentation.Hidden)
+						{
+							<TucSelect Required="false" TOption="string"
+							           Items="_defaultFilterComparisonMethodOptions"
+							           SelectedOption="@_form.Settings.DefaultComparisonMethodDescription"
+							           SelectedOptionChanged="((x) => _form.Settings.DefaultComparisonMethodDescription = x)"
+							           Placeholder="@LOC("no default filter selected")"
+							           Label="@LOC("Default column filter")" Style="width:100%"/>
+						}
+					</FluentGridItem>
+				</FluentGrid>		
 				<TucErrorBoundry>
 					@(((ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(_selectedColumnType.GetType())!).Render(_typeOptions))
 					<FluentValidationMessage For="@(() => _form.TypeOptionsJson)"/>
