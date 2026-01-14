@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.Extra.Addons;
 public partial class TucSwitchStatusAction : TfBaseComponent, ITfScreenRegionAddon<TfSpaceViewToolBarActionScreenRegion>
 {
 	//State

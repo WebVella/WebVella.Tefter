@@ -1,5 +1,5 @@
 ﻿@namespace WebVella.Tefter.UI.Components
-@using WebVella.Tefter.UI.Addons.Recipes
+@using WebVella.Tefter.UI.Addons
 @inherits TfBaseComponent
 
 <div class="tf-welcome">
@@ -15,7 +15,7 @@
 					<p>@LOC("If you are experienced with Tefter or just looking for a precision in the outcome, you can start setting up the system yourself.")</p>
 				</ChildContent>
 				<FooterTemplate>
-					<TucAnchor Style="width: 100%" Appearance="Appearance.Outline" Href="@(String.Format(TfConstants.InstallRecipeDetailsPage, new BlankRecipeAddon().AddonId))">Choose this option</TucAnchor>
+					<TucAnchor Style="width: 100%" Appearance="Appearance.Outline" Href="@(String.Format(TfConstants.InstallRecipeDetailsPage, new BlankOnboardRecipeAddon().AddonId))">Choose this option</TucAnchor>
 				</FooterTemplate>
 			</TucCard>
 		</div>

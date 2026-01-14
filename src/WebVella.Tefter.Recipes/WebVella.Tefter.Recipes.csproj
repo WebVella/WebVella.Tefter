@@ -39,5 +39,9 @@
 		<ProjectReference Include="..\WebVella.Tefter\WebVella.Tefter.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Addons\SpaceRecipes\" />
+	</ItemGroup>
+
 
 </Project>

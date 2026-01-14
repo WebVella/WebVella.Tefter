@@ -121,8 +121,6 @@ public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption :
 	/// <returns>A Task representing the asynchronous operation.</returns>
 	protected override async Task OnParametersSetAsync()
 	{
-		if(SelectedOption is TfSelectOption)
-			Console.WriteLine($"{Id} ::::: {(SelectedOption as TfSelectOption).Value}");
 		// If OptionText is not provided, default to using ToString() on the option
 		if (OptionText is null && OptionTemplate is null)
 			OptionText = x => x.ToString();

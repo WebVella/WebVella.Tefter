@@ -1,4 +1,4 @@
-﻿@namespace WebVella.Tefter.UI.Addons.RecipeSteps
+﻿@namespace WebVella.Tefter.UI.Addons
 @inherits TfRecipeStepFormBase
 
 <FluentEditForm EditContext="EditContext"
@@ -7,7 +7,7 @@
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
-			                 Label="@LOC("Space Name")" Style="width:100%" AutoComplete="new-password" />
+			                 Label="@LOC("Name")" Style="width:100%" AutoComplete="off" />
 			<FluentValidationMessage For="@(() => _form.Name)" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
@@ -15,13 +15,13 @@
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentInputLabel Label="@LOC("Space Color")"/>
-			<TucSelectColor @bind-Value=@_form.Color/>
+			<FluentInputLabel Label="@LOC("Color")"/>
+			<TucSelectColor @bind-Value=@_form.Color Required="true"/>
 			<FluentValidationMessage For="@(() => _form.Color)"/>
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentInputLabel Label="@LOC("Space Icon")"/>
-			<TucSelectIcon @bind-Value="@_form.FluentIconName"/>
+			<FluentInputLabel Label="@LOC("Icon")"/>
+			<TucSelectIcon @bind-Value="@_form.FluentIconName" Required="true"/>
 			<FluentValidationMessage For="@(() => _form.FluentIconName)"/>
 		</FluentGridItem>
 	</FluentGrid>

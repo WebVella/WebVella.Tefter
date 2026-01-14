@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.Extra.Components;
 
 public partial class TucChangeStatusDialog : TfBaseComponent, IDialogContentComponent<TucChangeStatusDialogModel?>
 {

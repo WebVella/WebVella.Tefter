@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.UI.Addons.RecipeSteps;
+﻿namespace WebVella.Tefter.UI.Addons;
 public partial class TfCreateRoleRecipeStepForm : TfRecipeStepFormBase
 {
 	[Parameter] public TfCreateRoleRecipeStep Addon { get; set; } = null!;

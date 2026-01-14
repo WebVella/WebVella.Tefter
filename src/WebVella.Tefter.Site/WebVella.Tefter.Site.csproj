@@ -20,6 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+        <ProjectReference Include="..\Extra\WebVella.Tefter.Extra\WebVella.Tefter.Extra.csproj" />
         <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.DocumentFile\WebVella.Tefter.TemplateProcessors.DocumentFile.csproj" />
         <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.Email\WebVella.Tefter.TemplateProcessors.Email.csproj" />
         <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.ExcelFile\WebVella.Tefter.TemplateProcessors.ExcelFile.csproj" />

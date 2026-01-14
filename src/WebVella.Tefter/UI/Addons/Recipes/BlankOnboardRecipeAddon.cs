@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WebVella.Tefter.UI.Addons.RecipeSteps;
-
-namespace WebVella.Tefter.UI.Addons.Recipes;
-public class BlankRecipeAddon : ITfRecipeAddon
+﻿namespace WebVella.Tefter.UI.Addons;
+public class BlankOnboardRecipeAddon : ITfOnboardRecipeAddon
 {
 	public Guid AddonId { get; init; } = new Guid("de692b3f-be7a-4ace-a1d5-4cdfcbf50d12");
 	public string AddonName { get; init; } = "Manual Setup";
@@ -17,7 +10,7 @@ public class BlankRecipeAddon : ITfRecipeAddon
 	public string Website { get; init; } = "https://tefter.webvella.com";
 	public List<ITfRecipeStepAddon> Steps { get; init; } = new();
 
-	public BlankRecipeAddon()
+	public BlankOnboardRecipeAddon()
 	{
 		Steps.Add(new TfInfoRecipeStep
 		{

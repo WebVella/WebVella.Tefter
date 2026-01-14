@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
-@if (_recipe is not null)
+@if (_onboardRecipe is not null)
 {
 
 	<TucLayoutGridContent>
@@ -15,11 +15,11 @@
 							<div style="flex: 1 1 auto;">
 								<div class="tf-recipe clean">
 									<div class="tf-recipe__icon">
-										<FluentIcon Value="@TfConstants.GetIcon(_recipe.AddonFluentIconName)" Color="@Color.Custom" />
+										<FluentIcon Value="@TfConstants.GetIcon(_onboardRecipe.AddonFluentIconName)" Color="@Color.Custom" />
 									</div>
 									<div class="tf-recipe__meta">
-										<div class="tf-recipe__meta__name">@_recipe.AddonName</div>
-										<div class="tf-recipe__meta__description">@_recipe.AddonDescription</div>
+										<div class="tf-recipe__meta__name">@_onboardRecipe.AddonName</div>
+										<div class="tf-recipe__meta__description">@_onboardRecipe.AddonDescription</div>
 									</div>
 								</div>
 							</div>

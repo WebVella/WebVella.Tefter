@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.UI.Addons.RecipeSteps;
-
-namespace WebVella.Tefter.Models;
+﻿namespace WebVella.Tefter.Models;
 
 public class TfRecipeResult
 {

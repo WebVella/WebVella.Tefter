@@ -3,6 +3,7 @@
 public partial class TucAsideActions : TfBaseComponent
 {
 	private bool _spaceMenuVisible = false;
+	private bool _addMenuVisible = false;
 	private bool _spaceFinderVisible = false;
 
 	private async Task _addPage()
@@ -94,6 +95,35 @@ public partial class TucAsideActions : TfBaseComponent
 		Navigator.NavigateTo(pageManageUrl.GenerateWithLocalAndQueryAsReturnUrl(Navigator.Uri)!);
 	}
 
+	private async Task _addSpace()
+	{
+		// var dialog = await DialogService.ShowDialogAsync<TucSpaceManageDialog>(
+		// 	new TfSpace(),
+		// 	new()
+		// 	{
+		// 		PreventDismissOnOverlayClick = true,
+		// 		PreventScroll = true,
+		// 		Width = TfConstants.DialogWidthLarge,
+		// 		TrapFocus = false
+		// 	});
+		// var result = await dialog.Result;
+		// if (result is { Cancelled: false, Data: not null })
+		// {
+		// 	var space = (TfSpace)result.Data;
+		// 	Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, space.Id));
+		// }
+		
+		_ = await DialogService.ShowDialogAsync<TucSpaceCreateDialog>(
+			new TucSpaceCreateDialogContext(),
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
+	
+	}	
 	
 	private async Task _deleteSpace()
 	{

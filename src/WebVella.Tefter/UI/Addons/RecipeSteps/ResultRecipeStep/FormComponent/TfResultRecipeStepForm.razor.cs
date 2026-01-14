@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.UI.Components;
-
-namespace WebVella.Tefter.UI.Addons.RecipeSteps;
+﻿namespace WebVella.Tefter.UI.Addons;
 public partial class TfResultRecipeStepForm : TfRecipeStepFormBase
 {
 	[Parameter] public TfResultRecipeStep Addon { get; set; } = null!;

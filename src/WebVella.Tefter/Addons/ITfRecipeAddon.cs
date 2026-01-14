@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter;
 
-public interface ITfRecipeAddon : ITfAddon
+public interface  ITfRecipeAddon : ITfAddon
 {
 	public int SortIndex { get; init; }
 	//creator

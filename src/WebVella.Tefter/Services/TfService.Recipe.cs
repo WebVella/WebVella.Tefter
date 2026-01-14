@@ -4,7 +4,7 @@ public partial interface ITfService
 {
 	Task<TfInstallData?> GetInstallDataAsync();
 	Task SaveInstallDataAsync(TfInstallData data);
-	Task<TfRecipeResult> ApplyRecipeAsync(ITfRecipeAddon recipe);
+	Task<TfRecipeResult> ApplyRecipeAsync(ITfRecipeAddon onboardRecipe);
 	Task<TfRecipeStepResult> ApplyStep(ITfRecipeStepAddon step);
 }
 
@@ -31,7 +31,7 @@ public partial class TfService
 		return Task.CompletedTask;
 	}
 
-	public async Task<TfRecipeResult> ApplyRecipeAsync(ITfRecipeAddon recipe)
+	public async Task<TfRecipeResult> ApplyRecipeAsync(ITfRecipeAddon onboardRecipe)
 	{
 		var result = new TfRecipeResult()
 		{
@@ -39,9 +39,9 @@ public partial class TfService
 		};
 		try
 		{
-			if (recipe == null) throw new ArgumentNullException(nameof(recipe));
+			if (onboardRecipe == null) throw new ArgumentNullException(nameof(onboardRecipe));
 			using TfDatabaseTransactionScope scope = _dbService.CreateTransactionScope();
-			foreach (var step in recipe.Steps)
+			foreach (var step in onboardRecipe.Steps)
 			{
 				var stepResult = await ApplyStep(step);
 				result.Steps.Add(stepResult);
@@ -53,8 +53,8 @@ public partial class TfService
 			{
 				var installData = new TfInstallData
 				{
-					RecipeId = recipe.AddonId,
-					RecipeTypeFullName = recipe.GetType().FullName!,
+					RecipeId = onboardRecipe.AddonId,
+					RecipeTypeFullName = onboardRecipe.GetType().FullName!,
 					AppliedOn = DateTime.Now
 				};
 				var setting = new TfSetting
@@ -67,7 +67,7 @@ public partial class TfService
 			}
 			else
 			{
-				foreach (var step in recipe.Steps)
+				foreach (var step in onboardRecipe.Steps)
 				{
 					var stepResult = result.Steps.FirstOrDefault(x => x.StepId == step.Instance.StepId);
 					await ReverseStep(step, stepResult);
@@ -78,7 +78,7 @@ public partial class TfService
 		}
 		catch (Exception ex)
 		{
-			foreach (var step in recipe!.Steps)
+			foreach (var step in onboardRecipe!.Steps)
 			{
 				var stepResult = result.Steps.FirstOrDefault(x => x.StepId == step.Instance.StepId);
 				await ReverseStep(step, stepResult);

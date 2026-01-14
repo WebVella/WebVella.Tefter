@@ -1,10 +1,30 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 <div class="tf-aside-actions">
-    @if (TfAuthLayout.GetState().Space is not null)
+    @if (TfAuthLayout.GetState().Space is not null && TfAuthLayout.GetState().User.IsAdmin)
     {
         var state = TfAuthLayout.GetState();
-        <FluentButton Title="@LOC("Add new page")" Appearance="@Appearance.Outline" OnClick="@_addPage">@LOC("new page")</FluentButton>        
+        <FluentButton Id="new-space-page-menu-toggle" 
+                      Appearance="@Appearance.Outline" Title="@LOC("Create new Space of page")"  
+                      OnClick="@(() => _addMenuVisible = !_addMenuVisible)">@LOC("create new")</FluentButton>        
+        <FluentMenu @bind-Open="_addMenuVisible" Anchor="new-space-page-menu-toggle" UseMenuService="true"
+                    HorizontalPosition="HorizontalPosition.Right">
+            <FluentMenuItem
+                OnClick="@_addPage">
+                @LOC("New Page")
+                <span slot="start">
+                    <FluentIcon Value="@TfConstants.GetIcon("DocumentAdd")" Slot="start"/>
+                </span>
+            </FluentMenuItem>         
+            <FluentMenuItem
+                OnClick="@_addSpace">
+                @LOC("New Space")
+                <span slot="start">
+                    <FluentIcon Value="@TfConstants.GetIcon("AddCircle")" Slot="start"/>
+                </span>
+            </FluentMenuItem>               
+        </FluentMenu>
+        
         <FluentButton Id="space-menu-toggle"
                       Appearance="@Appearance.Outline" Title="@LOC("Space settings")"
                       OnClick="@(() => _spaceMenuVisible = !_spaceMenuVisible)">@LOC("settings")</FluentButton>  
