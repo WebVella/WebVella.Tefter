@@ -1008,7 +1008,8 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 					.AddDateTimeColumn("created_on", c => { c.NotNullable().WithAutoDefaultValue(); })
 					.AddDateTimeColumn("modified_on", c => { c.NotNullable().WithAutoDefaultValue(); })
 					.AddGuidColumn("created_by", c => { c.Nullable(); })
-					.AddGuidColumn("modified_by", c => { c.Nullable(); });
+					.AddGuidColumn("modified_by", c => { c.Nullable(); })
+					.AddShortIntegerColumn("column_name_preprocess", c => { c.NotNullable().WithDefaultValue(0); });
 			})
 			.WithConstraints(constraints =>
 			{

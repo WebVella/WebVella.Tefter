@@ -64,6 +64,7 @@ public partial class TfServiceTest : BaseTest
 					IsSelectable = true,
 					SettingsJson = null,
 					UserId = user.Id,
+					ColumnNamePreprocess = ColumnNamePreprocessType.RemoveProviderPrefix,
 				};
 
 				var createResult = tfService.CreateTemplate(createTemplateModel);
@@ -73,6 +74,7 @@ public partial class TfServiceTest : BaseTest
 				allTemplateResult[0].Name.Should().Be(createTemplateModel.Name);
 				allTemplateResult[0].Description.Should().Be(createTemplateModel.Description);
 				allTemplateResult[0].FluentIconName.Should().Be(createTemplateModel.FluentIconName);
+				allTemplateResult[0].ColumnNamePreprocess.Should().Be(createTemplateModel.ColumnNamePreprocess);
 
 
 				TfManageTemplateModel updateTemplateModel = new TfManageTemplateModel
@@ -86,6 +88,7 @@ public partial class TfServiceTest : BaseTest
 					IsSelectable = true,
 					SettingsJson = "{}",
 					UserId = user.Id,
+					ColumnNamePreprocess = ColumnNamePreprocessType.None
 				};
 
 				var updateResult = tfService.UpdateTemplate(updateTemplateModel);
@@ -95,6 +98,7 @@ public partial class TfServiceTest : BaseTest
 				allTemplateResult[0].Name.Should().Be(updateTemplateModel.Name);
 				allTemplateResult[0].Description.Should().Be(updateTemplateModel.Description);
 				allTemplateResult[0].FluentIconName.Should().Be(updateTemplateModel.FluentIconName);
+				allTemplateResult[0].ColumnNamePreprocess.Should().Be(updateTemplateModel.ColumnNamePreprocess);
 
 				tfService.DeleteTemplate(updateTemplateModel.Id);
 

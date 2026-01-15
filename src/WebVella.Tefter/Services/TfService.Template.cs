@@ -184,22 +184,26 @@ public partial class TfService : ITfService
 
 				var modifiedByPar = CreateParameter("@modified_by", template.UserId, DbType.Guid);
 
+				var columnNamePreprocessPar = CreateParameter("@column_name_preprocess", 
+					(short)template.ColumnNamePreprocess, DbType.Int16);
+
 				const string SQL = @"
 				INSERT INTO tf_template(
 					id, name, icon, description, space_data_json, is_enabled, 
 					is_selectable, result_type, settings_json, content_processor_type,
-					created_on, modified_on, created_by, modified_by)
+					created_on, modified_on, created_by, modified_by, column_name_preprocess)
 				VALUES (
 					@id, @name, @icon, @description, @space_data_json, @is_enabled, 
 					@is_selectable, @result_type, @settings_json, @content_processor_type,
-					@created_on, @modified_on, @created_by, @modified_by )";
+					@created_on, @modified_on, @created_by, @modified_by, @column_name_preprocess )";
 
 				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
 					SQL,
 					idPar, namePar, descriptionPar, iconPar,
 					isEnabledPar, isSelectablePar, resultTypePar,
 					spaceDataJsonPar, settingsJsonPar, cptPar,
-					createdByPar, createdOnPar, modifiedByPar, modifiedOnPar);
+					createdByPar, createdOnPar, modifiedByPar,
+					modifiedOnPar, columnNamePreprocessPar);
 
 				if (dbResult != 1)
 				{
@@ -279,6 +283,9 @@ public partial class TfService : ITfService
 
 				var modifiedByPar = CreateParameter("@modified_by", template.UserId, DbType.Guid);
 
+				var columnNamePreprocessPar = CreateParameter("@column_name_preprocess",
+					(short)template.ColumnNamePreprocess, DbType.Int16);
+
 				const string SQL = @"
 				UPDATE tf_template
 				SET 
@@ -292,7 +299,8 @@ public partial class TfService : ITfService
 					settings_json=@settings_json, 
 					content_processor_type=@content_processor_type, 
 					modified_on=@modified_on, 
-					modified_by=@modified_by
+					modified_by=@modified_by,
+					column_name_preprocess=@column_name_preprocess
 				WHERE id = @id;";
 
 				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
@@ -300,7 +308,7 @@ public partial class TfService : ITfService
 					idPar, namePar, descriptionPar, iconPar,
 					isEnabledPar, isSelectablePar, resultTypePar,
 					spaceDataJsonPar, settingsJsonPar, cptPar,
-					modifiedByPar, modifiedOnPar);
+					modifiedByPar, modifiedOnPar, columnNamePreprocessPar);
 
 				if (dbResult != 1)
 				{
@@ -690,6 +698,7 @@ public partial class TfService : ITfService
 				CreatedOn = dr.Field<DateTime>("created_on"),
 				ModifiedBy = modifiedBy,
 				ModifiedOn = dr.Field<DateTime>("modified_on"),
+				ColumnNamePreprocess = (ColumnNamePreprocessType)(int)dr.Field<short>("column_name_preprocess"),
 			};
 
 			templateList.Add(asset);
