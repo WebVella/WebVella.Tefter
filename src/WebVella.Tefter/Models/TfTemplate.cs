@@ -2,9 +2,11 @@
 
 namespace WebVella.Tefter.Models;
 
-public enum ColumnNamePreprocessType
+public enum TfColumnNamePreprocessType
 { 
+	[Description("no preprocessing")]
 	None = 0,
+	[Description("remove data provider prefix (eg. dp_1)")]
 	RemoveProviderPrefix = 1
 }
 
@@ -24,7 +26,7 @@ public record TfTemplate
 	public TfUser CreatedBy { get; set; }
 	public DateTime ModifiedOn { get; set; }
 	public TfUser ModifiedBy { get; set; }
-	public ColumnNamePreprocessType ColumnNamePreprocess { get; set; } = ColumnNamePreprocessType.None;
+	public TfColumnNamePreprocessType ColumnNamePreprocess { get; set; } = TfColumnNamePreprocessType.None;
 }
 
 public record TfManageTemplateModel
@@ -39,7 +41,7 @@ public record TfManageTemplateModel
 	public bool IsSelectable { get; set; } = true;
 	public string? SettingsJson { get; set; }
 	public Type ContentProcessorType { get; set; }
-	public ColumnNamePreprocessType ColumnNamePreprocess { get; set; }
+	public TfColumnNamePreprocessType ColumnNamePreprocess { get; set; } = TfColumnNamePreprocessType.None;
 	public Guid? UserId { get; set; }
 	public List<Guid> SpaceDataList { get; set; } = new();
 }

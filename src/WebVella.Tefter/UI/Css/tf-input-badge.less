@@ -3,10 +3,15 @@
 /*Badge*/
 .tf-input-badge {
   border-radius: calc(var(--control-corner-radius) * 1px);
+  width: 100%;
+ span{
+   justify-content: start !important;
+   padding-left:calc(var(--design-unit) * 2px + 1px)
+ }
 
   &::part(control) {
     padding: 7px 5px;
-
+    
   }
 
   &--error {

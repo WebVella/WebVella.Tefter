@@ -172,4 +172,28 @@ public static class StringExtensions
 
 		return true;
 	}
+
+	public static string GetColumnNameWithoutPrefix(this string columnName)
+	{
+		var newName = columnName;
+		//Data Identity
+		if (newName.Contains("."))
+		{
+			var dotArray = newName.Split('.', StringSplitOptions.RemoveEmptyEntries);
+			if (dotArray.Length == 2 && dotArray[1].StartsWith("dp"))
+			{
+				var firstUnderscoreIndex = dotArray[1].ToList().FindIndex(x => x == '_');
+				newName = $"{dotArray[0]}.{dotArray[1].Substring(firstUnderscoreIndex+1)}";
+			}
+		}
+		//Provider Column
+		else if (newName.StartsWith("dp"))
+		{
+			var firstUnderscoreIndex = newName.ToList().FindIndex(x => x == '_');
+			newName = newName.Substring(firstUnderscoreIndex+1);
+		}
+
+
+		return newName;
+	}
 }

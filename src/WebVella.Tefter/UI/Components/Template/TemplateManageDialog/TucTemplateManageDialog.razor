@@ -36,7 +36,7 @@
 					<FluentValidationMessage For="@(() => _form.IsEnabled)"/>
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentInputLabel Label="@LOC("Use")"/>
+					<FluentInputLabel Label="@LOC("Selectable by Users")"/>
 					<FluentSwitch @bind-Value=@_form.IsSelectable>
 						<span slot="checked-message">@LOC("selectable")</span>
 						<span slot="unchecked-message">@LOC("selectable")</span>
@@ -59,13 +59,23 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentTextArea Rows="2"
-					                @bind-Value=@_form.Description
-					                Resize="TextAreaResize.Vertical"
-					                Label="@LOC("Description")" Style="width:100%"/>
+					<FluentTextField @bind-Value=@_form.Description
+					                 Label="@LOC("Description")" Style="width:100%"/>
 					<FluentValidationMessage For="@(() => _form.Name)"/>
 				</FluentGridItem>
 			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<TucSelect TOption="TfColumnNamePreprocessType"
+					           Items="@(Enum.GetValues<TfColumnNamePreprocessType>())"
+					           SelectedOption="_form.ColumnNamePreprocess"
+					           SelectedOptionChanged="@((x)=> _form.ColumnNamePreprocess = x)"
+					           OptionText="@((x) => x.ToDescriptionString())"
+					           OptionValue="@((x) => ((int)x).ToString())"
+					           Label="@LOC("Column name preprocessing")" Style="width:100%"/>
+					<FluentValidationMessage For="@(() => _form.ColumnNamePreprocess)"/>
+				</FluentGridItem>
+			</FluentGrid>			
 			<FluentGrid>
 				<FluentGridItem xs="12">
 					<FluentInputLabel Label="@LOC("Target Space Dataset")"/>

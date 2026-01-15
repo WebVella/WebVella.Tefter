@@ -4,11 +4,12 @@
 	<div style="padding:var(--tf-padding)">
 		@if (String.IsNullOrWhiteSpace(UriInitialized))
 		{
-			<TucSkeletonPageHeader />
+			<TucSkeletonPageHeader/>
 		}
 		else if (_navState.TemplateResultType is not null && _navState.TemplateId is null)
 		{
-			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Info">@LOC("No items created yet")</FluentMessageBar>
+			<FluentMessageBar AllowDismiss=false
+			                  Intent="@MessageIntent.Info">@LOC("No items created yet")</FluentMessageBar>
 		}
 		else if (_template is null)
 		{
@@ -20,80 +21,82 @@
 				<ToolbarTemplate>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_editTemplate">
 						@LOC("Update")
-						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start"/>
 					</FluentButton>
 				</ToolbarTemplate>
 				<ChildContent>
 					<FluentGrid>
 						<FluentGridItem xs="6">
 							<FluentTextField TextFieldType="@TextFieldType.Text" Value="@_template.Name"
-											 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+							                 Label="@LOC("Name")" Style="width:100%" ReadOnly="true"/>
 						</FluentGridItem>
-						<FluentGridItem xs="6">
-							<FluentInputLabel Label="@LOC("Icon")" />
-							<TucSelectIcon Value="@_template.FluentIconName" Required="true" />
+						<FluentGridItem xs="3">
+							<FluentInputLabel Label="@LOC("Status")"/>
+							@if (_template.IsEnabled)
+							{
+								<FluentBadge Class="tf-input-badge tf-input-badge--success">ENABLED</FluentBadge>
+							}
+							else
+							{
+								<FluentBadge Class="tf-input-badge tf-input-badge--error">DISABLED</FluentBadge>
+							}
+						</FluentGridItem>
+						<FluentGridItem xs="3">
+							<FluentInputLabel Label="@LOC("Selectable by Users")"/>
+							@if (_template.IsSelectable)
+							{
+								<FluentBadge Class="tf-input-badge tf-input-badge--success">SELECTABLE</FluentBadge>
+							}
+							else
+							{
+								<FluentBadge Class="tf-input-badge tf-input-badge--error">NOT SELECTABLE</FluentBadge>
+							}
 						</FluentGridItem>
 					</FluentGrid>
 					<FluentGrid>
 						<FluentGridItem xs="6">
-							<FluentTextArea Value="@_template.Description"
-											Label="@LOC("Description")" Style="width:100%" ReadOnly="true" />
+							<FluentTextField Value="@_template.Description"
+							                 Label="@LOC("Description")" Style="width:100%" ReadOnly="true"/>
 						</FluentGridItem>
-						<FluentGridItem xs="3">
-							<FluentInputLabel Label="@LOC("Status")" />
-							@if (_template.IsEnabled)
-							{
-								<FluentBadge Class="tf-input-badge">ENABLED</FluentBadge>
-							}
-							else
-							{
-								<FluentBadge Class="tf-input-badge" Fill="somevalue" BackgroundColor="@TfColor.Red500.GetColor().OKLCH" Color="white">DISABLED</FluentBadge>
-							}
+						<FluentGridItem xs="6">
+							<FluentInputLabel Label="@LOC("Icon")"/>
+							<TucSelectIcon Value="@_template.FluentIconName" Required="true"/>
 						</FluentGridItem>
-						<FluentGridItem xs="3">
-							<FluentInputLabel Label="@LOC("Usable")" />
-							@if (_template.IsSelectable)
-							{
-								<FluentBadge Class="tf-input-badge">SELECTABLE</FluentBadge>
-							}
-							else
-							{
-								<FluentBadge Class="tf-input-badge" Fill="somevalue" BackgroundColor="@TfColor.Red500.GetColor().OKLCH" Color="white">NOT SELECTABLE</FluentBadge>
-							}
+
+					</FluentGrid>
+					<FluentGrid>
+						<FluentGridItem xs="6">
+							<TucSelect TOption="TfColumnNamePreprocessType"
+							           Items="@(Enum.GetValues<TfColumnNamePreprocessType>())"
+							           SelectedOption="_template.ColumnNamePreprocess"
+							           OptionText="@((x) => x.ToDescriptionString())"
+							           OptionValue="@((x) => ((int)x).ToString())"
+							           Label="@LOC("Column name preprocessing")" Style="width:100%" ReadOnly="true"/>
 						</FluentGridItem>
 					</FluentGrid>
 					<FluentGrid>
 						<FluentGridItem xs="12">
-							<FluentInputLabel Label="@LOC("Target Space Dataset")" />
+							<FluentInputLabel Label="@LOC("Target Space Dataset")"/>
 
 							<table class="tf-grid" style="margin-top:15px;">
-								<thead class="tf-grid-thead">
-									<tr class="tf-grid-thead-bkg"></tr>
-									<tr class="tf-grid-tr">
-										<th class="tf-grid-th">data name</th>
-									</tr>
-								</thead>
 								<tbody class="tf-grid-tbody">
-									@foreach (var row in _spaceDataSelection)
-									{
-										<tr @key=row.Id class="tf-grid-tr">
-											<td class="tf-grid-td">
-												<div>
-													@row.Name
-												</div>
-											</td>
-										</tr>
-									}
-									@if (_spaceDataSelection.Count == 0)
-									{
-										<tr class="tf-grid-tr">
-											<td class="tf-grid-td">
-												<div>
-													@LOC("No targeted space dataset found")
-												</div>
-											</td>
-										</tr>
-									}
+								<tr class="tf-grid-tr">
+									<td class="tf-grid-td">
+										<div>
+											<FluentStack>
+												@foreach (var item in _spaceDataSelection)
+												{
+													<FluentBadge
+														Appearance="@Appearance.Neutral">@item.Name</FluentBadge>
+												}
+												@if (_spaceDataSelection.Count == 0)
+												{
+													<span>@LOC("No targeted space dataset found")</span>
+												}
+											</FluentStack>
+										</div>
+									</td>
+								</tr>
 								</tbody>
 							</table>
 						</FluentGridItem>
@@ -102,32 +105,36 @@
 			</TucCard>
 			<div style="margin-top: var(--tf-card-space)">
 				<TucSelectComponent TOption="ITfTemplateProcessorAddon" Items="@(new List<ITfTemplateProcessorAddon>())"
-								   Value="_processor"
-								   OptionText="@(x => x.Name)" OptionIcon="@(x => x.FluentIconName)" OptionDescription="@(x => x.Description)"
-								   OptionMatch="@((x, y) => x.Id == y.Id)" />
+				                    Value="_processor"
+				                    OptionText="@(x => x.Name)" OptionIcon="@(x => x.FluentIconName)"
+				                    OptionDescription="@(x => x.Description)"
+				                    OptionMatch="@((x, y) => x.Id == y.Id)"/>
 			</div>
 			<TucCard Title="@LOC("Template Settings")" Style="margin-top: var(--tf-card-space)">
 				<ToolbarTemplate>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="onHelpClick">
 						@LOC("Help")
-						<FluentIcon Value="@TfConstants.GetIcon("QuestionCircle")" Color="@Color.Accent" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("QuestionCircle")" Color="@Color.Accent" Slot="start"/>
 					</FluentButton>
 					<FluentButton Appearance="@Appearance.Outline" OnClick="onUpdateSettingsClick">
 						@LOC("Update")
-						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start"/>
 					</FluentButton>
 				</ToolbarTemplate>
 				<ChildContent>
-					<TucScreenRegionComponent Region="_dynamicComponentContext" Scope="@_dynamicComponentScope" Placeholder="@LOC("Template does not require additional settings")" />
+					<TucScreenRegionComponent Region="_dynamicComponentContext" Scope="@_dynamicComponentScope"
+					                          Placeholder="@LOC("Template does not require additional settings")"/>
 				</ChildContent>
 			</TucCard>
 			<TucCard Style="margin-top: var(--tf-card-space)">
-				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+				<FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween"
+				             VerticalAlignment="@VerticalAlignment.Center">
 					<div>@LOC("Deleting the template will make it unavailable for future use.")</div>
 					<div>
-						<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white" OnClick="_deleteTemplate">
+						<FluentButton BackgroundColor="@Color.Error.ToAttributeValue()" Color="white"
+						              OnClick="_deleteTemplate">
 							@LOC("Delete this Template")
-							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start" />
+							<FluentIcon Value="@TfConstants.GetIcon("Delete")!.WithColor("white")" Slot="start"/>
 						</FluentButton>
 					</div>
 				</FluentStack>

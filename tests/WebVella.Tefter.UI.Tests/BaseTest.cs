@@ -9,6 +9,7 @@ using WebVella.Tefter.Database;
 using WebVella.Tefter.Database.Dbo;
 using WebVella.Tefter.Migrations;
 using WebVella.Tefter.Services;
+using WebVella.Tefter.UI.EventsBus;
 
 namespace WebVella.Tefter.UI.Tests;
 public class BaseTest
@@ -27,6 +28,7 @@ public class BaseTest
 	internal Mock<IMigrationManager> MigrationManagerMock;
 	public Mock<ITfService> TfServiceMock;
 	public Mock<ITfMetaService> TfMetaServiceMock;
+	public Mock<ITfEventBus> TfEventBus;
 	//public Mock<IWvBlazorTraceService> WvBlazorTraceServiceMock;
 	//localization
 	public Mock<IStringLocalizerFactory> StringLocalizerFactoryMock;
@@ -59,6 +61,9 @@ public class BaseTest
 		TfConfigurationServiceMock = new Mock<ITfConfigurationService>();
 		Context.Services.AddSingleton(typeof(ITfConfigurationService), Services => TfConfigurationServiceMock.Object);
 
+		TfEventBus = new Mock<ITfEventBus>();
+		Context.Services.AddSingleton(typeof(ITfEventBus), Services => TfEventBus.Object);		
+		
 		TfCryptoServiceMock = new Mock<ITfCryptoService>();
 		Context.Services.AddSingleton(typeof(ITfCryptoService), Services => TfCryptoServiceMock.Object);
 
@@ -88,6 +93,7 @@ public class BaseTest
 
 		TfMetaServiceMock = new Mock<ITfMetaService>();
 		Context.Services.AddSingleton(typeof(ITfMetaService), Services => TfMetaServiceMock.Object);
+		
 
 		#region << Local Storage >>
 		// This string will be the json of the object you want

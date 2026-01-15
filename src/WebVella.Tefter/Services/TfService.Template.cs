@@ -79,9 +79,9 @@ public partial class TfService : ITfService
 				return ToTemplateList(dt).Where(x =>
 					(String.IsNullOrWhiteSpace(search) || x.Name.ToLowerInvariant().Contains(searchProcessed))
 					&& types.Contains(x.ResultType)).ToList();
-			
+
 			return ToTemplateList(dt).Where(x =>
-				(String.IsNullOrWhiteSpace(search) || x.Name.ToLowerInvariant().Contains(searchProcessed))).ToList();			
+				(String.IsNullOrWhiteSpace(search) || x.Name.ToLowerInvariant().Contains(searchProcessed))).ToList();
 		}
 		catch (Exception ex)
 		{
@@ -184,7 +184,7 @@ public partial class TfService : ITfService
 
 				var modifiedByPar = CreateParameter("@modified_by", template.UserId, DbType.Guid);
 
-				var columnNamePreprocessPar = CreateParameter("@column_name_preprocess", 
+				var columnNamePreprocessPar = CreateParameter("@column_name_preprocess",
 					(short)template.ColumnNamePreprocess, DbType.Int16);
 
 				const string SQL = @"
@@ -393,7 +393,7 @@ public partial class TfService : ITfService
 			var processor = GetTemplateProcessor(template.ContentProcessorType);
 
 			var dataTable = QueryDataset(spaceData.Id, tfRecordIds);
-
+			dataTable = ProcessDataForTemplate(dataTable,template);
 			return processor.GenerateTemplatePreviewResult(template, dataTable, _serviceProvider);
 		}
 		catch (Exception ex)
@@ -421,8 +421,7 @@ public partial class TfService : ITfService
 			var spaceData = GetDataset(spaceDataId);
 			var processor = GetTemplateProcessor(template.ContentProcessorType);
 			var dataTable = QueryDataset(spaceData.Id, tfRecordIds);
-
-
+			dataTable = ProcessDataForTemplate(dataTable,template);
 			return processor.ProcessTemplate(template, dataTable, preview, _serviceProvider);
 		}
 		catch (Exception ex)
@@ -496,7 +495,8 @@ public partial class TfService : ITfService
 				Name = template.Name,
 				SettingsJson = settingsJson,
 				SpaceDataList = template.SpaceDataList,
-				UserId = template.CreatedBy?.Id
+				UserId = template.CreatedBy?.Id,
+				ColumnNamePreprocess =  template.ColumnNamePreprocess,
 			};
 			var result = UpdateTemplate(form);
 			return result;
@@ -698,7 +698,7 @@ public partial class TfService : ITfService
 				CreatedOn = dr.Field<DateTime>("created_on"),
 				ModifiedBy = modifiedBy,
 				ModifiedOn = dr.Field<DateTime>("modified_on"),
-				ColumnNamePreprocess = (ColumnNamePreprocessType)(int)dr.Field<short>("column_name_preprocess"),
+				ColumnNamePreprocess = (TfColumnNamePreprocessType)(int)dr.Field<short>("column_name_preprocess"),
 			};
 
 			templateList.Add(asset);
@@ -719,6 +719,36 @@ public partial class TfService : ITfService
 			par.Value = value;
 
 		return par;
+	}
+
+	private TfDataTable ProcessDataForTemplate(TfDataTable dataTable, TfTemplate template)
+	{
+		if (template.ColumnNamePreprocess == TfColumnNamePreprocessType.None)
+		{
+			//No changes to the dataTable are required
+		}
+		else if (template.ColumnNamePreprocess == TfColumnNamePreprocessType.RemoveProviderPrefix)
+		{
+			var newDataTable = new TfDataTable();
+			foreach (TfDataColumn column in dataTable.Columns)
+			{
+				var newName = column.Name.GetColumnNameWithoutPrefix();
+				newDataTable.Columns.Add(new TfDataColumn(newDataTable, newName, column.DbType, column.IsNullable,
+					column.Origin, column.IsReadOnly));
+			}
+
+			foreach (TfDataRow row in dataTable.Rows)
+			{
+				object?[] values = new object[dataTable.Columns.Count];
+				int valuesCounter = 0;
+				foreach (TfDataColumn column in dataTable.Columns)
+					values[valuesCounter++] = row[column.Name];
+				newDataTable.Rows.Add(new TfDataRow(newDataTable, values));
+			}
+			dataTable = newDataTable;
+		}
+		
+		return dataTable;
 	}
 
 	#endregion

@@ -64,7 +64,7 @@ public partial class TfServiceTest : BaseTest
 					IsSelectable = true,
 					SettingsJson = null,
 					UserId = user.Id,
-					ColumnNamePreprocess = ColumnNamePreprocessType.RemoveProviderPrefix,
+					ColumnNamePreprocess = TfColumnNamePreprocessType.RemoveProviderPrefix,
 				};
 
 				var createResult = tfService.CreateTemplate(createTemplateModel);
@@ -88,7 +88,7 @@ public partial class TfServiceTest : BaseTest
 					IsSelectable = true,
 					SettingsJson = "{}",
 					UserId = user.Id,
-					ColumnNamePreprocess = ColumnNamePreprocessType.None
+					ColumnNamePreprocess = TfColumnNamePreprocessType.None
 				};
 
 				var updateResult = tfService.UpdateTemplate(updateTemplateModel);

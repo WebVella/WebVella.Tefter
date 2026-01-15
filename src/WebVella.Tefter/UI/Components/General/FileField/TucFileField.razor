@@ -24,14 +24,13 @@ else
 	<FluentStack VerticalAlignment="@VerticalAlignment.Center" HorizontalGap="5">
 		@if (!String.IsNullOrWhiteSpace(Value))
 		{
-
-			<TucAnchor Href="@Value" IconStart="@TfConstants.GetIcon("ArrowDownload")" Appearance="Appearance.Outline" Target="_blank" />
-			<FluentTextField ReadOnly="true" Value="@_fileName" Style="width:100%" />
+			<TucAnchor Href="@Value" Appearance="Appearance.Outline" Target="_blank">@LOC("Download")</TucAnchor>
+			<FluentTextField ReadOnly="true" Value="@_fileName" Style="flex:1 1 auto;" />
 			@if (!String.IsNullOrWhiteSpace(_originalValue) && _originalValue != Value)
 			{
-				<FluentButton OnClick="_resetFile" Title="@LOC("download file")" IconStart="@TfConstants.GetIcon("ArrowReset")" />
+				<FluentButton OnClick="_resetFile" Appearance="Appearance.Outline" Title="@LOC("download file")" IconStart="@TfConstants.GetIcon("ArrowReset")" />
 			}
-			<FluentButton OnClick="_clearFile" IconStart="@TfConstants.GetIcon("Dismiss")!.WithColor(Color.Error)" />
+			<FluentButton OnClick="_clearFile" Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowSwap")">@LOC("Change")</FluentButton>
 		}
 		else
 		{

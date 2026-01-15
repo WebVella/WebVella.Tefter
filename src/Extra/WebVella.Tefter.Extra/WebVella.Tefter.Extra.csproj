@@ -19,8 +19,4 @@
     <ProjectReference Include="..\..\WebVella.Tefter\WebVella.Tefter.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="Addons\RecipeSteps\TfCreateIHSpaceStep\FormComponent\TfBookmarkRecipeStepForm.razor" />
-  </ItemGroup>
-
 </Project>
