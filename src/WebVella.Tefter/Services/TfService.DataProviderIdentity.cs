@@ -285,6 +285,15 @@ public partial class TfService : ITfService
 				if (provider is null)
 					throw new TfException("Failed to create new data provider identity");
 
+				//remove all dataset identities that use this data identity
+				var providerDataSets = GetDatasets(providerId: provider.Id);
+				foreach(var ds in providerDataSets)
+				{
+					var dsIdentities = ds.Identities.Where(x => x.DataIdentity == dataIdentity.DataIdentity);
+					foreach(var dsIdentity in dsIdentities)
+						DeleteDatasetIdentity(dsIdentity.Id);
+				}
+
 				string providerTableName = $"dp{provider.Index}";
 				string identityColumnName = $"tf_ide_{dataIdentity.DataIdentity}";
 				string identityColumnIndexName = $"ix_{providerTableName}_{identityColumnName}";
@@ -307,7 +316,7 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				return GetDataProvider(dataIdentity.DataProviderId);
+				return GetDataProvider(dataIdentity.DataProviderId)!;
 			}
 		}
 		catch (Exception ex)
