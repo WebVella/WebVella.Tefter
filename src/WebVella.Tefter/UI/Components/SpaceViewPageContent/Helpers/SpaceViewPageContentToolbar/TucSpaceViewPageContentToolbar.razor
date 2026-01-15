@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.UI.Components
 @inherits TfBaseComponent
 
-<TucScreenRegionComponent Region="@(new TfSpaceViewToolBarActionScreenRegion())" />
+<TucScreenRegionComponent Region="@_getToolbarActionsContext()" />
 @if (SpaceView.CanCreateRecords(Context.CurrentUser))
 {
 	<FluentButton OnClick="_onAddRowClick" Appearance="@Appearance.Outline" Title="@LOC("Add new row")">
@@ -104,9 +104,9 @@
 		<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" Color="@Color.Accent" />
 		</FluentButton> *@
 
-<TucSpaceViewActionSelector @ref="_actionSelector" SpaceView="SpaceView" SpaceData="SpaceData" 
+<TucSpaceViewActionSelector @ref="_actionSelector" SpaceView="SpaceView" SpaceData="Dataset" 
 							SpacePage="Context.SpacePage"
 							User=Context.CurrentUser Data="Data" SelectedRows="SelectedRows" />
 <TucSpaceViewShareSelector @ref="_shareSelector" SpaceView="SpaceView" Data="Data" SelectedRows="SelectedRows" />
-<TucSpaceViewSettingsSelector @ref="_settingsSelector" SpaceView="SpaceView" SpaceData="SpaceData" User=Context.CurrentUser 
+<TucSpaceViewSettingsSelector @ref="_settingsSelector" SpaceView="SpaceView" SpaceData="Dataset" User=Context.CurrentUser 
                               Data="Data" SelectedRows="SelectedRows"/>

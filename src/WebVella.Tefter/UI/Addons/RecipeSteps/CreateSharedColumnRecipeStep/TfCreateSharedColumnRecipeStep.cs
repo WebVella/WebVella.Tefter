@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.UI.Addons.RecipeSteps;
+﻿namespace WebVella.Tefter.UI.Addons;
 public class TfCreateSharedColumnRecipeStep : ITfRecipeStepAddon
 {
 	public Guid AddonId { get; init; } = new Guid("1b812109-b4f2-4d74-902c-b8365161a4b7");

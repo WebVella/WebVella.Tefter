@@ -1,0 +1,55 @@
+﻿@namespace WebVella.Tefter.Extra.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Change Process status")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
+		              Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false"
+		                  Style="margin-bottom: 1rem;">@_error</FluentMessageBar>
+	}
+
+	<FluentGrid>
+		<FluentGridItem xs="12">
+			<TucSelect Required="true"
+			           Id="step"
+			           Label="@LOC("Process Step")"
+			           Items="@_stepOptions"
+			           OptionValue="@((p) => (string?)p.Value)"
+			           OptionText="@((p) => p.Label)"
+			           TOption="TfSelectOption"
+			           Placeholder="@LOC("select a process step")"
+			           SelectedOption="_selectedStep"
+			           SelectedOptionChanged="@(x => _stepChanged(x))"
+			           Style="width:100%"/>
+		</FluentGridItem>
+		<FluentGridItem xs="12">
+			<TucSelect Required="true" Disabled="_selectedStep is null"
+			           Id="status"
+			           Label="@LOC("Step Status")"
+			           Items="@_statusOptions"
+			           OptionValue="@((p) => (string?)p.Value)"
+			           OptionText="@((p) => p.Label)"
+			           TOption="TfSelectOption"
+			           SelectedOption="_selectedStatus"
+			           Placeholder="@LOC("select a status")"
+			           SelectedOptionChanged="@(x => _statusChanged(x))"
+			           Style="width:100%"/>
+		</FluentGridItem>
+	</FluentGrid>
+
+</FluentDialogBody>

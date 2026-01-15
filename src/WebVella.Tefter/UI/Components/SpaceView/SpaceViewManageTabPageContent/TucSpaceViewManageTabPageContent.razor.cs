@@ -154,7 +154,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 			{
 				PreventDismissOnOverlayClick = true,
 				PreventScroll = true,
-				Width = TfConstants.DialogWidthSmall,
+				//Width = TfConstants.DialogWidthSmall,
 				TrapFocus = false
 			});
 		var result = await dialog.Result;

@@ -5,5 +5,11 @@
 /// </summary>
 public class TfSpaceViewToolBarActionScreenRegion : TfBaseScreenRegion
 {
-
+	public List<Guid> SelectedDataRows { get; set; } = new();
+	public TfDataTable Data { get; set; } = null!;
+	public TfSpacePage SpacePage { get; set; } = null!;
+	public TfSpaceView SpaceView { get; set; } = null!;
+	public TfDataset Dataset { get; set; } = null!;
+	public TfUser CurrentUser { get; set; } = null!;
+	public TucSpaceViewPageContent TucSpaceViewPageContent { get; set; } = null!;
 }

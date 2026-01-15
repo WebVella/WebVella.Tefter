@@ -1,0 +1,9 @@
+﻿@namespace WebVella.Tefter.Extra.Addons
+@inherits TfBaseComponent
+<FluentButton Appearance="Appearance.Accent"
+              Disabled="(RegionContext.SelectedDataRows.Count == 0)"
+              IconStart="@TfConstants.GetIcon("CubeTree")"
+              Title="@(RegionContext.SelectedDataRows.Count == 0 ? "select records first" : "click to select new status")"
+              OnClick="_clickHandler">
+    @LOC("Change Status")
+</FluentButton>

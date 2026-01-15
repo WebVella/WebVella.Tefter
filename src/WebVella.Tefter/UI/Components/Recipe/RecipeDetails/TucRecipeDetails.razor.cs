@@ -1,13 +1,9 @@
-﻿using System.Threading.Tasks;
-using WebVella.Tefter.UI.Addons.Recipes;
-using WebVella.Tefter.UI.Addons.RecipeSteps;
-
-namespace WebVella.Tefter.UI.Components;
+﻿namespace WebVella.Tefter.UI.Components;
 public partial class TucRecipeDetails : TfBaseComponent
 {
 	[Parameter] public Guid RecipeId { get; set; }
 
-	private ITfRecipeAddon _recipe;
+	private ITfOnboardRecipeAddon _onboardRecipe;
 
 	private bool _submitting = false;
 	private ITfRecipeStepAddon _activeStep;
@@ -20,11 +16,11 @@ public partial class TucRecipeDetails : TfBaseComponent
 		if (installData is not null)
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
-		_recipe = TfMetaService.GetRecipe(RecipeId);
-		if (_recipe is null)
+		_onboardRecipe = TfMetaService.GetOnboardRecipe(RecipeId);
+		if (_onboardRecipe is null)
 			throw new Exception("Recipe Id not found");
 		var position = 1;
-		foreach (var step in _recipe.Steps)
+		foreach (var step in _onboardRecipe.Steps)
 		{
 			if (step.Instance.Visible)
 				_visibleSteps.Add(step);
@@ -75,7 +71,7 @@ public partial class TucRecipeDetails : TfBaseComponent
 	}
 	private void _toList()
 	{
-		if(new BlankRecipeAddon().AddonId == RecipeId)
+		if(new BlankOnboardRecipeAddon().AddonId == RecipeId)
 			Navigator.NavigateTo(TfConstants.InstallPage);
 		else
 			Navigator.NavigateTo(TfConstants.InstallRecipesPage);
@@ -123,8 +119,8 @@ public partial class TucRecipeDetails : TfBaseComponent
 				_stepNext();
 				return;
 			}
-			_recipeResult = await TfService.ApplyRecipeAsync(_recipe);
-			_recipeResult.ApplyResultToSteps(_recipe.Steps);
+			_recipeResult = await TfService.ApplyRecipeAsync(_onboardRecipe);
+			_recipeResult.ApplyResultToSteps(_onboardRecipe.Steps);
 			var resultStepBase = _visibleSteps.Single(x => x.GetType() == typeof(TfResultRecipeStep));
 			var resultStep = (TfResultRecipeStep)resultStepBase;
 			((TfResultRecipeStepData)resultStep.Data).Result = _recipeResult;

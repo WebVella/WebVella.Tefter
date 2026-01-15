@@ -9,11 +9,10 @@ using WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Addons.RecipeSteps;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
 using WebVella.Tefter.UI.Addons;
-using WebVella.Tefter.UI.Addons.RecipeSteps;
 
-namespace WebVella.Tefter.Recipes.Addons.Recipes;
+namespace WebVella.Tefter.Recipes.Addons;
 
-public class GeoTalkRecipeAddon : ITfRecipeAddon
+public class GeoTalkOnboardRecipeAddon : ITfOnboardRecipeAddon
 {
     public Guid AddonId { get; init; } = new Guid("b8f2c8ae-cc42-4c90-9f22-289498b4dffb");
     public string AddonName { get; init; } = "Geo Team";
@@ -24,7 +23,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
     public string Website { get; init; } = "https://tefter.webvella.com";
     public List<ITfRecipeStepAddon> Steps { get; init; } = new();
 
-    public GeoTalkRecipeAddon()
+    public GeoTalkOnboardRecipeAddon()
     {
         var adminUserId = Guid.NewGuid();
         var regularUserId = Guid.NewGuid();

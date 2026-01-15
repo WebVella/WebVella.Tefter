@@ -12,11 +12,14 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 	private FluentSearch? _searchInput = null;
 	private int _selectedIndex = 0;
 	private DotNetObjectReference<TucSpaceFinderDialog>? _objectRef = null;
+	private IAsyncDisposable? _spaceEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		try
 		{
+			if (_spaceEventSubscriber is not null)
+				await _spaceEventSubscriber.DisposeAsync();
 			await JSRuntime.InvokeAsync<object>("Tefter.removeArrowsKeyListener", ComponentId.ToString());
 			await JSRuntime.InvokeAsync<object>("Tefter.removeEnterKeyListener", ComponentId.ToString());
 		}
@@ -37,6 +40,9 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 		_currentSpaceId = state.NavigationState.SpaceId;
 		_objectRef = DotNetObjectReference.Create(this);
 		_init(null);
+		_spaceEventSubscriber = await TfEventBus.SubscribeAsync<TfSpaceEventPayload>(
+			handler: On_SpaceEventAsync,
+			matchKey: (_) => true);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -54,6 +60,14 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 			}
 			catch { }
 		}
+	}
+
+	private Task On_SpaceEventAsync(string? key, TfSpaceEventPayload? payload)
+	{
+		if (payload is null) return Task.CompletedTask;
+		_allSpaces = TfService.GetSpacesListForUser(Content.Id);
+		_init(_search);
+		return Task.CompletedTask;
 	}
 
 	private void _init(string? search)
@@ -94,8 +108,8 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 
 	private async Task _addSpace()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TucSpaceManageDialog>(
-			new TfSpace(),
+		var dialog = await DialogService.ShowDialogAsync<TucSpaceCreateDialog>(
+			new TucSpaceCreateDialogContext(),
 			new()
 			{
 				PreventDismissOnOverlayClick = true,
@@ -103,13 +117,13 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 				Width = TfConstants.DialogWidthLarge,
 				TrapFocus = false
 			});
-		var result = await dialog.Result;
-		if (result is { Cancelled: false, Data: not null })
-		{
-			var space = (TfSpace)result.Data;
-			Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, space.Id));
-			await Dialog.CloseAsync();
-		}
+		// var result = await dialog.Result;
+		// if (result is { Cancelled: false, Data: not null })
+		// {
+		// 	var space = (TfSpace)result.Data;
+		// 	Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, space.Id));
+		// 	await Dialog.CloseAsync();
+		// }
 	}
 
 	private async Task _adminNavigation()
@@ -154,5 +168,4 @@ public partial class TucSpaceFinderDialog : TfBaseComponent, IDialogContentCompo
 	{
 		await _selectSpace(_options[_selectedIndex]);
 	}
-
 }

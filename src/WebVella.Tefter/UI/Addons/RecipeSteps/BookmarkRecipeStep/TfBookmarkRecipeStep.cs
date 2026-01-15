@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Services;
-
-namespace WebVella.Tefter.UI.Addons.RecipeSteps;
+﻿namespace WebVella.Tefter.UI.Addons;
 public class TfBookmarkRecipeStep : ITfRecipeStepAddon
 {
 	//addon

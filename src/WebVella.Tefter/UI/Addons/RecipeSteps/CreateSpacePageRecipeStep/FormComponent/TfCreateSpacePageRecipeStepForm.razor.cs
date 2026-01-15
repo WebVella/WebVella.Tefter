@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.UI.Addons.RecipeSteps;
+﻿namespace WebVella.Tefter.UI.Addons;
 public partial class TfCreateSpacePageRecipeStepForm : TfRecipeStepFormBase
 {
 	[Parameter] public TfCreateSpacePageRecipeStep Addon { get; set; }

@@ -2,8 +2,8 @@
 
 public partial class TucSpacePageManageTabContent : TfBaseComponent, IAsyncDisposable
 {
-	private TfSpace _space = null!;
-	private TfSpacePage _spacePage = null!;
+	private TfSpace? _space = null;
+	private TfSpacePage? _spacePage = null;
 	private IAsyncDisposable? _spacePageUpdatedEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
@@ -34,7 +34,7 @@ public partial class TucSpacePageManageTabContent : TfBaseComponent, IAsyncDispo
 	private async Task On_SpacePageUpdatedEventAsync(string? key, TfSpacePageUpdatedEventPayload? payload)
 	{
 		if(payload is null) return;
-		if(payload.SpacePage.Id != _spacePage.Id) return;
+		if(payload.SpacePage.Id != _spacePage?.Id) return;
 		if(key == TfAuthLayout.GetSessionId().ToString())
 			await _init(TfAuthLayout.GetState().NavigationState);
 		else
@@ -47,11 +47,10 @@ public partial class TucSpacePageManageTabContent : TfBaseComponent, IAsyncDispo
 		{
 			if (navState.SpaceId is null)
 				throw new Exception("Space Id not found in URL");
-			_space = TfService.GetSpace(navState.SpaceId.Value) ?? throw new Exception("Space not found");
 			if (navState.SpacePageId is null)
 				throw new Exception("Page Id not found in URL");
-			_spacePage = TfService.GetSpacePage(navState.SpacePageId.Value) ??
-			             throw new Exception("Space page not found");
+			_space = TfService.GetSpace(navState.SpaceId.Value);			
+			_spacePage = TfService.GetSpacePage(navState.SpacePageId.Value);
 		}
 		finally
 		{
@@ -64,11 +63,11 @@ public partial class TucSpacePageManageTabContent : TfBaseComponent, IAsyncDispo
 	{
 		var dict = new Dictionary<string, object> { ["Context"] = new TfSpacePageAddonContext
 			{
-				ComponentOptionsJson = _spacePage.ComponentOptionsJson,
-				Icon = _spacePage.FluentIconName,
+				ComponentOptionsJson = _spacePage!.ComponentOptionsJson,
+				Icon = _spacePage!.FluentIconName,
 				Mode = TfComponentMode.Manage,
-				SpacePage = _spacePage,
-				Space = _space,
+				SpacePage = _spacePage!,
+				Space = _space!,
 				CurrentUser = TfAuthLayout.GetState().User,
 			}
 		};

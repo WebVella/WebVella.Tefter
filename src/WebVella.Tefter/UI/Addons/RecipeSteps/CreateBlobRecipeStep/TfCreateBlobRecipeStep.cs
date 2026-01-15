@@ -1,5 +1,5 @@
 ﻿
-namespace WebVella.Tefter.UI.Addons.RecipeSteps;
+namespace WebVella.Tefter.UI.Addons;
 public class TfCreateBlobRecipeStep : ITfRecipeStepAddon
 {
 	public Guid AddonId { get; init; } = new Guid("7c7eb937-46d8-4814-9f1a-d4f3ab770d26");

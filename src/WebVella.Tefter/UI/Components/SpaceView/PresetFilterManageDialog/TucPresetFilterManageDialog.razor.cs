@@ -166,8 +166,10 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent,
 					preset: _form);					
 				ToastService.ShowSuccess(LOC("Preset Filter updated!"));
 			}
+
+			var spaceView = TfService.GetSpaceView(Content.SpaceView.Id)!;
 			await TfEventBus.PublishAsync(key:TfAuthLayout.GetSessionId(), 
-				payload: new TfSpaceViewUpdatedEventPayload(Content.SpaceView!));					
+				payload: new TfSpaceViewUpdatedEventPayload(spaceView));					
 			await Dialog.CloseAsync(_form);
 		}
 		catch (Exception ex)

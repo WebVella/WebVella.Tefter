@@ -140,9 +140,10 @@ public sealed partial class TucSelect<TOption> : TfBaseComponent where TOption :
 			await Task.Delay(1);
 			await InvokeAsync(StateHasChanged);
 			_shouldRender = true;
-			await Task.Delay(1);
+			await Task.Delay(1); 
 			await InvokeAsync(StateHasChanged);
 		}
+		await InvokeAsync(StateHasChanged);
 	}
 
 	private string? _getPlacehoder()

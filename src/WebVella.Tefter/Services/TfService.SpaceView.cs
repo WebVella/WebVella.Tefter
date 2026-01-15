@@ -155,7 +155,9 @@ public partial class TfService
 						Id = Guid.NewGuid(),
 						Name = spaceViewExt.Name,
 						DatasetId = dataset.Id,
-						Presets = spaceViewExt.Presets,
+						Presets = spaceViewTemplate is null
+							? spaceViewExt.Presets
+							: spaceViewTemplate.Presets,
 						SettingsJson = spaceViewTemplate is null
 							? JsonSerializer.Serialize(spaceViewExt.Settings)
 							: JsonSerializer.Serialize(spaceViewTemplate.Settings),
