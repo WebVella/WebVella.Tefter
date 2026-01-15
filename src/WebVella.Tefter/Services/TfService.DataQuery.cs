@@ -483,7 +483,7 @@ public partial class TfService
 			case TfDatabaseColumnType.Text:
 			case TfDatabaseColumnType.ShortText:
 				{
-					List<string> result = new List<string>();
+					List<string?> result = new List<string?>();
 					foreach (var jObj in jArr)
 					{
 						string stringValue = ((JToken)jObj[providerColumn.DbName]).ToObject<string>();

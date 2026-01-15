@@ -353,7 +353,7 @@ public sealed class TfDataTable
 		DataTable dt = new DataTable();
 		foreach (var column in this.Columns)
 		{
-			var columnType = GetTypeForDatabaseColumnType(column.DbType);
+			var columnType = GetTypeForDatabaseColumn(column);
 			dt.Columns.Add(column.Name, columnType);
 		}
 
@@ -363,30 +363,61 @@ public sealed class TfDataTable
 		return dt;
 	}
 
-	private Type GetTypeForDatabaseColumnType(TfDatabaseColumnType dbType)
+	private Type GetTypeForDatabaseColumn(TfDataColumn column)
 	{
-		switch (dbType)
+		var dbType = column.DbType;
+		if (column.Origin == TfDataColumnOriginType.JoinedProviderColumn)
 		{
-			case TfDatabaseColumnType.Guid:
-				return typeof(Guid);
-			case TfDatabaseColumnType.ShortText:
-				return typeof(string);
-			case TfDatabaseColumnType.Text:
-				return typeof(string);
-			case TfDatabaseColumnType.ShortInteger:
-				return typeof(short);
-			case TfDatabaseColumnType.Integer:
-				return typeof(int);
-			case TfDatabaseColumnType.LongInteger:
-				return typeof(long);
-			case TfDatabaseColumnType.Number:
-				return typeof(decimal);
-			case TfDatabaseColumnType.DateOnly:
-				return typeof(DateOnly);
-			case TfDatabaseColumnType.DateTime:
-				return typeof(DateTime);
-			default:
-				throw new Exception("Type is not supported");
+			switch (dbType)
+			{
+				case TfDatabaseColumnType.Guid:
+					return typeof(List<Guid?>);
+				case TfDatabaseColumnType.ShortText:
+					return typeof(List<string?>);
+				case TfDatabaseColumnType.Text:
+					return typeof(List<string?>);
+				case TfDatabaseColumnType.ShortInteger:
+					return typeof(List<short?>);
+				case TfDatabaseColumnType.Integer:
+					return typeof(List<int?>);
+				case TfDatabaseColumnType.LongInteger:
+					return typeof(List<long?>);
+				case TfDatabaseColumnType.Number:
+					return typeof(List<decimal?>);
+				case TfDatabaseColumnType.DateOnly:
+					return typeof(List<DateOnly?>);
+				case TfDatabaseColumnType.DateTime:
+					return typeof(List<DateTime?>);
+				default:
+					throw new Exception("Type is not supported");
+			}
+		}
+		else
+		{
+			
+			switch (dbType)
+			{
+				case TfDatabaseColumnType.Guid:
+					return typeof(Guid);
+				case TfDatabaseColumnType.ShortText:
+					return typeof(string);
+				case TfDatabaseColumnType.Text:
+					return typeof(string);
+				case TfDatabaseColumnType.ShortInteger:
+					return typeof(short);
+				case TfDatabaseColumnType.Integer:
+					return typeof(int);
+				case TfDatabaseColumnType.LongInteger:
+					return typeof(long);
+				case TfDatabaseColumnType.Number:
+					return typeof(decimal);
+				case TfDatabaseColumnType.DateOnly:
+					return typeof(DateOnly);
+				case TfDatabaseColumnType.DateTime:
+					return typeof(DateTime);
+				default:
+					throw new Exception("Type is not supported");
+			}
 		}
 	}
 }
