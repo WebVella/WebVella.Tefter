@@ -245,6 +245,19 @@ public partial class TfService
 				RuleFor(dataIdentity => dataIdentity.DataIdentity)
 					.Must((dataIdentity, dataIdentityKey) =>
 					{
+						var datasets = _tfService.GetDatasets();
+						foreach(var dataset in datasets)
+						{
+							if (dataset.Identities.Any(x => x.DataIdentity == dataIdentityKey))
+								return false;
+						}
+						return true;
+					})
+					.WithMessage("Data identity cannot be deleted while it is used by any dataset.");
+
+				RuleFor(dataIdentity => dataIdentity.DataIdentity)
+					.Must((dataIdentity, dataIdentityKey) =>
+					{
 						var sharedColumns = _tfService.GetSharedColumns();	
 						return sharedColumns.Count(x=>x.DataIdentity == dataIdentity.DataIdentity) == 0;
 					})
