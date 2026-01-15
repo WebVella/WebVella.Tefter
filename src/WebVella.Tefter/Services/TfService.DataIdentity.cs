@@ -164,9 +164,11 @@ public partial class TfService
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
 
-						return !dbName.StartsWith("tf_");
+						return !dbName.StartsWith("tf_") &&
+								!dbName.StartsWith("dp") &&
+								!dbName.StartsWith("sc_");
 					})
-					.WithMessage("The identity name cannot start with 'tf_'.");
+					.WithMessage("The identity name cannot start with 'tf_','dp' and 'sc_'.");
 
 
 				RuleFor(dataIdentity => dataIdentity.DataIdentity)
