@@ -17,6 +17,7 @@ public record TfTemplate
 	public string Description { get; set; }
 	public string FluentIconName { get; set; }
 	public List<Guid> SpaceDataList { get; set; } = new();
+	public List<string> RequiredColumnsList { get; set; } = new();
 	public bool IsEnabled { get; set; } = true;
 	public bool IsSelectable { get; set; } = true;
 	public TfTemplateResultType ResultType { get; set; }
@@ -44,4 +45,5 @@ public record TfManageTemplateModel
 	public TfColumnNamePreprocessType ColumnNamePreprocess { get; set; } = TfColumnNamePreprocessType.None;
 	public Guid? UserId { get; set; }
 	public List<Guid> SpaceDataList { get; set; } = new();
+	public List<string> RequiredColumnsList { get; set; } = new();
 }

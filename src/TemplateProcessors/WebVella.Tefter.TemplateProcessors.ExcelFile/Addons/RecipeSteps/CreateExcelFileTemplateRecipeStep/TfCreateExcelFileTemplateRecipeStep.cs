@@ -34,6 +34,7 @@ public class TfCreateExcelFileTemplateRecipeStep : ITfRecipeStepAddon
 			IsSelectable = step.IsSelectable,
 			SettingsJson = step.SettingsJson,
 			SpaceDataList = step.SpaceDataList,
+			RequiredColumnsList = step.RequiredColumnsList,
 			UserId = null
 		});
 
@@ -56,6 +57,7 @@ public class TfCreateExcelFileTemplateRecipeStepData : ITfRecipeStepAddonData
 	public bool IsSelectable { get; set; } = true;
 	public string SettingsJson { get; set; } = "{}";
 	public List<Guid> SpaceDataList { get; set; } = new();
+	public List<string> RequiredColumnsList { get; set; } = new();
 	/// <summary>
 	/// will be used if an uploaded file is needed
 	/// </summary>

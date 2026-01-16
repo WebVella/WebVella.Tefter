@@ -40,6 +40,7 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 			SettingsJson = Content.SettingsJson,
 			UserId = TfAuthLayout.GetState().User.Id,
 			SpaceDataList = Content.SpaceDataList,
+			RequiredColumnsList = Content.RequiredColumnsList,
 			ColumnNamePreprocess = Content.ColumnNamePreprocess,
 		};
 		if (_form.ContentProcessorType is not null 
