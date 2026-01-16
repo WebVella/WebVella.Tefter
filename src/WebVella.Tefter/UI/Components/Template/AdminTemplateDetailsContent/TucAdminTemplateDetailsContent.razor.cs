@@ -3,7 +3,6 @@
 public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IAsyncDisposable
 {
 	private TfTemplate? _template = null;
-	private List<TfDatasetAsOption> _spaceDataSelection = new();
 	private TfTemplateProcessorDisplaySettingsScreenRegion? _dynamicComponentContext = null;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
 	private ITfTemplateProcessorAddon? _processor = null;
@@ -63,8 +62,7 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IAsyncDis
 			}
 
 			if (_template is null) return;
-			_spaceDataSelection = TfService.GetSpaceDataOptionsForTemplate()
-				.Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
+
 			if (_template.ContentProcessorType is not null &&
 			    _template.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 			{
@@ -155,9 +153,6 @@ public partial class TucAdminTemplateDetailsContent : TfBaseComponent, IAsyncDis
 		if (!result.Cancelled && result.Data != null)
 		{
 			_template = (TfTemplate)result.Data;
-
-			_spaceDataSelection = TfService.GetSpaceDataOptionsForTemplate()
-				.Where(x => _template.SpaceDataList.Contains(x.Id)).ToList();
 		}
 	}
 }

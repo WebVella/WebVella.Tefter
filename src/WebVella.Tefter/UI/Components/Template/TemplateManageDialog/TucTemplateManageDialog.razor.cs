@@ -15,10 +15,6 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 	private ReadOnlyCollection<ITfTemplateProcessorAddon> _processors = null!;
 	private ITfTemplateProcessorAddon? _selectedProcessor = null;
 
-	private List<TfDatasetAsOption> _datasetsAll = new();
-	private List<TfDatasetAsOption> _datasetOptions = new();
-	private List<TfDatasetAsOption> _spaceDataSelection = new();
-	private TfDatasetAsOption? _datasetOption = null;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -39,7 +35,6 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 			Name = Content.Name,
 			SettingsJson = Content.SettingsJson,
 			UserId = TfAuthLayout.GetState().User.Id,
-			SpaceDataList = Content.SpaceDataList,
 			RequiredColumnsList = Content.RequiredColumnsList,
 			ColumnNamePreprocess = Content.ColumnNamePreprocess,
 		};
@@ -69,8 +64,6 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 		{
 			_form.FluentIconName = _selectedProcessor.ResultType.GetFluentIcon();
 		}
-		_datasetsAll = TfService.GetSpaceDataOptionsForTemplate();
-		_recalcSpaceDataOptions();
 		InitForm(_form);
 	}
 
@@ -131,35 +124,6 @@ public partial class TucTemplateManageDialog : TfFormBaseComponent, IDialogConte
 		_selectedProcessor = item;
 		_form.ContentProcessorType = _selectedProcessor.GetType();
 	}
-
-	private void _recalcSpaceDataOptions()
-	{
-		_spaceDataSelection = new();
-		_datasetOptions = _datasetsAll.ToList();
-		foreach (var item in _form.SpaceDataList)
-		{
-			var attachment = _datasetsAll.Where(x => x.Id == item).FirstOrDefault();
-			if (attachment is null) continue;
-			_spaceDataSelection.Add(attachment);
-			_datasetOptions = _datasetOptions.Where(x => x.Id != item).ToList();
-		}
-	}
-
-	private void _spaceDataOptionChanged(TfDatasetAsOption option)
-	{
-		_datasetOption = null;
-		bool isSelected = _form.SpaceDataList.Contains(option.Id);
-		if (isSelected) return;
-		_form.SpaceDataList.Add(option.Id);
-		_recalcSpaceDataOptions();
-	}
-
-	private void _removeItem(TfDatasetAsOption item)
-	{
-		var index = _form.SpaceDataList.FindIndex(x => x == item.Id);
-		if (index == -1) return;
-		_form.SpaceDataList.RemoveAt(index);
-		_recalcSpaceDataOptions();
-	}
+	
 }
 

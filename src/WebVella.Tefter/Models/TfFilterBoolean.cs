@@ -44,6 +44,15 @@ public record TfFilterBoolean : TfFilterBase
 		else
 			Value = null;
 	}
+	
+	public void ValueStringChanged(string? value)
+	{
+		if (String.IsNullOrWhiteSpace(value)) Value = null;
+		else if (Boolean.TryParse(value, out Boolean outVal))
+			Value = value;
+		else
+			Value = null;
+	}	
 
 	public TfFilterBoolean() : base(String.Empty, String.Empty) { }
 	public TfFilterBoolean(int comparisonMethodInt) : base(String.Empty, String.Empty)

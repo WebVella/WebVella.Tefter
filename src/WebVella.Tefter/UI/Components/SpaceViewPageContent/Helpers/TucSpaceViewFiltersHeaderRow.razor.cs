@@ -228,7 +228,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 	}
 
 
-	private async Task _valueChanged(string queryName, object? valueObj,
+	private async Task _valueChanged(string queryName, string? valueJson,
 		bool processMethod = false, object? methodObj = null)
 	{
 		var updateObj = _filters.FirstOrDefault(x => x.QueryName == queryName);
@@ -250,8 +250,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 			}
 
 			{
-				var value = (Option<string>?)valueObj;
-				baseFilter.ValueOptionChanged(value);
+				baseFilter.ValueStringChanged(valueJson);
 				updateObj.Value = baseFilter.Value;
 			}
 		}
@@ -267,7 +266,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 			}
 
 			{
-				baseFilter.ValueStringChanged(((string?)valueObj)?.Trim());
+				baseFilter.ValueStringChanged(((string?)valueJson)?.Trim());
 				updateObj.Value = baseFilter.Value;
 			}
 		}
@@ -282,10 +281,10 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 			}
 
 			{
-				var value = (string?)valueObj;
-				if (!String.IsNullOrWhiteSpace(value) && !Guid.TryParse(value, out Guid _))
+
+				if (!String.IsNullOrWhiteSpace(valueJson) && !Guid.TryParse(valueJson, out Guid _))
 					ToastService.ShowError(LOC("Invalid GUID value"));
-				baseFilter.ValueStringChanged(value);
+				baseFilter.ValueStringChanged(valueJson);
 				updateObj.Value = baseFilter.Value;
 			}
 		}
@@ -302,7 +301,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 			}
 
 			{
-				baseFilter.ValueChanged((decimal?)(long?)valueObj);
+				baseFilter.ValueStringChanged(valueJson);
 				updateObj.Value = baseFilter.Value;
 			}
 		}
@@ -317,7 +316,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 			}
 
 			{
-				baseFilter.ValueChanged((decimal?)valueObj);
+				baseFilter.ValueStringChanged(valueJson);
 				updateObj.Value = baseFilter.Value;
 			}
 		}
@@ -333,7 +332,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 			}
 
 			{
-				baseFilter.ValueChanged(((string?)valueObj)?.Trim());
+				baseFilter.ValueChanged(((string?)valueJson)?.Trim());
 				updateObj.Value = baseFilter.Value;
 			}
 		}

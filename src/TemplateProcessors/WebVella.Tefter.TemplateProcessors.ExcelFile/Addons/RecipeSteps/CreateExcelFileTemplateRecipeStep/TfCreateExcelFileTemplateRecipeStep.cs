@@ -33,7 +33,6 @@ public class TfCreateExcelFileTemplateRecipeStep : ITfRecipeStepAddon
 			IsEnabled = step.IsEnabled,
 			IsSelectable = step.IsSelectable,
 			SettingsJson = step.SettingsJson,
-			SpaceDataList = step.SpaceDataList,
 			RequiredColumnsList = step.RequiredColumnsList,
 			UserId = null
 		});

@@ -999,7 +999,6 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 					.AddShortTextColumn("name", c => { c.NotNullable(); })
 					.AddShortTextColumn("icon", c => { c.Nullable(); })
 					.AddTextColumn("description", c => { c.Nullable().WithDefaultValue(""); })
-					.AddTextColumn("space_data_json", c => { c.NotNullable().WithDefaultValue("[]"); })
 					.AddTextColumn("required_columns_json", c => { c.NotNullable().WithDefaultValue("[]"); })
 					.AddBooleanColumn("is_enabled", c => { c.NotNullable().WithDefaultValue(true); })
 					.AddBooleanColumn("is_selectable", c => { c.NotNullable().WithDefaultValue(true); })

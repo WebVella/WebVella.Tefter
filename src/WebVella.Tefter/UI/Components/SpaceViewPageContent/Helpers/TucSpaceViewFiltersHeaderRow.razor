@@ -27,7 +27,7 @@
                             {
                                 <TucSelect
                                     SelectedOption="@(baseFilter.ValueOptions.FirstOrDefault(x => x.Value == queryFilter.Value))"
-                                    SelectedOptionChanged="@((value) => _valueChanged(column.QueryName, value))"
+                                    SelectedOptionChanged="@((value) => _valueChanged(column.QueryName, value?.ToString()))"
                                     TOption="Option<string>" Required="false"
                                     OptionText="@((p) => p.Text)"
                                     OptionValue="@((p) => p.Value)"
@@ -101,14 +101,49 @@
 
                             if (column.Settings.FilterPresentation == TfSpaceViewColumnSettingsFilterPresentation.VisibleWithOptions)
                             {
-                                <FluentPopover Style="width: 300px;" AnchorId="@($"btn-{column.Id}")"
+                                var popoverBaseFilter = (TfFilterDateTime)_popoverBaseFilterDict[column.QueryName];
+                                var popoverFilter = _popoverQueryFilterDict[column.QueryName];
+                                <FluentPopover Style="width: calc( 300px + 2rem);" AnchorId="@($"btn-{column.Id}")"
                                                Open="@(column.Id == _openedFilterId)"
-                                               OpenChanged="@((opened) => _openedFilterId = opened ? column.Id : null)"
+                                               OpenChanged="@((opened) => _popoverOpenChanged(opened, column))"
                                                AutoFocus="false">
                                     <Body>
-                                    Callout Body (no header)
+                                    <div style="display:flex;flex-flow: column; gap:10px;">
+                                        <TucSelect
+                                            SelectedOption="@((TfFilterDateTimeComparisonMethod)popoverFilter.Method)"
+                                            SelectedOptionChanged="@((value) =>
+                                                                   {
+                                                                       popoverFilter.Method = (int)value;
+                                                                       popoverBaseFilter.ComparisonMethod = value;
+                                                                   })"
+                                            TOption="TfFilterDateTimeComparisonMethod" Required="true"
+                                            Items="@(Enum.GetValues<TfFilterDateTimeComparisonMethod>())"
+                                            Style="flex:1 1 100%"
+                                            OptionValue="@((p) => ((int)p).ToString())"
+                                            OptionText="@((p) => LOC(p.ToDescriptionString()))"/>
+                                        @if (popoverBaseFilter.RequiresValue)
+                                        {
+                                            <FluentStack HorizontalGap="2">
+                                                <FluentTextField Value="@popoverFilter.Value"
+                                                                 ValueChanged="@((value) => popoverFilter.Value = value?.ToString())"
+                                                                 AutoComplete="off"
+                                                                 Placeholder="@($"{TfConstants.DateTimeFormatInput}, now()... ")" Style="flex:1 1 100%" />
+                                                <FluentButton Id="@($"tf-{column.QueryName}")" IconStart="@TfConstants.GetIcon("QuestionCircle")" Disabled=true />
+                                                <FluentTooltip Anchor="@($"tf-{column.QueryName}")">
+                                                    @((MarkupString)LOC("for dynamic date use one of the following:{0}", "<br/> now(+- decimal hours),<br/> day(+- decimal days),<br/> month(+- decimal months),<br/> year(+- decimal year)"))
+                                                </FluentTooltip>
+                                            </FluentStack>                                            
+                                        }
+                                    </div>
                                     </Body>
-                                    <Footer>Callout Footer</Footer>
+                                    <Footer>
+                                        <FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween">
+                                            <FluentButton Appearance="Appearance.Outline"
+                                                          OnClick="@(() => _popoverClear(column))">@LOC("Clear")</FluentButton>
+                                            <FluentButton Appearance="Appearance.Accent"
+                                                          OnClick="@(() => _popoverSubmit(column))">@LOC("Submit")</FluentButton>
+                                        </FluentStack>
+                                    </Footer>
                                 </FluentPopover>
                             }
                         }
@@ -126,14 +161,43 @@
 
                             if (column.Settings.FilterPresentation == TfSpaceViewColumnSettingsFilterPresentation.VisibleWithOptions)
                             {
-                                <FluentPopover Style="width: 300px;" AnchorId="@($"btn-{column.Id}")"
+                                var popoverBaseFilter = (TfFilterGuid)_popoverBaseFilterDict[column.QueryName];
+                                var popoverFilter = _popoverQueryFilterDict[column.QueryName];
+                                <FluentPopover Style="width: calc( 300px + 2rem);" AnchorId="@($"btn-{column.Id}")"
                                                Open="@(column.Id == _openedFilterId)"
-                                               OpenChanged="@((opened) => _openedFilterId = opened ? column.Id : null)"
+                                               OpenChanged="@((opened) => _popoverOpenChanged(opened, column))"
                                                AutoFocus="false">
                                     <Body>
-                                    Callout Body (no header)
+                                    <div style="display:flex;flex-flow: column; gap:10px;">
+                                        <TucSelect
+                                            SelectedOption="@((TfFilterGuidComparisonMethod)popoverFilter.Method)"
+                                            SelectedOptionChanged="@((value) =>
+                                                                   {
+                                                                       popoverFilter.Method = (int)value;
+                                                                       popoverBaseFilter.ComparisonMethod = value;
+                                                                   })"
+                                            TOption="TfFilterGuidComparisonMethod" Required="true"
+                                            Items="@(Enum.GetValues<TfFilterGuidComparisonMethod>())"
+                                            Style="flex:1 1 100%"
+                                            OptionValue="@((p) => ((int)p).ToString())"
+                                            OptionText="@((p) => LOC(p.ToDescriptionString()))"/>
+                                        @if (popoverBaseFilter.RequiresValue)
+                                        {
+                                            <FluentTextField Value="@popoverFilter.Value"
+                                                             ValueChanged="@((value) => popoverFilter.Value = value)"
+                                                             AutoComplete="off"
+                                                             Placeholder="@LOC("no value")" Style="flex:1 1 100%"/>
+                                        }
+                                    </div>
                                     </Body>
-                                    <Footer>Callout Footer</Footer>
+                                    <Footer>
+                                        <FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween">
+                                            <FluentButton Appearance="Appearance.Outline"
+                                                          OnClick="@(() => _popoverClear(column))">@LOC("Clear")</FluentButton>
+                                            <FluentButton Appearance="Appearance.Accent"
+                                                          OnClick="@(() => _popoverSubmit(column))">@LOC("Submit")</FluentButton>
+                                        </FluentStack>
+                                    </Footer>
                                 </FluentPopover>
                             }
                         }
@@ -147,21 +211,51 @@
                             {
                                 <FluentNumberField Value="@queryFilter.Value.ToNullableLong()"
                                                    TValue="long?"
-                                                   ValueChanged="@((value) => _valueChanged(column.QueryName, value))"
+                                                   ValueChanged="@((value) => _valueChanged(column.QueryName, value?.ToString()))"
                                                    AutoComplete="off"
                                                    Placeholder="@LOC(baseFilter.ComparisonMethod.ToDescriptionString())"/>
                             }
 
                             if (column.Settings.FilterPresentation == TfSpaceViewColumnSettingsFilterPresentation.VisibleWithOptions)
                             {
-                                <FluentPopover Style="width: 300px;" AnchorId="@($"btn-{column.Id}")"
+                                var popoverBaseFilter = (TfFilterNumeric)_popoverBaseFilterDict[column.QueryName];
+                                var popoverFilter = _popoverQueryFilterDict[column.QueryName];
+                                <FluentPopover Style="width: calc( 300px + 2rem);" AnchorId="@($"btn-{column.Id}")"
                                                Open="@(column.Id == _openedFilterId)"
-                                               OpenChanged="@((opened) => _openedFilterId = opened ? column.Id : null)"
+                                               OpenChanged="@((opened) => _popoverOpenChanged(opened, column))"
                                                AutoFocus="false">
                                     <Body>
-                                    Callout Body (no header)
+                                    <div style="display:flex;flex-flow: column; gap:10px;">
+                                        <TucSelect
+                                            SelectedOption="@((TfFilterNumericComparisonMethod)popoverFilter.Method)"
+                                            SelectedOptionChanged="@((value) =>
+                                                                   {
+                                                                       popoverFilter.Method = (int)value;
+                                                                       popoverBaseFilter.ComparisonMethod = value;
+                                                                   })"
+                                            TOption="TfFilterNumericComparisonMethod" Required="true"
+                                            Items="@(Enum.GetValues<TfFilterNumericComparisonMethod>())"
+                                            Style="flex:1 1 100%"
+                                            OptionValue="@((p) => ((int)p).ToString())"
+                                            OptionText="@((p) => LOC(p.ToDescriptionString()))"/>
+                                        @if (popoverBaseFilter.RequiresValue)
+                                        {
+                                            <FluentNumberField Value="@popoverFilter.Value.ToNullableLong()"
+                                                               TValue="long?"
+                                                               ValueChanged="@((value) => popoverFilter.Value = value?.ToString())"
+                                                               AutoComplete="off"
+                                                               Placeholder="@LOC("no value")" Style="flex:1 1 100%"/>
+                                        }
+                                    </div>
                                     </Body>
-                                    <Footer>Callout Footer</Footer>
+                                    <Footer>
+                                        <FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween">
+                                            <FluentButton Appearance="Appearance.Outline"
+                                                          OnClick="@(() => _popoverClear(column))">@LOC("Clear")</FluentButton>
+                                            <FluentButton Appearance="Appearance.Accent"
+                                                          OnClick="@(() => _popoverSubmit(column))">@LOC("Submit")</FluentButton>
+                                        </FluentStack>
+                                    </Footer>
                                 </FluentPopover>
                             }
                         }
@@ -173,21 +267,51 @@
                             {
                                 <FluentNumberField Value="@queryFilter.Value.ToNullableDecimal()"
                                                    TValue="decimal?"
-                                                   ValueChanged="@((value) => _valueChanged(column.QueryName, value))"
+                                                   ValueChanged="@((value) => _valueChanged(column.QueryName, value?.ToString()))"
                                                    AutoComplete="off"
                                                    Placeholder="@LOC(baseFilter.ComparisonMethod.ToDescriptionString())"/>
                             }
 
                             if (column.Settings.FilterPresentation == TfSpaceViewColumnSettingsFilterPresentation.VisibleWithOptions)
                             {
-                                <FluentPopover Style="width: 300px;" AnchorId="@($"btn-{column.Id}")"
+                                var popoverBaseFilter = (TfFilterNumeric)_popoverBaseFilterDict[column.QueryName];
+                                var popoverFilter = _popoverQueryFilterDict[column.QueryName];
+                                <FluentPopover Style="width: calc( 300px + 2rem);" AnchorId="@($"btn-{column.Id}")"
                                                Open="@(column.Id == _openedFilterId)"
-                                               OpenChanged="@((opened) => _openedFilterId = opened ? column.Id : null)"
+                                               OpenChanged="@((opened) => _popoverOpenChanged(opened, column))"
                                                AutoFocus="false">
                                     <Body>
-                                    Callout Body (no header)
+                                    <div style="display:flex;flex-flow: column; gap:10px;">
+                                        <TucSelect
+                                            SelectedOption="@((TfFilterNumericComparisonMethod)popoverFilter.Method)"
+                                            SelectedOptionChanged="@((value) =>
+                                                                   {
+                                                                       popoverFilter.Method = (int)value;
+                                                                       popoverBaseFilter.ComparisonMethod = value;
+                                                                   })"
+                                            TOption="TfFilterNumericComparisonMethod" Required="true"
+                                            Items="@(Enum.GetValues<TfFilterNumericComparisonMethod>())"
+                                            Style="flex:1 1 100%"
+                                            OptionValue="@((p) => ((int)p).ToString())"
+                                            OptionText="@((p) => LOC(p.ToDescriptionString()))"/>
+                                        @if (popoverBaseFilter.RequiresValue)
+                                        {
+                                            <FluentNumberField Value="@popoverFilter.Value.ToNullableDecimal()"
+                                                               TValue="decimal?"
+                                                               ValueChanged="@((value) => popoverFilter.Value = value?.ToString())"
+                                                               AutoComplete="off"
+                                                               Placeholder="@LOC("no value")" Style="flex:1 1 100%"/>
+                                        }
+                                    </div>
                                     </Body>
-                                    <Footer>Callout Footer</Footer>
+                                    <Footer>
+                                        <FluentStack HorizontalAlignment="@HorizontalAlignment.SpaceBetween">
+                                            <FluentButton Appearance="Appearance.Outline"
+                                                          OnClick="@(() => _popoverClear(column))">@LOC("Clear")</FluentButton>
+                                            <FluentButton Appearance="Appearance.Accent"
+                                                          OnClick="@(() => _popoverSubmit(column))">@LOC("Submit")</FluentButton>
+                                        </FluentStack>
+                                    </Footer>
                                 </FluentPopover>
                             }
                         }

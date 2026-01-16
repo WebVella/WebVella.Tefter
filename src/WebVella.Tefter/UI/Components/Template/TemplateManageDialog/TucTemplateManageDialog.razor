@@ -78,56 +78,21 @@
 			</FluentGrid>			
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentInputLabel Label="@LOC("Target Space Dataset")"/>
-					<TucSelect Style="width:100%" TOption="TfDatasetAsOption"
-					           SelectedOption="@_datasetOption"
-					           SelectedOptionChanged="_spaceDataOptionChanged"
-					           Placeholder="@LOC("select space dataset...")"
-					           OptionValue="((p)=> p.Id.ToString())"
-					           Items="_datasetOptions">
-						<OptionTemplate Context="option">@option.Name</OptionTemplate>
-					</TucSelect>
-					<FluentValidationMessage For="@(() => _form.SpaceDataList)"/>
-					<table class="tf-grid" style="margin-top:15px;">
-						<thead class="tf-grid-thead">
-						<tr class="tf-grid-thead-bkg"></tr>
-						<tr class="tf-grid-tr">
-							<th class="tf-grid-th" style="width:30px;min-width:30px;"></th>
-							<th class="tf-grid-th">data name</th>
-						</tr>
-						</thead>
-						<tbody class="tf-grid-tbody">
-						@foreach (var row in _spaceDataSelection)
+					<FluentInputLabel>
+						<span>@LOC("Required columns")</span>
+						@if (_form.ColumnNamePreprocess == TfColumnNamePreprocessType.RemoveProviderPrefix)
 						{
-							<tr @key=row.Id class="tf-grid-tr">
-								<td class="tf-grid-td">
-									<div>
-										<FluentButton Appearance=@Appearance.Outline
-										              IconStart="@TfConstants.GetIcon("Delete")!.WithColor(Color.Error)"
-										              OnClick="@(_ => _removeItem(row))"/>
-									</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>
-										@row.Name
-									</div>
-								</td>
-							</tr>
+
+							<span style="margin-left:5px;">(@LOC("without provider prefix"))</span>
 						}
-						@if (_spaceDataSelection.Count == 0)
-						{
-							<tr class="tf-grid-tr">
-								<td class="tf-grid-td" colspan="2">
-									<div>
-										@LOC("No targeted space dataset found")
-									</div>
-								</td>
-							</tr>
-						}
-						</tbody>
-					</table>
+					</FluentInputLabel>
+					<FluentStack>
+						<TucSelectList @bind-Values=@_form.RequiredColumnsList Placeholder="@LOC("type a column name + ENTER")"
+						               NoItemsMessage="@LOC("no required columns submitted")"/>
+					</FluentStack>
+					<FluentValidationMessage For="@(() => _form.RequiredColumnsList)" />
 				</FluentGridItem>
-			</FluentGrid>
+			</FluentGrid>			
 			@if (_isCreate)
 			{
 				<FluentDivider Style="margin:15px 0"/>

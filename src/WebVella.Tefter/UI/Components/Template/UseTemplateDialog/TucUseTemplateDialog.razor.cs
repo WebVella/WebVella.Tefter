@@ -35,7 +35,7 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 
 	private void _getTemplates()
 	{
-		_templates = TfService.GetSpaceDataTemplates(Content!.SpaceData.Id, _search);
+		_templates = TfService.GetDatasetTemplates(Content!.SpaceData.Id, _search);
 	}
 
 	private async Task _cancel()

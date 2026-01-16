@@ -9,7 +9,7 @@ public partial interface ITfService
 
 	public List<TfTemplate> GetTemplates(string? search = null, List<TfTemplateResultType>? types = null);
 
-	public List<TfTemplate> GetSpaceDataTemplates(Guid spaceDataId, string? search = null);
+	public List<TfTemplate> GetDatasetTemplates(Guid datasetId, string? search = null);
 
 	public TfTemplate CreateTemplate(
 		TfManageTemplateModel template);
@@ -89,10 +89,12 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfTemplate> GetSpaceDataTemplates(Guid spaceDataId, string? search = null)
+	public List<TfTemplate> GetDatasetTemplates(Guid datasetId, string? search = null)
 	{
 		var templates = GetTemplates();
 		var result = new List<TfTemplate>();
+		var dataset = GetDataset(datasetId);
+		if (dataset is null) return result;
 		foreach (var item in templates)
 		{
 			if (!item.IsEnabled)
@@ -101,7 +103,7 @@ public partial class TfService : ITfService
 			if (!item.IsSelectable)
 				continue;
 
-			if (!item.SpaceDataList.Contains(spaceDataId))
+			if (!item.IsDatasetApplicable(dataset))
 				continue;
 
 			if (!TemplateMatchSearch(item, search, null))
@@ -153,7 +155,6 @@ public partial class TfService : ITfService
 					.ToValidationException()
 					.ThrowIfContainsErrors();
 
-				string spaceDataListJson = JsonSerializer.Serialize(template.SpaceDataList ?? new List<Guid>());
 				string requiredColumnsListJson = JsonSerializer.Serialize(template.RequiredColumnsList ?? new List<string>());
 
 				var idPar = CreateParameter("@id", template.Id, DbType.Guid);
@@ -169,9 +170,7 @@ public partial class TfService : ITfService
 				var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
 
 				var resultTypePar = CreateParameter("@result_type", (short)contentProcessor.ResultType, DbType.Int16);
-
-				var spaceDataJsonPar = CreateParameter("@space_data_json", spaceDataListJson, DbType.String);
-				
+			
 				var requiredColumnsJsonPar = CreateParameter("@required_columns_json", requiredColumnsListJson, DbType.String);
 
 				var settingsJsonPar = CreateParameter("@settings_json", template.SettingsJson, DbType.String);
@@ -192,11 +191,11 @@ public partial class TfService : ITfService
 
 				const string SQL = @"
 				INSERT INTO tf_template(
-					id, name, icon, description, space_data_json,required_columns_json, is_enabled, 
+					id, name, icon, description, required_columns_json, is_enabled, 
 					is_selectable, result_type, settings_json, content_processor_type,
 					created_on, modified_on, created_by, modified_by, column_name_preprocess)
 				VALUES (
-					@id, @name, @icon, @description, @space_data_json,@required_columns_json, @is_enabled, 
+					@id, @name, @icon, @description, @required_columns_json, @is_enabled, 
 					@is_selectable, @result_type, @settings_json, @content_processor_type,
 					@created_on, @modified_on, @created_by, @modified_by, @column_name_preprocess )";
 
@@ -204,7 +203,7 @@ public partial class TfService : ITfService
 					SQL,
 					idPar, namePar, descriptionPar, iconPar,
 					isEnabledPar, isSelectablePar, resultTypePar,
-					spaceDataJsonPar,requiredColumnsJsonPar, settingsJsonPar, cptPar,
+					requiredColumnsJsonPar, settingsJsonPar, cptPar,
 					createdByPar, createdOnPar, modifiedByPar,
 					modifiedOnPar, columnNamePreprocessPar);
 
@@ -259,7 +258,6 @@ public partial class TfService : ITfService
 					.ToValidationException()
 					.ThrowIfContainsErrors();
 
-				string spaceDataListJson = JsonSerializer.Serialize(template.SpaceDataList ?? new List<Guid>());
 				string requiredColumnsListJson = JsonSerializer.Serialize(template.RequiredColumnsList ?? new List<string>());
 
 				var idPar = CreateParameter("@id", template.Id, DbType.Guid);
@@ -275,9 +273,7 @@ public partial class TfService : ITfService
 				var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
 
 				var resultTypePar = CreateParameter("@result_type", (short)contentProcessor.ResultType, DbType.Int16);
-
-				var spaceDataJsonPar = CreateParameter("@space_data_json", spaceDataListJson, DbType.String);
-				
+			
 				var requiredColumnsJsonPar = CreateParameter("@required_columns_json", requiredColumnsListJson, DbType.String);
 
 				var settingsJsonPar = CreateParameter("@settings_json", template.SettingsJson, DbType.String);
@@ -298,7 +294,6 @@ public partial class TfService : ITfService
 					name=@name,
 					icon=@icon,
 					description=@description,
-					space_data_json=@space_data_json,
 					required_columns_json=@required_columns_json,
 					is_enabled=@is_enabled,
 					is_selectable=@is_selectable, 
@@ -314,7 +309,7 @@ public partial class TfService : ITfService
 					SQL,
 					idPar, namePar, descriptionPar, iconPar,
 					isEnabledPar, isSelectablePar, resultTypePar,
-					spaceDataJsonPar,requiredColumnsJsonPar, settingsJsonPar, cptPar,
+					requiredColumnsJsonPar, settingsJsonPar, cptPar,
 					modifiedByPar, modifiedOnPar, columnNamePreprocessPar);
 
 				if (dbResult != 1)
@@ -422,9 +417,6 @@ public partial class TfService : ITfService
 			if (template is null)
 				throw new Exception("Template is not found.");
 
-			if (!template.SpaceDataList.Contains(spaceDataId))
-				throw new Exception("Template does not work for selected space data.");
-
 			var spaceData = GetDataset(spaceDataId);
 			var processor = GetTemplateProcessor(template.ContentProcessorType);
 			var dataTable = QueryDataset(spaceData.Id, tfRecordIds);
@@ -501,7 +493,6 @@ public partial class TfService : ITfService
 				IsSelectable = template.IsSelectable,
 				Name = template.Name,
 				SettingsJson = settingsJson,
-				SpaceDataList = template.SpaceDataList,
 				RequiredColumnsList = template.RequiredColumnsList,
 				UserId = template.CreatedBy?.Id,
 				ColumnNamePreprocess =  template.ColumnNamePreprocess,
@@ -696,7 +687,6 @@ public partial class TfService : ITfService
 				Name = dr.Field<string>("name"),
 				Description = dr.Field<string>("description"),
 				FluentIconName = dr.Field<string>("icon"),
-				SpaceDataList = JsonSerializer.Deserialize<List<Guid>>(dr.Field<string>("space_data_json") ?? "[]"),
 				RequiredColumnsList = JsonSerializer.Deserialize<List<string>>(dr.Field<string>("required_columns_json") ?? "[]"),
 				ContentProcessorType = contentProcessor.GetType(),
 				ResultType = (TfTemplateResultType)dr.Field<short>("result_type"),

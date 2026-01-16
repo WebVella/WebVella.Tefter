@@ -76,7 +76,14 @@
 					</FluentGrid>
 					<FluentGrid>
 						<FluentGridItem xs="12">
-							<FluentInputLabel Label="@LOC("Target Space Dataset")"/>
+							<FluentInputLabel>
+								<span>@LOC("Required columns")</span>
+								@if (_template.ColumnNamePreprocess == TfColumnNamePreprocessType.RemoveProviderPrefix)
+								{
+
+									<span style="margin-left:5px;">(@LOC("without provider prefix"))</span>
+								}
+							</FluentInputLabel>
 
 							<table class="tf-grid" style="margin-top:15px;">
 								<tbody class="tf-grid-tbody">
@@ -84,14 +91,14 @@
 									<td class="tf-grid-td">
 										<div>
 											<FluentStack>
-												@foreach (var item in _spaceDataSelection)
+												@foreach (var item in _template.RequiredColumnsList)
 												{
 													<FluentBadge
-														Appearance="@Appearance.Neutral">@item.Name</FluentBadge>
+														Appearance="@Appearance.Neutral">@item</FluentBadge>
 												}
-												@if (_spaceDataSelection.Count == 0)
+												@if (_template.RequiredColumnsList.Count == 0)
 												{
-													<span>@LOC("No targeted space dataset found")</span>
+													<span>@LOC("There are no requirements")</span>
 												}
 											</FluentStack>
 										</div>
@@ -100,7 +107,7 @@
 								</tbody>
 							</table>
 						</FluentGridItem>
-					</FluentGrid>
+					</FluentGrid>					
 				</ChildContent>
 			</TucCard>
 			<div style="margin-top: var(--tf-card-space)">

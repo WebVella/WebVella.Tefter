@@ -19,6 +19,16 @@ public record TfFilterNumeric : TfFilterBase
 	{
 		Value = value?.ToString(TfConstants.TF_FILTER_CULTURE);
 	}
+	
+	public void ValueStringChanged(string? value)
+	{
+		if (String.IsNullOrWhiteSpace(value)) Value = null;
+		else if (decimal.TryParse(value, out decimal outVal))
+			Value = value;
+		else
+			Value = null;
+	}		
+	
 	public decimal? ValueAsDecimal
 	{
 		get
