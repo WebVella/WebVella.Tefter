@@ -140,7 +140,8 @@ public class EmailTemplateProcessor : ITfTemplateProcessorAddon
 			emailMessage.TextBody = item.TextContent;
 			emailMessage.HtmlBody = item.HtmlContent;
 			emailMessage.RelatedRowIds = item.RelatedRowIds;
-
+			emailMessage.RelatedDataSetIds = item.RelatedDataSetIds;
+			emailMessage.RelatedSpaceIds = item.RelatedSpaceIds;
 			emailMessage.Attachments = new List<CreateEmailAttachmentModel>();
 			foreach (var attachment in item.Attachments)
 			{

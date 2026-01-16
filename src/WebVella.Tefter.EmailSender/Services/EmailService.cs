@@ -249,7 +249,9 @@ INSERT INTO email_message(
 	attachments,
 	x_search,
 	user_id,
-	related_row_ids
+	related_row_ids,
+    related_dataset_ids,
+    related_space_ids  
 )
 VALUES 
 (
@@ -272,7 +274,9 @@ VALUES
 	@attachments, 
 	@x_search,
 	@user_id,
-	@related_row_ids
+	@related_row_ids,
+    @related_dataset_ids,
+    @related_space_ids   
 )";
 
 		var dbResult = _dbService.ExecuteSqlNonQueryCommand(
@@ -296,7 +300,9 @@ VALUES
 			CreateParameter("reply_to_email", replyToEmail, DbType.String),
 			CreateParameter("x_search", GenerateSearch(emailMessage), DbType.String),
 			CreateParameter("user_id", emailMessage.UserId, DbType.Guid),
-			CreateParameter("related_row_ids", JsonSerializer.Serialize(emailMessage.RelatedRowIds ?? new()), DbType.String)
+			CreateParameter("related_row_ids", JsonSerializer.Serialize(emailMessage.RelatedRowIds ?? new()), DbType.String),
+			CreateParameter("related_dataset_ids", JsonSerializer.Serialize(emailMessage.RelatedDataSetIds ?? new()), DbType.String),
+			CreateParameter("related_space_ids", JsonSerializer.Serialize(emailMessage.RelatedSpaceIds ?? new()), DbType.String)
 		);
 
 		if (dbResult != 1)
@@ -385,6 +391,8 @@ VALUES
 				Attachments = JsonSerializer.Deserialize<List<EmailAttachment>>(dr.Field<string>("attachments")),
 				XSearch = dr.Field<string>("x_search"),
 				RelatedRowIds = JsonSerializer.Deserialize<List<Guid>>(dr.Field<string>("related_row_ids")),
+				RelatedDataSetIds = JsonSerializer.Deserialize<List<Guid>>(dr.Field<string>("related_dataset_ids")),
+				RelatedSpaceIds = JsonSerializer.Deserialize<List<Guid>>(dr.Field<string>("related_space_ids")),
 				User = user
 			});
 

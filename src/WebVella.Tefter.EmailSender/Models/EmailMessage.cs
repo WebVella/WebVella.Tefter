@@ -20,6 +20,8 @@ public record EmailMessage
 	public int RetriesCount { get; internal set; }
 	public List<EmailAttachment> Attachments { get; internal set; } = new();
 	public List<Guid> RelatedRowIds { get; internal set; } = new();
+	public List<Guid> RelatedDataSetIds { get; internal set; } = new();
+	public List<Guid> RelatedSpaceIds { get; internal set; } = new();
 	public string XSearch { get; internal set; }
 
 	public TfUser User { get; internal set; }
@@ -38,5 +40,7 @@ public record CreateEmailMessageModel
 	public EmailPriority Priority { get; set; } = EmailPriority.Normal;
 	public List<CreateEmailAttachmentModel> Attachments { get; set; } = new();
 	public List<Guid> RelatedRowIds { get; set; } = new();
+	public List<Guid> RelatedDataSetIds { get; set; } = new();
+	public List<Guid> RelatedSpaceIds { get; set; } = new();	
 	public Guid? UserId { get; set; } = null;
 }

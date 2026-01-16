@@ -29,6 +29,7 @@ public partial class EmailSenderTests : BaseTest
 				model.Recipients.Add(new EmailAddress { Address = "rumen.yankov@gmail.com", Name = "Rumen Yankov" });
 				model.UserId = user.Id;
 				model.RelatedRowIds.Add(relatedRowId);
+				
 
 				emailService.CreateEmailMessage(model);
 				var emailsList = emailService.GetEmailMessages();

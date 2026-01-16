@@ -15,5 +15,7 @@ public class EmailTemplateResultItem
 	public string TextContent { get; set; }
 	public List<EmailTemplateResultItemAttachment> Attachments { get; set; } = new();
 	public List<Guid> RelatedRowIds { get; set; } = new();
+	public List<Guid> RelatedDataSetIds { get; set; } = new();
+	public List<Guid> RelatedSpaceIds { get; set; } = new();
 	public List<ValidationError> Errors { get; set; } = new();
 }
