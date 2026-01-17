@@ -5,6 +5,7 @@ namespace WebVella.Tefter.EmailSender.Components;
 public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 {
     [Inject] public IEmailService EmailService { get; set; }
+    [Parameter] public bool InAdmin { get; set; } = false;
 
     private string? _search = null;
     private List<EmailMessage> _messages = new();

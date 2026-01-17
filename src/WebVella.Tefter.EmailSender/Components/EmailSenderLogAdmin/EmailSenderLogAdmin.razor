@@ -3,11 +3,14 @@
 
 <TucLayoutPageContent Title="@LOC("Email Queue")" Icon="Mail">
 	<Toolbar>
-		<FluentButton Appearance="@Appearance.Outline" OnClick="_createTestHandler" IconStart="@TfConstants.GetIcon("Add")">
-			@LOC("Sent test email")
-		</FluentButton>
+		@if (InAdmin)
+		{
+			<FluentButton Appearance="@Appearance.Outline" OnClick="_createTestHandler" IconStart="@TfConstants.GetIcon("Add")">
+				@LOC("Sent test email")
+			</FluentButton>
+		}
 		<FluentSearch Placeholder="@LOC("search...")" ValueChanged="_searchValueChanged" Value="@_search"
-					  AutoComplete="off" Style="margin-left:1rem;" @ref=_refSearch />
+		              AutoComplete="off" Style="margin-left:1rem;" @ref="_refSearch"/>
 	</Toolbar>
 	<ChildContent>
 		<table class="tf-grid">
