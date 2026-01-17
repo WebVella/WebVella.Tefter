@@ -15,6 +15,7 @@ public partial class EmailSenderLogSpacePageComponent : TucBaseSpacePageComponen
 	[Inject] protected IJSRuntime JSRuntime { get; set; } = null!;
 	[Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 	[Inject] protected NavigationManager Navigator { get; set; } = null!;
+	[Inject] protected IDialogService DialogService { get; set; } = null!;
 	#endregion
 
 	#region << Base Overrides >>
@@ -28,7 +29,14 @@ public partial class EmailSenderLogSpacePageComponent : TucBaseSpacePageComponen
 	public override List<ValidationError> ValidateOptions()
 	{
 		ValidationErrors.Clear();
-		//BOZ TODO: VALIDATE IF CUSTOM ID IS GUID
+		if (_options.RelatedIdValueType == EmailSenderLogRelatedIdValueType.AnyRelatedId
+		    || _options.RelatedIdValueType == EmailSenderLogRelatedIdValueType.AnyRelatedId)
+		{
+			if (!Guid.TryParse(_options.CustomIdValue, out _))
+			{
+				ValidationErrors.Add(new ValidationError(nameof(_options.CustomIdValue), "invalid GUID"));	
+			}
+		}		
 		return ValidationErrors;
 	}
 
@@ -45,7 +53,7 @@ public partial class EmailSenderLogSpacePageComponent : TucBaseSpacePageComponen
 	{
 		var tabs = new List<TfScreenRegionTab>()
 		{
-			new TfScreenRegionTab("channel", "Connected Channel", "CommentMultiple"),
+			new TfScreenRegionTab("filter", "Emails Filter", "Filter"),
 		};
 		return tabs;
 	}	
@@ -57,6 +65,7 @@ public partial class EmailSenderLogSpacePageComponent : TucBaseSpacePageComponen
 	private EmailSenderLogSpacePageComponentOptions _options { get; set; } = new();
 
 	//Read mode
+	private Guid _spacePageId;
 	private bool _isLoaded = false;
 	private string _uriInitialized = string.Empty;
 
@@ -103,6 +112,7 @@ public partial class EmailSenderLogSpacePageComponent : TucBaseSpacePageComponen
 	{
 		try
 		{
+			_spacePageId = navState.SpacePageId ?? Guid.Empty;
 			_options = null;
 			if (!String.IsNullOrWhiteSpace(Context.ComponentOptionsJson))
 			{
@@ -116,16 +126,27 @@ public partial class EmailSenderLogSpacePageComponent : TucBaseSpacePageComponen
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-
-
+	private async Task _editFolder()
+	{
+		var dialog = await DialogService.ShowDialogAsync<EmailSenderLogPageManageDialog>(
+			new EmailSenderLogPageManageDialogContext() { Options = _options, SpacePageId = _spacePageId },
+			new()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
+		_ = await dialog.Result;
+	}	
 	#endregion
 }
 
 public record EmailSenderLogSpacePageComponentOptions
 {
-	[JsonPropertyName("DataIdentityValueType")]
-	public EmailSenderLogDataIdentityValueType DataIdentityValueType { get; set; } = EmailSenderLogDataIdentityValueType.SpaceId;
+	[JsonPropertyName("RelatedIdValueType")]
+	public EmailSenderLogRelatedIdValueType RelatedIdValueType { get; set; } = EmailSenderLogRelatedIdValueType.SpaceId;
 
-	[JsonPropertyName("CustomDataIdentityValue")]
-	public string CustomDataIdentityValue { get; set; } = "";
+	[JsonPropertyName("CustomIdValue")]
+	public string CustomIdValue { get; set; } = "";
 }

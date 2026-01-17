@@ -1,0 +1,55 @@
+﻿@namespace WebVella.Tefter.EmailSender.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Send Emails")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save")"
+		              Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+	}
+	else
+	{
+		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+		                FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator/>
+		
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<TucSelect SelectedOption="@_form.RelatedIdValueType"
+					           Required="true"
+					           SelectedOptionChanged="((x) => _form.RelatedIdValueType = x)"
+					           TOption="EmailSenderLogRelatedIdValueType"
+					           Items="@(Enum.GetValues<EmailSenderLogRelatedIdValueType>())" Style="width:100%"
+					           OptionValue="@((p) => ((int)p).ToString())"
+					           OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Guid value")"/>
+					<FluentValidationMessage For="@(() => _form.RelatedIdValueType)"/>
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					@if (_form.RelatedIdValueType == EmailSenderLogRelatedIdValueType.DatasetId
+					     || _form.RelatedIdValueType == EmailSenderLogRelatedIdValueType.AnyRelatedId)
+					{
+						<FluentTextField TextFieldType="@TextFieldType.Text"
+						                 Placeholder="@LOC("empty string")"
+						                 @bind-Value=@_form.CustomIdValue AutoComplete="off"
+						                 Label="@LOC("Guid value")" Style="width:100%"/>
+						<FluentValidationMessage For="@(() => _form.CustomIdValue)"/>
+					}
+				</FluentGridItem>
+			</FluentGrid>
+		</FluentEditForm>
+	}
+</FluentDialogBody>

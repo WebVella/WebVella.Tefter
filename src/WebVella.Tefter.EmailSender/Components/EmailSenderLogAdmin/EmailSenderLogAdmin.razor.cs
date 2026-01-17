@@ -6,6 +6,8 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
 {
     [Inject] public IEmailService EmailService { get; set; }
     [Parameter] public bool InAdmin { get; set; } = false;
+    [Parameter]
+    public EmailSenderLogSpacePageComponentOptions Options { get; set; } = new ();    
 
     private string? _search = null;
     private List<EmailMessage> _messages = new();
@@ -55,10 +57,39 @@ public partial class EmailSenderLogAdmin : TfBaseComponent, IDisposable
     private async Task _init(TfNavigationState navState)
     {
         _navState = navState;
+
+        Guid? relatedSpaceId = null;
+        Guid? relatedDatasetId = null;
+        Guid? relatedAnyId = null;
+        Guid optionsId = Guid.NewGuid();// to be sure that no record is returned;
+        if (!String.IsNullOrWhiteSpace(Options.CustomIdValue)
+            && Guid.TryParse(Options.CustomIdValue, out Guid outGuid))
+        {
+            optionsId = outGuid;
+        }
+
+        switch (Options.RelatedIdValueType)
+        {
+            case EmailSenderLogRelatedIdValueType.SpaceId:
+                relatedSpaceId = TfAuthLayout.GetState().Space?.Id; 
+                break;
+            case EmailSenderLogRelatedIdValueType.DatasetId:
+                relatedDatasetId = optionsId;
+                break;            
+            case EmailSenderLogRelatedIdValueType.AnyRelatedId:
+                relatedAnyId = optionsId; 
+                break;                        
+        }
+
         try
         {
-            _messages = EmailService.GetEmailMessages(_navState.Search, _navState.Page ?? 1,
-                _navState.PageSize ?? TfConstants.PageSize);
+            _messages = EmailService.GetEmailMessages(
+                search:_navState.Search, 
+                relatedDatasetId:relatedDatasetId,
+                relatedSpaceId:relatedSpaceId,
+                anyRelatedId:relatedAnyId,
+                page: _navState.Page ?? 1,
+                pageSize: _navState.PageSize ?? TfConstants.PageSize);
             _search = _navState.Search;
         }
         finally

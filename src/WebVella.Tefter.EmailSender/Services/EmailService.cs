@@ -13,6 +13,10 @@ public partial interface IEmailService
 
 	public List<EmailMessage> GetEmailMessages(
 		string search = null,
+		Guid? relatedRowId = null,
+		Guid? relatedDatasetId = null,
+		Guid? relatedSpaceId = null,	
+		Guid? anyRelatedId = null,
 		int? page = null,
 		int? pageSize = null);
 
@@ -89,6 +93,10 @@ internal partial class EmailService : IEmailService
 
 	public List<EmailMessage> GetEmailMessages(
 		string search = null,
+		Guid? relatedRowId = null,
+		Guid? relatedDatasetId = null,
+		Guid? relatedSpaceId = null,
+		Guid? anyRelatedId = null,
 		int? page = null,
 		int? pageSize = null
 		)
@@ -102,17 +110,60 @@ internal partial class EmailService : IEmailService
 			pagingSql = $"OFFSET {offset} LIMIT {limit}";
 		}
 
-		string SQL = $@"
-SELECT * FROM email_message
-WHERE ( @search IS NULL OR x_search ILIKE CONCAT ('%', @search, '%') )
-ORDER BY created_on DESC {pagingSql}";
+		var sqlParams = new List<NpgsqlParameter>();
+		var whereList = new List<string>();
+		if (!String.IsNullOrWhiteSpace(search))
+		{
+			sqlParams.Add(CreateParameter(
+				"search",
+				search,
+				DbType.String));
+			whereList.Add("(x_search ILIKE CONCAT ('%', @search, '%') ))");
+		}
+		if (relatedRowId is not null)
+		{
+			sqlParams.Add(CreateParameter(
+				"relatedRowId",
+				relatedRowId,
+				DbType.Guid));
+			whereList.Add("(related_row_ids ILIKE CONCAT ('%', @relatedRowId, '%'))");
+		}	
+		if (relatedDatasetId is not null)
+		{
+			sqlParams.Add(CreateParameter(
+				"relatedDatasetId",
+				relatedDatasetId,
+				DbType.Guid));
+			whereList.Add("(related_dataset_ids ILIKE CONCAT ('%', @relatedDatasetId, '%'))");
+		}		
+		if (relatedSpaceId is not null)
+		{
+			sqlParams.Add(CreateParameter(
+				"relatedSpaceId",
+				relatedSpaceId,
+				DbType.Guid));
+			whereList.Add("(related_space_ids ILIKE CONCAT ('%', @relatedSpaceId, '%'))");
+		}			
+		if (anyRelatedId is not null)
+		{
+			sqlParams.Add(CreateParameter(
+				"anyRelatedId",
+				anyRelatedId,
+				DbType.Guid));
+			whereList.Add("( (related_row_ids ILIKE CONCAT ('%', @anyRelatedId, '%'))" +
+			              " OR (related_dataset_ids ILIKE CONCAT ('%', @anyRelatedId, '%'))" +
+			              " OR (related_space_ids ILIKE CONCAT ('%', @anyRelatedId, '%')) )");
+		}
 
-		var searchPar = CreateParameter(
-			"search",
-			search,
-			DbType.String);
+		var whereSql = "";
+		if (whereList.Count > 0)
+		{
+			whereSql = $" WHERE {string.Join(" AND ", whereList)} ";
+		}
 
-		var dt = _dbService.ExecuteSqlQueryCommand(SQL, searchPar);
+		string SQL = $" SELECT * FROM email_message {whereSql} ORDER BY created_on DESC {pagingSql}";
+
+		var dt = _dbService.ExecuteSqlQueryCommand(SQL, sqlParams);
 
 		List<EmailMessage> emailMessages = CreateModelListFromDataTable(dt);
 

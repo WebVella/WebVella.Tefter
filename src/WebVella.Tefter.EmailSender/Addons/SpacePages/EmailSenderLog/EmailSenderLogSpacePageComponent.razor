@@ -1,55 +1,72 @@
 ﻿@namespace WebVella.Tefter.EmailSender.Addons
-@using WebVella.Tefter.UI.Components
 @inherits TucBaseSpacePageComponent
 
 @if (_isLoaded)
 {
 	@if (Context.Mode == TfComponentMode.Read)
 	{
-		<div>READ</div>
+		<EmailSenderLogAdmin Options="_options"/>
 	}
 	else if (Context.Mode == TfComponentMode.Create || Context.Mode == TfComponentMode.Update)
 	{
-		<div>Create || Update</div>
-		@* <FluentGrid> *@
-		@* 	<FluentGridItem xs="6"> *@
-		@* 		<TucSelect SelectedOption="@_optionsChannel" *@
-		@* 		           SelectedOptionChanged="_optionsChannelChangeHandler" *@
-		@* 		           TOption="TalkChannel" *@
-		@* 		           Items="@_channels" Style="width:100%" *@
-		@* 		           OptionValue="@((p) => p.Id.ToString())" *@
-		@* 		           Placeholder="@LOC("select..")" *@
-		@* 		           OptionText="@(p => p.Name)" Label="@LOC("Select channel")" *@
-		@* 		           Class="@GetValidationCssClass(nameof(_options.ChannelId))"/> *@
-		@* 		<TucValidationMessage Field="@(nameof(_options.ChannelId))" Errors="ValidationErrors"/> *@
-		@* 	</FluentGridItem> *@
-		@* </FluentGrid> *@
-		@* <FluentGrid> *@
-		@* 	<FluentGridItem xs="6"> *@
-		@* 		<TucSelect SelectedOption="@_options.DataIdentityValueType" *@
-		@* 		           SelectedOptionChanged="((x) => _options.DataIdentityValueType = x)" *@
-		@* 		           TOption="TalkChannelDataIdentityValueType" *@
-		@* 		           Items="@(Enum.GetValues<TalkChannelDataIdentityValueType>())" Style="width:100%" *@
-		@* 		           OptionValue="@((p) => ((int)p).ToString())" *@
-		@* 		           OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Data Identity value")" *@
-		@* 		           Class="@GetValidationCssClass(nameof(_options.DataIdentityValueType))"/> *@
-		@* 		<TucValidationMessage Field="@(nameof(_options.DataIdentityValueType))" Errors="ValidationErrors"/> *@
-		@* 	</FluentGridItem> *@
-		@* 	<FluentGridItem xs="6"> *@
-		@* 		@if (_options.DataIdentityValueType == TalkChannelDataIdentityValueType.CustomString) *@
-		@* 		{ *@
-		@* 			<FluentTextField TextFieldType="@TextFieldType.Text" *@
-		@* 			                 Placeholder="@LOC("empty string")" *@
-		@* 			                 @bind-Value=@_options.CustomDataIdentityValue AutoComplete="off" *@
-		@* 			                 Label="@LOC("Custom data identity type")" Style="width:100%"/> *@
-		@* 			<TucValidationMessage Field="@(nameof(_options.ChannelId))" Errors="ValidationErrors"/> *@
-		@* 		} *@
-		@* 	</FluentGridItem> *@
-		@* </FluentGrid> *@
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<TucSelect SelectedOption="@_options.RelatedIdValueType"
+				           SelectedOptionChanged="((x) => _options.RelatedIdValueType = x)"
+				           TOption="EmailSenderLogRelatedIdValueType"
+				           Items="@(Enum.GetValues<EmailSenderLogRelatedIdValueType>())" Style="width:100%"
+				           OptionValue="@((p) => ((int)p).ToString())"
+				           OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Email Filter")"
+				           Class="@GetValidationCssClass(nameof(_options.RelatedIdValueType))"/>
+				<TucValidationMessage Field="@(nameof(_options.RelatedIdValueType))" Errors="ValidationErrors"/>
+			</FluentGridItem>
+			<FluentGridItem xs="6">
+				@if (_options.RelatedIdValueType == EmailSenderLogRelatedIdValueType.DatasetId
+						|| _options.RelatedIdValueType == EmailSenderLogRelatedIdValueType.AnyRelatedId)
+				{
+					<FluentTextField TextFieldType="@TextFieldType.Text"
+					                 Placeholder="@LOC("empty string")"
+					                 @bind-Value=@_options.CustomIdValue AutoComplete="off"
+					                 Label="@LOC("Guid value")" Style="width:100%"/>
+					<TucValidationMessage Field="@(nameof(_options.CustomIdValue))" Errors="ValidationErrors"/>
+				}
+			</FluentGridItem>
+		</FluentGrid>
 	}
 	else if (Context.Mode == TfComponentMode.Manage)
 	{
-		<div>Manage</div>
+		<TucCard Title="@LOC("Settings")">
+			<ToolbarTemplate>
+				<FluentButton Appearance="@Appearance.Outline" OnClick="_editFolder">
+					@LOC("Edit")
+					<FluentIcon Value="@TfConstants.GetIcon("Edit")" Color="@Color.Accent" Slot="start"/>
+				</FluentButton>
+			</ToolbarTemplate>
+			<ChildContent>
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<TucSelect SelectedOption="@_options.RelatedIdValueType"
+						           SelectedOptionChanged="((x) => _options.RelatedIdValueType = x)"
+						           TOption="EmailSenderLogRelatedIdValueType"
+						           Items="@(Enum.GetValues<EmailSenderLogRelatedIdValueType>())" Style="width:100%"
+						           OptionValue="@((p) => ((int)p).ToString())"
+						           OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Email Filter")"
+						           ReadOnly="true"/>
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						@if (_options.RelatedIdValueType == EmailSenderLogRelatedIdValueType.DatasetId
+						     || _options.RelatedIdValueType == EmailSenderLogRelatedIdValueType.AnyRelatedId)
+						{
+							<FluentTextField TextFieldType="@TextFieldType.Text"
+							                 Placeholder="@LOC("empty string")"
+							                 @bind-Value=@_options.CustomIdValue AutoComplete="off"
+							                 Label="@LOC("Guid value")" Style="width:100%"
+							                 ReadOnly="true"/>
+						}
+					</FluentGridItem>
+				</FluentGrid>
+			</ChildContent>
+		</TucCard>
 	}
 	else
 	{
