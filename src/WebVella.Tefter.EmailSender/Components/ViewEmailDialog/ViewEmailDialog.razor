@@ -15,114 +15,195 @@
 	@if (!string.IsNullOrWhiteSpace(_error))
 	{
 		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
-
 	}
 	else
 	{
-		<FluentGrid>
-			<FluentGridItem xs="6">
-				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.Status.ToDescriptionString()
-								 Label="@LOC("Status")" Style="width:100%" ReadOnly="true" />
-			</FluentGridItem>
-		</FluentGrid>
 		@if (!String.IsNullOrWhiteSpace(Content.ServerError))
 		{
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentTextArea Value=@Content.ServerError
-									Label="@LOC("Error")" Style="width:100%" ReadOnly="true" Rows="3" />
+					                Label="@LOC("Error")" Style="width:100%" ReadOnly="true" Rows="3"/>
 				</FluentGridItem>
 			</FluentGrid>
 		}
+
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.CreatedOn.ToString(TfConstants.DateHourFormat)
-								 Label="@LOC("Created on")" Style="width:100%" ReadOnly="true" />
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.Status.ToDescriptionString()
+				                 Label="@LOC("Status")" Style="width:100%" ReadOnly="true"/>
 			</FluentGridItem>
 			<FluentGridItem xs="6">
-				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.SentOn?.ToString(TfConstants.DateHourFormat)
-								 Label="@LOC("Send on")" Style="width:100%" ReadOnly="true" />
+				<FluentTextField TextFieldType="@TextFieldType.Text"
+				                 Value=@Content.SentOn?.ToString(TfConstants.DateHourFormat)
+				                 Label="@LOC("Send on")" Style="width:100%" ReadOnly="true"/>
 			</FluentGridItem>
 		</FluentGrid>
-		@if (Content.ScheduledOn is not null)
-		{
-			<FluentGrid>
-				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.ScheduledOn.Value.ToString(TfConstants.DateHourFormat)
-									 Label="@LOC("Scheduled on")" Style="width:100%" ReadOnly="true" />
-				</FluentGridItem>
-				<FluentGridItem xs="6">
-					<FluentNumberField Value=@Content.RetriesCount
-									   Label="@LOC("Retries")" Style="width:100%" ReadOnly="true" />
-				</FluentGridItem>
-			</FluentGrid>
-		}
+
 		<FluentGrid>
 			<FluentGridItem xs="6">
 				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.Sender?.Address
-								 Label="@LOC("Sender")" Style="width:100%" ReadOnly="true" />
+				                 Label="@LOC("Sender")" Style="width:100%" ReadOnly="true"/>
 			</FluentGridItem>
 			<FluentGridItem xs="6">
-				@if (String.IsNullOrWhiteSpace(Content.ReplyToEmail))
+				@if (String.IsNullOrWhiteSpace(Content.ReplyToEmail) && Content.ReplyToEmail != Content.Sender?.Address)
 				{
 					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.ReplyToEmail
-									 Label="@LOC("Reply To")" Style="width:100%" ReadOnly="true" />
+					                 Label="@LOC("Reply To")" Style="width:100%" ReadOnly="true"/>
 				}
 			</FluentGridItem>
 		</FluentGrid>
 		<FluentGrid>
 			<FluentGridItem xs="12">
 				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.Sender?.Address
-								 Label="@LOC("Recipients")" Style="width:100%" ReadOnly="true" />
+				                 Label="@LOC("Recipients")" Style="width:100%" ReadOnly="true"/>
 			</FluentGridItem>
 		</FluentGrid>
 		@if (Content.RecipientsCc.Count > 0)
 		{
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@(String.Join(", ",Content.RecipientsCc.Select(x=> x.Address)))"
-									 Label="@LOC("CC")" Style="width:100%" ReadOnly="true" />
+					<FluentTextField TextFieldType="@TextFieldType.Text"
+					                 Value="@(String.Join(", ", Content.RecipientsCc.Select(x => x.Address)))"
+					                 Label="@LOC("CC")" Style="width:100%" ReadOnly="true"/>
 				</FluentGridItem>
 			</FluentGrid>
 		}
+
 		@if (Content.RecipientsBcc.Count > 0)
 		{
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@(String.Join(", ",Content.RecipientsBcc.Select(x=> x.Address)))"
-									 Label="@LOC("BCC")" Style="width:100%" ReadOnly="true" />
+					<FluentTextField TextFieldType="@TextFieldType.Text"
+					                 Value="@(String.Join(", ", Content.RecipientsBcc.Select(x => x.Address)))"
+					                 Label="@LOC("BCC")" Style="width:100%" ReadOnly="true"/>
 				</FluentGridItem>
 			</FluentGrid>
 		}
+
 		<FluentGrid>
 			<FluentGridItem xs="12">
 				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@Content.Subject"
-								 Label="@LOC("Subject")" Style="width:100%" ReadOnly="true" />
+				                 Label="@LOC("Subject")" Style="width:100%" ReadOnly="true"/>
 			</FluentGridItem>
 		</FluentGrid>
 		@if (Content.Attachments.Count > 0)
 		{
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@(String.Join(", ",Content.Attachments.Select(x=> x.Filename)))"
-									 Label="@LOC("Attachments")" Style="width:100%" ReadOnly="true" />
+					<FluentTextField TextFieldType="@TextFieldType.Text"
+					                 Value="@(String.Join(", ", Content.Attachments.Select(x => x.Filename)))"
+					                 Label="@LOC("Attachments")" Style="width:100%" ReadOnly="true"/>
 				</FluentGridItem>
 			</FluentGrid>
 		}
-		<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
+
+		<FluentDivider Style="margin:1rem 0;"/>
+		<FluentTabs @bind-ActiveTabId="@_activeTab">
 			<FluentTab Label="@LOC("Text body")" Id="text">
-				<FluentGrid>
-					<FluentGridItem xs="12">
-						<TucCard Class="email-sender-email-body">
-							<pre>@Content.ContentText</pre>
-						</TucCard>
-					</FluentGridItem>
-				</FluentGrid>
+				<TucCard Class="email-sender-email-body">
+					<pre>@Content.ContentText</pre>
+				</TucCard>
 			</FluentTab>
 			<FluentTab Label="@LOC("HTML body")" Id="html">
 				<TucCard Class="email-sender-email-body">
 					@((MarkupString)Content.ContentHtml)
 				</TucCard>
+			</FluentTab>
+			<FluentTab Label="@LOC("System information")" Id="info">
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentTextField TextFieldType="@TextFieldType.Text"
+						                 Value=@Content.CreatedOn.ToString(TfConstants.DateHourFormat)
+						                 Label="@LOC("Created on")" Style="width:100%" ReadOnly="true"/>
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						<FluentTextField TextFieldType="@TextFieldType.Text"
+						                 Value=@Content.User?.Email
+						                 Label="@LOC("Created by")" Style="width:100%" ReadOnly="true"/>
+					</FluentGridItem>					
+				</FluentGrid>
+				@if (Content.ScheduledOn is not null)
+				{
+					<FluentGrid>
+						<FluentGridItem xs="6">
+							<FluentTextField TextFieldType="@TextFieldType.Text"
+							                 Value=@Content.ScheduledOn.Value.ToString(TfConstants.DateHourFormat)
+							                 Label="@LOC("Scheduled on")" Style="width:100%" ReadOnly="true"/>
+						</FluentGridItem>
+						<FluentGridItem xs="6">
+							<FluentNumberField Value=@Content.RetriesCount
+							                   Label="@LOC("Retries")" Style="width:100%" ReadOnly="true"/>
+						</FluentGridItem>
+					</FluentGrid>
+				}
+				<FluentGrid>
+					<FluentGridItem xs="12">
+						<FluentInputLabel>@LOC("Related spaces")</FluentInputLabel>
+						<FluentStack Orientation="@Orientation.Horizontal" Style="min-height:24px;">
+							@foreach (var item in Content.RelatedSpaceIds)
+							{
+								@if (_spaceDict.ContainsKey(item))
+								{
+									<FluentBadge Appearance="Appearance.Neutral">@_spaceDict[item].Name</FluentBadge>
+								}
+								else
+								{
+									<FluentBadge Appearance="Appearance.Neutral">@item (not found)</FluentBadge>
+								}
+							}
+							@if (Content.RelatedSpaceIds.Count == 0)
+							{
+								<div style="color:var(--neutral-foreground-hint)">@LOC("no related spaces")</div>
+							}
+						</FluentStack>
+					</FluentGridItem>
+				</FluentGrid>
+				<FluentGrid>
+					<FluentGridItem xs="12">
+						<FluentInputLabel>@LOC("Related datasets")</FluentInputLabel>
+						<FluentStack Orientation="@Orientation.Horizontal" Style="min-height:24px;">
+							@foreach (var item in Content.RelatedDataSetIds)
+							{
+								@if (_datasetDict.ContainsKey(item))
+								{
+									<FluentBadge Appearance="Appearance.Neutral">@_datasetDict[item].Name</FluentBadge>
+								}
+								else
+								{
+									<FluentBadge Appearance="Appearance.Neutral">@item (not found)</FluentBadge>
+								}
+							}
+							@if (Content.RelatedDataSetIds.Count == 0)
+							{
+								<div style="color:var(--neutral-foreground-hint)">@LOC("no related datasets")</div>
+							}
+						</FluentStack>
+					</FluentGridItem>
+				</FluentGrid>
+				<FluentGrid>
+					<FluentGridItem xs="12">
+						<FluentInputLabel>@LOC("Related dataset rows")</FluentInputLabel>
+						<FluentStack Orientation="@Orientation.Horizontal" Style="min-height:24px;">
+							@if (Content.RelatedRowIds.Count == 0)
+							{
+								<div style="color:var(--neutral-foreground-hint)">@LOC("no related datasets")</div>
+							}
+							else if (Content.RelatedRowIds.Count > 5)
+							{
+								<FluentBadge Appearance="Appearance.Neutral">@Content.RelatedRowIds.Count+ rows
+								</FluentBadge>
+							}
+							else
+							{
+								@foreach (var item in Content.RelatedRowIds)
+								{
+									<FluentBadge Appearance="Appearance.Neutral">@item (not found)</FluentBadge>
+								}
+							}
+						</FluentStack>
+					</FluentGridItem>
+				</FluentGrid>
 			</FluentTab>
 		</FluentTabs>
 	}

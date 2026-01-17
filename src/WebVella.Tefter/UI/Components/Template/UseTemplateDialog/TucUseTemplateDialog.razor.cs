@@ -138,10 +138,13 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 	private void _initDynamicComponent()
 	{
 		_processor = _getProcessor();
+		var state = TfAuthLayout.GetState();
 		_resultPreviewComponentContext = new TfTemplateProcessorResultPreviewScreenRegion
 		{
 			Template = null,
 			SelectedRowIds = Content!.SelectedRowIds,
+			RelatedDatasetIds = [Content.SpaceData.Id],
+			RelatedSpaceIds = state.Space is null ? [] : [state.Space.Id],
 			SpaceData = Content.SpaceData,
 			User = Content.User,
 			CustomSettingsJson = null,
@@ -154,6 +157,8 @@ public partial class TucUseTemplateDialog : TfBaseComponent, IDialogContentCompo
 		{
 			Template = null,
 			SelectedRowIds = Content.SelectedRowIds,
+			RelatedDatasetIds = [Content.SpaceData.Id],
+			RelatedSpaceIds = state.Space is null ? [] : [state.Space.Id],			
 			SpaceData = Content.SpaceData,
 			User = Content.User,
 			CustomSettingsJson = null,

@@ -38,6 +38,9 @@ public partial class ResultAddon : TfBaseComponent,
 					templateId: RegionContext.Template.Id,
 					spaceDataId: RegionContext.SpaceData.Id,
 					tfRecordIds: RegionContext.SelectedRowIds,
+					tfDatasetIds: RegionContext.RelatedDatasetIds,
+					tfSpaceIds: RegionContext.RelatedSpaceIds,					
+					userId:RegionContext.User.Id,
 					preview: RegionContext.Preview
 				); ;
 				if (result is TextFileTemplateResult)

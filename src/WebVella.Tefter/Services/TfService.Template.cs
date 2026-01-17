@@ -23,17 +23,27 @@ public partial interface ITfService
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		Guid templateId,
 		Guid spaceDataId,
-		List<Guid> tfRecordIds);
+		List<Guid> tfRecordIds,
+		List<Guid> tfDatasetIds,
+		List<Guid> tfSpaceIds,
+		Guid userId);
 
 	public ITfTemplateResult ProcessTemplate(
 		Guid templateId,
 		Guid spaceDataId,
 		List<Guid> tfRecordIds,
+		List<Guid> tfDatasetIds,
+		List<Guid> tfSpaceIds,
+		Guid userId,
 		ITfTemplatePreviewResult preview);
 
 	public ITfTemplateResult ProcessTemplate(
 		Guid templateId,
 		TfDataTable dataTable,
+		List<Guid> tfRecordIds,
+		List<Guid> tfDatasetIds,
+		List<Guid> tfSpaceIds,	
+		Guid userId,
 		ITfTemplatePreviewResult preview);
 
 	public void ValidateTemplatePreview(
@@ -386,7 +396,10 @@ public partial class TfService : ITfService
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		Guid templateId,
 		Guid spaceDataId,
-		List<Guid> tfRecordIds)
+		List<Guid> tfRecordIds,
+		List<Guid> tfDatasetIds,
+		List<Guid> tfSpaceIds,
+		Guid userId)
 	{
 		try
 		{
@@ -396,7 +409,7 @@ public partial class TfService : ITfService
 
 			var dataTable = QueryDataset(spaceData.Id, tfRecordIds);
 			dataTable = ProcessDataForTemplate(dataTable,template);
-			return processor.GenerateTemplatePreviewResult(template, dataTable, _serviceProvider);
+			return processor.GenerateTemplatePreviewResult(template, dataTable,tfRecordIds, tfDatasetIds, tfSpaceIds,userId, _serviceProvider);
 		}
 		catch (Exception ex)
 		{
@@ -408,6 +421,9 @@ public partial class TfService : ITfService
 		Guid templateId,
 		Guid spaceDataId,
 		List<Guid> tfRecordIds,
+		List<Guid> tfDatasetIds,
+		List<Guid> tfSpaceIds,		
+		Guid userId,
 		ITfTemplatePreviewResult preview)
 	{
 		try
@@ -421,7 +437,7 @@ public partial class TfService : ITfService
 			var processor = GetTemplateProcessor(template.ContentProcessorType);
 			var dataTable = QueryDataset(spaceData.Id, tfRecordIds);
 			dataTable = ProcessDataForTemplate(dataTable,template);
-			return processor.ProcessTemplate(template, dataTable, preview, _serviceProvider);
+			return processor.ProcessTemplate(template, dataTable,tfRecordIds, tfDatasetIds, tfSpaceIds,userId, preview, _serviceProvider);
 		}
 		catch (Exception ex)
 		{
@@ -432,6 +448,10 @@ public partial class TfService : ITfService
 	public ITfTemplateResult ProcessTemplate(
 		Guid templateId,
 		TfDataTable dataTable,
+		List<Guid> tfRecordIds,
+		List<Guid> tfDatasetIds,
+		List<Guid> tfSpaceIds,			
+		Guid userId,
 		ITfTemplatePreviewResult preview)
 	{
 		try
@@ -441,7 +461,7 @@ public partial class TfService : ITfService
 				throw new Exception("Template is not found.");
 
 			var processor = GetTemplateProcessor(template.ContentProcessorType);
-			return processor.ProcessTemplate(template, dataTable, preview, _serviceProvider);
+			return processor.ProcessTemplate(template, dataTable,tfRecordIds, tfDatasetIds, tfSpaceIds,userId, preview, _serviceProvider);
 		}
 		catch (Exception ex)
 		{

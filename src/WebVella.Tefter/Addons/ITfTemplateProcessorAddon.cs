@@ -16,11 +16,19 @@ public interface ITfTemplateProcessorAddon
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		TfTemplate template,
 		TfDataTable dataTable,
+		List<Guid> tfRecordIds,
+		List<Guid> tfDatasetIds,
+		List<Guid> tfSpaceIds,	
+		Guid userId,
 		IServiceProvider serviceProvider);
 
 	public ITfTemplateResult ProcessTemplate(
 		TfTemplate template,
 		TfDataTable dataTable,
+		List<Guid> tfRecordIds,
+		List<Guid> tfDatasetIds,
+		List<Guid> tfSpaceIds,	
+		Guid userId,
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider);
 

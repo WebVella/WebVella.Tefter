@@ -27,10 +27,14 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessorAddon
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		TfTemplate template,
 		TfDataTable dataTable,
+		List<Guid> tfRecordIds,
+		List<Guid> tfDatasetIds,
+		List<Guid> tfSpaceIds,			
+		Guid userId,
 		IServiceProvider serviceProvider)
 	{
 		var result = (DocumentFileTemplateResult)GenerateResultInternal(
-			template, dataTable, serviceProvider);
+			template, dataTable,tfRecordIds, tfDatasetIds, tfSpaceIds, serviceProvider);
 
 		return new DocumentFileTemplatePreviewResult
 		{
@@ -42,15 +46,22 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessorAddon
 	public ITfTemplateResult ProcessTemplate(
 		TfTemplate template,
 		TfDataTable dataTable,
+		List<Guid> tfRecordIds,
+		List<Guid> tfDatasetIds,
+		List<Guid> tfSpaceIds,				
+		Guid userId,
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)
 	{
-		return GenerateResultInternal(template, dataTable, serviceProvider);
+		return GenerateResultInternal(template, dataTable,tfRecordIds, tfDatasetIds, tfSpaceIds, serviceProvider);
 	}
 
 	private ITfTemplateResult GenerateResultInternal(
 		TfTemplate template,
 		TfDataTable dataTable,
+		List<Guid> tfRecordIds,
+		List<Guid> tfDatasetIds,
+		List<Guid> tfSpaceIds,			
 		IServiceProvider serviceProvider)
 	{
 		var result = new DocumentFileTemplateResult();

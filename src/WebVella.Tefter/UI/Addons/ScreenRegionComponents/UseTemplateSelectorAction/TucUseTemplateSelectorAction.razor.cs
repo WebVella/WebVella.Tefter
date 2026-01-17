@@ -17,7 +17,7 @@ public partial class TucUseTemplateSelectorAction : TfBaseComponent, ITfScreenRe
 
 		var context = new TfUseTemplateContext
 		{
-			SelectedRowIds = RegionContext.SelectedDataRows,
+			SelectedRowIds = RegionContext.SelectedDataRows.ToList(),
 			SpaceData = RegionContext.Dataset,
 			User = RegionContext.CurrentUser
 		};

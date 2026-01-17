@@ -41,7 +41,10 @@ public partial class ResultPreviewAddon : TfBaseComponent,
 				ITfTemplatePreviewResult result = TfService.GenerateTemplatePreviewResult(
 					templateId: RegionContext.Template.Id,
 					spaceDataId: RegionContext.SpaceData.Id,
-					tfRecordIds: RegionContext.SelectedRowIds
+					tfRecordIds: RegionContext.SelectedRowIds,
+					tfDatasetIds:RegionContext.RelatedDatasetIds,
+					tfSpaceIds: RegionContext.RelatedSpaceIds,
+					userId:RegionContext.User.Id
 				);
 				if (result is not ExcelFileTemplatePreviewResult)
 				{
