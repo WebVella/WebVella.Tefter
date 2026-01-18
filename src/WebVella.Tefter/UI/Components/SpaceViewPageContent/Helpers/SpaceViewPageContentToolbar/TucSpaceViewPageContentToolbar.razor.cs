@@ -37,7 +37,8 @@ public partial class TucSpaceViewPageContentToolbar : TfBaseComponent, IAsyncDis
 		await _init(_navState);
 		Navigator.LocationChanged += On_NavigationStateChanged;
 		_userUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfUserUpdatedEventPayload>(
-			handler: On_UserUpdatedEventAsync);
+			handler: On_UserUpdatedEventAsync,
+			matchKey: (key) => key == TfAuthLayout.GetUserId().ToString());
 	}
 
 	protected override async Task OnParametersSetAsync()

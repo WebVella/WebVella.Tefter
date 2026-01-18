@@ -263,6 +263,23 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
+			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), typeof(TfGlobalStateScreenRegion)))
+			{
+				var instance = (ITfScreenRegionAddon<TfGlobalStateScreenRegion>)Activator.CreateInstance(type);
+				if (_addonIdHS.Contains(instance.AddonId))
+					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+				_addonIdHS.Add(instance.AddonId);
+				meta = new TfScreenRegionComponentMeta
+				{
+					Id = instance.AddonId,
+					PositionRank = instance.PositionRank,
+					Name = instance.AddonName,
+					Description = instance.AddonDescription,
+					FluentIconName = instance.AddonFluentIconName,
+					Type = type,
+					Scopes = instance.Scopes
+				};
+			}			
 		}
 		#endregion
 		if (meta is not null)

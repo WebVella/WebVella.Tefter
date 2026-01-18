@@ -24,7 +24,8 @@ public partial class TalkPageComponent : TfBaseComponent, IAsyncDisposable
     {
         if (firstRender)
             _spacePageUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageUpdatedEventPayload>(
-                handler: On_SpacePageUpdatedEventAsync);
+                handler: On_SpacePageUpdatedEventAsync,
+                matchKey: (key) => key == TfAuthLayout.GetSessionId().ToString());
     }
 
     private Task On_SpacePageUpdatedEventAsync(string? key, TfSpacePageUpdatedEventPayload? payload)

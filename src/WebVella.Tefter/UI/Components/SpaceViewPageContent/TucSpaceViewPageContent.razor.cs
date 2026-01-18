@@ -120,7 +120,8 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				handler: On_SpaceViewUpdatedEventAsync,
 				matchKey: (_) => true);
 			_userUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfUserUpdatedEventPayload>(
-				handler: On_UserUpdatedEventAsync);
+				handler: On_UserUpdatedEventAsync,
+				matchKey: (key) => key == TfAuthLayout.GetUserId().ToString());
 
 
 			try

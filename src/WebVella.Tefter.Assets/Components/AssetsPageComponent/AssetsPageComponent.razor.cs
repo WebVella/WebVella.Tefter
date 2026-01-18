@@ -25,7 +25,8 @@ public partial class AssetsPageComponent : TfBaseComponent, IAsyncDisposable
     {
         if (firstRender)
             _spacePageUpdatedEventSubscriber = await TfEventBus.SubscribeAsync<TfSpacePageUpdatedEventPayload>(
-                handler: On_SpacePageUpdatedEventAsync);
+                handler: On_SpacePageUpdatedEventAsync,
+                matchKey: (_) => true);
     }
 
     private Task On_SpacePageUpdatedEventAsync(string? key, TfSpacePageUpdatedEventPayload? payload)
