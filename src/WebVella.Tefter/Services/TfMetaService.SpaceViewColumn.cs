@@ -3,8 +3,8 @@
 namespace WebVella.Tefter.Services;
 public partial interface ITfMetaService
 {
-	ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypesMeta();
-	ReadOnlyDictionary<Guid,ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypeDictionary();
+	List<ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypesMeta();
+	Dictionary<Guid,ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypeDictionary();
 	ITfSpaceViewColumnTypeAddon? GetSpaceViewColumnType(Guid addonId);
 }
 
@@ -14,13 +14,30 @@ public partial class TfMetaService : ITfMetaService
 	private static readonly Dictionary<Guid, ITfSpaceViewColumnTypeAddon> _columnTypeMetaDict = new();
 
 
-	public ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypesMeta()
+	public List<ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypesMeta()
 	{
-		return _columnTypeMetaList.OrderBy(x=> x.AddonName).ToList().AsReadOnly();
-	}
-	public ReadOnlyDictionary<Guid,ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypeDictionary()
+		var instances = new List<ITfSpaceViewColumnTypeAddon>();
+		foreach (var dictInstance in _columnTypeMetaList)
+		{
+			var instance = (ITfSpaceViewColumnTypeAddon?)Activator.CreateInstance(dictInstance.GetType());
+			if(instance is null) continue;
+			instances.Add(instance);
+		}
+
+		return instances.OrderBy(x=> x.AddonName).ToList();
+	}		
+
+	public Dictionary<Guid,ITfSpaceViewColumnTypeAddon> GetSpaceViewColumnTypeDictionary()
 	{
-		return _columnTypeMetaDict.AsReadOnly();
+		var newDict = new Dictionary<Guid, ITfSpaceViewColumnTypeAddon>();
+		foreach (var addonId in _columnTypeMetaDict.Keys)
+		{
+			var dictInstance = _columnTypeMetaDict[addonId];
+			var instance = (ITfSpaceViewColumnTypeAddon?)Activator.CreateInstance(dictInstance.GetType());
+			if(instance is null) continue;
+			newDict[addonId] = instance;
+		}
+		return newDict;
 	}
 
 	public ITfSpaceViewColumnTypeAddon? GetSpaceViewColumnType(Guid addonId)

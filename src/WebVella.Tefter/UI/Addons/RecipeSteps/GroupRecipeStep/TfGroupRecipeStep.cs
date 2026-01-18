@@ -30,20 +30,24 @@ public class TfGroupRecipeStep : ITfRecipeStepAddon
 	public async Task ReverseStep(IServiceProvider serviceProvider, ITfRecipeStepAddon addon, TfRecipeStepResult? stepResult)
 	{
 		var step = (TfGroupRecipeStepData)addon.Data;
-		ITfMetaService metaService = serviceProvider.GetService<ITfMetaService>();
+		ITfMetaService? metaService = serviceProvider.GetService<ITfMetaService>();
 		foreach (var substep in step.Steps)
 		{
 			try
 			{
 				var subStepResult = stepResult?.SubSteps.FirstOrDefault(x => x.StepId == substep.Instance.StepId);
-				var stepAddon = metaService.GetRecipeStep(substep.AddonId);
+				var stepAddon = metaService?.GetRecipeStep(substep.AddonId);
 				if (stepAddon is null) return;
 				await stepAddon.ReverseStep(
 					serviceProvider: serviceProvider,
 					stepBase: substep,
 					stepResult: subStepResult);
 			}
-			catch { }
+			catch
+			{
+				//Ignore
+				
+			}
 		}
 	}
 }

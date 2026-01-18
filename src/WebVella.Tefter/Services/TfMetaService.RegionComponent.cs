@@ -2,10 +2,9 @@
 
 public partial interface ITfMetaService
 {
-	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMeta();
-	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMeta(Type? context = null, TfScreenRegionScope? scope = null);
-	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetAdminAddonPages(string? search = null);
-	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetHomeAddonPages(string? search = null);
+	public List<TfScreenRegionComponentMeta> GetRegionComponentsMeta(Type? context = null, TfScreenRegionScope? scope = null);
+	public List<TfScreenRegionComponentMeta> GetAdminAddonPages(string? search = null);
+	public List<TfScreenRegionComponentMeta> GetHomeAddonPages(string? search = null);
 }
 
 public partial class TfMetaService : ITfMetaService
@@ -13,32 +12,25 @@ public partial class TfMetaService : ITfMetaService
 	private static readonly List<TfScreenRegionComponentMeta> _regionComponentMeta = new();
 	private static readonly Dictionary<Guid, TfScreenRegionComponentMeta> _regionComponentMetaDict = new();
 
-	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMeta()
-	{
-		return _regionComponentMeta
-			.OrderBy(x => x.PositionRank)
-			.ThenBy(x => x.Name)
-			.ToList()
-			.AsReadOnly();
-	}
-	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMeta(Type? context = null, TfScreenRegionScope? scope = null)
+
+	public List<TfScreenRegionComponentMeta> GetRegionComponentsMeta(Type? context = null, TfScreenRegionScope? scope = null)
 	{
 		var result = new List<TfScreenRegionComponentMeta>();
-		foreach (var comp in _regionComponentMeta)
+		foreach (var compMeta in _regionComponentMeta)
 		{
 			var contextMatched = false;
-			if (context is null || comp.Type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), context))
+			if (context is null || compMeta.Type.ImplementsGenericInterface(typeof(ITfScreenRegionAddon<>), context))
 				contextMatched = true;
 			if (!contextMatched) continue;
 
 			var scopeMatched = false;
-			if (scope is null || comp.Scopes is null || comp.Scopes.Count == 0)
+			if (scope is null || compMeta.Scopes is null || compMeta.Scopes.Count == 0)
 			{
 				scopeMatched = true;
 			}
 			else
 			{
-				foreach (var compScope in comp.Scopes)
+				foreach (var compScope in compMeta.Scopes)
 				{
 					if (ScopesMatch(scope, compScope))
 					{
@@ -49,26 +41,45 @@ public partial class TfMetaService : ITfMetaService
 			}
 
 			if (!scopeMatched) continue;
-
-
-			result.Add(comp);
+			result.Add(compMeta);
 		}
 
 		return result
 			.OrderBy(x => x.PositionRank)
 			.ThenBy(x => x.Name)
-			.ToList()
-			.AsReadOnly();
+			.ToList();
 	}
 
-	public TfScreenRegionComponentMeta GetRegionComponentsMetaById(Guid addonId)
+	public List<TfScreenRegionComponentMeta> GetAdminAddonPages(string? search = null)
 	{
-		if (_regionComponentMetaDict.ContainsKey(addonId))
-			return _regionComponentMetaDict[addonId];
+		var addonPages = GetRegionComponentsMeta(
+			context: typeof(TfAdminPageScreenRegion),
+			scope: null
+		);
+		if (String.IsNullOrWhiteSpace(search))
+		{
+			return addonPages;
+		}
 
-		return null;
+		search = search.Trim().ToLowerInvariant();
+		return addonPages.Where(x=> x.Name.ToLowerInvariant().Contains(search)).ToList();
 	}
+	
+	public List<TfScreenRegionComponentMeta> GetHomeAddonPages(string? search = null)
+	{
+		var addonPages = GetRegionComponentsMeta(
+			context: typeof(TfPageScreenRegion),
+			scope: null
+		);
+		if (String.IsNullOrWhiteSpace(search))
+		{
+			return addonPages;
+		}
 
+		search = search.Trim().ToLowerInvariant();
+		return addonPages.Where(x=> x.Name.ToLowerInvariant().Contains(search)).ToList();
+	}		
+	
 	private static void ScanAndRegisterRegionComponents(Type type)
 	{
 		TfScreenRegionComponentMeta meta = null;
@@ -306,35 +317,7 @@ public partial class TfMetaService : ITfMetaService
 		return compMatched && itemTypeMatched;
 	}
 
-	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetAdminAddonPages(string? search = null)
-	{
-		var addonPages = GetRegionComponentsMeta(
-						context: typeof(TfAdminPageScreenRegion),
-						scope: null
-					);
-		if (String.IsNullOrWhiteSpace(search))
-		{
-			return addonPages;
-		}
 
-		search = search.Trim().ToLowerInvariant();
-		return addonPages.Where(x=> x.Name.ToLowerInvariant().Contains(search)).ToList().AsReadOnly();
-	}
-	
-	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetHomeAddonPages(string? search = null)
-	{
-		var addonPages = GetRegionComponentsMeta(
-			context: typeof(TfPageScreenRegion),
-			scope: null
-		);
-		if (String.IsNullOrWhiteSpace(search))
-		{
-			return addonPages;
-		}
-
-		search = search.Trim().ToLowerInvariant();
-		return addonPages.Where(x=> x.Name.ToLowerInvariant().Contains(search)).ToList().AsReadOnly();
-	}	
 }
 
 

@@ -137,7 +137,7 @@ internal partial class MigrationManager : IMigrationManager
 				continue;
 
 
-			ITfApplicationAddon tfApp = _metaService.GetApplication(migration.ApplicationId);
+			ITfApplicationAddon? tfApp = _metaService.GetApplication(migration.ApplicationId);
 
 			if (tfApp is null)
 			{

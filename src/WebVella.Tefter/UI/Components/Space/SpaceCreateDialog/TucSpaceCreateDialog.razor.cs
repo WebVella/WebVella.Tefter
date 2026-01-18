@@ -4,7 +4,7 @@ public partial class TucSpaceCreateDialog : TfFormBaseComponent, IDialogContentC
 	[Parameter] public TucSpaceCreateDialogContext? Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; } = null!;
 
-	private readonly string _error = string.Empty;
+	private string _error = string.Empty;
 	private bool _submitting = false;
 	private TfSpace _form = new();
 	private List<ITfSpaceRecipeAddon> _recipes = null!;
@@ -25,6 +25,7 @@ public partial class TucSpaceCreateDialog : TfFormBaseComponent, IDialogContentC
 	
 	private void _select(ITfSpaceRecipeAddon recipe)
 	{
+		_error = string.Empty;
 		_selectedRecipe = recipe;
 		if(_selectedRecipe is null) return;
 		_visibleSteps.Clear();

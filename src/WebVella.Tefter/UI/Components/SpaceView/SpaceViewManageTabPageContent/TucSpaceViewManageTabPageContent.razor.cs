@@ -13,7 +13,7 @@ public partial class TucSpaceViewManageTabPageContent : TfBaseComponent, IAsyncD
 	private TfSpaceView? _spaceView = null;
 	private TfDataset? _spaceData = null;
 	private List<TfSpaceViewColumn> _spaceViewColumns = new();
-	private ReadOnlyDictionary<Guid, ITfSpaceViewColumnTypeAddon> _typeMetaDict = null!;
+	private Dictionary<Guid, ITfSpaceViewColumnTypeAddon> _typeMetaDict = null!;
 	private bool _submitting = false;
 	private Dictionary<Guid, TfRole> _roleDict = new();
 	private List<TfRole> _rolesTotal = new();

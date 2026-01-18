@@ -16,7 +16,7 @@ public partial class TucDataProviderManageDialog : TfFormBaseComponent, IDialogC
 
 	private TfDataProviderManageSettingsScreenRegion _dynamicComponent = null!;
 	private TfScreenRegionScope? _dynamicComponentScope = null;
-	private ReadOnlyCollection<ITfDataProviderAddon> _providerTypes = null!;
+	private List<ITfDataProviderAddon> _providerTypes = null!;
 
 	protected override async Task OnInitializedAsync()
 	{

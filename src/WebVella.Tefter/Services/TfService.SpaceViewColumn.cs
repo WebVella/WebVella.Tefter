@@ -2,7 +2,7 @@
 
 public partial interface ITfService
 {
-	public ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetAvailableSpaceViewColumnTypes();
+	public List<ITfSpaceViewColumnTypeAddon> GetAvailableSpaceViewColumnTypes();
 
 	public List<TfSpaceViewColumn> GetSpaceViewColumnsList(
 		Guid spaceViewId);
@@ -25,7 +25,7 @@ public partial interface ITfService
 	public Task MoveSpaceViewColumnDown(
 		Guid id);
 
-	ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetCompatibleViewColumnTypesMeta(
+	List<ITfSpaceViewColumnTypeAddon> GetCompatibleViewColumnTypesMeta(
 		TfSpaceViewColumn viewColumn);
 
 	Task<(bool, List<TfSpaceViewColumn>)> ImportMissingColumnsFromDataset(
@@ -34,7 +34,7 @@ public partial interface ITfService
 
 public partial class TfService : ITfService
 {
-	public ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetAvailableSpaceViewColumnTypes()
+	public List<ITfSpaceViewColumnTypeAddon> GetAvailableSpaceViewColumnTypes()
 		=> _metaService.GetSpaceViewColumnTypesMeta();
 
 
@@ -361,13 +361,13 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetCompatibleViewColumnTypesMeta(
+	public List<ITfSpaceViewColumnTypeAddon> GetCompatibleViewColumnTypesMeta(
 		TfSpaceViewColumn viewColumn)
 	{
 		var list = new List<ITfSpaceViewColumnTypeAddon>();
 		var spaceView = GetSpaceView(viewColumn.SpaceViewId);
 		var dataset = GetDataset(spaceView!.DatasetId);
-		if (dataset is null) return list.AsReadOnly();
+		if (dataset is null) return list;
 		var sampleData = QueryDataset(dataset.Id, page: 1, pageSize: 1);
 
 		var dataAliasTypeDict = new Dictionary<string, TfDatabaseColumnType?>();
@@ -412,7 +412,7 @@ public partial class TfService : ITfService
 				list.Add(target);
 		}
 
-		return list.OrderBy(x => x.AddonName).ToList().AsReadOnly();
+		return list.OrderBy(x => x.AddonName).ToList();
 	}
 
 	public async Task<(bool, List<TfSpaceViewColumn>)> ImportMissingColumnsFromDataset(

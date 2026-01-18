@@ -10,7 +10,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 	private DotNetObjectReference<TucSpaceViewPageContent> _objectRef = null!;
 	private bool _isDataLoading = false;
 	private bool _selectAllLoading = false;
-	private ReadOnlyDictionary<Guid, ITfSpaceViewColumnTypeAddon> _columnTypeMetaDict = null!;
+	private Dictionary<Guid, ITfSpaceViewColumnTypeAddon> _columnTypeMetaDict = null!;
 	private TfNavigationState _navState = null!;
 	private TfUser _currentUser = null!;
 	private TfSpace? _space = null;

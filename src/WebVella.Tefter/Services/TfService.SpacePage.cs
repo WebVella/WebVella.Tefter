@@ -58,13 +58,14 @@ public partial class TfService : ITfService
 				.Where(x => x.ParentId is null)
 				.OrderBy(x => x.Position)
 				.ToList();
-			ReadOnlyCollection<TfSpacePageAddonMeta> components = _metaService.GetSpacePagesComponentsMeta();
+			List<ITfSpacePageAddon> components = _metaService.GetSpacePagesComponents();
 			foreach (var rootPage in rootPages)
 			{
+				var pageType = components
+					.SingleOrDefault(x => x.AddonId == rootPage.ComponentId);
+				if(pageType is null) continue;
 				rootPage.ParentPage = null;
-				rootPage.ComponentType = components
-					.SingleOrDefault(x => x.ComponentId == rootPage.ComponentId)
-					?.Instance.GetType();
+				rootPage.ComponentType = pageType.GetType();
 				InitSpacePageChildPages(rootPage, spacePagesList, components);
 			}
 
@@ -92,13 +93,14 @@ public partial class TfService : ITfService
 				.OrderBy(x => x.Position)
 				.ToList();
 			var components = _metaService
-				.GetSpacePagesComponentsMeta();
+				.GetSpacePagesComponents();
 			foreach (var rootPage in rootPages)
 			{
+				var pageType = components
+					.SingleOrDefault(x => x.AddonId == rootPage.ComponentId);
+				if(pageType is null) continue;
 				rootPage.ParentPage = null;
-				rootPage.ComponentType = components
-					.SingleOrDefault(x => x.ComponentId == rootPage.ComponentId)
-					?.Instance.GetType();
+				rootPage.ComponentType = pageType.GetType();
 				InitSpacePageChildPages(rootPage, spacePagesList, components);
 			}
 
@@ -126,7 +128,7 @@ public partial class TfService : ITfService
 	private void InitSpacePageChildPages(
 		TfSpacePage page,
 		List<TfSpacePage> allPages,
-		ReadOnlyCollection<TfSpacePageAddonMeta> components)
+		List<ITfSpacePageAddon> components)
 	{
 		var childPages = allPages
 			.Where(x => x.ParentId == page.Id)
@@ -137,11 +139,11 @@ public partial class TfService : ITfService
 
 		foreach (var childPage in childPages)
 		{
+			var pageType = components
+				.SingleOrDefault(x => x.AddonId == childPage.ComponentId);
+			if(pageType is null) continue;
 			childPage.ParentPage = page;
-			childPage.ComponentType = components
-				.SingleOrDefault(x => x.ComponentId == childPage.ComponentId)
-				?.Instance.GetType();
-			;
+			childPage.ComponentType = pageType.GetType();
 			InitSpacePageChildPages(childPage, allPages, components);
 		}
 	}
@@ -265,9 +267,9 @@ public partial class TfService : ITfService
 
 				if (spacePage.Type == TfSpacePageType.Page && spacePage.ComponentId.HasValue)
 				{
-					var spacePageComponents = _metaService.GetSpacePagesComponentsMeta();
+					var spacePageComponents = _metaService.GetSpacePagesComponents();
 					var pageComponent =
-						spacePageComponents.SingleOrDefault(x => x.ComponentId == spacePage.ComponentId);
+						spacePageComponents.SingleOrDefault(x => x.AddonId == spacePage.ComponentId);
 					if (pageComponent is not null)
 					{
 						var task = Task.Run(async () =>
@@ -282,7 +284,7 @@ public partial class TfService : ITfService
 								Mode = TfComponentMode.Update
 							};
 
-							var optionsJson = await pageComponent.Instance.OnPageCreated(_serviceProvider, context);
+							var optionsJson = await pageComponent.OnPageCreated(_serviceProvider, context);
 							if (optionsJson != spacePage.ComponentOptionsJson)
 							{
 								spacePage.ComponentOptionsJson = optionsJson;
@@ -564,9 +566,9 @@ public partial class TfService : ITfService
 
 				if (spacePage.Type == TfSpacePageType.Page && spacePage.ComponentId.HasValue)
 				{
-					var spacePageComponents = _metaService.GetSpacePagesComponentsMeta();
+					var spacePageComponents = _metaService.GetSpacePagesComponents();
 					var pageComponent =
-						spacePageComponents.SingleOrDefault(x => x.ComponentId == spacePage.ComponentId);
+						spacePageComponents.SingleOrDefault(x => x.AddonId == spacePage.ComponentId);
 					if (pageComponent is not null)
 					{
 						var task = Task.Run(async () =>
@@ -580,7 +582,7 @@ public partial class TfService : ITfService
 								Mode = TfComponentMode.Update
 							};
 
-							var optionsJson = await pageComponent.Instance.OnPageUpdated(_serviceProvider, context);
+							var optionsJson = await pageComponent.OnPageUpdated(_serviceProvider, context);
 							if (optionsJson != spacePage.ComponentOptionsJson)
 							{
 								spacePage.ComponentOptionsJson = optionsJson;
@@ -687,7 +689,7 @@ public partial class TfService : ITfService
 
 				pagesToDelete.Reverse();
 
-				var spacePageComponents = _metaService.GetSpacePagesComponentsMeta();
+				var spacePageComponents = _metaService.GetSpacePagesComponents();
 
 				foreach (var pageToDelete in pagesToDelete)
 				{
@@ -707,7 +709,7 @@ public partial class TfService : ITfService
 					if (pageToDelete.Type == TfSpacePageType.Page && pageToDelete.ComponentId.HasValue)
 					{
 						var pageComponent =
-							spacePageComponents.SingleOrDefault(x => x.ComponentId == pageToDelete.ComponentId);
+							spacePageComponents.SingleOrDefault(x => x.AddonId == pageToDelete.ComponentId);
 						if (pageComponent is not null)
 						{
 							var task = Task.Run(async () =>
@@ -721,7 +723,7 @@ public partial class TfService : ITfService
 									Mode = TfComponentMode.Update
 								};
 
-								await pageComponent.Instance.OnPageDeleted(_serviceProvider, context);
+								await pageComponent.OnPageDeleted(_serviceProvider, context);
 							});
 							task.WaitAndUnwrapException();
 						}

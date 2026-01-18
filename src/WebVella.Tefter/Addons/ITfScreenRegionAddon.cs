@@ -7,7 +7,7 @@ public interface ITfScreenRegionAddon<T> : ITfAddon where T : TfBaseScreenRegion
 	T? RegionContext { get; set; }
 }
 
-public class TfScreenRegionComponentMeta
+public record TfScreenRegionComponentMeta
 {
 	public Guid Id { get; init;}
 	public int PositionRank { get; init;}

@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.Exceptions;
+﻿using System.Text.RegularExpressions;
+using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.Extra.Addons;
 public partial class TfCreateIHSpaceStepForm : TfRecipeStepFormBase
@@ -15,8 +16,8 @@ public partial class TfCreateIHSpaceStepForm : TfRecipeStepFormBase
 
 		if (Addon.Data!.GetType().FullName != typeof(TfCreateIHSpaceStepData).FullName)
 			throw new Exception("Wrong model data type provided");
-
-		_form = (TfCreateIHSpaceStepData)Addon.Data;
+		var stepData = (TfCreateIHSpaceStepData)Addon.Data;
+		_form = stepData with {BuildingCode = stepData.BuildingCode};
 		base.InitForm(_form);
 	}
 	
@@ -44,11 +45,21 @@ public partial class TfCreateIHSpaceStepForm : TfRecipeStepFormBase
 	{
 		MessageStore.Clear();
 		var errors = new List<ValidationError>();
-
+		
 		if (String.IsNullOrWhiteSpace(_form.BuildingCode))
 		{
 			errors.Add(new ValidationError(nameof(_form.BuildingCode), LOC("required")));
 		}
+		else
+		{
+			_form.BuildingCode = _form.BuildingCode.Trim();
+			string pattern = @"^[A-Z0-9]+$";
+			if (!Regex.IsMatch(_form.BuildingCode, pattern))
+			{
+				errors.Add(new ValidationError(nameof(_form.BuildingCode), LOC("only latin capital letters and numbers are allowed, without spaces")));
+			}
+		}
+
 
 		foreach (var item in errors)
 		{

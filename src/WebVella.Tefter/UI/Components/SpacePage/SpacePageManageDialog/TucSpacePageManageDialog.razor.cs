@@ -14,8 +14,8 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 	private TfSpacePage _form = new();
 	private TfSpacePage? _parentNode = null;
 	private IEnumerable<TfSpacePage> _parentNodeOptions = Enumerable.Empty<TfSpacePage>();
-	private ReadOnlyCollection<TfSpacePageAddonMeta> _pageComponents = null!;
-	private TfSpacePageAddonMeta? _selectedPageComponent = null;
+	private List<ITfSpacePageAddon> _pageComponents = null!;
+	private ITfSpacePageAddon? _selectedPageComponent = null;
 	private DynamicComponent typeSettingsComponent = null!;
 	private TfSpace? _space = null;
 	private List<Option<bool>> _copyOptions = new();
@@ -68,7 +68,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		}
 		_copyOption = _copyOptions[0];
 
-		_pageComponents = TfMetaService.GetSpacePagesComponentsMeta();
+		_pageComponents = TfMetaService.GetSpacePagesComponents();
 		_space = spaceDict[Content.SpaceId];
 		_parentNodeOptions = _getParents();
 		if (_isCreate)
@@ -79,7 +79,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 				SpaceId = Content.SpaceId,
 				Type = TfSpacePageType.Page,
 				FluentIconName = "Document",
-				ComponentId = _pageComponents.Count > 0 ? _pageComponents[0].ComponentId : null
+				ComponentId = _pageComponents.Count > 0 ? _pageComponents[0].AddonId : null
 			};
 		}
 		else
@@ -106,7 +106,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 
 		if (_form.ComponentId.HasValue)
 		{
-			_selectedPageComponent = _pageComponents.FirstOrDefault(x => x.ComponentId == _form.ComponentId);
+			_selectedPageComponent = _pageComponents.FirstOrDefault(x => x.AddonId == _form.ComponentId);
 		}
 		_onDescriptionChanged();
 		base.InitForm(_form);
@@ -138,13 +138,13 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 			}
 			else if (submit.Type == TfSpacePageType.Page)
 			{
-				if (typeSettingsComponent is not null)
+				if (typeSettingsComponent is not null && _selectedPageComponent is not null)
 				{
 					addonComponent = typeSettingsComponent.Instance as ITfSpacePageAddon;
 					settingsErrors = addonComponent.ValidateOptions();
 					submit.ComponentOptionsJson = addonComponent.GetOptions();
-					submit.ComponentType = _selectedPageComponent?.Instance.GetType();
-					submit.ComponentId = _selectedPageComponent?.Instance.AddonId;
+					submit.ComponentType = _selectedPageComponent.GetType();
+					submit.ComponentId = _selectedPageComponent.AddonId;
 				}
 			}
 		}
@@ -242,7 +242,7 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		if (type == TfSpacePageType.Folder) _selectedPageComponent = null;
 		else if (type == TfSpacePageType.Page && _pageComponents.Any()) _selectedPageComponent = _pageComponents[0];
 	}
-	private void _pageComponentChanged(TfSpacePageAddonMeta meta)
+	private void _pageComponentChanged(ITfSpacePageAddon meta)
 	{
 		_selectedPageComponent = meta;
 	}

@@ -2,18 +2,25 @@
 
 public partial interface ITfMetaService
 {
-	public ReadOnlyCollection<TfSpacePageAddonMeta> GetSpacePagesComponentsMeta();
+	public List<ITfSpacePageAddon> GetSpacePagesComponents();
 }
 
-public partial class TfMetaService : ITfMetaService
+public partial class TfMetaService
 {
-	private static List<TfSpacePageAddonMeta> _spacePageComponentMeta = 
-		new List<TfSpacePageAddonMeta>();
+	private static List<ITfSpacePageAddon> _spacePageComponents = new ();
 
-	public ReadOnlyCollection<TfSpacePageAddonMeta> GetSpacePagesComponentsMeta()
+	public List<ITfSpacePageAddon> GetSpacePagesComponents()
 	{
-		return _spacePageComponentMeta.AsReadOnly();
-	}
+		var instances = new List<ITfSpacePageAddon>();
+		foreach (var dictInstance in _spacePageComponents)
+		{
+			var instance = (ITfSpacePageAddon?)Activator.CreateInstance(dictInstance.GetType());
+			if(instance is null) continue;
+			instances.Add(instance);
+		}
+
+		return instances;
+	}		
 
 	private static void ScanAndRegisterSpacePageComponents(
 		Type type)
@@ -26,14 +33,7 @@ public partial class TfMetaService : ITfMetaService
 			if(_addonIdHS.Contains(instance.AddonId))
 				throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
 			_addonIdHS.Add(instance.AddonId);
-
-			TfSpacePageAddonMeta meta = new TfSpacePageAddonMeta
-			{
-				Instance = instance,
-				ComponentId = instance.AddonId,
-			};
-
-			_spacePageComponentMeta.Add(meta);
+			_spacePageComponents.Add(instance);
 			_typesMap[type.FullName] = type;
 		}
 	}

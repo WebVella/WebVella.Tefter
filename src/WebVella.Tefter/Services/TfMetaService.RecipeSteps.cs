@@ -4,7 +4,7 @@ public partial interface ITfMetaService
 {
 	ITfRecipeStepAddon? GetRecipeStep(Guid id);
 
-	ReadOnlyCollection<ITfRecipeStepAddon> GetRecipeSteps();
+	List<ITfRecipeStepAddon> GetRecipeSteps();
 }
 
 public partial class TfMetaService : ITfMetaService
@@ -26,13 +26,24 @@ public partial class TfMetaService : ITfMetaService
 	}
 	public ITfRecipeStepAddon? GetRecipeStep(Guid id)
 	{
-		return _recipeSteps.SingleOrDefault(x => x.AddonId == id);
-	}
+		var dictInstance = _recipeSteps.SingleOrDefault(x => x.AddonId == id);
+		if (dictInstance is null) return null;
+		return (ITfRecipeStepAddon?)Activator.CreateInstance(dictInstance.GetType());
+	}		
 
-	public ReadOnlyCollection<ITfRecipeStepAddon> GetRecipeSteps()
+
+	public List<ITfRecipeStepAddon> GetRecipeSteps()
 	{
-		return _recipeSteps.AsReadOnly();
-	}
+		var instances = new List<ITfRecipeStepAddon>();
+		foreach (var dictInstance in _recipeSteps)
+		{
+			var instance = (ITfRecipeStepAddon?)Activator.CreateInstance(dictInstance.GetType());
+			if(instance is null) continue;
+			instances.Add(instance);
+		}
+
+		return instances;
+	}		
 }
 
 

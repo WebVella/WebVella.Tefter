@@ -4,11 +4,11 @@ public partial interface ITfMetaService
 {
 	ITfOnboardRecipeAddon? GetOnboardRecipe(Guid id);
 
-	ReadOnlyCollection<ITfOnboardRecipeAddon> GetOnboardRecipes();
+	List<ITfOnboardRecipeAddon> GetOnboardRecipes();
 
 	ITfSpaceRecipeAddon? GetSpaceRecipe(Guid id);
 
-	ReadOnlyCollection<ITfSpaceRecipeAddon> GetSpaceRecipes();
+	List<ITfSpaceRecipeAddon> GetSpaceRecipes();
 }
 
 public partial class TfMetaService : ITfMetaService
@@ -45,14 +45,44 @@ public partial class TfMetaService : ITfMetaService
 	}
 
 	public ITfOnboardRecipeAddon? GetOnboardRecipe(Guid id)
-		=> _onboardRecipes.SingleOrDefault(x => x.AddonId == id);
+	{
+		var dictInstance = _onboardRecipes.SingleOrDefault(x => x.AddonId == id);
+		if (dictInstance is null) return null;
+		return (ITfOnboardRecipeAddon?)Activator.CreateInstance(dictInstance.GetType());
+	}
 
-	public ReadOnlyCollection<ITfOnboardRecipeAddon> GetOnboardRecipes()
-		=> _onboardRecipes.AsReadOnly();
+
+	public List<ITfOnboardRecipeAddon> GetOnboardRecipes()
+	{
+		var instances = new List<ITfOnboardRecipeAddon>();
+		foreach (var dictInstance in _onboardRecipes)
+		{
+			var instance = (ITfOnboardRecipeAddon?)Activator.CreateInstance(dictInstance.GetType());
+			if(instance is null) continue;
+			instances.Add(instance);
+		}
+
+		return instances;
+	}
+
 	
 	public ITfSpaceRecipeAddon? GetSpaceRecipe(Guid id)
-		=> _spaceRecipes.SingleOrDefault(x => x.AddonId == id);
+	{
+		var dictInstance = _spaceRecipes.SingleOrDefault(x => x.AddonId == id);
+		if (dictInstance is null) return null;
+		return (ITfSpaceRecipeAddon?)Activator.CreateInstance(dictInstance.GetType());
+	}	
 
-	public ReadOnlyCollection<ITfSpaceRecipeAddon> GetSpaceRecipes()
-		=> _spaceRecipes.AsReadOnly();	
+	public List<ITfSpaceRecipeAddon> GetSpaceRecipes()
+	{
+		var instances = new List<ITfSpaceRecipeAddon>();
+		foreach (var dictInstance in _spaceRecipes)
+		{
+			var instance = (ITfSpaceRecipeAddon?)Activator.CreateInstance(dictInstance.GetType());
+			if(instance is null) continue;
+			instances.Add(instance);
+		}
+
+		return instances;
+	}	
 }

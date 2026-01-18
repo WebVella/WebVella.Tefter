@@ -765,6 +765,18 @@ fluent-menu-item::part(start) {
 .fluent-dialog-body fluent-select::part(listbox) {
   --fill-color: var(--neutral-layer-2);
 }
+/*DL*/
+dt {
+  float: left;
+  clear: left;
+  min-width: 60px;
+  margin-right: 5px;
+  font-weight: bold;
+}
+dd {
+  margin-left: 0;
+  margin-bottom: 0;
+}
 .tf-card {
   border: 1px solid var(--neutral-stroke-rest);
   border-radius: calc(var(--layer-corner-radius) * 1px);

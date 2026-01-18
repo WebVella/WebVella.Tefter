@@ -165,8 +165,10 @@ public partial class TucChangeStatusDialog : TfBaseComponent, IDialogContentComp
                 ChannelId = new Guid("27a7703a-8fe8-4363-aee1-64a219d7520e"),
                 Type = 0,
                 Content =
-                    $"Status was changed from status '<span style=\"color:var(--info)\">{_initialStep?.Label ?? "N/A"} : {_initalStatus?.Label ?? "N/A"}</span>'" +
-                    $" to status '<span style=\"color:var(--info)\">{_selectedStep?.Label ?? "N/A"} : {_selectedStatus?.Label ?? "N/A"}</span>'",
+                    $"Status changed <dl>" +
+                    $"<dt>from</dt><dd style=\"color:var(--accent-foreground-rest)\">{_initialStep?.Label ?? "N/A"} :: {_initalStatus?.Label ?? "N/A"}</dd>" +
+                    $"<dt>to</dt><dd style=\"color:var(--accent-foreground-rest)\">{_selectedStep?.Label ?? "N/A"} :: {_selectedStatus?.Label ?? "N/A"}</dd>" +
+                    $"</dl>",
                 UserId = TfAuthLayout.GetUserId(),
                 RowIds = submitDict.Keys.ToList(),
                 DataProviderId = Content.Dataset.DataProviderId

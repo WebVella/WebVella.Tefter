@@ -17,18 +17,16 @@ public partial class TucScreenRegionComponent
 		}
 	}
 
-	private ReadOnlyCollection<TfScreenRegionComponentMeta> _componentsMeta
+	private List<TfScreenRegionComponentMeta> _componentsMeta
 	{
 		get
 		{
-			if (Region is null) return (new List<TfScreenRegionComponentMeta>()).AsReadOnly();
-
 			if (Count is not null)
 			{
 				return TfMetaService.GetRegionComponentsMeta(
 					context: Region.GetType(),
 					scope: Scope
-				).Take(Count.Value).ToList().AsReadOnly();
+				).Take(Count.Value).ToList();
 			}
 			return TfMetaService.GetRegionComponentsMeta(
 				context: Region.GetType(),

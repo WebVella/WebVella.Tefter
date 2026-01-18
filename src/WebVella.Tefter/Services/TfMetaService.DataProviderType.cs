@@ -2,15 +2,15 @@
 
 public partial interface ITfMetaService
 {
-	ITfDataProviderAddon GetDataProviderType(
+	ITfDataProviderAddon? GetDataProviderType(
 		Guid id);
 
-	ReadOnlyCollection<ITfDataProviderAddon> GetDataProviderTypes();
+	List<ITfDataProviderAddon> GetDataProviderTypes();
 }
 
 public partial class TfMetaService : ITfMetaService
 {
-	public static List<ITfDataProviderAddon> _providerTypes { get; internal set; } = new List<ITfDataProviderAddon>();
+	public static List<ITfDataProviderAddon> _providerTypes { get; internal set; } = new ();
 
 	private static void ScanAndRegisterDataProvidersTypes(
 		Type type)
@@ -27,16 +27,25 @@ public partial class TfMetaService : ITfMetaService
 			_typesMap[type.FullName] = type;
 		}
 	}
-	public ITfDataProviderAddon GetDataProviderType(
+	public ITfDataProviderAddon? GetDataProviderType(
 		Guid id)
 	{
-		return _providerTypes.SingleOrDefault(x => x.AddonId == id);
+		var dictInstance = _providerTypes.SingleOrDefault(x => x.AddonId == id);
+		if (dictInstance is null) return null;
+		return (ITfDataProviderAddon?)Activator.CreateInstance(dictInstance.GetType());		
 	}
 
-	public ReadOnlyCollection<ITfDataProviderAddon> GetDataProviderTypes()
+	public List<ITfDataProviderAddon> GetDataProviderTypes()
 	{
-		return _providerTypes.AsReadOnly();
-	}
+		var instances = new List<ITfDataProviderAddon>();
+		foreach (var dictInstance in _providerTypes)
+		{
+			var instance = (ITfDataProviderAddon?)Activator.CreateInstance(dictInstance.GetType());
+			if(instance is null) continue;
+			instances.Add(instance);
+		}
+		return instances;
+	}		
 }
 
 

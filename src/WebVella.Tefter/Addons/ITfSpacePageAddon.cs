@@ -11,12 +11,6 @@ public interface ITfSpacePageAddon : ITfAddon
 	public List<TfScreenRegionTab> GetManagementTabs();
 }
 
-public class TfSpacePageAddonMeta
-{
-	public Guid ComponentId { get; init; }
-	internal ITfSpacePageAddon Instance { get; init; }
-}
-
 public class TfSpacePageAddonContext
 {
 	public TfSpacePage SpacePage { get; set; } = null!;

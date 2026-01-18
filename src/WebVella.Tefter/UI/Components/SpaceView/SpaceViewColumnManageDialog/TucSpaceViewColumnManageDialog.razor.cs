@@ -13,7 +13,7 @@ public partial class TucSpaceViewColumnManageDialog : TfFormBaseComponent, IDial
 	private bool _isCreate = false;
 
 	private ITfSpaceViewColumnTypeAddon? _selectedColumnType = null;
-	private ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> _availableColumnTypes = null!;
+	private List<ITfSpaceViewColumnTypeAddon> _availableColumnTypes = null!;
 	private TucSpaceViewColumnManageDialogTab _activeTab = TucSpaceViewColumnManageDialogTab.General;
 	private List<TfMenuItem> _menu = new();
 	private TfSpaceViewColumn _form = new();

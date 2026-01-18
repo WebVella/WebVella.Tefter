@@ -132,12 +132,12 @@
                     <FluentGrid>
                         <FluentGridItem xs="12">
                             <FluentInputLabel Label="@LOC("Page type")" />
-                            <TucSelectComponent TOption="TfSpacePageAddonMeta" Items="@_pageComponents"
+                            <TucSelectComponent TOption="ITfSpacePageAddon" Items="@_pageComponents"
                                                 Value="_selectedPageComponent" ValueChanged="_pageComponentChanged"
-                                                OptionText="@(x => x.Instance.AddonName)"
-                                                OptionIcon="@(x => x.Instance.AddonFluentIconName)"
-                                                OptionDescription="@(x => x.Instance.AddonDescription)"
-                                                OptionMatch="@((x, y) => x.Instance?.AddonId == y.Instance.AddonId)" />
+                                                OptionText="@(x => x.AddonName)"
+                                                OptionIcon="@(x => x.AddonFluentIconName)"
+                                                OptionDescription="@(x => x.AddonDescription)"
+                                                OptionMatch="@((x, y) => x.AddonId == y.AddonId)" />
                             <FluentValidationMessage For="@(() => _form.ComponentId)" />
                         </FluentGridItem>
                     </FluentGrid>
@@ -149,7 +149,7 @@
                     else
                     {
                         <TucErrorBoundry>
-                            <DynamicComponent Type="_selectedPageComponent.Instance.GetType()"
+                            <DynamicComponent Type="_selectedPageComponent.GetType()"
                                               Parameters="@_getDynamicComponentParams()"
                                               @ref="typeSettingsComponent"></DynamicComponent>
                         </TucErrorBoundry>

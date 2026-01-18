@@ -25,10 +25,10 @@ public partial class TfService
 			if (resultNode is null)
 				throw new TfException("GetSpaceNode method failed");
 
-			var spacePagesMeta = _metaService.GetSpacePagesComponentsMeta();
-			var spacePageMeta = spacePagesMeta.SingleOrDefault(x => x.ComponentId == resultNode.ComponentId);
+			var spacePageAddons = _metaService.GetSpacePagesComponents();
+			var spacePageMeta = spacePageAddons.SingleOrDefault(x => x.AddonId == resultNode.ComponentId);
 			if (resultNode.Type == TfSpacePageType.Page && spacePageMeta != null &&
-			    spacePageMeta.Instance.GetType() == typeof(TucSpaceViewSpacePageAddon))
+			    spacePageMeta.GetType() == typeof(TucSpaceViewSpacePageAddon))
 			{
 				try
 				{
@@ -157,10 +157,10 @@ public partial class TfService
 			if (resultNode is null)
 				throw new TfException("GetSpaceNode method failed");
 
-			var spacePagesMeta = _metaService.GetSpacePagesComponentsMeta();
-			var spacePageMeta = spacePagesMeta.SingleOrDefault(x => x.ComponentId == resultNode.ComponentId);
-			if (resultNode.Type == TfSpacePageType.Page && spacePageMeta != null &&
-			    spacePageMeta.Instance.GetType() == typeof(TucSpaceViewSpacePageAddon))
+			var spacePageAddons = _metaService.GetSpacePagesComponents();
+			var spacePageAddon = spacePageAddons.SingleOrDefault(x => x.AddonId == resultNode.ComponentId);
+			if (resultNode.Type == TfSpacePageType.Page && spacePageAddon != null &&
+			    spacePageAddon.GetType() == typeof(TucSpaceViewSpacePageAddon))
 			{
 				try
 				{

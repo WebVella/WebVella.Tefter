@@ -16,9 +16,9 @@ public partial class TucRecipeDetails : TfBaseComponent
 		if (installData is not null)
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
-		_onboardRecipe = TfMetaService.GetOnboardRecipe(RecipeId);
-		if (_onboardRecipe is null)
-			throw new Exception("Recipe Id not found");
+		var recipe = TfMetaService.GetOnboardRecipe(RecipeId);
+		_onboardRecipe = recipe ?? throw new Exception("Recipe Id not found");
+
 		var position = 1;
 		foreach (var step in _onboardRecipe.Steps)
 		{

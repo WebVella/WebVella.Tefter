@@ -1,7 +1,5 @@
 ﻿namespace WebVella.Tefter.Utility;
 
-using WebVella.Tefter.Models;
-
 public static partial class NavigatorExt
 {
 	internal static TfState GenerateAppState(this NavigationManager navigator,
@@ -95,7 +93,7 @@ public static partial class NavigatorExt
 
 	private static List<TfMenuItem> generateAdminMenu(this TfNavigationState routeState,
 		IStringLocalizer<TfService> LOC,
-		ReadOnlyCollection<TfScreenRegionComponentMeta> addonPages)
+		List<TfScreenRegionComponentMeta> addonPages)
 	{
 		var menuItems = new List<TfMenuItem>();
 
@@ -258,7 +256,7 @@ public static partial class NavigatorExt
 
 	private static List<TfMenuItem> generateHomeMenu(this TfNavigationState routeState,
 		IStringLocalizer<TfService> LOC,
-		ReadOnlyCollection<TfScreenRegionComponentMeta> addonPages)
+		List<TfScreenRegionComponentMeta> addonPages)
 	{
 		var menuItems = new List<TfMenuItem>();
 
@@ -334,7 +332,7 @@ public static partial class NavigatorExt
 
 	private static void generateBreadcrumb(this TfState appState, IStringLocalizer<TfService> LOC,
 		TfNavigationState navState,
-		ReadOnlyCollection<TfScreenRegionComponentMeta>? addonPages = null,
+		List<TfScreenRegionComponentMeta>? addonPages = null,
 		List<TfSpacePage>? spacePages = null)
 	{
 		var menu = new List<TfMenuItem>();

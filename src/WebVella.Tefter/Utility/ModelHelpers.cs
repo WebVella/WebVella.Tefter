@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Utility;
 public static class ModelHelpers
 {
-	internal static ITfSpaceViewColumnTypeAddon GetColumnTypeForDbType(this TfDatabaseColumnType dbType, ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> availableTypes)
+	internal static ITfSpaceViewColumnTypeAddon GetColumnTypeForDbType(this TfDatabaseColumnType dbType, List<ITfSpaceViewColumnTypeAddon> availableTypes)
 	{
 		ITfSpaceViewColumnTypeAddon? selectedType;
 		switch (dbType)

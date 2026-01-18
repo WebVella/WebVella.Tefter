@@ -9,7 +9,7 @@ public partial class TucSpaceViewQuickView : TfBaseComponent
 
 	private string _tableId = "space-view-table";
 	private bool _isDataLoading = true;
-	private ReadOnlyDictionary<Guid, ITfSpaceViewColumnTypeAddon> _columnTypeMetaDict = null!;
+	private Dictionary<Guid, ITfSpaceViewColumnTypeAddon> _columnTypeMetaDict = null!;
 	private TfSpace? _space = null;
 	private TfSpacePage? _spacePage = null;
 	private TfSpaceView? _spaceView = null;

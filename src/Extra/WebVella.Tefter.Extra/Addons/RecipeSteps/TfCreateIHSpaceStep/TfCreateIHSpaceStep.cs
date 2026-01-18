@@ -32,7 +32,7 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
 	}
 }
 
-public class TfCreateIHSpaceStepData : ITfRecipeStepAddonData
+public record TfCreateIHSpaceStepData : ITfRecipeStepAddonData
 {
 	public string BuildingCode { get; set; }
 }

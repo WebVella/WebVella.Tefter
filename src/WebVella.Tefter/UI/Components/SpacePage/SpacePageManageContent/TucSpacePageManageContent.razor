@@ -61,13 +61,13 @@
                                 <FluentInputLabel Label="@LOC("Page type")"/>
                                 @if (_component is not null)
                                 {
-                                    <TucSelectComponent TOption="TfSpacePageAddonMeta"
-                                                        Items="@(new List<TfSpacePageAddonMeta>() { _component })"
+                                    <TucSelectComponent TOption="ITfSpacePageAddon"
+                                                        Items="@(new List<ITfSpacePageAddon>() { _component })"
                                                         Value="_component"
-                                                        OptionText="@(x => x.Instance.AddonName)"
-                                                        OptionIcon="@(x => x.Instance.AddonFluentIconName)"
-                                                        OptionDescription="@(x => x.Instance.AddonDescription)"
-                                                        OptionMatch="@((x, y) => x.Instance?.AddonId == y.Instance.AddonId)"
+                                                        OptionText="@(x => x.AddonName)"
+                                                        OptionIcon="@(x => x.AddonFluentIconName)"
+                                                        OptionDescription="@(x => x.AddonDescription)"
+                                                        OptionMatch="@((x, y) => x.AddonId == y.AddonId)"
                                                         ReadOnly="true"/>
                                 }
                                 else
