@@ -2,13 +2,13 @@
 
 public record TfDataProviderIdentity
 {
-	public Guid Id { get; internal set; }
+	public Guid Id { get; set; }
 
-	public Guid DataProviderId { get; internal set; }
+	public Guid DataProviderId { get; set; }
 
 	public string DataIdentity { get; set; }
 
-	public List<string> Columns { get; internal set; } = new();
+	public List<string> Columns { get; set; } = new();
 }
 
 

@@ -51,7 +51,7 @@ public partial interface ITfService
 	/// </summary>
 	/// <param name="providerModel"></param>
 	/// <returns></returns>
-	internal TfDataProvider CreateDataProvider(
+	public TfDataProvider CreateDataProvider(
 		TfCreateDataProvider providerModel);
 
 	/// <summary>
@@ -59,7 +59,7 @@ public partial interface ITfService
 	/// </summary>
 	/// <param name="providerModel"></param>
 	/// <returns></returns>
-	internal TfDataProvider UpdateDataProvider(
+	public TfDataProvider UpdateDataProvider(
 		TfUpdateDataProvider providerModel);
 
 	/// <summary>
@@ -67,7 +67,7 @@ public partial interface ITfService
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	internal void DeleteDataProvider(
+	public void DeleteDataProvider(
 		Guid id);
 
 	/// <summary>

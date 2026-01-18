@@ -140,7 +140,7 @@
 							           Label="@LOC("Default value rule")"/>
 						</FluentGridItem>
 						<FluentGridItem xs="4">
-							@if (_form.RuleSet == TfDataProviderColumnRuleSet.NullableWithDefault)
+							@if (_form.RuleSet == TfDataProviderColumnRuleSet.NotNullableWithCustomDefault)
 							{
 								<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DefaultValue
 								                 Label="@LOC("Default value")" Style="width:100%" AutoComplete="off"

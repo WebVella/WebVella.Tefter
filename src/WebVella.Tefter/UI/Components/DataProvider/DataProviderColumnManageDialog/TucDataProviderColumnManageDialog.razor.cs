@@ -173,7 +173,7 @@ public partial class TucDataProviderColumnManageDialog : TfFormBaseComponent, ID
 			};
 
 			if (submit.DefaultValue is null
-				&& submit.RuleSet == TfDataProviderColumnRuleSet.NullableWithDefault)
+				&& submit.RuleSet == TfDataProviderColumnRuleSet.NotNullableWithCustomDefault)
 				submit.DefaultValue = String.Empty;
 
 			if (_inputType == TfDataProviderColumnDataInputType.LocalInput)
