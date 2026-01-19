@@ -180,6 +180,25 @@ public partial class TfServiceTest : BaseTest
 	}
 
 	[Fact]
+	public async Task DataProvider_DeleteDataProviderWithRelaations()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var (provider, dataset) = await CreateTestStructureAndData(ServiceProvider, dbService);
+
+				var task = Task.Run(() => { tfService.DeleteDataProvider(provider.Id); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+			}
+		}
+	}
+
+	[Fact]
 	public async Task DataProvider_CreateProviderWithNoProviderType()
 	{
 		using (await locker.LockAsync())

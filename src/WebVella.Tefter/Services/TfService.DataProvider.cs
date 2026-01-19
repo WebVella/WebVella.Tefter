@@ -553,12 +553,7 @@ public partial class TfService : ITfService
 				}
 				var datasets = GetDatasets(providerId:provider.Id);
 				foreach (var dataset in datasets)
-				{
-					success = _dboManager.Delete<TfDatasetDbo>(dataset.Id);
-
-					if (!success)
-						throw new TfDboServiceException("Delete<TfDatasetDbo> failed.");
-				}				
+					DeleteDataset(dataset.Id);
 				
 				success = _dboManager.Delete<TfDataProviderDbo>(id);
 
