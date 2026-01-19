@@ -32,11 +32,15 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 		if (context.Space is null) throw new Exception("TfSpaceViewPageComponent error: Space not provided");
 		var tfService = serviceProvider.GetService<ITfService>();
 		//check if view not already created
+		Guid spaceViewId = Guid.NewGuid();
 		if(jsonOptions.SpaceViewId is not null && jsonOptions.SpaceViewId != Guid.Empty)
 		{
 			var pageView = tfService.GetSpaceView(jsonOptions.SpaceViewId.Value);
-			if (pageView is not null)
-				return context.ComponentOptionsJson;
+			if (pageView is null)
+			{
+				//the space view needs to be created with the preset ID
+				spaceViewId = jsonOptions.SpaceViewId.Value;
+			}
 		}
 
 
@@ -47,7 +51,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 			//Create view if needed
 			spaceView = new TfSpaceViewCreateModel
 			{
-				Id = Guid.NewGuid(),
+				Id = spaceViewId,
 				DatasetId = jsonOptions.DatasetId,
 				Name = context.SpacePage.Name,
 				Presets = new List<TfSpaceViewPreset>(),
@@ -77,7 +81,7 @@ public partial class TucSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 
 			spaceView = new TfSpaceViewCreateModel
 			{
-				Id = jsonOptions.SpaceViewId is not null && jsonOptions.SpaceViewId != Guid.Empty ? jsonOptions.SpaceViewId.Value : Guid.NewGuid(),
+				Id = spaceViewId,
 				DatasetId = templateView.DatasetId,
 				Name = context.SpacePage.Name,
 				Presets = templateView.Presets,

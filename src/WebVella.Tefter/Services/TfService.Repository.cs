@@ -383,7 +383,14 @@ public partial class TfService : ITfService
 		}
 		catch (Exception ex)
 		{
-			throw ProcessException(ex);
+			if (ex.InnerException is not null)
+			{
+				throw ProcessException(ex.InnerException);
+			}
+			else
+			{
+				throw ProcessException(ex);
+			}
 		}
 	}
 
