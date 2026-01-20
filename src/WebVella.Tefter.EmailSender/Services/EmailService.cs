@@ -118,7 +118,7 @@ internal partial class EmailService : IEmailService
 				"search",
 				search,
 				DbType.String));
-			whereList.Add("(x_search ILIKE CONCAT ('%', @search, '%') ))");
+			whereList.Add("(x_search ILIKE CONCAT ('%', @search, '%'))");
 		}
 		if (relatedRowId is not null)
 		{
@@ -150,9 +150,11 @@ internal partial class EmailService : IEmailService
 				"anyRelatedId",
 				anyRelatedId,
 				DbType.Guid));
-			whereList.Add("( (related_row_ids ILIKE CONCAT ('%', @anyRelatedId, '%'))" +
-			              " OR (related_dataset_ids ILIKE CONCAT ('%', @anyRelatedId, '%'))" +
-			              " OR (related_space_ids ILIKE CONCAT ('%', @anyRelatedId, '%')) )");
+			whereList.Add("( " +
+							" (related_row_ids ILIKE CONCAT ('%', @anyRelatedId, '%')) " +
+			              " OR (related_dataset_ids ILIKE CONCAT ('%', @anyRelatedId, '%')) " +
+			              " OR (related_space_ids ILIKE CONCAT ('%', @anyRelatedId, '%')) " +
+						  " )");
 		}
 
 		var whereSql = "";
