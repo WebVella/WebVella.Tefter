@@ -16,8 +16,8 @@
                 <ChildContent>
                     <FluentGrid>
                         <FluentGridItem xs="6">
-                            <FluentTextField Value="@(_spacePage.Name)"
-                                             Label="@LOC("Name")" Style="width:100%" ReadOnly="true"/>
+                            <FluentTextField Value="@(_spacePage.Type.ToDescriptionString())"
+                                             Label="@LOC("Type")" Style="width:100%" ReadOnly="true"/>
                         </FluentGridItem>
                         <FluentGridItem xs="6">
                             <FluentTextField
@@ -25,35 +25,38 @@
                                 Label="@LOC("Parent")" Style="width:100%" ReadOnly="true"/>
                         </FluentGridItem>
                     </FluentGrid>
-                    <FluentGrid>
-                        <FluentGridItem xs="6">
-                            <FluentTextField Value="@(_spacePage.Type.ToDescriptionString())"
-                                             Label="@LOC("Type")" Style="width:100%" ReadOnly="true"/>
-                        </FluentGridItem>
-                        <FluentGridItem xs="6">
-                            <FluentInputLabel Label="@LOC("Icon")"/>
-                            <TucSelectIcon @bind-Value="_spacePage.FluentIconName" ReadOnly="true"/>
-                        </FluentGridItem>
-                    </FluentGrid>
-                    <FluentGrid>
-                        <FluentGridItem xs="6">
-                            <FluentTextField Value="@_spacePage.Description"
-                                             Label="@LOC("Description")" Style="width:100%" ReadOnly="true"/>
-                        </FluentGridItem>
-                        <FluentGridItem xs="6">
-                            <FluentInputLabel Label="@LOC("Extracted Tags")"/>
-                            <FluentStack Orientation="@Orientation.Horizontal" Style="min-height:24px;">
-                                @foreach (var item in _pageTags)
-                                {
-                                    <FluentBadge Appearance="Appearance.Accent">#@item.Label</FluentBadge>
-                                }
-                                @if (_pageTags.Count == 0)
-                                {
-                                    <div style="color:var(--neutral-foreground-hint)">@LOC("no tags")</div>
-                                }
-                            </FluentStack>
-                        </FluentGridItem>
-                    </FluentGrid>
+                    @if (_spacePage.Type != TfSpacePageType.Divider)
+                    {
+                        <FluentGrid>
+                            <FluentGridItem xs="6">
+                                <FluentTextField Value="@(_spacePage.Name)"
+                                                 Label="@LOC("Name")" Style="width:100%" ReadOnly="true"/>
+                            </FluentGridItem>
+                            <FluentGridItem xs="6">
+                                <FluentInputLabel Label="@LOC("Icon")"/>
+                                <TucSelectIcon @bind-Value="_spacePage.FluentIconName" ReadOnly="true"/>
+                            </FluentGridItem>
+                        </FluentGrid>
+                        <FluentGrid>
+                            <FluentGridItem xs="6">
+                                <FluentTextField Value="@_spacePage.Description"
+                                                 Label="@LOC("Description")" Style="width:100%" ReadOnly="true"/>
+                            </FluentGridItem>
+                            <FluentGridItem xs="6">
+                                <FluentInputLabel Label="@LOC("Extracted Tags")"/>
+                                <FluentStack Orientation="@Orientation.Horizontal" Style="min-height:24px;">
+                                    @foreach (var item in _pageTags)
+                                    {
+                                        <FluentBadge Appearance="Appearance.Accent">#@item.Label</FluentBadge>
+                                    }
+                                    @if (_pageTags.Count == 0)
+                                    {
+                                        <div style="color:var(--neutral-foreground-hint)">@LOC("no tags")</div>
+                                    }
+                                </FluentStack>
+                            </FluentGridItem>
+                        </FluentGrid>
+                    }
                     @if (_spacePage.Type == TfSpacePageType.Page)
                     {
                         <FluentGrid>

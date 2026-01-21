@@ -190,7 +190,8 @@ public partial class TfService : ITfService
 			{
 				var allPages = GetSpacePages(spacePage.SpaceId);
 				var space = GetSpace(spacePage.SpaceId);
-
+				if (spacePage.Type == TfSpacePageType.Divider)
+					spacePage.Name = "divider";
 				new TfSpacePageValidator(allPages)
 					.ValidateCreate(spacePage)
 					.ToValidationException()

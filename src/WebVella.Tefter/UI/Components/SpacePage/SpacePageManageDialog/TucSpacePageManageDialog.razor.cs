@@ -73,13 +73,14 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		_parentNodeOptions = _getParents();
 		if (_isCreate)
 		{
+			
 			_form = new()
 			{
 				Id = Guid.NewGuid(),
 				SpaceId = Content.SpaceId,
 				Type = TfSpacePageType.Page,
 				FluentIconName = "Document",
-				ComponentId = _pageComponents.Count > 0 ? _pageComponents[0].AddonId : null
+				ComponentId = new Guid(TucSpaceViewSpacePageAddon.Id)
 			};
 		}
 		else
@@ -129,13 +130,19 @@ public partial class TucSpacePageManageDialog : TfFormBaseComponent, IDialogCont
 		TfSpacePage submit = _form with { Id = _form.Id };
 		if (!_copyOption.Value)
 		{
-			if (submit.Type == TfSpacePageType.Folder)
+			if (submit.Type == TfSpacePageType.Divider)
+			{
+				submit.ComponentOptionsJson = null;
+				submit.ComponentType = null;
+				submit.ComponentId = null;
+			}
+			else if (submit.Type == TfSpacePageType.Folder)
 			{
 				submit.ComponentOptionsJson = null;
 				submit.ComponentType = null;
 				submit.ComponentId = null;
 
-			}
+			}			
 			else if (submit.Type == TfSpacePageType.Page)
 			{
 				if (typeSettingsComponent is not null && _selectedPageComponent is not null)

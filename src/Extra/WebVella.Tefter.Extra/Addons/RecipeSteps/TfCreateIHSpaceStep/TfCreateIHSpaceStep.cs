@@ -503,6 +503,21 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
 
             #endregion
 
+            #region <<Divider>>
+
+            {
+                var submit = new TfSpacePage()
+                {
+                    Id = Guid.NewGuid(),
+                    Type = TfSpacePageType.Divider,
+                    Position = position++,
+                    SpaceId = spaceId,
+                };
+                var (pageId, pages) = tfService.CreateSpacePage(submit);
+            }
+
+            #endregion            
+            
             #region <<Изпратени имейлове>>
 
             {

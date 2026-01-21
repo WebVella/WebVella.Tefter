@@ -2002,6 +2002,10 @@ dd {
   border-right: 1px solid var(--neutral-stroke-rest);
   background: var(--tf-layout-aside-background);
 }
+.tflg__sidenav fluent-divider {
+  margin: 1rem 0 0.5rem 0;
+  border-top-style: dashed;
+}
 .tflg__page-topbar {
   flex: 0 0 var(--tf-topbar-height);
 }

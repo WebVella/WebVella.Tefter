@@ -23,7 +23,22 @@
 			</FluentStack>
 		</div>
 	</td>
-	@if (Item.Type == TfSpacePageType.Folder)
+	@if (Item.Type == TfSpacePageType.Divider)
+	{
+		<td class="tf-grid-td" colspan="3">
+			<div>
+				<FluentStack Wrap="false">
+					@for (int i = 0; i < Level; i++)
+					{
+						<span class="tf-grid-td-spacer"></span>
+					}
+					<span class="td-description">--- (@LOC("divider")) ---</span>
+				</FluentStack>
+
+			</div>
+		</td>
+	}
+	else if (Item.Type == TfSpacePageType.Folder)
 	{
 		<td class="tf-grid-td" colspan="3">
 			<div>
@@ -39,7 +54,7 @@
 
 			</div>
 		</td>
-	}
+	}	
 	else
 	{
 		<td class="tf-grid-td" colspan="3">

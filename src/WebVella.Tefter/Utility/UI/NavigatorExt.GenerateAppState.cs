@@ -36,7 +36,7 @@ public static partial class NavigatorExt
 			appState.Menu = navState.generateHomeMenu(
 				LOC: LOC,
 				addonPages: addonPages);
-			appState.generateBreadcrumb(LOC, navState, addonPages: addonPages);			
+			appState.generateBreadcrumb(LOC, navState, addonPages: addonPages);
 		}
 		else if (navState.RouteNodes[0] == RouteDataNode.Admin)
 		{
@@ -67,7 +67,7 @@ public static partial class NavigatorExt
 				{
 					//get space pages
 					if (oldState is not null && oldState.Space?.Id == appState.Space.Id
-											 && oldState.SpacePages is not null)
+					                         && oldState.SpacePages is not null)
 						appState.SpacePages = oldState.SpacePages;
 					else
 						appState.SpacePages = _tfService.GetSpacePages(navState.SpaceId.Value);
@@ -120,7 +120,7 @@ public static partial class NavigatorExt
 				IconCollapsed = TfConstants.GetIcon("People"),
 				IconExpanded = TfConstants.GetIcon("People"),
 				Selected = routeState.HasNode(RouteDataNode.Users, 1)
-						   || routeState.HasNode(RouteDataNode.Roles, 1),
+				           || routeState.HasNode(RouteDataNode.Roles, 1),
 				Url = string.Format(TfConstants.AdminUsersPageUrl),
 				Text = LOC["Access"],
 				Expanded = true
@@ -154,8 +154,8 @@ public static partial class NavigatorExt
 				IconCollapsed = TfConstants.GetIcon("Database"),
 				IconExpanded = TfConstants.GetIcon("Database"),
 				Selected = routeState.HasNode(RouteDataNode.DataProviders, 1)
-						   || routeState.HasNode(RouteDataNode.SharedColumns, 1)
-						   || routeState.HasNode(RouteDataNode.DataIdentities, 1),
+				           || routeState.HasNode(RouteDataNode.SharedColumns, 1)
+				           || routeState.HasNode(RouteDataNode.DataIdentities, 1),
 				Url = string.Format(TfConstants.AdminDataProvidersPageUrl),
 				Text = LOC["Data"],
 				Expanded = true
@@ -195,7 +195,7 @@ public static partial class NavigatorExt
 				IconCollapsed = TfConstants.GetIcon("Folder"),
 				IconExpanded = TfConstants.GetIcon("Folder"),
 				Selected = routeState.HasNode(RouteDataNode.Templates, 1)
-						   || routeState.HasNode(RouteDataNode.FileRepository, 1),
+				           || routeState.HasNode(RouteDataNode.FileRepository, 1),
 				Url = string.Format(TfConstants.AdminFileRepositoryPageUrl),
 				Text = LOC["Content"],
 				Expanded = true
@@ -271,11 +271,12 @@ public static partial class NavigatorExt
 			Url = "/",
 			Text = LOC["Dashboard"]
 		});
-		
+
 		#endregion
 
 
 		#region << Addons >>
+
 		foreach (var addonPage in addonPages)
 		{
 			menuItems.Add(new()
@@ -283,7 +284,7 @@ public static partial class NavigatorExt
 				Id = $"tf-addon-{addonPage.Id}",
 				Selected = routeState.PageId == addonPage.Id,
 				Url = string.Format(TfConstants.HomePagesSingleUrl, addonPage.Id),
-				IconCollapsed = TfConstants.GetIcon(addonPage.FluentIconName), 
+				IconCollapsed = TfConstants.GetIcon(addonPage.FluentIconName),
 				Text = addonPage.Name
 			});
 		}
@@ -291,8 +292,8 @@ public static partial class NavigatorExt
 		#endregion
 
 		return menuItems;
-	}	
-	
+	}
+
 	private static List<TfMenuItem> generateSpaceMenu(this TfNavigationState navState,
 		List<TfSpacePage> spacePages)
 	{
@@ -307,27 +308,37 @@ public static partial class NavigatorExt
 
 	private static TfMenuItem generateMenuItemForPage(this TfSpacePage page, TfNavigationState navState)
 	{
-		var item = new TfMenuItem()
+		if (page.Type == TfSpacePageType.Divider)
 		{
-			Id = TfConverters.ConvertGuidToHtmlElementId(page.Id),
-			IconCollapsed = TfConstants.GetIcon(page.FluentIconName),
-			IconExpanded = TfConstants.GetIcon(page.FluentIconName),
-			Selected = page.Id == navState.SpacePageId,
-			Expanded = true,
-			Url = page.Type == TfSpacePageType.Folder
-				? null
-				: String.Format(TfConstants.SpacePagePageUrl, page.SpaceId, page.Id),
-			Text = page.Name,
-			Tooltip = page.Name,
-			Data = new TfMenuItemData() { PageId = page.Id }
-		};
-
-		foreach (var childPage in page.ChildPages)
-		{
-			item.Items.Add(childPage.generateMenuItemForPage(navState));
+			return new TfMenuItem()
+			{
+				IsDivider = true
+			};
 		}
+		else
+		{
+			var item = new TfMenuItem()
+			{
+				Id = TfConverters.ConvertGuidToHtmlElementId(page.Id),
+				IconCollapsed = TfConstants.GetIcon(page.FluentIconName),
+				IconExpanded = TfConstants.GetIcon(page.FluentIconName),
+				Selected = page.Id == navState.SpacePageId,
+				Expanded = true,
+				Url = page.Type == TfSpacePageType.Folder
+					? null
+					: String.Format(TfConstants.SpacePagePageUrl, page.SpaceId, page.Id),
+				Text = page.Name,
+				Tooltip = page.Name,
+				Data = new TfMenuItemData() { PageId = page.Id }
+			};
 
-		return item;
+			foreach (var childPage in page.ChildPages)
+			{
+				item.Items.Add(childPage.generateMenuItemForPage(navState));
+			}
+
+			return item;
+		}
 	}
 
 	private static void generateBreadcrumb(this TfState appState, IStringLocalizer<TfService> LOC,
@@ -353,23 +364,17 @@ public static partial class NavigatorExt
 
 			var accessNode = new TfMenuItem()
 			{
-				Id = "tf-admin-access",
-				Text = LOC["Access"],
-				Url = TfConstants.AdminUsersPageUrl
+				Id = "tf-admin-access", Text = LOC["Access"], Url = TfConstants.AdminUsersPageUrl
 			};
 
 			var dataNode = new TfMenuItem()
 			{
-				Id = "tf-admin-data",
-				Text = LOC["Data"],
-				Url = TfConstants.AdminDataProvidersPageUrl
+				Id = "tf-admin-data", Text = LOC["Data"], Url = TfConstants.AdminDataProvidersPageUrl
 			};
 
 			var contentNode = new TfMenuItem()
 			{
-				Id = "tf-admin-content",
-				Text = LOC["Content"],
-				Url = TfConstants.AdminFileRepositoryPageUrl
+				Id = "tf-admin-content", Text = LOC["Content"], Url = TfConstants.AdminFileRepositoryPageUrl
 			};
 
 			var addonsNode = new TfMenuItem()
@@ -425,6 +430,7 @@ public static partial class NavigatorExt
 								Url = TfConstants.AdminDataProvidersPageUrl
 							});
 						}
+
 						break;
 					case RouteDataNode.SharedColumns:
 						menu.Add(dataNode);
@@ -515,13 +521,7 @@ public static partial class NavigatorExt
 		}
 		else if (navState.HasNode(RouteDataNode.Home, 0))
 		{
-
-			menu.Add(new()
-			{
-				Id = $"tf-space-home",
-				Text = LOC["Home"],
-				Url = "/"
-			});
+			menu.Add(new() { Id = $"tf-space-home", Text = LOC["Home"], Url = "/" });
 		}
 
 		appState.Breadcrumb = menu;

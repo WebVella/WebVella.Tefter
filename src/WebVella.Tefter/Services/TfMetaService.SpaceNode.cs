@@ -19,7 +19,7 @@ public partial class TfMetaService
 			instances.Add(instance);
 		}
 
-		return instances;
+		return instances.OrderBy(x => x.AddonName).ToList();
 	}		
 
 	private static void ScanAndRegisterSpacePageComponents(
