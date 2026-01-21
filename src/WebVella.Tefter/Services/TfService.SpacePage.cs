@@ -61,11 +61,11 @@ public partial class TfService : ITfService
 			List<ITfSpacePageAddon> components = _metaService.GetSpacePagesComponents();
 			foreach (var rootPage in rootPages)
 			{
+				rootPage.ParentPage = null;
 				var pageType = components
 					.SingleOrDefault(x => x.AddonId == rootPage.ComponentId);
-				if(pageType is null) continue;
-				rootPage.ParentPage = null;
-				rootPage.ComponentType = pageType.GetType();
+				if (pageType is not null)
+					rootPage.ComponentType = pageType.GetType();
 				InitSpacePageChildPages(rootPage, spacePagesList, components);
 			}
 
@@ -96,11 +96,11 @@ public partial class TfService : ITfService
 				.GetSpacePagesComponents();
 			foreach (var rootPage in rootPages)
 			{
+				rootPage.ParentPage = null;
 				var pageType = components
 					.SingleOrDefault(x => x.AddonId == rootPage.ComponentId);
-				if(pageType is null) continue;
-				rootPage.ParentPage = null;
-				rootPage.ComponentType = pageType.GetType();
+				if (pageType is not null)
+					rootPage.ComponentType = pageType.GetType();
 				InitSpacePageChildPages(rootPage, spacePagesList, components);
 			}
 
@@ -139,11 +139,11 @@ public partial class TfService : ITfService
 
 		foreach (var childPage in childPages)
 		{
+			childPage.ParentPage = page;
 			var pageType = components
 				.SingleOrDefault(x => x.AddonId == childPage.ComponentId);
-			if(pageType is null) continue;
-			childPage.ParentPage = page;
-			childPage.ComponentType = pageType.GetType();
+			if (pageType is not null)
+				childPage.ComponentType = pageType.GetType();
 			InitSpacePageChildPages(childPage, allPages, components);
 		}
 	}
@@ -296,7 +296,6 @@ public partial class TfService : ITfService
 						task.WaitAndUnwrapException();
 					}
 				}
-
 				//Tags
 				MaintainSpacePageTags(spacePage);
 
@@ -700,9 +699,9 @@ public partial class TfService : ITfService
 					//Tags
 					var tags = GetSpacePageTags(pageToDelete.Id);
 					foreach (var tag in tags)
-						_deleteSpacePagePageTagRelation(tagId:tag.Id,pageId:pageToDelete.Id);					
-					
-					
+						_deleteSpacePagePageTagRelation(tagId: tag.Id, pageId: pageToDelete.Id);
+
+
 					if (!_dboManager.Delete<TfSpacePageDbo>(pageToDelete.Id))
 						throw new TfDboServiceException("Delete<TfSpacePageDbo> failed");
 
@@ -801,7 +800,7 @@ public partial class TfService : ITfService
 					}
 
 					var (createdPageId, pages) = CreateSpacePage(pageToCreate);
-					if(copyId is null)
+					if (copyId is null)
 						copyId = createdPageId;
 				}
 
@@ -851,8 +850,8 @@ public partial class TfService : ITfService
 		{
 			throw ProcessException(ex);
 		}
-	}	
-	
+	}
+
 	private TfSpacePage ConvertDboToModel(
 		TfSpacePageDbo dbo)
 	{

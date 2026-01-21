@@ -5,10 +5,10 @@ using WebVella.Tefter.Exceptions;
 namespace WebVella.Tefter.EmailSender.Addons;
 public partial class EmailSenderLogSpacePageComponent : TucBaseSpacePageComponent, IDisposable
 {
-	public const string ID = "033DC3C2-8460-4029-9EFC-AC19FD46BD7F";
-	public const string NAME = "Emails Log";
-	public const string DESCRIPTION = "lists schedule emails details";
-	public const string FLUENT_ICON_NAME = "Mail";
+	public static readonly string Id = "033DC3C2-8460-4029-9EFC-AC19FD46BD7F";
+	public static readonly string Name = "Emails Log";
+	public static readonly string Description = "lists schedule emails details";
+	public static readonly string FluentIconName = "Mail";
 
 	#region << Injects >>
 	[Inject] protected IEmailService EmailService { get; set; }
@@ -19,10 +19,10 @@ public partial class EmailSenderLogSpacePageComponent : TucBaseSpacePageComponen
 	#endregion
 
 	#region << Base Overrides >>
-	public override Guid AddonId { get; init; } = new Guid(ID);
-	public override string AddonName { get; init; } = NAME;
-	public override string AddonDescription { get; init; } = DESCRIPTION;
-	public override string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public override Guid AddonId { get; init; } = new Guid(Id);
+	public override string AddonName { get; init; } = Name;
+	public override string AddonDescription { get; init; } = Description;
+	public override string AddonFluentIconName { get; init; } = FluentIconName;
 	[Parameter] public override TfSpacePageAddonContext Context { get; set; }
 
 	public override string GetOptions() => JsonSerializer.Serialize(_options);

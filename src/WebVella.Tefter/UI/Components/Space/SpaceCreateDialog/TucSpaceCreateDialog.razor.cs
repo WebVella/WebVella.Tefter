@@ -86,6 +86,7 @@ public partial class TucSpaceCreateDialog : TfFormBaseComponent, IDialogContentC
 		_submitting = true;
 		_recipeResult = null;
 		await InvokeAsync(StateHasChanged);
+		await Task.Delay(1);
 		try
 		{
 			if (_activeStep is not null && _activeStep.Instance.FormComponent is not null)
@@ -138,6 +139,8 @@ public partial class TucSpaceCreateDialog : TfFormBaseComponent, IDialogContentC
 		var activeIndex = _visibleSteps.FindIndex(x => x.Instance.StepId == _activeStep.Instance.StepId);
 		if (activeIndex > 0)
 			_activeStep = _visibleSteps[activeIndex - 1];
+		
+		_activeStep.Instance.Errors.Clear();
 	}
 
 	private void _stepNext()

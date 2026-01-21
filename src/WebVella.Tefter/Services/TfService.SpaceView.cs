@@ -152,7 +152,7 @@ public partial class TfService
 				{
 					var spaceViewObj = new TfSpaceView()
 					{
-						Id = Guid.NewGuid(),
+						Id = spaceViewExt.Id,
 						Name = spaceViewExt.Name,
 						DatasetId = dataset.Id,
 						Presets = spaceViewTemplate is null

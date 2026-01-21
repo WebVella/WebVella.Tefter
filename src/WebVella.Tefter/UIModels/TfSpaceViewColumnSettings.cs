@@ -4,10 +4,6 @@ public record TfSpaceViewColumnSettings
 {
 	[JsonPropertyName("width")]
 	public short? Width { get; set; }
-	[JsonPropertyName("color")]
-	public TfColor? Color { get; set; }
-	[JsonPropertyName("backgroundColor")]
-	public TfColor? BackgroundColor { get; set; }
 	[JsonPropertyName("filterPresentation")]
 	public TfSpaceViewColumnSettingsFilterPresentation FilterPresentation { get; set; } = TfSpaceViewColumnSettingsFilterPresentation.VisibleWithOptions;
 	[JsonPropertyName("defaultFilter")]
