@@ -66,6 +66,21 @@ public class TfShortTextDatabaseColumnBuilder : TfDatabaseColumnBuilder
 		return this;
 	}
 
+	public TfShortTextDatabaseColumnBuilder AsSha1ExpressionFromColumnsWithPrefix(string prefix, params string[] columns)
+	{
+		if (columns == null || columns.Length == 0)
+			throw new ArgumentNullException(nameof(columns), "The columns array cannot be null or empty.");
+
+		if(string.IsNullOrWhiteSpace(prefix))
+			throw new ArgumentNullException(nameof(prefix), "The prefix cannot be null or empty.");
+
+		_expression = string.Format(TfConstants.DB_SHORT_TEXT_COLUMN_SHA1_FROM_COLUMNS_WITH_PREFIX_VALUE,
+			"'" + prefix + "'::TEXT",
+			string.Join(",", columns.Select(x => x + "::TEXT")));
+
+		return this;
+	}
+
 	internal override TfShortTextDatabaseColumn Build()
     {
         return new TfShortTextDatabaseColumn

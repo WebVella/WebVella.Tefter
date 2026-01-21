@@ -32,6 +32,16 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 		sb.AppendLine();
 
 		sb.AppendLine(@"
+CREATE OR REPLACE FUNCTION public._tefter_gen_sha1_with_prefix(prefix TEXT,col_values TEXT[])
+RETURNS TEXT AS $$
+BEGIN
+    RETURN encode(public.digest( prefix || array_to_string(col_values, ''), 'sha1'), 'hex');
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+");
+		sb.AppendLine();
+
+		sb.AppendLine(@"
 CREATE OR REPLACE FUNCTION public._tefter_gen_random_sha1()
 RETURNS TEXT AS $$
 BEGIN

@@ -165,7 +165,10 @@ public partial class TfService : ITfService
 					{
 						c.AddShortTextColumn(identityColumnName, col =>
 						{
-							col.AsSha1ExpressionFromColumns(dataIdentity.Columns.ToArray());
+							if(string.IsNullOrWhiteSpace(dataIdentity.Prefix))
+								col.AsSha1ExpressionFromColumns(dataIdentity.Columns.ToArray());
+							else
+								col.AsSha1ExpressionFromColumnsWithPrefix(dataIdentity.Prefix,dataIdentity.Columns.ToArray());
 						});
 					});
 
@@ -239,7 +242,10 @@ public partial class TfService : ITfService
 					{
 						c.AddShortTextColumn(identityColumnName, col =>
 						{
-							col.AsSha1ExpressionFromColumns(dataIdentity.Columns.ToArray());
+							if (string.IsNullOrWhiteSpace(dataIdentity.Prefix))
+								col.AsSha1ExpressionFromColumns(dataIdentity.Columns.ToArray());
+							else
+								col.AsSha1ExpressionFromColumnsWithPrefix(dataIdentity.Prefix, dataIdentity.Columns.ToArray());
 						});
 					});
 
@@ -455,6 +461,20 @@ public partial class TfService : ITfService
 						return true;
 					})
 					.WithMessage($"There are same columns added more than once in the identity. Its not allowed.");
+
+
+				RuleFor(dataProviderIdentity => dataProviderIdentity.Prefix)
+					.Must((dataProviderIdentity, prefix) =>
+					{
+						if (string.IsNullOrWhiteSpace(prefix))
+							return true;
+
+						return
+							prefix.Length < 10 &&
+							prefix.All(c => char.IsLetterOrDigit(c) || c == '_');
+
+					})
+					.WithMessage($"The prefix can contain only letters, digits or underscore with max len of 10 characters.");
 			});
 
 			RuleSet("create", () =>

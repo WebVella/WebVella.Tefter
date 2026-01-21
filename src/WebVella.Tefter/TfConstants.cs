@@ -31,6 +31,7 @@ public partial class TfConstants
 	public const string DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE = "clock_timestamp()";
 	public const string DB_SHORT_TEXT_COLUMN_AUTO_SHA1_DEFAULT_VALUE = "_tefter_gen_random_sha1()";
 	public const string DB_SHORT_TEXT_COLUMN_SHA1_FROM_COLUMNS_VALUE = "_tefter_gen_sha1( ARRAY[ {0} ] )";
+	public const string DB_SHORT_TEXT_COLUMN_SHA1_FROM_COLUMNS_WITH_PREFIX_VALUE = "_tefter_gen_sha1_with_prefix( {0}, ARRAY[ {1} ] )";
 
 	//public const string DB_TABLE_ID_COLUMN_NAME = "id";
 	public const string DB_OPERATION_LOCK_KEY = "DB_OPERATION_LOCK_KEY";

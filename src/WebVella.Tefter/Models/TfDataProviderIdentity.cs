@@ -8,6 +8,8 @@ public record TfDataProviderIdentity
 
 	public string DataIdentity { get; set; }
 
+	public string Prefix { get; set; } = string.Empty;
+
 	public List<string> Columns { get; set; } = new();
 }
 
@@ -27,4 +29,7 @@ internal record TfDataProviderIdentityDbo
 
 	[TfDboModelProperty("column_names_json")]
 	public string ColumnNamesJson { get; set; } = "[]";
+
+	[TfDboModelProperty("prefix")]
+	public string Prefix { get; set; } = string.Empty;
 }
