@@ -15,33 +15,11 @@ public partial class TfService
 	{
 		Guid? spaceViewId = null;
 
-		if (data.RouteState.SpaceViewId is not null)
+		if (data.RouteState.SpacePageId is not null)
 		{
-			spaceViewId = data.RouteState.SpaceViewId.Value;
-		}
-		else if (data.RouteState.SpacePageId is not null)
-		{
-			var resultNode = GetSpacePage(data.RouteState.SpacePageId.Value);
-			if (resultNode is null)
-				throw new TfException("GetSpaceNode method failed");
-
-			var spacePageAddons = _metaService.GetSpacePagesComponents();
-			var spacePageMeta = spacePageAddons.SingleOrDefault(x => x.AddonId == resultNode.ComponentId);
-			if (resultNode.Type == TfSpacePageType.Page && spacePageMeta != null &&
-			    spacePageMeta.GetType() == typeof(TucSpaceViewSpacePageAddon))
-			{
-				try
-				{
-					var options =
-						JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(resultNode.ComponentOptionsJson) ??
-						new();
-					spaceViewId = options.SpaceViewId;
-				}
-				catch (Exception ex)
-				{
-					throw new Exception($"TfSpaceViewPageComponent options could not deserialize. {ex.Message}");
-				}
-			}
+			var optionsViewId = GetSpacePage(data.RouteState.SpacePageId.Value)?.GetSpaceViewId();
+			if (optionsViewId is not null)
+				spaceViewId = optionsViewId;
 		}
 
 		if (spaceViewId is null)
@@ -147,33 +125,11 @@ public partial class TfService
 		Guid? spaceViewId = null;
 		CultureInfo culture = TfConstants.DefaultCulture;
 
-		if (data.RouteState.SpaceViewId is not null)
+		if (data.RouteState.SpacePageId is not null)
 		{
-			spaceViewId = data.RouteState.SpaceViewId.Value;
-		}
-		else if (data.RouteState.SpacePageId is not null)
-		{
-			var resultNode = GetSpacePage(data.RouteState.SpacePageId.Value);
-			if (resultNode is null)
-				throw new TfException("GetSpaceNode method failed");
-
-			var spacePageAddons = _metaService.GetSpacePagesComponents();
-			var spacePageAddon = spacePageAddons.SingleOrDefault(x => x.AddonId == resultNode.ComponentId);
-			if (resultNode.Type == TfSpacePageType.Page && spacePageAddon != null &&
-			    spacePageAddon.GetType() == typeof(TucSpaceViewSpacePageAddon))
-			{
-				try
-				{
-					var options =
-						JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(resultNode.ComponentOptionsJson) ??
-						new();
-					spaceViewId = options.SpaceViewId;
-				}
-				catch (Exception ex)
-				{
-					throw new Exception($"TfSpaceViewPageComponent options could not deserialize. {ex.Message}");
-				}
-			}
+			var optionsViewId = GetSpacePage(data.RouteState.SpacePageId.Value)?.GetSpaceViewId();
+			if (optionsViewId is not null)
+				spaceViewId = optionsViewId;
 		}
 
 		if (spaceViewId is null)

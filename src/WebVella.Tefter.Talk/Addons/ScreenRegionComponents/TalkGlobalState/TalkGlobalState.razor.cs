@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Talk.Components;
+﻿using WebVella.Tefter.UI.Addons;
+
+namespace WebVella.Tefter.Talk.Components;
 
 public partial class TalkGlobalState : TfBaseComponent,
     ITfScreenRegionAddon<TfGlobalStateScreenRegion>, IAsyncDisposable
@@ -28,6 +30,7 @@ public partial class TalkGlobalState : TfBaseComponent,
 
     protected override async Task OnInitializedAsync()
     {
+        var session = TfAuthLayout.GetSessionId().ToString();
         _addonEventSubscriber = await TfEventBus.SubscribeAsync<TfAddonEventPayload>(
             handler: On_AddonEvent,
             matchKey: (key) => key == TfAuthLayout.GetSessionId().ToString());
@@ -40,21 +43,32 @@ public partial class TalkGlobalState : TfBaseComponent,
         switch (payload.EventName)
         {
             case "ITalkService-CreateThread-WithRowIdModel":
-                await On_ITalkService_CreateThread(payload);
+                await On_ITalkService_CreateThread(key, payload);
                 break;
         }
     }
 
-    private Task On_ITalkService_CreateThread(TfAddonEventPayload payload)
+    private Task On_ITalkService_CreateThread(string? key, TfAddonEventPayload payload)
     {
-        if(String.IsNullOrWhiteSpace(payload.EventJson)) return Task.CompletedTask;
+        if (String.IsNullOrWhiteSpace(payload.EventJson)) return Task.CompletedTask;
         try
         {
             var createThreadObj =
                 JsonSerializer.Deserialize<CreateTalkThreadWithRowIdModel>(payload.EventJson);
-            if(createThreadObj is null) return Task.CompletedTask;
+            if (createThreadObj is null) return Task.CompletedTask;
             TalkService.CreateThread(createThreadObj);
-            //TODO BOZ: Add event publishing when Space View ONData Change is event driven
+            var spacePageId = TfAuthLayout.GetState().NavigationState.SpacePageId;
+            if (spacePageId is not null)
+            {
+                var spaceViewId = TfService.GetSpacePage(spacePageId.Value)?.GetSpaceViewId();
+                if (spaceViewId is not null)
+                {
+                    TfEventBus.Publish(
+                        key: key,
+                        payload: new TfSpaceViewDataUpdatedEventPayload(spaceViewId.Value,
+                            createThreadObj.RowIds));
+                }
+            }
         }
         catch (Exception)
         {

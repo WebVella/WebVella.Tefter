@@ -9,6 +9,7 @@ using WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
 using WebVella.Tefter.TemplateProcessors.TextFile.Addons;
 using WebVella.Tefter.TemplateProcessors.TextFile.Models;
+using WebVella.Tefter.UI.EventsBus;
 
 namespace WebVella.Tefter.TemplateProcessors.Email.Addons;
 
@@ -78,11 +79,12 @@ public class EmailTemplateProcessor : ITfTemplateProcessorAddon
         List<Guid> tfRecordIds,
         List<Guid> tfDatasetIds,
         List<Guid> tfSpaceIds,
+        Guid sessionId,
         Guid userId,
         IServiceProvider serviceProvider)
     {
         var result =
-            GenerateResultInternal(template, dataTable, tfRecordIds, tfDatasetIds, tfSpaceIds,userId, serviceProvider);
+            GenerateResultInternal(template, dataTable, tfRecordIds, tfDatasetIds, tfSpaceIds, userId, serviceProvider);
         EmailTemplatePreviewResult previewResult = new EmailTemplatePreviewResult
         {
             Items = ((EmailTemplateResult)result).Items,
@@ -98,6 +100,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessorAddon
         List<Guid> tfRecordIds,
         List<Guid> tfDatasetIds,
         List<Guid> tfSpaceIds,
+        Guid sessionId,
         Guid userId,
         ITfTemplatePreviewResult preview,
         IServiceProvider serviceProvider)
@@ -110,6 +113,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessorAddon
 
         var tfService = serviceProvider.GetService<ITfService>();
         var emailService = serviceProvider.GetService<IEmailService>();
+        var tfEventBus = serviceProvider.GetService<ITfEventBus>();
 
         foreach (var item in result.Items)
         {
@@ -171,6 +175,36 @@ public class EmailTemplateProcessor : ITfTemplateProcessorAddon
             try
             {
                 var resultEmail = emailService.CreateEmailMessage(emailMessage);
+                //Publish Talk event to fill in
+                if (item.RelatedDatasetIds.Count > 0 && item.RelatedSpaceIds.Count > 0 && sessionId != Guid.Empty)
+                {
+                    var provider = tfService.GetDataset(item.RelatedDatasetIds[0]);
+                    var space = tfService.GetSpace(item.RelatedSpaceIds[0]);
+                    if (provider is not null)
+                    {
+                        var eventObj = new
+                        {
+                            ChannelId = new Guid("27a7703a-8fe8-4363-aee1-64a219d7520e"),
+                            Type = 0,
+                            Content =
+                                $"<div>Send as email template '{template.Name}'</div>" +
+                                $"<dl>" +
+                                $"<dt>From space</dt><dd style=\"color:var(--accent-foreground-rest)\">'{space.Name}'</dd>" +
+                                $"<dt>From</dt><dd style=\"color:var(--accent-foreground-rest)\">{emailMessage.Sender.Address}</dd>" +
+                                $"<dt>To</dt><dd style=\"color:var(--accent-foreground-rest)\">{(String.Join(",", emailMessage.Recipients.Select(x => x.Address)))}</dd>" +
+                                $"<dt>Subject</dt><dd style=\"color:var(--accent-foreground-rest)\">{emailMessage.Subject}</dd>" +
+                                $"</dl>",
+                            UserId = userId,
+                            RowIds = item.RelatedRowIds,
+                            DataProviderId = provider.DataProviderId
+                        };
+                        tfEventBus.Publish(
+                            key: sessionId,
+                            payload: new TfAddonEventPayload(new Guid("27a7703a-8fe8-4363-aee1-64a219d7520e"),
+                                "ITalkService-CreateThread-WithRowIdModel", JsonSerializer.Serialize(eventObj))
+                        );
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -216,6 +250,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessorAddon
             result.Errors.Add(new ValidationError("", "Template settings invalid."));
             return result;
         }
+
         WvEmail emailTmpl = new WvEmail
         {
             Sender = settings.Sender ?? string.Empty,
@@ -273,7 +308,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessorAddon
                 emailAtt.Filename = attTemplaceSettings.FileName;
                 emailAtt.GroupDataByColumns = attTemplaceSettings.GroupBy;
                 emailTmpl.AttachmentItems.Add(emailAtt);
-            }            
+            }
             else
             {
                 //ignore other type templates

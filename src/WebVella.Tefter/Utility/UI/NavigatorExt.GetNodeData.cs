@@ -456,35 +456,12 @@ public static partial class NavigatorExt
 		if (result.NodesDict[2] == TfConstants.RouteNameSpaceView)
 		{
 			result = result.AddRouteNodes(RouteDataNode.SpaceView);
-			result = result.Front_Space_SpaceId_SpaceView_SpaceViewId_NodesProcess();
 		}
 
 		return result;
 	}
 
-	private static TfNavigationState Front_Space_SpaceId_SpaceView_SpaceViewId_NodesProcess(
-		this TfNavigationState result)
-	{
-		if (result.RouteNodes.Count < 3
-		    || result.RouteNodes[0] != RouteDataNode.Space
-		    || result.RouteNodes[1] != RouteDataNode.SpaceId
-		    || result.RouteNodes[2] != RouteDataNode.SpaceView)
-			return result;
-
-		if (result.NodesDict.Count < 4)
-			return result;
-
-		if (Guid.TryParse(result.NodesDict[3], out Guid outGuid))
-		{
-			result = result.AddRouteNodes(RouteDataNode.SpaceViewId);
-			result = result with { SpaceViewId = outGuid };
-			result = result.Front_Space_SpaceId_SpaceView_SpaceViewId_Columns_NodesProcess();
-			result = result.Front_Space_SpaceId_SpaceView_SpaceViewId_Filters_NodesProcess();
-			result = result.Front_Space_SpaceId_SpaceView_SpaceViewId_Pages_NodesProcess();
-		}
-
-		return result;
-	}
+	
 
 	private static TfNavigationState Front_Space_SpaceId_SpaceView_SpaceViewId_Columns_NodesProcess(
 		this TfNavigationState result)

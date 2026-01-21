@@ -44,6 +44,7 @@ public partial class ResultAddon : TfBaseComponent,
 					tfRecordIds: RegionContext.SelectedRowIds,
 					tfDatasetIds: RegionContext.RelatedDatasetIds,
 					tfSpaceIds: RegionContext.RelatedSpaceIds,	
+					sessionId:RegionContext.SessionId,
 					userId:RegionContext.User.Id,
 					preview: RegionContext.Preview
 				);

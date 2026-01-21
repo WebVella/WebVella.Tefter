@@ -41,7 +41,8 @@ public class TextContentTemplateProcessor : ITfTemplateProcessorAddon
 		TfDataTable dataTable,
 		List<Guid> tfRecordIds,
 		List<Guid> tfDatasetIds,
-		List<Guid> tfSpaceIds,			
+		List<Guid> tfSpaceIds,
+		Guid sessionId,
 		Guid userId,
 		IServiceProvider serviceProvider)
 	{
@@ -65,6 +66,7 @@ public class TextContentTemplateProcessor : ITfTemplateProcessorAddon
 		List<Guid> tfRecordIds,
 		List<Guid> tfDatasetIds,
 		List<Guid> tfSpaceIds,				
+		Guid sessionId,
 		Guid userId,
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)

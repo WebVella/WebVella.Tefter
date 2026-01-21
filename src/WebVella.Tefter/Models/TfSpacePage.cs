@@ -54,6 +54,17 @@ public record TfSpacePage
 		return null;
 	}
 
+	public Guid? GetSpaceViewId()
+	{
+		if(String.IsNullOrWhiteSpace(ComponentOptionsJson)) return null;
+		if (Type != TfSpacePageType.Page) return null;
+		if (ComponentId != new Guid(TucSpaceViewSpacePageAddon.Id)) return null;
+		var options =
+			JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(ComponentOptionsJson);
+		if(options is null) return null;
+		return options.SpaceViewId;
+	}
+
 	[Obsolete]
 	public TfMenuItem ToMenuItem(Action<TfMenuItem>? postProcess = null, Func<TfSpacePage, bool>? includeChildFunc = null)
 	{

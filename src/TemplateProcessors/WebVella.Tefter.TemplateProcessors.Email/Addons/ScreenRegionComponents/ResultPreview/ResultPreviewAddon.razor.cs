@@ -49,6 +49,7 @@ public partial class ResultPreviewAddon : TfFormBaseComponent,
 					tfRecordIds: RegionContext.SelectedRowIds,
 					tfDatasetIds:RegionContext.RelatedDatasetIds,
 					tfSpaceIds: RegionContext.RelatedSpaceIds,
+					sessionId: RegionContext.SessionId,
 					userId:RegionContext.User.Id
 				);
 				if (result is not EmailTemplatePreviewResult)

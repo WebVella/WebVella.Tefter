@@ -10,6 +10,7 @@ public class TfTemplateProcessorResultScreenRegion : TfBaseScreenRegion
 	public List<Guid> RelatedDatasetIds { get; set; } = new();
 	public List<Guid> RelatedSpaceIds { get; set; } = new();	
 	public TfDataset SpaceData { get; set; } = null!;
+	public Guid SessionId { get; set; }
 	public TfUser User { get; set; } = null!;
 	public string? CustomSettingsJson { get; set; } = null;
 	public ITfTemplatePreviewResult Preview { get; set; } = null!;

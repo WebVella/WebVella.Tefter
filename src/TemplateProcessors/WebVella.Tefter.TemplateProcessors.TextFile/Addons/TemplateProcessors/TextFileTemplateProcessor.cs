@@ -38,6 +38,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessorAddon
 		List<Guid> tfRecordIds,
 		List<Guid> tfDatasetIds,
 		List<Guid> tfSpaceIds,			
+		Guid sessionId,
 		Guid userId,
 		IServiceProvider serviceProvider)
 	{
@@ -57,6 +58,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessorAddon
 		List<Guid> tfRecordIds,
 		List<Guid> tfDatasetIds,
 		List<Guid> tfSpaceIds,				
+		Guid sessionId,
 		Guid userId,
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)

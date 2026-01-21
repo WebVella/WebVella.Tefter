@@ -84,7 +84,7 @@ public partial class TucSpaceManageDetailsContentToolbar : TfBaseComponent, IAsy
 			_menu.Add(new TfMenuItem
 			{
 				Id = Guid.NewGuid().ToString(),
-				Url = string.Format(TfConstants.SpaceManagePagesPageUrl, navState.SpaceId, navState.SpaceViewId)
+				Url = string.Format(TfConstants.SpaceManagePagesPageUrl, navState.SpaceId, navState.SpacePageId)
 					.GenerateWithLocalAndQueryAsReturnUrl(navState.ReturnUrl),
 				Selected = navState.HasNode(RouteDataNode.Pages, 3),
 				Text = LOC("Pages"),

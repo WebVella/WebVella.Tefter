@@ -19,6 +19,7 @@ public interface ITfTemplateProcessorAddon
 		List<Guid> tfRecordIds,
 		List<Guid> tfDatasetIds,
 		List<Guid> tfSpaceIds,	
+		Guid sessionId,
 		Guid userId,
 		IServiceProvider serviceProvider);
 
@@ -28,6 +29,7 @@ public interface ITfTemplateProcessorAddon
 		List<Guid> tfRecordIds,
 		List<Guid> tfDatasetIds,
 		List<Guid> tfSpaceIds,	
+		Guid sessionId,
 		Guid userId,
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider);

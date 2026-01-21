@@ -5,7 +5,6 @@ public partial record TfNavigationState
 	public Dictionary<int, string> NodesDict { get; init; } = new();
 	public Guid? SpaceId { get; init; }
 	public Guid? SpaceDataId { get; init; }
-	public Guid? SpaceViewId { get; init; }
 	public Guid? SpacePageId { get; init; }
 	public Guid? UserId { get; init; }
 	public Guid? RoleId { get; init; }
