@@ -74,6 +74,80 @@ public partial class TfServiceTest : BaseTest
 	}
 
 	[Fact]
+	public async Task DataProviderIdentity_CreateAndUpdateWithPrefix()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfDatabaseManager dbManager = ServiceProvider.GetRequiredService<ITfDatabaseManager>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var provider = CreateDataProviderSampleStructureForIdentities(tfService, tfMetaService);
+				provider.Identities.Count().Should().Be(1); //default should be created 
+
+				TfDataIdentity dataIdentityModel = new TfDataIdentity
+				{
+					DataIdentity = "test_data_identity",
+					Label = "Test Data Identity",
+				};
+
+				TfDataIdentity dataIdentity = null;
+				var task = Task.Run(() => { dataIdentity = tfService.CreateDataIdentity(dataIdentityModel); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				dataIdentity.Should().NotBeNull();
+
+				TfDataProviderIdentity dataProviderIdentityModel =
+					new TfDataProviderIdentity
+					{
+						Id = Guid.NewGuid(),
+						DataProviderId = provider.Id,
+						DataIdentity = dataIdentity.DataIdentity,
+						Columns = provider.Columns.Select(x => x.DbName).ToList(),
+						Prefix = "PRE_"
+					};
+
+				task = Task.Run(() => { provider = tfService.CreateDataProviderIdentity(dataProviderIdentityModel); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				provider.Identities.Count().Should().Be(2); //default should be created
+				var resultIdentity = provider.Identities.Single(x => x.DataIdentity == dataIdentity.DataIdentity);
+				resultIdentity.Columns.Count().Should().Be(provider.Columns.Count());
+				resultIdentity.Prefix.Should().Be("PRE_");
+
+				var tables = dbManager.GetDatabaseBuilder().Build();
+				var table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
+				table.Should().NotBeNull();
+				table.Columns.Any(x => x.Name == $"tf_ide_{dataProviderIdentityModel.DataIdentity}").Should().BeTrue();
+
+				dataProviderIdentityModel.Columns = new List<string> { provider.Columns.Last().DbName };
+				dataProviderIdentityModel.Prefix = "UPDATED_";
+				task = Task.Run(() => { provider = tfService.UpdateDataProviderIdentity(dataProviderIdentityModel); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				provider.Identities.Count().Should().Be(2);//default should be created
+				provider.Identities.Single(x => x.DataIdentity == dataIdentity.DataIdentity).Columns.Count().Should().Be(1);
+				provider.Identities.Single(x => x.DataIdentity == dataIdentity.DataIdentity).Prefix.Should().Be("UPDATED_");
+
+
+				task = Task.Run(() => { provider = tfService.DeleteDataProviderIdentity(dataProviderIdentityModel.Id); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				provider.Identities.Count().Should().Be(1);//default should be created
+
+				tables = dbManager.GetDatabaseBuilder().Build();
+				table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
+				table.Should().NotBeNull();
+				table.Columns.Any(x => x.Name == $"tf_ide_{dataProviderIdentityModel.DataIdentity}").Should().BeFalse();
+
+			}
+		}
+	}
+
+	[Fact]
 	public async Task DataProviderIdentity_TryToCreateWithSameId()
 	{
 		using (await locker.LockAsync())
