@@ -349,7 +349,8 @@ public partial class TfService : ITfService
 			Id = identity.Id,
 			DataProviderId = identity.DataProviderId,
 			DataIdentity = identity.DataIdentity,
-			ColumnNamesJson = columnNamesJson
+			ColumnNamesJson = columnNamesJson,
+			Prefix = identity.Prefix
 		};
 	}
 
@@ -364,7 +365,8 @@ public partial class TfService : ITfService
 			Id = dbo.Id,
 			DataIdentity = dbo.DataIdentity,
 			DataProviderId = dbo.DataProviderId,
-			Columns = JsonSerializer.Deserialize<List<string>>(dbo.ColumnNamesJson ?? "[]")
+			Columns = JsonSerializer.Deserialize<List<string>>(dbo.ColumnNamesJson ?? "[]"),
+			Prefix = dbo.Prefix
 		};
 	}
 
