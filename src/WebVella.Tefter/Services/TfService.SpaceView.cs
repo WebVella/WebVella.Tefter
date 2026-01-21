@@ -466,7 +466,8 @@ public partial class TfService
 		currentPreset.Search = preset.Search;
 		currentPreset.Filters = preset.Filters;
 		currentPreset.SortOrders = preset.SortOrders;
-
+		currentPreset.NoRecordsCheck = preset.NoRecordsCheck;
+		
 		if (currentParentId != preset.ParentId)
 		{
 			TfSpaceViewPreset? currentParent = null;

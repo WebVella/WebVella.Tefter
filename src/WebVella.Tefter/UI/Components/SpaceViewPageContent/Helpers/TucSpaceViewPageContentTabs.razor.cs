@@ -11,14 +11,20 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 	private TfNavigationState? _navState = null!;
 	private Guid _initedViewId = Guid.Empty;
 	private IAsyncDisposable? _spaceViewUpdatedEventSubscriber = null;
+	private IAsyncDisposable? _spaceViewDataUpdatedEventSubscriber = null;
+	private IAsyncDisposable? _spaceViewDataReloadEventSubscriber = null;
 
 	public async ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= On_NavigationStateChanged;
 		if (_spaceViewUpdatedEventSubscriber is not null)
 			await _spaceViewUpdatedEventSubscriber.DisposeAsync();
+		if (_spaceViewDataUpdatedEventSubscriber is not null)
+			await _spaceViewDataUpdatedEventSubscriber.DisposeAsync();		
+		if (_spaceViewDataReloadEventSubscriber is not null)
+			await _spaceViewDataReloadEventSubscriber.DisposeAsync();		
 	}
-
+	
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -40,6 +46,14 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 				await TfEventBus.SubscribeAsync<TfSpaceViewUpdatedEventPayload>(
 					handler: On_SpaceViewUpdatedEventAsync,
 					matchKey: (_) => true);
+			_spaceViewDataUpdatedEventSubscriber =
+				await TfEventBus.SubscribeAsync<TfSpaceViewDataUpdatedEventPayload>(
+					handler: On_SpaceViewDataUpdatedEventAsync,
+					matchKey: (_) => true);			
+			_spaceViewDataReloadEventSubscriber =
+				await TfEventBus.SubscribeAsync<TfSpaceViewDataReloadEventPayload>(
+					handler: On_SpaceViewDataUpdatedEventAsync,
+					matchKey: (_) => true);					
 		}
 	}
 
@@ -67,6 +81,25 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
 	}
 
+	private async Task On_SpaceViewDataUpdatedEventAsync(string? key, TfSpaceViewDataUpdatedEventPayload? payload)
+	{
+		if (payload is null) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
+		{
+			_init(newView: TfService.GetSpaceView(payload.SpaceViewId)!);
+			await InvokeAsync(StateHasChanged);
+		}
+	}	
+	
+	private async Task On_SpaceViewDataUpdatedEventAsync(string? key, TfSpaceViewDataReloadEventPayload? payload)
+	{
+		if (payload is null) return;
+		if (key == TfAuthLayout.GetSessionId().ToString())
+		{
+			_init(newView: TfService.GetSpaceView(payload.SpaceViewId)!);
+			await InvokeAsync(StateHasChanged);
+		}
+	}		
 
 	private void _init(TfSpaceView? newView = null)
 	{
@@ -92,6 +125,23 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 				foreach (var prItem in spaceView.Presets)
 				{
 					var menuItem = _getMenuItem(prItem, first, true);
+					if (prItem.NoRecordsCheck)
+					{
+						var data = TfService.QueryDataset(
+							datasetId: SpaceView!.DatasetId,
+							presetSearch: prItem?.Search,
+							presetFilters: prItem?.Filters,
+							presetSorts: prItem?.SortOrders,
+							userSearch: _navState.Search,
+							userFilters: [],
+							userSorts: [],
+							page: 1,
+							pageSize: 1
+						);
+						if(data.Rows.Count == 0)
+							menuItem.Style = "--accent-foreground-rest:var(--neutral-foreground-hint);";
+					}
+
 					_menu.Add(menuItem);
 					first = false;
 				}

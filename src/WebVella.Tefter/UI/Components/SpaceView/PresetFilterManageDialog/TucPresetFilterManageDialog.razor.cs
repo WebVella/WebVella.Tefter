@@ -120,6 +120,7 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent,
 				ParentId = null,
 				Color = null,
 				Icon = string.Empty,
+				NoRecordsCheck = false
 			};
 		}
 

@@ -458,10 +458,10 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
         #region <<Create pages >>
 
         {
+            short position = 1;
             #region << Step pages >>
 
             {
-                short position = 1;
                 foreach (TfDataRow row in ihSteps.Rows)
                 {
                     var ihStep = GetStepData(row,stepsProvider);
@@ -510,7 +510,7 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
                 {
                     Id = emailPageId,
                     Name = $"Изпратени имейлове",
-                    Position = 9,
+                    Position = position++,
                     FluentIconName = "FolderMail",
                     ParentPage = null,
                     ParentId = null,
@@ -837,38 +837,6 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
         }
 
         #endregion
-
-        if (stepIhStatuses.Count > 1)
-        {
-            #region << статус >>
-
-            {
-                result.Add(new TfSpaceViewColumn()
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "статус",
-                    Position = position++,
-                    TypeId = new Guid(TfTextViewColumnType.ID),
-                    TypeOptionsJson = JsonSerializer.Serialize(new TfTextViewColumnTypeSettings
-                    {
-                        ChangeConfirmationMessage = null,
-                    }),
-                    Settings = new TfSpaceViewColumnSettings()
-                    {
-                        Width = 100,
-                        FilterPresentation = TfSpaceViewColumnSettingsFilterPresentation.VisibleWithDefault,
-                        DefaultComparisonMethodDescription = "contains"
-                    },
-                    DataMapping = new Dictionary<string, string?>() { { "Value", $"{ih001IdIdentity}.{statusSharedColumn}" } },
-                    SpaceViewId = spaceViewId,
-                    QueryName = NavigatorExt.GenerateQueryName(),
-                    Icon = null,
-                    OnlyIcon = false,
-                });
-            }
-
-            #endregion
-        }
 
         #region << индекс >>
 
@@ -1205,7 +1173,7 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
                     new TfFilterText()
                     {
                         Value = ihStatus.Code,
-                        ColumnName = $"{ih001IdIdentity}.{statusSharedColumn}",
+                        ColumnName = $"{ih001IdIdentity}.{statusSharedColumn.DbName}",
                         ComparisonMethod = TfFilterTextComparisonMethod.Equal,
                         Id = Guid.NewGuid(),
                     }

@@ -14,7 +14,10 @@ public record TfMenuItem
 	public TfColor? Color { get; set; }
 	public TfColor? IconColor { get; set; }
 	public bool SpinIcon { get; set; } = false;
+	public string? Class { get; set; }
+	public string? Style { get; set; }
 
+	
 	public Icon? Icon
 	{
 		get
@@ -112,7 +115,7 @@ public record TfMenuItem
 		{
 			var sb = new StringBuilder();
 			sb.Append(
-				$"{Id}{Url}{Text}{Description}{Expanded}{Selected}{IconCollapsed?.Name}{IconExpanded?.Name}{(int?)Color}{(int?)IconColor}{OnClick.HasDelegate}{OnExpand.HasDelegate}");
+				$"{Id}{Url}{Text}{Description}{Expanded}{Selected}{IconCollapsed?.Name}{IconExpanded?.Name}{(int?)Color}{(int?)IconColor}{OnClick.HasDelegate}{OnExpand.HasDelegate}{Style}{Class}");
 			foreach (var item in Items)
 			{
 				sb.Append(item.Hash);

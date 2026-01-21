@@ -42,7 +42,7 @@
 						<FluentValidationMessage For="@(() => _form.IsGroup)"/>
 					</FluentGridItem>
 					<FluentGridItem xs="4">
-						<FluentInputLabel Label="@LOC("Fade when no records")"/>
+						<FluentInputLabel Label="@LOC("Grayout when no records")"/>
 						<FluentSwitch @bind-Value=@_form.NoRecordsCheck
 						              CheckedMessage="@LOC("check for no records")"
 						              UncheckedMessage="@LOC("no check")"/>

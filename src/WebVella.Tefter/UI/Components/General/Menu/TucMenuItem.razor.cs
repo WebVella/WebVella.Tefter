@@ -35,8 +35,14 @@ public partial class TucMenuItem : TfBaseComponent
 		_css = null;
 		_expandItemCss = null;
 
-		_attributes = (new Dictionary<string, object>() { { "title", Item.Tooltip ?? String.Empty } }).AsReadOnly();
-
+		_attributes = (new Dictionary<string, object>()
+		{
+			{ "title", Item.Tooltip ?? String.Empty },
+			{ "class", String.IsNullOrWhiteSpace(Item.Class) ? String.Empty : Item.Class },
+			{ "style", String.IsNullOrWhiteSpace(Item.Style) ? String.Empty : Item.Style },
+		}).AsReadOnly();
+		
+		
 		var classList = new List<string>();
 		classList.Add("tf-tabs__item");
 		if (!String.IsNullOrWhiteSpace(Class)) classList.Add(Class);
