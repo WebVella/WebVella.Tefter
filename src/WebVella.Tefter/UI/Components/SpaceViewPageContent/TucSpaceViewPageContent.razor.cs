@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.UI.Components;
+﻿using WebVella.BlazorTrace.Utility;
+
+namespace WebVella.Tefter.UI.Components;
 
 public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 {
@@ -211,7 +213,10 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		if (payload is null) return;
 		if (payload.SpaceViewId != _spaceView?.Id) return;
 		if (key == TfAuthLayout.GetSessionId().ToString())
-			OnDataChange(payload.DataDictionary);
+		{
+			OnDataChange(payload.ChangedRows);
+			await InvokeAsync(StateHasChanged);
+		}
 		else
 			await TfEventBus.PublishAsync(key: key, new TfPageOutdatedAlertEventPayload());
 	}
@@ -534,22 +539,28 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 		}
 	}
 
-	public void OnDataChange(Dictionary<Guid, Dictionary<string, object>>? change)
+	public void OnDataChange(List<Guid> changedRows)
 	{
-		if (_data is null || change is null || change.Keys.Count == 0) return;
-		foreach (var rowId in change.Keys)
+		if(changedRows.Count == 0 || _data is null || _data.Rows.Count == 0) return;
+		TfDataTable newDataTable = TfService.QueryDataset(
+			datasetId: _spaceView!.DatasetId,
+			tfIds: changedRows
+		);
+
+		foreach (TfDataRow newRow in newDataTable.Rows)
 		{
-			var row = _data.Rows[rowId];
-			if (row is null) continue;
-			foreach (var columnName in change[rowId].Keys)
+			var tfId = newRow.GetRowId();
+			var oldRow = _data.Rows[tfId];
+			if(oldRow is null) continue;
+			foreach (var newColumn in newDataTable.Columns)
 			{
-				var column = _data.Columns[columnName];
-				if (column is null) continue;
-				_data[rowId, columnName] = change[rowId][columnName];
+				var oldColumn = _data.Columns[newColumn.Name];
+				if(oldColumn is null) continue;
+				var value = newDataTable.Rows[tfId]![newColumn.Name];
+				_data.Rows[tfId]![newColumn.Name] = value;
 			}
 		}
-
-		StateHasChanged();
+	
 	}
 
 	public void OnEditRows(List<Guid>? tfIds)
@@ -599,23 +610,7 @@ public partial class TucSpaceViewPageContent : TfBaseComponent, IAsyncDisposable
 				rowDict: rowDict
 			);
 
-			//Apply changed to the datatable
-			if (_data is null || _data.Rows.Count == 0 || _data.Rows.Count == 0) return;
-
-			for (int i = 0; i < _data.Rows.Count; i++)
-			{
-				TfDataRow row = _data.Rows[i];
-				Guid tfId = row.GetRowId();
-				if (change.RowId != tfId) continue;
-
-				foreach (var column in _data.Columns)
-				{
-					if (column.Origin == TfDataColumnOriginType.System ||
-					    column.Origin == TfDataColumnOriginType.Identity) continue;
-					if (rowDict.ContainsKey(column.Name))
-						row[column.Name] = rowDict[column.Name];
-				}
-			}
+			OnDataChange([change.RowId]);
 
 			_generateMeta();
 			await InvokeAsync(StateHasChanged);

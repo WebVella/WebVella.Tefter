@@ -91,7 +91,8 @@ public partial class TucSpaceViewPageContentTabs : TfBaseComponent, IAsyncDispos
 
 				foreach (var prItem in spaceView.Presets)
 				{
-					_menu.Add(_getMenuItem(prItem, first, true));
+					var menuItem = _getMenuItem(prItem, first, true);
+					_menu.Add(menuItem);
 					first = false;
 				}
 

@@ -1,0 +1,174 @@
+﻿namespace WebVella.Tefter.TemplateProcessors.FileGroup.Addons;
+
+public partial class ResultPreviewAddon : TfFormBaseComponent, 
+	ITfScreenRegionAddon<TfTemplateProcessorResultPreviewScreenRegion>
+{
+	[Inject] public ITfService TfService { get; set; } = null!;
+	public const string ID = "23F9F553-8B86-4110-B08A-9A1410426154";
+	public const string NAME = "FileGroup Template Result Preview";
+	public const string DESCRIPTION = "";
+	public const string FLUENT_ICON_NAME = "PuzzlePiece";
+	public const int POSITION_RANK = 1000;
+	public Guid AddonId { get; init; } = new Guid(ID);
+	public string AddonName { get; init; } = NAME;
+	public string AddonDescription { get; init; } = DESCRIPTION;
+	public string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public int PositionRank { get; init; } = POSITION_RANK;
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(FileGroupTemplateProcessor),null)
+	};
+	[Parameter] public TfTemplateProcessorResultPreviewScreenRegion RegionContext { get; set; }
+
+	private FileGroupTemplatePreviewResult _preview = null;
+	private bool _isLoading = true;
+	private List<ValidationError> _previewValidationErrors = new();
+	private FileGroupTemplateResultItem _form = new();
+	private Dictionary<Guid, int> _itemPositionDict = new();
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		if (RegionContext is null) throw new Exception("Context is not defined");
+
+		RegionContext.ValidatePreviewResult = _validatePreviewResult;
+		base.InitForm(_form);
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+		if (firstRender)
+		{
+			if (RegionContext.Template is not null && RegionContext.SpaceData is not null)
+			{
+				ITfTemplatePreviewResult result = TfService.GenerateTemplatePreviewResult(
+					templateId: RegionContext.Template.Id,
+					spaceDataId: RegionContext.SpaceData.Id,
+					tfRecordIds: RegionContext.SelectedRowIds,
+					tfDatasetIds:RegionContext.RelatedDatasetIds,
+					tfSpaceIds: RegionContext.RelatedSpaceIds,
+					userId:RegionContext.User.Id
+				);
+				if (result is not FileGroupTemplatePreviewResult)
+				{
+					throw new Exception("Preview result is not of type ExcelFileTemplatePreviewResult");
+				}
+				_preview = (FileGroupTemplatePreviewResult)result;
+				_itemPositionDict = new();
+				if (_preview.Items.Count > 0)
+				{
+					_form = _preview.Items[0];
+					base.InitForm(_form);
+					var position = 1;
+					foreach (var item in _preview.Items)
+					{
+						_itemPositionDict[item.Id] = position;
+						position++;
+					}
+				}
+				await RegionContext.PreviewResultChanged.InvokeAsync(_preview);
+			}
+
+			_isLoading = false;
+			StateHasChanged();
+		}
+	}
+
+	private List<ValidationError> _validatePreviewResult()
+	{
+		MessageStore.Clear();
+		_previewValidationErrors = new List<ValidationError>();
+		foreach (var emailItem in _preview.Items)
+		{
+			var formValErrors = _validateItem(emailItem);
+			foreach (var item in formValErrors)
+			{
+				MessageStore.Add(EditContext.Field(item.PropertyName), item.Message);
+			}
+			_previewValidationErrors.AddRange(formValErrors);
+		}
+		var isValid = EditContext.Validate();
+		StateHasChanged();
+		return _previewValidationErrors;
+	}
+
+	private void _nextItem()
+	{
+		if (_form is null || _itemPositionDict is null) return;
+		var itemPosition = _itemPositionDict[_form.Id];
+		var newPosition = itemPosition + 1;
+		if (newPosition <= 0 || newPosition > _preview.Items.Count)
+			newPosition = 1;
+
+		MessageStore.Clear();
+		var formValErrors = _validateItem(_form);
+		foreach (var item in formValErrors)
+		{
+			MessageStore.Add(EditContext.Field(item.PropertyName), item.Message);
+		}
+		if (!EditContext.Validate()) return;
+		
+		 _form = _preview.Items[newPosition - 1];
+		base.InitForm(_form);
+	}
+	private void _prevItem()
+	{
+		if (_form is null || _itemPositionDict is null) return;
+		var itemPosition = _itemPositionDict[_form.Id];
+		var newPosition = itemPosition - 1;
+		if (newPosition <= 0)
+			newPosition = _preview.Items.Count;
+
+		MessageStore.Clear();
+		var formValErrors = _validateItem(_form);
+		foreach (var item in formValErrors)
+		{
+			MessageStore.Add(EditContext.Field(item.PropertyName), item.Message);
+		}
+		if (!EditContext.Validate()) return;
+		
+		_form = _preview.Items[newPosition - 1];
+		base.InitForm(_form);
+	}
+
+	private List<ValidationError> _validateItem(FileGroupTemplateResultItem item)
+	{
+		var valErrors = new List<ValidationError>();
+		// if (String.IsNullOrWhiteSpace(item.Sender))
+		// 	valErrors.Add(new ValidationError(nameof(item.Sender), LOC("required")));
+		// else if (!item.Sender.IsEmail())
+		// 	valErrors.Add(new ValidationError(nameof(item.Sender), LOC("{0} is invalid email", item.Sender)));
+		//
+		// if (item.Recipients is null || item.Recipients.Count == 0)
+		// 	valErrors.Add(new ValidationError(nameof(item.Recipients), LOC("required")));
+		// else
+		// {
+		// 	foreach (var recipient in item.Recipients)
+		// 	{
+		// 		if (!recipient.IsEmail())
+		// 			valErrors.Add(new ValidationError(nameof(item.Recipients), LOC("{0} is invalid email", recipient)));
+		// 	}
+		// }
+		// if (String.IsNullOrWhiteSpace(item.Subject))
+		// 	valErrors.Add(new ValidationError(nameof(item.Subject), LOC("required")));
+		// if (String.IsNullOrWhiteSpace(item.HtmlContent))
+		// 	valErrors.Add(new ValidationError(nameof(item.HtmlContent), LOC("required")));
+		return valErrors;
+	}
+
+
+	private void _selectedOptionChanged(FileGroupTemplateResultItem item)
+	{
+		MessageStore.Clear();
+		var formValErrors = _validateItem(_form);
+		foreach (var error in formValErrors)
+		{
+			MessageStore.Add(EditContext.Field(error.PropertyName), error.Message);
+		}
+		if (!EditContext.Validate()) return;
+
+		_form = item;
+		base.InitForm(_form);
+
+	}
+
+}

@@ -34,27 +34,32 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
             throw new Exception("Wrong data model type provided for application");
         var stepData = (TfCreateIHSpaceStepData)addon.Data;
 
+        #region << Definitions >>
+
         ITfService tfService = serviceProvider.GetService<ITfService>()!;
         ITfMetaService tfMetaService = serviceProvider.GetService<ITfMetaService>()!;
         ITalkService talkService = serviceProvider.GetService<ITalkService>()!;
         IAssetsService assetsService = serviceProvider.GetService<IAssetsService>()!;
-        var excelDataProvider = tfMetaService.GetDataProviderType(new Guid("7be5a3cd-c922-4e20-99d5-5555f141133c"));
-        if (excelDataProvider is null)
+        var excelDataProviderType = tfMetaService.GetDataProviderType(new Guid(TfExtraConstants.EXCEL_DATA_PROVIDER_ADDON_ID));
+        if (excelDataProviderType is null)
             throw new Exception("Excel Data provider not found");
 
         var roles = tfService.GetRoles();
-        var adminRole = roles.Single(x => x.Id == new Guid("3a0c26c5-bd28-4cca-aaf7-5d225b4c3136"));
-        var ihRole = roles.Single(x => x.Id == new Guid("39451bfb-997e-492f-8483-41dadd590f24"));
+        var adminRole = roles.Single(x => x.Id == new Guid(TfExtraConstants.ADMIN_ROLE_ID));
+        var ihRole = roles.Single(x => x.Id == new Guid(TfExtraConstants.IH_ROLE_ID));
         var defaultTalkChannel = talkService.GetChannels().Single(x => x.Name == "default");
         var defaultAssetsFolder = assetsService.GetFolders().Single(x => x.Name == "default");
         var dataProviders = tfService.GetDataProviders();
-        var stepsProvider = dataProviders.Single(x => x.Id == new Guid("cba9f436-1b82-42fb-8e3e-6213d667fb73"));
-        var statusProvider = dataProviders.Single(x => x.Id == new Guid("437c9cb1-7f76-4a05-a9b3-c90a714d9768"));
+        var stepsProvider = dataProviders.Single(x => x.Id == new Guid(TfExtraConstants.STEPS_DATA_PROVIDER_ID));
+        var statusProvider = dataProviders.Single(x => x.Id == new Guid(TfExtraConstants.STATUS_DATA_PROVIDER_ID));
+        var companyProvider = dataProviders.Single(x => x.Id == new Guid(TfExtraConstants.COMPANY_DATA_PROVIDER_ID));
+        var contactProvider = dataProviders.Single(x => x.Id == new Guid(TfExtraConstants.CONTACT_DATA_PROVIDER_ID));
+        var sharedColumns = talkService.GetAllSharedColumns();
+        var stepSharedColumn = sharedColumns.Single(x => x.DbName == TfExtraConstants.STEP_SHARED_COLUMN_NAME);
+        var statusSharedColumn = sharedColumns.Single(x => x.DbName == TfExtraConstants.STATUS_SHARED_COLUMN_NAME);
+
         TfDataTable ihSteps = tfService.QueryDataset(datasetId: stepsProvider.Id); //the default one
         TfDataTable ihStatuses = tfService.QueryDataset(datasetId: statusProvider.Id); //the default one
-
-
-        #region << Definitions >>
 
         Guid providerId = Guid.NewGuid();
         Guid spaceId = Guid.NewGuid();
@@ -75,8 +80,11 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
                 Id = providerId,
                 Name = $"{stepData.BuildingCode}-IH001",
                 Index = -1,
-                ProviderType = excelDataProvider,
-                SettingsJson = JsonSerializer.Serialize(new ExcelDataProviderSettings()),
+                ProviderType = excelDataProviderType,
+                SettingsJson = JsonSerializer.Serialize(new ExcelDataProviderSettings()
+                {
+                    CultureName = "bg-BG",
+                }),
                 SynchPrimaryKeyColumns = [],
                 SynchScheduleEnabled = false,
                 AutoInitialize = false
@@ -223,7 +231,7 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
 
             #endregion
 
-            #region << q_ty >>
+            #region << qty >>
 
             {
                 var submit = new TfUpsertDataProviderColumn
@@ -233,7 +241,7 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
                     SourceName = "Q-ty",
                     SourceType = "NUMBER",
                     CreatedOn = DateTime.Now,
-                    DbName = $"{provider.ColumnPrefix}q_ty",
+                    DbName = $"{provider.ColumnPrefix}qty",
                     DbType = TfDatabaseColumnType.Number,
                     DefaultValue = "N/A",
                     RuleSet = TfDataProviderColumnRuleSet.Nullable,
@@ -307,7 +315,7 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
                     DefaultValue = "N/A",
                     RuleSet = TfDataProviderColumnRuleSet.Nullable,
                     IncludeInTableSearch = false,
-                    Expression = $"{provider.ColumnPrefix}q_ty * {provider.ColumnPrefix}rate",
+                    Expression = $"{provider.ColumnPrefix}qty * {provider.ColumnPrefix}rate",
                     ExpressionJson = null
                 };
                 _ = tfService.CreateDataProviderColumn(submit);
@@ -344,14 +352,15 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
         #region <<Create Provider indentities>>
 
         {
-            #region <<ih001_id>>
+            #region <<ih001IdIdentity>>
 
             {
                 var submit = new TfDataProviderIdentity
                 {
                     Id = Guid.NewGuid(),
                     DataProviderId = providerId,
-                    DataIdentity = "ih001_id",
+                    DataIdentity = TfExtraConstants.IH001_ID_DATA_IDENTITY,
+                    Prefix = stepData.BuildingCode,
                     Columns =
                     [
                         $"{provider.ColumnPrefix}index", $"{provider.ColumnPrefix}building",
@@ -363,14 +372,29 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
 
             #endregion
 
-            #region <<company_name>>
+            #region <<ih001CompanyIdentity>>
 
             {
                 var submit = new TfDataProviderIdentity
                 {
                     Id = Guid.NewGuid(),
                     DataProviderId = providerId,
-                    DataIdentity = "company_name",
+                    DataIdentity = TfExtraConstants.IH001_COMPANY_DATA_IDENTITY,
+                    Columns = [$"{provider.ColumnPrefix}manufacturer"]
+                };
+                provider = tfService.CreateDataProviderIdentity(submit);
+            }
+
+            #endregion
+
+            #region <<ih001ContactIdentity>>
+
+            {
+                var submit = new TfDataProviderIdentity
+                {
+                    Id = Guid.NewGuid(),
+                    DataProviderId = providerId,
+                    DataIdentity = TfExtraConstants.IH001_CONTACT_DATA_IDENTITY,
                     Columns = [$"{provider.ColumnPrefix}manufacturer"]
                 };
                 provider = tfService.CreateDataProviderIdentity(submit);
@@ -386,15 +410,21 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
         {
             foreach (TfDataRow row in ihSteps.Rows)
             {
-                var ihStep = GetStepData(row);
+                var ihStep = GetStepData(row,stepsProvider);
                 stepDatasetDict[ihStep.Id] = Guid.NewGuid();
                 var submit = GetDatasetSubmit(
                     datasetId: stepDatasetDict[ihStep.Id],
                     providerId: providerId,
                     providerPrefix: provider.ColumnPrefix,
                     buildingCode: stepData.BuildingCode,
-                    ihStep: ihStep
-                );
+                    ihStep: ihStep,
+                    companyProvider:companyProvider,
+                    contactProvider:contactProvider,
+                    stepSharedColumn:stepSharedColumn,
+                    statusSharedColumn:statusSharedColumn,
+                    ih001IdIdentity:TfExtraConstants.IH001_ID_DATA_IDENTITY,
+                    ih001CompanyIdentity:TfExtraConstants.IH001_COMPANY_DATA_IDENTITY,
+                    ih001ContactIdentity:TfExtraConstants.IH001_CONTACT_DATA_IDENTITY);
                 _ = tfService.CreateDataset(submit);
             }
         }
@@ -434,7 +464,7 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
                 short position = 1;
                 foreach (TfDataRow row in ihSteps.Rows)
                 {
-                    var ihStep = GetStepData(row);
+                    var ihStep = GetStepData(row,stepsProvider);
                     stepPageDict[ihStep.Id] = Guid.NewGuid();
                     stepViewDict[ihStep.Id] = Guid.NewGuid();
                     var submit = new TfSpacePage()
@@ -509,7 +539,7 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
         {
             foreach (TfDataRow row in ihSteps.Rows)
             {
-                var ihStep = GetStepData(row);
+                var ihStep = GetStepData(row,stepsProvider);
 
                 var submit = GetSpaceViewSettings(ihRole.Id, adminRole.Id);
                 await tfService.UpdateSpaceViewSettings(stepViewDict[ihStep.Id], submit);
@@ -523,16 +553,29 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
         {
             foreach (TfDataRow row in ihSteps.Rows)
             {
-                var ihStep = GetStepData(row);
+                var ihStep = GetStepData(row,stepsProvider);
+                var stepStatuses = new List<TfIhStatusData>();
+                foreach (TfDataRow statusRow in ihStatuses.Rows)
+                {
+                    var ihStatus = GetStatusData(statusRow,statusProvider);
+                    if (!ihStatus.Code.StartsWith($"{ihStep.Code}-")) continue;
+                    stepStatuses.Add(ihStatus);
+                }
 
-                var columns = GetSpaceViewColumns(stepViewDict[ihStep.Id], defaultTalkChannel.Id, 
-                    defaultAssetsFolder.Id,
-                    provider.ColumnPrefix, ihStep);
+                var columns = GetSpaceViewColumns(
+                    spaceViewId:stepViewDict[ihStep.Id], 
+                    defaultTalkChannelId:defaultTalkChannel.Id,
+                    defaultAssetsFolderId: defaultAssetsFolder.Id,
+                    providerPrefix: provider.ColumnPrefix, 
+                    stepIhStatuses: stepStatuses,
+                    statusSharedColumn:statusSharedColumn,
+                    ih001IdIdentity:TfExtraConstants.IH001_ID_DATA_IDENTITY
+                    );
                 foreach (var column in columns)
                 {
                     _ = tfService.CreateSpaceViewColumn(column);
                 }
-            }            
+            }
         }
 
         #endregion
@@ -542,17 +585,22 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
         {
             foreach (TfDataRow stepRow in ihSteps.Rows)
             {
-                var ihStep = GetStepData(stepRow);
+                var ihStep = GetStepData(stepRow,stepsProvider);
                 var stepStatuses = new List<TfIhStatusData>();
                 foreach (TfDataRow statusRow in ihStatuses.Rows)
                 {
-                    var ihStatus = GetStatusData(statusRow);
-                    if(!ihStatus.Code.StartsWith($"{ihStep.Code}-")) continue;
+                    var ihStatus = GetStatusData(statusRow,statusProvider);
+                    if (!ihStatus.Code.StartsWith($"{ihStep.Code}-")) continue;
                     stepStatuses.Add(ihStatus);
                 }
+
                 var spaceView = tfService.GetSpaceView(stepViewDict[ihStep.Id])!;
-                AddSpaceViewPresets(spaceView, ihStep, stepStatuses);
-                _ = tfService.UpdateSpaceView(spaceView);                
+                AddSpaceViewPresets(
+                    spaceView:spaceView, 
+                    stepIhStatuses:stepStatuses,
+                    statusSharedColumn:statusSharedColumn,
+                    ih001IdIdentity: TfExtraConstants.IH001_ID_DATA_IDENTITY);
+                _ = tfService.UpdateSpaceView(spaceView);
             }
         }
 
@@ -564,28 +612,31 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
         return Task.CompletedTask;
     }
 
-    public TfIhStepData GetStepData(TfDataRow row)
+    public TfIhStepData GetStepData(TfDataRow row, TfDataProvider stepsProvider)
     {
         var result = new TfIhStepData();
         result.Id = row.GetRowId();
-        result.Code = (string)row[$"dp2_id"]!;
-        result.Label = (string)row["dp2_name"]!;
-        result.Icon = (string?)row["dp2_icon"]!;
+        result.Code = (string)row[$"{stepsProvider.ColumnPrefix}code"]!;
+        result.Label = (string)row[$"{stepsProvider.ColumnPrefix}name"]!;
+        result.Icon = (string?)row[$"{stepsProvider.ColumnPrefix}icon"]!;
 
         return result;
     }
-    
-    public TfIhStatusData GetStatusData(TfDataRow row)
+
+    public TfIhStatusData GetStatusData(TfDataRow row, TfDataProvider statusProvider)
     {
         var result = new TfIhStatusData();
         result.Id = row.GetRowId();
-        result.Code = (string)row["dp3_id"]!;
-        result.Label = (string)row["dp3_name"]!;
+        result.Code = (string)row[$"{statusProvider.ColumnPrefix}code"]!;
+        result.Label = (string)row[$"{statusProvider.ColumnPrefix}name"]!;
         return result;
-    }    
+    }
 
     private TfCreateDataset GetDatasetSubmit(Guid datasetId, Guid providerId, string providerPrefix,
-        string buildingCode, TfIhStepData ihStep)
+        string buildingCode, TfIhStepData ihStep,
+        TfDataProvider companyProvider, TfDataProvider contactProvider,
+        TfSharedColumn stepSharedColumn, TfSharedColumn statusSharedColumn,
+        string ih001IdIdentity, string ih001CompanyIdentity, string ih001ContactIdentity)
     {
         TfCreateDataset submit = new()
         {
@@ -603,21 +654,21 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
                     new TfFilterText()
                     {
                         Id = Guid.NewGuid(),
-                        ColumnName = $"ih001_id.sc_ih001_step",
+                        ColumnName = $"{ih001IdIdentity}.{stepSharedColumn.DbName}",
                         ComparisonMethod = TfFilterTextComparisonMethod.Equal,
                         Value = ihStep.Code,
                     },
                     new TfFilterText()
                     {
                         Id = Guid.NewGuid(),
-                        ColumnName = $"ih001_id.sc_ih001_step",
+                        ColumnName = $"{ih001IdIdentity}.{stepSharedColumn.DbName}",
                         ComparisonMethod = TfFilterTextComparisonMethod.HasNoValue,
                         Value = null,
                     },
                     new TfFilterText()
                     {
                         Id = Guid.NewGuid(),
-                        ColumnName = $"ih001_id.sc_ih001_step",
+                        ColumnName = $"{ih001IdIdentity}.{stepSharedColumn.DbName}",
                         ComparisonMethod = TfFilterTextComparisonMethod.Equal,
                         Value = String.Empty,
                     }
@@ -631,7 +682,7 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
                 new TfFilterText()
                 {
                     Id = Guid.NewGuid(),
-                    ColumnName = $"ih001_id.sc_ih001_step",
+                    ColumnName = $"{ih001IdIdentity}.{stepSharedColumn.DbName}",
                     ComparisonMethod = TfFilterTextComparisonMethod.Equal,
                     Value = ihStep.Code,
                 }
@@ -664,9 +715,27 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
             new TfDatasetIdentity()
             {
                 Id = Guid.NewGuid(),
-                DataIdentity = "company_name",
+                DataIdentity = ih001ContactIdentity,
                 DatasetId = datasetId,
-                Columns = ["dp4_name", "dp4_email", "dp4_job_title"]
+                Columns =
+                [
+                    $"{contactProvider.ColumnPrefix}name",
+                    $"{contactProvider.ColumnPrefix}email",
+                    $"{contactProvider.ColumnPrefix}phone",
+                    $"{contactProvider.ColumnPrefix}job_title"
+                ]
+            },
+            new TfDatasetIdentity()
+            {
+                Id = Guid.NewGuid(),
+                DataIdentity = ih001CompanyIdentity,
+                DatasetId = datasetId,
+                Columns =
+                [
+                    $"{companyProvider.ColumnPrefix}vat",
+                    $"{companyProvider.ColumnPrefix}mol",
+                    $"{companyProvider.ColumnPrefix}address"
+                ]
             },
             new TfDatasetIdentity()
             {
@@ -678,9 +747,9 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
             new TfDatasetIdentity()
             {
                 Id = Guid.NewGuid(),
-                DataIdentity = "ih001_id",
+                DataIdentity = ih001IdIdentity,
                 DatasetId = datasetId,
-                Columns = ["sc_ih001_status", "sc_ih001_step"]
+                Columns = [stepSharedColumn.DbName, statusSharedColumn.DbName]
             }
         };
 
@@ -694,7 +763,7 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
         {
             CanCreateRoles = [],
             CanDeleteRoles = [],
-            CanUpdateRoles = [ihRoleId, adminRoleId],
+            CanUpdateRoles = [],
             ColoringRules = [],
             FitlerType = TfSpaceViewFilterType.GridFilter,
             FreezeFinalNColumns = null,
@@ -703,10 +772,14 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
     }
 
     private List<TfSpaceViewColumn> GetSpaceViewColumns(Guid spaceViewId, Guid defaultTalkChannelId,
-        Guid defaultAssetsFolderId, string providerPrefix, TfIhStepData ihStep)
+        Guid defaultAssetsFolderId, string providerPrefix,  
+        List<TfIhStatusData> stepIhStatuses,
+        TfSharedColumn statusSharedColumn,
+        string ih001IdIdentity)
     {
         var result = new List<TfSpaceViewColumn>();
         short position = 1;
+
         #region << talk >>
 
         {
@@ -764,6 +837,38 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
         }
 
         #endregion
+
+        if (stepIhStatuses.Count > 1)
+        {
+            #region << статус >>
+
+            {
+                result.Add(new TfSpaceViewColumn()
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "статус",
+                    Position = position++,
+                    TypeId = new Guid(TfTextViewColumnType.ID),
+                    TypeOptionsJson = JsonSerializer.Serialize(new TfTextViewColumnTypeSettings
+                    {
+                        ChangeConfirmationMessage = null,
+                    }),
+                    Settings = new TfSpaceViewColumnSettings()
+                    {
+                        Width = 100,
+                        FilterPresentation = TfSpaceViewColumnSettingsFilterPresentation.VisibleWithDefault,
+                        DefaultComparisonMethodDescription = "contains"
+                    },
+                    DataMapping = new Dictionary<string, string?>() { { "Value", $"{ih001IdIdentity}.{statusSharedColumn}" } },
+                    SpaceViewId = spaceViewId,
+                    QueryName = NavigatorExt.GenerateQueryName(),
+                    Icon = null,
+                    OnlyIcon = false,
+                });
+            }
+
+            #endregion
+        }
 
         #region << индекс >>
 
@@ -930,7 +1035,7 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
                     FilterPresentation = TfSpaceViewColumnSettingsFilterPresentation.VisibleWithOptions,
                     DefaultComparisonMethodDescription = "greater or equal"
                 },
-                DataMapping = new Dictionary<string, string?>() { { "Value", $"{providerPrefix}q_ty" } },
+                DataMapping = new Dictionary<string, string?>() { { "Value", $"{providerPrefix}qty" } },
                 SpaceViewId = spaceViewId,
                 QueryName = NavigatorExt.GenerateQueryName(),
                 Icon = null,
@@ -1061,21 +1166,46 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
         return result;
     }
 
-    private void AddSpaceViewPresets(TfSpaceView spaceView, TfIhStepData ihStep, List<TfIhStatusData> stepIhStatuses)
+    private void AddSpaceViewPresets(TfSpaceView spaceView, List<TfIhStatusData> stepIhStatuses,
+        TfSharedColumn statusSharedColumn,
+        string ih001IdIdentity)
     {
         spaceView.Presets.Clear();
-        if(stepIhStatuses.Count <= 1) return;
+        if (stepIhStatuses.Count <= 1) return;
+
+        spaceView.Presets.Add(new TfSpaceViewPreset()
+        {
+            Name = "Всички",
+            Filters = new(),
+            Id = Guid.NewGuid(),
+            ParentId = null,
+            Search = null,
+            SortOrders = new(),
+            Presets = new(),
+            IsGroup = false,
+            Color = null,
+            Icon = null,
+            NoRecordsCheck = true
+        });
+
         foreach (var ihStatus in stepIhStatuses)
         {
+            var presetName = ihStatus.Label?.Trim();
+            // var dotIndex = ihStatus.Label.ToList().FindIndex(x => x == '.');
+            // if (dotIndex != -1)
+            // {
+            //     presetName = ihStatus.Label.Substring(dotIndex + 1);
+            // }
+
             spaceView.Presets.Add(new TfSpaceViewPreset()
             {
-                Name = ihStatus.Label,
+                Name = presetName,
                 Filters = new()
                 {
                     new TfFilterText()
                     {
                         Value = ihStatus.Code,
-                        ColumnName = "ih001_id.sc_ih001_status",
+                        ColumnName = $"{ih001IdIdentity}.{statusSharedColumn}",
                         ComparisonMethod = TfFilterTextComparisonMethod.Equal,
                         Id = Guid.NewGuid(),
                     }
@@ -1088,7 +1218,8 @@ public class TfCreateIHSpaceStep : ITfRecipeStepAddon
                 IsGroup = false,
                 Color = null,
                 Icon = null,
-            });            
+                NoRecordsCheck = true
+            });
         }
     }
 }

@@ -282,7 +282,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessorAddon
 		{
 			result.Add(new ValidationError(nameof(settings.FileName), "Filename is required"));
 		}
-		else if (settings.FileName.IndexOfAny(Path.GetInvalidFileNameChars()) != 0)
+		else if (settings.FileName.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
 		{
 			result.Add(new ValidationError(nameof(settings.FileName), "Filename is invalid"));
 		}

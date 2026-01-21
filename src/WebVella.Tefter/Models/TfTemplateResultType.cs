@@ -11,4 +11,7 @@ public enum TfTemplateResultType
 	[Description("Text")]
 	[FluentIcon("ScanText")]
 	Text = 2,
+	[Description("File Group")]
+	[FluentIcon("Folder")]
+	FileGroup = 3,	
 }

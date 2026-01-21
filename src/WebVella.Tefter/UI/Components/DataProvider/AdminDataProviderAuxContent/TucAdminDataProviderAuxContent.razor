@@ -76,6 +76,10 @@
                                             <td class="tf-grid-td">
                                                 <div>
                                                     <FluentStack>
+                                                        @if (!String.IsNullOrWhiteSpace(context.Prefix))
+                                                        {
+                                                            <div>@context.Prefix <span style="color:var(--neutral-foreground-hint)">+</span> </div>
+                                                        }
                                                         @foreach (var item in context.Columns)
                                                         {
                                                             <FluentBadge Appearance="@Appearance.Neutral">@item</FluentBadge>

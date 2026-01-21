@@ -29,15 +29,24 @@
 						<FluentInputLabel Label="@LOC("Preset type")" Required="true"/>
 						@if (_isCreate)
 						{
-							<FluentCheckbox @bind-Value="@_form.IsGroup" Label="@LOC("make as a group for holding presets")"/>
+							<FluentCheckbox @bind-Value="@_form.IsGroup"
+							                Label="@LOC("make as a group for holding presets")"/>
 						}
 						else
 						{
 							<FluentTextField TextFieldType="@TextFieldType.Text"
-							                 Value=@(_form.IsGroup ? LOC("group") : LOC("preset filter")) Disabled="true"
+							                 Value=@(_form.IsGroup ? LOC("group") : LOC("preset filter"))
+							                 Disabled="true"
 							                 Style="width:100%"/>
 						}
 						<FluentValidationMessage For="@(() => _form.IsGroup)"/>
+					</FluentGridItem>
+					<FluentGridItem xs="4">
+						<FluentInputLabel Label="@LOC("Fade when no records")"/>
+						<FluentSwitch @bind-Value=@_form.NoRecordsCheck
+						              CheckedMessage="@LOC("check for no records")"
+						              UncheckedMessage="@LOC("no check")"/>
+						<FluentValidationMessage For="@(() => _form.NoRecordsCheck)"/>
 					</FluentGridItem>
 				</FluentGrid>
 				<FluentGrid>
@@ -89,12 +98,12 @@
 							                 @bind-Value=@_form.Search AutoComplete="off" Style="width:100%"/>
 							<FluentValidationMessage For="@(() => _form.Search)"/>
 						</FluentGridItem>
-					</FluentGrid>					
+					</FluentGrid>
 				</TucCard>
 				<div class="tf-divider tf-divider--with-title" style="margin:15px 0">
 					<div class="tf-divider__title">@LOC("FILTERS")</div>
 					<div class="tf-divider__hr"></div>
-				</div>				
+				</div>
 				<TucFilterCard DatasetId="Content.DateSet!.Id" @bind-Items="_form.Filters"/>
 				<div class="tf-divider tf-divider--with-title" style="margin:15px 0">
 					<div class="tf-divider__title">@LOC("SORT ORDER")</div>

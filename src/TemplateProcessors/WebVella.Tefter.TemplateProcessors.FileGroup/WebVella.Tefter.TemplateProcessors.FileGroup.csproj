@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\WebVella.Tefter\WebVella.Tefter.csproj" />
+      <ProjectReference Include="..\WebVella.Tefter.TemplateProcessors.DocumentFile\WebVella.Tefter.TemplateProcessors.DocumentFile.csproj" />
+      <ProjectReference Include="..\WebVella.Tefter.TemplateProcessors.ExcelFile\WebVella.Tefter.TemplateProcessors.ExcelFile.csproj" />
+      <ProjectReference Include="..\WebVella.Tefter.TemplateProcessors.TextFile\WebVella.Tefter.TemplateProcessors.TextFile.csproj" />
+    </ItemGroup>
+
+</Project>

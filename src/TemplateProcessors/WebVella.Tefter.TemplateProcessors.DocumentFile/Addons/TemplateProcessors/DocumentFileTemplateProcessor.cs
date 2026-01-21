@@ -100,9 +100,6 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessorAddon
 
 			foreach (var resultItem in tmplResult.ResultItems)
 			{
-				if (resultItem is null)
-					continue;
-
 				string filename = settings.FileName ?? String.Empty;
 
 				filesCounter++;
@@ -113,37 +110,36 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessorAddon
 					var name = Path.GetFileNameWithoutExtension(filename);
 					filename = $"{filename}_{filesCounter}{ext}";
 				}
-
-				try
+				var item = new DocumentFileTemplateResultItem
 				{
-					var item = new DocumentFileTemplateResultItem
+					FileName = filename,
+					NumberOfRows = (int)(resultItem.DataTable?.Rows.Count ?? 0)
+				};
+				var valErrors = resultItem.Validate();
+				if (valErrors.Count > 0)
+				{
+					foreach (var valError in valErrors)
 					{
-						FileName = filename,
-						NumberOfRows = (int)(resultItem.DataTable?.Rows.Count ?? 0)
-					};
-
-					if (resultItem.Result is not null)
-					{
-						item.BlobId = tfService.CreateBlob(resultItem.Result, temporary: true);
-						item.DownloadUrl = $"/fs/blob/{item.BlobId}/{filename}";
+						item.Errors.Add(new ValidationError("", valError.Description));
 					}
-
-					result.Items.Add(item);
 				}
-				catch (Exception ex)
+				else
 				{
-					result.Items.Add(new DocumentFileTemplateResultItem
+					try
 					{
-						FileName = filename,
-						DownloadUrl = String.Empty,
-						BlobId = null,
-						NumberOfRows = (int)(resultItem.DataTable?.Rows.Count ?? 0),
-						Errors = new()
+						if (resultItem.Result is not null)
 						{
-							new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}")
+							item.BlobId = tfService.CreateBlob(resultItem.Result, temporary: true);
+							item.DownloadUrl = $"/fs/blob/{item.BlobId}/{filename}";
 						}
-					});
+					}
+					catch (Exception ex)
+					{
+						item.Errors.Add(new ValidationError("",
+							$"Unexpected error occurred. {ex.Message} {ex.StackTrace}"));
+					}
 				}
+				result.Items.Add(item);
 			}
 			if (!String.IsNullOrEmpty(settings.FileName))
 				GenerateZipFile(settings.FileName, result, tfService);
@@ -206,17 +202,22 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessorAddon
 		}
 
 		var settings = JsonSerializer.Deserialize<DocumentFileTemplateSettings>(settingsJson);
-
-		if (settings is null || string.IsNullOrWhiteSpace(settings.FileName))
+		if (settings is null)
+		{
+			result.Add(new ValidationError(nameof(settings), "invalid settings format"));
+			return result;
+		}
+		
+		if (string.IsNullOrWhiteSpace(settings.FileName))
 		{
 			result.Add(new ValidationError(nameof(settings.FileName), "Filename is required"));
 		}
-		else if (settings.FileName.IndexOfAny(Path.GetInvalidFileNameChars()) != 0)
+		else if (settings.FileName.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
 		{
 			result.Add(new ValidationError(nameof(settings.FileName), "Filename is invalid"));
 		}
 
-		if (settings is null || settings.TemplateFileBlobId is null)
+		if (settings.TemplateFileBlobId is null)
 		{
 			result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), "Template file is not specified"));
 		}
@@ -225,8 +226,33 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessorAddon
 			var tfService = serviceProvider.GetService<ITfService>();
 			if(tfService is null) throw new Exception("tfService not found");
 
-			if (!tfService.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: false) &&
-				!tfService.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true))
+			if (tfService.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: false))
+			{
+				var bytes = tfService.GetBlobByteArray(settings.TemplateFileBlobId.Value,false);
+				var fileTemplate = new WvDocumentFileTemplate
+				{
+					Template = new MemoryStream(bytes),
+				};
+				var valErrors = fileTemplate.Validate();
+				foreach (var valError in valErrors)
+				{
+					result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), valError.Description));
+				}
+			}
+			else if (tfService.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true))
+			{
+				var bytes = tfService.GetBlobByteArray(settings.TemplateFileBlobId.Value,true);
+				var fileTemplate = new WvDocumentFileTemplate
+				{
+					Template = new MemoryStream(bytes),
+				};
+				var valErrors = fileTemplate.Validate();
+				foreach (var valError in valErrors)
+				{
+					result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), valError.Description));
+				}                
+			}
+			else
 			{
 				result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), "Template file is not found."));
 			}

@@ -3,6 +3,8 @@ using WebVella.DocumentTemplates.Engines.Email;
 using WebVella.DocumentTemplates.Engines.Email.Models;
 using WebVella.Tefter.EmailSender.Models;
 using WebVella.Tefter.EmailSender.Services;
+using WebVella.Tefter.TemplateProcessors.DocumentFile.Addons;
+using WebVella.Tefter.TemplateProcessors.DocumentFile.Models;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
 using WebVella.Tefter.TemplateProcessors.TextFile.Addons;
@@ -209,7 +211,11 @@ public class EmailTemplateProcessor : ITfTemplateProcessorAddon
         }
 
         var settings = JsonSerializer.Deserialize<EmailTemplateSettings>(template.SettingsJson);
-
+        if (settings is null)
+        {
+            result.Errors.Add(new ValidationError("", "Template settings invalid."));
+            return result;
+        }
         WvEmail emailTmpl = new WvEmail
         {
             Sender = settings.Sender ?? string.Empty,
@@ -256,6 +262,18 @@ public class EmailTemplateProcessor : ITfTemplateProcessorAddon
                 emailAtt.GroupDataByColumns = attTemplaceSettings.GroupBy;
                 emailTmpl.AttachmentItems.Add(emailAtt);
             }
+            else if (((TfTemplate)attTemplate).ContentProcessorType == typeof(DocumentFileTemplateProcessor))
+            {
+                var attTemplaceSettings =
+                    JsonSerializer.Deserialize<DocumentFileTemplateSettings>(attTemplate.SettingsJson);
+                var bytes = _tfService.GetBlobByteArray(attTemplaceSettings.TemplateFileBlobId.Value);
+
+                emailAtt.Type = WvEmailAttachmentType.DocumentFile;
+                emailAtt.Template = new MemoryStream(bytes);
+                emailAtt.Filename = attTemplaceSettings.FileName;
+                emailAtt.GroupDataByColumns = attTemplaceSettings.GroupBy;
+                emailTmpl.AttachmentItems.Add(emailAtt);
+            }            
             else
             {
                 //ignore other type templates
@@ -326,7 +344,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessorAddon
                     emailAtt.DownloadUrl = null;
                     if (attachmentItem.Template is not null)
                     {
-                        emailAtt.BlobId = _tfService.CreateBlob(attachmentItem.Template.GetBuffer(), temporary: true);
+                        emailAtt.BlobId = _tfService.CreateBlob(attachmentItem.Template, temporary: true);
                         emailAtt.DownloadUrl = $"/fs/blob/{emailAtt.BlobId}/{emailAtt.FileName}";
                     }
 

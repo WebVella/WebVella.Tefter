@@ -18,11 +18,14 @@ public partial class TucChangeStatusDialog : TfBaseComponent, IDialogContentComp
     private TfSelectOption? _initalStatus = null;
     private TfSelectOption? _selectedStep = null;
     private TfSelectOption? _selectedStatus = null;
-    private readonly Guid _stepDataProviderId = new Guid("cba9f436-1b82-42fb-8e3e-6213d667fb73");
-    private readonly Guid _statusDataProviderId = new Guid("437c9cb1-7f76-4a05-a9b3-c90a714d9768");
-    private readonly string _stepColumnName = "ih001_id.sc_ih001_step";
-    private readonly string _statusColumnName = "ih001_id.sc_ih001_status";
-
+    private readonly Guid _stepDataProviderId = new Guid(TfExtraConstants.STEPS_DATA_PROVIDER_ID);
+    private readonly Guid _statusDataProviderId = new Guid(TfExtraConstants.STATUS_DATA_PROVIDER_ID);
+    private readonly string _stepColumnName = $"{TfExtraConstants.IH001_ID_DATA_IDENTITY}.{TfExtraConstants.STEP_SHARED_COLUMN_NAME}";
+    private readonly string _statusColumnName = $"{TfExtraConstants.IH001_ID_DATA_IDENTITY}.{TfExtraConstants.STATUS_SHARED_COLUMN_NAME}";
+    private TfDataProvider _stepProvider = null!;
+    private TfDataProvider _statusProvider = null!;
+    
+    
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -33,6 +36,8 @@ public partial class TucChangeStatusDialog : TfBaseComponent, IDialogContentComp
         if (Content.User is null) throw new Exception("User is required");
         if (Content.SpacePage is null) throw new Exception("SpacePage is required");
         if (Content.Data is null) throw new Exception("Data is required");
+        _stepProvider = TfService.GetDataProvider(_stepDataProviderId)!;
+        _statusProvider = TfService.GetDataProvider(_statusDataProviderId)!;        
         _initOptions();
     }
 
@@ -50,16 +55,21 @@ public partial class TucChangeStatusDialog : TfBaseComponent, IDialogContentComp
             {
                 allStatuses.Add(new TfSelectOption()
                 {
-                    Label = (string)row["dp3_name"]!, Value = (string)row["dp3_id"]!,
+                    Label = (string)row[$"{_statusProvider.ColumnPrefix}name"]!, Value = (string)row[$"{_statusProvider.ColumnPrefix}code"]!,
                 });
             }
 
             allStatuses = allStatuses.OrderBy(x => x.Label).ToList();
             foreach (TfDataRow row in stepDt.Rows)
             {
-                var stepId = (string)row["dp2_id"]!;
-                _stepOptions.Add(new TfSelectOption() { Label = (string)row["dp2_name"]!, Value = stepId, });
-                _stepStatusOptionsDict[stepId] = allStatuses.Where(x => ((string)x.Value!).StartsWith(stepId)).ToList();
+                var stepCode = (string)row[$"{_stepProvider.ColumnPrefix}code"]!;
+                _stepOptions.Add(new TfSelectOption()
+                {
+                    Label = (string)row[$"{_stepProvider.ColumnPrefix}name"]!, 
+                    Value = stepCode,
+                    IconName = (string?)row[$"{_stepProvider.ColumnPrefix}icon"]!,
+                });
+                _stepStatusOptionsDict[stepCode] = allStatuses.Where(x => ((string)x.Value!).StartsWith(stepCode)).ToList();
             }
 
             _stepOptions = _stepOptions.OrderBy(x => x.Label).ToList();

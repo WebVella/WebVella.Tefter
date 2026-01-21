@@ -10,5 +10,5 @@ public abstract record TfSpaceViewDataEventPayload(Guid SpaceViewId)
 public record TfSpaceViewDataReloadEventPayload(Guid SpaceViewId)
 	: TfSpaceViewDataEventPayload(SpaceViewId);
 
-public record TfSpaceViewDataUpdatedEventPayload(Guid SpaceViewId, Dictionary<Guid, Dictionary<string, object>> DataDictionary)
+public record TfSpaceViewDataUpdatedEventPayload(Guid SpaceViewId, List<Guid> ChangedRows)
 	: TfSpaceViewDataEventPayload(SpaceViewId);

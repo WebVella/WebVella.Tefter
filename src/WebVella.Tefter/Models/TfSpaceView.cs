@@ -109,4 +109,7 @@ public record TfSpaceViewPreset
 	public TfColor? Color { get; set; } = TfConstants.DefaultThemeColor;
 
 	[JsonPropertyName("icon")] public string? Icon { get; set; } = null;
+	
+	[JsonPropertyName("no_records_check")]
+	public bool NoRecordsCheck { get; set; } = false;	
 }

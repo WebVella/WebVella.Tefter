@@ -24,6 +24,7 @@
         <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.DocumentFile\WebVella.Tefter.TemplateProcessors.DocumentFile.csproj" />
         <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.Email\WebVella.Tefter.TemplateProcessors.Email.csproj" />
         <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.ExcelFile\WebVella.Tefter.TemplateProcessors.ExcelFile.csproj" />
+        <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.FileGroup\WebVella.Tefter.TemplateProcessors.FileGroup.csproj" />
         <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.TextContent\WebVella.Tefter.TemplateProcessors.TextContent.csproj" />
         <ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.TextFile\WebVella.Tefter.TemplateProcessors.TextFile.csproj" />
         <ProjectReference Include="..\WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj" />

@@ -103,6 +103,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Extra", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.DocumentTemplates", "..\WebVella.DocumentTemplates\Src\WebVella.DocumentTemplates\WebVella.DocumentTemplates.csproj", "{931C62C6-E3B7-48FE-9E31-3B6473A65626}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.TemplateProcessors.FileGroup", "src\TemplateProcessors\WebVella.Tefter.TemplateProcessors.FileGroup\WebVella.Tefter.TemplateProcessors.FileGroup.csproj", "{C1E13236-0CE2-453E-BF0F-B9B42DAEEA0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -224,6 +226,10 @@ Global
 		{931C62C6-E3B7-48FE-9E31-3B6473A65626}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{931C62C6-E3B7-48FE-9E31-3B6473A65626}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{931C62C6-E3B7-48FE-9E31-3B6473A65626}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1E13236-0CE2-453E-BF0F-B9B42DAEEA0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1E13236-0CE2-453E-BF0F-B9B42DAEEA0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1E13236-0CE2-453E-BF0F-B9B42DAEEA0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1E13236-0CE2-453E-BF0F-B9B42DAEEA0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -249,6 +255,7 @@ Global
 		{7DC27614-46A2-40D3-9694-3204990D40B6} = {75A65CF5-1A85-4B19-9A54-63CAF3AA221B}
 		{6B412A7B-082E-4394-8E91-695E363EF44C} = {FBDDD2A3-E610-424E-B64E-58B4662A4583}
 		{04BE69B4-4D5F-4240-A879-526BCDDF58AC} = {3B81EE67-F78A-4493-AB33-8B56B9B95DE7}
+		{C1E13236-0CE2-453E-BF0F-B9B42DAEEA0E} = {5B27AF15-DB08-4A07-BDBB-1F857288F9FC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C1A4AC87-0ABF-4D69-AB37-06B038019BBB}

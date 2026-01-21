@@ -7,6 +7,13 @@
 else
 {
 	<FluentGrid>
+		<FluentGridItem xs="12">
+			<FluentInputLabel Label="@LOC("Group by columns")" />
+			<TucSelectList Values=@_form.GroupBy
+			               NoItemsMessage="@LOC("no data grouping will be applied")" />
+		</FluentGridItem>
+	</FluentGrid>	
+	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentInputLabel Label="@LOC("From")" />
 			<FluentTextField Value=@_form.Sender ReadOnly="true"
@@ -94,11 +101,5 @@ else
 			</table>
 		</FluentGridItem>
 	</FluentGrid>
-	<FluentGrid>
-		<FluentGridItem xs="12">
-			<FluentInputLabel Label="@LOC("Group by columns")" />
-			<TucSelectList Values=@_form.GroupBy
-						   NoItemsMessage="@LOC("no data grouping will be applied")" />
-		</FluentGridItem>
-	</FluentGrid>
+
 }

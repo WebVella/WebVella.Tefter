@@ -137,14 +137,11 @@ public partial class AssetsAttachModal : TfFormBaseComponent, IDialogContentComp
 				&& !String.IsNullOrWhiteSpace(_selectedFolder.DataIdentity)
 				&& !String.IsNullOrWhiteSpace(_selectedFolder.CountSharedColumnName))
 			{
-				var columnName = $"{_selectedFolder.DataIdentity}.{_selectedFolder.CountSharedColumnName}";
-				foreach (var rowId in Content.SelectedRowIds)
-				{
-					Content.CountChange[rowId] = new();
-					Content.CountChange[rowId][columnName] = _countChange;
-				}
+				await TfEventBus.PublishAsync(
+					key: TfAuthLayout.GetSessionId(),
+					payload: new TfSpaceViewDataUpdatedEventPayload(Content.SpaceViewId,Content.SelectedRowIds));	 
 			}
-			await _cancel();
+			await Dialog.CloseAsync();
 		}
 		catch (Exception ex)
 		{
@@ -168,6 +165,7 @@ public record AssetsAttachModalContext
 {
 	public TfUser CurrentUser { get; set; }
 	public Guid DataProviderId { get; set; }
+	public Guid SpaceViewId { get; set; }
 	public List<Guid> SelectedRowIds { get; set; } = new();
 	public Dictionary<Guid, Dictionary<string, long>> CountChange { get; set; } = new();
 

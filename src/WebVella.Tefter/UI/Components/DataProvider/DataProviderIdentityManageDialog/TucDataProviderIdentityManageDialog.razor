@@ -39,6 +39,13 @@
 						</FluentStack>
 						<FluentValidationMessage For="@(() => _form.DataIdentity)"/>
 					</FluentGridItem>
+					<FluentGridItem xs="6">
+						<FluentTextField TextFieldType="@TextFieldType.Text"
+						                 @bind-Value=@_form.Prefix
+						                 Label="@LOC("Value Prefix")" Style="width:100%" AutoComplete="off"
+						                 Placeholder="@LOC("if empty, only column values will be used")"/>
+						<FluentValidationMessage For="@(() => _form.Prefix)"/>
+					</FluentGridItem>					
 				</FluentGrid>
 				<FluentGrid>
 					<FluentGridItem xs="6">

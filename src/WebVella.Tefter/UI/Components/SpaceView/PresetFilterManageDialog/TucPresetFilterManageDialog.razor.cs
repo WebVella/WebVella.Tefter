@@ -32,7 +32,8 @@ public partial class TucPresetFilterManageDialog : TfFormBaseComponent,
 				Presets = Content.Item.Presets.ToList(),
 				ParentId = Content.Item.ParentId,
 				Color = Content.Item.Color,
-				Icon = Content.Item.Icon
+				Icon = Content.Item.Icon,
+				NoRecordsCheck = Content.Item.NoRecordsCheck
 			};
 			if (_form.ParentId != null)
 			{

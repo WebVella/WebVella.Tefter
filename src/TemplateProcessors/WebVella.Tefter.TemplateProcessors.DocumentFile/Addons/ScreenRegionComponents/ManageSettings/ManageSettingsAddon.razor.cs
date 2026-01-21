@@ -58,16 +58,15 @@ public partial class ManageSettingsAddon : TfFormBaseComponent,
 	private List<ValidationError> _validate()
 	{
 		MessageStore.Clear();
-		var errors = new List<ValidationError>();
-		if (String.IsNullOrWhiteSpace(_form.FileName))
-			errors.Add(new ValidationError(nameof(DocumentFileTemplateSettings.FileName), LOC("required")));
-
+		var processor = (ITfTemplateProcessorAddon?)Activator.CreateInstance(RegionContext!.Template.ContentProcessorType);
+		if (processor is null) throw new Exception("processor cannot be initialized");
+		var errors = processor.ValidateSettings(JsonSerializer.Serialize(_form),ServiceProvider);
 		foreach (var item in errors)
 		{
 			MessageStore.Add(EditContext.Field(item.PropertyName), item.Message);
 		}
 
-		var isValid = EditContext.Validate();
+		_ = EditContext.Validate();
 		StateHasChanged();
 		return errors;
 	}

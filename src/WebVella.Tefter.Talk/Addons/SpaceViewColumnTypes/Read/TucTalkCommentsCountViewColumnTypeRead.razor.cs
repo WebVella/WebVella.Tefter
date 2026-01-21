@@ -35,23 +35,9 @@ public partial class TucTalkCommentsCountViewColumnTypeRead : ComponentBase
 			TrapFocus = false,
 			OnDialogClosing = EventCallback.Factory.Create<DialogInstance>(this, async (instance) =>
 			{
-
-                var change = ((TalkThreadPanelContext)instance.Content).CountChange;
-				if(change == 0) return;
-                if (ColumnName is null) return;
-                var changeRequest = new Dictionary<Guid, Dictionary<string, long>>
-                {
-	                [Context.RowId] = new()
-	                {
-		                [ColumnName] = change
-	                }
-                };
-                var dataChange = Context.DataTable.ApplyCountChange(
-                    countChange: changeRequest);
-                if (dataChange is null) return;
                 await TfEventBus.PublishAsync(
 	                key: TfAuthLayout.GetSessionId().ToString(),
-	                payload: new TfSpaceViewDataUpdatedEventPayload(Context.ViewColumn.SpaceViewId,dataChange));	    
+	                payload: new TfSpaceViewDataUpdatedEventPayload(Context.ViewColumn.SpaceViewId,[Context.RowId]));	    
             })
 		});
 	}	

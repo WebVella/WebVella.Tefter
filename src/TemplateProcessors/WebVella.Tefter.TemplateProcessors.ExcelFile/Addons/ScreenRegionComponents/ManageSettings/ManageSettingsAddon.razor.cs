@@ -6,7 +6,6 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 public partial class ManageSettingsAddon : TfFormBaseComponent, 
 	ITfScreenRegionAddon<TfTemplateProcessorManageSettingsScreenRegion>
 {
-	[Inject] public ITfService TfService { get; set; } = null!;
 	public const string ID = "51157e04-9849-48ec-9bf3-de31308c4b0c";
 	public const string NAME = "Excel Template Manage Seettings";
 	public const string DESCRIPTION = "";
@@ -58,16 +57,16 @@ public partial class ManageSettingsAddon : TfFormBaseComponent,
 	private List<ValidationError> _validate()
 	{
 		MessageStore.Clear();
-		var errors = new List<ValidationError>();
-		if (String.IsNullOrWhiteSpace(_form.FileName))
-			errors.Add(new ValidationError(nameof(ExcelFileTemplateSettings.FileName), LOC("required")));
+		var processor = (ITfTemplateProcessorAddon?)Activator.CreateInstance(RegionContext!.Template.ContentProcessorType);
+		if (processor is null) throw new Exception("processor cannot be initialized");
+		var errors = processor.ValidateSettings(JsonSerializer.Serialize(_form),ServiceProvider);
 
 		foreach (var item in errors)
 		{
 			MessageStore.Add(EditContext.Field(item.PropertyName), item.Message);
 		}
 
-		var isValid = EditContext.Validate();
+		_ = EditContext.Validate();
 		StateHasChanged();
 		return errors;
 	}
