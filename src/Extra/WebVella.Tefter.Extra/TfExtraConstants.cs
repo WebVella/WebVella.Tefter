@@ -2,6 +2,8 @@
 
 public class TfExtraConstants
 {
+	public const string DEFAULT_VALUE = "n/a";
+	
 	public const string IH001_ID_DATA_IDENTITY = "ih001_id";
 	public const string IH001_COMPANY_DATA_IDENTITY = "ih001_company";
 	public const string IH001_CONTACT_DATA_IDENTITY = "ih001_contact";
