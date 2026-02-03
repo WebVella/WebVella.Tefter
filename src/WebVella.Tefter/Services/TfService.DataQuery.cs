@@ -379,7 +379,9 @@ public partial class TfService
 					DatasetId = dataset.Id
 				},
 
-				dataTable
+				dataTable,
+				returnOnlyTfIds
+
 			);
 		}
 		catch (Exception ex)
@@ -395,7 +397,8 @@ public partial class TfService
 		List<SqlBuilderJoinData> joinData,
 		List<SqlBuilderSharedColumnData> sharedColumnsData,
 		TfDataTableQuery query,
-		DataTable dataTable)
+		DataTable dataTable,
+		bool returnOnlyTfIds = false)
 	{
 		List<string> columns = new List<string>();
 		foreach (DataColumn column in dataTable.Columns)
@@ -403,54 +406,72 @@ public partial class TfService
 			columns.Add(column.ColumnName);
 		}
 
-		TfDataTable resultTable = new TfDataTable(provider, joinData,
-			sharedColumnsData, query, sql, sqlParameters, columns);
-
-		HashSet<string> dateOnlyColumns = new HashSet<string>();
-
-		foreach (var column in resultTable.Columns)
+		if (returnOnlyTfIds)
 		{
-			if (column.DbType == TfDatabaseColumnType.DateOnly)
-				dateOnlyColumns.Add(column.Name);
+			TfDataTable resultTable = new TfDataTable(provider, joinData,
+				sharedColumnsData, query, sql, sqlParameters, new List<string> { "tf_id" });
+
+			foreach (DataRow row in dataTable.Rows)
+			{
+				var tfRow = resultTable.NewRow();
+				tfRow["tf_id"] = (Guid)row["tf_id"];
+				resultTable.Rows.Add(tfRow);
+			}
+
+			return resultTable;
 		}
-
-		foreach (DataRow row in dataTable.Rows)
+		else
 		{
-			var joinColumnValuesDict = GetRowJoinedValues(row, joinData);
-			object[] values = new object[resultTable.Columns.Count];
-			int valuesCounter = 0;
+
+			TfDataTable resultTable = new TfDataTable(provider, joinData,
+				sharedColumnsData, query, sql, sqlParameters, columns);
+
+			HashSet<string> dateOnlyColumns = new HashSet<string>();
+
 			foreach (var column in resultTable.Columns)
 			{
-				var columnName = column.Name;
-
-				if (column.Origin == TfDataColumnOriginType.JoinedProviderColumn)
-				{
-					values[valuesCounter++] = joinColumnValuesDict[column.Name];
-					continue;
-				}
-				else if (column.Origin == TfDataColumnOriginType.SharedColumn)
-				{
-					var segments = columnName.Split(".");
-					columnName = segments[1];
-				}
-
-				object value = row[columnName];
-
-				if (value == DBNull.Value)
-				{
-					value = null;
-				}
-				else if (dateOnlyColumns.Contains(columnName))
-				{
-					value = DateOnly.FromDateTime((DateTime)value);
-				}
-
-				values[valuesCounter++] = value;
+				if (column.DbType == TfDatabaseColumnType.DateOnly)
+					dateOnlyColumns.Add(column.Name);
 			}
-			resultTable.Rows.Add(new TfDataRow(resultTable, values));
-		}
 
-		return resultTable;
+			foreach (DataRow row in dataTable.Rows)
+			{
+				var joinColumnValuesDict = GetRowJoinedValues(row, joinData);
+				object[] values = new object[resultTable.Columns.Count];
+				int valuesCounter = 0;
+				foreach (var column in resultTable.Columns)
+				{
+					var columnName = column.Name;
+
+					if (column.Origin == TfDataColumnOriginType.JoinedProviderColumn)
+					{
+						values[valuesCounter++] = joinColumnValuesDict[column.Name];
+						continue;
+					}
+					else if (column.Origin == TfDataColumnOriginType.SharedColumn)
+					{
+						var segments = columnName.Split(".");
+						columnName = segments[1];
+					}
+
+					object value = row[columnName];
+
+					if (value == DBNull.Value)
+					{
+						value = null;
+					}
+					else if (dateOnlyColumns.Contains(columnName))
+					{
+						value = DateOnly.FromDateTime((DateTime)value);
+					}
+
+					values[valuesCounter++] = value;
+				}
+				resultTable.Rows.Add(new TfDataRow(resultTable, values));
+			}
+
+			return resultTable;
+		}
 	}
 
 	private Dictionary<string, object> GetRowJoinedValues(

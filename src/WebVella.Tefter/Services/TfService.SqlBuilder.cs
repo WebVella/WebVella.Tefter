@@ -540,30 +540,36 @@ public partial class TfService : ITfService
 		{
 			CalculatePaging();
 
-			string columns = string.Join($",{Environment.NewLine}\t",
-				_selectColumns.Select(x => x.GetSelectString()).ToList());
-
-			if (_joinData.Count > 0)
-			{
-				string extColumns = string.Join($",{Environment.NewLine}\t",
-					_joinData.Select(x => x.GetSelectString(_tableAlias)).ToList());
-
-				columns = columns + $",{Environment.NewLine}\t" + extColumns;
-			}
-
-			if (_sharedColumnsData.Count > 0)
-			{
-				string extColumns = string.Join($",{Environment.NewLine}\t",
-					_sharedColumnsData.Select(x => x.GetSelectString()).ToList());
-
-				columns = columns + $",{Environment.NewLine}\t" + extColumns;
-			}
-
 			StringBuilder sb = new StringBuilder();
 			if (_returnOnlyTfIds)
+			{
 				sb.Append($"SELECT tf_id {Environment.NewLine}FROM {_tableName} {_tableAlias}");
+				_joinData.Clear();
+			}
 			else
+			{
+				string columns = string.Join($",{Environment.NewLine}\t",
+					_selectColumns.Select(x => x.GetSelectString()).ToList());
+
+				if (_joinData.Count > 0)
+				{
+					string extColumns = string.Join($",{Environment.NewLine}\t",
+						_joinData.Select(x => x.GetSelectString(_tableAlias)).ToList());
+
+					columns = columns + $",{Environment.NewLine}\t" + extColumns;
+				}
+
+				if (_sharedColumnsData.Count > 0)
+				{
+					string extColumns = string.Join($",{Environment.NewLine}\t",
+						_sharedColumnsData.Select(x => x.GetSelectString()).ToList());
+
+					columns = columns + $",{Environment.NewLine}\t" + extColumns;
+				}
+
 				sb.Append($"SELECT {columns} {Environment.NewLine}FROM {_tableName} {_tableAlias}");
+			}
+
 
 			//joins are created for select columns, filter columns and sort columns
 			var columnsToJoin = _selectColumns
