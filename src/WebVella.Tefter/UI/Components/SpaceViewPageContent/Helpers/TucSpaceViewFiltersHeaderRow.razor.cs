@@ -66,7 +66,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 		var stateFilters = TfAuthLayout.GetState().NavigationState.Filters ?? new();
 		foreach (var column in SpaceViewColumns)
 		{
-			if(column.Settings.FilterPresentation == TfSpaceViewColumnSettingsFilterPresentation.Hidden) continue;
+			if (column.Settings.FilterPresentation == TfSpaceViewColumnSettingsFilterPresentation.Hidden) continue;
 			if (!_typeDict.ContainsKey(column.QueryName)) continue;
 
 			var columnFilter = stateFilters.FirstOrDefault(x => x.QueryName == column.QueryName);
@@ -75,7 +75,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 			{
 				_columnQueryFilterDict[column.QueryName] = columnFilter with { QueryName = columnFilter.QueryName };
 			}
-			else if(!String.IsNullOrWhiteSpace(column.Settings.DefaultComparisonMethodDescription))
+			else if (!String.IsNullOrWhiteSpace(column.Settings.DefaultComparisonMethodDescription))
 			{
 				var dbType = _typeDict[column.QueryName];
 				int method = 0;
@@ -110,7 +110,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 									x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
 							if (methodEnum is not null)
 								method = (int)methodEnum;
-						}						
+						}
 						break;
 					case TfDatabaseColumnType.ShortText:
 					case TfDatabaseColumnType.Text:
@@ -120,7 +120,7 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 									x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
 							if (methodEnum is not null)
 								method = (int)methodEnum;
-						}							
+						}
 						break;
 					case TfDatabaseColumnType.Guid:
 						{
@@ -129,12 +129,13 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 									x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
 							if (methodEnum is not null)
 								method = (int)methodEnum;
-						}							
+						}
 						break;
-				}				
+				}
+
 				_columnQueryFilterDict[column.QueryName] =
 					new TfFilterQuery() { QueryName = column.QueryName, Value = null, Method = method };
-			}			
+			}
 			else
 			{
 				_columnQueryFilterDict[column.QueryName] =
@@ -238,6 +239,8 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 			_filters.Add(updateObj);
 		}
 
+		//If no method is defined check for default in the view column settings
+		var column = SpaceViewColumns.FirstOrDefault(x => x.QueryName == queryName);
 		var type = _typeDict[queryName];
 		if (type == TfDatabaseColumnType.Boolean)
 		{
@@ -247,6 +250,14 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 				var value = (int)baseFilter.ComparisonMethod;
 				if (methodObj is not null) value = (int)methodObj;
 				updateObj.Method = value;
+			}
+			else if (column is not null)
+			{
+				TfFilterBooleanComparisonMethod? method = Enum.GetValues<TfFilterBooleanComparisonMethod>()
+					.FirstOrDefault(x =>
+						x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
+				method ??= TfFilterBooleanComparisonMethod.Equal;
+				updateObj.Method = (int)method;
 			}
 
 			{
@@ -264,6 +275,14 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 				if (methodObj is not null) value = (int)methodObj;
 				updateObj.Method = value;
 			}
+			else if (column is not null)
+			{
+				TfFilterDateTimeComparisonMethod? method = Enum.GetValues<TfFilterDateTimeComparisonMethod>()
+					.FirstOrDefault(x =>
+						x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
+				method ??= TfFilterDateTimeComparisonMethod.Equal;
+				updateObj.Method = (int)method;
+			}
 
 			{
 				baseFilter.ValueStringChanged(((string?)valueJson)?.Trim());
@@ -279,9 +298,16 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 				if (methodObj is not null) value = (int)methodObj;
 				updateObj.Method = value;
 			}
+			else if (column is not null)
+			{
+				TfFilterGuidComparisonMethod? method = Enum.GetValues<TfFilterGuidComparisonMethod>()
+					.FirstOrDefault(x =>
+						x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
+				method ??= TfFilterGuidComparisonMethod.Equal;
+				updateObj.Method = (int)method;
+			}
 
 			{
-
 				if (!String.IsNullOrWhiteSpace(valueJson) && !Guid.TryParse(valueJson, out Guid _))
 					ToastService.ShowError(LOC("Invalid GUID value"));
 				baseFilter.ValueStringChanged(valueJson);
@@ -299,6 +325,14 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 				if (methodObj is not null) value = (int)methodObj;
 				updateObj.Method = value;
 			}
+			else if (column is not null)
+			{
+				TfFilterNumericComparisonMethod? method = Enum.GetValues<TfFilterNumericComparisonMethod>()
+					.FirstOrDefault(x =>
+						x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
+				method ??= TfFilterNumericComparisonMethod.Equal;
+				updateObj.Method = (int)method;
+			}
 
 			{
 				baseFilter.ValueStringChanged(valueJson);
@@ -313,6 +347,14 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 				var value = (int)baseFilter.ComparisonMethod;
 				if (methodObj is not null) value = (int)methodObj;
 				updateObj.Method = value;
+			}
+			else if (column is not null)
+			{
+				TfFilterNumericComparisonMethod? method = Enum.GetValues<TfFilterNumericComparisonMethod>()
+					.FirstOrDefault(x =>
+						x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
+				method ??= TfFilterNumericComparisonMethod.Equal;
+				updateObj.Method = (int)method;
 			}
 
 			{
@@ -330,6 +372,14 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 				if (methodObj is not null) value = (int)methodObj;
 				updateObj.Method = value;
 			}
+			else if (column is not null)
+			{
+				TfFilterTextComparisonMethod? method = Enum.GetValues<TfFilterTextComparisonMethod>()
+					.FirstOrDefault(x =>
+						x.ToDescriptionString() == column.Settings.DefaultComparisonMethodDescription);
+				method ??= TfFilterTextComparisonMethod.Equal;
+				updateObj.Method = (int)method;
+			}
 
 			{
 				baseFilter.ValueChanged(((string?)valueJson)?.Trim());
@@ -338,9 +388,72 @@ public partial class TucSpaceViewFiltersHeaderRow : TfBaseComponent, IAsyncDispo
 		}
 		else throw new Exception("Unsupported TucFilterBase in _valueChanged");
 
-
+		_cleanUnusedFilters();
 		await TucSpaceViewPageContent.OnFilter(_filters.Where(x => !String.IsNullOrWhiteSpace(x.Value) || x.Method != 0)
 			.ToList());
+	}
+
+	private void _cleanUnusedFilters()
+	{
+		var cleanFilters = new List<TfFilterQuery>();
+		foreach (var filter in _filters)
+		{
+			if (!_typeDict.ContainsKey(filter.QueryName) || filter.Items.Count > 0)
+			{
+				cleanFilters.Add(filter);
+				continue;
+			}
+
+
+			var type = _typeDict[filter.QueryName];
+			var requiresValue = false;
+
+			if (type == TfDatabaseColumnType.Boolean)
+			{
+				var baseFilter = (TfFilterBoolean)_columnBaseFilterDict[filter.QueryName];
+				requiresValue = baseFilter.RequiresValue;
+			}
+			else if (type == TfDatabaseColumnType.DateOnly
+			         || type == TfDatabaseColumnType.DateTime)
+			{
+				var baseFilter = (TfFilterDateTime)_columnBaseFilterDict[filter.QueryName];
+				requiresValue = baseFilter.RequiresValue;
+			}
+			else if (type == TfDatabaseColumnType.Guid)
+			{
+				var baseFilter = (TfFilterGuid)_columnBaseFilterDict[filter.QueryName];
+				requiresValue = baseFilter.RequiresValue;
+			}
+			else if (type == TfDatabaseColumnType.ShortInteger
+			         || type == TfDatabaseColumnType.Integer
+			         || type == TfDatabaseColumnType.LongInteger)
+			{
+				var baseFilter = (TfFilterNumeric)_columnBaseFilterDict[filter.QueryName];
+				requiresValue = baseFilter.RequiresValue;
+			}
+			else if (type == TfDatabaseColumnType.Number)
+			{
+				var baseFilter = (TfFilterNumeric)_columnBaseFilterDict[filter.QueryName];
+				requiresValue = baseFilter.RequiresValue;
+			}
+			else if (type == TfDatabaseColumnType.ShortText
+			         || type == TfDatabaseColumnType.Text)
+			{
+				var baseFilter = (TfFilterText)_columnBaseFilterDict[filter.QueryName];
+				requiresValue = baseFilter.RequiresValue;
+			}
+
+			if (requiresValue && String.IsNullOrWhiteSpace(filter.Value))
+			{
+				//skip this filter
+			}
+			else
+			{
+				cleanFilters.Add(filter);
+			}
+		}
+
+		_filters = cleanFilters;
 	}
 
 	private void _popoverOpenChanged(bool opened, TfSpaceViewColumn column)
