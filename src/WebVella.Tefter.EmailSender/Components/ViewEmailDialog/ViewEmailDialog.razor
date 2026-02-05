@@ -21,7 +21,7 @@
 		@if (!String.IsNullOrWhiteSpace(Content.ServerError))
 		{
 			<FluentGrid>
-				<FluentGridItem xs="6">
+				<FluentGridItem xs="12">
 					<FluentTextArea Value=@Content.ServerError
 					                Label="@LOC("Error")" Style="width:100%" ReadOnly="true" Rows="3"/>
 				</FluentGridItem>

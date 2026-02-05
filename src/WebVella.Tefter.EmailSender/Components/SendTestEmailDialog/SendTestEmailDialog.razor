@@ -43,11 +43,11 @@
 			</FluentGrid>
 			<FluentValidationMessage For="@(() => _form.ContentText)" />
 			<FluentValidationMessage For="@(() => _form.ContentHtml)" />
-			<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
+			<FluentTabs @bind-ActiveTabId="@_activeTab">
 				<FluentTab Label="@LOC("Text Body")" Id="text">
 					<FluentGrid>
 						<FluentGridItem xs="12">
-							<FluentTextArea Required="true" @bind-Value=@_form.ContentText Style="width:100%" />
+							<FluentTextArea Required="true" @bind-Value=@_form.ContentText Style="width:100%"/>
 						</FluentGridItem>
 					</FluentGrid>
 				</FluentTab>
