@@ -44,15 +44,14 @@ internal class SmtpBackgroundJob : BackgroundService
 			{
 				await Task.Delay(10000, stoppingToken);
 			}
-
-			while (!stoppingToken.IsCancellationRequested)
+            var lastTriggerTime = DateTime.UtcNow;
+            while (!stoppingToken.IsCancellationRequested)
 			{
 				try
 				{
-					var now = DateTime.Now;
 					if (!env.IsDevelopment())
 					{
-						if (now.Minute % 5 != 0 || now.Second != 0) //every 5 mins
+						if (DateTime.UtcNow < lastTriggerTime.AddMinutes(1)) //every 1 mins
 						{
 							//check every sec
 							await Task.Delay(1000, stoppingToken);
@@ -61,15 +60,15 @@ internal class SmtpBackgroundJob : BackgroundService
 					}
 					else
 					{
-						if (now.Second % 10 != 0) //every 10 sec in dev mode
+						if (DateTime.UtcNow < lastTriggerTime.AddSeconds(10)) //every 10 sec in dev mode
 						{
 							//check every sec
-							await Task.Delay(100, stoppingToken);
+							await Task.Delay(1000, stoppingToken);
 							continue;
 						}
 					}
-
-					ExceptionDispatchInfo capturedException = null;
+                    lastTriggerTime = DateTime.UtcNow;
+                    ExceptionDispatchInfo capturedException = null;
 					try 
 					{
 						SynchronizationContext.SetSynchronizationContext(new TfHostedServiceSynchContext());
