@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using WebVella.DocumentTemplates.Engines.DocumentFile;
+using WebVella.DocumentTemplates.Engines.Text;
 using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Addons;
@@ -100,21 +101,33 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessorAddon
 
 			int filesCounter = 0;
 
-			foreach (var resultItem in tmplResult.ResultItems)
+            string templateFilename = settings.FileName ?? String.Empty;
+            var ext = Path.GetExtension(templateFilename);
+
+            foreach (var resultItem in tmplResult.ResultItems)
 			{
-				string filename = settings.FileName ?? String.Empty;
+                string resultFileName = settings.FileName;
+                if (!String.IsNullOrWhiteSpace(settings.TemplatedFileName))
+                {
+                    WvTextTemplate fileNameTemplate = new WvTextTemplate
+                    {
+                        Template = settings.TemplatedFileName
+                    };
+                    var fileNameProcessed = fileNameTemplate.Process(resultItem.DataTable);
+                    if (fileNameProcessed.ResultItems.Count > 0 && !String.IsNullOrWhiteSpace(fileNameProcessed.ResultItems[0].Result))
+                        resultFileName = fileNameProcessed.ResultItems[0].Result + ext;
+                }
+                var name = Path.GetFileNameWithoutExtension(resultFileName);
+                if (filesCounter == 0)
+                    resultFileName = $"{name}{ext}";
+                else
+                    resultFileName = $"{name}_{filesCounter}{ext}";
 
-				filesCounter++;
+                filesCounter++;
 
-				if (tmplResult.ResultItems.Count > 1)
-				{
-					var ext = Path.GetExtension(filename);
-					var name = Path.GetFileNameWithoutExtension(filename);
-					filename = $"{filename}_{filesCounter}{ext}";
-				}
 				var item = new DocumentFileTemplateResultItem
 				{
-					FileName = filename,
+					FileName = resultFileName,
 					NumberOfRows = (int)(resultItem.DataTable?.Rows.Count ?? 0)
 				};
 				var valErrors = resultItem.Validate();
@@ -132,7 +145,7 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessorAddon
 						if (resultItem.Result is not null)
 						{
 							item.BlobId = tfService.CreateBlob(resultItem.Result, temporary: true);
-							item.DownloadUrl = $"/fs/blob/{item.BlobId}/{filename}";
+							item.DownloadUrl = $"/fs/blob/{item.BlobId}/{resultFileName}";
 						}
 					}
 					catch (Exception ex)

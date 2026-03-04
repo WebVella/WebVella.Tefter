@@ -282,6 +282,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessorAddon
                 emailAtt.Type = WvEmailAttachmentType.SpreadsheetFile;
                 emailAtt.Template = new MemoryStream(bytes);
                 emailAtt.Filename = attTemplaceSettings.FileName;
+                emailAtt.TemplatedFilename = attTemplaceSettings.TemplatedFileName;
                 emailAtt.GroupDataByColumns = attTemplaceSettings.GroupBy;
                 emailTmpl.AttachmentItems.Add(emailAtt);
             }
@@ -294,6 +295,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessorAddon
                 emailAtt.Type = WvEmailAttachmentType.TextFile;
                 emailAtt.Template = new MemoryStream(bytes);
                 emailAtt.Filename = attTemplaceSettings.FileName;
+                emailAtt.TemplatedFilename = attTemplaceSettings.TemplatedFileName;
                 emailAtt.GroupDataByColumns = attTemplaceSettings.GroupBy;
                 emailTmpl.AttachmentItems.Add(emailAtt);
             }
@@ -306,6 +308,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessorAddon
                 emailAtt.Type = WvEmailAttachmentType.DocumentFile;
                 emailAtt.Template = new MemoryStream(bytes);
                 emailAtt.Filename = attTemplaceSettings.FileName;
+                emailAtt.TemplatedFilename = attTemplaceSettings.TemplatedFileName;
                 emailAtt.GroupDataByColumns = attTemplaceSettings.GroupBy;
                 emailTmpl.AttachmentItems.Add(emailAtt);
             }

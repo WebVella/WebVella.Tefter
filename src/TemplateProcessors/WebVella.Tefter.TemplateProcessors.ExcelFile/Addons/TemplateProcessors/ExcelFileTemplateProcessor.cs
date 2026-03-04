@@ -101,10 +101,11 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessorAddon
 
             int filesCounter = 0;
 
+            string templateFilename = settings.FileName;
+            var ext = Path.GetExtension(templateFilename);
+
             foreach (var resultItem in tmplResult.ResultItems)
             {
-                string templateFilename = settings.FileName;
-                var ext = Path.GetExtension(templateFilename);
                 string resultFileName = settings.FileName;
                 if (!String.IsNullOrWhiteSpace(settings.TemplatedFileName))
                 {
