@@ -21,6 +21,13 @@
 <script src="@Assets[$"_framework/blazor.web.js?cb={cb}"]"></script>
 <script src="@Assets[$"_content/WebVella.Tefter/lib/Sortable.min.js?cb={cb}"]" type="text/javascript"></script>
 <script src="@Assets[$"_content/WebVella.Tefter/app.js?cb={cb}"]" type="text/javascript"></script>
+	<div id="components-reconnect-modal">
+		<div class="modal-content">
+			<div class="spinner-border text-primary" role="status"></div>
+			<p>The connection was lost. Hang tight while we bring you back...</p>
+			<button class="btn btn-primary" onclick="window.location.reload()">Reload Page</button>
+		</div>
+	</div>
 </body>
 </html>
 

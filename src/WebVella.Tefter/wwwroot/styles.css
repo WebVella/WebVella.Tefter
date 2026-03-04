@@ -777,6 +777,52 @@ dd {
   margin-left: 0;
   margin-bottom: 0;
 }
+/* Base styles for the modal */
+#components-reconnect-modal {
+  display: none;
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  z-index: 1000;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.8);
+  /* Light mode overlay */
+  text-align: center;
+  backdrop-filter: blur(4px);
+  /* Modern touch */
+}
+/* Dark Mode Overrides */
+@media (prefers-color-scheme: dark) {
+  #components-reconnect-modal {
+    background-color: rgba(0, 0, 0, 0.7);
+    /* Dark mode overlay */
+    color: #f0f0f0;
+  }
+  #components-reconnect-modal > div {
+    padding: 15px;
+    background-color: #2d2d2d;
+    border: 1px solid #444;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    color: #fff;
+  }
+}
+/* Specific state styling (Classes applied by Blazor) */
+#components-reconnect-modal.components-reconnect-show {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#components-reconnect-modal.components-reconnect-failed {
+  /* Style for when the server is actually gone */
+  border-top: 5px solid #ff4444;
+}
+#components-reconnect-modal.components-reconnect-rejected {
+  /* Style for when the session expired */
+  border-top: 5px solid #ffbb33;
+}
 .tf-card {
   border: 1px solid var(--neutral-stroke-rest);
   border-radius: calc(var(--layer-corner-radius) * 1px);
