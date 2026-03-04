@@ -84,7 +84,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			const string SQL = @"SELECT * FROM tf_template";
+			const string SQL = @"SELECT * FROM tf_template ORDER BY name ASC";
 
 			var dt = _dbService.ExecuteSqlQueryCommand(SQL);
 			var searchProcessed = search?.Trim().ToLowerInvariant() ?? String.Empty;

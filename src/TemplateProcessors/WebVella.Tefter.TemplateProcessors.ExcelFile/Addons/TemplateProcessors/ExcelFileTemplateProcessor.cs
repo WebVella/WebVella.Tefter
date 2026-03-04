@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using WebVella.DocumentTemplates.Engines.SpreadsheetFile;
+using WebVella.DocumentTemplates.Engines.Text;
 using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
@@ -102,19 +103,30 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessorAddon
 
             foreach (var resultItem in tmplResult.ResultItems)
             {
-                string filename = settings.FileName;
+                string templateFilename = settings.FileName;
+                var ext = Path.GetExtension(templateFilename);
+                string resultFileName = settings.FileName;
+                if (!String.IsNullOrWhiteSpace(settings.TemplatedFileName))
+                {
+                    WvTextTemplate fileNameTemplate = new WvTextTemplate
+                    {
+                        Template = settings.TemplatedFileName
+                    };
+                    var fileNameProcessed = fileNameTemplate.Process(resultItem.DataTable);
+                    if (fileNameProcessed.ResultItems.Count > 0 && !String.IsNullOrWhiteSpace(fileNameProcessed.ResultItems[0].Result))
+                        resultFileName = fileNameProcessed.ResultItems[0].Result + ext;
+                }
+                var name = Path.GetFileNameWithoutExtension(resultFileName);
+                if(filesCounter == 0)
+                    resultFileName = $"{name}{ext}";
+                else
+                    resultFileName = $"{name}_{filesCounter}{ext}";
 
                 filesCounter++;
 
-                if (tmplResult.ResultItems.Count > 1)
-                {
-                    var ext = Path.GetExtension(filename);
-                    var name = Path.GetFileNameWithoutExtension(filename);
-                    filename = $"{filename}_{filesCounter}{ext}";
-                }
                 var item = new ExcelFileTemplateResultItem
                 {
-                    FileName = filename,
+                    FileName = resultFileName,
                     NumberOfRows = (int)resultItem.DataTable?.Rows.Count
                 };
                 var valErrors = resultItem.Validate();
@@ -132,7 +144,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessorAddon
                         if (resultItem.Result is not null)
                         {
                             item.BlobId = tfService.CreateBlob(resultItem.Result, temporary: true);
-                            item.DownloadUrl = $"/fs/blob/{item.BlobId}/{filename}";
+                            item.DownloadUrl = $"/fs/blob/{item.BlobId}/{resultFileName}";
                         }
                     }
                     catch (Exception ex)
@@ -141,7 +153,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessorAddon
                             $"Unexpected error occurred. {ex.Message} {ex.StackTrace}"));
                     }
                 }
-                result.Items.Add(item);                
+                result.Items.Add(item);
             }
 
             GenerateZipFile(settings.FileName, result, tfService);
@@ -224,10 +236,10 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessorAddon
         else
         {
             var tfService = serviceProvider.GetService<ITfService>();
-            if(tfService is null) throw new Exception("tfService not found");
+            if (tfService is null) throw new Exception("tfService not found");
             if (tfService.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: false))
             {
-                var bytes = tfService.GetBlobByteArray(settings.TemplateFileBlobId.Value,false);
+                var bytes = tfService.GetBlobByteArray(settings.TemplateFileBlobId.Value, false);
                 var fileTemplate = new WvSpreadsheetFileTemplate
                 {
                     Template = new MemoryStream(bytes),
@@ -240,7 +252,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessorAddon
             }
             else if (tfService.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true))
             {
-                var bytes = tfService.GetBlobByteArray(settings.TemplateFileBlobId.Value,true);
+                var bytes = tfService.GetBlobByteArray(settings.TemplateFileBlobId.Value, true);
                 var fileTemplate = new WvSpreadsheetFileTemplate
                 {
                     Template = new MemoryStream(bytes),
@@ -249,7 +261,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessorAddon
                 foreach (var valError in valErrors)
                 {
                     result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), valError.Description));
-                }                
+                }
             }
             else
             {

@@ -11,6 +11,16 @@
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="12">
+			<FluentInputLabel Label="@LOC("Result File name (without extension)")" />
+			<FluentTextField @bind-Value=@_form.TemplatedFileName
+							 Placeholder="accepts {{template}}. empty uses the template file name"
+							 @bind-Value:after=_valueChanged
+							 TextFieldType="TextFieldType.Text" Style="width:100%" />
+			<FluentValidationMessage For="@(() => _form.TemplatedFileName)" />
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentGrid>
+		<FluentGridItem xs="12">
 			<FluentInputLabel Label="@LOC("Group by columns")" />
 			<FluentStack>
 				<TucSelectList @bind-Values=@_form.GroupBy @bind-Values:after=_valueChanged Placeholder="@LOC("type a column name + ENTER")"

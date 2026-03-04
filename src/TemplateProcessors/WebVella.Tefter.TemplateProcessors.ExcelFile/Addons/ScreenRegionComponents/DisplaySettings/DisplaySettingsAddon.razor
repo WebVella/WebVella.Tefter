@@ -6,6 +6,13 @@
 		<TucFileField Value=@_downloadUrl />
 	</FluentGridItem>
 	<FluentGridItem xs="6">
+		<FluentInputLabel Label="@LOC("Result File Name (without extension)")" />
+		<FluentTextField Value=@_form.TemplatedFileName ReadOnly="true"
+						 TextFieldType="TextFieldType.Text" Style="width:100%" />
+	</FluentGridItem>
+</FluentGrid>
+<FluentGrid>
+	<FluentGridItem xs="12">
 		<FluentInputLabel Label="@LOC("Group by columns")" />
 		<TucSelectList Values=@_form.GroupBy NoItemsMessage="@LOC("no data grouping will be applied")" />
 	</FluentGridItem>

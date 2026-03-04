@@ -2,6 +2,7 @@
 
 public class ExcelFileTemplateSettings
 {
+	public string TemplatedFileName { get; set; }
 	public string FileName { get; set; }
 	public Guid? TemplateFileBlobId { get; set; }
 	public List<string> GroupBy { get; set; } = new();
